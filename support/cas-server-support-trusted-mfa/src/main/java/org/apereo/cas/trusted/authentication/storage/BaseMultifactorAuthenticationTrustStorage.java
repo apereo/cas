@@ -42,13 +42,13 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
 
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal, final LocalDate onOrAfterDate) {
-        final Set<MultifactorAuthenticationTrustRecord> res = get(principal);
+        final var res = get(principal);
         res.removeIf(entry -> {
             if (entry.getRecordDate().isBefore(onOrAfterDate)) {
                 return true;
             }
-            final String decodedKey = this.cipherExecutor.decode(entry.getRecordKey());
-            final String currentKey = MultifactorAuthenticationTrustUtils.generateKey(entry);
+            final var decodedKey = this.cipherExecutor.decode(entry.getRecordKey());
+            final var currentKey = MultifactorAuthenticationTrustUtils.generateKey(entry);
             if (StringUtils.isBlank(decodedKey)) {
                 return true;
             }

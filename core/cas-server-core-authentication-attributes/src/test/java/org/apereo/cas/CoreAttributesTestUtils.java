@@ -28,20 +28,20 @@ public class CoreAttributesTestUtils {
     }
     
     public static Service getService() {
-        final Service svc = mock(Service.class);
+        final var svc = mock(Service.class);
         when(svc.getId()).thenReturn(CONST_TEST_URL);
         when(svc.matches(any(Service.class))).thenReturn(true);
         return svc;
     }
 
     public static RegisteredService getRegisteredService() {
-        final RegisteredService service = mock(RegisteredService.class);
+        final var service = mock(RegisteredService.class);
         when(service.getServiceId()).thenReturn(CONST_TEST_URL);
         when(service.getName()).thenReturn("service");
         when(service.getId()).thenReturn(Long.MAX_VALUE);
         when(service.getDescription()).thenReturn("description");
 
-        final RegisteredServiceAccessStrategy access = mock(RegisteredServiceAccessStrategy.class);
+        final var access = mock(RegisteredServiceAccessStrategy.class);
         when(access.isServiceAccessAllowed()).thenReturn(true);
         when(service.getAccessStrategy()).thenReturn(access);
         return service;

@@ -52,7 +52,7 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
         if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             registeredService.setId(findHighestId() + 1);
         }
-        final RegisteredService svc = findServiceById(registeredService.getId());
+        final var svc = findServiceById(registeredService.getId());
         if (svc != null) {
             this.registeredServices.remove(svc);
         }

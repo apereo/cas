@@ -23,7 +23,7 @@ public class RemoteAddressCredentialTests {
 
     @Test
     public void verifySerializeARemoteAddressCredentialToJson() throws IOException {
-        final RemoteAddressCredential credentialWritten = new RemoteAddressCredential("80.123.456.78");
+        final var credentialWritten = new RemoteAddressCredential("80.123.456.78");
         MAPPER.writeValue(JSON_FILE, credentialWritten);
         final CredentialMetaData credentialRead = MAPPER.readValue(JSON_FILE, RemoteAddressCredential.class);
         assertEquals(credentialWritten, credentialRead);

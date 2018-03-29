@@ -22,19 +22,19 @@ public class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthen
 
     @Test
     public void verifyTestWhenNoAuthnEventsFoundForUser() {
-        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("datetimeperson");
+        final var authentication = CoreAuthenticationTestUtils.getAuthentication("datetimeperson");
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);
+        final var request = new MockHttpServletRequest();
+        final var score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isHighestRisk());
     }
 
     @Test
     public void verifyTestWhenAuthnEventsFoundForUser() {
-        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
+        final var authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);
+        final var request = new MockHttpServletRequest();
+        final var score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isLowestRisk());
     }
 }

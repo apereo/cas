@@ -53,9 +53,9 @@ public class CasCoreHttpConfiguration {
     @SneakyThrows
     public SSLContext sslContext() {
 
-        final HttpClientProperties.Truststore client = casProperties.getHttpClient().getTruststore();
+        final var client = casProperties.getHttpClient().getTruststore();
         if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
-            final DefaultCasSslContext ctx =
+            final var ctx =
                 new DefaultCasSslContext(client.getFile(), client.getPsw(), KeyStore.getDefaultType());
             return ctx.getSslContext();
         }
@@ -66,8 +66,8 @@ public class CasCoreHttpConfiguration {
     @ConditionalOnMissingBean(name = "httpClient")
     @Bean
     public FactoryBean<SimpleHttpClient> httpClient() {
-        final SimpleHttpClientFactoryBean.DefaultHttpClient c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
-        final HttpClientProperties httpClient = casProperties.getHttpClient();
+        final var c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
+        final var httpClient = casProperties.getHttpClient();
         c.setConnectionTimeout(Beans.newDuration(httpClient.getConnectionTimeout()).toMillis());
         c.setReadTimeout((int) Beans.newDuration(httpClient.getReadTimeout()).toMillis());
         return c;
@@ -95,8 +95,8 @@ public class CasCoreHttpConfiguration {
     }
 
     private HttpClient getHttpClient(final boolean redirectEnabled) throws Exception {
-        final SimpleHttpClientFactoryBean.DefaultHttpClient c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
-        final HttpClientProperties httpClient = casProperties.getHttpClient();
+        final var c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
+        final var httpClient = casProperties.getHttpClient();
         c.setConnectionTimeout(Beans.newDuration(httpClient.getConnectionTimeout()).toMillis());
         c.setReadTimeout((int) Beans.newDuration(httpClient.getReadTimeout()).toMillis());
         c.setRedirectsEnabled(redirectEnabled);

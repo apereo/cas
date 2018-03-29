@@ -45,20 +45,20 @@ public class SurrogateAuthenticationEventListener {
     }
 
     private void notify(final Principal principal, final AbstractCasEvent event) {
-        final String eventDetails = event.toString();
+        final var eventDetails = event.toString();
         if (communicationsManager.isSmsSenderDefined()) {
-            final SmsProperties sms = casProperties.getAuthn().getSurrogate().getSms();
-            final String text = sms.getText().concat("\n").concat(eventDetails);
+            final var sms = casProperties.getAuthn().getSurrogate().getSms();
+            final var text = sms.getText().concat("\n").concat(eventDetails);
             communicationsManager.sms(sms.getFrom(), principal.getAttributes().get(sms.getAttributeName()).toString(), text);
         } else {
             LOGGER.trace("CAS is unable to send surrogate-authentication SMS messages given no settings are defined to account for servers, etc");
         }
         if (communicationsManager.isMailSenderDefined()) {
-            final EmailProperties mail = casProperties.getAuthn().getSurrogate().getMail();
-            final String emailAttribute = mail.getAttributeName();
-            final Object to = principal.getAttributes().get(emailAttribute);
+            final var mail = casProperties.getAuthn().getSurrogate().getMail();
+            final var emailAttribute = mail.getAttributeName();
+            final var to = principal.getAttributes().get(emailAttribute);
             if (to != null) {
-                final String text = mail.getText().concat("\n").concat(eventDetails);
+                final var text = mail.getText().concat("\n").concat(eventDetails);
                 this.communicationsManager.email(text, mail.getFrom(), mail.getSubject(), to.toString(), mail.getCc(), mail.getBcc());
             } else {
                 LOGGER.trace("The principal has no {} attribute, cannot send email notification", emailAttribute);

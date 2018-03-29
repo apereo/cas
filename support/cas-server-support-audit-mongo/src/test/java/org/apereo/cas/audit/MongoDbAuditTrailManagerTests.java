@@ -48,8 +48,8 @@ public class MongoDbAuditTrailManagerTests {
 
     @Test
     public void verify() {
-        final Date since = DateTimeUtils.dateOf(LocalDate.now().minusDays(2));
-        final AuditActionContext ctx = new AuditActionContext("casuser", "resource",
+        final var since = DateTimeUtils.dateOf(LocalDate.now().minusDays(2));
+        final var ctx = new AuditActionContext("casuser", "resource",
             "action", "appcode", since, "clientIp",
             "serverIp");
         auditTrailExecutionPlan.record(ctx);

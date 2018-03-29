@@ -54,7 +54,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
     @Override
     public <T extends Ticket> T create(final ProxyGrantingTicket proxyGrantingTicket, final Service service,
                                        final Class<T> clazz) {
-        final String ticketId = produceTicketIdentifier(service);
+        final var ticketId = produceTicketIdentifier(service);
         return produceTicket(proxyGrantingTicket, service, ticketId, clazz);
     }
 
@@ -70,7 +70,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
      */
     protected <T extends Ticket> T produceTicket(final ProxyGrantingTicket proxyGrantingTicket,
                                                  final Service service, final String ticketId, final Class<T> clazz) {
-        final ProxyTicket result = proxyGrantingTicket.grantProxyTicket(
+        final var result = proxyGrantingTicket.grantProxyTicket(
             ticketId,
             service,
             this.proxyTicketExpirationPolicy,
@@ -91,15 +91,15 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
      * @return the ticket id
      */
     protected String produceTicketIdentifier(final Service service) {
-        final String uniqueTicketIdGenKey = service.getClass().getName();
+        final var uniqueTicketIdGenKey = service.getClass().getName();
         LOGGER.debug("Looking up ticket id generator for [{}]", uniqueTicketIdGenKey);
-        UniqueTicketIdGenerator generator = this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
+        var generator = this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
         if (generator == null) {
             generator = this.defaultTicketIdGenerator;
             LOGGER.debug("Ticket id generator not found for [{}]. Using the default generator...", uniqueTicketIdGenKey);
         }
 
-        String ticketId = generator.getNewTicketId(ProxyTicket.PROXY_TICKET_PREFIX);
+        var ticketId = generator.getNewTicketId(ProxyTicket.PROXY_TICKET_PREFIX);
         if (this.cipherExecutor != null) {
             LOGGER.debug("Attempting to encode proxy ticket [{}]", ticketId);
             ticketId = this.cipherExecutor.encode(ticketId);

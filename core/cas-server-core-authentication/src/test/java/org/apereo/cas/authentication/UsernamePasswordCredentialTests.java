@@ -14,8 +14,8 @@ public class UsernamePasswordCredentialTests {
 
     @Test
     public void verifySetGetUsername() {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
-        final String userName = "test";
+        final var c = new UsernamePasswordCredential();
+        final var userName = "test";
 
         c.setUsername(userName);
 
@@ -24,8 +24,8 @@ public class UsernamePasswordCredentialTests {
 
     @Test
     public void verifySetGetPassword() {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
-        final String password = "test";
+        final var c = new UsernamePasswordCredential();
+        final var password = "test";
 
         c.setPassword(password);
 

@@ -18,8 +18,8 @@ public class ServiceResourceResolver implements AuditResourceResolver {
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
-        final Service service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
-        final StringBuilder builder = new StringBuilder(retval.toString())
+        final var service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
+        final var builder = new StringBuilder(retval.toString())
                 .append(" for ")
                 .append(DigestUtils.abbreviate(service.getId()));
 
@@ -28,7 +28,7 @@ public class ServiceResourceResolver implements AuditResourceResolver {
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Exception ex) {
-        final Service service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
+        final var service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
         return new String[]{service.getId()};
     }
 }

@@ -51,15 +51,15 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
     public static Collection<Object[]> getTestParameters() {
         final Collection<Object[]> params = new ArrayList<>();
 
-        final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
-        final ZonedDateTime twoHoursAgo = now.minusHours(2);
-        final ZonedDateTime oneHourAgo = now.minusHours(1);
-        final ZonedDateTime halfHourAgo = now.minusMinutes(30);
-        final X500Principal issuer = new X500Principal("CN=CAS");
+        final var now = ZonedDateTime.now(ZoneOffset.UTC);
+        final var twoHoursAgo = now.minusHours(2);
+        final var oneHourAgo = now.minusHours(1);
+        final var halfHourAgo = now.minusMinutes(30);
+        final var issuer = new X500Principal("CN=CAS");
 
         // Test case #1
         // Expect expired for zero leniency on CRL expiring 1ms ago
-        final ThresholdExpiredCRLRevocationPolicy zeroThreshold = new ThresholdExpiredCRLRevocationPolicy(0);
+        final var zeroThreshold = new ThresholdExpiredCRLRevocationPolicy(0);
         params.add(new Object[] {
                 zeroThreshold,
                 new MockX509CRL(issuer, DateTimeUtils.dateOf(oneHourAgo), DateTimeUtils.dateOf(now.minusSeconds(1))),
@@ -68,7 +68,7 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
 
         // Test case #2
         // Expect expired for 1h leniency on CRL expired 1 hour 1ms ago
-        final ThresholdExpiredCRLRevocationPolicy oneHourThreshold = new ThresholdExpiredCRLRevocationPolicy(3600);
+        final var oneHourThreshold = new ThresholdExpiredCRLRevocationPolicy(3600);
         params.add(new Object[] {
                 oneHourThreshold,
                 new MockX509CRL(issuer, DateTimeUtils.dateOf(twoHoursAgo), DateTimeUtils.dateOf(oneHourAgo.minusSeconds(1))),

@@ -23,7 +23,7 @@ public class DigestCredentialTests {
 
     @Test
     public void verifySerializeADigestCredentialToJson() throws IOException {
-        final DigestCredential credentialMetaDataWritten = new DigestCredential("uid", "realm", "hash");
+        final var credentialMetaDataWritten = new DigestCredential("uid", "realm", "hash");
 
         MAPPER.writeValue(JSON_FILE, credentialMetaDataWritten);
 

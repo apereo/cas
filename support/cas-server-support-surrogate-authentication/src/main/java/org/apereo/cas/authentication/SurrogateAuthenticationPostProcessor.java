@@ -40,10 +40,10 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
 
     @Override
     public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws AuthenticationException {
-        final Authentication authentication = builder.build();
-        final Principal principal = authentication.getPrincipal();
-        final SurrogateUsernamePasswordCredential surrogateCredentials = (SurrogateUsernamePasswordCredential) transaction.getPrimaryCredential().get();
-        final String targetUserId = surrogateCredentials.getSurrogateUsername();
+        final var authentication = builder.build();
+        final var principal = authentication.getPrincipal();
+        final var surrogateCredentials = (SurrogateUsernamePasswordCredential) transaction.getPrimaryCredential().get();
+        final var targetUserId = surrogateCredentials.getSurrogateUsername();
 
         try {
 
@@ -54,15 +54,15 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
 
             LOGGER.debug("Authenticated [{}] will be checked for surrogate eligibility next...", principal);
             if (transaction.getService() != null) {
-                final RegisteredService svc = this.servicesManager.findServiceBy(transaction.getService());
+                final var svc = this.servicesManager.findServiceBy(transaction.getService());
 
-                final AuditableContext serviceAccessAudit = AuditableContext.builder().service(transaction.getService())
+                final var serviceAccessAudit = AuditableContext.builder().service(transaction.getService())
                     .authentication(authentication)
                     .registeredService(svc)
                     .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                     .build();
 
-                final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(serviceAccessAudit);
+                final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(serviceAccessAudit);
                 accessResult.throwExceptionIfNeeded();
             }
 
@@ -71,7 +71,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                 builder.setPrincipal(this.principalFactory.createPrincipal(targetUserId));
                 publishSuccessEvent(principal, targetUserId);
 
-                final AuditableContext surrogateEligibleAudit = AuditableContext.builder()
+                final var surrogateEligibleAudit = AuditableContext.builder()
                     .service(transaction.getService())
                     .authentication(authentication)
                     .properties(CollectionUtils.wrap("targetUserId", targetUserId, "eligible", true))
@@ -88,7 +88,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
             final Map<String, Throwable> map = CollectionUtils.wrap(getClass().getSimpleName(),
                 new SurrogateAuthenticationException("Principal " + principal + " is unauthorized to authenticate as " + targetUserId));
 
-            final AuditableContext surrogateIneligibleAudit = AuditableContext.builder()
+            final var surrogateIneligibleAudit = AuditableContext.builder()
                 .service(transaction.getService())
                 .authentication(authentication)
                 .build();

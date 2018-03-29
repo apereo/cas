@@ -71,7 +71,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
      * @return Name of next flow state to transition to or {@value #UNKNOWN}
      */
     public String handle(final Exception e, final RequestContext requestContext) {
-        final MessageContext messageContext = requestContext.getMessageContext();
+        final var messageContext = requestContext.getMessageContext();
 
         if (e instanceof AuthenticationException) {
             return handleAuthenticationException((AuthenticationException) e, requestContext);
@@ -82,7 +82,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
         }
         
         LOGGER.trace("Unable to translate errors of the authentication exception [{}]. Returning [{}]", e, UNKNOWN);
-        final String messageCode = this.messageBundlePrefix + UNKNOWN;
+        final var messageCode = this.messageBundlePrefix + UNKNOWN;
         messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
         return UNKNOWN;
     }
@@ -100,7 +100,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
      */
     protected String handleAuthenticationException(final AuthenticationException e, final RequestContext requestContext) {
         if (e.getHandlerErrors().containsKey(UnauthorizedServiceForPrincipalException.class.getSimpleName())) {
-            final URI url = WebUtils.getUnauthorizedRedirectUrlIntoFlowScope(requestContext);
+            final var url = WebUtils.getUnauthorizedRedirectUrlIntoFlowScope(requestContext);
             if (url != null) {
                 LOGGER.warn("Unauthorized service access for principal; CAS will be redirecting to [{}]", url);
                 return CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK;
@@ -108,7 +108,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
         }
 
         final Collection<Class> values = e.getHandlerErrors().values().stream().map(Throwable::getClass).collect(Collectors.toList());
-        final String handlerErrorName = this.errors
+        final var handlerErrorName = this.errors
             .stream()
             .filter(values::contains)
             .map(Class::getSimpleName)
@@ -118,8 +118,8 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
                 return UNKNOWN;
             });
 
-        final MessageContext messageContext = requestContext.getMessageContext();
-        final String messageCode = this.messageBundlePrefix + handlerErrorName;
+        final var messageContext = requestContext.getMessageContext();
+        final var messageCode = this.messageBundlePrefix + handlerErrorName;
         messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
         return handlerErrorName;
     }
@@ -135,8 +135,8 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
      * @return Name of next flow state to transition to or {@value #UNKNOWN}
      */
     protected String handleAbstractTicketException(final AbstractTicketException e, final RequestContext requestContext) {
-        final MessageContext messageContext = requestContext.getMessageContext();
-        final Optional<String> match = this.errors.stream()
+        final var messageContext = requestContext.getMessageContext();
+        final var match = this.errors.stream()
             .filter(c -> c.isInstance(e)).map(Class::getSimpleName)
             .findFirst();
 
@@ -146,13 +146,13 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final Event currentEvent = requestContext.getCurrentEvent();
+        final var currentEvent = requestContext.getCurrentEvent();
         LOGGER.debug("Located current event [{}]", currentEvent);
 
-        final Exception error = currentEvent.getAttributes().get("error", Exception.class);
+        final var error = currentEvent.getAttributes().get("error", Exception.class);
         LOGGER.debug("Located error attribute [{}] with message [{}] from the current event", error.getClass(), error.getMessage());
 
-        final String event = handle(error, requestContext);
+        final var event = handle(error, requestContext);
         LOGGER.debug("Final event id resolved from the error is [{}]", event);
 
         return new EventFactorySupport().event(this, event);

@@ -86,7 +86,7 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     @Bean
     @RefreshScope
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
-        final TrustedDevicesMultifactorProperties trusted = casProperties.getAuthn().getMfa().getTrusted();
+        final var trusted = casProperties.getAuthn().getMfa().getTrusted();
         final LoadingCache<String, MultifactorAuthenticationTrustRecord> storage = Caffeine.newBuilder()
             .initialCapacity(INITIAL_CACHE_SIZE)
             .maximumSize(MAX_CACHE_SIZE)
@@ -118,7 +118,7 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     @Bean
     @RefreshScope
     public CipherExecutor mfaTrustCipherExecutor() {
-        final EncryptionJwtSigningJwtCryptographyProperties crypto = casProperties.getAuthn().getMfa().getTrusted().getCrypto();
+        final var crypto = casProperties.getAuthn().getMfa().getTrusted().getCrypto();
         if (crypto.isEnabled()) {
             return new MultifactorAuthenticationTrustCipherExecutor(
                 crypto.getEncryption().getKey(),

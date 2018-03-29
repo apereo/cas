@@ -22,19 +22,19 @@ public class DefaultDigestHashedCredentialRetrieverTests {
 
     @Test
     public void verifyCanFindAnExistingUser() throws Exception {
-        final String expectedPassword = "password";
-        final DefaultDigestHashedCredentialRetriever credentialRetriever = new DefaultDigestHashedCredentialRetriever(
+        final var expectedPassword = "password";
+        final var credentialRetriever = new DefaultDigestHashedCredentialRetriever(
                 Collections.singletonMap("user", expectedPassword));
 
-        final String credential = credentialRetriever.findCredential("user", "ignored");
+        final var credential = credentialRetriever.findCredential("user", "ignored");
 
         assertEquals(expectedPassword, credential);
     }
 
     @Test
     public void verifyAnExceptionIsThrownIfUsedDoesNotExist() throws Exception {
-        final String username = "user";
-        final DefaultDigestHashedCredentialRetriever credentialRetriever = new DefaultDigestHashedCredentialRetriever(
+        final var username = "user";
+        final var credentialRetriever = new DefaultDigestHashedCredentialRetriever(
                 Collections.singletonMap("anotherUsername", "password"));
 
         thrown.expect(AccountNotFoundException.class);

@@ -75,7 +75,7 @@ public class ResourceUtils {
     public static boolean doesResourceExist(final String resource, final ResourceLoader resourceLoader) {
         try {
             if (StringUtils.isNotBlank(resource)) {
-                final Resource res = resourceLoader.getResource(resource);
+                final var res = resourceLoader.getResource(resource);
                 return doesResourceExist(res);
             }
         } catch (final Exception e) {
@@ -126,7 +126,7 @@ public class ResourceUtils {
      * @throws IOException the exception
      */
     public static AbstractResource getResourceFrom(final String location) throws IOException {
-        final AbstractResource metadataLocationResource = getRawResourceFrom(location);
+        final var metadataLocationResource = getRawResourceFrom(location);
         if (!metadataLocationResource.exists() || !metadataLocationResource.isReadable()) {
             throw new FileNotFoundException("Resource " + location + " does not exist or is unreadable");
         }
@@ -174,11 +174,11 @@ public class ResourceUtils {
             return resource;
         }
 
-        final URL url = org.springframework.util.ResourceUtils.extractArchiveURL(resource.getURL());
-        final File file = org.springframework.util.ResourceUtils.getFile(url);
+        final var url = org.springframework.util.ResourceUtils.extractArchiveURL(resource.getURL());
+        final var file = org.springframework.util.ResourceUtils.getFile(url);
 
-        final File casDirectory = new File(FileUtils.getTempDirectory(), "cas");
-        final File destination = new File(casDirectory, resource.getFilename());
+        final var casDirectory = new File(FileUtils.getTempDirectory(), "cas");
+        final var destination = new File(casDirectory, resource.getFilename());
         if (isDirectory) {
             FileUtils.forceMkdir(destination);
             FileUtils.cleanDirectory(destination);
@@ -186,15 +186,15 @@ public class ResourceUtils {
             FileUtils.forceDelete(destination);
         }
 
-        try (JarFile jFile = new JarFile(file)) {
+        try (var jFile = new JarFile(file)) {
             final Enumeration e = jFile.entries();
             while (e.hasMoreElements()) {
-                final ZipEntry entry = (ZipEntry) e.nextElement();
+                final var entry = (ZipEntry) e.nextElement();
                 if (entry.getName().contains(resource.getFilename()) && entry.getName().contains(containsName)) {
-                    try (InputStream stream = jFile.getInputStream(entry)) {
-                        File copyDestination = destination;
+                    try (var stream = jFile.getInputStream(entry)) {
+                        var copyDestination = destination;
                         if (isDirectory) {
-                            final File entryFileName = new File(entry.getName());
+                            final var entryFileName = new File(entry.getName());
                             copyDestination = new File(destination, entryFileName.getName());
                         }
 
@@ -217,7 +217,7 @@ public class ResourceUtils {
      * @return the input stream resource
      */
     public static InputStreamResource buildInputStreamResourceFrom(final String value, final String description) {
-        final StringReader reader = new StringReader(value);
+        final var reader = new StringReader(value);
         final InputStream is = new ReaderInputStream(reader, StandardCharsets.UTF_8);
         return new InputStreamResource(is, description);
     }

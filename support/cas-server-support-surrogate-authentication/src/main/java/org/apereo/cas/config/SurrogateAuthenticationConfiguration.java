@@ -76,9 +76,9 @@ public class SurrogateAuthenticationConfiguration {
     
     @Bean
     public ExpirationPolicy grantingTicketExpirationPolicy(@Qualifier("ticketGrantingTicketExpirationPolicy") final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
-        final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
-        final HardTimeoutExpirationPolicy surrogatePolicy = new HardTimeoutExpirationPolicy(su.getTgt().getTimeToKillInSeconds());
-        final SurrogateSessionExpirationPolicy policy = new SurrogateSessionExpirationPolicy(surrogatePolicy);
+        final var su = casProperties.getAuthn().getSurrogate();
+        final var surrogatePolicy = new HardTimeoutExpirationPolicy(su.getTgt().getTimeToKillInSeconds());
+        final var policy = new SurrogateSessionExpirationPolicy(surrogatePolicy);
         policy.addPolicy(SurrogateSessionExpirationPolicy.PolicyTypes.SURROGATE, surrogatePolicy);
         policy.addPolicy(SurrogateSessionExpirationPolicy.PolicyTypes.DEFAULT, ticketGrantingTicketExpirationPolicy);
         return policy;
@@ -89,7 +89,7 @@ public class SurrogateAuthenticationConfiguration {
     @Bean
     @SneakyThrows
     public SurrogateAuthenticationService surrogateAuthenticationService() {
-        final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
+        final var su = casProperties.getAuthn().getSurrogate();
         if (su.getJson().getLocation() != null) {
             LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getLocation());
             return new JsonResourceSurrogateAuthenticationService(su.getJson().getLocation(), servicesManager);

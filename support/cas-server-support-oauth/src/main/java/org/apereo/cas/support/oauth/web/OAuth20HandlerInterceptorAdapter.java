@@ -55,11 +55,11 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      * @return the boolean
      */
     protected boolean isAccessTokenRequestRequest(final HttpServletRequest request, final HttpServletResponse response) {
-        final String requestPath = request.getRequestURI();
-        final boolean value = doesUriMatchPattern(requestPath, OAuth20Constants.ACCESS_TOKEN_URL)
+        final var requestPath = request.getRequestURI();
+        final var value = doesUriMatchPattern(requestPath, OAuth20Constants.ACCESS_TOKEN_URL)
                 || doesUriMatchPattern(requestPath, OAuth20Constants.TOKEN_URL);
         if (!value) {
-            final BaseAccessTokenGrantRequestExtractor extractor = this.accessTokenGrantRequestExtractors
+            final var extractor = this.accessTokenGrantRequestExtractors
                     .stream()
                     .filter(ext -> ext.supports(request))
                     .findFirst()
@@ -80,7 +80,7 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      * @return the boolean
      */
     protected boolean isAuthorizationRequest(final HttpServletRequest request, final HttpServletResponse response) {
-        final String requestPath = request.getRequestURI();
+        final var requestPath = request.getRequestURI();
         return doesUriMatchPattern(requestPath, OAuth20Constants.AUTHORIZE_URL);
     }
 
@@ -92,7 +92,7 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      * @return the boolean
      */
     protected boolean doesUriMatchPattern(final String requestPath, final String patternUrl) {
-        final Pattern pattern = Pattern.compile('/' + patternUrl + "(/)*$");
+        final var pattern = Pattern.compile('/' + patternUrl + "(/)*$");
         return pattern.matcher(requestPath).find();
     }
 }

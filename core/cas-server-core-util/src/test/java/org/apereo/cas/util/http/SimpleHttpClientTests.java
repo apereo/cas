@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 public class SimpleHttpClientTests {
 
     private static SimpleHttpClient getHttpClient() throws Exception {
-        final SimpleHttpClient httpClient = new SimpleHttpClientFactoryBean().getObject();
+        final var httpClient = new SimpleHttpClientFactoryBean().getObject();
         return httpClient;
     }
 
@@ -45,11 +45,11 @@ public class SimpleHttpClientTests {
 
     @Test
     public void verifyBypassedInvalidHttpsUrl() throws Exception {
-        final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
+        final var clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(getFriendlyToAllSSLSocketFactory());
         clientFactory.setHostnameVerifier(new NoopHostnameVerifier());
         clientFactory.setAcceptableCodes(CollectionUtils.wrapList(200, 403));
-        final SimpleHttpClient client = clientFactory.getObject();
+        final var client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://wrong.host.badssl.com/"));
     }
 
@@ -68,7 +68,7 @@ public class SimpleHttpClientTests {
             public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
             }
         };
-        final SSLContext sc = SSLContext.getInstance("SSL");
+        final var sc = SSLContext.getInstance("SSL");
         sc.init(null, new TrustManager[]{trm}, null);
         return new SSLConnectionSocketFactory(sc, new NoopHostnameVerifier());
     }

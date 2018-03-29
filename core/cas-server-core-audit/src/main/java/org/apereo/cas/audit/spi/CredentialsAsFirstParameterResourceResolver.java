@@ -39,9 +39,9 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
      * @return the string[]
      */
     private static String[] toResources(final Object[] args) {
-        final Object object = args[0];
+        final var object = args[0];
         if (object instanceof AuthenticationTransaction) {
-            final AuthenticationTransaction transaction = AuthenticationTransaction.class.cast(object);
+            final var transaction = AuthenticationTransaction.class.cast(object);
             return new String[] {SUPPLIED_CREDENTIALS + transaction.getCredentials()};
         }
         return new String[] {SUPPLIED_CREDENTIALS + CollectionUtils.wrap(object)};

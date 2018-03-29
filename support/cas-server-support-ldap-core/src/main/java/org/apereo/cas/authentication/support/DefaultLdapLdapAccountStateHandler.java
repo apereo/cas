@@ -96,7 +96,7 @@ public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandl
             handlePolicyAttributes(response);
         }
 
-        final AccountState state = response.getAccountState();
+        final var state = response.getAccountState();
         if (state == null) {
             LOGGER.debug("Account state not defined. Returning empty list of messages.");
             return new ArrayList<>(0);
@@ -127,7 +127,7 @@ public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandl
         throws LoginException {
 
         LOGGER.debug("Handling LDAP account state error [{}]", error);
-        final LoginException ex = this.errorMap.get(error);
+        final var ex = this.errorMap.get(error);
         if (ex != null) {
             throw ex;
         }
@@ -159,8 +159,8 @@ public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandl
         }
 
         if (warning.getExpiration() != null) {
-            final ZonedDateTime expDate = DateTimeUtils.zonedDateTimeOf(warning.getExpiration());
-            final long ttl = ZonedDateTime.now(ZoneOffset.UTC).until(expDate, ChronoUnit.DAYS);
+            final var expDate = DateTimeUtils.zonedDateTimeOf(warning.getExpiration());
+            final var ttl = ZonedDateTime.now(ZoneOffset.UTC).until(expDate, ChronoUnit.DAYS);
             LOGGER.debug(
                 "Password expires in [{}] days. Expiration warning threshold is [{}] days.",
                 ttl,
@@ -189,10 +189,10 @@ public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandl
      */
     @SneakyThrows
     protected void handlePolicyAttributes(final AuthenticationResponse response) {
-        final Collection<LdapAttribute> attributes = response.getLdapEntry().getAttributes();
-        for (final LdapAttribute attr : attributes) {
+        final var attributes = response.getLdapEntry().getAttributes();
+        for (final var attr : attributes) {
             if (this.attributesToErrorMap.containsKey(attr.getName()) && Boolean.parseBoolean(attr.getStringValue())) {
-                final Class<LoginException> clazz = this.attributesToErrorMap.get(attr.getName());
+                final var clazz = this.attributesToErrorMap.get(attr.getName());
                 throw clazz.getDeclaredConstructor().newInstance();
             }
         }

@@ -37,11 +37,11 @@ public class BasicAuthenticationAction extends AbstractNonInteractiveCredentials
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext requestContext) {
         try {
-            final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-            final BasicAuthExtractor extractor = new BasicAuthExtractor();
+            final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+            final var extractor = new BasicAuthExtractor();
             final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
-            final UsernamePasswordCredentials credentials = extractor.extract(webContext);
+            final var credentials = extractor.extract(webContext);
             if (credentials != null) {
                 LOGGER.debug("Received basic authentication request from credentials [{}]", credentials);
                 return new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());

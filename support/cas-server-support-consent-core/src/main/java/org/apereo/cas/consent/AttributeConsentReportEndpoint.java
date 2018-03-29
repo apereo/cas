@@ -35,7 +35,7 @@ public class AttributeConsentReportEndpoint {
     public Collection<Map<String, Object>> consentDecisions(@Selector final String principal) {
         final Collection<Map<String, Object>> result = new HashSet<>();
         LOGGER.debug("Fetching consent decisions for principal [{}]", principal);
-        final Collection<ConsentDecision> consentDecisions = this.consentRepository.findConsentDecisions(principal);
+        final var consentDecisions = this.consentRepository.findConsentDecisions(principal);
         LOGGER.debug("Resolved consent decisions for principal [{}]: {}", principal, consentDecisions);
 
         consentDecisions.stream().forEach(d -> {

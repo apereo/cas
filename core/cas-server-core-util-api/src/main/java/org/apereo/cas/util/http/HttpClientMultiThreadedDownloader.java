@@ -29,9 +29,9 @@ public class HttpClientMultiThreadedDownloader {
      */
     @SneakyThrows
     public void download() {
-        final AtomicBoolean stop = new AtomicBoolean(false);
-        final DownloadInfo info = new DownloadInfo(resourceToDownload.getURL());
-        final DownloadStatusListener status = new DownloadStatusListener(info);
+        final var stop = new AtomicBoolean(false);
+        final var info = new DownloadInfo(resourceToDownload.getURL());
+        final var status = new DownloadStatusListener(info);
 
         // extract information from the web
         info.extract(stop, status);
@@ -40,7 +40,7 @@ public class HttpClientMultiThreadedDownloader {
         info.enableMultipart();
 
         // create downloader
-        final WGet w = new WGet(info, this.targetDestination);
+        final var w = new WGet(info, this.targetDestination);
 
         // init speed info
         status.speedInfo.start(0);
@@ -81,11 +81,11 @@ public class HttpClientMultiThreadedDownloader {
 
                 case DOWNLOADING:
                     speedInfo.step(info.getCount());
-                    final long now = System.currentTimeMillis();
+                    final var now = System.currentTimeMillis();
                     if (now - 1_000 > last) {
                         last = now;
 
-                        final StringBuilder partBuilder = new StringBuilder();
+                        final var partBuilder = new StringBuilder();
                         if (info.getParts() != null) {
                             info.getParts().forEach(p -> {
                                 switch (p.getState()) {
@@ -104,7 +104,7 @@ public class HttpClientMultiThreadedDownloader {
                             });
                         }
 
-                        final float p = info.getCount() / (float) info.getLength();
+                        final var p = info.getCount() / (float) info.getLength();
                         LOGGER.debug(String.format("%.2f %s (%s / %s)", p, partBuilder.toString(),
                             FileUtils.byteCountToDisplaySize(speedInfo.getCurrentSpeed()),
                             FileUtils.byteCountToDisplaySize(speedInfo.getAverageSpeed())));

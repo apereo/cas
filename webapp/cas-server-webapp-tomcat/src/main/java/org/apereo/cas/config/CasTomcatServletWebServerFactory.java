@@ -56,15 +56,15 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
             return;
         }
 
-        final SimpleTcpCluster cluster = new SimpleTcpCluster();
+        final var cluster = new SimpleTcpCluster();
         cluster.setChannelSendOptions(clusteringProperties.getChannelSendOptions());
 
-        final ClusterManagerBase manager = getClusteringManagerInstance();
+        final var manager = getClusteringManagerInstance();
         cluster.setManagerTemplate(manager);
 
-        final GroupChannel channel = new GroupChannel();
+        final var channel = new GroupChannel();
 
-        final NioReceiver receiver = new NioReceiver();
+        final var receiver = new NioReceiver();
         receiver.setPort(clusteringProperties.getReceiverPort());
         receiver.setTimeout(clusteringProperties.getReceiverTimeout());
         receiver.setMaxThreads(clusteringProperties.getReceiverMaxThreads());
@@ -72,7 +72,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         receiver.setAutoBind(clusteringProperties.getReceiverAutoBind());
         channel.setChannelReceiver(receiver);
 
-        final McastService membershipService = new McastService();
+        final var membershipService = new McastService();
         membershipService.setPort(clusteringProperties.getMembershipPort());
         membershipService.setAddress(clusteringProperties.getMembershipAddress());
         membershipService.setFrequency(clusteringProperties.getMembershipFrequency());
@@ -82,7 +82,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         membershipService.setLocalLoopbackDisabled(clusteringProperties.isMembershipLocalLoopbackDisabled());
         channel.setMembershipService(membershipService);
 
-        final ReplicationTransmitter sender = new ReplicationTransmitter();
+        final var sender = new ReplicationTransmitter();
         sender.setTransport(new PooledParallelSender());
         channel.setChannelSender(sender);
 
@@ -90,11 +90,11 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         channel.addInterceptor(new TcpFailureDetector());
         channel.addInterceptor(new MessageDispatchInterceptor());
 
-        final StaticMembershipInterceptor membership = new StaticMembershipInterceptor();
-        final String[] memberSpecs = clusteringProperties.getClusterMembers().split(",", -1);
-        for (final String spec : memberSpecs) {
-            final ClusterMemberDesc memberDesc = new ClusterMemberDesc(spec);
-            final StaticMember member = new StaticMember();
+        final var membership = new StaticMembershipInterceptor();
+        final var memberSpecs = clusteringProperties.getClusterMembers().split(",", -1);
+        for (final var spec : memberSpecs) {
+            final var memberDesc = new ClusterMemberDesc(spec);
+            final var member = new StaticMember();
             member.setHost(memberDesc.getAddress());
             member.setPort(memberDesc.getPort());
             member.setDomain("CAS");
@@ -117,7 +117,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         }
 
         addContextCustomizers(context -> {
-            final ClusterManagerBase manager = getClusteringManagerInstance();
+            final var manager = getClusteringManagerInstance();
             context.setManager(manager);
             context.setDistributable(true);
         });
@@ -126,12 +126,12 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
     private ClusterManagerBase getClusteringManagerInstance() {
         switch (clusteringProperties.getManagerType().toUpperCase()) {
             case "DELTA":
-                final DeltaManager manager = new DeltaManager();
+                final var manager = new DeltaManager();
                 manager.setExpireSessionsOnShutdown(clusteringProperties.isExpireSessionsOnShutdown());
                 manager.setNotifyListenersOnReplication(true);
                 return manager;
             default:
-                final BackupManager backupManager = new BackupManager();
+                final var backupManager = new BackupManager();
                 backupManager.setNotifyListenersOnReplication(true);
                 return backupManager;
         }
@@ -148,15 +148,15 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         private String uniqueId;
 
         ClusterMemberDesc(final String spec) {
-            final String[] values = spec.split(":", -1);
+            final var values = spec.split(":", -1);
             address = values[0];
             port = Integer.parseInt(values[1]);
-            int index = Integer.parseInt(values[2]);
+            var index = Integer.parseInt(values[2]);
             if ((index < 0) || (index > UNIQUE_ID_LIMIT)) {
                 throw new IllegalArgumentException("invalid unique index: must be >= 0 and < 256");
             }
             uniqueId = "{";
-            for (int i = 0; i < UNIQUE_ID_ITERATIONS; i++, index++) {
+            for (var i = 0; i < UNIQUE_ID_ITERATIONS; i++, index++) {
                 if (i != 0) {
                     uniqueId += ',';
                 }

@@ -124,7 +124,7 @@ public class GenerateDdlCommand implements CommandMarker {
             unspecifiedDefaultValue = "true",
             optionContext = "Halt if an error occurs during the generation process") final boolean haltOnError) {
 
-        final String dialectName = DIALECTS_MAP.getOrDefault(dialect.trim().toUpperCase(), dialect);
+        final var dialectName = DIALECTS_MAP.getOrDefault(dialect.trim().toUpperCase(), dialect);
         LOGGER.info("Using database dialect class [{}]", dialectName);
         if (!dialectName.contains(".")) {
             LOGGER.warn("Dialect name must be a fully qualified class name. Supported dialects by default are [{}] "
@@ -132,14 +132,14 @@ public class GenerateDdlCommand implements CommandMarker {
             return;
         }
 
-        final StandardServiceRegistryBuilder svcRegistry = new StandardServiceRegistryBuilder();
+        final var svcRegistry = new StandardServiceRegistryBuilder();
         if (StringUtils.isNotBlank(dialectName)) {
             svcRegistry.applySetting(AvailableSettings.DIALECT, dialect);
         }
-        final MetadataSources metadata = new MetadataSources(svcRegistry.build());
+        final var metadata = new MetadataSources(svcRegistry.build());
         REFLECTIONS.getTypesAnnotatedWith(MappedSuperclass.class).forEach(metadata::addAnnotatedClass);
         REFLECTIONS.getTypesAnnotatedWith(Entity.class).forEach(metadata::addAnnotatedClass);
-        final SchemaExport export = new SchemaExport();
+        final var export = new SchemaExport();
         export.setDelimiter(delimiter);
         export.setOutputFile(file);
         export.setFormat(pretty);

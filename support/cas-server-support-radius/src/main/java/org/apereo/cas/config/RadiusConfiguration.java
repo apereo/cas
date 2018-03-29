@@ -64,10 +64,10 @@ public class RadiusConfiguration {
     @RefreshScope
     @Bean
     public JRadiusServerImpl radiusServer() {
-        final RadiusClientProperties client = casProperties.getAuthn().getRadius().getClient();
-        final RadiusServerProperties server = casProperties.getAuthn().getRadius().getServer();
+        final var client = casProperties.getAuthn().getRadius().getClient();
+        final var server = casProperties.getAuthn().getRadius().getServer();
 
-        final Set<String> ips = getClientIps(client);
+        final var ips = getClientIps(client);
         return getSingleRadiusServer(client, server, ips.iterator().next());
     }
 
@@ -76,10 +76,10 @@ public class RadiusConfiguration {
     }
 
     private JRadiusServerImpl getSingleRadiusServer(final RadiusClientProperties client, final RadiusServerProperties server, final String clientInetAddress) {
-        final RadiusClientFactory factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(), client.getSocketTimeout(),
+        final var factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(), client.getSocketTimeout(),
             clientInetAddress, client.getSharedSecret());
 
-        final RadiusProtocol protocol = RadiusProtocol.valueOf(server.getProtocol());
+        final var protocol = RadiusProtocol.valueOf(server.getProtocol());
 
         return new JRadiusServerImpl(protocol, factory, server.getRetries(),
             server.getNasIpAddress(), server.getNasIpv6Address(), server.getNasPort(),
@@ -96,17 +96,17 @@ public class RadiusConfiguration {
     @RefreshScope
     @Bean
     public List<RadiusServer> radiusServers() {
-        final RadiusClientProperties client = casProperties.getAuthn().getRadius().getClient();
-        final RadiusServerProperties server = casProperties.getAuthn().getRadius().getServer();
+        final var client = casProperties.getAuthn().getRadius().getClient();
+        final var server = casProperties.getAuthn().getRadius().getServer();
 
-        final Set<String> ips = getClientIps(casProperties.getAuthn().getRadius().getClient());
+        final var ips = getClientIps(casProperties.getAuthn().getRadius().getClient());
         return ips.stream().map(ip -> getSingleRadiusServer(client, server, ip)).collect(Collectors.toList());
     }
 
     @Bean
     public AuthenticationHandler radiusAuthenticationHandler() {
-        final RadiusProperties radius = casProperties.getAuthn().getRadius();
-        final RadiusAuthenticationHandler h = new RadiusAuthenticationHandler(radius.getName(), servicesManager, radiusPrincipalFactory(), radiusServers(),
+        final var radius = casProperties.getAuthn().getRadius();
+        final var h = new RadiusAuthenticationHandler(radius.getName(), servicesManager, radiusPrincipalFactory(), radiusServers(),
             radius.isFailoverOnException(), radius.isFailoverOnAuthenticationFailure());
 
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(radius.getPasswordEncoder()));
@@ -119,7 +119,7 @@ public class RadiusConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer radiusAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            final Set<String> ips = getClientIps(casProperties.getAuthn().getRadius().getClient());
+            final var ips = getClientIps(casProperties.getAuthn().getRadius().getClient());
             if (!ips.isEmpty()) {
                 plan.registerAuthenticationHandler(radiusAuthenticationHandler());
             } else {

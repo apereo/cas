@@ -50,8 +50,8 @@ public class HazelcastTicketRegistryConfiguration {
     @Autowired
     @Bean
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        final HazelcastTicketRegistryProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
-        final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(ticketCatalog),
+        final var hz = casProperties.getTicket().getRegistry().getHazelcast();
+        final var r = new HazelcastTicketRegistry(hazelcast(ticketCatalog),
                 ticketCatalog,
                 hz.getPageSize());
         r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast"));
@@ -70,21 +70,21 @@ public class HazelcastTicketRegistryConfiguration {
     }
 
     private Config getConfig(final TicketCatalog ticketCatalog) {
-        final HazelcastTicketRegistryProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
-        final Map<String, MapConfig> configs = buildHazelcastMapConfigurations(ticketCatalog);
-        final HazelcastConfigurationFactory factory = new HazelcastConfigurationFactory();
+        final var hz = casProperties.getTicket().getRegistry().getHazelcast();
+        final var configs = buildHazelcastMapConfigurations(ticketCatalog);
+        final var factory = new HazelcastConfigurationFactory();
         return factory.build(hz, configs);
     }
 
     private Map<String, MapConfig> buildHazelcastMapConfigurations(final TicketCatalog ticketCatalog) {
         final Map<String, MapConfig> mapConfigs = new HashMap<>();
 
-        final HazelcastTicketRegistryProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
-        final HazelcastConfigurationFactory factory = new HazelcastConfigurationFactory();
+        final var hz = casProperties.getTicket().getRegistry().getHazelcast();
+        final var factory = new HazelcastConfigurationFactory();
 
-        final Collection<TicketDefinition> definitions = ticketCatalog.findAll();
+        final var definitions = ticketCatalog.findAll();
         definitions.forEach(t -> {
-            final MapConfig mapConfig = factory.buildMapConfig(hz, t.getProperties().getStorageName(), t.getProperties().getStorageTimeout());
+            final var mapConfig = factory.buildMapConfig(hz, t.getProperties().getStorageName(), t.getProperties().getStorageTimeout());
             LOGGER.debug("Created Hazelcast map configuration for [{}]", t);
             mapConfigs.put(t.getProperties().getStorageName(), mapConfig);
         });

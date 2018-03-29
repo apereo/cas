@@ -48,7 +48,7 @@ public class ThreadContextMDCServletFilter implements Filter {
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
                          final FilterChain filterChain) throws IOException, ServletException {
         try {
-            final HttpServletRequest request = (HttpServletRequest) servletRequest;
+            final var request = (HttpServletRequest) servletRequest;
 
             addContextAttribute("remoteAddress", request.getRemoteAddr());
             addContextAttribute("remoteUser", request.getRemoteUser());
@@ -69,21 +69,21 @@ public class ThreadContextMDCServletFilter implements Filter {
             addContextAttribute("scheme", request.getScheme());
             addContextAttribute("timezone", TimeZone.getDefault().getDisplayName());
 
-            final Map<String, String[]> params = request.getParameterMap();
+            final var params = request.getParameterMap();
             params.keySet().forEach(k -> {
-                final String[] values = params.get(k);
+                final var values = params.get(k);
                 addContextAttribute(k, Arrays.toString(values));
             });
             
             Collections.list(request.getAttributeNames()).forEach(a -> addContextAttribute(a, request.getAttribute(a)));
-            final Enumeration<String> requestHeaderNames = request.getHeaderNames();
+            final var requestHeaderNames = request.getHeaderNames();
             if (requestHeaderNames != null) {
                 Collections.list(requestHeaderNames).forEach(h -> addContextAttribute(h, request.getHeader(h)));
             }
 
-            final String cookieValue = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+            final var cookieValue = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
             if (StringUtils.isNotBlank(cookieValue)) {
-                final Principal p = this.ticketRegistrySupport.getAuthenticatedPrincipalFrom(cookieValue);
+                final var p = this.ticketRegistrySupport.getAuthenticatedPrincipalFrom(cookieValue);
                 if (p != null) {
                     addContextAttribute("principal", p.getId());
                 }

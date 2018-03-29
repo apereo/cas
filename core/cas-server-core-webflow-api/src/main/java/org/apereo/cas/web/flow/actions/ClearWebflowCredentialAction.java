@@ -26,13 +26,13 @@ public class ClearWebflowCredentialAction extends AbstractAction {
     protected Event doExecute(final RequestContext requestContext) {
         WebUtils.putCredential(requestContext, null);
 
-        final String current = requestContext.getCurrentEvent().getId();
+        final var current = requestContext.getCurrentEvent().getId();
         if (current.equalsIgnoreCase(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)
             || current.equalsIgnoreCase(CasWebflowConstants.TRANSITION_ID_ERROR)) {
             LOGGER.debug("Current event signaled a failure. Recreating credentials instance from the context");
 
-            final Flow flow = (Flow) requestContext.getFlowExecutionContext().getDefinition();
-            final FlowVariable var = flow.getVariable(CasWebflowConstants.VAR_ID_CREDENTIAL);
+            final var flow = (Flow) requestContext.getFlowExecutionContext().getDefinition();
+            final var var = flow.getVariable(CasWebflowConstants.VAR_ID_CREDENTIAL);
             var.create(requestContext);
 
         }

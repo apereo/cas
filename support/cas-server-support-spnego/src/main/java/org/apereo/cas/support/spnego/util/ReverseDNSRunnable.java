@@ -42,7 +42,7 @@ public class ReverseDNSRunnable implements Runnable {
     public void run() {
         try {
             LOGGER.debug("Attempting to resolve [{}]", this.ipAddress);
-            final InetAddress address = InetAddress.getByName(this.ipAddress);
+            final var address = InetAddress.getByName(this.ipAddress);
             set(address.getCanonicalHostName());
         } catch (final UnknownHostException e) {
             /* N/A -- Default to IP address, but that's already done. **/

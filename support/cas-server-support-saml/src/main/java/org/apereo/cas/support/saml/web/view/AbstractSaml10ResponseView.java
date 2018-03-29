@@ -109,7 +109,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         String serviceId = null;
         try {
             response.setCharacterEncoding(this.encoding);
-            final WebApplicationService service = this.samlArgumentExtractor.extractService(request);
+            final var service = this.samlArgumentExtractor.extractService(request);
             if (service == null || StringUtils.isBlank(service.getId())) {
                 serviceId = "UNKNOWN";
             } else {
@@ -121,7 +121,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
             }
 
             LOGGER.debug("Using [{}] as the recipient of the SAML response for [{}]", serviceId, service);
-            final Response samlResponse = this.samlObjectBuilder.newResponse(
+            final var samlResponse = this.samlObjectBuilder.newResponse(
                     this.samlObjectBuilder.generateSecureRandomId(),
                     ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(this.skewAllowance), serviceId, service);
             LOGGER.debug("Created SAML response for service [{}]", serviceId);

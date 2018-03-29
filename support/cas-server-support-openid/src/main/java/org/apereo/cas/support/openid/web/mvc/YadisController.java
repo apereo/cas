@@ -40,10 +40,10 @@ public class YadisController {
      */
     @GetMapping(path = "/yadis.xml")
     public void yadis(final HttpServletResponse response) throws Exception {
-        final Resource template = this.resourceLoader.getResource("classpath:/yadis.template");
-        try (StringWriter writer = new StringWriter()) {
+        final var template = this.resourceLoader.getResource("classpath:/yadis.template");
+        try (var writer = new StringWriter()) {
             IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);
-            final String yadis = writer.toString().replace("$casLoginUrl", casProperties.getServer().getLoginUrl());
+            final var yadis = writer.toString().replace("$casLoginUrl", casProperties.getServer().getLoginUrl());
             response.setContentType("application/xrds+xml");
             final Writer respWriter = response.getWriter();
             respWriter.write(yadis);

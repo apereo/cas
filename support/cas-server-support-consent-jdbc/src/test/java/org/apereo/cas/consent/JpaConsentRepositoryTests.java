@@ -42,21 +42,21 @@ public class JpaConsentRepositoryTests {
     
     @Test
     public void verifyConsentDecisionIsNotFound() {
-        final ConsentDecision d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication());
+        final var d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication());
         assertNull(d);
     }
 
     @Test
     public void verifyConsentDecisionIsSaved() {
-        final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, "casuser", ATTR);
+        final var decision = BUILDER.build(SVC, REG_SVC, "casuser", ATTR);
         decision.setId(100);
         repository.storeConsentDecision(decision);
 
-        ConsentDecision d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication("casuser"));
+        var d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication("casuser"));
         assertNotNull(d);
         assertEquals("casuser", d.getPrincipal());
         
-        final boolean res = this.repository.deleteConsentDecision(d.getId());
+        final var res = this.repository.deleteConsentDecision(d.getId());
         assertTrue(res);
         assertTrue(this.repository.findConsentDecisions().isEmpty());
         d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication("casuser"));

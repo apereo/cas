@@ -31,11 +31,11 @@ public class OidcJsonWebKeystoreGeneratorService {
     @PostConstruct
     @SneakyThrows
     public void generate() {
-        final File file = oidcProperties.getJwksFile().getFile();
+        final var file = oidcProperties.getJwksFile().getFile();
         if (!file.exists()) {
-            final RsaJsonWebKey rsaJsonWebKey = RsaJwkGenerator.generateJwk(2048);
-            final JsonWebKeySet jsonWebKeySet = new JsonWebKeySet(rsaJsonWebKey);
-            final String data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
+            final var rsaJsonWebKey = RsaJwkGenerator.generateJwk(2048);
+            final var jsonWebKeySet = new JsonWebKeySet(rsaJsonWebKey);
+            final var data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
             FileUtils.write(file, data, StandardCharsets.UTF_8);
             LOGGER.debug("Generated JSON web keystore at [{}]", file);
         } else {

@@ -143,7 +143,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     public void copyFrom(final RegisteredService source) {
         super.copyFrom(source);
 
-        final OidcRegisteredService oidcService = (OidcRegisteredService) source;
+        final var oidcService = (OidcRegisteredService) source;
         setJwks(oidcService.getJwks());
         setImplicit(oidcService.isImplicit());
         setSignIdToken(oidcService.isSignIdToken());

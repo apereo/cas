@@ -30,9 +30,9 @@ public class IpAddressAuthenticationRequestRiskCalculator extends BaseAuthentica
                                         final Authentication authentication,
                                         final RegisteredService service,
                                         final Collection<CasEvent> events) {
-        final String remoteAddr = ClientInfoHolder.getClientInfo().getClientIpAddress();
+        final var remoteAddr = ClientInfoHolder.getClientInfo().getClientIpAddress();
         LOGGER.debug("Filtering authentication events for ip address [{}]", remoteAddr);
-        final long count = events.stream().filter(e -> e.getClientIpAddress().equalsIgnoreCase(remoteAddr)).count();
+        final var count = events.stream().filter(e -> e.getClientIpAddress().equalsIgnoreCase(remoteAddr)).count();
         LOGGER.debug("Total authentication events found for [{}]: [{}]", remoteAddr, count);
         if (count == events.size()) {
             LOGGER.debug("Principal [{}] has always authenticated from [{}]", authentication.getPrincipal(), remoteAddr);

@@ -36,7 +36,7 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override
     protected void doInitialize() {
-        final Flow flow = getLoginFlow();
+        final var flow = getLoginFlow();
         if (flow != null) {
             createSurrogateListViewState(flow);
             createSurrogateSelectionActionState(flow);
@@ -46,23 +46,23 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void createSurrogateAuthorizationActionState(final Flow flow) {
-        final ActionState actionState = getState(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET, ActionState.class);
+        final var actionState = getState(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET, ActionState.class);
         actionState.getEntryActionList().add(createEvaluateAction("surrogateAuthorizationCheck"));
     }
 
     private void createTransitionToInjectSurrogateIntoFlow(final Flow flow) {
-        final ActionState actionState = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
+        final var actionState = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
         createTransitionForState(actionState, VIEW_ID_SURROGATE_VIEW, VIEW_ID_SURROGATE_VIEW, true);
     }
 
     private void createSurrogateSelectionActionState(final Flow flow) {
-        final ActionState selectSurrogate = createActionState(flow, "selectSurrogate", selectSurrogateAction);
+        final var selectSurrogate = createActionState(flow, "selectSurrogate", selectSurrogateAction);
         createTransitionForState(selectSurrogate, CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.STATE_ID_REAL_SUBMIT);
     }
 
     private void createSurrogateListViewState(final Flow flow) {
-        final ViewState viewState = createViewState(flow, VIEW_ID_SURROGATE_VIEW, "casSurrogateAuthnListView");
+        final var viewState = createViewState(flow, VIEW_ID_SURROGATE_VIEW, "casSurrogateAuthnListView");
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "selectSurrogate");
     }
 }

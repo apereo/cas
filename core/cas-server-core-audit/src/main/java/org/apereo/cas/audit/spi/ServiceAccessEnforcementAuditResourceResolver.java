@@ -21,11 +21,11 @@ public class ServiceAccessEnforcementAuditResourceResolver extends ReturnValueAs
     @Override
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object returnValue) {
         Objects.requireNonNull(returnValue, "AuditableExecutionResult must not be null");
-        final AuditableExecutionResult serviceAccessCheckResult = AuditableExecutionResult.class.cast(returnValue);
-        final String accessCheckOutcome = "Service Access "
+        final var serviceAccessCheckResult = AuditableExecutionResult.class.cast(returnValue);
+        final var accessCheckOutcome = "Service Access "
             + BooleanUtils.toString(serviceAccessCheckResult.isExecutionFailure(), "Denied", "Granted");
 
-        final ToStringBuilder builder = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
+        final var builder = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
             .append("result", accessCheckOutcome);
         serviceAccessCheckResult.getService().ifPresent(service -> builder.append("service", service.getId()));
         serviceAccessCheckResult.getAuthentication().ifPresent(authn -> builder.append("principal", authn.getPrincipal()));

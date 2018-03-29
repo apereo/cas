@@ -86,13 +86,13 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends
 
     @Override
     protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress) throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final var request = new MockHttpServletRequest();
+        final var response = new MockHttpServletResponse();
         request.setMethod("POST");
         request.setParameter("username", username);
         request.setRemoteAddr(fromAddress);
         request.setRequestURI("/cas/login");
-        final MockRequestContext context = new MockRequestContext();
+        final var context = new MockRequestContext();
         context.setCurrentEvent(new Event(StringUtils.EMPTY, "error"));
         request.setAttribute("flowRequestContext", context);
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
@@ -109,7 +109,7 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends
     }
 
     private static UsernamePasswordCredential badCredentials(final String username) {
-        final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
+        final var credentials = new UsernamePasswordCredential();
         credentials.setUsername(username);
         credentials.setPassword("badpassword");
         return credentials;

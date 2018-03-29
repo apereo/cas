@@ -57,7 +57,7 @@ public class SamlResponseArtifactEncoder extends BaseSamlResponseEncoder {
 
     @Override
     protected BaseSAML2MessageEncoder getMessageEncoderInstance() throws Exception {
-        final HTTPArtifactEncoder encoder = new HTTPArtifactEncoder();
+        final var encoder = new HTTPArtifactEncoder();
         encoder.setVelocityEngine(this.velocityEngineFactory);
         return encoder;
     }
@@ -66,10 +66,10 @@ public class SamlResponseArtifactEncoder extends BaseSamlResponseEncoder {
     protected void finalizeEncode(final BaseSAML2MessageEncoder e,
                                   final Response samlResponse,
                                   final String relayState) throws Exception {
-        final HTTPArtifactEncoder encoder = (HTTPArtifactEncoder) e;
+        final var encoder = (HTTPArtifactEncoder) e;
         encoder.setArtifactMap(this.samlArtifactMap);
 
-        final MessageContext ctx = getEncoderMessageContext(samlResponse, relayState);
+        final var ctx = getEncoderMessageContext(samlResponse, relayState);
         prepareArtifactContext(samlResponse, ctx);
         encoder.setMessageContext(ctx);
         super.finalizeEncode(encoder, samlResponse, relayState);
@@ -77,10 +77,10 @@ public class SamlResponseArtifactEncoder extends BaseSamlResponseEncoder {
 
 
     private void prepareArtifactContext(final Response samlResponse, final MessageContext ctx) {
-        final SAMLArtifactContext art = ctx.getSubcontext(SAMLArtifactContext.class, true);
+        final var art = ctx.getSubcontext(SAMLArtifactContext.class, true);
         art.setArtifactType(SAML2ArtifactType0004.TYPE_CODE);
         art.setSourceEntityId(samlResponse.getIssuer().getValue());
-        final AssertionConsumerService svc = adaptor.getAssertionConsumerServiceForArtifactBinding();
+        final var svc = adaptor.getAssertionConsumerServiceForArtifactBinding();
         art.setSourceArtifactResolutionServiceEndpointIndex(svc.getIndex());
         art.setSourceArtifactResolutionServiceEndpointURL(svc.getLocation());
     }

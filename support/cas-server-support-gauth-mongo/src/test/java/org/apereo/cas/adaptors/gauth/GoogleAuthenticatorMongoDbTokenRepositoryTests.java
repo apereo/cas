@@ -107,8 +107,8 @@ public class GoogleAuthenticatorMongoDbTokenRepositoryTests {
         final OneTimeToken token2 = new GoogleAuthenticatorToken(5678, "casuser");
         repository.store(token2);
 
-        final OneTimeToken t1 = repository.get("casuser", 1111);
-        final OneTimeToken t2 = repository.get("casuser", 5678);
+        final var t1 = repository.get("casuser", 1111);
+        final var t2 = repository.get("casuser", 5678);
         
         assertTrue(t1.getId() > 0);
         assertTrue(t2.getId() > 0);

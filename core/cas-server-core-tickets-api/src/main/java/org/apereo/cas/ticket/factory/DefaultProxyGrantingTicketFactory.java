@@ -43,7 +43,7 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
     @Override
     public <T extends ProxyGrantingTicket> T create(final ServiceTicket serviceTicket,
                                                     final Authentication authentication, final Class<T> clazz) throws AbstractTicketException {
-        final String pgtId = produceTicketIdentifier();
+        final var pgtId = produceTicketIdentifier();
         return produceTicket(serviceTicket, authentication, pgtId, clazz);
     }
 
@@ -59,7 +59,7 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      */
     protected <T extends ProxyGrantingTicket> T produceTicket(final ServiceTicket serviceTicket, final Authentication authentication,
                                                               final String pgtId, final Class<T> clazz) {
-        final ProxyGrantingTicket result = serviceTicket.grantProxyGrantingTicket(pgtId,
+        final var result = serviceTicket.grantProxyGrantingTicket(pgtId,
                 authentication, this.ticketGrantingTicketExpirationPolicy);
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [" + result
@@ -75,7 +75,7 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      * @return the ticket
      */
     protected String produceTicketIdentifier() {
-        String pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
+        var pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
         if (this.cipherExecutor != null) {
             LOGGER.debug("Attempting to encode proxy-granting ticket [{}]", pgtId);
             pgtId = this.cipherExecutor.encode(pgtId);

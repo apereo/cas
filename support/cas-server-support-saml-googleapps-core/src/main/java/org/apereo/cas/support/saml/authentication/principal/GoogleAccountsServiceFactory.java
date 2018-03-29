@@ -25,9 +25,9 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
 
     @Override
     public GoogleAccountsService createService(final HttpServletRequest request) {
-        final String relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
+        final var relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
 
-        final String xmlRequest = this.googleSaml20ObjectBuilder.decodeSamlAuthnRequest(
+        final var xmlRequest = this.googleSaml20ObjectBuilder.decodeSamlAuthnRequest(
                 request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST));
 
         if (StringUtils.isBlank(xmlRequest)) {
@@ -35,15 +35,15 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
             return null;
         }
 
-        final Document document = this.googleSaml20ObjectBuilder.constructDocumentFromXml(xmlRequest);
+        final var document = this.googleSaml20ObjectBuilder.constructDocumentFromXml(xmlRequest);
         if (document == null) {
             return null;
         }
 
-        final Element root = document.getRootElement();
-        final String assertionConsumerServiceUrl = root.getAttributeValue("AssertionConsumerServiceURL");
-        final String requestId = root.getAttributeValue("ID");
-        final GoogleAccountsService s = new GoogleAccountsService(assertionConsumerServiceUrl, relayState, requestId);
+        final var root = document.getRootElement();
+        final var assertionConsumerServiceUrl = root.getAttributeValue("AssertionConsumerServiceURL");
+        final var requestId = root.getAttributeValue("ID");
+        final var s = new GoogleAccountsService(assertionConsumerServiceUrl, relayState, requestId);
         s.setLoggedOutAlready(true);
         return s;
     }

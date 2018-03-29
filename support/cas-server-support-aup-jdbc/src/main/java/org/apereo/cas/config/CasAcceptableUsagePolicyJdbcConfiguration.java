@@ -37,7 +37,7 @@ public class CasAcceptableUsagePolicyJdbcConfiguration {
     @RefreshScope
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
-        final AcceptableUsagePolicyProperties.Jdbc jdbc = casProperties.getAcceptableUsagePolicy().getJdbc();
+        final var jdbc = casProperties.getAcceptableUsagePolicy().getJdbc();
         
         if (StringUtils.isBlank(jdbc.getTableName())) {
             throw new BeanCreationException("Database table for acceptable usage policy must be specified.");

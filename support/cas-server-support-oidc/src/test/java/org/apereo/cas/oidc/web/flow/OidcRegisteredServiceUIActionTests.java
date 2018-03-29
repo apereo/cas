@@ -98,16 +98,16 @@ public class OidcRegisteredServiceUIActionTests {
 
     @Test
     public void verifyOidcActionWithoutMDUI() throws Exception {
-        final MockRequestContext ctx = new MockRequestContext();
+        final var ctx = new MockRequestContext();
         WebUtils.putService(ctx, RegisteredServiceTestUtils.getService());
-        final Event event = oidcRegisteredServiceUIAction.execute(ctx);
+        final var event = oidcRegisteredServiceUIAction.execute(ctx);
         assertEquals("success", event.getId());
         assertNull(WebUtils.getServiceUserInterfaceMetadata(ctx, Serializable.class));
     }
 
     @Test
     public void verifyOidcActionWithMDUI() throws Exception {
-        final OidcRegisteredService svc = new OidcRegisteredService();
+        final var svc = new OidcRegisteredService();
         svc.setClientId("id");
         svc.setName("oauth");
         svc.setDescription("description");
@@ -118,12 +118,12 @@ public class OidcRegisteredServiceUIActionTests {
         svc.setLogo("logo");
         servicesManager.save(svc);
 
-        final MockRequestContext ctx = new MockRequestContext();
+        final var ctx = new MockRequestContext();
         WebUtils.putService(ctx, RegisteredServiceTestUtils.getService(
                 "https://www.example.org?client_id=id&client_secret=secret&redirect_uri=https://oauth.example.org"));
-        final Event event = oidcRegisteredServiceUIAction.execute(ctx);
+        final var event = oidcRegisteredServiceUIAction.execute(ctx);
         assertEquals("success", event.getId());
-        final DefaultRegisteredServiceUserInterfaceInfo mdui = WebUtils.getServiceUserInterfaceMetadata(ctx, DefaultRegisteredServiceUserInterfaceInfo.class);
+        final var mdui = WebUtils.getServiceUserInterfaceMetadata(ctx, DefaultRegisteredServiceUserInterfaceInfo.class);
         assertNotNull(mdui);
 
         assertEquals(mdui.getDisplayName(), svc.getName());

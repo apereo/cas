@@ -63,7 +63,7 @@ public class CasJdbcAuthenticationConfiguration {
     @RefreshScope
     public Collection<AuthenticationHandler> jdbcAuthenticationHandlers() {
         final Collection<AuthenticationHandler> handlers = new HashSet<>();
-        final JdbcAuthenticationProperties jdbc = casProperties.getAuthn().getJdbc();
+        final var jdbc = casProperties.getAuthn().getJdbc();
         jdbc.getBind().forEach(b -> handlers.add(bindModeSearchDatabaseAuthenticationHandler(b)));
         jdbc.getEncode().forEach(b -> handlers.add(queryAndEncodeDatabaseAuthenticationHandler(b)));
         jdbc.getQuery().forEach(b -> handlers.add(queryDatabaseAuthenticationHandler(b)));
@@ -72,7 +72,7 @@ public class CasJdbcAuthenticationConfiguration {
     }
 
     private AuthenticationHandler bindModeSearchDatabaseAuthenticationHandler(final BindJdbcAuthenticationProperties b) {
-        final BindModeSearchDatabaseAuthenticationHandler h = new BindModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager,
+        final var h = new BindModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager,
             jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b));
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(b.getPasswordEncoder()));
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
@@ -88,7 +88,7 @@ public class CasJdbcAuthenticationConfiguration {
     }
 
     private AuthenticationHandler queryAndEncodeDatabaseAuthenticationHandler(final QueryEncodeJdbcAuthenticationProperties b) {
-        final QueryAndEncodeDatabaseAuthenticationHandler h = new QueryAndEncodeDatabaseAuthenticationHandler(b.getName(), servicesManager,
+        final var h = new QueryAndEncodeDatabaseAuthenticationHandler(b.getName(), servicesManager,
             jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b), b.getAlgorithmName(), b.getSql(), b.getPasswordFieldName(),
             b.getSaltFieldName(), b.getExpiredFieldName(), b.getDisabledFieldName(), b.getNumberOfIterationsFieldName(), b.getNumberOfIterations(),
             b.getStaticSalt());
@@ -111,7 +111,7 @@ public class CasJdbcAuthenticationConfiguration {
         final Multimap<String, Object> attributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(b.getPrincipalAttributeList());
         LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", attributes, b.getUrl());
 
-        final QueryDatabaseAuthenticationHandler h = new QueryDatabaseAuthenticationHandler(b.getName(), servicesManager,
+        final var h = new QueryDatabaseAuthenticationHandler(b.getName(), servicesManager,
             jdbcPrincipalFactory(), b.getOrder(),
             JpaBeans.newDataSource(b), b.getSql(), b.getFieldPassword(),
             b.getFieldExpired(), b.getFieldDisabled(), CollectionUtils.wrap(attributes));
@@ -131,7 +131,7 @@ public class CasJdbcAuthenticationConfiguration {
     }
 
     private AuthenticationHandler searchModeSearchDatabaseAuthenticationHandler(final SearchJdbcAuthenticationProperties b) {
-        final SearchModeSearchDatabaseAuthenticationHandler h = new SearchModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager,
+        final var h = new SearchModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager,
             jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b), b.getFieldUser(), b.getFieldPassword(), b.getTableUsers());
 
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(b.getPasswordEncoder()));

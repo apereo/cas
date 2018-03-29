@@ -59,25 +59,25 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final RegisteredService service = resolveRegisteredServiceInRequestContext(context);
-        final Authentication authentication = WebUtils.getAuthentication(context);
+        final var service = resolveRegisteredServiceInRequestContext(context);
+        final var authentication = WebUtils.getAuthentication(context);
         if (service == null || authentication == null) {
             LOGGER.debug("No service or authentication is available to determine event for principal");
             return null;
         }
-        final Principal principal = authentication.getPrincipal();
+        final var principal = authentication.getPrincipal();
         if (StringUtils.isBlank(restEndpoint)) {
             LOGGER.debug("Rest endpoint to determine event is not configured for [{}]", principal.getId());
             return null;
         }
-        final Map<String, MultifactorAuthenticationProvider> providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        final var providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             return null;
         }
-        final Collection<MultifactorAuthenticationProvider> flattenedProviders = flattenProviders(providerMap.values());
+        final var flattenedProviders = flattenProviders(providerMap.values());
         LOGGER.debug("Contacting [{}] to inquire about [{}]", restEndpoint, principal.getId());
-        final String results = callRestEndpointForMultifactor(principal, context);
+        final var results = callRestEndpointForMultifactor(principal, context);
         if (StringUtils.isNotBlank(results)) {
             return resolveMultifactorEventViaRestResult(results, flattenedProviders);
         }
@@ -100,7 +100,7 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
      */
     protected Set<Event> resolveMultifactorEventViaRestResult(final String results, final Collection<MultifactorAuthenticationProvider> providers) {
         LOGGER.debug("Result returned from the rest endpoint is [{}]", results);
-        final MultifactorAuthenticationProvider restProvider = providers.stream().filter(p -> p.matches(results)).findFirst().orElse(null);
+        final var restProvider = providers.stream().filter(p -> p.matches(results)).findFirst().orElse(null);
         if (restProvider != null) {
             LOGGER.debug("Found multifactor authentication provider [{}]", restProvider.getId());
             return CollectionUtils.wrapSet(new Event(this, restProvider.getId()));
@@ -117,10 +117,10 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
      * @return return the rest response, typically the mfa id.
      */
     protected String callRestEndpointForMultifactor(final Principal principal, final RequestContext context) {
-        final RestTemplate restTemplate = new RestTemplate();
-        final Service resolvedService = resolveServiceFromAuthenticationRequest(context);
-        final RestEndpointEntity entity = new RestEndpointEntity(principal.getId(), resolvedService.getId());
-        final ResponseEntity<String> responseEntity = restTemplate.postForEntity(restEndpoint, entity, String.class);
+        final var restTemplate = new RestTemplate();
+        final var resolvedService = resolveServiceFromAuthenticationRequest(context);
+        final var entity = new RestEndpointEntity(principal.getId(), resolvedService.getId());
+        final var responseEntity = restTemplate.postForEntity(restEndpoint, entity, String.class);
         if (responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK) {
             return responseEntity.getBody();
         }

@@ -40,17 +40,17 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
      */
     @Override
     protected String extractPrincipalId(final Credential credentials, final Principal currentPrincipal) {
-        final WsFederationCredential wsFedCredentials = (WsFederationCredential) credentials;
-        final Map<String, List<Object>> attributes = wsFedCredentials.getAttributes();
+        final var wsFedCredentials = (WsFederationCredential) credentials;
+        final var attributes = wsFedCredentials.getAttributes();
         LOGGER.debug("Credential attributes provided are: [{}]", attributes);
-        final String idAttribute = this.configuration.getIdentityAttribute();
+        final var idAttribute = this.configuration.getIdentityAttribute();
         if (attributes.containsKey(idAttribute)) {
             LOGGER.debug("Extracting principal id from attribute [{}]", this.configuration.getIdentityAttribute());
-            final List<Object> idAttributeAsList = attributes.get(this.configuration.getIdentityAttribute());
+            final var idAttributeAsList = attributes.get(this.configuration.getIdentityAttribute());
             if (idAttributeAsList.size() > 1) {
                 LOGGER.warn("Found multiple values for id attribute [{}].", idAttribute);
             }
-            final String principalId = idAttributeAsList.get(0).toString();
+            final var principalId = idAttributeAsList.get(0).toString();
             LOGGER.debug("Principal Id extracted from credentials: [{}]", principalId);
             return principalId;
         }
@@ -62,7 +62,7 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
 
     @Override
     protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
-        final WsFederationCredential wsFedCredentials = (WsFederationCredential) credential;
+        final var wsFedCredentials = (WsFederationCredential) credential;
         if (this.configuration.getAttributesType() == WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.WSFED) {
             return wsFedCredentials.getAttributes();
         }

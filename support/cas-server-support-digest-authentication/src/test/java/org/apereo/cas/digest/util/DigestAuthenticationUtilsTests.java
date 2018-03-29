@@ -34,7 +34,7 @@ public class DigestAuthenticationUtilsTests {
 
     @Test
     public void verifyHeader() {
-        final String header = DigestAuthenticationUtils.createAuthenticateHeader("domain", 
+        final var header = DigestAuthenticationUtils.createAuthenticateHeader("domain",
                 "authMethod", DigestAuthenticationUtils.createNonce());
         assertNotNull(header);
 

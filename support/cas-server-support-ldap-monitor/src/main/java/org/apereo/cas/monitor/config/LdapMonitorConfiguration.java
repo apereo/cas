@@ -43,8 +43,8 @@ public class LdapMonitorConfiguration {
     @Bean
     public HealthIndicator pooledLdapConnectionFactoryHealthIndicator(@Qualifier("pooledConnectionFactoryMonitorExecutorService")
                                                                           final ExecutorService executor) {
-        final MonitorProperties.Ldap ldap = casProperties.getMonitor().getLdap();
-        final PooledConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+        final var ldap = casProperties.getMonitor().getLdap();
+        final var connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new PooledLdapConnectionFactoryHealthIndicator(Beans.newDuration(ldap.getMaxWait()).toMillis(),
             connectionFactory, executor, new SearchValidator());
     }

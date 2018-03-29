@@ -42,12 +42,12 @@ public class HazelcastConfigurationFactory {
      * @return the map config
      */
     public MapConfig buildMapConfig(final BaseHazelcastProperties hz, final String mapName, final long timeoutSeconds) {
-        final HazelcastClusterProperties cluster = hz.getCluster();
-        final EvictionPolicy evictionPolicy = EvictionPolicy.valueOf(cluster.getEvictionPolicy());
+        final var cluster = hz.getCluster();
+        final var evictionPolicy = EvictionPolicy.valueOf(cluster.getEvictionPolicy());
 
         LOGGER.debug("Creating Hazelcast map configuration for [{}] with idle timeoutSeconds [{}] second(s)", mapName, timeoutSeconds);
 
-        final MaxSizeConfig maxSizeConfig = new MaxSizeConfig()
+        final var maxSizeConfig = new MaxSizeConfig()
             .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(cluster.getMaxSizePolicy()))
             .setSize(cluster.getMaxHeapSizePercentage());
 
@@ -68,7 +68,7 @@ public class HazelcastConfigurationFactory {
      * @return the config
      */
     public Config build(final BaseHazelcastProperties hz, final Map<String, MapConfig> mapConfigs) {
-        final Config cfg = build(hz);
+        final var cfg = build(hz);
         cfg.setMapConfigs(mapConfigs);
         return finalizeConfig(cfg, hz);
     }
@@ -93,15 +93,15 @@ public class HazelcastConfigurationFactory {
      * @return the config
      */
     public Config build(final BaseHazelcastProperties hz) {
-        final HazelcastClusterProperties cluster = hz.getCluster();
-        final Config config = new Config();
+        final var cluster = hz.getCluster();
+        final var config = new Config();
 
-        final JoinConfig joinConfig = cluster.getDiscovery().isEnabled()
+        final var joinConfig = cluster.getDiscovery().isEnabled()
             ? createDiscoveryJoinConfig(config, hz.getCluster()) : createDefaultJoinConfig(config, hz.getCluster());
 
         LOGGER.debug("Created Hazelcast join configuration [{}]", joinConfig);
 
-        final NetworkConfig networkConfig = new NetworkConfig()
+        final var networkConfig = new NetworkConfig()
             .setPort(cluster.getPort())
             .setPortAutoIncrement(cluster.isPortAutoIncrement())
             .setJoin(joinConfig);
@@ -117,14 +117,14 @@ public class HazelcastConfigurationFactory {
     }
 
     private JoinConfig createDiscoveryJoinConfig(final Config config, final HazelcastClusterProperties cluster) {
-        final JoinConfig joinConfig = new JoinConfig();
+        final var joinConfig = new JoinConfig();
 
         LOGGER.debug("Disabling multicast and TCP/IP configuration for discovery");
         joinConfig.getMulticastConfig().setEnabled(false);
         joinConfig.getTcpIpConfig().setEnabled(false);
 
-        final DiscoveryConfig discoveryConfig = new DiscoveryConfig();
-        final DiscoveryStrategyConfig strategyConfig = locateDiscoveryStrategyConfig(cluster);
+        final var discoveryConfig = new DiscoveryConfig();
+        final var strategyConfig = locateDiscoveryStrategyConfig(cluster);
         LOGGER.debug("Creating discovery strategy configuration as [{}]", strategyConfig);
         discoveryConfig.setDiscoveryStrategyConfigs(CollectionUtils.wrap(strategyConfig));
         joinConfig.setDiscoveryConfig(discoveryConfig);
@@ -132,29 +132,29 @@ public class HazelcastConfigurationFactory {
     }
 
     private DiscoveryStrategyConfig locateDiscoveryStrategyConfig(final HazelcastClusterProperties cluster) {
-        final ServiceLoader<HazelcastDiscoveryStrategy> serviceLoader = ServiceLoader.load(HazelcastDiscoveryStrategy.class);
-        final Iterator<HazelcastDiscoveryStrategy> it = serviceLoader.iterator();
+        final var serviceLoader = ServiceLoader.load(HazelcastDiscoveryStrategy.class);
+        final var it = serviceLoader.iterator();
         if (it.hasNext()) {
-            final HazelcastDiscoveryStrategy strategy = it.next();
+            final var strategy = it.next();
             return strategy.get(cluster);
         }
         throw new IllegalArgumentException("Could not create discovery strategy configuration. No discovery provider is defined in the settings");
     }
 
     private JoinConfig createDefaultJoinConfig(final Config config, final HazelcastClusterProperties cluster) {
-        final TcpIpConfig tcpIpConfig = new TcpIpConfig()
+        final var tcpIpConfig = new TcpIpConfig()
             .setEnabled(cluster.isTcpipEnabled())
             .setMembers(cluster.getMembers())
             .setConnectionTimeoutSeconds(cluster.getTimeout());
         LOGGER.debug("Created Hazelcast TCP/IP configuration [{}] for members [{}]", tcpIpConfig, cluster.getMembers());
 
-        final MulticastConfig multicastConfig = new MulticastConfig().setEnabled(cluster.isMulticastEnabled());
+        final var multicastConfig = new MulticastConfig().setEnabled(cluster.isMulticastEnabled());
         if (cluster.isMulticastEnabled()) {
             LOGGER.debug("Created Hazelcast Multicast configuration [{}]", multicastConfig);
             multicastConfig.setMulticastGroup(cluster.getMulticastGroup());
             multicastConfig.setMulticastPort(cluster.getMulticastPort());
 
-            final Set<String> trustedInterfaces = StringUtils.commaDelimitedListToSet(cluster.getMulticastTrustedInterfaces());
+            final var trustedInterfaces = StringUtils.commaDelimitedListToSet(cluster.getMulticastTrustedInterfaces());
             if (!trustedInterfaces.isEmpty()) {
                 multicastConfig.setTrustedInterfaces(trustedInterfaces);
             }
@@ -171,8 +171,8 @@ public class HazelcastConfigurationFactory {
 
     private Config finalizeConfig(final Config config, final BaseHazelcastProperties hz) {
         if (StringUtils.hasText(hz.getCluster().getPartitionMemberGroupType())) {
-            final PartitionGroupConfig partitionGroupConfig = config.getPartitionGroupConfig();
-            final PartitionGroupConfig.MemberGroupType type = PartitionGroupConfig.MemberGroupType.valueOf(
+            final var partitionGroupConfig = config.getPartitionGroupConfig();
+            final var type = PartitionGroupConfig.MemberGroupType.valueOf(
                 hz.getCluster().getPartitionMemberGroupType().toUpperCase());
             LOGGER.debug("Using partition member group type [{}]", type);
             partitionGroupConfig.setEnabled(true).setGroupType(type);

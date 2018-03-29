@@ -25,16 +25,16 @@ public class CasHttpSoap11Encoder extends HTTPSOAP11Encoder {
 
     @Override
     protected void buildAndStoreSOAPMessage(final XMLObject payload) {
-        final XMLObjectBuilderFactory builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
+        final var builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
 
-        final SOAPObjectBuilder<Envelope> envBuilder =
+        final var envBuilder =
                 (SOAPObjectBuilder<Envelope>) builderFactory.getBuilder(Envelope.DEFAULT_ELEMENT_NAME);
-        final Envelope envelope = envBuilder.buildObject(
+        final var envelope = envBuilder.buildObject(
                 SOAPConstants.SOAP11_NS, Envelope.DEFAULT_ELEMENT_LOCAL_NAME, OPENSAML_11_SOAP_NS_PREFIX);
 
-        final SOAPObjectBuilder<Body> bodyBuilder =
+        final var bodyBuilder =
                 (SOAPObjectBuilder<Body>) builderFactory.getBuilder(Body.DEFAULT_ELEMENT_NAME);
-        final Body body = bodyBuilder.buildObject(
+        final var body = bodyBuilder.buildObject(
                 SOAPConstants.SOAP11_NS, Body.DEFAULT_ELEMENT_LOCAL_NAME, OPENSAML_11_SOAP_NS_PREFIX);
 
         if (!body.getUnknownXMLObjects().isEmpty()) {

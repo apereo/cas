@@ -22,16 +22,16 @@ public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> 
 
     @Override
     public OpenIdService createService(final HttpServletRequest request) {
-        final String service = request.getParameter(OpenIdProtocolConstants.OPENID_RETURNTO);
-        final String openIdIdentity = request.getParameter(OpenIdProtocolConstants.OPENID_IDENTITY);
+        final var service = request.getParameter(OpenIdProtocolConstants.OPENID_RETURNTO);
+        final var openIdIdentity = request.getParameter(OpenIdProtocolConstants.OPENID_IDENTITY);
 
         if (openIdIdentity == null || !StringUtils.hasText(service)) {
             return null;
         }
 
-        final String id = cleanupUrl(service);
-        final String artifactId = request.getParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE);
-        final OpenIdService s = new OpenIdService(id, service, artifactId, openIdIdentity);
+        final var id = cleanupUrl(service);
+        final var artifactId = request.getParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE);
+        final var s = new OpenIdService(id, service, artifactId, openIdIdentity);
         s.setLoggedOutAlready(true);
         return s;
     }

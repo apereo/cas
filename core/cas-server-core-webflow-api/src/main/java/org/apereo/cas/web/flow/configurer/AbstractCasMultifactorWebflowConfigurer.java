@@ -45,9 +45,9 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
      * @param sourceRegistry the source registry
      */
     protected void registerMultifactorFlowDefinitionIntoLoginFlowRegistry(final FlowDefinitionRegistry sourceRegistry) {
-        final String[] flowIds = sourceRegistry.getFlowDefinitionIds();
-        for (final String flowId : flowIds) {
-            final FlowDefinition definition = sourceRegistry.getFlowDefinition(flowId);
+        final var flowIds = sourceRegistry.getFlowDefinitionIds();
+        for (final var flowId : flowIds) {
+            final var definition = sourceRegistry.getFlowDefinition(flowId);
             LOGGER.debug("Registering flow definition [{}]", flowId);
             this.loginFlowDefinitionRegistry.registerFlowDefinition(definition);
         }
@@ -69,13 +69,13 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
      * @param mfaProviderFlowRegistry the mfa provider flow registry
      */
     protected void augmentMultifactorProviderFlowRegistry(final FlowDefinitionRegistry mfaProviderFlowRegistry) {
-        final String[] flowIds = mfaProviderFlowRegistry.getFlowDefinitionIds();
+        final var flowIds = mfaProviderFlowRegistry.getFlowDefinitionIds();
         Arrays.stream(flowIds).forEach(id -> {
-            final Flow flow = Flow.class.cast(mfaProviderFlowRegistry.getFlowDefinition(id));
+            final var flow = Flow.class.cast(mfaProviderFlowRegistry.getFlowDefinition(id));
             if (containsFlowState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT)) {
-                final Collection<String> states = getCandidateStatesForMultifactorAuthentication();
+                final var states = getCandidateStatesForMultifactorAuthentication();
                 states.forEach(s -> {
-                    final TransitionableState state = getState(flow, s);
+                    final var state = getState(flow, s);
                     ensureEndStateTransitionExists(state, flow, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
                     ensureEndStateTransitionExists(state, flow, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS,
                         CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS);
@@ -93,27 +93,27 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
      * @param mfaProviderFlowRegistry the registry
      */
     protected void registerMultifactorProviderAuthenticationWebflow(final Flow flow, final String subflowId, final FlowDefinitionRegistry mfaProviderFlowRegistry) {
-        final SubflowState subflowState = createSubflowState(flow, subflowId, subflowId);
-        final Collection<String> states = getCandidateStatesForMultifactorAuthentication();
+        final var subflowState = createSubflowState(flow, subflowId, subflowId);
+        final var states = getCandidateStatesForMultifactorAuthentication();
         LOGGER.debug("Candidate states for multifactor authentication are [{}]", states);
 
         states.forEach(s -> {
             LOGGER.debug("Locating state [{}] to process for multifactor authentication", s);
-            final TransitionableState actionState = getState(flow, s);
+            final var actionState = getState(flow, s);
 
             LOGGER.debug("Locating transition id [{}] to process multifactor authentication for state [{}", CasWebflowConstants.TRANSITION_ID_SUCCESS, s);
-            final String targetSuccessId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
+            final var targetSuccessId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
 
             LOGGER.debug("Locating transition id [{}] to process multifactor authentication for state [{}", CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, s);
-            final String targetWarningsId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS).getTargetStateId();
+            final var targetWarningsId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS).getTargetStateId();
 
             final List<DefaultMapping> mappings = new ArrayList<>();
-            final Mapper inputMapper = createMapperToSubflowState(mappings);
-            final SubflowAttributeMapper subflowMapper = createSubflowAttributeMapper(inputMapper, null);
+            final var inputMapper = createMapperToSubflowState(mappings);
+            final var subflowMapper = createSubflowAttributeMapper(inputMapper, null);
             subflowState.setAttributeMapper(subflowMapper);
 
             LOGGER.debug("Creating transitions to subflow state [{}]", subflowState.getId());
-            final TransitionSet transitionSet = subflowState.getTransitionSet();
+            final var transitionSet = subflowState.getTransitionSet();
             transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, targetSuccessId));
             transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, targetWarningsId));
 
@@ -123,7 +123,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
             registerMultifactorFlowDefinitionIntoLoginFlowRegistry(mfaProviderFlowRegistry);
             augmentMultifactorProviderFlowRegistry(mfaProviderFlowRegistry);
 
-            final TransitionableState state = getTransitionableState(flow, CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
+            final var state = getTransitionableState(flow, CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
             createTransitionForState(state, subflowId, subflowId);
         });
     }

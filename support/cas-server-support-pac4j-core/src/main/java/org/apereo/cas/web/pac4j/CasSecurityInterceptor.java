@@ -48,7 +48,7 @@ public class CasSecurityInterceptor extends SecurityInterceptor {
         if (modelAndView != null
                 && StringUtils.isNotBlank(request.getQueryString())
                 && request.getQueryString().contains(CasProtocolConstants.PARAMETER_TICKET)) {
-            final RedirectView v = new RedirectView(request.getRequestURL().toString());
+            final var v = new RedirectView(request.getRequestURL().toString());
             v.setExposeModelAttributes(false);
             v.setExposePathVariables(false);
             modelAndView.setView(v);

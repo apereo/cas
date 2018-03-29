@@ -24,31 +24,31 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
 
     @Test
     public void verifyGenerator() {
-        final ShibbolethCompatiblePersistentIdGenerator generator = new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
+        final var generator = new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
 
-        final Principal p = mock(Principal.class);
+        final var p = mock(Principal.class);
         when(p.getId()).thenReturn("testuser");
-        final String value = generator.generate(p, RegisteredServiceTestUtils.getService());
+        final var value = generator.generate(p, RegisteredServiceTestUtils.getService());
 
         assertNotNull(value);
     }
 
     @Test
     public void realTestofGeneratorThatVerifiesValueReturned() {
-        final ShibbolethCompatiblePersistentIdGenerator generator = new ShibbolethCompatiblePersistentIdGenerator("thisisasalt");
+        final var generator = new ShibbolethCompatiblePersistentIdGenerator("thisisasalt");
 
-        final Principal p = mock(Principal.class);
+        final var p = mock(Principal.class);
         when(p.getId()).thenReturn("grudkin");
-        final Service s = mock(Service.class);
+        final var s = mock(Service.class);
         when(s.getId()).thenReturn("https://shibboleth.irbmanager.com/");
 
-        final String value = generator.generate(p, s);
+        final var value = generator.generate(p, s);
         assertEquals("jvZO/wYedArYIEIORGdHoMO4qkw=", value);
     }
 
     @Test
     public void verifySerializeAShibbolethCompatiblePersistentIdGeneratorToJson() throws IOException {
-        final ShibbolethCompatiblePersistentIdGenerator generatorWritten = new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
+        final var generatorWritten = new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
 
         MAPPER.writeValue(JSON_FILE, generatorWritten);
 

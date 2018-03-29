@@ -40,7 +40,7 @@ public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
     @Override
     public OAuthCode create(final Service service, final Authentication authentication,
                             final TicketGrantingTicket ticketGrantingTicket, final Collection<String> scopes) {
-        final String codeId = this.oAuthCodeIdGenerator.getNewTicketId(OAuthCode.PREFIX);
+        final var codeId = this.oAuthCodeIdGenerator.getNewTicketId(OAuthCode.PREFIX);
         return new OAuthCodeImpl(codeId, service, authentication,
             this.expirationPolicy, ticketGrantingTicket, scopes);
     }

@@ -48,15 +48,15 @@ public class CasKryoTranscoder implements Transcoder<Object> {
 
     @Override
     public CachedData encode(final Object obj) {
-        try (CloseableKryo kryo = this.kryoPool.borrow();
-             ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-             Output output = new Output(byteStream)) {
+        try (var kryo = this.kryoPool.borrow();
+             var byteStream = new ByteArrayOutputStream();
+             var output = new Output(byteStream)) {
             if (obj != null) {
                 LOGGER.trace("Writing object [{}] to memcached ", obj.getClass());
             }
             kryo.writeClassAndObject(output, obj);
             output.flush();
-            final byte[] bytes = byteStream.toByteArray();
+            final var bytes = byteStream.toByteArray();
             return new CachedData(0, bytes, bytes.length);
         } catch (final Exception exception) {
             throw new KryoException(exception);
@@ -65,9 +65,9 @@ public class CasKryoTranscoder implements Transcoder<Object> {
 
     @Override
     public Object decode(final CachedData d) {
-        final byte[] bytes = d.getData();
-        try (CloseableKryo kryo = this.kryoPool.borrow();
-             Input input = new Input(new ByteArrayInputStream(bytes))) {
+        final var bytes = d.getData();
+        try (var kryo = this.kryoPool.borrow();
+             var input = new Input(new ByteArrayInputStream(bytes))) {
             return kryo.readClassAndObject(input);
         } catch (final Exception exception) {
             throw new KryoException(exception);

@@ -44,10 +44,10 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
                                                                         final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                         final SamlRegisteredServiceServiceProviderMetadataFacade facade,
                                                                         final EntityDescriptor entityDescriptor) {
-        final EntityAttributesPredicate.Candidate attr = new EntityAttributesPredicate.Candidate(this.entityAttribute, this.entityAttributeFormat);
+        final var attr = new EntityAttributesPredicate.Candidate(this.entityAttribute, this.entityAttributeFormat);
         attr.setValues(this.entityAttributeValues);
         LOGGER.debug("Loading entity attribute predicate filter for candidate [{}] with values [{}]", attr.getName(), attr.getValues());
-        final EntityAttributesPredicate predicate = new EntityAttributesPredicate(CollectionUtils.wrap(attr), true);
+        final var predicate = new EntityAttributesPredicate(CollectionUtils.wrap(attr), true);
         if (predicate.apply(entityDescriptor)) {
             return authorizeReleaseOfAllowedAttributes(attributes);
         }

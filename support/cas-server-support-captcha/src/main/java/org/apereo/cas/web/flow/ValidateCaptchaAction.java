@@ -41,37 +41,37 @@ public class ValidateCaptchaAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        final String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        final var gRecaptchaResponse = request.getParameter("g-recaptcha-response");
 
         if (StringUtils.isBlank(gRecaptchaResponse)) {
             LOGGER.warn("Recaptcha response is missing from the request");
             return getError(requestContext);
         }
         try {
-            final URL obj = new URL(recaptchaProperties.getVerifyUrl());
-            final HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+            final var obj = new URL(recaptchaProperties.getVerifyUrl());
+            final var con = (HttpsURLConnection) obj.openConnection();
 
             con.setRequestMethod("POST");
             con.setRequestProperty("User-Agent", WebUtils.getHttpServletRequestUserAgentFromRequestContext());
             con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
 
-            final String postParams = "secret=" + recaptchaProperties.getSecret() + "&response=" + gRecaptchaResponse;
+            final var postParams = "secret=" + recaptchaProperties.getSecret() + "&response=" + gRecaptchaResponse;
 
             LOGGER.debug("Sending 'POST' request to URL: [{}]", obj);
             con.setDoOutput(true);
-            try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
+            try (var wr = new DataOutputStream(con.getOutputStream())) {
                 wr.writeBytes(postParams);
                 wr.flush();
             }
-            final int responseCode = con.getResponseCode();
+            final var responseCode = con.getResponseCode();
             LOGGER.debug("Response Code: [{}]", responseCode);
 
             if (responseCode == HttpStatus.OK.value()) {
-                try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
-                    final String response = in.lines().collect(Collectors.joining());
+                try (var in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
+                    final var response = in.lines().collect(Collectors.joining());
                     LOGGER.debug("Google captcha response received: [{}]", response);
-                    final JsonNode node = READER.readTree(response);
+                    final var node = READER.readTree(response);
                     if (node.has("success") && node.get("success").booleanValue()) {
                         return null;
                     }
@@ -84,7 +84,7 @@ public class ValidateCaptchaAction extends AbstractAction {
     }
 
     private Event getError(final RequestContext requestContext) {
-        final MessageContext messageContext = requestContext.getMessageContext();
+        final var messageContext = requestContext.getMessageContext();
         messageContext.addMessage(new MessageBuilder().error().code(CODE).build());
         return getEventFactorySupport().event(this, CODE);
     }

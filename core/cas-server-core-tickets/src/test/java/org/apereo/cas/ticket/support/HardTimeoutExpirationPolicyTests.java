@@ -23,7 +23,7 @@ public class HardTimeoutExpirationPolicyTests {
 
     @Test
     public void verifySerializeANeverExpiresExpirationPolicyToJson() throws IOException {
-        final HardTimeoutExpirationPolicy policyWritten = new HardTimeoutExpirationPolicy();
+        final var policyWritten = new HardTimeoutExpirationPolicy();
         MAPPER.writeValue(JSON_FILE, policyWritten);
         final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, HardTimeoutExpirationPolicy.class);
         assertEquals(policyWritten, policyRead);

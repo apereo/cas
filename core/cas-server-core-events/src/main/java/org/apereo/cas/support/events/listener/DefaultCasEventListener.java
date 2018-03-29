@@ -55,7 +55,7 @@ public class DefaultCasEventListener {
     @EventListener
     public void handleCasTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent event) {
         if (this.casEventRepository != null) {
-            final CasEvent dto = prepareCasEvent(event);
+            final var dto = prepareCasEvent(event);
             dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
             dto.putId(TicketIdSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
             dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
@@ -71,7 +71,7 @@ public class DefaultCasEventListener {
     @EventListener
     public void handleCasAuthenticationTransactionFailureEvent(final CasAuthenticationTransactionFailureEvent event) {
         if (this.casEventRepository != null) {
-            final CasEvent dto = prepareCasEvent(event);
+            final var dto = prepareCasEvent(event);
             dto.setPrincipalId(event.getCredential().getId());
             dto.putId(CasAuthenticationPolicyFailureEvent.class.getSimpleName());
             this.casEventRepository.save(dto);
@@ -86,7 +86,7 @@ public class DefaultCasEventListener {
     @EventListener
     public void handleCasAuthenticationPolicyFailureEvent(final CasAuthenticationPolicyFailureEvent event) {
         if (this.casEventRepository != null) {
-            final CasEvent dto = prepareCasEvent(event);
+            final var dto = prepareCasEvent(event);
             dto.setPrincipalId(event.getAuthentication().getPrincipal().getId());
             dto.putId(CasAuthenticationPolicyFailureEvent.class.getSimpleName());
             this.casEventRepository.save(dto);
@@ -101,7 +101,7 @@ public class DefaultCasEventListener {
     @EventListener
     public void handleCasRiskyAuthenticationDetectedEvent(final CasRiskyAuthenticationDetectedEvent event) {
         if (this.casEventRepository != null) {
-            final CasEvent dto = prepareCasEvent(event);
+            final var dto = prepareCasEvent(event);
             dto.putId(event.getService().getName());
             dto.setPrincipalId(event.getAuthentication().getPrincipal().getId());
             this.casEventRepository.save(dto);
@@ -109,17 +109,17 @@ public class DefaultCasEventListener {
     }
 
     private static CasEvent prepareCasEvent(final AbstractCasEvent event) {
-        final CasEvent dto = new CasEvent();
+        final var dto = new CasEvent();
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
         dto.setCreationTime(DateTimeUtils.zonedDateTimeOf(event.getTimestamp()).toString());
 
-        final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
+        final var clientInfo = ClientInfoHolder.getClientInfo();
         dto.putClientIpAddress(clientInfo.getClientIpAddress());
         dto.putServerIpAddress(clientInfo.getServerIpAddress());
         dto.putAgent(WebUtils.getHttpServletRequestUserAgentFromRequestContext());
 
-        final GeoLocationRequest location = WebUtils.getHttpServletRequestGeoLocationFromRequestContext();
+        final var location = WebUtils.getHttpServletRequestGeoLocationFromRequestContext();
         if (location != null) {
             dto.putGeoLocation(location);
         }

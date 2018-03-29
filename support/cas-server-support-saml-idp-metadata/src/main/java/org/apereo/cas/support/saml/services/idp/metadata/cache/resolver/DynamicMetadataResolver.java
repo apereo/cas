@@ -43,8 +43,8 @@ public class DynamicMetadataResolver extends BaseSamlRegisteredServiceMetadataRe
     public List<MetadataResolver> resolve(final SamlRegisteredService service) {
         LOGGER.info("Loading metadata dynamically for [{}]", service.getName());
 
-        final SamlIdPMetadataProperties md = samlIdPProperties.getMetadata();
-        final FunctionDrivenDynamicHTTPMetadataResolver resolver =
+        final var md = samlIdPProperties.getMetadata();
+        final var resolver =
             new FunctionDrivenDynamicHTTPMetadataResolver(this.httpClient.getWrappedHttpClient());
         resolver.setMinCacheDuration(TimeUnit.MILLISECONDS.convert(md.getCacheExpirationMinutes(), TimeUnit.MINUTES));
         resolver.setRequireValidMetadata(md.isRequireValidMetadata());
@@ -58,7 +58,7 @@ public class DynamicMetadataResolver extends BaseSamlRegisteredServiceMetadataRe
 
         resolver.setRequestURLBuilder(input -> {
             if (StringUtils.isNotBlank(input)) {
-                final String metadataLocation = service.getMetadataLocation().replace("{0}", EncodingUtils.urlEncode(input));
+                final var metadataLocation = service.getMetadataLocation().replace("{0}", EncodingUtils.urlEncode(input));
                 LOGGER.info("Constructed dynamic metadata query [{}] for [{}]", metadataLocation, service.getName());
                 return metadataLocation;
             }

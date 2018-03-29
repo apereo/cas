@@ -22,7 +22,7 @@ public class RefuseRegisteredServiceProxyPolicyTests {
 
     @Test
     public void verifySerializeARefuseRegisteredServiceProxyPolicyToJson() throws IOException {
-        final RefuseRegisteredServiceProxyPolicy policyWritten = new RefuseRegisteredServiceProxyPolicy();
+        final var policyWritten = new RefuseRegisteredServiceProxyPolicy();
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
 

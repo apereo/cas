@@ -28,11 +28,11 @@ public class ThemeFileTemplateResolver extends FileTemplateResolver {
                                                         final String template, final String resourceName, final String characterEncoding,
                                                         final Map<String, Object> templateResolutionAttributes) {
 
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
         if (request != null) {
-            final String themeName = (String) request.getSession().getAttribute(casProperties.getTheme().getParamName());
+            final var themeName = (String) request.getSession().getAttribute(casProperties.getTheme().getParamName());
             if (StringUtils.isNotBlank(themeName)) {
-                final String themeTemplate = String.format(resourceName, themeName);
+                final var themeTemplate = String.format(resourceName, themeName);
                 return super.computeTemplateResource(configuration, ownerTemplate, template, themeTemplate,
                     characterEncoding, templateResolutionAttributes);
             }

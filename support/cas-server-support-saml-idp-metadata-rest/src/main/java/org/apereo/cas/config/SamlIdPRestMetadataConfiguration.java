@@ -34,7 +34,7 @@ public class SamlIdPRestMetadataConfiguration implements SamlRegisteredServiceMe
 
     @Bean
     public SamlRegisteredServiceMetadataResolver restSamlRegisteredServiceMetadataResolver() {
-        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
+        final var idp = casProperties.getAuthn().getSamlIdp();
         return new RestSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean);
     }
 

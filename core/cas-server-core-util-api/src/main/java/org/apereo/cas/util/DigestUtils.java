@@ -82,7 +82,7 @@ public class DigestUtils {
      * @return the string
      */
     public static String shaBase64(final String salt, final String data, final String separator) {
-        final byte[] result = rawDigest(MessageDigestAlgorithms.SHA_1, salt, separator == null ? data : data + separator);
+        final var result = rawDigest(MessageDigestAlgorithms.SHA_1, salt, separator == null ? data : data + separator);
         return EncodingUtils.encodeBase64(result);
     }
     
@@ -117,7 +117,7 @@ public class DigestUtils {
      */
     public static byte[] rawDigest(final String alg, final byte[] data) {
         try {
-            final MessageDigest digest = getMessageDigestInstance(alg);
+            final var digest = getMessageDigestInstance(alg);
             return digest.digest(data);
         } catch (final Exception cause) {
             throw new SecurityException(cause);
@@ -135,7 +135,7 @@ public class DigestUtils {
      */
     public static byte[] rawDigest(final String alg, final String salt, final String... data) {
         try {
-            final MessageDigest digest = getMessageDigestInstance(alg);
+            final var digest = getMessageDigestInstance(alg);
             Arrays.stream(data).forEach(d -> digest.update(d.getBytes(StandardCharsets.UTF_8)));
             return digest.digest(salt.getBytes(StandardCharsets.UTF_8));
         } catch (final Exception cause) {
@@ -154,7 +154,7 @@ public class DigestUtils {
     }
     
     private static MessageDigest getMessageDigestInstance(final String alg) throws Exception {
-        final MessageDigest digest = MessageDigest.getInstance(alg);
+        final var digest = MessageDigest.getInstance(alg);
         digest.reset();
         return digest;
     }

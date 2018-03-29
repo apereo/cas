@@ -21,9 +21,9 @@ public class ZonedDateTimeSerializerTests {
 
     @Test
     public void verifyTranscoderWorks() {
-        final CasKryoPool pool = new CasKryoPool();
-        try (CloseableKryo kryo = pool.borrow()) {
-            final ByteBufferOutput output = new ByteBufferOutput(2048);
+        final var pool = new CasKryoPool();
+        try (var kryo = pool.borrow()) {
+            final var output = new ByteBufferOutput(2048);
             kryo.writeObject(output, ZonedDateTime.now(ZoneOffset.UTC));
             kryo.writeObject(output, ZonedDateTime.now());
         }

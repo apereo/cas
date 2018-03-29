@@ -18,11 +18,11 @@ import org.w3c.dom.Element;
 public class X509TokenDelegationHandler implements TokenDelegationHandler {
     @Override
     public boolean canHandleToken(final ReceivedToken delegateTarget) {
-        final Object token = delegateTarget.getToken();
+        final var token = delegateTarget.getToken();
         if (token instanceof Element) {
-            final Element tokenElement = (Element) token;
-            final String namespace = tokenElement.getNamespaceURI();
-            final String localname = tokenElement.getLocalName();
+            final var tokenElement = (Element) token;
+            final var namespace = tokenElement.getNamespaceURI();
+            final var localname = tokenElement.getLocalName();
             return WSConstants.SIG_NS.equals(namespace) && WSConstants.X509_DATA_LN.equals(localname);
         }
         return false;
@@ -30,8 +30,8 @@ public class X509TokenDelegationHandler implements TokenDelegationHandler {
 
     @Override
     public TokenDelegationResponse isDelegationAllowed(final TokenDelegationParameters tokenParameters) {
-        final TokenDelegationResponse response = new TokenDelegationResponse();
-        final ReceivedToken delegateTarget = tokenParameters.getToken();
+        final var response = new TokenDelegationResponse();
+        final var delegateTarget = tokenParameters.getToken();
         response.setToken(delegateTarget);
 
         if (!delegateTarget.isDOMElement()) {

@@ -25,8 +25,8 @@ public class DuoSecurityHealthIndicator extends AbstractHealthIndicator {
             .filter(DuoMultifactorAuthenticationProvider.class::isInstance)
             .map(DuoMultifactorAuthenticationProvider.class::cast)
             .forEach(p -> {
-                final boolean result = p.getDuoAuthenticationService().ping();
-                final Health.Builder b = builder.withDetail("duoApiHost", p.getDuoAuthenticationService().getApiHost());
+                final var result = p.getDuoAuthenticationService().ping();
+                final var b = builder.withDetail("duoApiHost", p.getDuoAuthenticationService().getApiHost());
                 if (result) {
                     b.up().build();
                 } else {

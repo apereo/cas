@@ -44,10 +44,10 @@ public class CasAppender extends AbstractAppender {
 
     @Override
     public void append(final LogEvent logEvent) {
-        final LogEvent newLogEvent = LoggingUtils.prepareLogEvent(logEvent);
-        final String refName = this.appenderRef.getRef();
+        final var newLogEvent = LoggingUtils.prepareLogEvent(logEvent);
+        final var refName = this.appenderRef.getRef();
         if (StringUtils.isNotBlank(refName)) {
-            final Appender appender = this.config.getAppender(refName);
+            final var appender = this.config.getAppender(refName);
             if (appender != null) {
                 appender.append(newLogEvent);
             } else {

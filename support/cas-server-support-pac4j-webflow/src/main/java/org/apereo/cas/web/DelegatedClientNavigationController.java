@@ -57,19 +57,19 @@ public class DelegatedClientNavigationController {
      */
     @GetMapping(ENDPOINT_REDIRECT)
     public View redirectToProvider(final HttpServletRequest request, final HttpServletResponse response) {
-        final String clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
+        final var clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
         try {
             final IndirectClient client = (IndirectClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
-            final J2EContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
-            final Ticket ticket = delegatedClientWebflowManager.store(webContext, client);
+            final var webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
+            final var ticket = delegatedClientWebflowManager.store(webContext, client);
 
             final View result;
-            final RedirectAction action = client.getRedirectAction(webContext);
+            final var action = client.getRedirectAction(webContext);
             if (RedirectAction.RedirectType.SUCCESS.equals(action.getType())) {
                 result = new DynamicHtmlView(action.getContent());
             } else {
-                final URIBuilder builder = new URIBuilder(action.getLocation());
-                final String url = builder.toString();
+                final var builder = new URIBuilder(action.getLocation());
+                final var url = builder.toString();
                 LOGGER.debug("Redirecting client [{}] to [{}] based on identifier [{}]", client.getName(), url, ticket.getId());
                 result = new RedirectView(url);
             }

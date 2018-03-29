@@ -59,10 +59,10 @@ public class JWTTokenTicketBuilderWithoutEncryptionTests {
 
     @Test
     public void verifyJwtForServiceTicket() throws Exception {
-        final String jwt = tokenTicketBuilder.build("ST-123456", CoreAuthenticationTestUtils.getService());
+        final var jwt = tokenTicketBuilder.build("ST-123456", CoreAuthenticationTestUtils.getService());
         assertNotNull(jwt);
-        final Object result = tokenCipherExecutor.decode(jwt);
-        final JWTClaimsSet claims = JWTClaimsSet.parse(result.toString());
+        final var result = tokenCipherExecutor.decode(jwt);
+        final var claims = JWTClaimsSet.parse(result.toString());
         assertEquals("casuser", claims.getSubject());
     }
 

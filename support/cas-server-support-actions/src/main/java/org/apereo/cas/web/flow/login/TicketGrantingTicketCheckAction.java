@@ -53,13 +53,13 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
      */
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        final String tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
+        final var tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
         if (!StringUtils.hasText(tgtId)) {
             return new Event(this, NOT_EXISTS);
         }
-        String eventId = INVALID;
+        var eventId = INVALID;
         try {
-            final Ticket ticket = this.centralAuthenticationService.getTicket(tgtId, Ticket.class);
+            final var ticket = this.centralAuthenticationService.getTicket(tgtId, Ticket.class);
             if (ticket != null && !ticket.isExpired()) {
                 eventId = VALID;
             }

@@ -39,25 +39,25 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
+        final var pm = casProperties.getAuthn().getPm();
 
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         LOGGER.debug("Checking for token at param [{}]", PARAMETER_NAME_TOKEN);
-        final String token = request.getParameter(PARAMETER_NAME_TOKEN);
+        final var token = request.getParameter(PARAMETER_NAME_TOKEN);
 
         if (StringUtils.isBlank(token)) {
             LOGGER.error("Password reset token is missing");
             return error();
         }
 
-        final String username = passwordManagementService.parseToken(token);
+        final var username = passwordManagementService.parseToken(token);
         if (StringUtils.isBlank(username)) {
             LOGGER.error("Password reset token could not be verified");
             return error();
         }
 
         if (pm.getReset().isSecurityQuestionsEnabled()) {
-            final List<String> questions = BasePasswordManagementService
+            final var questions = BasePasswordManagementService
                     .canonicalizeSecurityQuestions(passwordManagementService.getSecurityQuestions(username));
             if (questions.isEmpty()) {
                 LOGGER.warn("No security questions could be found for [{}]", username);

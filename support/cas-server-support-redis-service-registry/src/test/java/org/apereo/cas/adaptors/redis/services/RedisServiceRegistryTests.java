@@ -52,7 +52,7 @@ public class RedisServiceRegistryTests {
 
     @Before
     public void setUp() {
-        final List<RegisteredService> services = this.dao.load();
+        final var services = this.dao.load();
         services.forEach(service -> this.dao.delete(service));
     }
 
@@ -69,16 +69,16 @@ public class RedisServiceRegistryTests {
 
     @Test
     public void execSaveMethodWithDefaultUsernameAttribute() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("execSaveMethodWithDefaultUsernameAttribute");
         r.setServiceId("testing");
         r.setDescription("New service");
         r.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
-        final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
+        final var policy = new ReturnAllAttributeReleasePolicy();
         policy.setConsentPolicy(new DefaultRegisteredServiceConsentPolicy(CollectionUtils.wrapSet("test"),
                 CollectionUtils.wrapSet("test")));
         r.setAttributeReleasePolicy(policy);
-        final RegisteredService r2 = this.dao.save(r);
+        final var r2 = this.dao.save(r);
         assertEquals(r2, r);
     }
 
@@ -86,7 +86,7 @@ public class RedisServiceRegistryTests {
     public void verifyServiceRemovals() {
         final List<RegisteredService> list = new ArrayList<>(5);
         IntStream.range(1, 3).forEach(i -> {
-            final RegexRegisteredService r = new RegexRegisteredService();
+            final var r = new RegexRegisteredService();
             r.setServiceId("serviceId" + i);
             r.setName("testServiceType");
             r.setTheme("testtheme");

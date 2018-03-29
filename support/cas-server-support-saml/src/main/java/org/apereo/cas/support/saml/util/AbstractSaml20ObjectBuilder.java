@@ -68,7 +68,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @return the name iD
      */
     public NameID getNameID(final String nameIdFormat, final String nameIdValue) {
-        final NameID nameId = newSamlObject(NameID.class);
+        final var nameId = newSamlObject(NameID.class);
         nameId.setFormat(nameIdFormat);
         nameId.setValue(nameIdValue);
         return nameId;
@@ -81,7 +81,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @return the response
      */
     public org.opensaml.saml.saml2.ecp.Response newEcpResponse(final String assertionConsumerUrl) {
-        final org.opensaml.saml.saml2.ecp.Response samlResponse = newSamlObject(org.opensaml.saml.saml2.ecp.Response.class);
+        final var samlResponse = newSamlObject(org.opensaml.saml.saml2.ecp.Response.class);
         samlResponse.setSOAP11MustUnderstand(Boolean.TRUE);
         samlResponse.setSOAP11Actor(ActorBearing.SOAP11_ACTOR_NEXT);
         samlResponse.setAssertionConsumerServiceURL(assertionConsumerUrl);
@@ -100,7 +100,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     public Response newResponse(final String id, final ZonedDateTime issueInstant,
                                 final String recipient, final WebApplicationService service) {
 
-        final Response samlResponse = newSamlObject(Response.class);
+        final var samlResponse = newSamlObject(Response.class);
         samlResponse.setID(id);
         samlResponse.setIssueInstant(DateTimeUtils.dateTimeOf(issueInstant));
         samlResponse.setVersion(SAMLVersion.VERSION_20);
@@ -121,12 +121,12 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @return the status
      */
     public Status newStatus(final String codeValue, final String statusMessage) {
-        final Status status = newSamlObject(Status.class);
-        final StatusCode code = newSamlObject(StatusCode.class);
+        final var status = newSamlObject(Status.class);
+        final var code = newSamlObject(StatusCode.class);
         code.setValue(codeValue);
         status.setStatusCode(code);
         if (StringUtils.isNotBlank(statusMessage)) {
-            final StatusMessage message = newSamlObject(StatusMessage.class);
+            final var message = newSamlObject(StatusMessage.class);
             message.setMessage(statusMessage);
             status.setStatusMessage(message);
         }
@@ -160,7 +160,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      */
     public Assertion newAssertion(final List<Statement> authnStatement, final String issuer,
                                   final ZonedDateTime issuedAt, final String id) {
-        final Assertion assertion = newSamlObject(Assertion.class);
+        final var assertion = newSamlObject(Assertion.class);
         assertion.setID(id);
         assertion.setIssueInstant(DateTimeUtils.dateTimeOf(issuedAt));
         assertion.setIssuer(newIssuer(issuer));
@@ -175,7 +175,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @return the issuer
      */
     public Issuer newIssuer(final String issuerValue) {
-        final Issuer issuer = newSamlObject(Issuer.class);
+        final var issuer = newSamlObject(Issuer.class);
         issuer.setValue(issuerValue);
         return issuer;
     }
@@ -193,14 +193,14 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                                                     final Map<String, String> attributeFriendlyNames,
                                                     final Map<String, String> configuredNameFormats,
                                                     final String defaultNameFormat) {
-        final AttributeStatement attrStatement = newSamlObject(AttributeStatement.class);
-        for (final Map.Entry<String, Object> e : attributes.entrySet()) {
+        final var attrStatement = newSamlObject(AttributeStatement.class);
+        for (final var e : attributes.entrySet()) {
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
                 LOGGER.info("Skipping attribute [{}] because it does not have any values.", e.getKey());
                 continue;
             }
-            final String friendlyName = attributeFriendlyNames.getOrDefault(e.getKey(), null);
-            final Attribute attribute = newAttribute(friendlyName, e, configuredNameFormats, defaultNameFormat);
+            final var friendlyName = attributeFriendlyNames.getOrDefault(e.getKey(), null);
+            final var attribute = newAttribute(friendlyName, e, configuredNameFormats, defaultNameFormat);
             attrStatement.getAttributes().add(attribute);
         }
 
@@ -234,7 +234,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                                      final Map.Entry<String, Object> e,
                                      final Map<String, String> configuredNameFormats,
                                      final String defaultNameFormat) {
-        final Attribute attribute = newSamlObject(Attribute.class);
+        final var attribute = newSamlObject(Attribute.class);
         attribute.setName(e.getKey());
 
         if (StringUtils.isNotBlank(attributeFriendlyName)) {
@@ -246,7 +246,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         addAttributeValuesToSaml2Attribute(e.getKey(), e.getValue(), attribute.getAttributeValues());
 
         if (!configuredNameFormats.isEmpty() && configuredNameFormats.containsKey(attribute.getName())) {
-            final String nameFormat = configuredNameFormats.get(attribute.getName());
+            final var nameFormat = configuredNameFormats.get(attribute.getName());
             LOGGER.debug("Found name format [{}] for attribute [{}]", nameFormat, attribute.getName());
             configureAttributeNameFormat(attribute, nameFormat);
             LOGGER.debug("Attribute [{}] is assigned the name format of [{}]", attribute.getName(), attribute.getNameFormat());
@@ -264,7 +264,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             return;
         }
 
-        final String compareFormat = nameFormat.trim().toLowerCase();
+        final var compareFormat = nameFormat.trim().toLowerCase();
         if ("basic".equals(compareFormat) || compareFormat.equals(Attribute.BASIC)) {
             attribute.setNameFormat(Attribute.BASIC);
         } else if ("uri".equals(compareFormat) || compareFormat.equals(Attribute.URI_REFERENCE)) {
@@ -289,10 +289,10 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         LOGGER.debug("Building authentication statement with context class ref [{}] @ [{}] with index [{}]",
             contextClassRef, authnInstant, sessionIndex);
 
-        final AuthnStatement stmt = newSamlObject(AuthnStatement.class);
-        final AuthnContext ctx = newSamlObject(AuthnContext.class);
+        final var stmt = newSamlObject(AuthnStatement.class);
+        final var ctx = newSamlObject(AuthnContext.class);
 
-        final AuthnContextClassRef classRef = newSamlObject(AuthnContextClassRef.class);
+        final var classRef = newSamlObject(AuthnContextClassRef.class);
         classRef.setAuthnContextClassRef(contextClassRef);
 
         ctx.setAuthnContextClassRef(classRef);
@@ -312,13 +312,13 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      */
     public Conditions newConditions(final ZonedDateTime notBefore, final ZonedDateTime notOnOrAfter, final String... audienceUri) {
         LOGGER.debug("Building conditions for audience [{}] that enforce not-before [{}] and not-after [{}]", audienceUri, notBefore, notOnOrAfter);
-        final Conditions conditions = newSamlObject(Conditions.class);
+        final var conditions = newSamlObject(Conditions.class);
         conditions.setNotBefore(DateTimeUtils.dateTimeOf(notBefore));
         conditions.setNotOnOrAfter(DateTimeUtils.dateTimeOf(notOnOrAfter));
 
-        final AudienceRestriction audienceRestriction = newSamlObject(AudienceRestriction.class);
+        final var audienceRestriction = newSamlObject(AudienceRestriction.class);
         Arrays.stream(audienceUri).forEach(audienceEntry -> {
-            final Audience audience = newSamlObject(Audience.class);
+            final var audience = newSamlObject(Audience.class);
             audience.setAudienceURI(audienceEntry);
             audienceRestriction.getAudiences().add(audience);
         });
@@ -340,7 +340,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     public Subject newSubject(final String nameIdFormat, final String nameIdValue,
                               final String recipient, final ZonedDateTime notOnOrAfter,
                               final String inResponseTo, final ZonedDateTime notBefore) {
-        final NameID nameID = getNameID(nameIdFormat, nameIdValue);
+        final var nameID = getNameID(nameIdFormat, nameIdValue);
         return newSubject(nameID, recipient, notOnOrAfter, inResponseTo, notBefore);
     }
 
@@ -358,10 +358,10 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                               final String inResponseTo, final ZonedDateTime notBefore) {
 
         LOGGER.debug("Building subject for NameID [{}] and recipient [{}], in response to [{}]", nameId, recipient, inResponseTo);
-        final SubjectConfirmation confirmation = newSamlObject(SubjectConfirmation.class);
+        final var confirmation = newSamlObject(SubjectConfirmation.class);
         confirmation.setMethod(SubjectConfirmation.METHOD_BEARER);
 
-        final SubjectConfirmationData data = newSamlObject(SubjectConfirmationData.class);
+        final var data = newSamlObject(SubjectConfirmationData.class);
 
         if (StringUtils.isNotBlank(recipient)) {
             data.setRecipient(recipient);
@@ -374,7 +374,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         if (StringUtils.isNotBlank(inResponseTo)) {
             data.setInResponseTo(inResponseTo);
 
-            final InetAddress ip = InetAddressUtils.getByName(inResponseTo);
+            final var ip = InetAddressUtils.getByName(inResponseTo);
             if (ip != null) {
                 data.setAddress(ip.getHostName());
             }
@@ -387,7 +387,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         confirmation.setSubjectConfirmationData(data);
 
-        final Subject subject = newSamlObject(Subject.class);
+        final var subject = newSamlObject(Subject.class);
         if (nameId != null) {
             subject.setNameID(nameId);
         }
@@ -399,24 +399,24 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
     @Override
     public String generateSecureRandomId() {
-        final SecureRandom generator = RandomUtils.getNativeInstance();
+        final var generator = RandomUtils.getNativeInstance();
         final char[] charMappings = {
             'a', 'b', 'c', 'd', 'e', 'f', 'g',
             'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
             'p'};
 
-        final int charsLength = 40;
-        final int generatorBytesLength = 20;
-        final int shiftLength = 4;
+        final var charsLength = 40;
+        final var generatorBytesLength = 20;
+        final var shiftLength = 4;
 
         // 160 bits
-        final byte[] bytes = new byte[generatorBytesLength];
+        final var bytes = new byte[generatorBytesLength];
         generator.nextBytes(bytes);
 
-        final char[] chars = new char[charsLength];
+        final var chars = new char[charsLength];
         IntStream.range(0, bytes.length).forEach(i -> {
-            final int left = bytes[i] >> shiftLength & HEX_HIGH_BITS_BITWISE_FLAG;
-            final int right = bytes[i] & HEX_HIGH_BITS_BITWISE_FLAG;
+            final var left = bytes[i] >> shiftLength & HEX_HIGH_BITS_BITWISE_FLAG;
+            final var right = bytes[i] & HEX_HIGH_BITS_BITWISE_FLAG;
             chars[i * 2] = charMappings[left];
             chars[i * 2 + 1] = charMappings[right];
         });
@@ -434,12 +434,12 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             return null;
         }
 
-        final byte[] decodedBytes = EncodingUtils.decodeBase64(encodedRequestXmlString);
+        final var decodedBytes = EncodingUtils.decodeBase64(encodedRequestXmlString);
         if (decodedBytes == null) {
             return null;
         }
 
-        final String inflated = CompressionUtils.inflate(decodedBytes);
+        final var inflated = CompressionUtils.inflate(decodedBytes);
         if (!StringUtils.isEmpty(inflated)) {
             return inflated;
         }

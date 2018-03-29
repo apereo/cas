@@ -57,22 +57,22 @@ public class DefaultCassandraRepositoryTests {
 
     @Test
     public void verifyUserNotFound() throws Exception {
-        final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("baduser", "Mellon");
+        final var c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("baduser", "Mellon");
         thrown.expect(AccountNotFoundException.class);
         cassandraAuthenticationHandler.authenticate(c);
     }
 
     @Test
     public void verifyUserBadPassword() throws Exception {
-        final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "bad");
+        final var c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "bad");
         thrown.expect(FailedLoginException.class);
         cassandraAuthenticationHandler.authenticate(c);
     }
 
     @Test
     public void verifyUser() throws Exception {
-        final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
-        final AuthenticationHandlerExecutionResult result = cassandraAuthenticationHandler.authenticate(c);
+        final var c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
+        final var result = cassandraAuthenticationHandler.authenticate(c);
         assertNotNull(result);
         assertEquals("casuser", result.getPrincipal().getId());
     }

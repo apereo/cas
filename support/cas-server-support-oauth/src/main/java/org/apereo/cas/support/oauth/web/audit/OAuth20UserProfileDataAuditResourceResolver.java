@@ -24,10 +24,10 @@ public class OAuth20UserProfileDataAuditResourceResolver extends ReturnValueAsSt
     @Override
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
         Objects.requireNonNull(retval, "User profile data must not be null");
-        final Map profileMap = Map.class.cast(retval);
-        final AccessToken accessToken = AccessToken.class.cast(auditableTarget.getArgs()[0]);
+        final var profileMap = Map.class.cast(retval);
+        final var accessToken = AccessToken.class.cast(auditableTarget.getArgs()[0]);
 
-        final String result = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
+        final var result = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
             .append("id", profileMap.get(MODEL_ATTRIBUTE_ID))
             .append("client_id", profileMap.get(CLIENT_ID))
             .append("service", profileMap.get(PARAMETER_SERVICE))

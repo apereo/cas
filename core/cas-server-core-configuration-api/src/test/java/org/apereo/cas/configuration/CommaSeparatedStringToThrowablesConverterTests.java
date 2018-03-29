@@ -19,14 +19,14 @@ public class CommaSeparatedStringToThrowablesConverterTests {
 
     @Test
     public void verifyConverters() {
-        final CommaSeparatedStringToThrowablesConverter c = new CommaSeparatedStringToThrowablesConverter();
+        final var c = new CommaSeparatedStringToThrowablesConverter();
         final List list = c.convert(Exception.class.getName() + "," + RuntimeException.class.getName());
         assertEquals(2, list.size());
     }
 
     @Test
     public void verifyConverter() {
-        final CommaSeparatedStringToThrowablesConverter c = new CommaSeparatedStringToThrowablesConverter();
+        final var c = new CommaSeparatedStringToThrowablesConverter();
         final List list = c.convert(Exception.class.getName());
         assertEquals(1, list.size());
     }

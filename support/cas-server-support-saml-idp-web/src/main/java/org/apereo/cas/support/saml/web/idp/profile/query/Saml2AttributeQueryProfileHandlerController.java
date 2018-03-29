@@ -86,29 +86,29 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
     protected void handlePostRequest(final HttpServletResponse response,
                                      final HttpServletRequest request) {
 
-        final MessageContext ctx = decodeSoapRequest(request);
-        final AttributeQuery query = (AttributeQuery) ctx.getMessage();
+        final var ctx = decodeSoapRequest(request);
+        final var query = (AttributeQuery) ctx.getMessage();
         try {
-            final String issuer = query.getIssuer().getValue();
-            final SamlRegisteredService service = verifySamlRegisteredService(issuer);
-            final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor = getSamlMetadataFacadeFor(service, query);
+            final var issuer = query.getIssuer().getValue();
+            final var service = verifySamlRegisteredService(issuer);
+            final var adaptor = getSamlMetadataFacadeFor(service, query);
             if (!adaptor.isPresent()) {
                 throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
             }
 
-            final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
+            final var facade = adaptor.get();
             verifyAuthenticationContextSignature(ctx, request, query, facade);
 
             final Map<String, Object> attrs = new LinkedHashMap<>();
             if (query.getAttributes().isEmpty()) {
-                final String id = this.samlAttributeQueryTicketFactory.createTicketIdFor(query.getSubject().getNameID().getValue());
-                final SamlAttributeQueryTicket ticket = this.ticketRegistry.getTicket(id, SamlAttributeQueryTicket.class);
+                final var id = this.samlAttributeQueryTicketFactory.createTicketIdFor(query.getSubject().getNameID().getValue());
+                final var ticket = this.ticketRegistry.getTicket(id, SamlAttributeQueryTicket.class);
 
-                final Authentication authentication = ticket.getTicketGrantingTicket().getAuthentication();
-                final Principal principal = authentication.getPrincipal();
+                final var authentication = ticket.getTicketGrantingTicket().getAuthentication();
+                final var principal = authentication.getPrincipal();
 
-                final Map<String, Object> authnAttrs = authentication.getAttributes();
-                final Map<String, Object> principalAttrs = principal.getAttributes();
+                final var authnAttrs = authentication.getAttributes();
+                final var principalAttrs = principal.getAttributes();
 
                 query.getAttributes().forEach(a -> {
                     if (authnAttrs.containsKey(a.getName())) {
@@ -119,7 +119,7 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
                 });
             }
 
-            final Assertion casAssertion = buildCasAssertion(issuer, service, attrs);
+            final var casAssertion = buildCasAssertion(issuer, service, attrs);
             this.responseBuilder.build(query, request, response, casAssertion, service, facade, SAMLConstants.SAML2_SOAP11_BINDING_URI);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

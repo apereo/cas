@@ -42,12 +42,12 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         if (providers == null || providers.isEmpty()) {
             return Optional.empty();
         }
-        final Set<String> validProviderIds = providers.stream()
+        final var validProviderIds = providers.stream()
             .map(MultifactorAuthenticationProvider::getId)
             .collect(Collectors.toSet());
-        final Principal principal = authentication != null ? authentication.getPrincipal() : null;
+        final var principal = authentication != null ? authentication.getPrincipal() : null;
 
-        Optional<String> provider = resolveRequestParameterTrigger(request, validProviderIds);
+        var provider = resolveRequestParameterTrigger(request, validProviderIds);
 
         if (!provider.isPresent()) {
             provider = resolveRegisteredServiceTrigger(service, principal, validProviderIds);
@@ -79,9 +79,9 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
             return Optional.empty();
         }
 
-        final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
-        final String attrName = policy.getPrincipalAttributeNameTrigger();
-        final String attrValue = policy.getPrincipalAttributeValueToMatch();
+        final var policy = service.getMultifactorPolicy();
+        final var attrName = policy.getPrincipalAttributeNameTrigger();
+        final var attrValue = policy.getPrincipalAttributeValueToMatch();
 
         // Principal attribute name and/or value is not defined, enforce policy
         if (!StringUtils.hasText(attrName) || !StringUtils.hasText(attrValue)) {
@@ -176,7 +176,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         }
 
         // check to see if any of the specified attributes match the value pattern
-        final Predicate<String> valuePredicate = Pattern.compile(value).asPredicate();
+        final var valuePredicate = Pattern.compile(value).asPredicate();
         return commaDelimitedListToSet(names).stream()
             .map(attributes::get)
             .filter(Objects::nonNull)

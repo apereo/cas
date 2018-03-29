@@ -38,20 +38,20 @@ public class VerifySecurityQuestionsAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        final String username = requestContext.getFlowScope().getString("username");
-        final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        final var username = requestContext.getFlowScope().getString("username");
+        final var pm = casProperties.getAuthn().getPm();
 
         if (!pm.getReset().isSecurityQuestionsEnabled()) {
             LOGGER.debug("Security questions are not enabled");
             return success();
         }
         
-        final Map<String, String> questions = passwordManagementService.getSecurityQuestions(username);
-        final List<String> canonicalQuestions = BasePasswordManagementService.canonicalizeSecurityQuestions(questions);
-        final AtomicInteger i = new AtomicInteger(0);
-        final long c = canonicalQuestions.stream().filter(q -> {
-            final String answer = request.getParameter("q" + i.getAndIncrement());
+        final var questions = passwordManagementService.getSecurityQuestions(username);
+        final var canonicalQuestions = BasePasswordManagementService.canonicalizeSecurityQuestions(questions);
+        final var i = new AtomicInteger(0);
+        final var c = canonicalQuestions.stream().filter(q -> {
+            final var answer = request.getParameter("q" + i.getAndIncrement());
             return passwordManagementService.isValidSecurityQuestionAnswer(username, q, questions.get(q), answer);
         }).count();
         if (c == questions.size()) {

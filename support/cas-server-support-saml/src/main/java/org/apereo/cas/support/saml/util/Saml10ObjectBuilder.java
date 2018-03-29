@@ -69,7 +69,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     public Response newResponse(final String id, final ZonedDateTime issueInstant,
                                 final String recipient, final WebApplicationService service) {
 
-        final Response samlResponse = newSamlObject(Response.class);
+        final var samlResponse = newSamlObject(Response.class);
         samlResponse.setID(id);
         samlResponse.setIssueInstant(DateTimeUtils.dateTimeOf(issueInstant));
         samlResponse.setVersion(SAMLVersion.VERSION_11);
@@ -86,8 +86,8 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      */
     private static void setInResponseToForSamlResponseIfNeeded(final Service service, final Response samlResponse) {
         if (service instanceof SamlService) {
-            final SamlService samlService = (SamlService) service;
-            final String requestId = samlService.getRequestId();
+            final var samlService = (SamlService) service;
+            final var requestId = samlService.getRequestId();
             if (StringUtils.isNotBlank(requestId)) {
                 samlResponse.setInResponseTo(requestId);
             }
@@ -105,7 +105,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      */
     public Assertion newAssertion(final AuthenticationStatement authnStatement, final String issuer,
                                   final ZonedDateTime issuedAt, final String id) {
-        final Assertion assertion = newSamlObject(Assertion.class);
+        final var assertion = newSamlObject(Assertion.class);
 
         assertion.setID(id);
         assertion.setIssueInstant(DateTimeUtils.dateTimeOf(issuedAt));
@@ -123,11 +123,11 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      * @return the conditions
      */
     public Conditions newConditions(final ZonedDateTime issuedAt, final String audienceUri, final long issueLength) {
-        final Conditions conditions = newSamlObject(Conditions.class);
+        final var conditions = newSamlObject(Conditions.class);
         conditions.setNotBefore(DateTimeUtils.dateTimeOf(issuedAt));
         conditions.setNotOnOrAfter(DateTimeUtils.dateTimeOf(issuedAt.plus(issueLength, ChronoUnit.SECONDS)));
-        final AudienceRestrictionCondition audienceRestriction = newSamlObject(AudienceRestrictionCondition.class);
-        final Audience audience = newSamlObject(Audience.class);
+        final var audienceRestriction = newSamlObject(AudienceRestrictionCondition.class);
+        final var audience = newSamlObject(Audience.class);
         audience.setUri(audienceUri);
         audienceRestriction.getAudiences().add(audience);
         conditions.getAudienceRestrictionConditions().add(audienceRestriction);
@@ -152,12 +152,12 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      * @return the status
      */
     public Status newStatus(final QName codeValue, final String statusMessage) {
-        final Status status = newSamlObject(Status.class);
-        final StatusCode code = newSamlObject(StatusCode.class);
+        final var status = newSamlObject(Status.class);
+        final var code = newSamlObject(StatusCode.class);
         code.setValue(codeValue);
         status.setStatusCode(code);
         if (StringUtils.isNotBlank(statusMessage)) {
-            final StatusMessage message = newSamlObject(StatusMessage.class);
+            final var message = newSamlObject(StatusMessage.class);
             message.setMessage(statusMessage);
             status.setStatusMessage(message);
         }
@@ -176,7 +176,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
                                                               final Collection<Object> authenticationMethod,
                                                               final String subjectId) {
 
-        final AuthenticationStatement authnStatement = newSamlObject(AuthenticationStatement.class);
+        final var authnStatement = newSamlObject(AuthenticationStatement.class);
         authnStatement.setAuthenticationInstant(DateTimeUtils.dateTimeOf(authenticationDate));
 
         authnStatement.setAuthenticationMethod(
@@ -206,13 +206,13 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      * @return the subject
      */
     public Subject newSubject(final String identifier, final String confirmationMethod) {
-        final SubjectConfirmation confirmation = newSamlObject(SubjectConfirmation.class);
-        final ConfirmationMethod method = newSamlObject(ConfirmationMethod.class);
+        final var confirmation = newSamlObject(SubjectConfirmation.class);
+        final var method = newSamlObject(ConfirmationMethod.class);
         method.setConfirmationMethod(confirmationMethod);
         confirmation.getConfirmationMethods().add(method);
-        final NameIdentifier nameIdentifier = newSamlObject(NameIdentifier.class);
+        final var nameIdentifier = newSamlObject(NameIdentifier.class);
         nameIdentifier.setNameIdentifier(identifier);
-        final Subject subject = newSamlObject(Subject.class);
+        final var subject = newSamlObject(Subject.class);
         subject.setNameIdentifier(nameIdentifier);
         subject.setSubjectConfirmation(confirmation);
         return subject;
@@ -243,14 +243,14 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
                                                     final Map<String, Object> attributes,
                                                     final String attributeNamespace) {
 
-        final AttributeStatement attrStatement = newSamlObject(AttributeStatement.class);
+        final var attrStatement = newSamlObject(AttributeStatement.class);
         attrStatement.setSubject(subject);
-        for (final Map.Entry<String, Object> e : attributes.entrySet()) {
+        for (final var e : attributes.entrySet()) {
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
                 LOGGER.info("Skipping attribute [{}] because it does not have any values.", e.getKey());
                 continue;
             }
-            final Attribute attribute = newSamlObject(Attribute.class);
+            final var attribute = newSamlObject(Attribute.class);
             attribute.setAttributeName(e.getKey());
 
             if (StringUtils.isNotBlank(attributeNamespace)) {

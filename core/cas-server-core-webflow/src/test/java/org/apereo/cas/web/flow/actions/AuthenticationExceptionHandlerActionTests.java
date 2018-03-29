@@ -35,54 +35,54 @@ public class AuthenticationExceptionHandlerActionTests {
  
     @Test
     public void handleAccountNotFoundExceptionByDefault() {
-        final AuthenticationExceptionHandlerAction handler = new AuthenticationExceptionHandlerAction(
+        final var handler = new AuthenticationExceptionHandlerAction(
                 CollectionUtils.wrapSet(AccountLockedException.class, AccountNotFoundException.class)
         );
-        final RequestContext req = getMockRequestContext();
+        final var req = getMockRequestContext();
 
         final Map<String, Throwable> map = new HashMap<>();
         map.put("notFound", new AccountNotFoundException());
-        final String id = handler.handle(new AuthenticationException(map), req);
+        final var id = handler.handle(new AuthenticationException(map), req);
         assertEquals(AccountNotFoundException.class.getSimpleName(), id);
     }
 
     private RequestContext getMockRequestContext() {
-        final RequestContext ctx = mock(RequestContext.class);
+        final var ctx = mock(RequestContext.class);
         when(ctx.getMessageContext()).thenReturn(mock(MessageContext.class));
         return ctx;
     }
 
     @Test
     public void handleUnknownExceptionByDefault() {
-        final AuthenticationExceptionHandlerAction handler = new AuthenticationExceptionHandlerAction();
-        final RequestContext req = getMockRequestContext();
+        final var handler = new AuthenticationExceptionHandlerAction();
+        final var req = getMockRequestContext();
         final Map<String, Throwable> map = new HashMap<>();
         map.put("unknown", new GeneralSecurityException());
-        final String id = handler.handle(new AuthenticationException(map), req);
+        final var id = handler.handle(new AuthenticationException(map), req);
         assertEquals("UNKNOWN", id);
     }
 
     @Test
     public void handleUnknownTicketExceptionByDefault() {
-        final AuthenticationExceptionHandlerAction handler = new AuthenticationExceptionHandlerAction();
-        final RequestContext req = getMockRequestContext();
+        final var handler = new AuthenticationExceptionHandlerAction();
+        final var req = getMockRequestContext();
 
-        final String id = handler.handle(new InvalidTicketException("TGT"), req);
+        final var id = handler.handle(new InvalidTicketException("TGT"), req);
         assertEquals("UNKNOWN", id);
     }
     
     @Test
     public void handleUnsatisfiedAuthenticationPolicyExceptionByDefault() {
-        final AuthenticationExceptionHandlerAction handler = new AuthenticationExceptionHandlerAction(
+        final var handler = new AuthenticationExceptionHandlerAction(
                 CollectionUtils.wrapSet(UnsatisfiedAuthenticationPolicyException.class,
                         AccountNotFoundException.class)
         );
-        final RequestContext req = getMockRequestContext();
+        final var req = getMockRequestContext();
 
         final ContextualAuthenticationPolicy<?> policy = new TestContextualAuthenticationPolicy();
-        final String id = handler.handle(new UnsatisfiedAuthenticationPolicyException(policy), req);
+        final var id = handler.handle(new UnsatisfiedAuthenticationPolicyException(policy), req);
         assertEquals("UnsatisfiedAuthenticationPolicyException", id);
-        final ArgumentCaptor<DefaultMessageResolver> message = ArgumentCaptor.forClass(DefaultMessageResolver.class);
+        final var message = ArgumentCaptor.forClass(DefaultMessageResolver.class);
         verify(req.getMessageContext(), times(1)).addMessage(message.capture());
         assertArrayEquals(new String[]{policy.getCode().get()}, message.getValue().getCodes());
     }

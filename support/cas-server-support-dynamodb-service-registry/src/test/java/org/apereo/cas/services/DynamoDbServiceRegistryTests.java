@@ -54,7 +54,7 @@ public class DynamoDbServiceRegistryTests {
 
     @Before
     public void setUp() {
-        final List<RegisteredService> services = this.serviceRegistry.load();
+        final var services = this.serviceRegistry.load();
         services.forEach(service -> this.serviceRegistry.delete(service));
     }
 
@@ -65,7 +65,7 @@ public class DynamoDbServiceRegistryTests {
             list.add(buildService(i));
             this.serviceRegistry.save(list.get(i));
         });
-        final List<RegisteredService> results = this.serviceRegistry.load();
+        final var results = this.serviceRegistry.load();
         assertEquals(results.size(), list.size());
         IntStream.range(0, 10).forEach(i -> list.contains(results.get(i)));
         IntStream.range(0, 10).forEach(i -> this.serviceRegistry.delete(results.get(i)));
@@ -73,10 +73,10 @@ public class DynamoDbServiceRegistryTests {
     }
 
     private static RegisteredService buildService(final int i) {
-        final AbstractRegisteredService rs = RegisteredServiceTestUtils.getRegisteredService("^http://www.serviceid" + i + ".org");
+        final var rs = RegisteredServiceTestUtils.getRegisteredService("^http://www.serviceid" + i + ".org");
         rs.setEvaluationOrder(i);
         final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
-        final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
+        final var property = new DefaultRegisteredServiceProperty();
         final Set<String> values = new HashSet<>();
         values.add("value111");
         values.add("value211");

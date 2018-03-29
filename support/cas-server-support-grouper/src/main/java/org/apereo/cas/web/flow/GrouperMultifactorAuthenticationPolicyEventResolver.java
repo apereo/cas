@@ -60,8 +60,8 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final RegisteredService service = resolveRegisteredServiceInRequestContext(context);
-        final Authentication authentication = WebUtils.getAuthentication(context);
+        final var service = resolveRegisteredServiceInRequestContext(context);
+        final var authentication = WebUtils.getAuthentication(context);
 
         if (StringUtils.isBlank(grouperField)) {
             LOGGER.debug("No group field is defined to process for Grouper multifactor trigger");
@@ -72,36 +72,36 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
             return null;
         }
 
-        final Principal principal = authentication.getPrincipal();
-        final Collection<WsGetGroupsResult> results = GrouperFacade.getGroupsForSubjectId(principal.getId());
+        final var principal = authentication.getPrincipal();
+        final var results = GrouperFacade.getGroupsForSubjectId(principal.getId());
         if (results.isEmpty()) {
             LOGGER.debug("No groups could be found for [{}] to resolve events for MFA", principal);
             return null;
         }
 
-        final Map<String, MultifactorAuthenticationProvider> providerMap =
+        final var providerMap =
                 MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
 
-        final GrouperGroupField groupField = GrouperGroupField.valueOf(grouperField);
+        final var groupField = GrouperGroupField.valueOf(grouperField);
 
-        final Set<String> values = results.stream()
+        final var values = results.stream()
                 .map(wsGetGroupsResult -> Stream.of(wsGetGroupsResult.getWsGroups()))
                 .flatMap(Function.identity())
                 .map(g -> GrouperFacade.getGrouperGroupAttribute(groupField, g))
                 .collect(Collectors.toSet());
 
-        final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, values);
+        final var providerFound = resolveProvider(providerMap, values);
 
         if (providerFound.isPresent()) {
-            final MultifactorAuthenticationProvider provider = providerFound.get();
+            final var provider = providerFound.get();
             if (provider.isAvailable(service)) {
                 LOGGER.debug("Attempting to build event based on the authentication provider [{}] and service [{}]",
                         provider, service.getName());
-                final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
+                final var event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
                         buildEventAttributeMap(authentication.getPrincipal(), service, provider));
                 return CollectionUtils.wrapSet(event);
             }

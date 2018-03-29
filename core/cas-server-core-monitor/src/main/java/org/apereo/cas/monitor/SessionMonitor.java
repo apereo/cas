@@ -36,23 +36,23 @@ public class SessionMonitor extends AbstractHealthIndicator {
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
 
-        final long sessionCount = this.registryState.sessionCount();
-        final long ticketCount = this.registryState.serviceTicketCount();
+        final var sessionCount = this.registryState.sessionCount();
+        final var ticketCount = this.registryState.serviceTicketCount();
 
         if (sessionCount == Integer.MIN_VALUE || ticketCount == Integer.MIN_VALUE) {
-            final String msg = String.format("Ticket registry %s reports unknown session and/or ticket counts.", this.registryState.getClass().getName());
+            final var msg = String.format("Ticket registry %s reports unknown session and/or ticket counts.", this.registryState.getClass().getName());
             buildHealthCheckStatus(builder.unknown(), sessionCount, ticketCount, msg);
             return;
         }
 
         if (this.sessionCountWarnThreshold > -1 && sessionCount > this.sessionCountWarnThreshold) {
-            final String msg = String.format("Session count (%s) is above threshold %s. ", sessionCount, this.sessionCountWarnThreshold);
+            final var msg = String.format("Session count (%s) is above threshold %s. ", sessionCount, this.sessionCountWarnThreshold);
             buildHealthCheckStatus(builder.status("WARN"), sessionCount, ticketCount, msg);
             return;
         }
 
         if (this.serviceTicketCountWarnThreshold > -1 && ticketCount > this.serviceTicketCountWarnThreshold) {
-            final String msg = String.format("Service ticket count (%s) is above threshold %s.", ticketCount, this.serviceTicketCountWarnThreshold);
+            final var msg = String.format("Service ticket count (%s) is above threshold %s.", ticketCount, this.serviceTicketCountWarnThreshold);
             buildHealthCheckStatus(builder.status("WARN"), sessionCount, ticketCount, msg);
             return;
         }

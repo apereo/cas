@@ -45,9 +45,9 @@ public class RegexRegisteredServiceTests {
 
     @Parameterized.Parameters
     public static Collection<Object[]> getParameters() {
-        final String domainCatchallHttp = "https*://([A-Za-z0-9_-]+\\.)+vt\\.edu/.*";
-        final String domainCatchallHttpImap = "(https*|imaps*)://([A-Za-z0-9_-]+\\.)+vt\\.edu/.*";
-        final String globalCatchallHttpImap = "(https*|imaps*)://.*";
+        final var domainCatchallHttp = "https*://([A-Za-z0-9_-]+\\.)+vt\\.edu/.*";
+        final var domainCatchallHttpImap = "(https*|imaps*)://([A-Za-z0-9_-]+\\.)+vt\\.edu/.*";
+        final var globalCatchallHttpImap = "(https*|imaps*)://.*";
         return Arrays.asList(new Object[][]{
                 // CAS-1071 domain-specific HTTP catch-all #1
                 {
@@ -110,14 +110,14 @@ public class RegexRegisteredServiceTests {
     }
 
     private static RegexRegisteredService newService(final String id) {
-        final RegexRegisteredService service = new RegexRegisteredService();
+        final var service = new RegexRegisteredService();
         service.setServiceId(id);
         return service;
     }
 
     @Test
     public void verifySerializeARegexRegisteredServiceToJson() throws IOException {
-        final RegexRegisteredService serviceWritten = newService("serviceId");
+        final var serviceWritten = newService("serviceId");
         serviceWritten.setLogoutType(RegisteredService.LogoutType.FRONT_CHANNEL);
         MAPPER.writeValue(JSON_FILE, serviceWritten);
         final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, RegexRegisteredService.class);

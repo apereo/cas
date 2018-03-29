@@ -42,24 +42,24 @@ public class ServiceWarningAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
         final Service service = WebUtils.getService(context);
-        final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
+        final var ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
 
-        final Authentication authentication = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
+        final var authentication = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
         if (authentication == null) {
             throw new InvalidTicketException(
                     new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket), ticketGrantingTicket);
         }
 
-        final Credential credential = WebUtils.getCredential(context);
-        final AuthenticationResultBuilder authenticationResultBuilder =
+        final var credential = WebUtils.getCredential(context);
+        final var authenticationResultBuilder =
                 authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
-        final AuthenticationResult authenticationResult = authenticationResultBuilder.build(service);
+        final var authenticationResult = authenticationResultBuilder.build(service);
 
-        final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
+        final var serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
         WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
 
         if (request.getParameterMap().containsKey("ignorewarn")) {

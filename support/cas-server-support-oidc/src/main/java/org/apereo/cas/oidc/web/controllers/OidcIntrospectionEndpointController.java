@@ -95,18 +95,18 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
                                                                                   final HttpServletResponse response) {
         try {
             final CredentialsExtractor<UsernamePasswordCredentials> authExtractor = new BasicAuthExtractor();
-            final UsernamePasswordCredentials credentials = authExtractor.extract(Pac4jUtils.getPac4jJ2EContext(request, response));
+            final var credentials = authExtractor.extract(Pac4jUtils.getPac4jJ2EContext(request, response));
             if (credentials == null) {
                 throw new IllegalArgumentException("No credentials are provided to verify introspection on the access token");
             }
 
-            final OAuthRegisteredService service = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, credentials.getUsername());
+            final var service = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, credentials.getUsername());
             if (validateIntrospectionRequest(service, credentials, request)) {
-                final String accessToken = StringUtils.defaultIfBlank(request.getParameter(OAuth20Constants.ACCESS_TOKEN),
+                final var accessToken = StringUtils.defaultIfBlank(request.getParameter(OAuth20Constants.ACCESS_TOKEN),
                         request.getParameter(OAuth20Constants.TOKEN));
 
                 LOGGER.debug("Located access token [{}] in the request", accessToken);
-                final AccessToken ticket = this.centralAuthenticationService.getTicket(accessToken, AccessToken.class);
+                final var ticket = this.centralAuthenticationService.getTicket(accessToken, AccessToken.class);
                 if (ticket != null) {
                     return createIntrospectionResponse(service, ticket);
                 }
@@ -121,7 +121,7 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
     private boolean validateIntrospectionRequest(final OAuthRegisteredService service,
                                                  final UsernamePasswordCredentials credentials,
                                                  final HttpServletRequest request) {
-        final boolean tokenExists = validator.checkParameterExist(request, OAuth20Constants.ACCESS_TOKEN)
+        final var tokenExists = validator.checkParameterExist(request, OAuth20Constants.ACCESS_TOKEN)
                 || validator.checkParameterExist(request, OAuth20Constants.TOKEN);
         return validator.checkServiceValid(service)
                 && tokenExists
@@ -129,18 +129,18 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
     }
 
     private ResponseEntity<OidcIntrospectionAccessTokenResponse> createIntrospectionResponse(final OAuthRegisteredService service, final AccessToken ticket) {
-        final OidcIntrospectionAccessTokenResponse introspect = new OidcIntrospectionAccessTokenResponse();
+        final var introspect = new OidcIntrospectionAccessTokenResponse();
         introspect.setActive(true);
         introspect.setClientId(service.getClientId());
-        final Authentication authentication = ticket.getAuthentication();
-        final String subject = authentication.getPrincipal().getId();
+        final var authentication = ticket.getAuthentication();
+        final var subject = authentication.getPrincipal().getId();
         introspect.setSub(subject);
         introspect.setUniqueSecurityName(subject);
         introspect.setExp(ticket.getExpirationPolicy().getTimeToLive());
         introspect.setIat(ticket.getCreationTime().toInstant().toEpochMilli());
 
-        final Object methods = authentication.getAttributes().get(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);
-        final String realmNames = CollectionUtils.toCollection(methods)
+        final var methods = authentication.getAttributes().get(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);
+        final var realmNames = CollectionUtils.toCollection(methods)
                 .stream()
                 .map(Object::toString)
                 .collect(Collectors.joining(","));
@@ -148,7 +148,7 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
         introspect.setRealmName(realmNames);
         introspect.setTokenType(OAuth20Constants.TOKEN_TYPE_BEARER);
 
-        final String grant = authentication.getAttributes()
+        final var grant = authentication.getAttributes()
                 .getOrDefault(OAuth20Constants.GRANT_TYPE, StringUtils.EMPTY).toString().toLowerCase();
         introspect.setGrantType(grant);
         introspect.setScope(OidcConstants.StandardScopes.OPENID.getScope());

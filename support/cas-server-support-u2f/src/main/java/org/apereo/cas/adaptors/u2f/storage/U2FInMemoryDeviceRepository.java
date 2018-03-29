@@ -35,7 +35,7 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     @SneakyThrows
     public List<DeviceRegistration> getRegisteredDevices(final String username) {
-        final List<DeviceRegistration> registrations = userStorage.get(username).values()
+        final var registrations = userStorage.get(username).values()
             .stream()
             .map(r -> {
                 try {

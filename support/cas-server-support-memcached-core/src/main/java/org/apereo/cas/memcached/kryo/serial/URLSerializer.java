@@ -21,7 +21,7 @@ public class URLSerializer extends Serializer<URL> {
     @Override
     @SneakyThrows
     public URL read(final Kryo kryo, final Input input, final Class<URL> type) {
-        final String url = kryo.readObject(input, String.class);
+        final var url = kryo.readObject(input, String.class);
         return new URL(url);
     }
 

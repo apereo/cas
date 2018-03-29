@@ -64,7 +64,7 @@ public class JpaConsentRepository implements ConsentRepository {
     public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService,
                                                final Authentication authentication) {
         try {
-            final String query = SELECT_QUERY.concat("where r.principal = :principal and r.service = :service");
+            final var query = SELECT_QUERY.concat("where r.principal = :principal and r.service = :service");
             return this.entityManager.createQuery(query, ConsentDecision.class)
                 .setParameter("principal", authentication.getPrincipal().getId())
                 .setParameter("service", service.getId()).getSingleResult();
@@ -79,8 +79,8 @@ public class JpaConsentRepository implements ConsentRepository {
     @Override
     public boolean storeConsentDecision(final ConsentDecision decision) {
         try {
-            final boolean isNew = decision.getId() < 0;
-            final ConsentDecision mergedDecision = this.entityManager.merge(decision);
+            final var isNew = decision.getId() < 0;
+            final var mergedDecision = this.entityManager.merge(decision);
             if (!isNew) {
                 this.entityManager.persist(mergedDecision);
             }
@@ -94,7 +94,7 @@ public class JpaConsentRepository implements ConsentRepository {
     @Override
     public boolean deleteConsentDecision(final long decisionId) {
         try {
-            final ConsentDecision decision = this.entityManager.createQuery(SELECT_QUERY.concat("where r.id = :id"), ConsentDecision.class)
+            final var decision = this.entityManager.createQuery(SELECT_QUERY.concat("where r.id = :id"), ConsentDecision.class)
                 .setParameter("id", decisionId).getSingleResult();
             this.entityManager.remove(decision);
             return true;
@@ -107,7 +107,7 @@ public class JpaConsentRepository implements ConsentRepository {
     @Override
     public boolean deleteConsentDecisions(final String principal) {
         try {
-            final TypedQuery<ConsentDecision> query = this.entityManager.createQuery(
+            final var query = this.entityManager.createQuery(
                 DELETE_QUERY.concat("where r.principal = :principal"), ConsentDecision.class)
                 .setParameter(principal, principal);
             return query.executeUpdate() > 0;

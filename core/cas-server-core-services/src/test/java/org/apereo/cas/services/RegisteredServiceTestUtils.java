@@ -59,7 +59,7 @@ public class RegisteredServiceTestUtils {
     }
 
     public static UsernamePasswordCredential getCredentialsWithSameUsernameAndPassword(final String username) {
-        final UsernamePasswordCredential usernamePasswordCredentials = new UsernamePasswordCredential();
+        final var usernamePasswordCredentials = new UsernamePasswordCredential();
         usernamePasswordCredentials.setUsername(username);
         usernamePasswordCredentials.setPassword(username);
 
@@ -67,7 +67,7 @@ public class RegisteredServiceTestUtils {
     }
 
     public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword(final String username, final String password) {
-        final UsernamePasswordCredential usernamePasswordCredentials = new UsernamePasswordCredential();
+        final var usernamePasswordCredentials = new UsernamePasswordCredential();
         usernamePasswordCredentials.setUsername(username);
         usernamePasswordCredentials.setPassword(password);
 
@@ -79,7 +79,7 @@ public class RegisteredServiceTestUtils {
     }
 
     public static AbstractWebApplicationService getService(final String name) {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var request = new MockHttpServletRequest();
         request.addParameter("service", name);
         return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
     }
@@ -115,7 +115,7 @@ public class RegisteredServiceTestUtils {
 
     @SneakyThrows
     public static AbstractRegisteredService getRegisteredService(final String id) {
-        final RegexRegisteredService s = new RegexRegisteredService();
+        final var s = new RegexRegisteredService();
         s.setServiceId(id);
         s.setEvaluationOrder(1);
         s.setName("Test registered service " + id);
@@ -124,7 +124,7 @@ public class RegisteredServiceTestUtils {
         s.setId(RandomUtils.getNativeInstance().nextInt(Math.abs(s.hashCode())));
         s.setTheme("exampleTheme");
         s.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("uid"));
-        final DefaultRegisteredServiceAccessStrategy accessStrategy =
+        final var accessStrategy =
             new DefaultRegisteredServiceAccessStrategy(true, true);
         accessStrategy.setRequireAllAttributes(true);
         accessStrategy.setRequiredAttributes(getTestAttributes());
@@ -136,11 +136,11 @@ public class RegisteredServiceTestUtils {
 
         s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA"));
 
-        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
+        final var policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAuthorizedToReleaseCredentialPassword(true);
         policy.setAuthorizedToReleaseProxyGrantingTicket(true);
 
-        final CachingPrincipalAttributesRepository repo =
+        final var repo =
             new CachingPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 10);
         repo.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
         policy.setPrincipalAttributesRepository(repo);

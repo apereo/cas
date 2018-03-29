@@ -36,7 +36,7 @@ public class CasAcceptableUsagePolicyLdapConfiguration {
     @RefreshScope
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
-        final AcceptableUsagePolicyProperties.Ldap ldap = casProperties.getAcceptableUsagePolicy().getLdap();
+        final var ldap = casProperties.getAcceptableUsagePolicy().getLdap();
         final ConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new LdapAcceptableUsagePolicyRepository(ticketRegistrySupport,
                 casProperties.getAcceptableUsagePolicy().getAupAttributeName(),

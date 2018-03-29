@@ -67,14 +67,14 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "personDirectoryPrincipalResolver")
     public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("principalFactory") final PrincipalFactory principalFactory) {
-        final PersonDirectoryPrincipalResolver bean = new PersonDirectoryPrincipalResolver(
+        final var bean = new PersonDirectoryPrincipalResolver(
             attributeRepository,
             principalFactory,
             casProperties.getPersonDirectory().isReturnNull(),
             casProperties.getPersonDirectory().getPrincipalAttribute()
         );
 
-        final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
+        final var resolver = new ChainingPrincipalResolver();
         if (!attributeRepositories.isEmpty()) {
             LOGGER.debug("Attribute repository sources are defined and available for the principal resolution chain. "
                 + "The principal resolver will use a combination of attributes collected from attribute repository sources "
@@ -93,7 +93,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "globalPrincipalAttributeRepository")
     public PrincipalAttributesRepository globalPrincipalAttributeRepository() {
-        final PrincipalAttributesProperties props = casProperties.getAuthn().getAttributeRepository();
+        final var props = casProperties.getAuthn().getAttributeRepository();
         final long cacheTime = props.getExpirationTime();
         if (cacheTime < 0) {
             return new DefaultPrincipalAttributesRepository();

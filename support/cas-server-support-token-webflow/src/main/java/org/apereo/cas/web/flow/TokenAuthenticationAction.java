@@ -47,13 +47,13 @@ public class TokenAuthenticationAction extends AbstractNonInteractiveCredentials
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext requestContext) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        final String authTokenValue = this.tokenRequestExtractor.extract(request);
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        final var authTokenValue = this.tokenRequestExtractor.extract(request);
         final Service service = WebUtils.getService(requestContext);
 
         if (StringUtils.isNotBlank(authTokenValue) && service != null) {
             try {
-                final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+                final var registeredService = this.servicesManager.findServiceBy(service);
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
 
                 final Credential credential = new TokenCredential(authTokenValue, service);

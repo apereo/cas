@@ -43,18 +43,18 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
     @Override
     public AccessTokenRequestDataHolder extract(final HttpServletRequest request, final HttpServletResponse response) {
-        final String grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
-        final Set<String> scopes = OAuth20Utils.parseRequestScopes(request);
+        final var grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
+        final var scopes = OAuth20Utils.parseRequestScopes(request);
 
         LOGGER.debug("OAuth grant type is [{}]", grantType);
 
-        final String redirectUri = getRegisteredServiceIdentifierFromRequest(request);
-        final OAuthRegisteredService registeredService = getOAuthRegisteredServiceBy(request);
+        final var redirectUri = getRegisteredServiceIdentifierFromRequest(request);
+        final var registeredService = getOAuthRegisteredServiceBy(request);
         if (registeredService == null) {
             throw new UnauthorizedServiceException("Unable to locate service in registry for redirect URI " + redirectUri);
         }
 
-        final OAuthToken token = getOAuthTokenFromRequest(request);
+        final var token = getOAuthTokenFromRequest(request);
         if (token == null) {
             throw new InvalidTicketException(getOAuthParameter(request));
         }
@@ -107,7 +107,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * @return the OAuth token
      */
     protected OAuthToken getOAuthTokenFromRequest(final HttpServletRequest request) {
-        final OAuthToken token = this.ticketRegistry.getTicket(getOAuthParameter(request), OAuthToken.class);
+        final var token = this.ticketRegistry.getTicket(getOAuthParameter(request), OAuthToken.class);
         if (token == null || token.isExpired()) {
             LOGGER.error("OAuth token indicated by parameter [{}] has expired or not found: [{}]", getOAuthParameter(request), token);
             if (token != null) {
@@ -126,7 +126,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      */
     @Override
     public boolean supports(final HttpServletRequest context) {
-        final String grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
+        final var grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, getGrantType());
     }
 
@@ -144,8 +144,8 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * @return the registered service
      */
     protected OAuthRegisteredService getOAuthRegisteredServiceBy(final HttpServletRequest request) {
-        final String redirectUri = getRegisteredServiceIdentifierFromRequest(request);
-        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, redirectUri);
+        final var redirectUri = getRegisteredServiceIdentifierFromRequest(request);
+        final var registeredService = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, redirectUri);
         LOGGER.debug("Located registered service [{}]", registeredService);
         return registeredService;
     }

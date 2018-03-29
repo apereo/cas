@@ -49,12 +49,12 @@ public class UsernamePasswordWrapperAuthenticationHandler extends AbstractWrappe
     @Override
     protected UsernamePasswordCredentials convertToPac4jCredentials(final UsernamePasswordCredential casCredential) throws GeneralSecurityException {
         LOGGER.debug("CAS credentials: [{}]", casCredential);
-        final String username = this.principalNameTransformer.transform(casCredential.getUsername());
+        final var username = this.principalNameTransformer.transform(casCredential.getUsername());
         if (username == null) {
             throw new AccountNotFoundException("Username is null.");
         }
-        final String password = this.passwordEncoder.encode(casCredential.getPassword());
-        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
+        final var password = this.passwordEncoder.encode(casCredential.getPassword());
+        final var credentials = new UsernamePasswordCredentials(username, password);
         LOGGER.debug("pac4j credentials: [{}]", credentials);
         return credentials;
     }

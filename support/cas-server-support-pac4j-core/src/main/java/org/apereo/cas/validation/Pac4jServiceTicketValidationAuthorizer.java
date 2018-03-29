@@ -33,25 +33,25 @@ public class Pac4jServiceTicketValidationAuthorizer implements ServiceTicketVali
 
     @Override
     public void authorize(final HttpServletRequest request, final Service service, final Assertion assertion) {
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        final var registeredService = this.servicesManager.findServiceBy(service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
         LOGGER.debug("Evaluating service [{}] for delegated authentication policy", service);
-        final RegisteredServiceDelegatedAuthenticationPolicy policy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
+        final var policy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
         if (policy != null) {
-            final Map<String, Object> attributes = assertion.getPrimaryAuthentication().getAttributes();
+            final var attributes = assertion.getPrimaryAuthentication().getAttributes();
 
             if (attributes.containsKey(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME)) {
-                final Object clientNameAttr = attributes.get(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME);
-                final Optional<Object> value = CollectionUtils.firstElement(clientNameAttr);
+                final var clientNameAttr = attributes.get(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME);
+                final var value = CollectionUtils.firstElement(clientNameAttr);
                 if (value.isPresent()) {
-                    final String client = value.get().toString();
+                    final var client = value.get().toString();
                     LOGGER.debug("Evaluating delegated authentication policy [{}] for client [{}] and service [{}]", policy, client, registeredService);
 
-                    final AuditableContext context = AuditableContext.builder()
+                    final var context = AuditableContext.builder()
                         .registeredService(registeredService)
                         .properties(CollectionUtils.wrap(Client.class.getSimpleName(), client))
                         .build();
-                    final AuditableExecutionResult result = delegatedAuthenticationPolicyEnforcer.execute(context);
+                    final var result = delegatedAuthenticationPolicyEnforcer.execute(context);
                     result.throwExceptionIfNeeded();
                 }
             }

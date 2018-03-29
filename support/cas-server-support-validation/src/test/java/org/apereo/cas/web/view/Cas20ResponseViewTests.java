@@ -69,11 +69,11 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
 
     @Test
     public void verifyView() throws Exception {
-        final ModelAndView modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
-        final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());
+        final var modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
+        final var req = new MockHttpServletRequest(new MockServletContext());
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
-        final MockHttpServletResponse resp = new MockHttpServletResponse();
+        final var resp = new MockHttpServletResponse();
         final View delegatedView = new View() {
             @Override
             public String getContentType() {
@@ -85,7 +85,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
                 map.forEach(request::setAttribute);
             }
         };
-        final Cas20ResponseView view = new Cas20ResponseView(true, null,
+        final var view = new Cas20ResponseView(true, null,
             null, "attribute", delegatedView, new DefaultAuthenticationAttributeReleasePolicy(),
             new DefaultAuthenticationServiceSelectionPlan());
         view.render(modelAndView.getModel(), req, resp);

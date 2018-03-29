@@ -44,10 +44,10 @@ public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdap
     @Override
     protected InputStream getResourceInputStream(final Resource resource, final String entityId) throws IOException {
         if (resource instanceof UrlResource && resource.getURL().toExternalForm().toLowerCase().endsWith("/entities/")) {
-            final String encodedId = EncodingUtils.urlEncode(entityId);
-            final URL url = new URL(resource.getURL().toExternalForm().concat(encodedId));
+            final var encodedId = EncodingUtils.urlEncode(entityId);
+            final var url = new URL(resource.getURL().toExternalForm().concat(encodedId));
             LOGGER.debug("Locating metadata input stream for [{}] via [{}]", encodedId, url);
-            final HttpURLConnection httpcon = (HttpURLConnection) url.openConnection();
+            final var httpcon = (HttpURLConnection) url.openConnection();
             httpcon.setDoOutput(true);
             httpcon.addRequestProperty("Accept", "*/*");
             httpcon.setRequestMethod("GET");

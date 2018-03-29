@@ -48,7 +48,7 @@ public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactor
      */
     public boolean canPing() {
         try {
-            final HttpURLConnection connection = (HttpURLConnection) new URL(this.swivelUrl).openConnection();
+            final var connection = (HttpURLConnection) new URL(this.swivelUrl).openConnection();
             connection.setRequestMethod(HttpMethod.GET.name());
             connection.connect();
             return connection.getResponseCode() == HttpStatus.SC_OK;

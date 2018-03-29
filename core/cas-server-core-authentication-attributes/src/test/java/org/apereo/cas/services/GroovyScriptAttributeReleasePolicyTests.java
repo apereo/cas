@@ -25,7 +25,7 @@ public class GroovyScriptAttributeReleasePolicyTests {
 
     @Test
     public void verifySerializeAGroovyScriptAttributeReleasePolicyToJson() throws IOException {
-        final GroovyScriptAttributeReleasePolicy policyWritten = new GroovyScriptAttributeReleasePolicy();
+        final var policyWritten = new GroovyScriptAttributeReleasePolicy();
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
 

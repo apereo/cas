@@ -29,10 +29,10 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
      */
     private static AbstractWebApplicationService determineWebApplicationFormat(final HttpServletRequest request,
                                                                                final AbstractWebApplicationService webApplicationService) {
-        final String format = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_FORMAT) : null;
+        final var format = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_FORMAT) : null;
         try {
             if (StringUtils.isNotBlank(format)) {
-                final ValidationResponseType formatType = ValidationResponseType.valueOf(format.toUpperCase());
+                final var formatType = ValidationResponseType.valueOf(format.toUpperCase());
                 webApplicationService.setFormat(formatType);
             }
         } catch (final Exception e) {
@@ -50,8 +50,8 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
      */
     protected static AbstractWebApplicationService newWebApplicationService(final HttpServletRequest request,
                                                                             final String serviceToUse) {
-        final String artifactId = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_TICKET) : null;
-        final String id = cleanupUrl(serviceToUse);
+        final var artifactId = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_TICKET) : null;
+        final var id = cleanupUrl(serviceToUse);
         final AbstractWebApplicationService newService = new SimpleWebApplicationServiceImpl(id, serviceToUse, artifactId);
         determineWebApplicationFormat(request, newService);
         return newService;
@@ -65,9 +65,9 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
      * @return the requested service
      */
     protected String getRequestedService(final HttpServletRequest request) {
-        final String targetService = request.getParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE);
-        final String service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
-        final Object serviceAttribute = request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
+        final var targetService = request.getParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE);
+        final var service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
+        final var serviceAttribute = request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
 
         String serviceToUse = null;
         if (StringUtils.isNotBlank(targetService)) {
@@ -90,7 +90,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
 
     @Override
     public WebApplicationService createService(final HttpServletRequest request) {
-        final String serviceToUse = getRequestedService(request);
+        final var serviceToUse = getRequestedService(request);
         if (StringUtils.isBlank(serviceToUse)) {
             LOGGER.debug("No service is specified in the request. Skipping service creation");
             return null;

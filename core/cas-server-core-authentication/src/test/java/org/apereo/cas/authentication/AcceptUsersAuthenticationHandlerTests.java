@@ -43,7 +43,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifySupportsSpecialCharacters() throws Exception {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
+        final var c = new UsernamePasswordCredential();
         c.setUsername("brian");
         c.setPassword("t�st");
         assertEquals("brian", this.authenticationHandler.authenticate(c).getPrincipal().getId());
@@ -51,7 +51,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifySupportsProperUserCredentials() {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
+        final var c = new UsernamePasswordCredential();
 
         c.setUsername(SCOTT);
         c.setPassword(RUTGERS);
@@ -71,7 +71,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticatesUserInMap() throws Exception {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
+        final var c = new UsernamePasswordCredential();
 
         c.setUsername(SCOTT);
         c.setPassword(RUTGERS);
@@ -85,7 +85,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsUserNotInMap() throws Exception {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
+        final var c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
         c.setPassword(RUTGERS);
@@ -98,7 +98,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsNullUserName() throws Exception {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
+        final var c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword("user");
@@ -109,7 +109,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsNullUserNameAndPassword() throws Exception {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
+        final var c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword(null);
@@ -122,7 +122,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsNullPassword() throws Exception {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
+        final var c = new UsernamePasswordCredential();
 
         c.setUsername(SCOTT);
         c.setPassword(null);

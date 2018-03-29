@@ -66,11 +66,11 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
 
     @Override
     public CommonProfile generate(final WebContext context, final CommonProfile profile) {
-        final String username = profile.getId();
+        final var username = profile.getId();
         final SearchResult userResult;
         try {
             LOGGER.debug("Attempting to get details for user [{}].", username);
-            final Response<SearchResult> response = this.userSearchExecutor.search(
+            final var response = this.userSearchExecutor.search(
                     this.connectionFactory,
                     LdapUtils.newLdaptiveSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(),
                             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(username)));
@@ -86,7 +86,7 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
                         "Found multiple results for user which is not allowed (allowMultipleResults=false).");
             }
 
-            final LdapEntry userEntry = userResult.getEntry();
+            final var userEntry = userResult.getEntry();
             return generateAuthorizationForLdapEntry(profile, userEntry);
         } catch (final LdapException e) {
             throw new IllegalArgumentException("LDAP error fetching details for user.", e);

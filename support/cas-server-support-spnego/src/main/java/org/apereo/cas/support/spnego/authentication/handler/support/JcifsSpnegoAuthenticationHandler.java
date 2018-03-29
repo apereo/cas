@@ -51,7 +51,7 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
     @Override
     @Synchronized
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
-        final SpnegoCredential spnegoCredential = (SpnegoCredential) credential;
+        final var spnegoCredential = (SpnegoCredential) credential;
         final java.security.Principal principal;
         final byte[] nextToken;
         if (!this.ntlmAllowed && spnegoCredential.isNtlm()) {
@@ -75,7 +75,7 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
         } else {
             LOGGER.debug("nextToken is null");
         }
-        boolean success = false;
+        var success = false;
         if (principal != null) {
             if (spnegoCredential.isNtlm()) {
                 LOGGER.debug("NTLM Credential is valid for user [{}]", principal.getName());

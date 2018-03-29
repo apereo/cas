@@ -61,8 +61,8 @@ public class UserAuthenticationResource {
             if (credential == null || credential.isEmpty()) {
                 throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
             }
-            final Service service = this.serviceFactory.createService(request);
-            final AuthenticationResult authenticationResult =
+            final var service = this.serviceFactory.createService(request);
+            final var authenticationResult =
                 authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
             return this.userAuthenticationResourceEntityResponseFactory.build(authenticationResult, request);
         } catch (final AuthenticationException e) {

@@ -43,7 +43,7 @@ public class RequestHeaderMultifactorAuthenticationPolicyEventResolver extends B
 
     @Override
     protected List<String> resolveEventFromHttpRequest(final HttpServletRequest request) {
-        final Enumeration<String> values = request.getHeaders(mfaRequestHeader);
+        final var values = request.getHeaders(mfaRequestHeader);
         if (values != null) {
             LOGGER.debug("Received request header [{}] as [{}]", mfaRequestHeader, values);
             return Collections.list(values);

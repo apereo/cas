@@ -62,7 +62,7 @@ public class EncryptPropertyCommand implements CommandMarker {
              specifiedDefaultValue = StringUtils.EMPTY,
              unspecifiedDefaultValue = StringUtils.EMPTY) final String iterations) {
 
-        final CasConfigurationJasyptCipherExecutor cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
+        final var cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
         cipher.setAlgorithm(alg);
         cipher.setPassword(password);
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
@@ -70,7 +70,7 @@ public class EncryptPropertyCommand implements CommandMarker {
         }
         cipher.setProviderName(provider);
         cipher.setKeyObtentionIterations(iterations);
-        final String encrypted = cipher.encryptValue(value);
+        final var encrypted = cipher.encryptValue(value);
         LOGGER.info("==== Encrypted Value ====\n{}", encrypted);
         try {
             cipher.decryptValue(encrypted);

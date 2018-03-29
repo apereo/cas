@@ -45,11 +45,11 @@ public class CasRegisteredServicesTestConfiguration {
     public List inMemoryRegisteredServices() {
         final List l = new ArrayList();
 
-        AbstractRegisteredService svc = RegisteredServiceTestUtils.getRegisteredService("testencryption$");
-        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
+        var svc = RegisteredServiceTestUtils.getRegisteredService("testencryption$");
+        final var policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAuthorizedToReleaseCredentialPassword(true);
         policy.setAuthorizedToReleaseProxyGrantingTicket(true);
-        final RegisteredServicePublicKeyImpl publicKey = new RegisteredServicePublicKeyImpl();
+        final var publicKey = new RegisteredServicePublicKeyImpl();
         publicKey.setLocation("classpath:keys/RSA1024Public.key");
         svc.setPublicKey(publicKey);
         svc.setAttributeReleasePolicy(policy);
@@ -80,7 +80,7 @@ public class CasRegisteredServicesTestConfiguration {
         svc.setEvaluationOrder(1);
         svc.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(".+"));
         svc.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:keys/RSA4096Public.key", "RSA"));
-        final ReturnAllowedAttributeReleasePolicy policy1 = new ReturnAllowedAttributeReleasePolicy();
+        final var policy1 = new ReturnAllowedAttributeReleasePolicy();
         policy1.setAuthorizedToReleaseCredentialPassword(true);
         policy1.setAuthorizedToReleaseProxyGrantingTicket(true);
         svc.setAttributeReleasePolicy(policy1);
@@ -95,7 +95,7 @@ public class CasRegisteredServicesTestConfiguration {
         l.add(svc);
 
         svc = RegisteredServiceTestUtils.getRegisteredService("testencryption$");
-        final ReturnAllowedAttributeReleasePolicy policy2 = new ReturnAllowedAttributeReleasePolicy();
+        final var policy2 = new ReturnAllowedAttributeReleasePolicy();
         policy2.setAuthorizedToReleaseCredentialPassword(true);
         policy2.setAuthorizedToReleaseProxyGrantingTicket(true);
         svc.setAttributeReleasePolicy(policy2);
@@ -172,7 +172,7 @@ public class CasRegisteredServicesTestConfiguration {
         svc = RegisteredServiceTestUtils.getRegisteredService("jwtservice");
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
-        final DefaultRegisteredServiceProperty prop = new DefaultRegisteredServiceProperty();
+        final var prop = new DefaultRegisteredServiceProperty();
         prop.setValues(CollectionUtils.wrapSet(Boolean.TRUE.toString()));
         svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.getPropertyName(), prop);
         svc.setEvaluationOrder(2000);

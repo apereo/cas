@@ -28,7 +28,7 @@ public class OneTimeTokenQRGeneratorController {
     @GetMapping(path = {"/otp/qrgen"})
     public void generate(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         response.setContentType("image/png");
-        final String key = request.getParameter("key");
+        final var key = request.getParameter("key");
         QRUtils.generateQRCode(response.getOutputStream(), key, QRUtils.WIDTH_LARGE, QRUtils.WIDTH_LARGE);
     }
 

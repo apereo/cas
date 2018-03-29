@@ -41,7 +41,7 @@ public class PoolHealthIndicatorTests {
                 return 2;
             }
         };
-        final Health health = monitor.health();
+        final var health = monitor.health();
         assertEquals(health.getStatus(), Status.UP);
     }
 
@@ -64,7 +64,7 @@ public class PoolHealthIndicatorTests {
                 return 1;
             }
         };
-        final Health health = monitor.health();
+        final var health = monitor.health();
         assertEquals(Status.DOWN, health.getStatus());
     }
 
@@ -86,7 +86,7 @@ public class PoolHealthIndicatorTests {
                 return 1;
             }
         };
-        final Health health = monitor.health();
+        final var health = monitor.health();
         assertEquals(health.getStatus(), Status.OUT_OF_SERVICE);
     }
 }

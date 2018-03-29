@@ -56,14 +56,14 @@ public class QRUtils {
         hintMap.put(EncodeHintType.MARGIN, 2);
         hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
 
-        final QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        final BitMatrix byteMatrix = qrCodeWriter.encode(key, BarcodeFormat.QR_CODE, width, height, hintMap);
-        final int byteMatrixWidth = byteMatrix.getWidth();
-        final BufferedImage image = new BufferedImage(byteMatrixWidth, byteMatrixWidth, BufferedImage.TYPE_INT_RGB);
+        final var qrCodeWriter = new QRCodeWriter();
+        final var byteMatrix = qrCodeWriter.encode(key, BarcodeFormat.QR_CODE, width, height, hintMap);
+        final var byteMatrixWidth = byteMatrix.getWidth();
+        final var image = new BufferedImage(byteMatrixWidth, byteMatrixWidth, BufferedImage.TYPE_INT_RGB);
         image.createGraphics();
 
         @Cleanup("dispose")
-        final Graphics2D graphics = (Graphics2D) image.getGraphics();
+        final var graphics = (Graphics2D) image.getGraphics();
 
         graphics.setColor(Color.WHITE);
         graphics.fillRect(0, 0, byteMatrixWidth, byteMatrixWidth);

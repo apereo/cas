@@ -154,8 +154,8 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         update();
         service.setPrincipal(getRoot().getAuthentication().getPrincipal().getId());
         if (onlyTrackMostRecentSession) {
-            final String path = normalizePath(service);
-            final Collection<Service> existingServices = this.services.values();
+            final var path = normalizePath(service);
+            final var existingServices = this.services.values();
             // loop on existing services
             existingServices.stream().filter(existingService -> path.equals(normalizePath(existingService))).findFirst().ifPresent(existingServices::remove);
         }
@@ -169,7 +169,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * @return the normalized path
      */
     private static String normalizePath(final Service service) {
-        String path = service.getId();
+        var path = service.getId();
         path = StringUtils.substringBefore(path, "?");
         path = StringUtils.substringBefore(path, ";");
         path = StringUtils.substringBefore(path, "#");
@@ -197,7 +197,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @JsonIgnore
     @Override
     public TicketGrantingTicket getRoot() {
-        final TicketGrantingTicket parent = this.getTicketGrantingTicket();
+        final var parent = this.getTicketGrantingTicket();
         if (parent == null) {
             return this;
         }

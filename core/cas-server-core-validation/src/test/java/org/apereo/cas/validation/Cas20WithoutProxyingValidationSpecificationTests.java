@@ -45,7 +45,7 @@ public class Cas20WithoutProxyingValidationSpecificationTests {
 
     @Test
     public void verifySettingRenew() {
-        final Cas20WithoutProxyingValidationSpecification validation = new Cas20WithoutProxyingValidationSpecification(
+        final var validation = new Cas20WithoutProxyingValidationSpecification(
                 true);
         assertTrue(validation.isRenew());
     }

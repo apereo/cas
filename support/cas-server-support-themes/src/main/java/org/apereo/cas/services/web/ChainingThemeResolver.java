@@ -35,11 +35,11 @@ public class ChainingThemeResolver extends AbstractThemeResolver {
 
     @Override
     public String resolveThemeName(final HttpServletRequest httpServletRequest) {
-        final Iterator<ThemeResolver> it = chain.iterator();
+        final var it = chain.iterator();
         while (it.hasNext()) {
-            final ThemeResolver r = it.next();
+            final var r = it.next();
             LOGGER.debug("Attempting to resolve theme via [{}]", r.getClass().getSimpleName());
-            final String resolverTheme = r.resolveThemeName(httpServletRequest);
+            final var resolverTheme = r.resolveThemeName(httpServletRequest);
             if (!resolverTheme.equalsIgnoreCase(getDefaultThemeName())) {
                 LOGGER.debug("Resolved theme [{}]", resolverTheme);
                 return resolverTheme;

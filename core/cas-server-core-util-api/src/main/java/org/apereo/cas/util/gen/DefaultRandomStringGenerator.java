@@ -32,9 +32,9 @@ public class DefaultRandomStringGenerator extends AbstractRandomStringGenerator 
      */
     @Override
     protected String convertBytesToString(final byte[] random) {
-        final char[] output = new char[random.length];
+        final var output = new char[random.length];
         IntStream.range(0, random.length).forEach(i -> {
-            final int index = Math.abs(random[i] % PRINTABLE_CHARACTERS.length);
+            final var index = Math.abs(random[i] % PRINTABLE_CHARACTERS.length);
             output[i] = PRINTABLE_CHARACTERS[index];
         });
 

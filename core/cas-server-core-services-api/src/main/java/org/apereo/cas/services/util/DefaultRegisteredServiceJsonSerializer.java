@@ -40,7 +40,7 @@ public class DefaultRegisteredServiceJsonSerializer extends AbstractJacksonBacke
      */
     @Override
     protected ObjectMapper initializeObjectMapper() {
-        final ObjectMapper mapper = super.initializeObjectMapper();
+        final var mapper = super.initializeObjectMapper();
         mapper.addHandler(new JasigRegisteredServiceDeserializationProblemHandler());
         return mapper;
     }

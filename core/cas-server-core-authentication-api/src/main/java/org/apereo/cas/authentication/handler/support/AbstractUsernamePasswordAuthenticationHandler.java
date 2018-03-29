@@ -45,13 +45,13 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
-        final UsernamePasswordCredential originalUserPass = (UsernamePasswordCredential) credential;
-        final UsernamePasswordCredential userPass = new UsernamePasswordCredential(originalUserPass.getUsername(), originalUserPass.getPassword());
+        final var originalUserPass = (UsernamePasswordCredential) credential;
+        final var userPass = new UsernamePasswordCredential(originalUserPass.getUsername(), originalUserPass.getPassword());
         if (StringUtils.isBlank(userPass.getUsername())) {
             throw new AccountNotFoundException("Username is null.");
         }
         LOGGER.debug("Transforming credential username via [{}]", this.principalNameTransformer.getClass().getName());
-        final String transformedUsername = this.principalNameTransformer.transform(userPass.getUsername());
+        final var transformedUsername = this.principalNameTransformer.transform(userPass.getUsername());
         if (StringUtils.isBlank(transformedUsername)) {
             throw new AccountNotFoundException("Transformed username is null.");
         }
@@ -60,7 +60,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         }
         LOGGER.debug("Attempting to encode credential password via [{}] for [{}]", this.passwordEncoder.getClass().getName(),
             transformedUsername);
-        final String transformedPsw = this.passwordEncoder.encode(userPass.getPassword());
+        final var transformedPsw = this.passwordEncoder.encode(userPass.getPassword());
         if (StringUtils.isBlank(transformedPsw)) {
             throw new AccountNotFoundException("Encoded password is null.");
         }
@@ -95,7 +95,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
             return true;
         }
         LOGGER.debug("Examining credential [{}] eligibility for authentication handler [{}]", credential, getName());
-        final boolean result = this.credentialSelectionPredicate.test(credential);
+        final var result = this.credentialSelectionPredicate.test(credential);
         LOGGER.debug("Credential [{}] eligibility is [{}] for authentication handler [{}]", credential, getName(), BooleanUtils.toStringTrueFalse(result));
         return result;
     }

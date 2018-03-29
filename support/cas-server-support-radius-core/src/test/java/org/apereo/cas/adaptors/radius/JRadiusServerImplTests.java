@@ -35,9 +35,9 @@ public class JRadiusServerImplTests {
 
     @Test
     public void verifyAuthenticationSuccess() throws Exception {
-        final JRadiusServerImpl server = new JRadiusServerImpl(RadiusProtocol.MSCHAPv2,
+        final var server = new JRadiusServerImpl(RadiusProtocol.MSCHAPv2,
                 new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, INET_ADDRESS, SECRET));
-        final RadiusResponse response = server.authenticate("casuser", "Mellon");
+        final var response = server.authenticate("casuser", "Mellon");
         assertEquals(2, response.getCode());
         assertFalse(response.getAttributes().isEmpty());
         assertTrue(response.getAttributes().stream().anyMatch(a -> a.getAttributeName().equals(Attr_MSCHAP2Success.NAME)));
@@ -45,16 +45,16 @@ public class JRadiusServerImplTests {
 
     @Test
     public void verifyAuthenticationFails() throws Exception {
-        final JRadiusServerImpl server = new JRadiusServerImpl(RadiusProtocol.MSCHAPv2,
+        final var server = new JRadiusServerImpl(RadiusProtocol.MSCHAPv2,
                 new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, INET_ADDRESS, SECRET));
-        final RadiusResponse response = server.authenticate("casuser", "badpsw");
+        final var response = server.authenticate("casuser", "badpsw");
         assertNull(response);
     }
 
     @Test
     public void verifyBadSecret() throws Exception {
         thrown.expect(TimeoutException.class);
-        final JRadiusServerImpl server = new JRadiusServerImpl(RadiusProtocol.MSCHAPv2,
+        final var server = new JRadiusServerImpl(RadiusProtocol.MSCHAPv2,
                 new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, 1,
                         INET_ADDRESS, "xyz"));
         server.authenticate("xyz", "xyz");
@@ -63,7 +63,7 @@ public class JRadiusServerImplTests {
     @Test
     public void verifyBadPorts() throws Exception {
         thrown.expect(TimeoutException.class);
-        final JRadiusServerImpl server = new JRadiusServerImpl(RadiusProtocol.MSCHAPv2,
+        final var server = new JRadiusServerImpl(RadiusProtocol.MSCHAPv2,
                 new RadiusClientFactory(1234, 4567, 1,
                         INET_ADDRESS, "xyz"));
         server.authenticate("xyz", "xyz");
@@ -72,7 +72,7 @@ public class JRadiusServerImplTests {
     @Test
     public void verifyBadAddress() throws Exception {
         thrown.expect(TimeoutException.class);
-        final JRadiusServerImpl server = new JRadiusServerImpl(RadiusProtocol.MSCHAPv2,
+        final var server = new JRadiusServerImpl(RadiusProtocol.MSCHAPv2,
                 new RadiusClientFactory(1234, 4567, 1,
                         "131.211.138.166", "1234"));
         server.authenticate("xyz", "xyz");

@@ -51,13 +51,13 @@ public class JasyptTestAlgorithmsCommand implements CommandMarker {
         }
 
         LOGGER.info("==== JASYPT Password Based Encryption Algorithms ====\n");
-        final String password = "SecretKeyValue";
-        final String value = "ValueToEncrypt";
+        final var password = "SecretKeyValue";
+        final var value = "ValueToEncrypt";
                 
         final Set<String> pbeAlgos = AlgorithmRegistry.getAllPBEAlgorithms();
-        for (final String provider : providers) {
-            for (final String algorithm : pbeAlgos) {
-                final CasConfigurationJasyptCipherExecutor cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
+        for (final var provider : providers) {
+            for (final var algorithm : pbeAlgos) {
+                final var cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
                 cipher.setPassword(password);
                 cipher.setKeyObtentionIterations("1");
                 cipher.setAlgorithm(algorithm);

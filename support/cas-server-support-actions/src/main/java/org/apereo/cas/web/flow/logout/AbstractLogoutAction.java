@@ -23,8 +23,8 @@ public abstract class AbstractLogoutAction extends AbstractAction {
 
     @Override
     public Event doExecute(final RequestContext context) throws Exception {
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         preventCaching(response);
         return doInternalExecute(request, response, context);
     }

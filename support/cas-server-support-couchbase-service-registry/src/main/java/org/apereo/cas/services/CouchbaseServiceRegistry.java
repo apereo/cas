@@ -69,9 +69,9 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry {
         if (service.getId() == AbstractRegisteredService.INITIAL_IDENTIFIER_VALUE) {
             service.setId(service.hashCode());
         }
-        try (StringWriter stringWriter = new StringWriter()) {
+        try (var stringWriter = new StringWriter()) {
             this.registeredServiceJsonSerializer.to(stringWriter, service);
-            final RawJsonDocument document = RawJsonDocument.create(String.valueOf(service.getId()), 0, stringWriter.toString());
+            final var document = RawJsonDocument.create(String.valueOf(service.getId()), 0, stringWriter.toString());
             this.couchbase.getBucket().upsert(document);
         }
         return service;
@@ -87,16 +87,16 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry {
     @Override
     public List<RegisteredService> load() {
         try {
-            final ViewResult allKeys = executeViewQueryForAllServices();
+            final var allKeys = executeViewQueryForAllServices();
             final List<RegisteredService> services = new ArrayList<>();
-            for (final ViewRow row : allKeys) {
-                final RawJsonDocument document = row.document(RawJsonDocument.class);
+            for (final var row : allKeys) {
+                final var document = row.document(RawJsonDocument.class);
                 if (document != null) {
-                    final String json = document.content();
+                    final var json = document.content();
                     LOGGER.debug("Found service: [{}]", json);
 
-                    final StringReader stringReader = new StringReader(json);
-                    final RegisteredService service = this.registeredServiceJsonSerializer.from(stringReader);
+                    final var stringReader = new StringReader(json);
+                    final var service = this.registeredServiceJsonSerializer.from(stringReader);
                     services.add(service);
                     publishEvent(new CasRegisteredServiceLoadedEvent(this, service));
                 }
@@ -116,10 +116,10 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry {
     public RegisteredService findServiceById(final long id) {
         try {
             LOGGER.debug("Lookup for service [{}]", id);
-            final RawJsonDocument document = this.couchbase.getBucket().get(String.valueOf(id), RawJsonDocument.class);
+            final var document = this.couchbase.getBucket().get(String.valueOf(id), RawJsonDocument.class);
             if (document != null) {
-                final String json = document.content();
-                final StringReader stringReader = new StringReader(json);
+                final var json = document.content();
+                final var stringReader = new StringReader(json);
                 return this.registeredServiceJsonSerializer.from(stringReader);
             }
         } catch (final Exception e) {

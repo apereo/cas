@@ -32,15 +32,15 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
             return this.createSsoSessionCookieOnRenewAuthentications;
         }
 
-        final Authentication authentication = WebUtils.getAuthentication(ctx);
+        final var authentication = WebUtils.getAuthentication(ctx);
         final Service service = WebUtils.getService(ctx);
         if (service != null) {
-            final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+            final var registeredService = this.servicesManager.findServiceBy(service);
             if (registeredService != null) {
-                final Authentication ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
+                final var ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
                 try {
                     AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
-                    final boolean isAllowedForSso = registeredService.getAccessStrategy().isServiceAccessAllowedForSso();
+                    final var isAllowedForSso = registeredService.getAccessStrategy().isServiceAccessAllowedForSso();
                     LOGGER.debug("Located [{}] in registry. Service access to participate in SSO is set to [{}]",
                         registeredService.getServiceId(), isAllowedForSso);
                     return isAllowedForSso;

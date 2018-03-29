@@ -41,11 +41,11 @@ public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServic
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         try {
             if (super.doPrincipalAttributesAllowServiceAccess(principal, principalAttributes)) {
-                final HttpClient client = ApplicationContextProvider.getApplicationContext().getBean("noRedirectHttpClient", HttpClient.class);
-                final URIBuilder builder = new URIBuilder(this.endpointUrl);
+                final var client = ApplicationContextProvider.getApplicationContext().getBean("noRedirectHttpClient", HttpClient.class);
+                final var builder = new URIBuilder(this.endpointUrl);
                 builder.addParameter("username", principal);
-                final URL url = builder.build().toURL();
-                final HttpMessage message = client.sendMessageToEndPoint(url);
+                final var url = builder.build().toURL();
+                final var message = client.sendMessageToEndPoint(url);
                 LOGGER.debug("Message received from [{}] is [{}]", url, message);
                 return message != null && StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes).contains(String.valueOf(message.getResponseCode()));
             }

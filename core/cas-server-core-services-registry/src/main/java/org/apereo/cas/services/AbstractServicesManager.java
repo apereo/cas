@@ -79,12 +79,12 @@ public abstract class AbstractServicesManager implements ServicesManager {
             return null;
         }
         
-        final RegisteredService service = getCandidateServicesToMatch(serviceId)
+        final var service = getCandidateServicesToMatch(serviceId)
                 .stream()
                 .filter(r -> r.matches(serviceId))
                 .findFirst()
                 .orElse(null);
-        final RegisteredService result = validateRegisteredService(service);
+        final var result = validateRegisteredService(service);
         return result;
     }
 
@@ -98,7 +98,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         if (StringUtils.isBlank(serviceId)) {
             return null;
         }
-        final RegisteredService service = findServiceBy(serviceId);
+        final var service = findServiceBy(serviceId);
         if (service != null && service.getClass().isAssignableFrom(clazz)) {
             return (T) service;
         }
@@ -112,7 +112,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public RegisteredService findServiceBy(final long id) {
-        final RegisteredService r = this.services.get(id);
+        final var r = this.services.get(id);
         return r == null ? null : r.clone();
     }
 
@@ -136,7 +136,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
             resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService delete(final long id) {
-        final RegisteredService service = findServiceBy(id);
+        final var service = findServiceBy(id);
         return delete(service);
     }
 
@@ -169,7 +169,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
     @Override
     public synchronized RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
         publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService));
-        final RegisteredService r = this.serviceRegistry.save(registeredService);
+        final var r = this.serviceRegistry.save(registeredService);
         this.services.put(r.getId(), r);
         saveInternal(registeredService);
 
@@ -211,7 +211,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
     private Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(final Predicate<RegisteredService>... p) {
         final List<Predicate<RegisteredService>> predicates = new ArrayList<>();
 
-        final Predicate<RegisteredService> expirationPolicyPredicate = getRegisteredServiceExpirationPolicyPredicate();
+        final var expirationPolicyPredicate = getRegisteredServiceExpirationPolicyPredicate();
         predicates.add(expirationPolicyPredicate);
 
         predicates.addAll(Stream.of(p).collect(Collectors.toList()));
@@ -229,12 +229,12 @@ public abstract class AbstractServicesManager implements ServicesManager {
                 if (service == null) {
                     return false;
                 }
-                final RegisteredServiceExpirationPolicy policy = service.getExpirationPolicy();
+                final var policy = service.getExpirationPolicy();
                 if (policy == null || StringUtils.isBlank(policy.getExpirationDate())) {
                     return true;
                 }
-                final LocalDateTime now = getCurrentSystemTime();
-                final LocalDateTime expirationDate = DateTimeUtils.localDateTimeOf(policy.getExpirationDate());
+                final var now = getCurrentSystemTime();
+                final var expirationDate = DateTimeUtils.localDateTimeOf(policy.getExpirationDate());
                 LOGGER.debug("Service expiration date is [{}] while now is [{}]", expirationDate, now);
                 return !now.isAfter(expirationDate);
             } catch (final Exception e) {
@@ -254,7 +254,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     private RegisteredService validateRegisteredService(final RegisteredService registeredService) {
-        final RegisteredService result = checkServiceExpirationPolicyIfAny(registeredService);
+        final var result = checkServiceExpirationPolicyIfAny(registeredService);
         return result;
     }
 
@@ -266,7 +266,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     private RegisteredService processExpiredRegisteredService(final RegisteredService registeredService) {
-        final RegisteredServiceExpirationPolicy policy = registeredService.getExpirationPolicy();
+        final var policy = registeredService.getExpirationPolicy();
         LOGGER.warn("Registered service [{}] has expired on [{}]", registeredService.getServiceId(), policy.getExpirationDate());
 
         if (policy.isDeleteWhenExpired()) {

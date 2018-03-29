@@ -78,7 +78,7 @@ public class SimplePrincipal implements Principal {
 
     @Override
     public int hashCode() {
-        final HashCodeBuilder builder = new HashCodeBuilder(83, 31);
+        final var builder = new HashCodeBuilder(83, 31);
         builder.append(this.id.toLowerCase());
         return builder.toHashCode();
     }
@@ -94,7 +94,7 @@ public class SimplePrincipal implements Principal {
         if (obj.getClass() != getClass()) {
             return false;
         }
-        final SimplePrincipal rhs = (SimplePrincipal) obj;
+        final var rhs = (SimplePrincipal) obj;
         return StringUtils.equalsIgnoreCase(this.id, rhs.getId());
     }
 }

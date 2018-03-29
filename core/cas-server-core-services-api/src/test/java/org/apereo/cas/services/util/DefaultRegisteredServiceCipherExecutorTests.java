@@ -26,17 +26,17 @@ public class DefaultRegisteredServiceCipherExecutorTests {
     
     @Test
     public void verifyCipherUnableToEncodeForStringIsTooLong() {
-        final AbstractRegisteredService svc = getService("classpath:keys/RSA1024Public.key");
+        final var svc = getService("classpath:keys/RSA1024Public.key");
 
-        final String ticketId = RandomStringUtils.randomAlphanumeric(120);
+        final var ticketId = RandomStringUtils.randomAlphanumeric(120);
         final RegisteredServiceCipherExecutor e = new DefaultRegisteredServiceCipherExecutor();
         assertNull(e.encode(ticketId, svc));
     }
 
     @Test
     public void verifyCipherAbleToEncode() {
-        final AbstractRegisteredService svc = getService("classpath:keys/RSA4096Public.key");
-        final String ticketId = RandomStringUtils.randomAlphanumeric(120);
+        final var svc = getService("classpath:keys/RSA4096Public.key");
+        final var ticketId = RandomStringUtils.randomAlphanumeric(120);
         final RegisteredServiceCipherExecutor e = new DefaultRegisteredServiceCipherExecutor();
         assertNotNull(e.encode(ticketId, svc));
     }

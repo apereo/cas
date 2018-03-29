@@ -24,7 +24,7 @@ public class SamlAttributeEncoder implements ProtocolAttributeEncoder {
         final Map<String, Object> finalAttributes = new HashMap<>(attributes.size());
 
         attributes.forEach((k, v) -> {
-            final String attributeName = EncodingUtils.hexDecode(k);
+            final var attributeName = EncodingUtils.hexDecode(k);
             if (StringUtils.isNotBlank(attributeName)) {
                 LOGGER.debug("Decoded SAML attribute [{}] to [{}] with value(s) [{}]", k, attributeName, v);
                 finalAttributes.put(attributeName, v);

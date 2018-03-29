@@ -35,9 +35,9 @@ public class HttpClientMultiThreadedDownloaderTests {
 
     @Test
     public void verify() throws Exception {
-        final Resource resource = resourceLoader.getResource("https://raw.githubusercontent.com/apereo/cas/master/NOTICE");
-        final File target = File.createTempFile("notice", ".md");
-        final HttpClientMultiThreadedDownloader downloader = new HttpClientMultiThreadedDownloader(resource, target);
+        final var resource = resourceLoader.getResource("https://raw.githubusercontent.com/apereo/cas/master/NOTICE");
+        final var target = File.createTempFile("notice", ".md");
+        final var downloader = new HttpClientMultiThreadedDownloader(resource, target);
         downloader.download();
         assertTrue(target.exists());
     }

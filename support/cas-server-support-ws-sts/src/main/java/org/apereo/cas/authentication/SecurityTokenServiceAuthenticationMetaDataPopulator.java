@@ -39,16 +39,16 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
     private void invokeSecurityTokenServiceForToken(final AuthenticationTransaction transaction,
                                                     final AuthenticationBuilder builder, final WSFederationRegisteredService rp,
                                                     final SecurityTokenServiceClient sts) {
-        final UsernamePasswordCredential up = transaction.getCredentials()
+        final var up = transaction.getCredentials()
             .stream().filter(UsernamePasswordCredential.class::isInstance)
             .map(UsernamePasswordCredential.class::cast).findFirst().orElse(null);
         if (up != null) {
             try {
                 sts.getProperties().put(SecurityConstants.USERNAME, up.getUsername());
-                final String uid = credentialCipherExecutor.encode(up.getUsername());
+                final var uid = credentialCipherExecutor.encode(up.getUsername());
                 sts.getProperties().put(SecurityConstants.PASSWORD, uid);
-                final SecurityToken token = sts.requestSecurityToken(rp.getAppliesTo());
-                final String tokenStr = EncodingUtils.encodeBase64(SerializationUtils.serialize(token));
+                final var token = sts.requestSecurityToken(rp.getAppliesTo());
+                final var tokenStr = EncodingUtils.encodeBase64(SerializationUtils.serialize(token));
                 builder.addAttribute(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE, tokenStr);
             } catch (final Exception e) {
                 throw new AuthenticationException(e.getMessage());
@@ -66,14 +66,14 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
         if (!this.selectionStrategy.supports(transaction.getService())) {
             return;
         }
-        final Service service = this.selectionStrategy.resolveServiceFrom(transaction.getService());
+        final var service = this.selectionStrategy.resolveServiceFrom(transaction.getService());
         if (service != null) {
-            final WSFederationRegisteredService rp = this.servicesManager.findServiceBy(service, WSFederationRegisteredService.class);
+            final var rp = this.servicesManager.findServiceBy(service, WSFederationRegisteredService.class);
             if (rp == null || !rp.getAccessStrategy().isServiceAccessAllowed()) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO.", rp);
                 throw new UnauthorizedSsoServiceException();
             }
-            final SecurityTokenServiceClient sts = clientBuilder.buildClientForSecurityTokenRequests(rp);
+            final var sts = clientBuilder.buildClientForSecurityTokenRequests(rp);
             invokeSecurityTokenServiceForToken(transaction, builder, rp, sts);
         }
     }

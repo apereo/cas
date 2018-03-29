@@ -42,11 +42,11 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
         throws GeneralSecurityException {
         LOGGER.debug("CAS credentials: [{}]", casCredential);
 
-        final String id = this.principalNameTransformer.transform(casCredential.getId());
+        final var id = this.principalNameTransformer.transform(casCredential.getId());
         if (id == null) {
             throw new AccountNotFoundException("Id is null.");
         }
-        final TokenCredentials credentials = new TokenCredentials(id);
+        final var credentials = new TokenCredentials(id);
         LOGGER.debug("pac4j credentials: [{}]", credentials);
         return credentials;
     }

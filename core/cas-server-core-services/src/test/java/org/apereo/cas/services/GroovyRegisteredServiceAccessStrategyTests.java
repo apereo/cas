@@ -26,7 +26,7 @@ public class GroovyRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkDefaultAuthzStrategyConfig() {
-        final GroovyRegisteredServiceAccessStrategy authz = new GroovyRegisteredServiceAccessStrategy();
+        final var authz = new GroovyRegisteredServiceAccessStrategy();
         authz.setGroovyScript("classpath:accessstrategy.groovy");
 
         assertTrue(authz.isServiceAccessAllowed());
@@ -38,7 +38,7 @@ public class GroovyRegisteredServiceAccessStrategyTests {
 
     @Test
     public void verifySerializationToJson() throws IOException {
-        final GroovyRegisteredServiceAccessStrategy authz = new GroovyRegisteredServiceAccessStrategy();
+        final var authz = new GroovyRegisteredServiceAccessStrategy();
         authz.setGroovyScript("classpath:accessstrategy.groovy");
         MAPPER.writeValue(JSON_FILE, authz);
 

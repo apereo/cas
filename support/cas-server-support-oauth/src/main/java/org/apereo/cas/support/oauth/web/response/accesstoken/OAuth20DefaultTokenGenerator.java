@@ -46,13 +46,13 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     @Override
     public Pair<AccessToken, RefreshToken> generate(final AccessTokenRequestDataHolder holder) {
         LOGGER.debug("Creating refresh token for [{}]", holder.getService());
-        final Authentication authn = DefaultAuthenticationBuilder
+        final var authn = DefaultAuthenticationBuilder
             .newInstance(holder.getAuthentication())
             .addAttribute(OAuth20Constants.GRANT_TYPE, holder.getGrantType().toString())
             .build();
 
         LOGGER.debug("Creating access token for [{}]", holder);
-        final AccessToken accessToken = this.accessTokenFactory.create(holder.getService(),
+        final var accessToken = this.accessTokenFactory.create(holder.getService(),
             authn, holder.getTicketGrantingTicket(), holder.getScopes());
 
         LOGGER.debug("Created access token [{}]", accessToken);
@@ -60,7 +60,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         LOGGER.debug("Added access token [{}] to registry", accessToken);
 
         if (holder.getToken() instanceof OAuthCode) {
-            final TicketState codeState = TicketState.class.cast(holder.getToken());
+            final var codeState = TicketState.class.cast(holder.getToken());
             codeState.update();
 
             if (holder.getToken().isExpired()) {
@@ -100,7 +100,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
 
     private RefreshToken generateRefreshToken(final AccessTokenRequestDataHolder responseHolder) {
         LOGGER.debug("Creating refresh token for [{}]", responseHolder.getService());
-        final RefreshToken refreshToken = this.refreshTokenFactory.create(responseHolder.getService(),
+        final var refreshToken = this.refreshTokenFactory.create(responseHolder.getService(),
             responseHolder.getAuthentication(), responseHolder.getTicketGrantingTicket(), responseHolder.getScopes());
         LOGGER.debug("Adding refresh token [{}] to the registry", refreshToken);
         addTicketToRegistry(refreshToken, responseHolder.getTicketGrantingTicket());

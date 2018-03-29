@@ -64,7 +64,7 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
         // create 2 records
         mfaTrustEngine.set(MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT));
         mfaTrustEngine.set(MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT));
-        final Set<MultifactorAuthenticationTrustRecord> records = mfaTrustEngine.get(PRINCIPAL);
+        final var records = mfaTrustEngine.get(PRINCIPAL);
         assertEquals(2, records.size());
 
         // expire 1 of the records
@@ -78,8 +78,8 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
     public void verifyRetrieveAndExpireByDate() {
         // create records
         Stream.of(PRINCIPAL, PRINCIPAL2).forEach(p -> {
-            for (int offset = 0; offset < 3; offset++) {
-                final MultifactorAuthenticationTrustRecord record =
+            for (var offset = 0; offset < 3; offset++) {
+                final var record =
                         MultifactorAuthenticationTrustRecord.newInstance(p, GEOGRAPHY, DEVICE_FINGERPRINT);
                 record.setRecordDate(LocalDate.now().minusDays(offset));
                 mfaTrustEngine.set(record);

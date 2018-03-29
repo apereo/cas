@@ -114,9 +114,9 @@ public class MongoDbSamlRegisteredServiceMetadataResolverTests {
 
     @Before
     public void setup() throws Exception {
-        final MongoDbSamlMetadataProperties mongo = casProperties.getAuthn().getSamlIdp().getMetadata().getMongo();
-        final ClassPathResource res = new ClassPathResource("sp-metadata.xml");
-        final SamlMetadataDocument md = new SamlMetadataDocument();
+        final var mongo = casProperties.getAuthn().getSamlIdp().getMetadata().getMongo();
+        final var res = new ClassPathResource("sp-metadata.xml");
+        final var md = new SamlMetadataDocument();
         md.setName("SP");
         md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
         mongoDbSamlMetadataResolverTemplate.save(md, mongo.getCollection());
@@ -124,13 +124,13 @@ public class MongoDbSamlRegisteredServiceMetadataResolverTests {
 
     @Test
     public void verifyResolver() {
-        final SamlRegisteredService service = new SamlRegisteredService();
+        final var service = new SamlRegisteredService();
         service.setName("SAML Service");
         service.setServiceId("https://carmenwiki.osu.edu/shibboleth");
         service.setDescription("Testing");
         service.setMetadataLocation("mongodb://");
         assertTrue(resolver.supports(service));
-        final Collection<MetadataResolver> resolvers = resolver.resolve(service);
+        final var resolvers = resolver.resolve(service);
         assertTrue(resolvers.size() == 1);
     }
 }

@@ -45,8 +45,8 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public Collection<DeviceRegistration> getRegisteredDevices(final String username) {
         try {
-            final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
-            final Query query = new Query();
+            final var expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+            final var query = new Query();
             query.addCriteria(Criteria.where("username").is(username).and("createdDate").gte(expirationDate));
             return this.mongoTemplate.find(query, U2FDeviceRegistration.class, this.collectionName)
                 .stream()
@@ -73,7 +73,7 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public void authenticateDevice(final String username, final DeviceRegistration registration) {
-        final U2FDeviceRegistration record = new U2FDeviceRegistration();
+        final var record = new U2FDeviceRegistration();
         record.setUsername(username);
         record.setRecord(getCipherExecutor().encode(registration.toJson()));
         record.setCreatedDate(LocalDate.now());
@@ -88,10 +88,10 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public void clean() {
         try {
-            final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+            final var expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
             LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
 
-            final Query query = new Query();
+            final var query = new Query();
             query.addCriteria(Criteria.where("createdDate").lte(expirationDate));
             this.mongoTemplate.remove(query, U2FDeviceRegistration.class, this.collectionName);
         } catch (final Exception e) {

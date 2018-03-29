@@ -20,7 +20,7 @@ public class CommaSeparatedStringToThrowablesConverter implements Converter<Stri
     public List<Class<? extends Throwable>> convert(final String source) {
         try {
             final List<Class<? extends Throwable>> classes = new ArrayList<>();
-            for (final String className : StringUtils.commaDelimitedListToStringArray(source)) {
+            for (final var className : StringUtils.commaDelimitedListToStringArray(source)) {
                 classes.add((Class<? extends Throwable>) ClassUtils.forName(className.trim(), getClass().getClassLoader()));
             }
             return classes;

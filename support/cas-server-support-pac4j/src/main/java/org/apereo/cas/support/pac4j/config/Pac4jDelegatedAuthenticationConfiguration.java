@@ -59,7 +59,7 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     @Bean
     @ConditionalOnMissingBean(name = "pac4jSessionStoreCookieGenerator")
     public CookieRetrievingCookieGenerator pac4jSessionStoreCookieGenerator() {
-        final Pac4jDelegatedSessionCookieProperties c = casProperties.getAuthn().getPac4j().getCookie();
+        final var c = casProperties.getAuthn().getPac4j().getCookie();
         return new SessionStoreCookieGenerator(
             new DefaultCasCookieValueManager(pac4jDelegatedSessionStoreCookieCipherExecutor()),
             c.getName(), c.getPath(), c.getMaxAge(),
@@ -69,7 +69,7 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     @Bean
     @ConditionalOnMissingBean(name = "pac4jDelegatedSessionStoreCookieCipherExecutor")
     public CipherExecutor pac4jDelegatedSessionStoreCookieCipherExecutor() {
-        final EncryptionJwtSigningJwtCryptographyProperties c = casProperties.getAuthn().getPac4j().getCookie().getCrypto();
+        final var c = casProperties.getAuthn().getPac4j().getCookie().getCrypto();
         if (c.isEnabled()) {
             return new DelegatedSessionCookieCipherExecutor(c.getEncryption().getKey(), c.getSigning().getKey(), c.getAlg());
         }

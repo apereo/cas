@@ -27,22 +27,22 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
 
     @Test
     public void verifyPrincipalResolution() {
-        final AnonymousRegisteredServiceUsernameAttributeProvider provider = new AnonymousRegisteredServiceUsernameAttributeProvider(
+        final var provider = new AnonymousRegisteredServiceUsernameAttributeProvider(
                 new ShibbolethCompatiblePersistentIdGenerator(CASROX));
         
-        final Service service = mock(Service.class);
+        final var service = mock(Service.class);
         when(service.getId()).thenReturn("id");
-        final Principal principal = mock(Principal.class);
+        final var principal = mock(Principal.class);
         when(principal.getId()).thenReturn("uid");
-        final String id = provider.resolveUsername(principal, service, RegisteredServiceTestUtils.getRegisteredService("id"));
+        final var id = provider.resolveUsername(principal, service, RegisteredServiceTestUtils.getRegisteredService("id"));
         assertNotNull(id);
     }
 
     @Test
     public void verifyEquality() {
-        final AnonymousRegisteredServiceUsernameAttributeProvider provider = new AnonymousRegisteredServiceUsernameAttributeProvider(
+        final var provider = new AnonymousRegisteredServiceUsernameAttributeProvider(
                         new ShibbolethCompatiblePersistentIdGenerator(CASROX));
-        final AnonymousRegisteredServiceUsernameAttributeProvider provider2 = new AnonymousRegisteredServiceUsernameAttributeProvider(
+        final var provider2 = new AnonymousRegisteredServiceUsernameAttributeProvider(
                         new ShibbolethCompatiblePersistentIdGenerator(CASROX));
 
         assertEquals(provider, provider2);
@@ -50,7 +50,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
 
     @Test
     public void verifySerializeADefaultRegisteredServiceUsernameProviderToJson() throws IOException {
-        final AnonymousRegisteredServiceUsernameAttributeProvider providerWritten = new AnonymousRegisteredServiceUsernameAttributeProvider(
+        final var providerWritten = new AnonymousRegisteredServiceUsernameAttributeProvider(
                         new ShibbolethCompatiblePersistentIdGenerator(CASROX));
         MAPPER.writeValue(JSON_FILE, providerWritten);
         final RegisteredServiceUsernameAttributeProvider providerRead = MAPPER.readValue(JSON_FILE, AnonymousRegisteredServiceUsernameAttributeProvider.class);

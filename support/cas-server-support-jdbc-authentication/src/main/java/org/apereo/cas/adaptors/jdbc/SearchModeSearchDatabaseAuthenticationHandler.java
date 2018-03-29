@@ -57,7 +57,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
                     + "No SQL statement or JDBC template found");
         }
 
-        final String username = credential.getUsername();
+        final var username = credential.getUsername();
         try {
             LOGGER.debug("Executing SQL query [{}]", sql);
 
