@@ -1,5 +1,6 @@
-package org.apereo.cas.support.oauth.validator;
+package org.apereo.cas.support.oauth.services;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,23 +28,15 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class OAuth20AuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = 8517547235465666978L;
-
-
-
+    
     private final ServicesManager servicesManager;
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
     private final String callbackUrl;
+    
     private final int order = Ordered.HIGHEST_PRECEDENCE;
-
-    public OAuth20AuthenticationServiceSelectionStrategy(final ServicesManager servicesManager,
-                                                         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                                         final String callbackUrl) {
-        this.servicesManager = servicesManager;
-        this.webApplicationServiceFactory = webApplicationServiceFactory;
-        this.callbackUrl = callbackUrl;
-    }
 
     @Override
     public Service resolveServiceFrom(final Service service) {

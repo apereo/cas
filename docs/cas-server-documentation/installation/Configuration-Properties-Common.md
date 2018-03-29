@@ -192,6 +192,19 @@ The following options related to principal transformation support in CAS apply e
 # ${configurationKey}.principalTransformation.prefix=
 ```
 
+## Cookie Properties
+
+The following common properties configure cookie generator support in CAS.
+
+```properties
+# ${configurationKey}.name=
+# ${configurationKey}.domain=
+# ${configurationKey}.path=
+# ${configurationKey}.httpOnly=true
+# ${configurationKey}.secure=true
+# ${configurationKey}.maxAge=-1
+```
+
 ## Hibernate & JDBC
 
 Control global properties that are relevant to Hibernate,
@@ -580,6 +593,7 @@ The following options related to DynamoDb support in CAS apply equally to a numb
 # ${configurationKey}.dynamoDb.serviceNameIntern=
 
 # ${configurationKey}.dynamoDb.dropTablesOnStartup=false
+# ${configurationKey}.dynamoDb.preventTableCreationOnStartup=false
 # ${configurationKey}.dynamoDb.timeOffset=0
 
 # ${configurationKey}.dynamoDb.localInstance=false

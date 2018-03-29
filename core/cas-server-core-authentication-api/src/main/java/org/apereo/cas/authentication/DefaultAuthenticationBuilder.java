@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
@@ -12,8 +13,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-
-import lombok.Getter;
 
 /**
  * Constructs immutable {@link Authentication} objects using the builder pattern.
@@ -158,7 +157,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
         if (this.attributes.containsKey(name)) {
             final Object value = this.attributes.get(name);
             final Collection valueCol = CollectionUtils.toCollection(value);
-            return valueCol.stream().filter(predicate).count() > 0;
+            return valueCol.stream().anyMatch(predicate);
         }
         return false;
     }
@@ -190,7 +189,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     public AuthenticationBuilder addSuccesses(final Map<String, AuthenticationHandlerExecutionResult> successes) {
-        successes.entrySet().stream().forEach(entry -> addSuccess(entry.getKey(), entry.getValue()));
+        successes.entrySet().forEach(entry -> addSuccess(entry.getKey(), entry.getValue()));
         return this;
     }
 
@@ -225,7 +224,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     public AuthenticationBuilder addFailures(final Map<String, Throwable> failures) {
-        failures.entrySet().stream().forEach(entry -> addFailure(entry.getKey(), entry.getValue()));
+        failures.entrySet().forEach(entry -> addFailure(entry.getKey(), entry.getValue()));
         return this;
     }
 
@@ -240,9 +239,12 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     public AuthenticationBuilder addFailure(final String key, final Throwable value) {
         LOGGER.debug("Recording authentication handler failure under key [{}]", key);
         if (this.successes.containsKey(key)) {
-            LOGGER.debug("Key mapped to authentication handler failure [{}] is already recorded in the list of failed attempts. Overriding...", key);
+            final String newKey = key + System.currentTimeMillis();
+            LOGGER.debug("Key mapped to authentication handler failure [{}] is recorded in the list of failed attempts. Overriding with [{}]", key, newKey);
+            this.failures.put(newKey, value);
+        } else {
+            this.failures.put(key, value);
         }
-        this.failures.put(key, value);
         return this;
     }
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
-    while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
+    # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
     echo "Running Cassandra docker image..."
     docker run --name cassandra -d -p 9042:9042 cassandra:3.10

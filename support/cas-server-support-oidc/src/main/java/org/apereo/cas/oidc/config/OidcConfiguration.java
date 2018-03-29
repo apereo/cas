@@ -58,8 +58,9 @@ import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth2UserProfileDataCreator;
-import org.apereo.cas.support.oauth.validator.OAuth20RequestValidator;
+import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
+import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
@@ -129,8 +130,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     private AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     @Autowired
-    @Qualifier("oauthRequestValidators")
-    private Set<OAuth20RequestValidator> oauthRequestValidators;
+    @Qualifier("oauthAuthorizationRequestValidators")
+    private Set<OAuth20AuthorizationRequestValidator> oauthRequestValidators;
 
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
@@ -241,6 +242,10 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @Qualifier("accessTokenGrantRequestExtractors")
     private Collection<BaseAccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
 
+    @Autowired
+    @Qualifier("oauthTokenRequestValidators")
+    private Collection<OAuth20TokenRequestValidator> oauthTokenRequestValidators;
+
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(oauthInterceptor()).addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
@@ -346,7 +351,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
             servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
             oidcPrincipalFactory(), webApplicationServiceFactory, oauthTokenGenerator,
             oidcAccessTokenResponseGenerator(), profileScopeToAttributesFilter(), casProperties,
-            ticketGrantingTicketCookieGenerator, accessTokenExpirationPolicy, accessTokenGrantRequestExtractors);
+            ticketGrantingTicketCookieGenerator, accessTokenExpirationPolicy,
+            accessTokenGrantRequestExtractors, oauthTokenRequestValidators);
     }
 
     @Bean
@@ -406,14 +412,20 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @Bean
     public OidcAuthorizeEndpointController oidcAuthorizeController() {
         return new OidcAuthorizeEndpointController(servicesManager,
-            ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
-            oidcPrincipalFactory(), webApplicationServiceFactory,
+            ticketRegistry,
+            oAuth20Validator,
+            defaultAccessTokenFactory,
+            oidcPrincipalFactory(),
+            webApplicationServiceFactory,
             defaultOAuthCodeFactory,
             consentApprovalViewResolver(),
-            profileScopeToAttributesFilter(), casProperties,
+            profileScopeToAttributesFilter(),
+            casProperties,
             ticketGrantingTicketCookieGenerator,
-            authenticationBuilder, oauthAuthorizationResponseBuilders,
-            oauthRequestValidators, registeredServiceAccessStrategyEnforcer);
+            authenticationBuilder,
+            oauthAuthorizationResponseBuilders,
+            oauthRequestValidators,
+            registeredServiceAccessStrategyEnforcer);
     }
 
     @Autowired

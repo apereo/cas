@@ -158,7 +158,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         final AtomicInteger count = new AtomicInteger(0);
         final Map<String, Service> services = ticket.getServices();
         if (services != null && !services.isEmpty()) {
-            services.keySet().stream().forEach(ticketId -> {
+            services.keySet().forEach(ticketId -> {
                 if (deleteSingleTicket(ticketId)) {
                     LOGGER.debug("Removed ticket [{}]", ticketId);
                     count.incrementAndGet();

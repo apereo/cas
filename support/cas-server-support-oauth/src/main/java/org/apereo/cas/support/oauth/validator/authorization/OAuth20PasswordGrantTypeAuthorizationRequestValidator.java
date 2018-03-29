@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.validator;
+package org.apereo.cas.support.oauth.validator.authorization;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,19 +7,20 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.pac4j.core.context.J2EContext;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * This is {@link OAuth20PasswordGrantTypeRequestValidator}.
+ * This is {@link OAuth20PasswordGrantTypeAuthorizationRequestValidator}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
 @AllArgsConstructor
-public class OAuth20PasswordGrantTypeRequestValidator implements OAuth20RequestValidator {
+public class OAuth20PasswordGrantTypeAuthorizationRequestValidator implements OAuth20AuthorizationRequestValidator {
     private final ServicesManager servicesManager;
     private final OAuth20Validator validator;
 

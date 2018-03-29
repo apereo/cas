@@ -3,7 +3,7 @@ package org.apereo.cas.util;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -14,7 +14,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -95,7 +94,7 @@ public class HttpUtils {
                                        final Map<String, String> headers) {
         return execute(url, method, basicAuthUsername, basicAuthPassword, parameters, headers, null);
     }
-    
+
     /**
      * Execute http request and produce a response.
      *
@@ -135,23 +134,12 @@ public class HttpUtils {
                     break;
             }
             headers.forEach(request::addHeader);
-
+            prepareHttpRequest(request, basicAuthUsername, basicAuthPassword, parameters);
             return client.execute(request);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return null;
-    }
-
-    private static URI buildHttpUri(final String url, final Map<String, String> parameters) throws URISyntaxException {
-        final URIBuilder uriBuilder = new URIBuilder(url);
-        parameters.forEach(uriBuilder::addParameter);
-        return uriBuilder.build();
-    }
-
-    private static HttpClient buildHttpClient(final String basicAuthUsername, final String basicAuthPassword) {
-        final HttpClientBuilder builder = HttpClientBuilder.create();
-        return prepareCredentialsIfNeeded(builder, basicAuthUsername, basicAuthPassword).build();
     }
 
     /**
@@ -240,106 +228,6 @@ public class HttpUtils {
      * @param url               the url
      * @param basicAuthUsername the basic auth username
      * @param basicAuthPassword the basic auth password
-     * @param parameters        the parameters
-     * @return the http response
-     */
-    public static HttpResponse executePost(final String url,
-                                           final String basicAuthUsername,
-                                           final String basicAuthPassword,
-                                           final Map<String, String> parameters) {
-        try {
-            return execute(url, basicAuthPassword, basicAuthUsername, HttpMethod.POST.name(), parameters, new HashMap<>());
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return null;
-    }
-
-    /**
-     * Execute post http response.
-     *
-     * @param url               the url
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
-     * @param entity            the entity
-     * @return the http response
-     */
-    public static HttpResponse executePost(final String url,
-                                           final String basicAuthUsername,
-                                           final String basicAuthPassword,
-                                           final HttpEntity entity) {
-        try {
-            final HttpClient client = buildHttpClient(basicAuthUsername, basicAuthPassword);
-            final URI uri = buildHttpUri(url, new HashMap<>());
-            final HttpPost request = new HttpPost(uri);
-            request.setEntity(entity);
-            return client.execute(request);
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return null;
-    }
-
-    /**
-     * Execute post http response.
-     *
-     * @param url        the url
-     * @param entity     the entity
-     * @param parameters the parameters
-     * @return the http response
-     */
-    public static HttpResponse executePost(final String url,
-                                           final HttpEntity entity,
-                                           final Map<String, String> parameters) {
-        try {
-            final HttpClient client = buildHttpClient(null, null);
-            final URI uri = buildHttpUri(url, parameters);
-            final HttpPost request = new HttpPost(uri);
-            request.setEntity(entity);
-            return client.execute(request);
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return null;
-    }
-
-    /**
-     * Execute post http response.
-     *
-     * @param url        the url
-     * @param parameters the parameters
-     * @return the http response
-     */
-    public static HttpResponse executePost(final String url,
-                                           final Map<String, String> parameters) {
-        try {
-            final HttpClient client = buildHttpClient(null, null);
-            final URI uri = buildHttpUri(url, parameters);
-            final HttpPost request = new HttpPost(uri);
-            return client.execute(request);
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return null;
-    }
-
-    /**
-     * Execute post http response.
-     *
-     * @param url    the url
-     * @param entity the entity
-     * @return the http response
-     */
-    public static HttpResponse executePost(final String url, final HttpEntity entity) {
-        return executePost(url, entity, new HashMap<>());
-    }
-
-    /**
-     * Execute post http response.
-     *
-     * @param url               the url
-     * @param basicAuthUsername the basic auth username
-     * @param basicAuthPassword the basic auth password
      * @param jsonEntity        the json entity
      * @return the http response
      */
@@ -380,12 +268,7 @@ public class HttpUtils {
                                            final String jsonEntity,
                                            final Map<String, String> parameters) {
         try {
-            final HttpClient client = buildHttpClient(basicAuthUsername, basicAuthPassword);
-            final URI uri = buildHttpUri(url, parameters);
-            final HttpPost request = new HttpPost(uri);
-            final StringEntity entity = new StringEntity(jsonEntity, ContentType.APPLICATION_JSON);
-            request.setEntity(entity);
-            return client.execute(request);
+            return execute(url, HttpMethod.POST.name(), basicAuthUsername, basicAuthPassword, parameters, new HashMap<>(), jsonEntity);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -410,4 +293,34 @@ public class HttpUtils {
         }
         return builder;
     }
+
+    /**
+     * Prepare http request. Tries to set the authorization header
+     * in cases where the URL endpoint does not actually produce the header
+     * on its own.
+     *
+     * @param request           the request
+     * @param basicAuthUsername the basic auth username
+     * @param basicAuthPassword the basic auth password
+     * @param parameters        the parameters
+     */
+    private static void prepareHttpRequest(final HttpUriRequest request, final String basicAuthUsername,
+                                           final String basicAuthPassword, final Map<String, String> parameters) {
+        if (StringUtils.isNotBlank(basicAuthUsername) && StringUtils.isNotBlank(basicAuthPassword)) {
+            final String auth = EncodingUtils.encodeBase64(basicAuthUsername + ":" + basicAuthPassword);
+            request.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + auth);
+        }
+    }
+
+    private static URI buildHttpUri(final String url, final Map<String, String> parameters) throws URISyntaxException {
+        final URIBuilder uriBuilder = new URIBuilder(url);
+        parameters.forEach(uriBuilder::addParameter);
+        return uriBuilder.build();
+    }
+
+    private static HttpClient buildHttpClient(final String basicAuthUsername, final String basicAuthPassword) {
+        final HttpClientBuilder builder = HttpClientBuilder.create();
+        return prepareCredentialsIfNeeded(builder, basicAuthUsername, basicAuthPassword).build();
+    }
+
 }

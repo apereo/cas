@@ -248,7 +248,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_BAD_REQUEST, mockResponse.getStatus());
-        assertEquals(ERROR_EQUALS + OAuth20Constants.INVALID_GRANT, mockResponse.getContentAsString());
+        assertEquals(ERROR_EQUALS + OAuth20Constants.INVALID_REQUEST, mockResponse.getContentAsString());
     }
 
     @Test

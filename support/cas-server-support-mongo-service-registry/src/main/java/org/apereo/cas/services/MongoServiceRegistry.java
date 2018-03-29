@@ -52,7 +52,7 @@ public class MongoServiceRegistry extends AbstractServiceRegistry {
     @Override
     public List<RegisteredService> load() {
         final List<RegisteredService> list = this.mongoTemplate.findAll(RegisteredService.class, this.collectionName);
-        list.stream().forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
+        list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
         return list;
     }
 

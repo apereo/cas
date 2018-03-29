@@ -20,4 +20,10 @@ public @interface ConditionalIgnore {
      * @return the class
      */
     Class<? extends IgnoreCondition> condition();
+
+    /**
+     * Optional port that needs to be busy when running test.
+     * @return port number
+     */
+    int port() default -1;
 }

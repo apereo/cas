@@ -147,7 +147,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     private static Map<String, List<Object>> convertPrincipalAttributesToPersonAttributes(final Principal p) {
         final Map<String, List<Object>> convertedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         final Map<String, Object> principalAttributes = p.getAttributes();
-        principalAttributes.entrySet().stream().forEach(entry -> {
+        principalAttributes.entrySet().forEach(entry -> {
             final Object values = entry.getValue();
             final String key = entry.getKey();
             if (values instanceof List) {

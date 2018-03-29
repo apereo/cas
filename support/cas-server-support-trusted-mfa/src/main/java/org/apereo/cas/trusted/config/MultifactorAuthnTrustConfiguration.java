@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.config;
 
+import static org.apereo.cas.trusted.BeanNames.BEAN_DEVICE_FINGERPRINT_STRATEGY;
+
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +22,6 @@ import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticati
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
 import org.apereo.cas.trusted.web.MultifactorTrustedDevicesReportEndpoint;
 import org.apereo.cas.trusted.web.flow.DeviceFingerprintStrategy;
-import org.apereo.cas.trusted.web.flow.GeographyDeviceFingerprintStrategy;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustAction;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
@@ -61,25 +62,23 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     private AuditResourceResolver returnValueResourceResolver;
 
     @Autowired
-    private CasConfigurationProperties casProperties;
+    @Qualifier(BEAN_DEVICE_FINGERPRINT_STRATEGY)
+    private DeviceFingerprintStrategy deviceFingerprintStrategy;
 
-    @ConditionalOnMissingBean(name = "deviceFingerprintStrategy")
-    @Bean
-    public DeviceFingerprintStrategy deviceFingerprintStrategy() {
-        return new GeographyDeviceFingerprintStrategy();
-    }
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     @Bean
     @RefreshScope
-    public Action mfaSetTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        return new MultifactorAuthenticationSetTrustAction(storage, deviceFingerprintStrategy(),
+    public Action mfaSetTrustAction() {
+        return new MultifactorAuthenticationSetTrustAction(mfaTrustEngine(), deviceFingerprintStrategy,
             casProperties.getAuthn().getMfa().getTrusted());
     }
 
     @Bean
     @RefreshScope
-    public Action mfaVerifyTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        return new MultifactorAuthenticationVerifyTrustAction(storage, deviceFingerprintStrategy(),
+    public Action mfaVerifyTrustAction() {
+        return new MultifactorAuthenticationVerifyTrustAction(mfaTrustEngine(), deviceFingerprintStrategy,
             casProperties.getAuthn().getMfa().getTrusted());
     }
 
@@ -137,7 +136,9 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     @Bean
     @Lazy
     public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner() {
-        return new MultifactorAuthenticationTrustStorageCleaner(casProperties.getAuthn().getMfa().getTrusted(), mfaTrustEngine());
+        return new MultifactorAuthenticationTrustStorageCleaner(
+                casProperties.getAuthn().getMfa().getTrusted(),
+                mfaTrustEngine());
     }
 
     @Override

@@ -48,7 +48,7 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository {
     public Collection<? extends CasEvent> load() {
         final List<CasEvent> events = new ArrayList<>();
         final QueryResult results = influxDbConnectionFactory.query(MEASUREMENT);
-        results.getResults().stream().forEach(r -> r.getSeries().forEach(s -> {
+        results.getResults().forEach(r -> r.getSeries().forEach(s -> {
             try {
                 final Iterator<List<Object>> it = s.getValues().iterator();
                 while (it.hasNext()) {
