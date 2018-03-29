@@ -3,6 +3,7 @@ package org.apereo.cas.support.rest.resources;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -57,6 +58,7 @@ public class ServiceTicketResource {
                                                       @PathVariable("tgtId") final String tgtId) {
         try {
             final Authentication authn = this.ticketRegistrySupport.getAuthenticationFrom(tgtId);
+            AuthenticationCredentialsThreadLocalBinder.bindCurrent(authn);
             if (authn == null) {
                 throw new InvalidTicketException(tgtId);
             }
@@ -72,6 +74,8 @@ public class ServiceTicketResource {
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            AuthenticationCredentialsThreadLocalBinder.clear();
         }
     }
 

@@ -137,7 +137,7 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
             LOGGER.debug("No authentication context could be determined based on authentication attribute [{}]", this.authenticationContextAttribute);
             return null;
         }
-        contexts.stream().forEach(context -> providers.removeIf(provider -> !provider.getId().equals(context)));
+        contexts.forEach(context -> providers.removeIf(provider -> !provider.getId().equals(context)));
         LOGGER.debug("Found [{}] providers that may satisfy the context", providers.size());
         return providers;
     }

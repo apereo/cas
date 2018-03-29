@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.validator;
+package org.apereo.cas.support.oauth.validator.authorization;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,33 +7,34 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.pac4j.core.context.J2EContext;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * This is {@link OAuth20RefreshTokenGrantTypeRequestValidator}.
+ * This is {@link OAuth20ClientCredentialsGrantTypeAuthorizationRequestValidator}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
 @AllArgsConstructor
-public class OAuth20RefreshTokenGrantTypeRequestValidator implements OAuth20RequestValidator {
-
+public class OAuth20ClientCredentialsGrantTypeAuthorizationRequestValidator implements OAuth20AuthorizationRequestValidator {
     private final ServicesManager servicesManager;
     private final OAuth20Validator validator;
 
     @Override
     public boolean validate(final J2EContext context) {
         final HttpServletRequest request = context.getRequest();
+        
         if (!validator.checkParameterExist(request, OAuth20Constants.GRANT_TYPE)) {
             LOGGER.warn("Grant type must be specified");
             return false;
         }
-
+        
         final String grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
-
+        
         if (!validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)) {
             LOGGER.warn("Client id not specified for grant type [{}]", grantType);
             return false;
@@ -44,11 +45,6 @@ public class OAuth20RefreshTokenGrantTypeRequestValidator implements OAuth20Requ
             return false;
         }
 
-        if (!validator.checkParameterExist(request, OAuth20Constants.REFRESH_TOKEN)) {
-            LOGGER.warn("Refresh token is not specified for grant type [{}]", grantType);
-            return false;
-        }
-
         final String clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
         final OAuthRegisteredService registeredService = getRegisteredServiceByClientId(clientId);
 
@@ -56,8 +52,9 @@ public class OAuth20RefreshTokenGrantTypeRequestValidator implements OAuth20Requ
             LOGGER.warn("Registered service [{}] is not found or is not authorized for access.", registeredService);
             return false;
         }
-
+        
         return OAuth20Utils.isAuthorizedGrantTypeForService(context, registeredService);
+
     }
 
     /**
@@ -73,6 +70,6 @@ public class OAuth20RefreshTokenGrantTypeRequestValidator implements OAuth20Requ
     @Override
     public boolean supports(final J2EContext context) {
         final String grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
-        return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.PASSWORD);
+        return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.CLIENT_CREDENTIALS);
     }
 }
