@@ -1,6 +1,7 @@
 package org.apereo.cas.util.junit;
 
 import lombok.SneakyThrows;
+import org.apereo.cas.util.SocketUtils;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Parameterized;
@@ -25,6 +26,12 @@ public class ConditionalParameterizedRunner extends Parameterized {
         if (ignore != null) {
             final IgnoreCondition condition = ignore.condition().getDeclaredConstructor().newInstance();
             runTests = condition.isSatisfied();
+
+            if (runTests) {
+                if (ignore.port() > 0) {
+                    runTests = !SocketUtils.isTcpPortAvailable(ignore.port());
+                }
+            }
         }
 
         if (runTests) {
