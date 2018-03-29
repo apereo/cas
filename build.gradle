@@ -44,16 +44,13 @@ buildscript {
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.netflix.nebula:gradle-lint-plugin:8.3.2"
-        classpath "io.franzbecker:gradle-lombok:1.11"
+        classpath "io.franzbecker:gradle-lombok:1.12"
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
         classpath "io.spring.gradle:propdeps-plugin:0.0.10.RELEASE"
         classpath "org.ajoberstar:grgit:2.1.1"
-        classpath "net.ltgt.gradle:gradle-errorprone-plugin:0.0.13"
+        classpath "net.ltgt.gradle:gradle-errorprone-javacplugin-plugin:0.1"
         classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
-        classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion"
     }
 }
 
@@ -124,11 +121,9 @@ subprojects {
             description: "Display a graph of all project dependencies") {
         doLast {}
     }
-    apply plugin: "kotlin"
-    apply plugin: "kotlin-spring"
     apply plugin: "java-library"
     if (!rootProject.skipErrorProneCompiler) {
-        apply plugin: "net.ltgt.errorprone"
+        apply plugin: "net.ltgt.errorprone-javacplugin"
     }
     apply plugin: "checkstyle"
     apply plugin: "io.franzbecker.gradle-lombok"
@@ -228,9 +223,8 @@ subprojects {
 
         def casCompilerArgs = ["-parameters"]
         if (!rootProject.skipErrorProneCompiler) {
-            casCompilerArgs.add("-XepAllErrorsAsWarnings")
-            casCompilerArgs.add("-Xep:MissingOverride:OFF")
-            casCompilerArgs.add("-Xep:ParameterName:OFF")
+            it.options.errorprone.allErrorsAsWarnings = false
+            it.options.errorprone.disableWarningsInGeneratedCode = true
         }
 
         if (JavaVersion.toVersion(sourceCompatibility).isJava9Compatible()) {
@@ -239,7 +233,6 @@ subprojects {
         }
 
         it.options.compilerArgs += casCompilerArgs
-
     }
 
     if (Boolean.getBoolean("enableIncremental")) {
@@ -257,16 +250,7 @@ subprojects {
     tasks.jar.onlyIf {
         project.buildDate != null || !project.buildJarFile.exists()
     }
-
-    compileKotlin {
-        kotlinOptions.jvmTarget = "$targetCompatibility"
-        kotlinOptions.javaParameters = true
-    }
-
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "$targetCompatibility"
-    }
-
+    
     lombok {
         version = "$lombokVersion"
     }
@@ -283,22 +267,16 @@ subprojects {
         }
     }
 
-    checkstyle {
-        configFile new File(rootDir, "style/checkstyle-rules.xml")
-        configProperties = ["checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml")]
-        ignoreFailures false
-        showViolations true
-        toolVersion "${checkstyleVersion}"
+    if (!Boolean.getBoolean("skipCheckstyle")) {
+        checkstyle {
+            configFile new File(rootDir, "style/checkstyle-rules.xml")
+            configProperties = ["checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml")]
+            ignoreFailures false
+            showViolations true
+            toolVersion "${checkstyleVersion}"
+        }
     }
-
-    checkstyleTest {
-        enabled = !Boolean.getBoolean("skipCheckstyle")
-    }
-
-    checkstyleMain {
-        enabled = !Boolean.getBoolean("skipCheckstyle")
-    }
-
+    
     if (!Boolean.getBoolean("skipFindbugs")) {
         findbugs {
             toolVersion = "${findbugsVersion}"
@@ -318,12 +296,11 @@ subprojects {
         }
     }
     dependencies {
-        //optional libraries.springcomponentindexer
+        optional libraries.springcomponentindexer
 
         implementation libraries.aspectj
         implementation libraries.validationapi
 
-        api libraries.kotlin
         api libraries.log4j
         api libraries.guava
         api libraries.commons
@@ -337,7 +314,7 @@ subprojects {
         api libraries.hibernate
         api libraries.springcloud
         api libraries.springboot
-
+       
         provided libraries.javax
 
         if (!Boolean.getBoolean("skipFindbugs")) {
