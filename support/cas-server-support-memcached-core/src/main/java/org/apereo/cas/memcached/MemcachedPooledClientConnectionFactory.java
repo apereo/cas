@@ -33,7 +33,7 @@ public class MemcachedPooledClientConnectionFactory extends BasePooledObjectFact
     @Override
     @SneakyThrows
     public MemcachedClientIF create() {
-        final MemcachedClientFactoryBean factoryBean = new MemcachedClientFactoryBean();
+        final var factoryBean = new MemcachedClientFactoryBean();
         factoryBean.setServers(memcachedProperties.getServers());
         factoryBean.setTranscoder(this.transcoder);
 

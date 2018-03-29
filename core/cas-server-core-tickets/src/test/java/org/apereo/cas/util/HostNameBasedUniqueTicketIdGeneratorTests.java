@@ -16,9 +16,9 @@ public class HostNameBasedUniqueTicketIdGeneratorTests {
     
     @Test
     public void verifyUniqueGenerationOfTicketIds() {
-        final HostNameBasedUniqueTicketIdGenerator generator = new HostNameBasedUniqueTicketIdGenerator(10, StringUtils.EMPTY);
-        final String id1 = generator.getNewTicketId("TEST");
-        final String id2 = generator.getNewTicketId("TEST");
+        final var generator = new HostNameBasedUniqueTicketIdGenerator(10, StringUtils.EMPTY);
+        final var id1 = generator.getNewTicketId("TEST");
+        final var id2 = generator.getNewTicketId("TEST");
         assertNotSame(id1, id2);
     }
 }

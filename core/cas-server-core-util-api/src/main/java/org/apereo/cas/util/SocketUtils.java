@@ -21,7 +21,7 @@ public class SocketUtils {
      * @return the boolean
      */
     public static boolean isTcpPortAvailable(final int port) {
-        try (ServerSocket serverSocket = new ServerSocket()) {
+        try (var serverSocket = new ServerSocket()) {
             serverSocket.setReuseAddress(false);
             serverSocket.bind(new InetSocketAddress(InetAddress.getByName("localhost"), port), 1);
             return true;

@@ -30,13 +30,13 @@ public class CookieDeviceFingerprintComponentExtractor implements DeviceFingerpr
     @Override
     public Optional<String> extractComponent(final String principal, final RequestContext context,
                                              final boolean isNew) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final String cookieValue = Optional.ofNullable(cookieGenerator.retrieveCookieValue(request))
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        final var cookieValue = Optional.ofNullable(cookieGenerator.retrieveCookieValue(request))
                 .orElseGet(randomStringGenerator::getNewString);
 
         // set/update the cookie in the response if we are "creating" a fingerprint
         if (isNew) {
-            final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+            final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
             cookieGenerator.addCookie(request, response, cookieValue);
         }
 

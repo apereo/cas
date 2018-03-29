@@ -32,17 +32,17 @@ public class MongoDbServiceRegistryConfiguration implements ServiceRegistryExecu
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryTemplate")
     @Bean
     public MongoTemplate mongoDbServiceRegistryTemplate() {
-        final MongoDbServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
-        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
+        final var mongo = casProperties.getServiceRegistry().getMongo();
+        final var factory = new MongoDbConnectionFactory();
 
-        final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
+        final var mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
     
     @Bean
     public ServiceRegistry mongoDbServiceRegistry() {
-        final MongoDbServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
+        final var mongo = casProperties.getServiceRegistry().getMongo();
         return new MongoServiceRegistry(
                 mongoDbServiceRegistryTemplate(),
                 mongo.getCollection());

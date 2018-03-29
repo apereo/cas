@@ -61,7 +61,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
      */
     @GetMapping(path = WSFederationConstants.ENDPOINT_FEDERATION_REQUEST)
     protected void handleFederationRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
-        final WSFederationRequest fedRequest = WSFederationRequest.of(request);
+        final var fedRequest = WSFederationRequest.of(request);
         switch (fedRequest.getWa().toLowerCase()) {
             case WSFederationConstants.WSIGNOUT10:
             case WSFederationConstants.WSIGNOUT_CLEANUP10:
@@ -78,13 +78,13 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
 
     private void handleLogoutRequest(final WSFederationRequest fedRequest, final HttpServletRequest request,
                                      final HttpServletResponse response) throws Exception {
-        String logoutUrl = casProperties.getServer().getLogoutUrl();
+        var logoutUrl = casProperties.getServer().getLogoutUrl();
         if (StringUtils.isNotBlank(fedRequest.getWreply())) {
             final Service service = webApplicationServiceFactory.createService(fedRequest.getWreply());
-            final WSFederationRegisteredService registeredService = getWsFederationRegisteredService(service);
+            final var registeredService = getWsFederationRegisteredService(service);
             LOGGER.debug("Invoking logout operation for request [{}], redirecting next to [{}] matched against [{}]",
                 fedRequest, fedRequest.getWreply(), registeredService);
-            final String logoutParam = casProperties.getLogout().getRedirectParameter();
+            final var logoutParam = casProperties.getLogout().getRedirectParameter();
             logoutUrl = logoutUrl.concat("?").concat(logoutParam).concat("=").concat(service.getId());
         }
         final AuthenticationRedirectStrategy authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
@@ -93,7 +93,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
 
     private void handleInitialAuthenticationRequest(final WSFederationRequest fedRequest,
                                                     final HttpServletResponse response, final HttpServletRequest request) {
-        final WSFederationRegisteredService service = findAndValidateFederationRequestForRegisteredService(response, request, fedRequest);
+        final var service = findAndValidateFederationRequestForRegisteredService(response, request, fedRequest);
         LOGGER.debug("Redirecting to identity provider for initial authentication [{}]", fedRequest);
         redirectToIdentityProvider(fedRequest, response, request, service);
     }
@@ -101,10 +101,10 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
     @SneakyThrows
     private void redirectToIdentityProvider(final WSFederationRequest fedRequest, final HttpServletResponse response,
                                             final HttpServletRequest request, final WSFederationRegisteredService service) {
-        final String serviceUrl = constructServiceUrl(request, response, fedRequest);
+        final var serviceUrl = constructServiceUrl(request, response, fedRequest);
         LOGGER.debug("Created service url [{}] mapped to [{}]", serviceUrl, service);
-        final boolean renew = shouldRenewAuthentication(fedRequest, request);
-        final String initialUrl = CommonUtils.constructRedirectUrl(casProperties.getServer().getLoginUrl(),
+        final var renew = shouldRenewAuthentication(fedRequest, request);
+        final var initialUrl = CommonUtils.constructRedirectUrl(casProperties.getServer().getLoginUrl(),
             CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, renew, false);
         LOGGER.debug("Redirecting authN request to [{}]", initialUrl);
         final AuthenticationRedirectStrategy authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();

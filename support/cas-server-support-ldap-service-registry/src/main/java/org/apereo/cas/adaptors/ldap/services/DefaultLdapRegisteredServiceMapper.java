@@ -42,20 +42,20 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
         if (svc.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             svc.setId(System.currentTimeMillis());
         }
-        final String newDn = getDnForRegisteredService(dn, svc);
+        final var newDn = getDnForRegisteredService(dn, svc);
         LOGGER.debug("Creating entry DN [{}]", newDn);
 
         final Collection<LdapAttribute> attrs = new ArrayList<>();
         attrs.add(new LdapAttribute(ldap.getIdAttribute(), String.valueOf(svc.getId())));
 
-        try (StringWriter writer = new StringWriter()) {
+        try (var writer = new StringWriter()) {
             this.jsonSerializer.to(writer, svc);
             attrs.add(new LdapAttribute(ldap.getServiceDefinitionAttribute(), writer.toString()));
             attrs.add(new LdapAttribute(LdapUtils.OBJECT_CLASS_ATTRIBUTE, "top", ldap.getObjectClass()));
         }
         LOGGER.debug("LDAP attributes assigned to the DN [{}] are [{}]", newDn, attrs);
 
-        final LdapEntry entry = new LdapEntry(newDn, attrs);
+        final var entry = new LdapEntry(newDn, attrs);
         LOGGER.debug("Created LDAP entry [{}]", entry);
         return entry;
 
@@ -65,7 +65,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
     @SneakyThrows
     public RegisteredService mapToRegisteredService(final LdapEntry entry) {
 
-        final String value = LdapUtils.getString(entry, ldap.getServiceDefinitionAttribute());
+        final var value = LdapUtils.getString(entry, ldap.getServiceDefinitionAttribute());
         if (StringUtils.hasText(value)) {
             LOGGER.debug("Transforming LDAP entry [{}] into registered service definition", entry);
             return this.jsonSerializer.from(value);

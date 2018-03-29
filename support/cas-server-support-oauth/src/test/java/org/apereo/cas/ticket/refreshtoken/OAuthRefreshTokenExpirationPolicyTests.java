@@ -18,9 +18,9 @@ import static org.junit.Assert.*;
 public class OAuthRefreshTokenExpirationPolicyTests extends BaseOAuthExpirationPolicyTests {
     @Test
     public void verifyRefreshTokenExpiryWhenTgtIsExpired() {
-        final TicketGrantingTicket tgt = newTicketGrantingTicket();
-        final AccessToken at = newAccessToken(tgt);
-        final RefreshToken rt = newRefreshToken(at);
+        final var tgt = newTicketGrantingTicket();
+        final var at = newAccessToken(tgt);
+        final var rt = newRefreshToken(at);
 
         assertFalse("Refresh token should not be expired", rt.isExpired());
         tgt.markTicketExpired();
@@ -29,7 +29,7 @@ public class OAuthRefreshTokenExpirationPolicyTests extends BaseOAuthExpirationP
 
     @Test
     public void verifySerializeAnOAuthRefreshTokenExpirationPolicyToJson() throws Exception {
-        final OAuthRefreshTokenExpirationPolicy policyWritten = new OAuthRefreshTokenExpirationPolicy(1234L);
+        final var policyWritten = new OAuthRefreshTokenExpirationPolicy(1234L);
         MAPPER.writeValue(JSON_FILE, policyWritten);
         final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, OAuthRefreshTokenExpirationPolicy.class);
         assertEquals(policyWritten, policyRead);

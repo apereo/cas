@@ -66,15 +66,15 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
-        final SpnegoCredential ntlmCredential = (SpnegoCredential) credential;
-        final byte[] src = ntlmCredential.getInitToken();
+        final var ntlmCredential = (SpnegoCredential) credential;
+        final var src = ntlmCredential.getInitToken();
 
         final UniAddress dc;
-        boolean success = false;
+        var success = false;
         try {
             if (this.loadBalance) {
                 if (StringUtils.isNotBlank(this.includePattern)) {
-                    final NbtAddress[] dcs = NbtAddress.getAllByName(this.domainController, NBT_ADDRESS_TYPE, null, null);
+                    final var dcs = NbtAddress.getAllByName(this.domainController, NBT_ADDRESS_TYPE, null, null);
                     dc = Arrays.stream(dcs)
                             .filter(dc2 -> dc2.getHostAddress().matches(this.includePattern))
                             .findFirst()
@@ -86,23 +86,23 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
             } else {
                 dc = UniAddress.getByName(this.domainController, true);
             }
-            final byte[] challenge = SmbSession.getChallenge(dc);
+            final var challenge = SmbSession.getChallenge(dc);
 
             switch (src[NTLM_TOKEN_TYPE_FIELD_INDEX]) {
                 case NTLM_TOKEN_TYPE_ONE:
                     LOGGER.debug("Type 1 received");
-                    final Type1Message type1 = new Type1Message(src);
-                    final Type2Message type2 = new Type2Message(type1,
+                    final var type1 = new Type1Message(src);
+                    final var type2 = new Type2Message(type1,
                             challenge, null);
                     LOGGER.debug("Type 2 returned. Setting next token.");
                     ntlmCredential.setNextToken(type2.toByteArray());
                     break;
                 case NTLM_TOKEN_TYPE_THREE:
                     LOGGER.debug("Type 3 received");
-                    final Type3Message type3 = new Type3Message(src);
-                    final byte[] lmResponse = type3.getLMResponse() == null ? new byte[0] : type3.getLMResponse();
-                    final byte[] ntResponse = type3.getNTResponse() == null ? new byte[0] : type3.getNTResponse();
-                    final NtlmPasswordAuthentication ntlm = new NtlmPasswordAuthentication(
+                    final var type3 = new Type3Message(src);
+                    final var lmResponse = type3.getLMResponse() == null ? new byte[0] : type3.getLMResponse();
+                    final var ntResponse = type3.getNTResponse() == null ? new byte[0] : type3.getNTResponse();
+                    final var ntlm = new NtlmPasswordAuthentication(
                             type3.getDomain(), type3.getUser(), challenge,
                             lmResponse, ntResponse);
                     LOGGER.debug("Trying to authenticate [{}] with domain controller", type3.getUser());

@@ -37,9 +37,9 @@ public class AuthyClientInstance {
         this.phoneAttribute = phoneAttribute;
         this.countryCode = countryCode;
 
-        final String authyUrl = StringUtils.defaultIfBlank(apiUrl, AuthyApiClient.DEFAULT_API_URI);
-        final URL url = new URL(authyUrl);
-        final boolean testFlag = url.getProtocol().equals("http");
+        final var authyUrl = StringUtils.defaultIfBlank(apiUrl, AuthyApiClient.DEFAULT_API_URI);
+        final var url = new URL(authyUrl);
+        final var testFlag = url.getProtocol().equals("http");
         this.authyClient = new AuthyApiClient(apiKey, authyUrl, testFlag);
         this.authyUsers = this.authyClient.getUsers();
         this.authyTokens = this.authyClient.getTokens();
@@ -61,7 +61,7 @@ public class AuthyClientInstance {
      * @return the authy error message
      */
     public static String getErrorMessage(final com.authy.api.Error err) {
-        final StringBuilder builder = new StringBuilder();
+        final var builder = new StringBuilder();
         if (err != null) {
             builder.append("Authy Error");
             if (StringUtils.isNotBlank(err.getCountryCode())) {
@@ -83,11 +83,11 @@ public class AuthyClientInstance {
      * @return the or create user
      */
     public User getOrCreateUser(final Principal principal) {
-        final String email = (String) principal.getAttributes().get(this.mailAttribute);
+        final var email = (String) principal.getAttributes().get(this.mailAttribute);
         if (StringUtils.isBlank(email)) {
             throw new IllegalArgumentException("No email address found for " + principal.getId());
         }
-        final String phone = (String) principal.getAttributes().get(this.phoneAttribute);
+        final var phone = (String) principal.getAttributes().get(this.phoneAttribute);
         if (StringUtils.isBlank(phone)) {
             throw new IllegalArgumentException("No phone number found for " + principal.getId());
         }

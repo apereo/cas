@@ -87,8 +87,8 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
-        final AcceptAuthenticationProperties props = casProperties.getAuthn().getAccept();
-        final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler(props.getName(), servicesManager,
+        final var props = casProperties.getAuthn().getAccept();
+        final var h = new AcceptUsersAuthenticationHandler(props.getName(), servicesManager,
             acceptUsersPrincipalFactory(), null, getParsedUsers());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(props.getPasswordEncoder()));
         h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration());
@@ -104,8 +104,8 @@ public class CasCoreAuthenticationHandlersConfiguration {
     }
 
     private Map<String, String> getParsedUsers() {
-        final Pattern pattern = Pattern.compile("::");
-        final String usersProperty = casProperties.getAuthn().getAccept().getUsers();
+        final var pattern = Pattern.compile("::");
+        final var usersProperty = casProperties.getAuthn().getAccept().getUsers();
 
         if (StringUtils.isNotBlank(usersProperty) && usersProperty.contains(pattern.pattern())) {
             return Stream.of(usersProperty.split(","))
@@ -152,7 +152,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
                 .stream()
                 .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
                 .map(jaas -> {
-                    final JaasAuthenticationHandler h = new JaasAuthenticationHandler(jaas.getName(),
+                    final var h = new JaasAuthenticationHandler(jaas.getName(),
                         servicesManager, jaasPrincipalFactory(), null);
 
                     h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());

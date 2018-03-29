@@ -22,7 +22,7 @@ public class SamlRestServiceTicketResourceEntityResponseFactory implements Servi
 
     @Override
     public ResponseEntity<String> build(final String ticketGrantingTicket, final Service service, final AuthenticationResult authenticationResult) {
-        final String serviceTicketId = uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX);
+        final var serviceTicketId = uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX);
         return new ResponseEntity<>(serviceTicketId, HttpStatus.OK);
     }
 

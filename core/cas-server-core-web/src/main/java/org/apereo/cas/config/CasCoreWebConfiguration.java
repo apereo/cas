@@ -53,12 +53,12 @@ public class CasCoreWebConfiguration {
      */
     @Bean
     public PropertiesFactoryBean casCommonMessages() {
-        final PropertiesFactoryBean properties = new PropertiesFactoryBean();
+        final var properties = new PropertiesFactoryBean();
         final List<Resource> resourceList = new ArrayList<>();
-        final DefaultResourceLoader resourceLoader = new DefaultResourceLoader();
+        final var resourceLoader = new DefaultResourceLoader();
         resourceList.add(resourceLoader.getResource("classpath:/cas_common_messages.properties"));
-        for (final String resourceName : casProperties.getMessageBundle().getCommonNames()) {
-            final Resource resource = resourceLoader.getResource(resourceName);
+        for (final var resourceName : casProperties.getMessageBundle().getCommonNames()) {
+            final var resource = resourceLoader.getResource(resourceName);
             // resource existence unknown at this point, let PropertiesFactoryBean determine and log
             resourceList.add(resource);
         }
@@ -71,8 +71,8 @@ public class CasCoreWebConfiguration {
     @RefreshScope
     @Bean
     public HierarchicalMessageSource messageSource(@Qualifier("casCommonMessages") final Properties casCommonMessages) {
-        final CasReloadableMessageBundle bean = new CasReloadableMessageBundle();
-        final MessageBundleProperties mb = casProperties.getMessageBundle();
+        final var bean = new CasReloadableMessageBundle();
+        final var mb = casProperties.getMessageBundle();
         bean.setDefaultEncoding(mb.getEncoding());
         bean.setCacheSeconds(mb.getCacheSeconds());
         bean.setFallbackToSystemLocale(mb.isFallbackSystemLocale());
@@ -92,10 +92,10 @@ public class CasCoreWebConfiguration {
 
     @Bean
     public FactoryBean<UrlValidator> urlValidator() {
-        final HttpClientProperties httpClient = this.casProperties.getHttpClient();
-        final boolean allowLocalLogoutUrls = httpClient.isAllowLocalLogoutUrls();
-        final String authorityValidationRegEx = httpClient.getAuthorityValidationRegEx();
-        final boolean authorityValidationRegExCaseSensitive = httpClient.isAuthorityValidationRegExCaseSensitive();
+        final var httpClient = this.casProperties.getHttpClient();
+        final var allowLocalLogoutUrls = httpClient.isAllowLocalLogoutUrls();
+        final var authorityValidationRegEx = httpClient.getAuthorityValidationRegEx();
+        final var authorityValidationRegExCaseSensitive = httpClient.isAuthorityValidationRegExCaseSensitive();
         return new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls, authorityValidationRegEx, authorityValidationRegExCaseSensitive);
     }
 }

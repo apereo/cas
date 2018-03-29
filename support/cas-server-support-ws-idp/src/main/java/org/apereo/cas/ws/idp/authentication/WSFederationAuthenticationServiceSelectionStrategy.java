@@ -32,7 +32,7 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
     @Override
     public Service resolveServiceFrom(final Service service) {
         if (service != null) {
-            final String serviceReply = getReplyAsParameter(service).get().getValue();
+            final var serviceReply = getReplyAsParameter(service).get().getValue();
             LOGGER.debug("Located service id [{}] from service authentication request at [{}]", serviceReply, service.getId());
             return this.webApplicationServiceFactory.createService(serviceReply);
         }
@@ -46,7 +46,7 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
 
     private static Optional<NameValuePair> getRealmAsParameter(final Service service) {
         try {
-            final URIBuilder builder = new URIBuilder(service.getId());
+            final var builder = new URIBuilder(service.getId());
             final Optional param = builder.getQueryParams()
                     .stream()
                     .filter(p -> p.getName().equals(WSFederationConstants.WTREALM))
@@ -60,7 +60,7 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
 
     private static Optional<NameValuePair> getReplyAsParameter(final Service service) {
         try {
-            final URIBuilder builder = new URIBuilder(service.getId());
+            final var builder = new URIBuilder(service.getId());
             final Optional param = builder.getQueryParams()
                     .stream()
                     .filter(p -> p.getName().equals(WSFederationConstants.WREPLY))

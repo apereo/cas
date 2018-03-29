@@ -25,7 +25,7 @@ public class LdapContinuousIntegrationSpnegoKnownClientSystemsFilterActionTests
 
     @BeforeClass
     public static void bootstrap() throws Exception {
-        final LDAPConnection c = new LDAPConnection("localhost", 10389,
+        final var c = new LDAPConnection("localhost", 10389,
             "cn=Directory Manager", "password");
         LdapIntegrationTestsOperations.populateDefaultEntries(c, "ou=people,dc=example,dc=org");
     }

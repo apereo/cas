@@ -34,7 +34,7 @@ public class CasKryoPool implements KryoPool {
                        final boolean replaceObjectsByReferences,
                        final boolean autoReset) {
         
-        final CloseableKryoFactory factory = new CloseableKryoFactory(this);
+        final var factory = new CloseableKryoFactory(this);
         factory.setWarnUnregisteredClasses(warnUnregisteredClasses);
         factory.setReplaceObjectsByReferences(replaceObjectsByReferences);
         factory.setAutoReset(autoReset);
@@ -55,7 +55,7 @@ public class CasKryoPool implements KryoPool {
 
     @Override
     public <T> T run(final KryoCallback<T> callback) {
-        try (CloseableKryo kryo = borrow()) {
+        try (var kryo = borrow()) {
             return callback.execute(kryo);
         }
     }

@@ -38,14 +38,14 @@ public class MemcachedMonitorConfiguration {
 
     @Bean
     public Transcoder memcachedMonitorTranscoder() {
-        final MonitorProperties.Memcached memcached = casProperties.getMonitor().getMemcached();
+        final var memcached = casProperties.getMonitor().getMemcached();
         return MemcachedUtils.newTranscoder(memcached, componentSerializationPlan.getRegisteredClasses());
     }
 
     @Bean
     public HealthIndicator memcachedHealthIndicator() {
-        final MonitorProperties.Memcached memcached = casProperties.getMonitor().getMemcached();
-        final MemcachedPooledClientConnectionFactory factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedMonitorTranscoder());
+        final var memcached = casProperties.getMonitor().getMemcached();
+        final var factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedMonitorTranscoder());
         final ObjectPool<MemcachedClientIF> pool = new GenericObjectPool<>(factory);
         return new MemcachedHealthIndicator(pool,
             casProperties.getMonitor().getWarn().getEvictionThreshold(),

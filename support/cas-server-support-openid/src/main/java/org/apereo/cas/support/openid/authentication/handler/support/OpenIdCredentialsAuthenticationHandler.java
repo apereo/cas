@@ -36,14 +36,14 @@ public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticati
 
     @Override
     public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
-        final OpenIdCredential c = (OpenIdCredential) credential;
+        final var c = (OpenIdCredential) credential;
 
-        final TicketGrantingTicket t = this.ticketRegistry.getTicket(c.getTicketGrantingTicketId(), TicketGrantingTicket.class);
+        final var t = this.ticketRegistry.getTicket(c.getTicketGrantingTicketId(), TicketGrantingTicket.class);
 
         if (t == null || t.isExpired()) {
             throw new FailedLoginException("TGT is null or expired.");
         }
-        final Principal principal = t.getAuthentication().getPrincipal();
+        final var principal = t.getAuthentication().getPrincipal();
         if (!principal.getId().equals(c.getUsername())) {
             throw new FailedLoginException("Principal ID mismatch");
         }

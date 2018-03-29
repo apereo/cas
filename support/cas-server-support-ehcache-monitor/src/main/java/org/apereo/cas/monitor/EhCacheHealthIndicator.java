@@ -33,7 +33,7 @@ public class EhCacheHealthIndicator extends AbstractCacheHealthIndicator {
     protected CacheStatistics[] getStatistics() {
         final List<CacheStatistics> list = Arrays.stream(this.ehcacheTicketsCache.getCacheNames())
             .map(c -> {
-                final Cache cache = this.ehcacheTicketsCache.getCache(c);
+                final var cache = this.ehcacheTicketsCache.getCache(c);
                 return new EhCacheStatistics(cache);
             })
             .collect(Collectors.toList());

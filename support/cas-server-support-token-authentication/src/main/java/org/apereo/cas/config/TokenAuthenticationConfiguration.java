@@ -49,7 +49,7 @@ public class TokenAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "tokenAuthenticationHandler")
     @Bean
     public AuthenticationHandler tokenAuthenticationHandler() {
-        final TokenAuthenticationProperties token = casProperties.getAuthn().getToken();
+        final var token = casProperties.getAuthn().getToken();
         return new TokenAuthenticationHandler(token.getName(), servicesManager, tokenPrincipalFactory(),
                 PrincipalNameTransformerUtils.newPrincipalNameTransformer(token.getPrincipalTransformation()));
     }

@@ -34,11 +34,11 @@ public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
                     final String issuerId, final SAMLObject samlMessage) throws IOException {
         super.put(artifact, relyingPartyId, issuerId, samlMessage);
 
-        final HttpServletRequest request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-        final TicketGrantingTicket ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
+        final var request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+        final var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
                 ticketGrantingTicketCookieGenerator, this.ticketRegistry, request);
 
-        final SamlArtifactTicket ticket = samlArtifactTicketFactory.create(artifact,
+        final var ticket = samlArtifactTicketFactory.create(artifact,
                 ticketGrantingTicket.getAuthentication(),
                 ticketGrantingTicket,
                 issuerId,

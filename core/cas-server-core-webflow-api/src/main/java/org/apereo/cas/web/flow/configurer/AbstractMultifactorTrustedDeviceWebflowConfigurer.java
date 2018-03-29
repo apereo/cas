@@ -50,17 +50,17 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         validateFlowDefinitionConfiguration(flowDefinitionRegistry);
 
         LOGGER.debug("Flow definitions found in the registry are [{}]", (Object[]) flowDefinitionRegistry.getFlowDefinitionIds());
-        final String flowId = Arrays.stream(flowDefinitionRegistry.getFlowDefinitionIds()).findFirst().get();
+        final var flowId = Arrays.stream(flowDefinitionRegistry.getFlowDefinitionIds()).findFirst().get();
         LOGGER.debug("Processing flow definition [{}]", flowId);
 
-        final Flow flow = (Flow) flowDefinitionRegistry.getFlowDefinition(flowId);
+        final var flow = (Flow) flowDefinitionRegistry.getFlowDefinition(flowId);
 
         // Set the verify action
-        final ActionState state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
-        final Transition transition = (Transition) state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        final String targetStateId = transition.getTargetStateId();
+        final var state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
+        final var transition = (Transition) state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        final var targetStateId = transition.getTargetStateId();
         transition.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_VERIFY_TRUSTED_DEVICE));
-        final ActionState verifyAction = createActionState(flow,
+        final var verifyAction = createActionState(flow,
                 CasWebflowConstants.STATE_ID_VERIFY_TRUSTED_DEVICE,
                 createEvaluateAction(MFA_VERIFY_TRUST_ACTION_BEAN_ID));
 
@@ -76,28 +76,28 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
                 isDeviceRegistrationRequired(),
                 CasWebflowConstants.VIEW_ID_REGISTER_DEVICE, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
 
-        final ActionState submit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
-        final Transition success = (Transition) submit.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        final var submit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
+        final var success = (Transition) submit.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
         if (enableDeviceRegistration) {
             success.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.VIEW_ID_REGISTER_DEVICE));
         } else {
             success.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE));
         }
-        final ViewState viewRegister = createViewState(flow, CasWebflowConstants.VIEW_ID_REGISTER_DEVICE, "casMfaRegisterDeviceView");
-        final Transition viewRegisterTransition = createTransition(CasWebflowConstants.TRANSITION_ID_SUBMIT, 
+        final var viewRegister = createViewState(flow, CasWebflowConstants.VIEW_ID_REGISTER_DEVICE, "casMfaRegisterDeviceView");
+        final var viewRegisterTransition = createTransition(CasWebflowConstants.TRANSITION_ID_SUBMIT,
                 CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE);
         viewRegister.getTransitionSet().add(viewRegisterTransition);
 
-        final ActionState registerAction = createActionState(flow,
+        final var registerAction = createActionState(flow,
                 CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE, createEvaluateAction(MFA_SET_TRUST_ACTION_BEAN_ID));
         createStateDefaultTransition(registerAction, CasWebflowConstants.STATE_ID_SUCCESS);
 
         if (submit.getActionList().size() == 0) {
             throw new IllegalArgumentException("There are no actions defined for the final submission event of " + flowId);
         }
-        final Action act = submit.getActionList().iterator().next();
-        final ActionState finishMfaTrustedAuth = createActionState(flow, CasWebflowConstants.STATE_ID_FINISH_MFA_TRUSTED_AUTH, act);
-        final Transition finishedTransition = createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
+        final var act = submit.getActionList().iterator().next();
+        final var finishMfaTrustedAuth = createActionState(flow, CasWebflowConstants.STATE_ID_FINISH_MFA_TRUSTED_AUTH, act);
+        final var finishedTransition = createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
         finishMfaTrustedAuth.getTransitionSet().add(finishedTransition);
         createStateDefaultTransition(finishMfaTrustedAuth, CasWebflowConstants.STATE_ID_SUCCESS);
     }
@@ -107,7 +107,7 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
             throw new IllegalArgumentException("Flow definition registry has no flow definitions");
         }
 
-        final String msg = "CAS application context cannot find bean [%s]. "
+        final var msg = "CAS application context cannot find bean [%s]. "
                 + "This typically indicates that configuration is attempting to activate trusted-devices functionality for "
                 + "multifactor authentication, yet the configuration modules that auto-configure the webflow are absent "
                 + "from the CAS application runtime. If you have no need for trusted-devices functionality and wish to let the "

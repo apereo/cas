@@ -26,11 +26,11 @@ public class InquireInterruptAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final Authentication authentication = WebUtils.getAuthentication(requestContext);
+        final var authentication = WebUtils.getAuthentication(requestContext);
         final Service service = WebUtils.getService(requestContext);
-        final RegisteredService registeredService = WebUtils.getRegisteredService(requestContext);
+        final var registeredService = WebUtils.getRegisteredService(requestContext);
         
-        final InterruptResponse response = this.interruptInquirer.inquire(authentication, registeredService, service);
+        final var response = this.interruptInquirer.inquire(authentication, registeredService, service);
         if (response == null || !response.isInterrupt()) {
             return no();
         }

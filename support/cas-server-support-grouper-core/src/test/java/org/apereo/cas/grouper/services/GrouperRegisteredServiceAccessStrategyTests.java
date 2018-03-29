@@ -23,9 +23,9 @@ public class GrouperRegisteredServiceAccessStrategyTests {
     
     @Test
     public void checkGrouperAttributes() {
-        final ClassPathResource resource = new ClassPathResource("grouper.client.properties");
+        final var resource = new ClassPathResource("grouper.client.properties");
         if (resource.exists()) {
-            final GrouperRegisteredServiceAccessStrategy strategy = new GrouperRegisteredServiceAccessStrategy();
+            final var strategy = new GrouperRegisteredServiceAccessStrategy();
             final Map<String, Set<String>> requiredAttributes = new HashMap<>();
             requiredAttributes.put("memberOf", Collections.singleton("admin"));
             strategy.setRequiredAttributes(requiredAttributes);

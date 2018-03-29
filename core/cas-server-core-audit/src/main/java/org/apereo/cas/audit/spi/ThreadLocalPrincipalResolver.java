@@ -38,8 +38,8 @@ public class ThreadLocalPrincipalResolver implements PrincipalResolver {
     }
 
     private String getCurrentPrincipal(final Object returnValue, final Exception exception) {
-        final Authentication authn = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
-        String principal = this.auditPrincipalIdProvider.getPrincipalIdFrom(authn, returnValue, exception);
+        final var authn = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
+        var principal = this.auditPrincipalIdProvider.getPrincipalIdFrom(authn, returnValue, exception);
         if (principal == null) {
             principal = AuthenticationCredentialsThreadLocalBinder.getCurrentCredentialIdsAsString();
         }

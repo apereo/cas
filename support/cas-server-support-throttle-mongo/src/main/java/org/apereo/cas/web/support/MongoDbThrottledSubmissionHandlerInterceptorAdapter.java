@@ -41,10 +41,10 @@ public class MongoDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
 
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
-        final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
-        final String remoteAddress = clientInfo.getClientIpAddress();
+        final var clientInfo = ClientInfoHolder.getClientInfo();
+        final var remoteAddress = clientInfo.getClientIpAddress();
 
-        final Query query = new Query()
+        final var query = new Query()
             .addCriteria(Criteria.where("clientIpAddress").is(remoteAddress)
                 .and("principal").is(getUsernameParameterFromRequest(request))
                 .and("actionPerformed").is(getAuthenticationFailureCode())
@@ -56,7 +56,7 @@ public class MongoDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
         query.fields().include("whenActionWasPerformed");
 
         LOGGER.debug("Executing MongoDb throttling query [{}]", query.toString());
-        final List<Date> failures = this.mongoTemplate.find(query, AuditActionContext.class, this.collectionName)
+        final var failures = this.mongoTemplate.find(query, AuditActionContext.class, this.collectionName)
             .stream()
             .map(AuditActionContext::getWhenActionWasPerformed)
             .collect(Collectors.toList());

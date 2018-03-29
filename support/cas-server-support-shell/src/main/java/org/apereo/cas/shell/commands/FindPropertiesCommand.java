@@ -57,7 +57,7 @@ public class FindPropertiesCommand implements CommandMarker {
                     unspecifiedDefaultValue = "false",
                     specifiedDefaultValue = "true") final boolean summary) {
 
-        final Map<String, ConfigurationMetadataProperty> results = find(strict, RegexUtils.createPattern(name));
+        final var results = find(strict, RegexUtils.createPattern(name));
 
         if (results.isEmpty()) {
             LOGGER.info("Could not find any results matching the criteria");
@@ -67,7 +67,7 @@ public class FindPropertiesCommand implements CommandMarker {
         results.forEach((k, v) -> {
             if (summary) {
                 LOGGER.info("{}={}", k, v.getDefaultValue());
-                final String value = StringUtils.normalizeSpace(v.getShortDescription());
+                final var value = StringUtils.normalizeSpace(v.getShortDescription());
                 if (StringUtils.isNotBlank(value)) {
                     LOGGER.info("{}", value);
                 }
@@ -100,11 +100,11 @@ public class FindPropertiesCommand implements CommandMarker {
     public Map<String, ConfigurationMetadataProperty> find(final boolean strict, final Pattern propertyPattern) {
         final Map<String, ConfigurationMetadataProperty> results = new LinkedHashMap<>();
 
-        final CasConfigurationMetadataRepository repository = new CasConfigurationMetadataRepository();
-        final Map<String, ConfigurationMetadataProperty> props = repository.getRepository().getAllProperties();
+        final var repository = new CasConfigurationMetadataRepository();
+        final var props = repository.getRepository().getAllProperties();
 
         props.forEach((k, v) -> {
-            final boolean matched = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(k).spliterator(), false)
+            final var matched = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(k).spliterator(), false)
                     .map(Object::toString)
                     .anyMatch(name -> strict ? RegexUtils.matches(propertyPattern, name) : RegexUtils.find(propertyPattern, name));
             if (matched) {

@@ -57,9 +57,9 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler rejectUsersAuthenticationHandler() {
-        final RejectAuthenticationProperties rejectProperties = casProperties.getAuthn().getReject();
-        final Set<String> users = org.springframework.util.StringUtils.commaDelimitedListToSet(rejectProperties.getUsers());
-        final RejectUsersAuthenticationHandler h = new RejectUsersAuthenticationHandler(rejectProperties.getName(), servicesManager,
+        final var rejectProperties = casProperties.getAuthn().getReject();
+        final var users = org.springframework.util.StringUtils.commaDelimitedListToSet(rejectProperties.getUsers());
+        final var h = new RejectUsersAuthenticationHandler(rejectProperties.getName(), servicesManager,
             rejectUsersPrincipalFactory(), users);
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rejectProperties.getPasswordEncoder()));
         h.setPasswordPolicyConfiguration(rejectPasswordPolicyConfiguration());
@@ -71,7 +71,7 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer rejectUsersAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            final String users = casProperties.getAuthn().getReject().getUsers();
+            final var users = casProperties.getAuthn().getReject().getUsers();
             if (StringUtils.isNotBlank(users)) {
                 plan.registerAuthenticationHandlerWithPrincipalResolver(rejectUsersAuthenticationHandler(), personDirectoryPrincipalResolver);
                 LOGGER.debug("Added rejecting authentication handler with the following users [{}]", users);

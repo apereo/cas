@@ -37,11 +37,11 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
     @Override
     public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
         try {
-            final String metadataLocation = service.getMetadataLocation();
+            final var metadataLocation = service.getMetadataLocation();
             LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
-            final AbstractResource metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
+            final var metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
 
-            final File metadataFile = metadataResource.getFile();
+            final var metadataFile = metadataResource.getFile();
             final AbstractMetadataResolver metadataResolver;
             if (metadataFile.isDirectory()) {
                 metadataResolver = new LocalDynamicMetadataResolver(new FilesystemLoadSaveManager<>(metadataFile, configBean.getParserPool()));
@@ -59,8 +59,8 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
     @Override
     public boolean supports(final SamlRegisteredService service) {
         try {
-            final String metadataLocation = service.getMetadataLocation();
-            final AbstractResource metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
+            final var metadataLocation = service.getMetadataLocation();
+            final var metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             return metadataResource instanceof FileSystemResource;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

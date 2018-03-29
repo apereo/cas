@@ -45,10 +45,10 @@ public class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsA
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
-        final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
-        final String openidIdentityParameter = context.getRequestParameters().get(OpenIdProtocolConstants.OPENID_IDENTITY);
+        final var ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
+        final var openidIdentityParameter = context.getRequestParameters().get(OpenIdProtocolConstants.OPENID_IDENTITY);
 
-        final String userName = getOpenIdSelectedIdentifier(context, ticketGrantingTicketId, openidIdentityParameter);
+        final var userName = getOpenIdSelectedIdentifier(context, ticketGrantingTicketId, openidIdentityParameter);
         final Service service = WebUtils.getService(context);
 
         // clear the service because otherwise we can fake the username
@@ -67,14 +67,14 @@ public class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsA
                                                final String openidIdentityParameter) {
         if (OpenIdProtocolConstants.OPENID_IDENTIFIERSELECT.equals(openidIdentityParameter)) {
             context.getFlowScope().remove(OpenIdProtocolConstants.OPENID_LOCALID);
-            final Principal p = ticketRegistrySupport.getAuthenticatedPrincipalFrom(ticketGrantingTicketId);
+            final var p = ticketRegistrySupport.getAuthenticatedPrincipalFrom(ticketGrantingTicketId);
             if (p != null) {
                 return p.getId();
             }
             return OpenIdProtocolConstants.OPENID_IDENTIFIERSELECT;
         }
         
-        final String userName = this.extractor.extractLocalUsernameFromUri(openidIdentityParameter);
+        final var userName = this.extractor.extractLocalUsernameFromUri(openidIdentityParameter);
         context.getFlowScope().put(OpenIdProtocolConstants.OPENID_LOCALID, userName);
         return userName;
     }

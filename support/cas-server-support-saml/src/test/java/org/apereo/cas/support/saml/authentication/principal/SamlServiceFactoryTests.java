@@ -18,18 +18,18 @@ import static org.junit.Assert.*;
 public class SamlServiceFactoryTests {
     @Test
     public void verifyObtainService() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "test");
 
-        final SamlServiceFactory factory = new SamlServiceFactory();
+        final var factory = new SamlServiceFactory();
         final Service service = factory.createService(request);
         assertEquals("test", service.getId());
     }
 
     @Test
     public void verifyServiceDoesNotExist() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final SamlServiceFactory factory = new SamlServiceFactory();
+        final var request = new MockHttpServletRequest();
+        final var factory = new SamlServiceFactory();
         assertNull(factory.createService(request));
     }
 }

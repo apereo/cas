@@ -29,7 +29,7 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
 
     @Override
     public void expire(final LocalDate onOrBefore) {
-        final Set<MultifactorAuthenticationTrustRecord> results = storage.asMap()
+        final var results = storage.asMap()
                 .values()
                 .stream()
                 .filter(entry -> entry.getRecordDate().isEqual(onOrBefore) || entry.getRecordDate().isBefore(onOrBefore))

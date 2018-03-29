@@ -42,7 +42,7 @@ public class LdapServiceRegistryConfiguration implements ServiceRegistryExecutio
     @Bean
     @RefreshScope
     public ServiceRegistry ldapServiceRegistry() {
-        final LdapServiceRegistryProperties ldap = casProperties.getServiceRegistry().getLdap();
+        final var ldap = casProperties.getServiceRegistry().getLdap();
         final ConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new LdapServiceRegistry(connectionFactory, ldap.getBaseDn(), ldapServiceRegistryMapper(), ldap);
     }

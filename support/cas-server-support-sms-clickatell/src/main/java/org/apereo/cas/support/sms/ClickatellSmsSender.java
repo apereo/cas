@@ -58,21 +58,21 @@ public class ClickatellSmsSender implements SmsSender {
             map.put("to", CollectionUtils.wrap(to));
             map.put("from", from);
 
-            final StringWriter stringify = new StringWriter();
+            final var stringify = new StringWriter();
             mapper.writeValue(stringify, map);
 
             final HttpEntity<String> request = new HttpEntity<>(stringify.toString(), headers);
-            final ResponseEntity<Map> response = restTemplate.postForEntity(new URI(this.serverUrl), request, Map.class);
+            final var response = restTemplate.postForEntity(new URI(this.serverUrl), request, Map.class);
             if (response.hasBody()) {
-                final List<Map> messages = (List<Map>) response.getBody().get("messages");
+                final var messages = (List<Map>) response.getBody().get("messages");
 
-                final String error = (String) response.getBody().get("error");
+                final var error = (String) response.getBody().get("error");
                 if (StringUtils.isNotBlank(error)) {
                     LOGGER.error(error);
                     return false;
                 }
 
-                final List<String> errors = messages.stream()
+                final var errors = messages.stream()
                         .filter(m -> m.containsKey("accepted") && !Boolean.parseBoolean(m.get("accepted").toString()) && m.containsKey("error"))
                         .map(m -> (String) m.get("error"))
                         .collect(Collectors.toList());

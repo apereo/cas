@@ -31,7 +31,7 @@ public class RankedMultifactorAuthenticationProviderSelector implements Multifac
             throw new IllegalArgumentException("List of candidate multifactor authentication providers is empty");
         }
         OrderComparator.sort(sorted);
-        final MultifactorAuthenticationProvider provider = sorted.get(sorted.size() - 1);
+        final var provider = sorted.get(sorted.size() - 1);
         LOGGER.debug("Selected the provider [{}] for service [{}] out of [{}] providers", provider, service, providers.size());
         return provider;
     }

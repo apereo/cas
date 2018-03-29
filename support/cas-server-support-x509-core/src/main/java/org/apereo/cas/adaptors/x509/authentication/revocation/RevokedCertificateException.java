@@ -67,9 +67,9 @@ public class RevokedCertificateException extends GeneralSecurityException {
          * @return the reason
          */
         public static Reason fromCode(final int code) {
-            final Reason[] reasons = Reason.values();
+            final var reasons = Reason.values();
 
-            for (int i = 0; i < reasons.length; i++) {
+            for (var i = 0; i < reasons.length; i++) {
                 if (i == code) {
                     return reasons[i];
                 }
@@ -114,7 +114,7 @@ public class RevokedCertificateException extends GeneralSecurityException {
     private static Reason getReasonFromX509Entry(final X509CRLEntry entry) {
         if (entry.hasExtensions()) {
             try {
-                final int code = Integer.parseInt(
+                final var code = Integer.parseInt(
                         new String(entry.getExtensionValue(CRL_REASON_OID), "ASCII"));
                 if (code < Reason.values().length) {
                     return Reason.fromCode(code);

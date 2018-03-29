@@ -33,8 +33,8 @@ public class SecurityTokenServiceClientBuilder {
      * @return the security token service client
      */
     public SecurityTokenServiceClient buildClientForSecurityTokenRequests(final WSFederationRegisteredService service) {
-        final Bus cxfBus = BusFactory.getDefaultBus();
-        final SecurityTokenServiceClient sts = new SecurityTokenServiceClient(cxfBus);
+        final var cxfBus = BusFactory.getDefaultBus();
+        final var sts = new SecurityTokenServiceClient(cxfBus);
         sts.setAddressingNamespace(StringUtils.defaultIfBlank(service.getAddressingNamespace(), WSFederationConstants.HTTP_WWW_W3_ORG_2005_08_ADDRESSING));
         sts.setTokenType(StringUtils.defaultIfBlank(service.getTokenType(), WSConstants.WSS_SAML2_TOKEN_TYPE));
         sts.setKeyType(WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512_BEARER);
@@ -42,7 +42,7 @@ public class SecurityTokenServiceClientBuilder {
         if (StringUtils.isNotBlank(service.getPolicyNamespace())) {
             sts.setWspNamespace(service.getPolicyNamespace());
         }
-        final String namespace = StringUtils.defaultIfBlank(service.getNamespace(), WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512);
+        final var namespace = StringUtils.defaultIfBlank(service.getNamespace(), WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512);
         sts.setServiceQName(new QName(namespace, StringUtils.defaultIfBlank(service.getWsdlService(), WSFederationConstants.SECURITY_TOKEN_SERVICE)));
         sts.setEndpointQName(new QName(namespace, service.getWsdlEndpoint()));
         sts.getProperties().putAll(new HashMap<>());
@@ -53,8 +53,8 @@ public class SecurityTokenServiceClientBuilder {
         if (StringUtils.isNotBlank(service.getWsdlLocation())) {
             return service.getWsdlLocation();
         }
-        final String wsdl = String.format(WSFederationConstants.ENDPOINT_STS_REALM_WSDL, wsFederationProperties.getIdp().getRealmName());
-        final String location = this.prefix.concat(wsdl);
+        final var wsdl = String.format(WSFederationConstants.ENDPOINT_STS_REALM_WSDL, wsFederationProperties.getIdp().getRealmName());
+        final var location = this.prefix.concat(wsdl);
         return location;
     }
 
@@ -67,11 +67,11 @@ public class SecurityTokenServiceClientBuilder {
      */
     public SecurityTokenServiceClient buildClientForRelyingPartyTokenResponses(final SecurityToken securityToken,
                                                                                final WSFederationRegisteredService service) {
-        final Bus cxfBus = BusFactory.getDefaultBus();
-        final SecurityTokenServiceClient sts = new SecurityTokenServiceClient(cxfBus);
+        final var cxfBus = BusFactory.getDefaultBus();
+        final var sts = new SecurityTokenServiceClient(cxfBus);
         sts.setAddressingNamespace(StringUtils.defaultIfBlank(service.getAddressingNamespace(), WSFederationConstants.HTTP_WWW_W3_ORG_2005_08_ADDRESSING));
         sts.setWsdlLocation(prepareWsdlLocation(service));
-        final String namespace = StringUtils.defaultIfBlank(service.getNamespace(), WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512);
+        final var namespace = StringUtils.defaultIfBlank(service.getNamespace(), WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512);
         sts.setServiceQName(new QName(namespace, service.getWsdlService()));
         sts.setEndpointQName(new QName(namespace, service.getWsdlEndpoint()));
         sts.setEnableAppliesTo(StringUtils.isNotBlank(service.getAppliesTo()));

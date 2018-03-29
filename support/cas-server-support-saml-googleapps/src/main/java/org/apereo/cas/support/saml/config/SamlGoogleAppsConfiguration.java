@@ -68,7 +68,7 @@ public class SamlGoogleAppsConfiguration implements ServiceFactoryConfigurer {
     @Bean
     @Lazy
     public ResponseBuilder googleAccountsServiceResponseBuilder() {
-        final GoogleAppsProperties gApps = casProperties.getGoogleApps();
+        final var gApps = casProperties.getGoogleApps();
         return new GoogleAccountsServiceResponseBuilder(
                 gApps.getPrivateKeyLocation(),
                 gApps.getPublicKeyLocation(),

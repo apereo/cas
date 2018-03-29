@@ -63,12 +63,12 @@ public class WsFederationCredential implements Credential {
             LOGGER.warn("Issuer is invalid: [{}]", this.issuer);
             return false;
         }
-        final ZonedDateTime retrievedOnTimeDrift = this.getRetrievedOn().minus(timeDrift, ChronoUnit.MILLIS);
+        final var retrievedOnTimeDrift = this.getRetrievedOn().minus(timeDrift, ChronoUnit.MILLIS);
         if (this.issuedOn.isBefore(retrievedOnTimeDrift)) {
             LOGGER.warn("Ticket is issued before the allowed drift. Issued on [{}] while allowed drift is [{}]", this.issuedOn, retrievedOnTimeDrift);
             return false;
         }
-        final ZonedDateTime retrievedOnTimeAfterDrift = this.retrievedOn.plus(timeDrift, ChronoUnit.MILLIS);
+        final var retrievedOnTimeAfterDrift = this.retrievedOn.plus(timeDrift, ChronoUnit.MILLIS);
         if (this.issuedOn.isAfter(retrievedOnTimeAfterDrift)) {
             LOGGER.warn("Ticket is issued after the allowed drift. Issued on [{}] while allowed drift is [{}]", this.issuedOn, retrievedOnTimeAfterDrift);
             return false;

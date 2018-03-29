@@ -26,7 +26,7 @@ public class CasProtocolServiceTicketResourceEntityResponseFactory implements Se
 
     @Override
     public ResponseEntity<String> build(final String ticketGrantingTicket, final Service service, final AuthenticationResult authenticationResult) {
-        final String serviceTicketId = grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
+        final var serviceTicketId = grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
         return new ResponseEntity<>(serviceTicketId, HttpStatus.OK);
     }
 
@@ -39,7 +39,7 @@ public class CasProtocolServiceTicketResourceEntityResponseFactory implements Se
      * @return the service ticket
      */
     protected String grantServiceTicket(final String ticketGrantingTicket, final Service service, final AuthenticationResult authenticationResult) {
-        final ServiceTicket ticket = centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
+        final var ticket = centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
 
         LOGGER.debug("Generated service ticket [{}]", ticket.getId());
         return ticket.getId();

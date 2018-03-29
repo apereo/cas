@@ -185,7 +185,7 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector() {
-        final Resource script = casProperties.getAuthn().getMfa().getProviderSelectorGroovyScript();
+        final var script = casProperties.getAuthn().getMfa().getProviderSelectorGroovyScript();
         if (script != null) {
             return new GroovyScriptMultifactorAuthenticationProviderSelector(script);
         }
@@ -197,7 +197,7 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver() {
-        final InitialAuthenticationAttemptWebflowEventResolver r = new InitialAuthenticationAttemptWebflowEventResolver(authenticationSystemSupport,
+        final var r = new InitialAuthenticationAttemptWebflowEventResolver(authenticationSystemSupport,
             centralAuthenticationService, servicesManager, ticketRegistrySupport,
             warnCookieGenerator, authenticationRequestServiceSelectionStrategies,
             multifactorAuthenticationProviderSelector, registeredServiceAccessStrategyEnforcer);
@@ -333,10 +333,10 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CipherExecutor webflowCipherExecutor() {
-        final WebflowProperties webflow = casProperties.getWebflow();
-        final EncryptionRandomizedSigningJwtCryptographyProperties crypto = webflow.getCrypto();
+        final var webflow = casProperties.getWebflow();
+        final var crypto = webflow.getCrypto();
 
-        boolean enabled = crypto.isEnabled();
+        var enabled = crypto.isEnabled();
         if (!enabled && (StringUtils.isNotBlank(crypto.getEncryption().getKey())) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
             LOGGER.warn("Webflow encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
                 + "are defined for operations. CAS will proceed to enable the webflow encryption/signing functionality.");

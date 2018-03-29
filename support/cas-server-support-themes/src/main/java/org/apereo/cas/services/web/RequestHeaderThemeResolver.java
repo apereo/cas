@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 public class RequestHeaderThemeResolver extends AbstractThemeResolver {
     @Override
     public String resolveThemeName(final HttpServletRequest request) {
-        final String theme = request.getHeader("theme");
+        final var theme = request.getHeader("theme");
         return StringUtils.defaultIfBlank(theme, getDefaultThemeName());
     }
 

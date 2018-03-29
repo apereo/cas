@@ -40,8 +40,8 @@ public class MongoDbAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
         try {
-            final Update update = Update.update(this.aupAttributeName, Boolean.TRUE);
-            final Query query = new Query(Criteria.where("username").is(credential.getId()));
+            final var update = Update.update(this.aupAttributeName, Boolean.TRUE);
+            final var query = new Query(Criteria.where("username").is(credential.getId()));
             this.mongoTemplate.updateFirst(query, update, this.collection);
             return true;
         } catch (final Exception e) {

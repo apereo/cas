@@ -107,11 +107,11 @@ public class SamlObjectSignatureValidator {
                                                  final HttpServletRequest request,
                                                  final MessageContext context) throws Exception {
 
-        final RoleDescriptorResolver roleDescriptorResolver = getRoleDescriptorResolver(resolver, context, profileRequest);
+        final var roleDescriptorResolver = getRoleDescriptorResolver(resolver, context, profileRequest);
 
         LOGGER.debug("Validating signature for [{}]", profileRequest.getClass().getName());
 
-        final Signature signature = profileRequest.getSignature();
+        final var signature = profileRequest.getSignature();
         if (signature != null) {
             validateSignatureOnProfileRequest(profileRequest, signature, roleDescriptorResolver);
         } else {
@@ -148,30 +148,30 @@ public class SamlObjectSignatureValidator {
     protected RoleDescriptorResolver getRoleDescriptorResolver(final MetadataResolver resolver,
                                                                final MessageContext context,
                                                                final RequestAbstractType profileRequest) throws Exception {
-        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
+        final var idp = casProperties.getAuthn().getSamlIdp();
         return SamlIdPUtils.getRoleDescriptorResolver(resolver, idp.getMetadata().isRequireValidMetadata());
     }
 
     private void validateSignatureOnAuthenticationRequest(final RequestAbstractType profileRequest, final HttpServletRequest request,
                                                           final MessageContext context,
                                                           final RoleDescriptorResolver roleDescriptorResolver) throws Exception {
-        final SAML2HTTPRedirectDeflateSignatureSecurityHandler handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
-        final SAMLPeerEntityContext peer = context.getSubcontext(SAMLPeerEntityContext.class, true);
+        final var handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
+        final var peer = context.getSubcontext(SAMLPeerEntityContext.class, true);
         peer.setEntityId(SamlIdPUtils.getIssuerFromSamlRequest(profileRequest));
         LOGGER.debug("Validating request signature for [{}] via [{}]...", peer.getEntityId(), handler.getClass().getSimpleName());
 
         LOGGER.debug("Resolving role descriptor for [{}]", peer.getEntityId());
 
-        final RoleDescriptor roleDescriptor = roleDescriptorResolver.resolveSingle(
+        final var roleDescriptor = roleDescriptorResolver.resolveSingle(
             new CriteriaSet(new EntityIdCriterion(peer.getEntityId()),
                 new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME)));
         peer.setRole(roleDescriptor.getElementQName());
-        final SAMLProtocolContext protocol = context.getSubcontext(SAMLProtocolContext.class, true);
+        final var protocol = context.getSubcontext(SAMLProtocolContext.class, true);
         protocol.setProtocol(SAMLConstants.SAML20P_NS);
 
         LOGGER.debug("Building security parameters context for signature validation of [{}]", peer.getEntityId());
-        final SecurityParametersContext secCtx = context.getSubcontext(SecurityParametersContext.class, true);
-        final SignatureValidationParameters validationParams = new SignatureValidationParameters();
+        final var secCtx = context.getSubcontext(SecurityParametersContext.class, true);
+        final var validationParams = new SignatureValidationParameters();
 
         if (overrideBlackListedSignatureAlgorithms != null && !overrideBlackListedSignatureAlgorithms.isEmpty()) {
             validationParams.setBlacklistedAlgorithms(this.overrideBlackListedSignatureAlgorithms);
@@ -184,16 +184,16 @@ public class SamlObjectSignatureValidator {
         }
 
         LOGGER.debug("Resolving signing credentials for [{}]", peer.getEntityId());
-        final Set<Credential> credentials = getSigningCredential(roleDescriptorResolver, profileRequest);
+        final var credentials = getSigningCredential(roleDescriptorResolver, profileRequest);
         if (credentials == null || credentials.isEmpty()) {
             throw new SamlException("Signing credentials for validation could not be resolved");
         }
 
-        boolean foundValidCredential = false;
-        final Iterator<Credential> it = credentials.iterator();
+        var foundValidCredential = false;
+        final var it = credentials.iterator();
         while (!foundValidCredential && it.hasNext()) {
             try {
-                final Credential c = it.next();
+                final var c = it.next();
 
                 final CredentialResolver resolver = new StaticCredentialResolver(c);
                 final KeyInfoCredentialResolver keyResolver = new StaticKeyInfoCredentialResolver(c);
@@ -225,23 +225,23 @@ public class SamlObjectSignatureValidator {
     private void validateSignatureOnProfileRequest(final RequestAbstractType profileRequest,
                                                    final Signature signature,
                                                    final RoleDescriptorResolver roleDescriptorResolver) throws Exception {
-        final SAMLSignatureProfileValidator validator = new SAMLSignatureProfileValidator();
+        final var validator = new SAMLSignatureProfileValidator();
         LOGGER.debug("Validating profile signature for [{}] via [{}]...", profileRequest.getIssuer(),
             validator.getClass().getSimpleName());
         validator.validate(signature);
         LOGGER.debug("Successfully validated profile signature for [{}].", profileRequest.getIssuer());
 
         @NonNull
-        final Set<Credential> credentials = getSigningCredential(roleDescriptorResolver, profileRequest);
+        final var credentials = getSigningCredential(roleDescriptorResolver, profileRequest);
         if (credentials.isEmpty()) {
             throw new SamlException("Signing credentials for validation could not be resolved based on the provided signature");
         }
 
-        boolean foundValidCredential = false;
-        final Iterator<Credential> it = credentials.iterator();
+        var foundValidCredential = false;
+        final var it = credentials.iterator();
         while (!foundValidCredential && it.hasNext()) {
             try {
-                final Credential c = it.next();
+                final var c = it.next();
                 LOGGER.debug("Validating signature using credentials for [{}]", c.getEntityId());
                 SignatureValidator.validate(signature, c);
                 LOGGER.info("Successfully validated the request signature.");
@@ -259,13 +259,13 @@ public class SamlObjectSignatureValidator {
 
     @SneakyThrows
     private Set<Credential> getSigningCredential(final RoleDescriptorResolver resolver, final RequestAbstractType profileRequest) {
-        final MetadataCredentialResolver kekCredentialResolver = new MetadataCredentialResolver();
-        final SignatureValidationConfiguration config = getSignatureValidationConfiguration();
+        final var kekCredentialResolver = new MetadataCredentialResolver();
+        final var config = getSignatureValidationConfiguration();
         kekCredentialResolver.setRoleDescriptorResolver(resolver);
         kekCredentialResolver.setKeyInfoCredentialResolver(
             DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
         kekCredentialResolver.initialize();
-        final CriteriaSet criteriaSet = new CriteriaSet();
+        final var criteriaSet = new CriteriaSet();
         criteriaSet.add(new SignatureValidationConfigurationCriterion(config));
         criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
 
@@ -293,9 +293,9 @@ public class SamlObjectSignatureValidator {
      * @return the signature validation configuration
      */
     protected SignatureValidationConfiguration getSignatureValidationConfiguration() {
-        final BasicSignatureValidationConfiguration config =
+        final var config =
             DefaultSecurityConfigurationBootstrap.buildDefaultSignatureValidationConfiguration();
-        final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
+        final var samlIdp = casProperties.getAuthn().getSamlIdp();
 
         if (this.overrideBlackListedSignatureAlgorithms != null
             && !samlIdp.getAlgs().getOverrideBlackListedSignatureSigningAlgorithms().isEmpty()) {

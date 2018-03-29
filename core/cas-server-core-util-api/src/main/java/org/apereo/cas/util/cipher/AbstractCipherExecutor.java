@@ -57,7 +57,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
             if (ResourceUtils.isFile(signingSecretKey) && ResourceUtils.doesResourceExist(signingSecretKey)) {
                 final Resource resource = ResourceUtils.getResourceFrom(signingSecretKey);
                 LOGGER.debug("Located signing key resource [{}]. Attempting to extract private key...", resource);
-                final PrivateKeyFactoryBean factory = new PrivateKeyFactoryBean();
+                final var factory = new PrivateKeyFactoryBean();
                 factory.setAlgorithm(RsaKeyUtil.RSA);
                 factory.setLocation(resource);
                 factory.setSingleton(false);

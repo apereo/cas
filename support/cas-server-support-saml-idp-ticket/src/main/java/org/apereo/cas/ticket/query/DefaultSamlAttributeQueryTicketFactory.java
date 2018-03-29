@@ -46,8 +46,8 @@ public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQuer
     @SneakyThrows
     public SamlAttributeQueryTicket create(final String id, final SAMLObject samlObject,
                                            final String relyingParty, final TicketGrantingTicket ticketGrantingTicket) {
-        try (StringWriter w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
-            final String codeId = createTicketIdFor(id);
+        try (var w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
+            final var codeId = createTicketIdFor(id);
             final Service service = this.webApplicationServiceFactory.createService(relyingParty);
             final SamlAttributeQueryTicket at = new SamlAttributeQueryTicketImpl(codeId, service, this.expirationPolicy, 
                     relyingParty, w.toString(), ticketGrantingTicket);

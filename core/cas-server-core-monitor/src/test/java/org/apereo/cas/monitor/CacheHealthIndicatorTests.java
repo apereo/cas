@@ -41,7 +41,7 @@ public class CacheHealthIndicatorTests {
                 return statsArray(new SimpleCacheStatistics(100, 200, 0));
             }
         };
-        final Status status = monitor.health().getStatus();
+        final var status = monitor.health().getStatus();
         assertEquals(Status.UP, status);
     }
 
@@ -56,7 +56,7 @@ public class CacheHealthIndicatorTests {
                 return statsArray(new SimpleCacheStatistics(199, 200, 100));
             }
         };
-        final Status status = monitor.health().getStatus();
+        final var status = monitor.health().getStatus();
         assertEquals("WARN", status.getCode());
     }
 
@@ -70,7 +70,7 @@ public class CacheHealthIndicatorTests {
                 return statsArray(new SimpleCacheStatistics(100, 110, 0));
             }
         };
-        final Status status = monitor.health().getStatus();
+        final var status = monitor.health().getStatus();
         assertEquals(Status.OUT_OF_SERVICE, status);
     }
 

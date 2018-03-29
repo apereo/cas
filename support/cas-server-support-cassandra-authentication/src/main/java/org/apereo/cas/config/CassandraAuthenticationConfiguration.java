@@ -58,14 +58,14 @@ public class CassandraAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public CassandraRepository cassandraRepository() {
-        final CassandraAuthenticationProperties cassandra = casProperties.getAuthn().getCassandra();
+        final var cassandra = casProperties.getAuthn().getCassandra();
         return new DefaultCassandraRepository(cassandra, cassandraSessionFactory);
     }
     
     @Bean
     public AuthenticationHandler cassandraAuthenticationHandler() {
-        final CassandraAuthenticationProperties cassandra = casProperties.getAuthn().getCassandra();
-        final CassandraAuthenticationHandler handler = new CassandraAuthenticationHandler(cassandra.getName(), servicesManager,
+        final var cassandra = casProperties.getAuthn().getCassandra();
+        final var handler = new CassandraAuthenticationHandler(cassandra.getName(), servicesManager,
                 cassandraPrincipalFactory(),
                 cassandra.getOrder(), cassandra, cassandraRepository());
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(cassandra.getPrincipalTransformation()));

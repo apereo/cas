@@ -49,8 +49,8 @@ public class CasSupportJdbcAuditConfigurationTests {
 
     @Test
     public void verifyAuditManager() {
-        final Date since = DateTimeUtils.dateOf(LocalDate.now().minusDays(2));
-        final AuditActionContext ctx = new AuditActionContext("casuser", "TEST", "TEST",
+        final var since = DateTimeUtils.dateOf(LocalDate.now().minusDays(2));
+        final var ctx = new AuditActionContext("casuser", "TEST", "TEST",
             "CAS", since, "1.2.3.4",
             "1.2.3.4");
         jdbcAuditTrailManager.record(ctx);

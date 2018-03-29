@@ -59,7 +59,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
 
     @Override
     public boolean changeInternal(@NonNull final Credential credential, @NonNull final PasswordChangeBean bean) {
-        final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
+        final var c = (UsernamePasswordCredential) credential;
         if (StringUtils.isBlank(c.getPassword()) || StringUtils.isBlank(bean.getPassword())) {
             LOGGER.error("Password cannot be blank");
             return false;
@@ -68,7 +68,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
             LOGGER.error("Password does not match and cannot be confirmed");
             return false;
         }
-        final JsonBackedAccount account = this.jsonBackedAccounts.getOrDefault(c.getId(), null);
+        final var account = this.jsonBackedAccounts.getOrDefault(c.getId(), null);
         if (account == null) {
             LOGGER.error("User account [{}] cannot be found", c.getId());
             return false;
@@ -87,13 +87,13 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
 
     @Override
     public String findEmail(final String username) {
-        final JsonBackedAccount account = this.jsonBackedAccounts.getOrDefault(username, null);
+        final var account = this.jsonBackedAccounts.getOrDefault(username, null);
         return account == null ? null : account.getEmail();
     }
 
     @Override
     public Map<String, String> getSecurityQuestions(final String username) {
-        final JsonBackedAccount account = this.jsonBackedAccounts.getOrDefault(username, null);
+        final var account = this.jsonBackedAccounts.getOrDefault(username, null);
         if (account != null) {
             return account.getSecurityQuestions();
         }

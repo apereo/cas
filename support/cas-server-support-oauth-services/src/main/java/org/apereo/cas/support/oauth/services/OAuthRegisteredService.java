@@ -61,7 +61,7 @@ public class OAuthRegisteredService extends RegexRegisteredService {
     @Override
     public void copyFrom(final RegisteredService source) {
         super.copyFrom(source);
-        final OAuthRegisteredService oAuthRegisteredService = (OAuthRegisteredService) source;
+        final var oAuthRegisteredService = (OAuthRegisteredService) source;
         setClientId(oAuthRegisteredService.getClientId());
         setClientSecret(oAuthRegisteredService.getClientSecret());
         setBypassApprovalPrompt(oAuthRegisteredService.isBypassApprovalPrompt());

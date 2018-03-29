@@ -33,7 +33,7 @@ public enum ConsentOptions {
      * @return the consent options
      */
     public static ConsentOptions valueOf(final int value) {
-        final ConsentOptions option = Arrays.stream(values())
+        final var option = Arrays.stream(values())
                 .filter(v -> v.getValue() == value)
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);

@@ -26,9 +26,9 @@ public class GroovyLdapPasswordPolicyHandlingStrategyTests {
 
     @Test
     public void verifyStrategySupportsDefault() {
-        final ClassPathResource resource = new ClassPathResource("lppe-strategy.groovy");
-        final GroovyLdapPasswordPolicyHandlingStrategy s = new GroovyLdapPasswordPolicyHandlingStrategy(resource);
-        final AuthenticationResponse res = mock(AuthenticationResponse.class);
+        final var resource = new ClassPathResource("lppe-strategy.groovy");
+        final var s = new GroovyLdapPasswordPolicyHandlingStrategy(resource);
+        final var res = mock(AuthenticationResponse.class);
 
         when(res.getAuthenticationResultCode()).thenReturn(AuthenticationResultCode.INVALID_CREDENTIAL);
         assertFalse(s.supports(null));
@@ -36,7 +36,7 @@ public class GroovyLdapPasswordPolicyHandlingStrategyTests {
         when(res.getResult()).thenReturn(false);
         assertTrue(s.supports(res));
 
-        final List<MessageDescriptor> results = s.handle(res, mock(LdapPasswordPolicyConfiguration.class));
+        final var results = s.handle(res, mock(LdapPasswordPolicyConfiguration.class));
         assertFalse(results.isEmpty());
     }
 }

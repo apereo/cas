@@ -105,7 +105,7 @@ public interface RegisteredServiceProperty extends Serializable {
          */
         public RegisteredServiceProperty getPropertyValue(final RegisteredService service) {
             if (isAssignedTo(service)) {
-                final Optional<Map.Entry<String, RegisteredServiceProperty>> property = service.getProperties().entrySet()
+                final var property = service.getProperties().entrySet()
                     .stream().filter(entry -> entry.getKey().equalsIgnoreCase(getPropertyName())
                         && StringUtils.isNotBlank(entry.getValue().getValue()))
                     .distinct().findFirst();
@@ -126,7 +126,7 @@ public interface RegisteredServiceProperty extends Serializable {
          */
         public <T> T getPropertyValue(final RegisteredService service, final Class<T> clazz) {
             if (isAssignedTo(service)) {
-                final RegisteredServiceProperty prop = getPropertyValue(service);
+                final var prop = getPropertyValue(service);
                 if (prop != null) {
                     return clazz.cast(prop.getValue());
                 }

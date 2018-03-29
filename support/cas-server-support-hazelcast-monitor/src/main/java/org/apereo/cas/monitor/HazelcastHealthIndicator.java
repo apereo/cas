@@ -33,7 +33,7 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
     protected CacheStatistics[] getStatistics() {
         final List<CacheStatistics> statsList = new ArrayList<>();
         LOGGER.debug("Locating hazelcast instance [{}]...", instanceName);
-        final HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(instanceName);
+        final var instance = Hazelcast.getHazelcastInstanceByName(instanceName);
         instance.getConfig().getMapConfigs().keySet().forEach(key -> {
             final IMap map = instance.getMap(key);
             LOGGER.debug("Starting to collect hazelcast statistics for map [{}] identified by key [{}]...", map, key);
@@ -82,7 +82,7 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
 
         @Override
         public int getPercentFree() {
-            final long capacity = getCapacity();
+            final var capacity = getCapacity();
             if (capacity == 0) {
                 return 0;
             }
@@ -91,7 +91,7 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
 
         @Override
         public void toString(final StringBuilder builder) {
-            final LocalMapStats localMapStats = map.getLocalMapStats();
+            final var localMapStats = map.getLocalMapStats();
             builder.append("Creation time: ").append(localMapStats.getCreationTime()).append(", ")
                 .append("Cluster size: ").append(clusterSize).append(", ").append("Owned entry count: ")
                 .append(localMapStats.getOwnedEntryCount()).append(", ").append("Backup entry count: ")

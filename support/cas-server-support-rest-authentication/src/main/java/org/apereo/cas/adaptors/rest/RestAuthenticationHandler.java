@@ -45,15 +45,15 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         throws GeneralSecurityException {
 
         try {
-            final UsernamePasswordCredential creds = new UsernamePasswordCredential(c.getUsername(), c.getPassword());
+            final var creds = new UsernamePasswordCredential(c.getUsername(), c.getPassword());
 
-            final ResponseEntity<SimplePrincipal> authenticationResponse = api.authenticate(creds);
+            final var authenticationResponse = api.authenticate(creds);
             if (authenticationResponse.getStatusCode() == HttpStatus.OK) {
-                final SimplePrincipal principalFromRest = authenticationResponse.getBody();
+                final var principalFromRest = authenticationResponse.getBody();
                 if (principalFromRest == null || StringUtils.isBlank(principalFromRest.getId())) {
                     throw new FailedLoginException("Could not determine authentication response from rest endpoint for " + c.getUsername());
                 }
-                final Principal principal = this.principalFactory.createPrincipal(principalFromRest.getId(), principalFromRest.getAttributes());
+                final var principal = this.principalFactory.createPrincipal(principalFromRest.getId(), principalFromRest.getAttributes());
                 return createHandlerResult(c, principal, new ArrayList<>());
             }
         } catch (final HttpClientErrorException e) {

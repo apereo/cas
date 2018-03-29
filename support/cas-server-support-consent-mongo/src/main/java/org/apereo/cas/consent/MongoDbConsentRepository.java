@@ -29,13 +29,13 @@ public class MongoDbConsentRepository implements ConsentRepository {
     public ConsentDecision findConsentDecision(final Service service,
                                                final RegisteredService registeredService,
                                                final Authentication authentication) {
-        final Query query = new Query(Criteria.where("service").is(service.getId()).and("principal").is(authentication.getPrincipal().getId()));
+        final var query = new Query(Criteria.where("service").is(service.getId()).and("principal").is(authentication.getPrincipal().getId()));
         return this.mongoTemplate.findOne(query, ConsentDecision.class, this.collectionName);
     }
 
     @Override
     public Collection<ConsentDecision> findConsentDecisions(final String principal) {
-        final Query query = new Query(Criteria.where("principal").is(principal));
+        final var query = new Query(Criteria.where("principal").is(principal));
         return this.mongoTemplate.find(query, ConsentDecision.class, this.collectionName);
     }
 
@@ -52,14 +52,14 @@ public class MongoDbConsentRepository implements ConsentRepository {
     
     @Override
     public boolean deleteConsentDecision(final long decisionId) {
-        final Query query = new Query(Criteria.where("id").is(decisionId));
+        final var query = new Query(Criteria.where("id").is(decisionId));
         this.mongoTemplate.remove(query, this.collectionName);
         return true;
     }
 
     @Override
     public boolean deleteConsentDecisions(final String principal) {
-        final Query query = new Query(Criteria.where("principal").is(principal));
+        final var query = new Query(Criteria.where("principal").is(principal));
         this.mongoTemplate.remove(query, this.collectionName);
         return true;
     }

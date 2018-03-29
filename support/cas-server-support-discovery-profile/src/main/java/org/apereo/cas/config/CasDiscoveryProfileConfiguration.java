@@ -58,7 +58,7 @@ public class CasDiscoveryProfileConfiguration {
         final LinkedHashSet<String> attributes = new LinkedHashSet<>(0);
         attributes.addAll(attributeRepository.getPossibleUserAttributeNames());
 
-        final List<LdapAuthenticationProperties> ldapProps = casProperties.getAuthn().getLdap();
+        final var ldapProps = casProperties.getAuthn().getLdap();
         if (ldapProps != null) {
             ldapProps.stream()
                 .forEach(ldap -> {
@@ -66,7 +66,7 @@ public class CasDiscoveryProfileConfiguration {
                     attributes.addAll(transformAttributes(ldap.getAdditionalAttributes()));
                 });
         }
-        final JdbcAuthenticationProperties jdbcProps = casProperties.getAuthn().getJdbc();
+        final var jdbcProps = casProperties.getAuthn().getJdbc();
         if (jdbcProps != null) {
             jdbcProps.getQuery().stream()
                 .forEach(jdbc -> attributes.addAll(transformAttributes(jdbc.getPrincipalAttributeList())));

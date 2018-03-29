@@ -41,9 +41,9 @@ public class HazelcastSessionConfiguration {
     @Bean
     @SneakyThrows
     public HazelcastInstance hazelcastInstance() {
-        final Resource hzConfigResource = casProperties.getWebflow().getSession().getHzLocation();
-        final URL configUrl = hzConfigResource.getURL();
-        final Config config = new XmlConfigBuilder(hzConfigResource.getInputStream()).build();
+        final var hzConfigResource = casProperties.getWebflow().getSession().getHzLocation();
+        final var configUrl = hzConfigResource.getURL();
+        final var config = new XmlConfigBuilder(hzConfigResource.getInputStream()).build();
         config.setConfigurationUrl(configUrl);
         config.setInstanceName(this.getClass().getSimpleName())
             .setProperty("hazelcast.logging.type", "slf4j")

@@ -27,12 +27,12 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
 
     @Override
     public boolean apply(final String userAgent, final GeoLocationRequest location) {
-        final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
+        final var clientInfo = ClientInfoHolder.getClientInfo();
         if (clientInfo == null || StringUtils.isBlank(userAgent)) {
             LOGGER.warn("No client IP or user-agent was provided. Skipping adaptive authentication policy...");
             return true;
         }
-        final String clientIp = clientInfo.getClientIpAddress();
+        final var clientIp = clientInfo.getClientIpAddress();
         LOGGER.debug("Located client IP address as [{}]", clientIp);
         if (isClientIpAddressRejected(clientIp)) {
             LOGGER.warn("Client IP [{}] is rejected for authentication", clientIp);
@@ -45,7 +45,7 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
         LOGGER.debug("User agent [{}] is authorized to proceed", userAgent);
         if (this.geoLocationService != null && location != null && StringUtils.isNotBlank(clientIp)
             && StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectCountries())) {
-            final GeoLocationResponse loc = this.geoLocationService.locate(clientIp, location);
+            final var loc = this.geoLocationService.locate(clientIp, location);
             if (loc != null) {
                 LOGGER.debug("Determined geolocation to be [{}]", loc);
                 if (isGeoLocationCountryRejected(loc)) {

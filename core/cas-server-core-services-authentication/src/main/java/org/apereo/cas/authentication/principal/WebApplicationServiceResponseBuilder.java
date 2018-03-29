@@ -38,9 +38,9 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
             parameters.put(CasProtocolConstants.PARAMETER_TICKET, serviceTicketId);
         }
 
-        final WebApplicationService finalService = buildInternal(service, parameters);
+        final var finalService = buildInternal(service, parameters);
 
-        final Response.ResponseType responseType = getWebApplicationServiceResponseType(finalService);
+        final var responseType = getWebApplicationServiceResponseType(finalService);
         if (responseType == Response.ResponseType.POST) {
             return buildPost(finalService, parameters);
         }

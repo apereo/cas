@@ -72,7 +72,7 @@ public class DefaultLogoutManagerTests {
         when(client.isValidEndPoint(any(URL.class))).thenReturn(true);
         when(client.sendMessageToEndPoint(any(HttpMessage.class))).thenReturn(true);
 
-        final UrlValidator validator = new SimpleUrlValidatorFactoryBean(true).getObject();
+        final var validator = new SimpleUrlValidatorFactoryBean(true).getObject();
 
         singleLogoutServiceMessageHandler = new DefaultSingleLogoutServiceMessageHandler(client,
             new SamlCompliantLogoutMessageCreator(), servicesManager,
@@ -94,7 +94,7 @@ public class DefaultLogoutManagerTests {
     public void verifyServiceLogoutUrlIsUsed() throws Exception {
         this.registeredService.setLogoutUrl(new URL("https://www.apereo.org"));
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
-        final LogoutRequest logoutRequest = logoutRequests.iterator().next();
+        final var logoutRequest = logoutRequests.iterator().next();
         assertEquals(logoutRequest.getLogoutUrl(), this.registeredService.getLogoutUrl());
     }
 
@@ -118,7 +118,7 @@ public class DefaultLogoutManagerTests {
     public void verifyLogoutTypeNotSet() {
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
-        final LogoutRequest logoutRequest = logoutRequests.iterator().next();
+        final var logoutRequest = logoutRequests.iterator().next();
         assertEquals(ID, logoutRequest.getTicketId());
         assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
         assertEquals(LogoutRequestStatus.SUCCESS, logoutRequest.getStatus());
@@ -129,7 +129,7 @@ public class DefaultLogoutManagerTests {
         this.registeredService.setLogoutType(LogoutType.BACK_CHANNEL);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
-        final LogoutRequest logoutRequest = logoutRequests.iterator().next();
+        final var logoutRequest = logoutRequests.iterator().next();
         assertEquals(ID, logoutRequest.getTicketId());
         assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
         assertEquals(LogoutRequestStatus.SUCCESS, logoutRequest.getStatus());
@@ -147,7 +147,7 @@ public class DefaultLogoutManagerTests {
         this.registeredService.setLogoutType(null);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
-        final LogoutRequest logoutRequest = logoutRequests.iterator().next();
+        final var logoutRequest = logoutRequests.iterator().next();
         assertEquals(ID, logoutRequest.getTicketId());
     }
 
@@ -156,7 +156,7 @@ public class DefaultLogoutManagerTests {
         this.registeredService.setLogoutType(LogoutType.FRONT_CHANNEL);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
-        final LogoutRequest logoutRequest = logoutRequests.iterator().next();
+        final var logoutRequest = logoutRequests.iterator().next();
         assertEquals(ID, logoutRequest.getTicketId());
         assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
         assertEquals(LogoutRequestStatus.NOT_ATTEMPTED, logoutRequest.getStatus());
@@ -171,7 +171,7 @@ public class DefaultLogoutManagerTests {
 
     @SneakyThrows
     public static AbstractRegisteredService getRegisteredService(final String id) {
-        final RegexRegisteredService s = new RegexRegisteredService();
+        final var s = new RegexRegisteredService();
         s.setServiceId(id);
         s.setName("Test registered service " + id);
         s.setDescription("Registered service description");
@@ -181,7 +181,7 @@ public class DefaultLogoutManagerTests {
     }
 
     public static AbstractWebApplicationService getService(final String url) {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var request = new MockHttpServletRequest();
         request.addParameter("service", url);
         return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
     }

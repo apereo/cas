@@ -47,8 +47,8 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
      * @return true/false
      */
     public boolean canPing() {
-        final String uidPsw = getClass().getSimpleName();
-        for (final RadiusServer server : this.servers) {
+        final var uidPsw = getClass().getSimpleName();
+        for (final var server : this.servers) {
             LOGGER.debug("Attempting to ping RADIUS server [{}] via simulating an authentication request. If the server responds "
                 + "successfully, mock authentication will fail correctly.", server);
             try {

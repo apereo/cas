@@ -24,7 +24,7 @@ public class Cas10ProxyHandlerTests {
 
     @Test
     public void verifyCredentialsAndProxy() {
-        final TicketGrantingTicket proxyGrantingTicket = mock(TicketGrantingTicket.class);
+        final var proxyGrantingTicket = mock(TicketGrantingTicket.class);
         when(proxyGrantingTicket.getId()).thenReturn("proxyGrantingTicket");
         assertNull(this.proxyHandler.handle(
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), proxyGrantingTicket));

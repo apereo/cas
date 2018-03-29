@@ -24,11 +24,11 @@ public class ScriptedRegisteredServiceAttributeReleasePolicyTests {
 
     @Test
     public void verifyInlineScript() {
-        final ScriptedRegisteredServiceAttributeReleasePolicy p = new ScriptedRegisteredServiceAttributeReleasePolicy();
+        final var p = new ScriptedRegisteredServiceAttributeReleasePolicy();
         p.setScriptFile("groovy { return attributes }");
-        final Principal principal = CoreAttributesTestUtils.getPrincipal("cas",
+        final var principal = CoreAttributesTestUtils.getPrincipal("cas",
                 Collections.singletonMap("attribute", "value"));
-        final Map<String, Object> attrs = p.getAttributes(principal,
+        final var attrs = p.getAttributes(principal,
             CoreAttributesTestUtils.getService(),
             CoreAttributesTestUtils.getRegisteredService());
         assertEquals(attrs.size(), principal.getAttributes().size());

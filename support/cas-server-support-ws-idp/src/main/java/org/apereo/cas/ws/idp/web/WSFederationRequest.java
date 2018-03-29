@@ -56,19 +56,19 @@ public class WSFederationRequest {
      * @return the federation request
      */
     public static WSFederationRequest of(final HttpServletRequest request) {
-        final String wtrealm = request.getParameter(WSFederationConstants.WTREALM);
-        final String wreply = request.getParameter(WSFederationConstants.WREPLY);
-        final String wreq = request.getParameter(WSFederationConstants.WREQ);
-        final String wctx = request.getParameter(WSFederationConstants.WCTX);
-        final String wfresh = request.getParameter(WSFederationConstants.WREFRESH);
-        final String whr = request.getParameter(WSFederationConstants.WHR);
-        final String wresult = request.getParameter(WSFederationConstants.WRESULT);
-        final String relayState = request.getParameter(WSFederationConstants.RELAY_STATE);
-        final String samlResponse = request.getParameter(WSFederationConstants.SAML_RESPONSE);
-        final String state = request.getParameter(WSFederationConstants.STATE);
-        final String code = request.getParameter(WSFederationConstants.CODE);
-        final String wa = request.getParameter(WSFederationConstants.WA);
-        final String wauth = StringUtils.defaultIfBlank(request.getParameter(WSFederationConstants.WAUTH), "default");
+        final var wtrealm = request.getParameter(WSFederationConstants.WTREALM);
+        final var wreply = request.getParameter(WSFederationConstants.WREPLY);
+        final var wreq = request.getParameter(WSFederationConstants.WREQ);
+        final var wctx = request.getParameter(WSFederationConstants.WCTX);
+        final var wfresh = request.getParameter(WSFederationConstants.WREFRESH);
+        final var whr = request.getParameter(WSFederationConstants.WHR);
+        final var wresult = request.getParameter(WSFederationConstants.WRESULT);
+        final var relayState = request.getParameter(WSFederationConstants.RELAY_STATE);
+        final var samlResponse = request.getParameter(WSFederationConstants.SAML_RESPONSE);
+        final var state = request.getParameter(WSFederationConstants.STATE);
+        final var code = request.getParameter(WSFederationConstants.CODE);
+        final var wa = request.getParameter(WSFederationConstants.WA);
+        final var wauth = StringUtils.defaultIfBlank(request.getParameter(WSFederationConstants.WAUTH), "default");
         return new WSFederationRequest(wtrealm, wreply, wctx, wfresh, whr, wresult, relayState, samlResponse, state, code, wa, wauth, wreq);
     }
 }

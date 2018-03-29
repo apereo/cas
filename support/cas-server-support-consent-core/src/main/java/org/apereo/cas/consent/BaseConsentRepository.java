@@ -52,7 +52,7 @@ public abstract class BaseConsentRepository implements ConsentRepository {
 
     @Override
     public boolean storeConsentDecision(final ConsentDecision decision) {
-        final ConsentDecision consent = getConsentDecisions()
+        final var consent = getConsentDecisions()
             .stream()
             .filter(d -> d.getId() == decision.getId())
             .findFirst()
@@ -68,7 +68,7 @@ public abstract class BaseConsentRepository implements ConsentRepository {
 
     @Override
     public boolean deleteConsentDecision(final long decisionId) {
-        final Collection<ConsentDecision> decisions = findConsentDecisions();
+        final var decisions = findConsentDecisions();
         return this.consentDecisions.remove(decisions.stream().filter(d -> d.getId() == decisionId).findFirst().get());
     }
 

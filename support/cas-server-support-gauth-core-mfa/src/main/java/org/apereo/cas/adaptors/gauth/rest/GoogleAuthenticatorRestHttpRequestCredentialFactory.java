@@ -28,7 +28,7 @@ public class GoogleAuthenticatorRestHttpRequestCredentialFactory implements Rest
     
     @Override
     public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
-        final String token = requestBody.getFirst(PARAMETER_NAME_GAUTH_OTP);
+        final var token = requestBody.getFirst(PARAMETER_NAME_GAUTH_OTP);
         LOGGER.debug("Google authenticator token in the request body: [{}]", token);
         if (StringUtils.isBlank(token)) {
             return new ArrayList<>(0);

@@ -67,7 +67,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator() {
-        final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        final var authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute,
             yubikeyAuthenticationHandler(),
             yubikeyAuthenticationProvider());
@@ -89,7 +89,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "yubicoClient")
     public YubicoClient yubicoClient() {
-        final YubiKeyMultifactorProperties yubi = this.casProperties.getAuthn().getMfa().getYubikey();
+        final var yubi = this.casProperties.getAuthn().getMfa().getYubikey();
 
         if (StringUtils.isBlank(yubi.getSecretKey())) {
             throw new IllegalArgumentException("Yubikey secret key cannot be blank");
@@ -98,9 +98,9 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
             throw new IllegalArgumentException("Yubikey client id is undefined");
         }
 
-        final YubicoClient client = YubicoClient.getClient(yubi.getClientId(), yubi.getSecretKey());
+        final var client = YubicoClient.getClient(yubi.getClientId(), yubi.getSecretKey());
         if (!yubi.getApiUrls().isEmpty()) {
-            final String[] urls = yubi.getApiUrls().toArray(new String[]{});
+            final var urls = yubi.getApiUrls().toArray(new String[]{});
             client.setWsapiUrls(urls);
         }
         return client;
@@ -110,8 +110,8 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationHandler")
     public AuthenticationHandler yubikeyAuthenticationHandler() {
-        final YubiKeyMultifactorProperties yubi = this.casProperties.getAuthn().getMfa().getYubikey();
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(yubi.getName(),
+        final var yubi = this.casProperties.getAuthn().getMfa().getYubikey();
+        final var handler = new YubiKeyAuthenticationHandler(yubi.getName(),
             servicesManager, yubikeyPrincipalFactory(),
             yubicoClient(), yubiKeyAccountRegistry());
         return handler;
@@ -140,18 +140,18 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "yubiKeyAccountRegistry")
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
-        final YubiKeyMultifactorProperties yubi = casProperties.getAuthn().getMfa().getYubikey();
+        final var yubi = casProperties.getAuthn().getMfa().getYubikey();
 
         if (yubi.getJsonFile() != null) {
             LOGGER.debug("Using JSON resource [{}] as the YubiKey account registry", yubi.getJsonFile());
-            final JsonYubiKeyAccountRegistry registry = new JsonYubiKeyAccountRegistry(yubi.getJsonFile(), yubiKeyAccountValidator());
+            final var registry = new JsonYubiKeyAccountRegistry(yubi.getJsonFile(), yubiKeyAccountValidator());
             registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
             return registry;
         }
         if (yubi.getAllowedDevices() != null) {
             LOGGER.debug("Using statically-defined devices for [{}] as the YubiKey account registry",
                 yubi.getAllowedDevices().keySet());
-            final WhitelistYubiKeyAccountRegistry registry = new WhitelistYubiKeyAccountRegistry(yubi.getAllowedDevices(), yubiKeyAccountValidator());
+            final var registry = new WhitelistYubiKeyAccountRegistry(yubi.getAllowedDevices(), yubiKeyAccountValidator());
             registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
             return registry;
         }
@@ -159,7 +159,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         LOGGER.warn("All credentials are considered eligible for YubiKey authentication. "
                 + "Consider providing an account registry implementation via [{}]",
             YubiKeyAccountRegistry.class.getName());
-        final OpenYubiKeyAccountRegistry registry = new OpenYubiKeyAccountRegistry(new DefaultYubiKeyAccountValidator(yubicoClient()));
+        final var registry = new OpenYubiKeyAccountRegistry(new DefaultYubiKeyAccountValidator(yubicoClient()));
         registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
         return registry;
     }
@@ -167,7 +167,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider yubikeyAuthenticationProvider() {
-        final YubiKeyMultifactorAuthenticationProvider p = new YubiKeyMultifactorAuthenticationProvider(yubicoClient(), this.httpClient);
+        final var p = new YubiKeyMultifactorAuthenticationProvider(yubicoClient(), this.httpClient);
         p.setBypassEvaluator(yubikeyBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getYubikey().getRank());
@@ -179,7 +179,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer yubikeyAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            final YubiKeyMultifactorProperties yubi = casProperties.getAuthn().getMfa().getYubikey();
+            final var yubi = casProperties.getAuthn().getMfa().getYubikey();
             if (yubi.getClientId() > 0 && StringUtils.isNotBlank(yubi.getSecretKey())) {
                 plan.registerAuthenticationHandler(yubikeyAuthenticationHandler());
                 plan.registerMetadataPopulator(yubikeyAuthenticationMetaDataPopulator());

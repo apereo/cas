@@ -45,7 +45,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
 
     @Override
     protected void doInitialize() {
-        final Flow flow = getLoginFlow();
+        final var flow = getLoginFlow();
         if (flow != null) {
             createClientActionActionState(flow);
             createStopWebflowViewState(flow);
@@ -54,13 +54,13 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
     }
 
     private void createSaml2ClientLogoutAction() {
-        final Flow logoutFlow = getLogoutFlow();
-        final DecisionState state = getState(logoutFlow, CasWebflowConstants.STATE_ID_FINISH_LOGOUT, DecisionState.class);
+        final var logoutFlow = getLogoutFlow();
+        final var state = getState(logoutFlow, CasWebflowConstants.STATE_ID_FINISH_LOGOUT, DecisionState.class);
         state.getEntryActionList().add(saml2ClientLogoutAction);
     }
 
     private void createClientActionActionState(final Flow flow) {
-        final ActionState actionState = createActionState(flow, CasWebflowConstants.STATE_ID_CLIENT_ACTION,
+        final var actionState = createActionState(flow, CasWebflowConstants.STATE_ID_CLIENT_ACTION,
                 createEvaluateAction(CasWebflowConstants.STATE_ID_CLIENT_ACTION));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET));
@@ -71,14 +71,14 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
     }
 
     private void createStopWebflowViewState(final Flow flow) {
-        final ViewState state = createViewState(flow, CasWebflowConstants.STATE_ID_STOP_WEBFLOW,
+        final var state = createViewState(flow, CasWebflowConstants.STATE_ID_STOP_WEBFLOW,
             CasWebflowConstants.VIEW_ID_PAC4J_STOP_WEBFLOW);
         state.getEntryActionList().add(new AbstractAction() {
             @Override
             protected Event doExecute(final RequestContext requestContext) {
-                final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-                final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-                final Optional<ModelAndView> mv = DelegatedClientAuthenticationAction.hasDelegationRequestFailed(request,
+                final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+                final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+                final var mv = DelegatedClientAuthenticationAction.hasDelegationRequestFailed(request,
                         response.getStatus());
                 mv.ifPresent(modelAndView -> modelAndView.getModel().forEach((k, v) -> requestContext.getFlowScope().put(k, v)));
                 return null;

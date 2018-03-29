@@ -50,7 +50,7 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
             throw new IllegalArgumentException("Database name/url cannot be blank and must be specified");
         }
 
-        final OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        final var builder = new OkHttpClient.Builder();
         this.influxDb = InfluxDBFactory.connect(url, uid, psw, builder);
         this.influxDb.enableGzip();
 
@@ -89,7 +89,7 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
         influxDb.setConsistency(InfluxDB.ConsistencyLevel.valueOf(props.getConsistencyLevel().toUpperCase()));
 
         if (props.getPointsToFlush() > 0 && StringUtils.isNotBlank(props.getBatchInterval())) {
-            final int interval = (int) Beans.newDuration(props.getBatchInterval()).toMillis();
+            final var interval = (int) Beans.newDuration(props.getBatchInterval()).toMillis();
             this.influxDb.enableBatch(props.getPointsToFlush(), interval, TimeUnit.MILLISECONDS);
         }
 
@@ -145,8 +145,8 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
      * @return the query result
      */
     public QueryResult query(final String fields, final String measurement, final String dbName) {
-        final String filter = String.format("SELECT %s FROM %s", fields, measurement);
-        final Query query = new Query(filter, dbName);
+        final var filter = String.format("SELECT %s FROM %s", fields, measurement);
+        final var query = new Query(filter, dbName);
         return this.influxDb.query(query);
     }
 

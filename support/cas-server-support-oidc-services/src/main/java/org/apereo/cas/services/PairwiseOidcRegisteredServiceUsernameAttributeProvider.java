@@ -50,12 +50,12 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
             LOGGER.warn("Service definition [{}] is undefined or it's not an OpenId Connect relying party", registeredService);
             return principal.getId();
         }
-        final OidcRegisteredService oidcSvc = OidcRegisteredService.class.cast(registeredService);
+        final var oidcSvc = OidcRegisteredService.class.cast(registeredService);
         if (StringUtils.isBlank(oidcSvc.getSubjectType()) || StringUtils.equalsIgnoreCase(OidcSubjectTypes.PUBLIC.getType(), oidcSvc.getSubjectType())) {
             LOGGER.warn("Service definition [{}] does not request a pairwise subject type", oidcSvc);
             return principal.getId();
         }
-        final String sectorIdentifier = getSectorIdentifier(oidcSvc);
+        final var sectorIdentifier = getSectorIdentifier(oidcSvc);
         if (StringUtils.isBlank(sectorIdentifier)) {
             LOGGER.debug("Service definition [{}] does not provide a sector identifier", oidcSvc);
             return principal.getId();
@@ -63,17 +63,17 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
         if (this.persistentIdGenerator == null) {
             throw new IllegalArgumentException("No pairwise persistent id generator is defined");
         }
-        final String id = this.persistentIdGenerator.generate(principal, new PairwiseService(sectorIdentifier));
+        final var id = this.persistentIdGenerator.generate(principal, new PairwiseService(sectorIdentifier));
         LOGGER.debug("Resolved username [{}] for pairwise access", id);
         return id;
     }
 
     private String getSectorIdentifier(final OidcRegisteredService client) {
         if (!StringUtils.isBlank(client.getSectorIdentifierUri())) {
-            final UriComponents uri = UriComponentsBuilder.fromUriString(client.getSectorIdentifierUri()).build();
+            final var uri = UriComponentsBuilder.fromUriString(client.getSectorIdentifierUri()).build();
             return uri.getHost();
         }
-        final UriComponents uri = UriComponentsBuilder.fromUriString(client.getServiceId()).build();
+        final var uri = UriComponentsBuilder.fromUriString(client.getServiceId()).build();
         return uri.getHost();
     }
 

@@ -29,7 +29,7 @@ public class RestServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
-        final ResponseEntity<RegisteredService> responseEntity = restTemplate.exchange(this.url, HttpMethod.POST,
+        final var responseEntity = restTemplate.exchange(this.url, HttpMethod.POST,
                 new HttpEntity<>(registeredService, this.headers), RegisteredService.class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             return responseEntity.getBody();
@@ -39,17 +39,17 @@ public class RestServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
-        final ResponseEntity<Integer> responseEntity = restTemplate.exchange(this.url, HttpMethod.DELETE,
+        final var responseEntity = restTemplate.exchange(this.url, HttpMethod.DELETE,
                 new HttpEntity<>(registeredService, this.headers), Integer.class);
         return responseEntity.getStatusCode() == HttpStatus.OK;
     }
 
     @Override
     public List<RegisteredService> load() {
-        final ResponseEntity<RegisteredService[]> responseEntity = restTemplate.exchange(this.url, HttpMethod.GET,
+        final var responseEntity = restTemplate.exchange(this.url, HttpMethod.GET,
                 new HttpEntity<>(this.headers), RegisteredService[].class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            final RegisteredService[] results = responseEntity.getBody();
+            final var results = responseEntity.getBody();
             return Stream.of(results).collect(Collectors.toList());
         }
         return new ArrayList<>(0);
@@ -57,7 +57,7 @@ public class RestServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        final ResponseEntity<RegisteredService> responseEntity = restTemplate.exchange(this.url, HttpMethod.GET,
+        final var responseEntity = restTemplate.exchange(this.url, HttpMethod.GET,
                 new HttpEntity<>(id, this.headers), RegisteredService.class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             return responseEntity.getBody();
@@ -67,7 +67,7 @@ public class RestServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceById(final String id) {
-        final ResponseEntity<RegisteredService> responseEntity = restTemplate.exchange(this.url, HttpMethod.GET,
+        final var responseEntity = restTemplate.exchange(this.url, HttpMethod.GET,
                 new HttpEntity<>(id, this.headers), RegisteredService.class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             return responseEntity.getBody();

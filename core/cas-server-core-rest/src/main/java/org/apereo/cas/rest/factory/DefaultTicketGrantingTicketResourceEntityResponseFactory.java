@@ -35,13 +35,13 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
         resourceResolverName = "REST_API_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Override
     public ResponseEntity<String> build(final TicketGrantingTicket ticketGrantingTicket, final HttpServletRequest request) throws Exception {
-        final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + ticketGrantingTicket.getId());
-        final HttpHeaders headers = new HttpHeaders();
+        final var ticketReference = new URI(request.getRequestURL().toString() + '/' + ticketGrantingTicket.getId());
+        final var headers = new HttpHeaders();
         headers.setLocation(ticketReference);
         final String response;
         if (isDefaultContentType(request)) {
             headers.setContentType(MediaType.TEXT_HTML);
-            final String tgtUrl = ticketReference.toString();
+            final var tgtUrl = ticketReference.toString();
             response = new StringBuilder(SUCCESSFUL_TGT_CREATED_INITIAL_LENGTH + tgtUrl.length())
                     .append(DOCTYPE_AND_OPENING_FORM)
                     .append(tgtUrl)
@@ -56,7 +56,7 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
     }
 
     private boolean isDefaultContentType(final HttpServletRequest request) {
-        final String accept = request.getHeader(HttpHeaders.ACCEPT) == null ? null : request.getHeader(HttpHeaders.ACCEPT).trim();
+        final var accept = request.getHeader(HttpHeaders.ACCEPT) == null ? null : request.getHeader(HttpHeaders.ACCEPT).trim();
         return StringUtils.isBlank(accept) || accept.startsWith(MediaType.ALL_VALUE) || accept.startsWith(MediaType.TEXT_HTML_VALUE);
     }
 

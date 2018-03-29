@@ -43,7 +43,7 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                                         final String originalPassword) throws GeneralSecurityException {
 
-        final String username = credential.getUsername();
+        final var username = credential.getUsername();
         if (this.users.contains(username)) {
             throw new FailedLoginException();
         }

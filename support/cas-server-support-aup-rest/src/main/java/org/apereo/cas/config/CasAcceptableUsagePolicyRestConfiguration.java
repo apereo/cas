@@ -34,7 +34,7 @@ public class CasAcceptableUsagePolicyRestConfiguration {
     @RefreshScope
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
-        final AcceptableUsagePolicyProperties aup = casProperties.getAcceptableUsagePolicy();
+        final var aup = casProperties.getAcceptableUsagePolicy();
         return new RestAcceptableUsagePolicyRepository(ticketRegistrySupport, aup.getAupAttributeName(), aup.getRest());
     }
 }

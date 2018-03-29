@@ -35,7 +35,7 @@ public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
     @Override
     public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
         try {
-            final List<SamlMetadataDocument> documents = mongoTemplate.findAll(SamlMetadataDocument.class, this.collectionName);
+            final var documents = mongoTemplate.findAll(SamlMetadataDocument.class, this.collectionName);
             return documents
                 .stream()
                 .map(doc -> buildMetadataResolverFrom(service, doc))
@@ -50,7 +50,7 @@ public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
     @Override
     public boolean supports(final SamlRegisteredService service) {
         try {
-            final String metadataLocation = service.getMetadataLocation();
+            final var metadataLocation = service.getMetadataLocation();
             return metadataLocation.trim().startsWith("mongodb://");
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

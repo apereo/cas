@@ -28,7 +28,7 @@ public class RegisteredServiceReverseMappedRegexAttributeFilter extends Register
         return attributeValues.stream()
                 .filter(v -> {
                     LOGGER.debug("Matching attribute value [{}] against pattern [{}]", v, pattern.pattern());
-                    final Matcher matcher = pattern.matcher(v.toString());
+                    final var matcher = pattern.matcher(v.toString());
                     if (isCompleteMatch()) {
                         return !matcher.matches();
                     }

@@ -45,27 +45,27 @@ public class DefaultCasSslContext {
 
     @SneakyThrows
     public DefaultCasSslContext(final Resource trustStoreFile, final String trustStorePassword, final String trustStoreType) {
-        final KeyStore casTrustStore = KeyStore.getInstance(trustStoreType);
-        final char[] trustStorePasswordCharArray = trustStorePassword.toCharArray();
+        final var casTrustStore = KeyStore.getInstance(trustStoreType);
+        final var trustStorePasswordCharArray = trustStorePassword.toCharArray();
 
-        try (InputStream casStream = trustStoreFile.getInputStream()) {
+        try (var casStream = trustStoreFile.getInputStream()) {
             casTrustStore.load(casStream, trustStorePasswordCharArray);
         }
 
-        final String defaultAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
-        final X509KeyManager customKeyManager = getKeyManager(ALG_NAME_PKIX, casTrustStore, trustStorePasswordCharArray);
-        final X509KeyManager jvmKeyManager = getKeyManager(defaultAlgorithm, null, null);
+        final var defaultAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
+        final var customKeyManager = getKeyManager(ALG_NAME_PKIX, casTrustStore, trustStorePasswordCharArray);
+        final var jvmKeyManager = getKeyManager(defaultAlgorithm, null, null);
 
-        final String defaultTrustAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-        final Collection<X509TrustManager> customTrustManager = getTrustManager(ALG_NAME_PKIX, casTrustStore);
-        final Collection<X509TrustManager> jvmTrustManagers = getTrustManager(defaultTrustAlgorithm, null);
+        final var defaultTrustAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+        final var customTrustManager = getTrustManager(ALG_NAME_PKIX, casTrustStore);
+        final var jvmTrustManagers = getTrustManager(defaultTrustAlgorithm, null);
 
         final KeyManager[] keyManagers = {
             new CompositeX509KeyManager(CollectionUtils.wrapList(jvmKeyManager, customKeyManager))
         };
         final List<X509TrustManager> allManagers = new ArrayList<>(customTrustManager);
         allManagers.addAll(jvmTrustManagers);
-        final TrustManager[] trustManagers = new TrustManager[]{new CompositeX509TrustManager(allManagers)};
+        final var trustManagers = new TrustManager[]{new CompositeX509TrustManager(allManagers)};
 
         this.sslContext = SSLContexts.custom().useProtocol("SSL").build();
         sslContext.init(keyManagers, trustManagers, null);
@@ -82,7 +82,7 @@ public class DefaultCasSslContext {
      */
     private static X509KeyManager getKeyManager(final String algorithm, final KeyStore keystore,
                                                 final char[] password) throws Exception {
-        final KeyManagerFactory factory = KeyManagerFactory.getInstance(algorithm);
+        final var factory = KeyManagerFactory.getInstance(algorithm);
         factory.init(keystore, password);
         return (X509KeyManager) factory.getKeyManagers()[0];
     }
@@ -96,7 +96,7 @@ public class DefaultCasSslContext {
      * @throws Exception the exception
      */
     private static Collection<X509TrustManager> getTrustManager(final String algorithm, final KeyStore keystore) throws Exception {
-        final TrustManagerFactory factory = TrustManagerFactory.getInstance(algorithm);
+        final var factory = TrustManagerFactory.getInstance(algorithm);
         factory.init(keystore);
         return Arrays.stream(factory.getTrustManagers())
             .filter(e -> e instanceof X509TrustManager)
@@ -180,12 +180,12 @@ public class DefaultCasSslContext {
 
         @Override
         public void checkClientTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
-            final boolean trusted = this.trustManagers.stream().anyMatch(trustManager -> {
+            final var trusted = this.trustManagers.stream().anyMatch(trustManager -> {
                 try {
                     trustManager.checkClientTrusted(chain, authType);
                     return true;
                 } catch (final CertificateException e) {
-                    final String msg = "Unable to trust the client certificates [%s] for auth type [%s]: [%s]";
+                    final var msg = "Unable to trust the client certificates [%s] for auth type [%s]: [%s]";
                     LOGGER.debug(String.format(msg, Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet()),
                         authType, e.getMessage()), e);
                     return false;
@@ -200,12 +200,12 @@ public class DefaultCasSslContext {
         @Override
         public void checkServerTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
 
-            final boolean trusted = this.trustManagers.stream().anyMatch(trustManager -> {
+            final var trusted = this.trustManagers.stream().anyMatch(trustManager -> {
                 try {
                     trustManager.checkServerTrusted(chain, authType);
                     return true;
                 } catch (final CertificateException e) {
-                    final String msg = "Unable to trust the server certificates [%s] for auth type [%s]: [%s]";
+                    final var msg = "Unable to trust the server certificates [%s] for auth type [%s]: [%s]";
                     LOGGER.debug(String.format(msg, Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet()),
                         authType, e.getMessage()), e);
                     return false;

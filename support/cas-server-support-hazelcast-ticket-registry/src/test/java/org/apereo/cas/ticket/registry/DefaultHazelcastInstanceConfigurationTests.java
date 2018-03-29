@@ -99,7 +99,7 @@ public class DefaultHazelcastInstanceConfigurationTests {
     @Test
     public void correctHazelcastInstanceIsCreated() {
         assertNotNull(this.hzInstance);
-        final Config config = this.hzInstance.getConfig();
+        final var config = this.hzInstance.getConfig();
         assertFalse(config.getNetworkConfig().getJoin().getMulticastConfig().isEnabled());
         assertEquals(Arrays.asList("localhost"), config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers());
         assertTrue(config.getNetworkConfig().isPortAutoIncrement());

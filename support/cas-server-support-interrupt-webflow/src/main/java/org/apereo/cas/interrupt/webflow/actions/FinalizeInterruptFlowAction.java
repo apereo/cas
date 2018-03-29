@@ -20,12 +20,12 @@ import org.springframework.webflow.execution.RequestContext;
 public class FinalizeInterruptFlowAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final RegisteredService registeredService = WebUtils.getRegisteredService(requestContext);
-        final InterruptResponse response = InterruptUtils.getInterruptFrom(requestContext);
+        final var registeredService = WebUtils.getRegisteredService(requestContext);
+        final var response = InterruptUtils.getInterruptFrom(requestContext);
         
         if (response.isBlock()) {
             if (registeredService != null && registeredService.getAccessStrategy().getUnauthorizedRedirectUrl() != null) {
-                final String url = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl().toURL().toExternalForm();
+                final var url = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl().toURL().toExternalForm();
                 requestContext.getExternalContext().requestExternalRedirect(url);
                 requestContext.getExternalContext().recordResponseComplete();
                 return no();

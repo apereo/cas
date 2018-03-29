@@ -70,32 +70,32 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
     @Override
     protected void prepareResponse(final Response response, final Map<String, Object> model) {
 
-        final ZonedDateTime issuedAt = DateTimeUtils.zonedDateTimeOf(response.getIssueInstant());
-        final Service service = getAssertionFrom(model).getService();
+        final var issuedAt = DateTimeUtils.zonedDateTimeOf(response.getIssueInstant());
+        final var service = getAssertionFrom(model).getService();
         LOGGER.debug("Preparing SAML response for service [{}]", service);
         
-        final Authentication authentication = getPrimaryAuthenticationFrom(model);
+        final var authentication = getPrimaryAuthenticationFrom(model);
         final Collection<Object> authnMethods = CollectionUtils.toCollection(authentication.getAttributes()
                 .get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
         LOGGER.debug("Authentication methods found are [{}]", authnMethods);
 
-        final Principal principal = getPrincipal(model);
-        final AuthenticationStatement authnStatement = this.samlObjectBuilder.newAuthenticationStatement(
+        final var principal = getPrincipal(model);
+        final var authnStatement = this.samlObjectBuilder.newAuthenticationStatement(
                 authentication.getAuthenticationDate(), authnMethods, principal.getId());
         LOGGER.debug("Built authentication statement for [{}] dated at [{}]", principal, authentication.getAuthenticationDate());
         
-        final Assertion assertion = this.samlObjectBuilder.newAssertion(authnStatement, this.issuer, issuedAt,
+        final var assertion = this.samlObjectBuilder.newAssertion(authnStatement, this.issuer, issuedAt,
                 this.samlObjectBuilder.generateSecureRandomId());
         LOGGER.debug("Built assertion for issuer [{}] dated at [{}]", this.issuer, issuedAt);
         
-        final Conditions conditions = this.samlObjectBuilder.newConditions(issuedAt, service.getId(), this.issueLength);
+        final var conditions = this.samlObjectBuilder.newConditions(issuedAt, service.getId(), this.issueLength);
         assertion.setConditions(conditions);
         LOGGER.debug("Built assertion conditions for issuer [{}] and service [{}] ", this.issuer, service.getId());
         
-        final Subject subject = this.samlObjectBuilder.newSubject(principal.getId());
+        final var subject = this.samlObjectBuilder.newSubject(principal.getId());
         LOGGER.debug("Built subject for principal [{}]", principal);
 
-        final Map<String, Object> attributesToSend = prepareSamlAttributes(model, service);
+        final var attributesToSend = prepareSamlAttributes(model, service);
         LOGGER.debug("Authentication statement shall include these attributes [{}]", attributesToSend);
         
         if (!attributesToSend.isEmpty()) {
@@ -120,14 +120,14 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
      * @since 4.1.0
      */
     private Map<String, Object> prepareSamlAttributes(final Map<String, Object> model, final Service service) {
-        final Map<String, Object> authnAttributes = authenticationAttributeReleasePolicy
+        final var authnAttributes = authenticationAttributeReleasePolicy
                 .getAuthenticationAttributesForRelease(getPrimaryAuthenticationFrom(model));
         if (isRememberMeAuthentication(model)) {
             authnAttributes.put(this.rememberMeAttributeName, Boolean.TRUE.toString());
         }
         LOGGER.debug("Retrieved authentication attributes [{}] from the model", authnAttributes);
         
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        final var registeredService = this.servicesManager.findServiceBy(service);
         final Map<String, Object> attributesToReturn = new HashMap<>();
         attributesToReturn.putAll(getPrincipalAttributesAsMultiValuedAttributes(model));
         attributesToReturn.putAll(authnAttributes);
@@ -136,7 +136,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
         decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attributesToReturn, model, registeredService);
 
         LOGGER.debug("Beginning to encode attributes [{}] for service [{}]", attributesToReturn, registeredService.getServiceId());
-        final Map<String, Object> finalAttributes = this.protocolAttributeEncoder.encodeAttributes(attributesToReturn, registeredService);
+        final var finalAttributes = this.protocolAttributeEncoder.encodeAttributes(attributesToReturn, registeredService);
         LOGGER.debug("Final collection of attributes are [{}]", finalAttributes);
         
         return finalAttributes;

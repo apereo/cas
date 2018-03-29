@@ -43,17 +43,17 @@ public class RadiusConfigurationTests {
 
     @Test
     public void emptyAddress() {
-        final RadiusClientProperties clientProperties = new RadiusClientProperties();
+        final var clientProperties = new RadiusClientProperties();
         clientProperties.setInetAddress("  ");
-        final Set<String> ips = RadiusConfiguration.getClientIps(clientProperties);
+        final var ips = RadiusConfiguration.getClientIps(clientProperties);
         assertEquals(0, ips.size());
     }
 
     @Test
     public void someAddressesWithSpaces() {
-        final RadiusClientProperties clientProperties = new RadiusClientProperties();
+        final var clientProperties = new RadiusClientProperties();
         clientProperties.setInetAddress("localhost,  localguest  ");
-        final Set<String> ips = RadiusConfiguration.getClientIps(clientProperties);
+        final var ips = RadiusConfiguration.getClientIps(clientProperties);
         assertEquals(2, ips.size());
         assertTrue(ips.contains("localhost"));
         assertTrue(ips.contains("localguest"));
@@ -67,7 +67,7 @@ public class RadiusConfigurationTests {
     @Test
     public void radiusServers() throws Exception {
         assertEquals("localhost,localguest", casProperties.getAuthn().getRadius().getClient().getInetAddress());
-        final List<RadiusServer> servers = radiusConfiguration.radiusServers();
+        final var servers = radiusConfiguration.radiusServers();
         assertNotNull(servers);
         assertEquals(2, servers.size());
     }

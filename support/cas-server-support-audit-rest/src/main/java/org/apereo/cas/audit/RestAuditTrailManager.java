@@ -48,7 +48,7 @@ public class RestAuditTrailManager implements AuditTrailManager {
     @Override
     public void record(final AuditActionContext audit) {
         final Runnable task = () -> {
-            final String auditJson = serializer.toString(audit);
+            final var auditJson = serializer.toString(audit);
             LOGGER.debug("Sending audit action context to REST endpoint [{}]", properties.getUrl());
             HttpUtils.executePost(properties.getUrl(), properties.getBasicAuthUsername(), properties.getBasicAuthPassword(), auditJson);
         };
@@ -64,9 +64,9 @@ public class RestAuditTrailManager implements AuditTrailManager {
     public Set<AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
         try {
             LOGGER.debug("Sending query to audit REST endpoint to fetch records from [{}]", localDate);
-            final HttpResponse response = HttpUtils.executeGet(properties.getUrl(), CollectionUtils.wrap("date", localDate.toEpochDay()));
+            final var response = HttpUtils.executeGet(properties.getUrl(), CollectionUtils.wrap("date", localDate.toEpochDay()));
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                final String result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                final var result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 final TypeReference<Set<AuditActionContext>> values = new TypeReference<Set<AuditActionContext>>() {
                 };
                 return MAPPER.readValue(result, values);

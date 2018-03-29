@@ -22,7 +22,7 @@ public class OneTimePasswordCredentialTests {
 
     @Test
     public void verifySerializeAnOneTimePasswordCredentialToJson() throws IOException {
-        final OneTimePasswordCredential credentialWritten = new OneTimePasswordCredential("id", "password");
+        final var credentialWritten = new OneTimePasswordCredential("id", "password");
         MAPPER.writeValue(JSON_FILE, credentialWritten);
         final CredentialMetaData credentialRead = MAPPER.readValue(JSON_FILE, OneTimePasswordCredential.class);
         assertEquals(credentialWritten, credentialRead);

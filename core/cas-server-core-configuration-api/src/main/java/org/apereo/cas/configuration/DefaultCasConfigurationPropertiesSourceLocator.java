@@ -46,12 +46,12 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
 
     @Override
     public PropertySource<?> locate(final Environment environment, final ResourceLoader resourceLoader) {
-        final CompositePropertySource compositePropertySource = new CompositePropertySource("casCompositePropertySource");
+        final var compositePropertySource = new CompositePropertySource("casCompositePropertySource");
 
         final PropertySource<?> sourceYaml = loadEmbeddedYamlOverriddenProperties(resourceLoader);
         compositePropertySource.addPropertySource(sourceYaml);
 
-        final File config = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
+        final var config = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
         LOGGER.debug("Located CAS standalone configuration directory at [{}]", config);
         if (config.isDirectory() && config.exists()) {
             final PropertySource<?> sourceProfiles = loadSettingsByApplicationProfiles(environment, config);
@@ -60,7 +60,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
             LOGGER.info("Configuration directory [{}] is not a directory or cannot be found at the specific path", config);
         }
 
-        final File configFile = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile();
+        final var configFile = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile();
         if (configFile != null) {
             final PropertySource<?> sourceStandalone = loadSettingsFromStandaloneConfigFile(configFile);
             compositePropertySource.addFirstPropertySource(sourceStandalone);
@@ -69,7 +69,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     }
 
     private PropertySource<?> loadSettingsFromStandaloneConfigFile(final File configFile) {
-        final Properties props = new Properties();
+        final var props = new Properties();
 
         try (Reader r = Files.newBufferedReader(configFile.toPath(), StandardCharsets.UTF_8)) {
             LOGGER.debug("Located CAS standalone configuration file at [{}]", configFile);
@@ -84,11 +84,11 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     }
 
     private PropertySource<?> loadSettingsByApplicationProfiles(final Environment environment, final File config) {
-        final Properties props = new Properties();
+        final var props = new Properties();
 
-        final List<String> profiles = getApplicationProfiles(environment);
-        final String regex = buildPatternForConfigurationFileDiscovery(config, profiles);
-        final Collection<File> configFiles = scanForConfigurationFilesByPattern(config, regex);
+        final var profiles = getApplicationProfiles(environment);
+        final var regex = buildPatternForConfigurationFileDiscovery(config, profiles);
+        final var configFiles = scanForConfigurationFilesByPattern(config, regex);
 
         LOGGER.info("Configuration files found at [{}] are [{}]", config, configFiles);
         configFiles.forEach(Unchecked.consumer(f -> {
@@ -98,7 +98,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
                 LOGGER.debug("Found settings [{}] in YAML file [{}]", pp.keySet(), f);
                 props.putAll(decryptProperties(pp));
             } else {
-                final Properties pp = new Properties();
+                final var pp = new Properties();
                 pp.load(Files.newBufferedReader(f.toPath(), StandardCharsets.UTF_8));
                 LOGGER.debug("Found settings [{}] in file [{}]", pp.keySet(), f);
                 props.putAll(decryptProperties(pp));
@@ -109,10 +109,10 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     }
 
     private PropertySource<?> loadEmbeddedYamlOverriddenProperties(final ResourceLoader resourceLoader) {
-        final Properties props = new Properties();
-        final Resource resource = resourceLoader.getResource("classpath:/application.yml");
+        final var props = new Properties();
+        final var resource = resourceLoader.getResource("classpath:/application.yml");
         if (resource != null && resource.exists()) {
-            final Map pp = loadYamlProperties(resource);
+            final var pp = loadYamlProperties(resource);
             if (pp.isEmpty()) {
                 LOGGER.debug("No properties were located inside [{}]", resource);
             } else {
@@ -135,12 +135,12 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     }
 
     private static String buildPatternForConfigurationFileDiscovery(final File config, final List<String> profiles) {
-        final String propertyNames = profiles.stream().collect(Collectors.joining("|"));
-        final String profiledProperties = profiles.stream()
+        final var propertyNames = profiles.stream().collect(Collectors.joining("|"));
+        final var profiledProperties = profiles.stream()
             .map(p -> String.format("application-%s", p))
             .collect(Collectors.joining("|"));
 
-        final String regex = String.format("(%s|%s|application)\\.(yml|properties)", propertyNames, profiledProperties);
+        final var regex = String.format("(%s|%s|application)\\.(yml|properties)", propertyNames, profiledProperties);
         LOGGER.debug("Looking for configuration files at [{}] that match the pattern [{}]", config, regex);
         return regex;
     }
@@ -153,7 +153,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     }
 
     private static Map loadYamlProperties(final Resource... resource) {
-        final YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
+        final var factory = new YamlPropertiesFactoryBean();
         factory.setResolutionMethod(YamlProcessor.ResolutionMethod.OVERRIDE);
         factory.setResources(resource);
         factory.setSingleton(true);

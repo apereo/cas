@@ -34,8 +34,8 @@ public class RedisServiceRegistryConfiguration implements ServiceRegistryExecuti
     @Bean
     @RefreshScope
     public RedisConnectionFactory redisConnectionFactory() {
-        final RedisServiceRegistryProperties redis = casProperties.getServiceRegistry().getRedis();
-        final RedisObjectFactory obj = new RedisObjectFactory();
+        final var redis = casProperties.getServiceRegistry().getRedis();
+        final var obj = new RedisObjectFactory();
         return obj.newRedisConnectionFactory(redis);
     }
 

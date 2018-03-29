@@ -16,12 +16,12 @@ public class CacheCredentialsMetaDataPopulatorTests {
 
     @Test
     public void verifyPasswordAsAuthenticationAttribute() {
-        final CacheCredentialsMetaDataPopulator populator = new CacheCredentialsMetaDataPopulator();
+        final var populator = new CacheCredentialsMetaDataPopulator();
 
-        final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        final AuthenticationBuilder builder = DefaultAuthenticationBuilder.newInstance(CoreAuthenticationTestUtils.getAuthentication());
+        final var c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        final var builder = DefaultAuthenticationBuilder.newInstance(CoreAuthenticationTestUtils.getAuthentication());
         populator.populateAttributes(builder, AuthenticationTransaction.of(c));
-        final Authentication authn = builder.build();
+        final var authn = builder.build();
         assertTrue(authn.getAttributes().containsKey(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD));
         assertTrue(authn.getAttributes().get(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD)
                 .equals(c.getPassword()));

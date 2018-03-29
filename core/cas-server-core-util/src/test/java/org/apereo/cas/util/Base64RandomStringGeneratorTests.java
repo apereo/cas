@@ -28,8 +28,8 @@ public class Base64RandomStringGeneratorTests {
 
     @Test
     public void verifyRandomString() {
-        final String s1 = this.randomStringGenerator.getNewString();
-        final String s2 = this.randomStringGenerator.getNewString();
+        final var s1 = this.randomStringGenerator.getNewString();
+        final var s2 = this.randomStringGenerator.getNewString();
         assertNotSame(s1, s2);
     }
 }

@@ -15,14 +15,14 @@ public class ServiceRegistryInitializerTests {
 
     @Test
     public void ensureInitFromJsonDoesNotCreateDuplicates() {
-        RegexRegisteredService initialService = newService();
+        var initialService = newService();
 
-        final ServicesManager servicesManager = mock(ServicesManager.class);
-        final ServiceRegistry jsonServiceRegistry = mock(ServiceRegistry.class);
+        final var servicesManager = mock(ServicesManager.class);
+        final var jsonServiceRegistry = mock(ServiceRegistry.class);
         when(jsonServiceRegistry.load()).thenReturn(Arrays.asList(initialService));
 
         final ServiceRegistry serviceRegistry = new InMemoryServiceRegistry();
-        final ServiceRegistryInitializer serviceRegistryInitializer = new ServiceRegistryInitializer(jsonServiceRegistry, serviceRegistry,
+        final var serviceRegistryInitializer = new ServiceRegistryInitializer(jsonServiceRegistry, serviceRegistry,
                                                                                                      servicesManager, true);
 
         // when initServiceRegistryIfNecessary is called
@@ -44,7 +44,7 @@ public class ServiceRegistryInitializerTests {
 
 
     private RegexRegisteredService newService() {
-        final RegexRegisteredService service = new RegexRegisteredService();
+        final var service = new RegexRegisteredService();
         service.setServiceId("^https?://.*");
         service.setName("Test");
         service.setDescription("Test");

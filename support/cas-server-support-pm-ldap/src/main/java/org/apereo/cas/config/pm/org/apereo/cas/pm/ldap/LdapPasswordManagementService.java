@@ -42,24 +42,24 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
     @Override
     public String findEmail(final String username) {
         try {
-            final PasswordManagementProperties.Ldap ldap = properties.getLdap();
-            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
+            final var ldap = properties.getLdap();
+            final var filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                 CollectionUtils.wrap(username));
             LOGGER.debug("Constructed LDAP filter [{}] to locate account email", filter);
 
             final ConnectionFactory factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-            final Response<SearchResult> response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
+            final var response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
             LOGGER.debug("LDAP response to locate account email is [{}]", response);
 
             if (LdapUtils.containsResultEntry(response)) {
-                final LdapEntry entry = response.getResult().getEntry();
+                final var entry = response.getResult().getEntry();
                 LOGGER.debug("Found LDAP entry [{}] to use for the account email", entry);
 
-                final String attributeName = properties.getReset().getEmailAttribute();
-                final LdapAttribute attr = entry.getAttribute(attributeName);
+                final var attributeName = properties.getReset().getEmailAttribute();
+                final var attr = entry.getAttribute(attributeName);
                 if (attr != null) {
-                    final String email = attr.getStringValue();
+                    final var email = attr.getStringValue();
                     LOGGER.debug("Found email address [{}] for user [{}]. Validating...", email, username);
                     if (EmailValidator.getInstance().isValid(email)) {
                         LOGGER.debug("Email address [{}] matches a valid email address", email);
@@ -82,20 +82,20 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
     @Override
     public boolean changeInternal(final Credential credential, final PasswordChangeBean bean) {
         try {
-            final PasswordManagementProperties.Ldap ldap = properties.getLdap();
-            final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
+            final var ldap = properties.getLdap();
+            final var c = (UsernamePasswordCredential) credential;
 
-            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
+            final var filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                 CollectionUtils.wrap(c.getId()));
             LOGGER.debug("Constructed LDAP filter [{}] to update account password", filter);
 
             final ConnectionFactory factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-            final Response<SearchResult> response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
+            final var response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
             LOGGER.debug("LDAP response to update password is [{}]", response);
 
             if (LdapUtils.containsResultEntry(response)) {
-                final String dn = response.getResult().getEntry().getDn();
+                final var dn = response.getResult().getEntry().getDn();
                 LOGGER.debug("Updating account password for [{}]", dn);
                 if (LdapUtils.executePasswordModifyOperation(dn, factory, c.getPassword(), bean.getPassword(),
                     properties.getLdap().getType())) {
@@ -116,25 +116,25 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
     public Map<String, String> getSecurityQuestions(final String username) {
         final Map<String, String> set = new LinkedHashMap<>();
         try {
-            final PasswordManagementProperties.Ldap ldap = properties.getLdap();
-            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
+            final var ldap = properties.getLdap();
+            final var filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                 CollectionUtils.wrap(username));
             LOGGER.debug("Constructed LDAP filter [{}] to locate security questions", filter);
 
             final ConnectionFactory factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-            final Response<SearchResult> response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
+            final var response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
             LOGGER.debug("LDAP response for security questions [{}]", response);
 
             if (LdapUtils.containsResultEntry(response)) {
-                final LdapEntry entry = response.getResult().getEntry();
+                final var entry = response.getResult().getEntry();
                 LOGGER.debug("Located LDAP entry [{}] in the response", entry);
-                final Map<String, String> qs = properties.getLdap().getSecurityQuestionsAttributes();
+                final var qs = properties.getLdap().getSecurityQuestionsAttributes();
                 LOGGER.debug("Security question attributes are defined to be [{}]", qs);
 
                 qs.forEach((k, v) -> {
-                    final LdapAttribute q = entry.getAttribute(k);
-                    final LdapAttribute a = entry.getAttribute(v);
+                    final var q = entry.getAttribute(k);
+                    final var a = entry.getAttribute(v);
                     if (q != null && a != null && StringUtils.isNotBlank(q.getStringValue())
                         && StringUtils.isNotBlank(a.getStringValue())) {
                         LOGGER.debug("Added security question [{}]", q.getStringValue());

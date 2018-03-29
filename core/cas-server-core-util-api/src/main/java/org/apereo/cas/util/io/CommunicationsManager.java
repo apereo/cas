@@ -49,7 +49,7 @@ public class CommunicationsManager {
                          final String subject,
                          final String cc, final String bcc) {
         if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isMailSenderDefined()) {
-            final String to = getFirstAttributeByName(principal, attribute);
+            final var to = getFirstAttributeByName(principal, attribute);
             return email(text, from, subject, to, cc, bcc);
         }
         return false;
@@ -90,8 +90,8 @@ public class CommunicationsManager {
                 return false;
             }
 
-            final MimeMessage message = this.mailSender.createMimeMessage();
-            final MimeMessageHelper helper = new MimeMessageHelper(message);
+            final var message = this.mailSender.createMimeMessage();
+            final var helper = new MimeMessageHelper(message);
             helper.setTo(to);
             helper.setText(text);
             helper.setSubject(subject);
@@ -126,7 +126,7 @@ public class CommunicationsManager {
                        final String attribute,
                        final String text, final String from) {
         if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isSmsSenderDefined()) {
-            final String to = getFirstAttributeByName(principal, attribute);
+            final var to = getFirstAttributeByName(principal, attribute);
             return sms(from, to, text);
         }
         return false;
@@ -149,7 +149,7 @@ public class CommunicationsManager {
     }
 
     private String getFirstAttributeByName(final Principal principal, final String attribute) {
-        final Object value = principal.getAttributes().get(attribute);
+        final var value = principal.getAttributes().get(attribute);
         return CollectionUtils.firstElement(value).toString();
     }
 

@@ -50,15 +50,15 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyE
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final RegisteredService service = resolveRegisteredServiceInRequestContext(context);
-        final Authentication authentication = WebUtils.getAuthentication(context);
+        final var service = resolveRegisteredServiceInRequestContext(context);
+        final var authentication = WebUtils.getAuthentication(context);
 
         if (authentication == null || service == null) {
             LOGGER.debug("No authentication or service is available to determine event for principal");
             return null;
         }
 
-        final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
+        final var policy = service.getMultifactorPolicy();
         if (policy == null || service.getMultifactorPolicy().getMultifactorAuthenticationProviders().isEmpty()) {
             LOGGER.debug("Authentication policy is absent or does not contain any multifactor authentication providers");
             return null;
@@ -70,8 +70,8 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyE
             return null;
         }
 
-        final Principal principal = authentication.getPrincipal();
-        final Collection<MultifactorAuthenticationProvider> providers = flattenProviders(getAuthenticationProviderForService(service));
+        final var principal = authentication.getPrincipal();
+        final var providers = flattenProviders(getAuthenticationProviderForService(service));
         return resolveEventViaPrincipalAttribute(principal,
                 org.springframework.util.StringUtils.commaDelimitedListToSet(policy.getPrincipalAttributeNameTrigger()),
                 service, context, providers, Pattern.compile(policy.getPrincipalAttributeValueToMatch()).asPredicate());

@@ -66,7 +66,7 @@ public class CasConfigurationEventListener {
             LOGGER.info("Received event [{}]. Refreshing CAS configuration...", event);
             Collection<String> keys = null;
             try {
-                final ContextRefresher refresher = this.contextRefresher.getIfAvailable();
+                final var refresher = this.contextRefresher.getIfAvailable();
                 if (refresher != null) {
                     keys = refresher.refresh();
                     LOGGER.debug("Refreshed the following settings: [{}].", keys);

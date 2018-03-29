@@ -53,7 +53,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
         attributes.put("username", Arrays.asList("uid"));
 
         this.dao = mock(IPersonAttributeDao.class);
-        final IPersonAttributes person = mock(IPersonAttributes.class);
+        final var person = mock(IPersonAttributes.class);
         when(person.getName()).thenReturn("uid");
         when(person.getAttributes()).thenReturn(attributes);
         when(dao.getPerson(any(String.class))).thenReturn(person);
@@ -69,7 +69,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     @Test
     public void checkExpiredCachedAttributes() throws Exception {
         assertEquals(1, this.principal.getAttributes().size());
-        try (AbstractPrincipalAttributesRepository repository = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100)) {
+        try (var repository = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100)) {
             assertEquals(repository.getAttributes(this.principal).size(), this.attributes.size());
             assertTrue(repository.getAttributes(this.principal).containsKey(MAIL));
             Thread.sleep(200);
@@ -81,7 +81,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
 
     @Test
     public void ensureCachedAttributesWithUpdate() throws Exception {
-        try (AbstractPrincipalAttributesRepository repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
+        try (var repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             assertEquals(repository.getAttributes(this.principal).size(), this.attributes.size());
             assertTrue(repository.getAttributes(this.principal).containsKey(MAIL));
 
@@ -92,7 +92,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
 
     @Test
     public void verifyMergingStrategyWithNoncollidingAttributeAdder() throws Exception {
-        try (AbstractPrincipalAttributesRepository repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
+        try (var repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
             assertTrue(repository.getAttributes(this.principal).containsKey(MAIL));
             assertEquals("final@school.com", repository.getAttributes(this.principal).get(MAIL).toString());
@@ -101,7 +101,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
 
     @Test
     public void verifyMergingStrategyWithReplacingAttributeAdder() throws Exception {
-        try (AbstractPrincipalAttributesRepository repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
+        try (var repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.REPLACE);
             assertTrue(repository.getAttributes(this.principal).containsKey(MAIL));
             assertEquals("final@example.com", repository.getAttributes(this.principal).get(MAIL).toString());
@@ -110,10 +110,10 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
 
     @Test
     public void verifyMergingStrategyWithMultivaluedAttributeMerger() throws Exception {
-        try (AbstractPrincipalAttributesRepository repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
+        try (var repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.MULTIVALUED);
 
-            final Object mailAttr = repository.getAttributes(this.principal).get(MAIL);
+            final var mailAttr = repository.getAttributes(this.principal).get(MAIL);
             assertTrue(mailAttr instanceof List);
             final List<?> values = (List) mailAttr;
             assertTrue(values.contains("final@example.com"));

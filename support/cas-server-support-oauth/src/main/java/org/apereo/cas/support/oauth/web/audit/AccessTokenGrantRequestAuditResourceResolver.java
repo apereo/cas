@@ -21,10 +21,10 @@ public class AccessTokenGrantRequestAuditResourceResolver extends ReturnValueAsS
     @Override
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
         Objects.requireNonNull(retval, "AccessTokenRequestDataHolder must not be null");
-        final AccessTokenRequestDataHolder accessTokenRequest = AccessTokenRequestDataHolder.class.cast(retval);
-        final String tokenId = accessTokenRequest.getToken() == null ? "N/A" : accessTokenRequest.getToken().getId();
+        final var accessTokenRequest = AccessTokenRequestDataHolder.class.cast(retval);
+        final var tokenId = accessTokenRequest.getToken() == null ? "N/A" : accessTokenRequest.getToken().getId();
 
-        final String result = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
+        final var result = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
                 .append("oauth_token", tokenId)
                 .append("client_id", accessTokenRequest.getRegisteredService().getClientId())
                 .append("client_service", accessTokenRequest.getService().getId())

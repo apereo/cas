@@ -58,7 +58,7 @@ public class SamlUtils {
      * @return the x 509 certificate
      */
     public static X509Certificate readCertificate(final Resource resource) {
-        try (InputStream in = resource.getInputStream()) {
+        try (var in = resource.getInputStream()) {
             return CertUtil.readCertificate(in);
         } catch (final Exception e) {
             throw new IllegalArgumentException("Error reading certificate " + resource, e);
@@ -89,10 +89,10 @@ public class SamlUtils {
     public static <T extends XMLObject> T transformSamlObject(final OpenSamlConfigBean configBean, final String xml,
                                                               final Class<T> clazz) {
         try (InputStream in = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))) {
-            final Document document = configBean.getParserPool().parse(in);
-            final Element root = document.getDocumentElement();
+            final var document = configBean.getParserPool().parse(in);
+            final var root = document.getDocumentElement();
 
-            final Unmarshaller marshaller = configBean.getUnmarshallerFactory().getUnmarshaller(root);
+            final var marshaller = configBean.getUnmarshallerFactory().getUnmarshaller(root);
             if (marshaller != null) {
                 final Object result = marshaller.unmarshall(root);
                 if (!clazz.isAssignableFrom(result.getClass())) {
@@ -119,16 +119,16 @@ public class SamlUtils {
      */
     public static StringWriter transformSamlObject(final OpenSamlConfigBean configBean, final XMLObject samlObject,
                                                    final boolean indent) throws SamlException {
-        final StringWriter writer = new StringWriter();
+        final var writer = new StringWriter();
         try {
-            final Marshaller marshaller = configBean.getMarshallerFactory().getMarshaller(samlObject.getElementQName());
+            final var marshaller = configBean.getMarshallerFactory().getMarshaller(samlObject.getElementQName());
             if (marshaller != null) {
-                final Element element = marshaller.marshall(samlObject);
-                final DOMSource domSource = new DOMSource(element);
+                final var element = marshaller.marshall(samlObject);
+                final var domSource = new DOMSource(element);
 
-                final StreamResult result = new StreamResult(writer);
-                final TransformerFactory tf = TransformerFactory.newInstance();
-                final Transformer transformer = tf.newTransformer();
+                final var result = new StreamResult(writer);
+                final var tf = TransformerFactory.newInstance();
+                final var transformer = tf.newTransformer();
 
                 if (indent) {
                     transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -150,7 +150,7 @@ public class SamlUtils {
      * @throws Exception the exception
      */
     public static SignatureValidationFilter buildSignatureValidationFilter(final String signatureResourceLocation) throws Exception {
-        final AbstractResource resource = ResourceUtils.getResourceFrom(signatureResourceLocation);
+        final var resource = ResourceUtils.getResourceFrom(signatureResourceLocation);
         return buildSignatureValidationFilter(resource);
     }
 
@@ -164,7 +164,7 @@ public class SamlUtils {
     public static SignatureValidationFilter buildSignatureValidationFilter(final ResourceLoader resourceLoader,
                                                                            final String signatureResourceLocation) {
         try {
-            final Resource resource = resourceLoader.getResource(signatureResourceLocation);
+            final var resource = resourceLoader.getResource(signatureResourceLocation);
             return buildSignatureValidationFilter(resource);
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
@@ -192,16 +192,16 @@ public class SamlUtils {
         keyInfoProviderList.add(new InlineX509DataProvider());
 
         LOGGER.debug("Attempting to resolve credentials from [{}]", signatureResourceLocation);
-        final BasicCredential credential = buildCredentialForMetadataSignatureValidation(signatureResourceLocation);
+        final var credential = buildCredentialForMetadataSignatureValidation(signatureResourceLocation);
         LOGGER.info("Successfully resolved credentials from [{}]", signatureResourceLocation);
 
         LOGGER.debug("Configuring credential resolver for key signature trust engine @ [{}]", credential.getCredentialType().getSimpleName());
-        final StaticCredentialResolver resolver = new StaticCredentialResolver(credential);
-        final BasicProviderKeyInfoCredentialResolver keyInfoResolver = new BasicProviderKeyInfoCredentialResolver(keyInfoProviderList);
-        final ExplicitKeySignatureTrustEngine trustEngine = new ExplicitKeySignatureTrustEngine(resolver, keyInfoResolver);
+        final var resolver = new StaticCredentialResolver(credential);
+        final var keyInfoResolver = new BasicProviderKeyInfoCredentialResolver(keyInfoProviderList);
+        final var trustEngine = new ExplicitKeySignatureTrustEngine(resolver, keyInfoResolver);
 
         LOGGER.debug("Adding signature validation filter based on the configured trust engine");
-        final SignatureValidationFilter signatureValidationFilter = new SignatureValidationFilter(trustEngine);
+        final var signatureValidationFilter = new SignatureValidationFilter(trustEngine);
         signatureValidationFilter.setRequireSignedRoot(false);
         LOGGER.debug("Added metadata SignatureValidationFilter with signature from [{}]", signatureResourceLocation);
         return signatureValidationFilter;
@@ -216,7 +216,7 @@ public class SamlUtils {
      */
     public static BasicCredential buildCredentialForMetadataSignatureValidation(final Resource resource) throws Exception {
         try {
-            final BasicX509CredentialFactoryBean x509FactoryBean = new BasicX509CredentialFactoryBean();
+            final var x509FactoryBean = new BasicX509CredentialFactoryBean();
             x509FactoryBean.setCertificateResource(resource);
             x509FactoryBean.afterPropertiesSet();
             return x509FactoryBean.getObject();
@@ -225,7 +225,7 @@ public class SamlUtils {
 
             LOGGER.debug("Credential cannot be extracted from [{}] via X.509. Treating it as a public key to locate credential...",
                     resource);
-            final BasicResourceCredentialFactoryBean credentialFactoryBean = new BasicResourceCredentialFactoryBean();
+            final var credentialFactoryBean = new BasicResourceCredentialFactoryBean();
             credentialFactoryBean.setPublicKeyInfo(resource);
             credentialFactoryBean.afterPropertiesSet();
             return credentialFactoryBean.getObject();

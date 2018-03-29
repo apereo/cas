@@ -35,8 +35,8 @@ public class OAuth20DefaultUserProfileViewRendererNestedTests extends AbstractOA
         final Map map = CollectionUtils.wrap(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, "cas",
                 OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES, CollectionUtils.wrap("email", "cas@example.org"),
                 "something", CollectionUtils.wrapList("something"));
-        final String json = oauthUserProfileViewRenderer.render(map, mock(AccessToken.class));
-        final JsonObject value = JsonValue.readJSON(json).asObject();
+        final var json = oauthUserProfileViewRenderer.render(map, mock(AccessToken.class));
+        final var value = JsonValue.readJSON(json).asObject();
         assertNotNull(value.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID));
         assertNotNull(value.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES));
     }

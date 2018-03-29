@@ -40,8 +40,8 @@ public class BasePasswordManagementService implements PasswordManagementService 
     @Override
     public String parseToken(final String token) {
         try {
-            final String json = this.cipherExecutor.decode(token);
-            final JwtClaims claims = JwtClaims.parse(json);
+            final var json = this.cipherExecutor.decode(token);
+            final var claims = JwtClaims.parse(json);
 
             if (!claims.getIssuer().equals(issuer)) {
                 LOGGER.error("Token issuer does not match CAS");
@@ -56,7 +56,7 @@ public class BasePasswordManagementService implements PasswordManagementService 
                 return null;
             }
 
-            final ClientInfo holder = ClientInfoHolder.getClientInfo();
+            final var holder = ClientInfoHolder.getClientInfo();
             if (!claims.getStringClaimValue("origin").equals(holder.getServerIpAddress())) {
                 LOGGER.error("Token origin does not match CAS");
                 return null;
@@ -81,20 +81,20 @@ public class BasePasswordManagementService implements PasswordManagementService 
     @Override
     public String createToken(final String to) {
         try {
-            final String token = UUID.randomUUID().toString();
-            final JwtClaims claims = new JwtClaims();
+            final var token = UUID.randomUUID().toString();
+            final var claims = new JwtClaims();
             claims.setJwtId(token);
             claims.setIssuer(issuer);
             claims.setAudience(issuer);
             claims.setExpirationTimeMinutesInTheFuture(properties.getReset().getExpirationMinutes());
             claims.setIssuedAtToNow();
 
-            final ClientInfo holder = ClientInfoHolder.getClientInfo();
+            final var holder = ClientInfoHolder.getClientInfo();
             claims.setStringClaim("origin", holder.getServerIpAddress());
             claims.setStringClaim("client", holder.getClientIpAddress());
 
             claims.setSubject(to);
-            final String json = claims.toJson();
+            final var json = claims.toJson();
             return this.cipherExecutor.encode(json);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

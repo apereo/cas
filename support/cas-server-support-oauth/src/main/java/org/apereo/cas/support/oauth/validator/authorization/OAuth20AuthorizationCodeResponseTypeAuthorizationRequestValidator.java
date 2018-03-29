@@ -27,8 +27,8 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
 
     @Override
     public boolean validate(final J2EContext context) {
-        final HttpServletRequest request = context.getRequest();
-        final boolean checkParameterExist = validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
+        final var request = context.getRequest();
+        final var checkParameterExist = validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
                 && validator.checkParameterExist(request, OAuth20Constants.REDIRECT_URI)
                 && validator.checkParameterExist(request, OAuth20Constants.RESPONSE_TYPE);
 
@@ -37,21 +37,21 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
             return false;
         }
 
-        final String responseType = request.getParameter(OAuth20Constants.RESPONSE_TYPE);
+        final var responseType = request.getParameter(OAuth20Constants.RESPONSE_TYPE);
         if (!validator.checkResponseTypes(responseType, OAuth20ResponseTypes.values())) {
             LOGGER.warn("Response type [{}] is not supported.", responseType);
             return false;
         }
 
-        final String clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
-        final OAuthRegisteredService registeredService = getRegisteredServiceByClientId(clientId);
+        final var clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+        final var registeredService = getRegisteredServiceByClientId(clientId);
 
         if (!validator.checkServiceValid(registeredService)) {
             LOGGER.warn("Registered service [{}] is not found or is not authorized for access.", registeredService);
             return false;
         }
 
-        final String redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
+        final var redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
         if (!validator.checkCallbackValid(registeredService, redirectUri)) {
             LOGGER.warn("Callback URL [{}] is not authorized for registered service [{}].", redirectUri, registeredService);
             return false;
@@ -72,7 +72,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
 
     @Override
     public boolean supports(final J2EContext context) {
-        final String grantType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
+        final var grantType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
         return OAuth20Utils.isResponseType(grantType, getResponseType());
     }
 

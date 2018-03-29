@@ -100,8 +100,8 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      */
     @Override
     public String getNewTicketId(final String prefix) {
-        final String number = this.numericGenerator.getNextNumberAsString();
-        final String ticketBody = this.randomStringGenerator.getNewString().replace("_", "-");
+        final var number = this.numericGenerator.getNextNumberAsString();
+        final var ticketBody = this.randomStringGenerator.getNewString().replace("_", "-");
         return prefix + '-' + number + '-' + ticketBody + StringUtils.defaultString(this.suffix);
     }
 

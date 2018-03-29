@@ -35,7 +35,7 @@ public class CryptoUtils {
      * @return the security properties
      */
     public static Properties getSecurityProperties(final String file, final String psw, final String alias) {
-        final Properties p = new Properties();
+        final var p = new Properties();
         p.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
         p.put("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
         p.put("org.apache.ws.security.crypto.merlin.keystore.password", psw);

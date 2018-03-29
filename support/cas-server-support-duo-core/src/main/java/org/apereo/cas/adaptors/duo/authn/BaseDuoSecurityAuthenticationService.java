@@ -49,15 +49,15 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     @Override
     public boolean ping() {
         try {
-            final String url = buildUrlHttpScheme(getApiHost().concat("/rest/v1/ping"));
+            final var url = buildUrlHttpScheme(getApiHost().concat("/rest/v1/ping"));
             LOGGER.debug("Contacting Duo @ [{}]", url);
 
-            final HttpMessage msg = this.httpClient.sendMessageToEndPoint(new URL(url));
+            final var msg = this.httpClient.sendMessageToEndPoint(new URL(url));
             if (msg != null) {
-                final String response = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8.name());
+                final var response = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8.name());
                 LOGGER.debug("Received Duo ping response [{}]", response);
 
-                final JsonNode result = MAPPER.readTree(response);
+                final var result = MAPPER.readTree(response);
                 if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
                     && result.get(RESULT_KEY_RESPONSE).asText().equalsIgnoreCase("pong")
                     && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
@@ -87,7 +87,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
         if (obj.getClass() != getClass()) {
             return false;
         }
-        final BaseDuoSecurityAuthenticationService rhs = (BaseDuoSecurityAuthenticationService) obj;
+        final var rhs = (BaseDuoSecurityAuthenticationService) obj;
         return new EqualsBuilder()
             .append(this.duoProperties.getDuoApiHost(), rhs.duoProperties.getDuoApiHost())
             .append(this.duoProperties.getDuoApplicationKey(), rhs.duoProperties.getDuoApplicationKey())
@@ -108,29 +108,29 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     @Override
     public DuoUserAccount getDuoUserAccount(final String username) {
-        final DuoUserAccount account = new DuoUserAccount(username);
+        final var account = new DuoUserAccount(username);
         account.setStatus(DuoUserAccountAuthStatus.AUTH);
 
         try {
-            final Http userRequest = buildHttpPostUserPreAuthRequest(username);
+            final var userRequest = buildHttpPostUserPreAuthRequest(username);
             signHttpUserPreAuthRequest(userRequest);
             LOGGER.debug("Contacting Duo to inquire about username [{}]", username);
-            final String userResponse = userRequest.executeHttpRequest().body().string();
-            final String jsonResponse = URLDecoder.decode(userResponse, StandardCharsets.UTF_8.name());
+            final var userResponse = userRequest.executeHttpRequest().body().string();
+            final var jsonResponse = URLDecoder.decode(userResponse, StandardCharsets.UTF_8.name());
             LOGGER.debug("Received Duo admin response [{}]", jsonResponse);
 
-            final JsonNode result = MAPPER.readTree(jsonResponse);
+            final var result = MAPPER.readTree(jsonResponse);
             if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
                 && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
 
-                final JsonNode response = result.get(RESULT_KEY_RESPONSE);
-                final String authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase();
+                final var response = result.get(RESULT_KEY_RESPONSE);
+                final var authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase();
 
-                final DuoUserAccountAuthStatus status = DuoUserAccountAuthStatus.valueOf(authResult);
+                final var status = DuoUserAccountAuthStatus.valueOf(authResult);
                 account.setStatus(status);
                 account.setMessage(response.get(RESULT_KEY_STATUS_MESSAGE).asText());
                 if (status == DuoUserAccountAuthStatus.ENROLL) {
-                    final String enrollUrl = response.get(RESULT_KEY_ENROLL_PORTAL_URL).asText();
+                    final var enrollUrl = response.get(RESULT_KEY_ENROLL_PORTAL_URL).asText();
                     account.setEnrollPortalUrl(enrollUrl);
                 }
             }
@@ -165,7 +165,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * @return the http
      */
     protected Http buildHttpPostUserPreAuthRequest(final String username) {
-        final Http usersRequest = new Http(HttpMethod.POST.name(),
+        final var usersRequest = new Http(HttpMethod.POST.name(),
             duoProperties.getDuoApiHost(),
             String.format("/auth/v%s/preauth", AUTH_API_VERSION));
         usersRequest.addParam("username", username);

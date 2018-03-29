@@ -96,7 +96,7 @@ public class WebUtils {
      * @return the http servlet request
      */
     public static HttpServletRequest getHttpServletRequestFromExternalWebflowContext() {
-        final ServletExternalContext servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
+        final var servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
         if (servletExternalContext != null) {
             return (HttpServletRequest) servletExternalContext.getNativeRequest();
         }
@@ -122,7 +122,7 @@ public class WebUtils {
      * @return the http servlet response
      */
     public static HttpServletResponse getHttpServletResponseFromExternalWebflowContext() {
-        final ServletExternalContext servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
+        final var servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
         if (servletExternalContext != null) {
             return (HttpServletResponse) servletExternalContext.getNativeResponse();
         }
@@ -138,7 +138,7 @@ public class WebUtils {
      * @return the service
      */
     public static WebApplicationService getService(final List<ArgumentExtractor> argumentExtractors, final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         return HttpRequestUtils.getService(argumentExtractors, request);
     }
 
@@ -169,7 +169,7 @@ public class WebUtils {
      * @param ticket  the ticket value
      */
     public static void putTicketGrantingTicketInScopes(final RequestContext context, final TicketGrantingTicket ticket) {
-        final String ticketValue = ticket != null ? ticket.getId() : null;
+        final var ticketValue = ticket != null ? ticket.getId() : null;
         putTicketGrantingTicketInScopes(context, ticketValue);
     }
 
@@ -183,7 +183,7 @@ public class WebUtils {
         putTicketGrantingTicketIntoMap(context.getRequestScope(), ticketValue);
         putTicketGrantingTicketIntoMap(context.getFlowScope(), ticketValue);
 
-        FlowSession session = context.getFlowExecutionContext().getActiveSession().getParent();
+        var session = context.getFlowExecutionContext().getActiveSession().getParent();
         while (session != null) {
             putTicketGrantingTicketIntoMap(session.getScope(), ticketValue);
             session = session.getParent();
@@ -208,8 +208,8 @@ public class WebUtils {
      * @return the ticket granting ticket id
      */
     public static String getTicketGrantingTicketId(final RequestContext context) {
-        final String tgtFromRequest = (String) context.getRequestScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
-        final String tgtFromFlow = (String) context.getFlowScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
+        final var tgtFromRequest = (String) context.getRequestScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
+        final var tgtFromFlow = (String) context.getFlowScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
 
         return tgtFromRequest != null ? tgtFromRequest : tgtFromFlow;
 
@@ -302,7 +302,7 @@ public class WebUtils {
      * @return warning cookie value, if present.
      */
     public static boolean getWarningCookie(final RequestContext context) {
-        final String val = ObjectUtils.defaultIfNull(context.getFlowScope().get("warnCookieValue"), Boolean.FALSE.toString()).toString();
+        final var val = ObjectUtils.defaultIfNull(context.getFlowScope().get("warnCookieValue"), Boolean.FALSE.toString()).toString();
         return Boolean.parseBoolean(val);
     }
 
@@ -325,7 +325,7 @@ public class WebUtils {
      * @return the credential
      */
     public static <T extends Credential> T getCredential(final RequestContext context, @NonNull final Class<T> clazz) {
-        final Credential credential = getCredential(context);
+        final var credential = getCredential(context);
         if (credential == null) {
             return null;
         }
@@ -344,11 +344,11 @@ public class WebUtils {
      * @return the credential, or null if it cant be found in the context or if it has no id.
      */
     public static Credential getCredential(final RequestContext context) {
-        final Credential cFromRequest = (Credential) context.getRequestScope().get(PARAMETER_CREDENTIAL);
-        final Credential cFromFlow = (Credential) context.getFlowScope().get(PARAMETER_CREDENTIAL);
-        final Credential cFromConversation = (Credential) context.getConversationScope().get(PARAMETER_CREDENTIAL);
+        final var cFromRequest = (Credential) context.getRequestScope().get(PARAMETER_CREDENTIAL);
+        final var cFromFlow = (Credential) context.getFlowScope().get(PARAMETER_CREDENTIAL);
+        final var cFromConversation = (Credential) context.getConversationScope().get(PARAMETER_CREDENTIAL);
 
-        Credential credential = cFromRequest;
+        var credential = cFromRequest;
         if (credential == null || StringUtils.isBlank(credential.getId())) {
             credential = cFromFlow;
         }
@@ -361,7 +361,7 @@ public class WebUtils {
         }
 
         if (credential == null) {
-            final FlowSession session = context.getFlowExecutionContext().getActiveSession();
+            final var session = context.getFlowExecutionContext().getActiveSession();
             credential = session.getScope().get(PARAMETER_CREDENTIAL, Credential.class);
         }
         if (credential != null && StringUtils.isBlank(credential.getId())) {
@@ -424,7 +424,7 @@ public class WebUtils {
     public static void putWarnCookieIfRequestParameterPresent(final CookieGenerator warnCookieGenerator, final RequestContext context) {
         if (warnCookieGenerator != null) {
             LOGGER.debug("Evaluating request to determine if warning cookie should be generated");
-            final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+            final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
             if (StringUtils.isNotBlank(context.getExternalContext().getRequestParameterMap().get("warn"))) {
                 warnCookieGenerator.addCookie(response, "true");
             }
@@ -472,7 +472,7 @@ public class WebUtils {
      */
     public static Principal getPrincipalFromRequestContext(final RequestContext requestContext,
                                                            final TicketRegistrySupport ticketRegistrySupport) {
-        final String tgt = WebUtils.getTicketGrantingTicketId(requestContext);
+        final var tgt = WebUtils.getTicketGrantingTicketId(requestContext);
         if (StringUtils.isBlank(tgt)) {
             throw new IllegalArgumentException("No ticket-granting ticket could be found in the context");
         }
@@ -516,7 +516,7 @@ public class WebUtils {
      * @return the http servlet request user agent
      */
     public static String getHttpServletRequestUserAgentFromRequestContext() {
-        final HttpServletRequest httpServletRequestFromExternalWebflowContext = getHttpServletRequestFromExternalWebflowContext();
+        final var httpServletRequestFromExternalWebflowContext = getHttpServletRequestFromExternalWebflowContext();
         return HttpRequestUtils.getHttpServletRequestUserAgent(httpServletRequestFromExternalWebflowContext);
     }
 
@@ -526,7 +526,7 @@ public class WebUtils {
      * @return the http servlet request geo location
      */
     public static GeoLocationRequest getHttpServletRequestGeoLocationFromRequestContext() {
-        final HttpServletRequest servletRequest = getHttpServletRequestFromExternalWebflowContext();
+        final var servletRequest = getHttpServletRequestFromExternalWebflowContext();
         return getHttpServletRequestGeoLocation(servletRequest);
     }
 
@@ -750,7 +750,7 @@ public class WebUtils {
      */
     public static Authentication getInProgressAuthentication() {
         Authentication authentication = null;
-        final RequestContext context = RequestContextHolder.getRequestContext();
+        final var context = RequestContextHolder.getRequestContext();
         if (context != null) {
             authentication = WebUtils.getAuthentication(context);
         }

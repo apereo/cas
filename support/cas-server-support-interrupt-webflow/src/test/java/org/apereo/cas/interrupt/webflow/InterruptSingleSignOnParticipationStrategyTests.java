@@ -21,17 +21,17 @@ public class InterruptSingleSignOnParticipationStrategyTests {
 
     @Test
     public void verifyStrategyWithoutInterrupt() {
-        final InterruptSingleSignOnParticipationStrategy s =
+        final var s =
             new InterruptSingleSignOnParticipationStrategy(mock(ServicesManager.class), true, true);
         assertTrue(s.isParticipating(new MockRequestContext()));
     }
 
     @Test
     public void verifyStrategyWithInterruptDisabled() {
-        final InterruptSingleSignOnParticipationStrategy s =
+        final var s =
             new InterruptSingleSignOnParticipationStrategy(mock(ServicesManager.class), true, true);
-        final MockRequestContext ctx = new MockRequestContext();
-        final InterruptResponse response = new InterruptResponse();
+        final var ctx = new MockRequestContext();
+        final var response = new InterruptResponse();
         response.setSsoEnabled(false);
         InterruptUtils.putInterruptIn(ctx, response);
         assertFalse(s.isParticipating(ctx));

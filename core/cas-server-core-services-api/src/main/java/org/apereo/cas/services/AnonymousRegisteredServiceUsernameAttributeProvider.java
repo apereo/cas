@@ -41,7 +41,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider extends BaseReg
         if (this.persistentIdGenerator == null) {
             throw new IllegalArgumentException("No persistent id generator is defined");
         }
-        final String id = this.persistentIdGenerator.generate(principal, new Service() {
+        final var id = this.persistentIdGenerator.generate(principal, new Service() {
 
             private static final long serialVersionUID = 178464253829044870L;
 

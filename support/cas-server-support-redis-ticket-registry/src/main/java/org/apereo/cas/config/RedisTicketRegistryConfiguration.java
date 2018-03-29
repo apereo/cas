@@ -34,8 +34,8 @@ public class RedisTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "redisTicketConnectionFactory")
     @Bean
     public RedisConnectionFactory redisTicketConnectionFactory() {
-        final RedisTicketRegistryProperties redis = casProperties.getTicket().getRegistry().getRedis();
-        final RedisObjectFactory obj = new RedisObjectFactory();
+        final var redis = casProperties.getTicket().getRegistry().getRedis();
+        final var obj = new RedisObjectFactory();
         return obj.newRedisConnectionFactory(redis);
     }
 
@@ -47,8 +47,8 @@ public class RedisTicketRegistryConfiguration {
 
     @Bean
     public TicketRegistry ticketRegistry() {
-        final RedisTicketRegistryProperties redis = casProperties.getTicket().getRegistry().getRedis();
-        final RedisTicketRegistry r = new RedisTicketRegistry(ticketRedisTemplate());
+        final var redis = casProperties.getTicket().getRegistry().getRedis();
+        final var r = new RedisTicketRegistry(ticketRedisTemplate());
         r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(redis.getCrypto(), "redis"));
         return r;
     }

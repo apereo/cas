@@ -21,7 +21,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
     public AuditableExecutionResult execute(final AuditableContext context) {
 
         if (context.getServiceTicket().isPresent() && context.getAuthenticationResult().isPresent() && context.getRegisteredService().isPresent()) {
-            final AuditableExecutionResult result = AuditableExecutionResult.of(context);
+            final var result = AuditableExecutionResult.of(context);
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getServiceTicket().get(),
                     context.getAuthenticationResult().get(), context.getRegisteredService().get());
@@ -32,7 +32,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         }
 
         if (context.getService().isPresent() && context.getRegisteredService().isPresent() && context.getTicketGrantingTicket().isPresent()) {
-            final AuditableExecutionResult result = AuditableExecutionResult.of(context.getService().get(),
+            final var result = AuditableExecutionResult.of(context.getService().get(),
                 context.getRegisteredService().get(), context.getTicketGrantingTicket().get());
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getService().get(),
@@ -46,7 +46,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         }
 
         if (context.getService().isPresent() && context.getRegisteredService().isPresent() && context.getAuthentication().isPresent()) {
-            final AuditableExecutionResult result = AuditableExecutionResult.of(context.getAuthentication().get(), context.getService().get(), context.getRegisteredService().get());
+            final var result = AuditableExecutionResult.of(context.getAuthentication().get(), context.getService().get(), context.getRegisteredService().get());
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getService().get(),
                     context.getRegisteredService().get(),

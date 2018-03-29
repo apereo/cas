@@ -103,7 +103,7 @@ public interface DistributedCacheManager<K extends Serializable, V extends Distr
      * @return the collection
      */
     default Optional<V> find(final Predicate<V> filter) {
-        final Collection<V> results = findAll(filter);
+        final var results = findAll(filter);
         if (results.isEmpty()) {
             return Optional.empty();
         }

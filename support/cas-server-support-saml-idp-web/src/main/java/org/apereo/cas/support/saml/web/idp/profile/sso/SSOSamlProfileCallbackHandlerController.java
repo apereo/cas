@@ -85,23 +85,23 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK)
     protected void handleCallbackProfileRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
-        final AuthnRequest authnRequest = retrieveSamlAuthenticationRequestFromHttpRequest(request);
+        final var authnRequest = retrieveSamlAuthenticationRequestFromHttpRequest(request);
         if (authnRequest == null) {
             LOGGER.error("Can not validate the request because the original Authn request can not be found.");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
 
-        final String ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
+        final var ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
         if (StringUtils.isBlank(ticket)) {
             LOGGER.error("Can not validate the request because no [{}] is provided via the request", CasProtocolConstants.PARAMETER_TICKET);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
 
-        final Pair<AuthnRequest, MessageContext> authenticationContext = buildAuthenticationContextPair(request, authnRequest);
-        final Assertion assertion = validateRequestAndBuildCasAssertion(response, request, authenticationContext);
-        final String binding = determineProfileBinding(authenticationContext, assertion);
+        final var authenticationContext = buildAuthenticationContextPair(request, authnRequest);
+        final var assertion = validateRequestAndBuildCasAssertion(response, request, authenticationContext);
+        final var binding = determineProfileBinding(authenticationContext, assertion);
         buildSamlResponse(response, request, authenticationContext, assertion, binding);
     }
 
@@ -114,13 +114,13 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
      */
     protected static Pair<AuthnRequest, MessageContext> buildAuthenticationContextPair(final HttpServletRequest request,
                                                                                        final AuthnRequest authnRequest) {
-        final MessageContext<SAMLObject> messageContext = bindRelayStateParameter(request);
+        final var messageContext = bindRelayStateParameter(request);
         return Pair.of(authnRequest, messageContext);
     }
 
     private static MessageContext<SAMLObject> bindRelayStateParameter(final HttpServletRequest request) {
         final MessageContext<SAMLObject> messageContext = new MessageContext<>();
-        final String relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
+        final var relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
         LOGGER.debug("Relay state is [{}]", relayState);
         SAMLBindingSupport.setRelayState(messageContext, relayState);
         return messageContext;
@@ -129,12 +129,12 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
     private Assertion validateRequestAndBuildCasAssertion(final HttpServletResponse response,
                                                           final HttpServletRequest request,
                                                           final Pair<AuthnRequest, MessageContext> pair) throws Exception {
-        final AuthnRequest authnRequest = pair.getKey();
-        final String ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
+        final var authnRequest = pair.getKey();
+        final var ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
         this.ticketValidator.setRenew(authnRequest.isForceAuthn());
-        final String serviceUrl = constructServiceUrl(request, response, pair);
+        final var serviceUrl = constructServiceUrl(request, response, pair);
         LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
-        final Assertion assertion = this.ticketValidator.validate(ticket, serviceUrl);
+        final var assertion = this.ticketValidator.validate(ticket, serviceUrl);
         logCasValidationAssertion(assertion);
         return assertion;
     }
@@ -149,16 +149,16 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
     protected String determineProfileBinding(final Pair<AuthnRequest, MessageContext> authenticationContext,
                                              final Assertion assertion) {
 
-        final AuthnRequest authnRequest = authenticationContext.getKey();
-        final Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> pair = getRegisteredServiceAndFacade(authnRequest);
-        final SamlRegisteredServiceServiceProviderMetadataFacade facade = pair.getValue();
+        final var authnRequest = authenticationContext.getKey();
+        final var pair = getRegisteredServiceAndFacade(authnRequest);
+        final var facade = pair.getValue();
 
-        final String binding = StringUtils.defaultIfBlank(authnRequest.getProtocolBinding(), SAMLConstants.SAML2_POST_BINDING_URI);
+        final var binding = StringUtils.defaultIfBlank(authnRequest.getProtocolBinding(), SAMLConstants.SAML2_POST_BINDING_URI);
         LOGGER.debug("Determined authentication request binding is [{}], issued by [{}]", binding, authnRequest.getIssuer().getValue());
 
         LOGGER.debug("Checking metadata for [{}] to see if binding [{}] is supported", facade.getEntityId(), binding);
         @NonNull
-        final AssertionConsumerService svc = facade.getAssertionConsumerService(binding);
+        final var svc = facade.getAssertionConsumerService(binding);
         LOGGER.debug("Binding [{}] is supported by [{}]", svc.getBinding(), facade.getEntityId());
         return binding;
     }

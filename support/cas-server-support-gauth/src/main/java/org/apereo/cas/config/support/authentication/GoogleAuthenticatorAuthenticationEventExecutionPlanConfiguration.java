@@ -79,8 +79,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     public IGoogleAuthenticator googleAuthenticatorInstance() {
-        final GAuthMultifactorProperties gauth = casProperties.getAuthn().getMfa().getGauth();
-        final GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
+        final var gauth = casProperties.getAuthn().getMfa().getGauth();
+        final var bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
 
         bldr.setCodeDigits(gauth.getCodeDigits());
         bldr.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(gauth.getTimeStepSize()));
@@ -106,8 +106,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider googleAuthenticatorAuthenticationProvider() {
-        final GAuthMultifactorProperties gauth = casProperties.getAuthn().getMfa().getGauth();
-        final GoogleAuthenticatorMultifactorAuthenticationProvider p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
+        final var gauth = casProperties.getAuthn().getMfa().getGauth();
+        final var p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
         p.setBypassEvaluator(googleBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(gauth.getRank());
@@ -128,7 +128,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public Action googleAccountRegistrationAction() {
-        final GAuthMultifactorProperties gauth = casProperties.getAuthn().getMfa().getGauth();
+        final var gauth = casProperties.getAuthn().getMfa().getGauth();
         return new OneTimeTokenAccountCheckRegistrationAction(googleAuthenticatorAccountRegistry,
             gauth.getLabel(),
             gauth.getIssuer());
@@ -146,7 +146,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry() {
-        final GAuthMultifactorProperties gauth = casProperties.getAuthn().getMfa().getGauth();
+        final var gauth = casProperties.getAuthn().getMfa().getGauth();
         if (gauth.getJson().getLocation() != null) {
             return new JsonGoogleAuthenticatorTokenCredentialRepository(gauth.getJson().getLocation(), googleAuthenticatorInstance(),
                 googleAuthenticatorAccountCipherExecutor());
@@ -162,7 +162,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public CipherExecutor googleAuthenticatorAccountCipherExecutor() {
-        final EncryptionJwtSigningJwtCryptographyProperties crypto = casProperties.getAuthn().getMfa().getGauth().getCrypto();
+        final var crypto = casProperties.getAuthn().getMfa().getGauth().getCrypto();
         if (crypto.isEnabled()) {
             return new OneTimeTokenAccountCipherExecutor(
                 crypto.getEncryption().getKey(),

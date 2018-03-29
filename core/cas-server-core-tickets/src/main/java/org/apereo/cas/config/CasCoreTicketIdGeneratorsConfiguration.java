@@ -32,7 +32,7 @@ public class CasCoreTicketIdGeneratorsConfiguration {
         final Map<String, UniqueTicketIdGenerator> map = new HashMap<>();
         if (configurers != null) {
             configurers.forEach(c -> {
-                final Collection<Pair<String, UniqueTicketIdGenerator>> pair = c.buildUniqueTicketIdGenerators();
+                final var pair = c.buildUniqueTicketIdGenerators();
                 pair.forEach(p -> map.put(p.getKey(), p.getValue()));
             });
         }

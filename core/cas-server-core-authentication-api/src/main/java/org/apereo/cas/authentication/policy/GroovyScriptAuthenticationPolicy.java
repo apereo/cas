@@ -28,10 +28,10 @@ public class GroovyScriptAuthenticationPolicy implements AuthenticationPolicy {
     public boolean isSatisfiedBy(final Authentication auth) throws Exception {
         final Exception ex;
         if (ScriptingUtils.isInlineGroovyScript(script)) {
-            final Map<String, Object> args = CollectionUtils.wrap("principal", auth.getPrincipal(), "logger", LOGGER);
+            final var args = CollectionUtils.wrap("principal", auth.getPrincipal(), "logger", LOGGER);
             ex = ScriptingUtils.executeGroovyShellScript(script, args, Exception.class);
         } else {
-            final Resource res = this.resourceLoader.getResource(script);
+            final var res = this.resourceLoader.getResource(script);
             final Object[] args = {auth.getPrincipal(), LOGGER};
             ex = ScriptingUtils.executeGroovyScript(res, args, Exception.class);
         }

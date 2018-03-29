@@ -35,26 +35,26 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final String agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext();
-        final GeoLocationRequest geoLocation = WebUtils.getHttpServletRequestGeoLocationFromRequestContext();
+        final var agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext();
+        final var geoLocation = WebUtils.getHttpServletRequestGeoLocationFromRequestContext();
 
         if (!adaptiveAuthenticationPolicy.apply(agent, geoLocation)) {
-            final String msg = "Adaptive authentication policy does not allow this request for " + agent + " and " + geoLocation;
+            final var msg = "Adaptive authentication policy does not allow this request for " + agent + " and " + geoLocation;
             final Map<String, Throwable> map = CollectionUtils.wrap(
                 UnauthorizedAuthenticationException.class.getSimpleName(),
                 new UnauthorizedAuthenticationException(msg));
-            final AuthenticationException error = new AuthenticationException(msg, map, new HashMap<>(0));
+            final var error = new AuthenticationException(msg, map, new HashMap<>(0));
             return new Event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
                 new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
         }
 
-        final Event serviceTicketEvent = this.serviceTicketRequestWebflowEventResolver.resolveSingle(requestContext);
+        final var serviceTicketEvent = this.serviceTicketRequestWebflowEventResolver.resolveSingle(requestContext);
         if (serviceTicketEvent != null) {
             fireEventHooks(serviceTicketEvent, requestContext);
             return serviceTicketEvent;
         }
 
-        final Event finalEvent = this.initialAuthenticationAttemptWebflowEventResolver.resolveSingle(requestContext);
+        final var finalEvent = this.initialAuthenticationAttemptWebflowEventResolver.resolveSingle(requestContext);
         fireEventHooks(finalEvent, requestContext);
         return finalEvent;
     }

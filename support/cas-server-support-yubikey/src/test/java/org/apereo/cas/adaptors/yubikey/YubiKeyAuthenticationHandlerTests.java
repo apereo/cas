@@ -41,7 +41,7 @@ public class YubiKeyAuthenticationHandlerTests {
 
     @Before
     public void before() {
-        final RequestContext ctx = mock(RequestContext.class);
+        final var ctx = mock(RequestContext.class);
         when(ctx.getConversationScope()).thenReturn(new LocalAttributeMap<>());
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), ctx);
         RequestContextHolder.setRequestContext(ctx);
@@ -49,13 +49,13 @@ public class YubiKeyAuthenticationHandlerTests {
 
     @Test
     public void checkDefaultAccountRegistry() {
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(CLIENT_ID, SECRET_KEY));
+        final var handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(CLIENT_ID, SECRET_KEY));
         assertNotNull(handler.getRegistry());
     }
 
     @Test
     public void checkReplayedAuthn() throws Exception {
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(CLIENT_ID, SECRET_KEY));
+        final var handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(CLIENT_ID, SECRET_KEY));
 
         this.thrown.expect(FailedLoginException.class);
         handler.authenticate(new YubiKeyCredential(OTP));
@@ -63,7 +63,7 @@ public class YubiKeyAuthenticationHandlerTests {
 
     @Test
     public void checkBadConfigAuthn() throws Exception {
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(123456, "123456"));
+        final var handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(123456, "123456"));
 
         this.thrown.expect(AccountNotFoundException.class);
         handler.authenticate(new YubiKeyCredential("casuser"));
@@ -71,10 +71,10 @@ public class YubiKeyAuthenticationHandlerTests {
 
     @Test
     public void checkAccountNotFound() throws Exception {
-        final WhitelistYubiKeyAccountRegistry registry = new WhitelistYubiKeyAccountRegistry(new HashMap<>(),
+        final var registry = new WhitelistYubiKeyAccountRegistry(new HashMap<>(),
             new DefaultYubiKeyAccountValidator(YubicoClient.getClient(CLIENT_ID, SECRET_KEY)));
         registry.setCipherExecutor(CipherExecutor.noOpOfSerializableToString());
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(StringUtils.EMPTY,
+        final var handler = new YubiKeyAuthenticationHandler(StringUtils.EMPTY,
             null, new DefaultPrincipalFactory(),
             YubicoClient.getClient(CLIENT_ID, SECRET_KEY),
             registry);
@@ -84,7 +84,7 @@ public class YubiKeyAuthenticationHandlerTests {
 
     @Test
     public void checkEncryptedAccount() {
-        final WhitelistYubiKeyAccountRegistry registry = new WhitelistYubiKeyAccountRegistry(new HashMap<>(), (uid, token) -> true);
+        final var registry = new WhitelistYubiKeyAccountRegistry(new HashMap<>(), (uid, token) -> true);
         registry.setCipherExecutor(new YubikeyAccountCipherExecutor(
             "1PbwSbnHeinpkZOSZjuSJ8yYpUrInm5aaV18J2Ar4rM",
             "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w"));

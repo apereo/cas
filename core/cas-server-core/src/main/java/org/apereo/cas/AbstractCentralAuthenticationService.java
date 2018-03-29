@@ -120,7 +120,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Timed("GET_TICKET_TIMER")
     @Override
     public Ticket getTicket(@NonNull final String ticketId) throws InvalidTicketException {
-        final Ticket ticket = this.ticketRegistry.getTicket(ticketId);
+        final var ticket = this.ticketRegistry.getTicket(ticketId);
         verifyTicketState(ticket, ticketId, null);
         return ticket;
     }
@@ -165,7 +165,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @throws AbstractTicketException the ticket exception
      */
     protected Authentication getAuthenticationSatisfiedByPolicy(final Authentication authentication, final ServiceContext context) throws AbstractTicketException {
-        final ContextualAuthenticationPolicy<ServiceContext> policy = this.serviceContextAuthenticationPolicyFactory.createPolicy(context);
+        final var policy = this.serviceContextAuthenticationPolicyFactory.createPolicy(context);
         try {
             if (policy.isSatisfiedBy(authentication)) {
                 return authentication;
@@ -184,10 +184,10 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @param registeredService    the registered service
      */
     protected void evaluateProxiedServiceIfNeeded(final Service service, final TicketGrantingTicket ticketGrantingTicket, final RegisteredService registeredService) {
-        final Service proxiedBy = ticketGrantingTicket.getProxiedBy();
+        final var proxiedBy = ticketGrantingTicket.getProxiedBy();
         if (proxiedBy != null) {
             LOGGER.debug("TGT is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
-            final RegisteredService proxyingService = this.servicesManager.findServiceBy(proxiedBy);
+            final var proxyingService = this.servicesManager.findServiceBy(proxiedBy);
             if (proxyingService != null) {
                 LOGGER.debug("Located proxying service [{}] in the service registry", proxyingService);
                 if (!proxyingService.getProxyPolicy().isAllowedToProxy()) {

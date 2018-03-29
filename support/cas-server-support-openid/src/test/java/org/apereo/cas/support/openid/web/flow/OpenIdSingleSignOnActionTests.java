@@ -41,7 +41,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
 
     @Test
     public void verifyNoTgt() throws Exception {
-        final MockRequestContext context = new MockRequestContext();
+        final var context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), new MockHttpServletRequest(),
                 new MockHttpServletResponse()));
@@ -50,12 +50,12 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
 
     @Test
     public void verifyNoService() throws Exception {
-        final MockRequestContext context = new MockRequestContext();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var context = new MockRequestContext();
+        final var request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request,
                 new MockHttpServletResponse()));
-        final Event event = this.action.execute(context);
+        final var event = this.action.execute(context);
 
         assertNotNull(event);
 
@@ -64,13 +64,13 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
 
     @Test
     public void verifyBadUsername() throws Exception {
-        final MockRequestContext context = new MockRequestContext();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var context = new MockRequestContext();
+        final var request = new MockHttpServletRequest();
         request.setParameter(OpenIdProtocolConstants.OPENID_IDENTITY, "fablah");
         request.setParameter(OpenIdProtocolConstants.OPENID_RETURNTO, "http://www.cnn.com");
 
-        final OpenIdServiceFactory factory = new OpenIdServiceFactory("");
-        final OpenIdService service = factory.createService(request);
+        final var factory = new OpenIdServiceFactory("");
+        final var service = factory.createService(request);
         context.getFlowScope().put("service", service);
         context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, "tgtId");
 
@@ -82,9 +82,9 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
 
     @Test
     public void verifySuccessfulServiceTicket() throws Exception {
-        final MockRequestContext context = new MockRequestContext();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("scootman28");
+        final var context = new MockRequestContext();
+        final var request = new MockHttpServletRequest();
+        final var authentication = CoreAuthenticationTestUtils.getAuthentication("scootman28");
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("TGT-11", authentication,
                 new NeverExpiresExpirationPolicy());
 
@@ -93,7 +93,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
         request.setParameter(OpenIdProtocolConstants.OPENID_IDENTITY, "http://openid.aol.com/scootman28");
         request.setParameter(OpenIdProtocolConstants.OPENID_RETURNTO, "http://www.cnn.com");
 
-        final OpenIdService service = new OpenIdServiceFactory("").createService(request);
+        final var service = new OpenIdServiceFactory("").createService(request);
         context.getFlowScope().put("service", service);
         context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, t.getId());
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

@@ -57,10 +57,10 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
 
     private AuthenticationHandlerExecutionResult authenticateDuoApiCredential(final Credential credential) throws FailedLoginException {
         try {
-            final DuoSecurityAuthenticationService duoAuthenticationService = getDuoAuthenticationService();
-            final DuoDirectCredential c = DuoDirectCredential.class.cast(credential);
+            final var duoAuthenticationService = getDuoAuthenticationService();
+            final var c = DuoDirectCredential.class.cast(credential);
             if (duoAuthenticationService.authenticate(c).getKey()) {
-                final Principal principal = c.getAuthentication().getPrincipal();
+                final var principal = c.getAuthentication().getPrincipal();
                 LOGGER.debug("Duo has successfully authenticated [{}]", principal.getId());
                 return createHandlerResult(credential, principal, new ArrayList<>());
             }
@@ -72,23 +72,23 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
 
     private AuthenticationHandlerExecutionResult authenticateDuoCredential(final Credential credential) throws FailedLoginException {
         try {
-            final DuoCredential duoCredential = (DuoCredential) credential;
+            final var duoCredential = (DuoCredential) credential;
             if (!duoCredential.isValid()) {
                 throw new GeneralSecurityException("Duo credential validation failed. Ensure a username "
                         + " and the signed Duo response is configured and passed. Credential received: " + duoCredential);
             }
 
-            final DuoSecurityAuthenticationService duoAuthenticationService = getDuoAuthenticationService();
-            final String duoVerifyResponse = duoAuthenticationService.authenticate(duoCredential).getValue();
+            final var duoAuthenticationService = getDuoAuthenticationService();
+            final var duoVerifyResponse = duoAuthenticationService.authenticate(duoCredential).getValue();
             LOGGER.debug("Response from Duo verify: [{}]", duoVerifyResponse);
-            final String primaryCredentialsUsername = duoCredential.getUsername();
+            final var primaryCredentialsUsername = duoCredential.getUsername();
 
-            final boolean isGoodAuthentication = duoVerifyResponse.equals(primaryCredentialsUsername);
+            final var isGoodAuthentication = duoVerifyResponse.equals(primaryCredentialsUsername);
 
             if (isGoodAuthentication) {
                 LOGGER.info("Successful Duo authentication for [{}]", primaryCredentialsUsername);
 
-                final Principal principal = this.principalFactory.createPrincipal(duoVerifyResponse);
+                final var principal = this.principalFactory.createPrincipal(duoVerifyResponse);
                 return createHandlerResult(credential, principal, new ArrayList<>());
             }
             throw new FailedLoginException("Duo authentication username "
@@ -101,15 +101,15 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     }
 
     private DuoSecurityAuthenticationService getDuoAuthenticationService() {
-        final RequestContext requestContext = RequestContextHolder.getRequestContext();
+        final var requestContext = RequestContextHolder.getRequestContext();
         if (requestContext == null) {
             throw new IllegalArgumentException("No request context is held to locate the Duo authentication service");
         }
-        final Collection<MultifactorAuthenticationProvider> col = WebUtils.getResolvedMultifactorAuthenticationProviders(requestContext);
+        final var col = WebUtils.getResolvedMultifactorAuthenticationProviders(requestContext);
         if (col.isEmpty()) {
             throw new IllegalArgumentException("No multifactor providers are found in the current request context");
         }
-        final MultifactorAuthenticationProvider pr = col.iterator().next();
+        final var pr = col.iterator().next();
         return provider.findProvider(pr.getId(), DuoMultifactorAuthenticationProvider.class).getDuoAuthenticationService();
     }
 

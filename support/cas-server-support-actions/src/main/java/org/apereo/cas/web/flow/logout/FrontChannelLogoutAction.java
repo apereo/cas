@@ -34,7 +34,7 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
     protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
                                       final RequestContext context) {
 
-        final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
+        final var logoutRequests = WebUtils.getLogoutRequests(context);
         final Map<LogoutRequest, LogoutHttpMessage> logoutUrls = new HashMap<>();
 
         if (logoutRequests != null) {
@@ -42,9 +42,9 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
                 .filter(r -> r.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED)
                 .forEach(r -> {
                     LOGGER.debug("Using logout url [{}] for front-channel logout requests", r.getLogoutUrl().toExternalForm());
-                    final String logoutMessage = this.logoutManager.createFrontChannelLogoutMessage(r);
+                    final var logoutMessage = this.logoutManager.createFrontChannelLogoutMessage(r);
                     LOGGER.debug("Front-channel logout message to send is [{}]", logoutMessage);
-                    final LogoutHttpMessage msg = new LogoutHttpMessage(r.getLogoutUrl(), logoutMessage, true);
+                    final var msg = new LogoutHttpMessage(r.getLogoutUrl(), logoutMessage, true);
                     logoutUrls.put(r, msg);
                     r.setStatus(LogoutRequestStatus.SUCCESS);
                     r.getService().setLoggedOutAlready(true);

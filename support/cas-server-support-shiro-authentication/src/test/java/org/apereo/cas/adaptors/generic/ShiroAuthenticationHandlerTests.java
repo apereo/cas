@@ -26,10 +26,10 @@ public class ShiroAuthenticationHandlerTests {
 
     @Test
     public void checkAuthenticationSuccessful() throws Exception {
-        final ShiroAuthenticationHandler shiro = new ShiroAuthenticationHandler("", null, null, new HashSet<>(0), new HashSet<>(0));
+        final var shiro = new ShiroAuthenticationHandler("", null, null, new HashSet<>(0), new HashSet<>(0));
         shiro.loadShiroConfiguration(new ClassPathResource("shiro.ini"));
 
-        final RememberMeUsernamePasswordCredential creds = new RememberMeUsernamePasswordCredential();
+        final var creds = new RememberMeUsernamePasswordCredential();
         creds.setRememberMe(true);
         creds.setUsername("casuser");
         creds.setPassword("Mellon");
@@ -39,11 +39,11 @@ public class ShiroAuthenticationHandlerTests {
 
     @Test
     public void checkAuthenticationSuccessfulRolesAndPermissions() throws Exception {
-        final ShiroAuthenticationHandler shiro = new ShiroAuthenticationHandler("", null, null, Collections.singleton("admin"),
+        final var shiro = new ShiroAuthenticationHandler("", null, null, Collections.singleton("admin"),
                 Collections.singleton("superuser:deleteAll"));
         shiro.loadShiroConfiguration(new ClassPathResource("shiro.ini"));
 
-        final RememberMeUsernamePasswordCredential creds = new RememberMeUsernamePasswordCredential();
+        final var creds = new RememberMeUsernamePasswordCredential();
         creds.setRememberMe(true);
         creds.setUsername("casuser");
         creds.setPassword("Mellon");
@@ -53,10 +53,10 @@ public class ShiroAuthenticationHandlerTests {
 
     @Test
     public void checkAuthenticationSuccessfulMissingRole() throws Exception {
-        final ShiroAuthenticationHandler shiro = new ShiroAuthenticationHandler("", null, null, Collections.singleton("student"), new HashSet<>(0));
+        final var shiro = new ShiroAuthenticationHandler("", null, null, Collections.singleton("student"), new HashSet<>(0));
         shiro.loadShiroConfiguration(new ClassPathResource("shiro.ini"));
 
-        final RememberMeUsernamePasswordCredential creds = new RememberMeUsernamePasswordCredential();
+        final var creds = new RememberMeUsernamePasswordCredential();
         creds.setRememberMe(true);
         creds.setUsername("casuser");
         creds.setPassword("Mellon");
@@ -69,10 +69,10 @@ public class ShiroAuthenticationHandlerTests {
 
     @Test
     public void checkAuthenticationSuccessfulMissingPermission() throws Exception {
-        final ShiroAuthenticationHandler shiro = new ShiroAuthenticationHandler("", null, null, new HashSet<>(0), Collections.singleton("dosomething"));
+        final var shiro = new ShiroAuthenticationHandler("", null, null, new HashSet<>(0), Collections.singleton("dosomething"));
         shiro.loadShiroConfiguration(new ClassPathResource("shiro.ini"));
 
-        final RememberMeUsernamePasswordCredential creds = new RememberMeUsernamePasswordCredential();
+        final var creds = new RememberMeUsernamePasswordCredential();
         creds.setRememberMe(true);
         creds.setUsername("casuser");
         creds.setPassword("Mellon");

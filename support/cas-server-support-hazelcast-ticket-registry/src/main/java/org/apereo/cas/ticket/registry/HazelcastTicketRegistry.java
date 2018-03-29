@@ -48,32 +48,32 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
         }
 
         LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ttl);
-        final Ticket encTicket = encodeTicket(ticket);
+        final var encTicket = encodeTicket(ticket);
 
-        final TicketDefinition metadata = this.ticketCatalog.find(ticket);
-        final IMap<String, Ticket> ticketMap = getTicketMapInstanceByMetadata(metadata);
+        final var metadata = this.ticketCatalog.find(ticket);
+        final var ticketMap = getTicketMapInstanceByMetadata(metadata);
 
         ticketMap.set(encTicket.getId(), encTicket, ttl, TimeUnit.SECONDS);
         LOGGER.debug("Added ticket [{}] with ttl [{}s]", encTicket.getId(), ttl);
     }
 
     private IMap<String, Ticket> getTicketMapInstanceByMetadata(final TicketDefinition metadata) {
-        final String mapName = metadata.getProperties().getStorageName();
+        final var mapName = metadata.getProperties().getStorageName();
         LOGGER.debug("Locating map name [{}] for ticket definition [{}]", mapName, metadata);
         return getTicketMapInstance(mapName);
     }
 
     @Override
     public Ticket getTicket(final String ticketId) {
-        final String encTicketId = encodeTicketId(ticketId);
+        final var encTicketId = encodeTicketId(ticketId);
         if (StringUtils.isBlank(encTicketId)) {
             return null;
         }
-        final TicketDefinition metadata = this.ticketCatalog.find(ticketId);
+        final var metadata = this.ticketCatalog.find(ticketId);
         if (metadata != null) {
-            final IMap<String, Ticket> map = getTicketMapInstanceByMetadata(metadata);
-            final Ticket ticket = map.get(encTicketId);
-            final Ticket result = decodeTicket(ticket);
+            final var map = getTicketMapInstanceByMetadata(metadata);
+            final var ticket = map.get(encTicketId);
+            final var result = decodeTicket(ticket);
             if (result != null && result.isExpired()) {
                 LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
                 map.remove(encTicketId);
@@ -87,9 +87,9 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
 
     @Override
     public boolean deleteSingleTicket(final String ticketIdToDelete) {
-        final String encTicketId = encodeTicketId(ticketIdToDelete);
-        final TicketDefinition metadata = this.ticketCatalog.find(ticketIdToDelete);
-        final IMap<String, Ticket> map = getTicketMapInstanceByMetadata(metadata);
+        final var encTicketId = encodeTicketId(ticketIdToDelete);
+        final var metadata = this.ticketCatalog.find(ticketIdToDelete);
+        final var map = getTicketMapInstanceByMetadata(metadata);
         return map.remove(encTicketId) != null;
     }
 
@@ -99,7 +99,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
             .map(this::getTicketMapInstanceByMetadata)
             .filter(Objects::nonNull)
             .mapToInt(instance -> {
-                final int size = instance.size();
+                final var size = instance.size();
                 instance.evictAll();
                 instance.clear();
                 return size;

@@ -68,34 +68,34 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
         final Map<String, Object> attributesToRelease = new HashMap<>();
         givenAttributes.entrySet().stream().filter(entry -> {
-            final String attributeName = entry.getKey();
-            final Object attributeValue = entry.getValue();
+            final var attributeName = entry.getKey();
+            final var attributeValue = entry.getValue();
             LOGGER.debug("Received attribute [{}] with value [{}]", attributeName, attributeValue);
             return attributeValue != null;
         }).forEach(entry -> {
-            final String attributeName = entry.getKey();
-            final Object attributeValue = entry.getValue();
+            final var attributeName = entry.getKey();
+            final var attributeValue = entry.getValue();
             if (attributeValue instanceof Collection) {
                 LOGGER.trace("Attribute value [{}] is a collection", attributeValue);
-                final List filteredAttributes = filterAttributes((Collection<String>) attributeValue, attributeName);
+                final var filteredAttributes = filterAttributes((Collection<String>) attributeValue, attributeName);
                 if (!filteredAttributes.isEmpty()) {
                     attributesToRelease.put(attributeName, filteredAttributes);
                 }
             } else if (attributeValue.getClass().isArray()) {
                 LOGGER.trace("Attribute value [{}] is an array", attributeValue);
-                final List filteredAttributes = filterAttributes(CollectionUtils.wrapList((String[]) attributeValue), attributeName);
+                final var filteredAttributes = filterAttributes(CollectionUtils.wrapList((String[]) attributeValue), attributeName);
                 if (!filteredAttributes.isEmpty()) {
                     attributesToRelease.put(attributeName, filteredAttributes);
                 }
             } else if (attributeValue instanceof Map) {
                 LOGGER.trace("Attribute value [{}] is a map", attributeValue);
-                final Map<String, String> filteredAttributes = filterAttributes((Map<String, String>) attributeValue);
+                final var filteredAttributes = filterAttributes((Map<String, String>) attributeValue);
                 if (!filteredAttributes.isEmpty()) {
                     attributesToRelease.put(attributeName, filteredAttributes);
                 }
             } else {
                 LOGGER.trace("Attribute value [{}] is a string", attributeValue);
-                final String attrValue = attributeValue.toString();
+                final var attrValue = attributeValue.toString();
                 if (patternMatchesAttributeValue(attrValue)) {
                     logReleasedAttributeEntry(attributeName, attrValue);
                     attributesToRelease.put(attributeName, attrValue);

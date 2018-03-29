@@ -27,7 +27,7 @@ public class DigestAuthenticationHandler extends AbstractAuthenticationHandler {
 
     @Override
     public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
-        final DigestCredential c = (DigestCredential) credential;
+        final var c = (DigestCredential) credential;
         if (StringUtils.isNotBlank(c.getId()) && StringUtils.isNotBlank(c.getHash())) {
             return new DefaultAuthenticationHandlerExecutionResult(this, c, this.principalFactory.createPrincipal(c.getId()));
         }

@@ -30,7 +30,7 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
     private final GeoApiContext context;
 
     public GoogleMapsGeoLocationService(final GoogleMapsProperties properties) {
-        final GeoApiContext.Builder builder = new GeoApiContext.Builder();
+        final var builder = new GeoApiContext.Builder();
         
         if (properties.isGoogleAppsEngine()) {
             builder.requestHandlerBuilder(new GaeRequestHandler.Builder());
@@ -52,7 +52,7 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
 
     @Override
     public GeoLocationResponse locate(final String address) {
-        final Info info = UserInfo.getInfo(address);
+        final var info = UserInfo.getInfo(address);
         if (info != null && info.getPosition() != null) {
             return locate(info.getPosition().getLatitude(), info.getPosition().getLongitude());
         }
@@ -66,13 +66,13 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
             return null;
         }
 
-        final GeoLocationResponse r = new GeoLocationResponse();
+        final var r = new GeoLocationResponse();
         r.setLatitude(latitude);
         r.setLongitude(longitude);
 
-        final LatLng latlng = new LatLng(latitude, longitude);
+        final var latlng = new LatLng(latitude, longitude);
         try {
-            final GeocodingResult[] results = GeocodingApi.reverseGeocode(this.context, latlng).await();
+            final var results = GeocodingApi.reverseGeocode(this.context, latlng).await();
             if (results != null && results.length > 0) {
                 Arrays.stream(results)
                         .map(result -> result.formattedAddress)

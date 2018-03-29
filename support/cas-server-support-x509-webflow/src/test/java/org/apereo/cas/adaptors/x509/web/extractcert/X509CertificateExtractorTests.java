@@ -54,8 +54,8 @@ public class X509CertificateExtractorTests extends AbstractX509CertificateTests 
             = new RequestHeaderX509CertificateExtractor("ssl_client_cert");
 
     private static String certificateSingleLine(final String[] lines, final String separator) {
-        final StringBuilder singleSpaced = new StringBuilder();
-        for (final String current : lines) {
+        final var singleSpaced = new StringBuilder();
+        for (final var current : lines) {
             singleSpaced.append(current).append(separator);
         }
         singleSpaced.deleteCharAt(singleSpaced.length() - 1);
@@ -74,21 +74,21 @@ public class X509CertificateExtractorTests extends AbstractX509CertificateTests 
 
     @Test
     public void verifyExtractX509FromHeaderSpaceSeperator() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var request = new MockHttpServletRequest();
         request.addHeader(extractX509CertificateFromHeader.getSslClientCertHeader(), certificateSingleLine(" "));
         assertCertificateParsed(extractX509CertificateFromHeader.extract(request));
     }
 
     @Test
     public void verifyExtractX509FromHeaderNoSeparator() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var request = new MockHttpServletRequest();
         request.addHeader(extractX509CertificateFromHeader.getSslClientCertHeader(), certificateSingleLine("\t"));
         assertCertificateParsed(extractX509CertificateFromHeader.extract(request));
     }
 
     @Test
     public void verifyExtractX509FromHeaderNoHeader() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var request = new MockHttpServletRequest();
         Assert.assertNull(extractX509CertificateFromHeader.extract(request));
     }
 }

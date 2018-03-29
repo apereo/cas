@@ -49,10 +49,10 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
     @SneakyThrows
     public ChainingMetadataResolver load(final SamlRegisteredService service) {
 
-        final ChainingMetadataResolver metadataResolver = new ChainingMetadataResolver();
+        final var metadataResolver = new ChainingMetadataResolver();
         final List<MetadataResolver> metadataResolvers = new ArrayList<>();
 
-        final Collection<SamlRegisteredServiceMetadataResolver> availableResolvers = this.metadataResolutionPlan.getRegisteredMetadataResolvers();
+        final var availableResolvers = this.metadataResolutionPlan.getRegisteredMetadataResolvers();
         availableResolvers
             .stream()
             .filter(Objects::nonNull)

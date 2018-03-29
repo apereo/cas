@@ -43,16 +43,16 @@ public class JdbcDataSourceHealthIndicatorTests {
 
     @Before
     public void setUp() {
-        final ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("classpath:/jpaTestApplicationContext.xml");
+        final var ctx = new ClassPathXmlApplicationContext("classpath:/jpaTestApplicationContext.xml");
         this.dataSource = ctx.getBean("dataSource", DataSource.class);
     }
 
     @Test
     public void verifyObserve() {
-        final JdbcDataSourceHealthIndicator monitor = new JdbcDataSourceHealthIndicator(5000,
+        final var monitor = new JdbcDataSourceHealthIndicator(5000,
             this.dataSource, this.executor,
             "SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
-        final Health status = monitor.health();
+        final var status = monitor.health();
         assertEquals(Status.UP, status.getStatus());
     }
 }

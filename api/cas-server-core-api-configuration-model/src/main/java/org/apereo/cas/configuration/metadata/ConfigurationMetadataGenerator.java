@@ -101,8 +101,8 @@ public class ConfigurationMetadataGenerator {
      * @throws Exception the exception
      */
     public static void main(final String[] args) throws Exception {
-        final String buildDir = args[0];
-        final String projectDir = args[1];
+        final var buildDir = args[0];
+        final var projectDir = args[1];
         new ConfigurationMetadataGenerator(buildDir, projectDir).execute();
     }
 
@@ -112,8 +112,8 @@ public class ConfigurationMetadataGenerator {
      * @throws Exception the exception
      */
     public void execute() throws Exception {
-        final File jsonFile = new File(buildDir, "classes/java/main/META-INF/spring-configuration-metadata.json");
-        final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
+        final var jsonFile = new File(buildDir, "classes/java/main/META-INF/spring-configuration-metadata.json");
+        final var mapper = new ObjectMapper().findAndRegisterModules();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         final TypeReference<Map<String, Set<ConfigurationMetadataProperty>>> values = new TypeReference<Map<String, Set<ConfigurationMetadataProperty>>>() {
@@ -128,10 +128,10 @@ public class ConfigurationMetadataGenerator {
         properties.stream()
             .filter(p -> NESTED_TYPE_PATTERN.matcher(p.getType()).matches())
             .forEach(Unchecked.consumer(p -> {
-                final Matcher matcher = NESTED_TYPE_PATTERN.matcher(p.getType());
-                final boolean indexBrackets = matcher.matches();
-                final String typeName = matcher.group(1);
-                final String typePath = buildTypeSourcePath(typeName);
+                final var matcher = NESTED_TYPE_PATTERN.matcher(p.getType());
+                final var indexBrackets = matcher.matches();
+                final var typeName = matcher.group(1);
+                final var typePath = buildTypeSourcePath(typeName);
 
                 parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
 
@@ -140,7 +140,7 @@ public class ConfigurationMetadataGenerator {
         properties.addAll(collectedProps);
         groups.addAll(collectedGroups);
 
-        final Set<ConfigurationMetadataHint> hints = processHints(properties, groups);
+        final var hints = processHints(properties, groups);
 
         jsonMap.put("properties", properties);
         jsonMap.put("groups", groups);
@@ -152,7 +152,7 @@ public class ConfigurationMetadataGenerator {
     }
 
     private String buildTypeSourcePath(final String type) {
-        final String newName = type.replace(".", File.separator);
+        final var newName = type.replace(".", File.separator);
         return sourcePath + "/src/main/java/" + newName + ".java";
     }
 
@@ -165,14 +165,14 @@ public class ConfigurationMetadataGenerator {
                                       final boolean indexNameWithBrackets) {
 
         try (InputStream is = new FileInputStream(typePath)) {
-            final CompilationUnit cu = JavaParser.parse(is);
+            final var cu = JavaParser.parse(is);
             new FieldVisitor(collectedProps, collectedGroups, indexNameWithBrackets, typeName).visit(cu, p);
             if (cu.getTypes().size() > 0) {
-                final ClassOrInterfaceDeclaration decl = ClassOrInterfaceDeclaration.class.cast(cu.getType(0));
-                for (int i = 0; i < decl.getExtendedTypes().size(); i++) {
-                    final ClassOrInterfaceType parentType = decl.getExtendedTypes().get(i);
-                    final Class parentClazz = locatePropertiesClassForType(parentType);
-                    final String parentTypePath = buildTypeSourcePath(parentClazz.getName());
+                final var decl = ClassOrInterfaceDeclaration.class.cast(cu.getType(0));
+                for (var i = 0; i < decl.getExtendedTypes().size(); i++) {
+                    final var parentType = decl.getExtendedTypes().get(i);
+                    final var parentClazz = locatePropertiesClassForType(parentType);
+                    final var parentTypePath = buildTypeSourcePath(parentClazz.getName());
 
                     parseCompilationUnit(collectedProps, collectedGroups, p,
                         parentTypePath, parentClazz.getName(), indexNameWithBrackets);
@@ -201,14 +201,14 @@ public class ConfigurationMetadataGenerator {
             if (field.getVariables().isEmpty()) {
                 throw new IllegalArgumentException("Field " + field + " has no variable definitions");
             }
-            final VariableDeclarator var = field.getVariable(0);
+            final var var = field.getVariable(0);
             if (field.getModifiers().contains(Modifier.STATIC)) {
                 LOGGER.debug("Field [{}] is static and will be ignored for metadata generation", var.getNameAsString());
                 return;
             }
 
             if (field.getJavadoc().isPresent()) {
-                final ConfigurationMetadataProperty prop = createConfigurationProperty(field, property);
+                final var prop = createConfigurationProperty(field, property);
                 processNestedClassOrInterfaceTypeIfNeeded(field, prop);
             } else {
                 LOGGER.error("Field " + field + " has no Javadoc defined");
@@ -217,23 +217,23 @@ public class ConfigurationMetadataGenerator {
 
         private ConfigurationMetadataProperty createConfigurationProperty(final FieldDeclaration n,
                                                                           final ConfigurationMetadataProperty arg) {
-            final VariableDeclarator variable = n.getVariables().get(0);
-            final String name = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(variable.getNameAsString()).spliterator(), false)
+            final var variable = n.getVariables().get(0);
+            final var name = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(variable.getNameAsString()).spliterator(), false)
                 .map(Object::toString)
                 .findFirst()
                 .orElse(variable.getNameAsString());
 
-            final String indexedGroup = arg.getName().concat(indexNameWithBrackets ? "[]" : StringUtils.EMPTY);
-            final String indexedName = indexedGroup.concat(".").concat(name);
+            final var indexedGroup = arg.getName().concat(indexNameWithBrackets ? "[]" : StringUtils.EMPTY);
+            final var indexedName = indexedGroup.concat(".").concat(name);
 
-            final ConfigurationMetadataProperty prop = new ConfigurationMetadataProperty();
-            final String description = n.getJavadoc().get().getDescription().toText();
+            final var prop = new ConfigurationMetadataProperty();
+            final var description = n.getJavadoc().get().getDescription().toText();
             prop.setDescription(description);
             prop.setShortDescription(StringUtils.substringBefore(description, "."));
             prop.setName(indexedName);
             prop.setId(indexedName);
 
-            final String elementType = n.getElementType().asString();
+            final var elementType = n.getElementType().asString();
             if (elementType.equals(String.class.getSimpleName())
                 || elementType.equals(Integer.class.getSimpleName())
                 || elementType.equals(Long.class.getSimpleName())
@@ -245,7 +245,7 @@ public class ConfigurationMetadataGenerator {
             }
 
             if (variable.getInitializer().isPresent()) {
-                final Expression exp = variable.getInitializer().get();
+                final var exp = variable.getInitializer().get();
                 if (exp instanceof LiteralStringValueExpr) {
                     prop.setDefaultValue(((LiteralStringValueExpr) exp).getValue());
                 } else if (exp instanceof BooleanLiteralExpr) {
@@ -254,7 +254,7 @@ public class ConfigurationMetadataGenerator {
             }
             properties.add(prop);
 
-            final ConfigurationMetadataProperty grp = new ConfigurationMetadataProperty();
+            final var grp = new ConfigurationMetadataProperty();
             grp.setId(indexedGroup);
             grp.setName(indexedGroup);
             grp.setType(this.parentClass);
@@ -265,11 +265,11 @@ public class ConfigurationMetadataGenerator {
 
         private void processNestedClassOrInterfaceTypeIfNeeded(final FieldDeclaration n, final ConfigurationMetadataProperty prop) {
             if (n.getElementType() instanceof ClassOrInterfaceType) {
-                final ClassOrInterfaceType type = (ClassOrInterfaceType) n.getElementType();
+                final var type = (ClassOrInterfaceType) n.getElementType();
                 if (!shouldTypeBeExcluded(type)) {
-                    final Class clz = locatePropertiesClassForType(type);
+                    final var clz = locatePropertiesClassForType(type);
                     if (clz != null && !clz.isMemberClass()) {
-                        final String typePath = buildTypeSourcePath(clz.getName());
+                        final var typePath = buildTypeSourcePath(clz.getName());
                         parseCompilationUnit(properties, groups, prop, typePath, clz.getName(), false);
                     }
                 }
@@ -305,8 +305,8 @@ public class ConfigurationMetadataGenerator {
 
         final Predicate<String> filterInputs = s -> s.contains(type.getNameAsString());
         final Predicate<String> filterResults = s -> s.endsWith(type.getNameAsString());
-        final String packageName = ConfigurationMetadataGenerator.class.getPackage().getName();
-        final Reflections reflections =
+        final var packageName = ConfigurationMetadataGenerator.class.getPackage().getName();
+        final var reflections =
             new Reflections(new ConfigurationBuilder()
                 .filterInputsBy(filterInputs)
                 .setUrls(ClasspathHelper.forPackage(packageName))
@@ -329,42 +329,42 @@ public class ConfigurationMetadataGenerator {
 
         final Set<ConfigurationMetadataHint> hints = new LinkedHashSet<>();
 
-        for (final ConfigurationMetadataProperty entry : props) {
+        for (final var entry : props) {
             try {
-                final String propName = StringUtils.substringAfterLast(entry.getName(), ".");
-                final String groupName = StringUtils.substringBeforeLast(entry.getName(), ".");
-                final ConfigurationMetadataProperty grp = groups
+                final var propName = StringUtils.substringAfterLast(entry.getName(), ".");
+                final var groupName = StringUtils.substringBeforeLast(entry.getName(), ".");
+                final var grp = groups
                     .stream()
                     .filter(g -> g.getName().equalsIgnoreCase(groupName))
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Cant locate group " + groupName));
 
-                final Matcher matcher = PATTERN_GENERICS.matcher(grp.getType());
-                final String className = matcher.find() ? matcher.group(1) : grp.getType();
+                final var matcher = PATTERN_GENERICS.matcher(grp.getType());
+                final var className = matcher.find() ? matcher.group(1) : grp.getType();
                 final Class clazz = ClassUtils.getClass(className);
 
 
-                final ConfigurationMetadataHint hint = new ConfigurationMetadataHint();
+                final var hint = new ConfigurationMetadataHint();
                 hint.setName(entry.getName());
 
                 if (clazz.isAnnotationPresent(RequiresModule.class)) {
-                    final RequiresModule annotation = Arrays.stream(clazz.getAnnotations())
+                    final var annotation = Arrays.stream(clazz.getAnnotations())
                         .filter(a -> a.annotationType().equals(RequiresModule.class))
                         .findFirst()
                         .map(RequiresModule.class::cast)
                         .get();
-                    final ValueHint valueHint = new ValueHint();
+                    final var valueHint = new ValueHint();
                     valueHint.setValue(Stream.of(RequiresModule.class.getName(), annotation.automated()).collect(Collectors.toList()));
                     valueHint.setDescription(annotation.name());
                     hint.getValues().add(valueHint);
                 }
 
-                final boolean foundRequiredProperty = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(propName).spliterator(), false)
+                final var foundRequiredProperty = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(propName).spliterator(), false)
                     .map(n -> ReflectionUtils.findField(clazz, n))
                     .anyMatch(f -> f != null && f.isAnnotationPresent(RequiredProperty.class));
 
                 if (foundRequiredProperty) {
-                    final ValueHint valueHint = new ValueHint();
+                    final var valueHint = new ValueHint();
                     valueHint.setValue(RequiredProperty.class.getName());
                     hint.getValues().add(valueHint);
                 }

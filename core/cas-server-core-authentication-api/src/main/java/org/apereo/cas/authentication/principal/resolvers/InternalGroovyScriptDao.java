@@ -28,10 +28,10 @@ public class InternalGroovyScriptDao extends BaseGroovyScriptDaoImpl {
     @Override
     public Map<String, List<Object>> getPersonAttributesFromMultivaluedAttributes(final Map<String, List<Object>> attributes) {
         if (attributes.containsKey("username")) {
-            final List<Object> username = attributes.get("username");
+            final var username = attributes.get("username");
             if (!username.isEmpty()) {
                 final Map<String, List<Object>> results = new HashMap<>();
-                final Map<String, Object> attrs = getAttributesForUser(username.get(0).toString());
+                final var attrs = getAttributesForUser(username.get(0).toString());
                 LOGGER.debug("Groovy-based attributes found are [{}]", attrs);
                 attrs.forEach((k, v) -> {
                     final List<Object> values = new ArrayList<>(CollectionUtils.toCollection(v));

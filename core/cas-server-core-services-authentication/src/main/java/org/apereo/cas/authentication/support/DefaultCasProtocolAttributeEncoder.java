@@ -75,8 +75,8 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
                                                       final RegisteredService registeredService) {
 
         if (cachedAttributesToEncode.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL)) {
-            final String value = cachedAttributesToEncode.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
-            final String decodedValue = this.cacheCredentialCipherExecutor.decode(value);
+            final var value = cachedAttributesToEncode.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
+            final var decodedValue = this.cacheCredentialCipherExecutor.decode(value);
             cachedAttributesToEncode.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
             if (StringUtils.isNotBlank(decodedValue)) {
                 cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, decodedValue);
@@ -118,10 +118,10 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
                                                            final String cachedAttributeName,
                                                            final RegisteredServiceCipherExecutor cipher,
                                                            final RegisteredService registeredService) {
-        final String cachedAttribute = cachedAttributesToEncode.remove(cachedAttributeName);
+        final var cachedAttribute = cachedAttributesToEncode.remove(cachedAttributeName);
         if (StringUtils.isNotBlank(cachedAttribute)) {
             LOGGER.debug("Retrieved [{}] as a cached model attribute...", cachedAttributeName);
-            final String encodedValue = cipher.encode(cachedAttribute, registeredService);
+            final var encodedValue = cipher.encode(cachedAttribute, registeredService);
             if (StringUtils.isNotBlank(encodedValue)) {
                 attributes.put(cachedAttributeName, encodedValue);
                 LOGGER.debug("Encrypted and encoded [{}] as an attribute to [{}].", cachedAttributeName, encodedValue);
@@ -147,7 +147,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
                                                            final RegisteredService registeredService) {
         LOGGER.debug("Sanitizing attribute names in preparation of the final validation response");
 
-        final Set<Pair<String, Object>> attrs = attributes.keySet().stream()
+        final var attrs = attributes.keySet().stream()
                 .filter(getSanitizingAttributeNamePredicate())
                 .map(s -> Pair.of(EncodingUtils.hexEncode(s.getBytes(StandardCharsets.UTF_8)), attributes.get(s)))
                 .collect(Collectors.toSet());

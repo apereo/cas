@@ -90,7 +90,7 @@ public class CloudDirectoryUtils {
                                                         final String attributeValue,
                                                         final ObjectReference reference,
                                                         final CloudDirectoryProperties cloud) {
-        final ObjectAttributeRange range = getObjectAttributeRanges(cloud.getSchemaArn(), cloud.getFacetName(),
+        final var range = getObjectAttributeRanges(cloud.getSchemaArn(), cloud.getFacetName(),
                 attributeName, attributeValue);
 
         return new ListIndexRequest().withDirectoryArn(cloud.getDirectoryArn())
@@ -110,7 +110,7 @@ public class CloudDirectoryUtils {
     public static ObjectAttributeRange getObjectAttributeRanges(final String schemaArn, final String facetName,
                                                                  final String attributeName, final String attributeValue) {
 
-        final AttributeKey attributeKey = getAttributeKey(schemaArn, facetName, attributeName);
+        final var attributeKey = getAttributeKey(schemaArn, facetName, attributeName);
         return new ObjectAttributeRange().withAttributeKey(attributeKey)
                 .withRange(new TypedAttributeValueRange()
                         .withStartValue(getTypedAttributeValue(attributeValue))

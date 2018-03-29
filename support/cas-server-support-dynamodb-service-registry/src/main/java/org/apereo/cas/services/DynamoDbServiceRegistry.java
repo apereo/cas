@@ -30,7 +30,7 @@ public class DynamoDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public List<RegisteredService> load() {
-        final List<RegisteredService> svc = dbTableService.getAll();
+        final var svc = dbTableService.getAll();
         svc.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
         return svc;
     }

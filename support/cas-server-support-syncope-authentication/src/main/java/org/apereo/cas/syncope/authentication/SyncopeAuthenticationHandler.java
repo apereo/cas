@@ -54,23 +54,23 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c,
                                                                                         final String originalPassword) throws GeneralSecurityException {
         try {
-            final String syncopeUrl = StringUtils.appendIfMissing(this.syncopeUrl, "/rest/users/self");
-            final HttpResponse response = HttpUtils.executeGet(syncopeUrl, c.getUsername(), c.getPassword(),
+            final var syncopeUrl = StringUtils.appendIfMissing(this.syncopeUrl, "/rest/users/self");
+            final var response = HttpUtils.executeGet(syncopeUrl, c.getUsername(), c.getPassword(),
                 new HashMap<>(), CollectionUtils.wrap("X-Syncope-Domain", this.syncopeDomain));
 
             LOGGER.debug("Received http response status as [{}]", response.getStatusLine());
 
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                final String result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                final var result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 LOGGER.debug("Received user object as [{}]", result);
-                final UserTO user = this.objectMapper.readValue(result, UserTO.class);
+                final var user = this.objectMapper.readValue(result, UserTO.class);
                 if (user.isSuspended()) {
                     throw new AccountDisabledException("Could not authenticate forbidden account for " + c.getUsername());
                 }
                 if (user.isMustChangePassword()) {
                     throw new AccountPasswordMustChangeException("Account password must change for " + c.getUsername());
                 }
-                final Principal principal = this.principalFactory.createPrincipal(user.getUsername(), buildSyncopeUserAttributes(user));
+                final var principal = this.principalFactory.createPrincipal(user.getUsername(), buildSyncopeUserAttributes(user));
                 return createHandlerResult(c, principal, new ArrayList<>());
             }
         } catch (final Exception e) {

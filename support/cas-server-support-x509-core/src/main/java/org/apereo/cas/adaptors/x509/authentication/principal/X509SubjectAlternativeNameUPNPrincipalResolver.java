@@ -54,11 +54,11 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
         LOGGER.debug("Resolving principal from Subject Alternative Name UPN for [{}]", certificate);
         try {
-            final Collection<List<?>> subjectAltNames = certificate.getSubjectAlternativeNames();
+            final var subjectAltNames = certificate.getSubjectAlternativeNames();
             if (subjectAltNames != null) {
-                for (final List<?> sanItem : subjectAltNames) {
-                    final ASN1Sequence seq = getAltnameSequence(sanItem);
-                    final String upnString = getUPNStringFromSequence(seq);
+                for (final var sanItem : subjectAltNames) {
+                    final var seq = getAltnameSequence(sanItem);
+                    final var upnString = getUPNStringFromSequence(seq);
                     if (upnString != null) {
                         return upnString;
                     }
@@ -83,10 +83,10 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
     private static String getUPNStringFromSequence(final ASN1Sequence seq) {
         if (seq != null) {
             // First in sequence is the object identifier, that we must check
-            final ASN1ObjectIdentifier id = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
+            final var id = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
             if (id != null && UPN_OBJECTID.equals(id.getId())) {
-                final ASN1TaggedObject obj = (ASN1TaggedObject) seq.getObjectAt(1);
-                ASN1Primitive prim = obj.getObject();
+                final var obj = (ASN1TaggedObject) seq.getObjectAt(1);
+                var prim = obj.getObject();
                 // Due to bug in java cert.getSubjectAltName, it can be tagged an extra time
                 if (prim instanceof ASN1TaggedObject) {
                     prim = ASN1TaggedObject.getInstance(prim).getObject();
@@ -119,9 +119,9 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
         if (sanItem.size() < 2) {
             LOGGER.error("Subject Alternative Name List does not contain at least two required elements. Returning null principal id...");
         }
-        final Integer itemType = (Integer) sanItem.get(0);
+        final var itemType = (Integer) sanItem.get(0);
         if (itemType == 0) {
-            final byte[] altName = (byte[]) sanItem.get(1);
+            final var altName = (byte[]) sanItem.get(1);
             return getAltnameSequence(altName);
         }
         return null;
@@ -137,8 +137,8 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      */
     private static ASN1Sequence getAltnameSequence(final byte[] sanValue) {
         ASN1Primitive oct = null;
-        try (ByteArrayInputStream bInput = new ByteArrayInputStream(sanValue)) {
-            try (ASN1InputStream input = new ASN1InputStream(bInput)) {
+        try (var bInput = new ByteArrayInputStream(sanValue)) {
+            try (var input = new ASN1InputStream(bInput)) {
                 oct = input.readObject();
             } catch (final IOException e) {
                 LOGGER.error("Error on getting Alt Name as a DERSEquence: [{}]", e.getMessage(), e);

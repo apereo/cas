@@ -104,19 +104,19 @@ public class JpaSamlRegisteredServiceMetadataResolverTests {
 
     @Test
     public void verifyResolver() throws Exception {
-        final ClassPathResource res = new ClassPathResource("samlsp-metadata.xml");
-        final SamlMetadataDocument md = new SamlMetadataDocument();
+        final var res = new ClassPathResource("samlsp-metadata.xml");
+        final var md = new SamlMetadataDocument();
         md.setName("SP");
         md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
         resolver.saveOrUpdate(md);
         
-        final SamlRegisteredService service = new SamlRegisteredService();
+        final var service = new SamlRegisteredService();
         service.setName("SAML Service");
         service.setServiceId("https://carmenwiki.osu.edu/shibboleth");
         service.setDescription("Testing");
         service.setMetadataLocation("jdbc://");
         assertTrue(resolver.supports(service));
-        final Collection<MetadataResolver> resolvers = resolver.resolve(service);
+        final var resolvers = resolver.resolve(service);
         assertTrue(resolvers.size() == 1);
     }
 }

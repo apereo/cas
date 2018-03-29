@@ -15,14 +15,14 @@ public class Cas10ProtocolValidationSpecificationTests {
 
     @Test
     public void verifyRenewGettersAndSettersFalse() {
-        final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification();
+        final var s = new Cas10ProtocolValidationSpecification();
         s.setRenew(false);
         assertFalse(s.isRenew());
     }
 
     @Test
     public void verifyRenewGettersAndSettersTrue() {
-        final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification();
+        final var s = new Cas10ProtocolValidationSpecification();
         s.setRenew(true);
         assertTrue(s.isRenew());
     }

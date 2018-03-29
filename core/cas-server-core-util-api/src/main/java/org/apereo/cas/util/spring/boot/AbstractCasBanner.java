@@ -48,16 +48,16 @@ public abstract class AbstractCasBanner implements Banner {
      * @return environment info
      */
     private String collectEnvironmentInfo(final Environment environment, final Class<?> sourceClass) {
-        final Properties properties = System.getProperties();
+        final var properties = System.getProperties();
         if (properties.containsKey("CAS_BANNER_SKIP")) {
-            try (Formatter formatter = new Formatter()) {
+            try (var formatter = new Formatter()) {
                 formatter.format("CAS Version: %s%n", CasVersion.getVersion());
                 return formatter.toString();
             }
         }
 
-        try (Formatter formatter = new Formatter()) {
-            final Map<String, Object> sysInfo = SystemUtils.getSystemInfo();
+        try (var formatter = new Formatter()) {
+            final var sysInfo = SystemUtils.getSystemInfo();
             sysInfo.forEach((k, v) -> formatter.format("%s: %s%n", k, v));
             formatter.format("%s%n", LINE_SEPARATOR);
             injectEnvironmentInfoIntoBanner(formatter, environment, sourceClass);

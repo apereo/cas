@@ -35,7 +35,7 @@ public class OAuth20Validator {
      * @return whether the parameter exists
      */
     public boolean checkParameterExist(final HttpServletRequest request, final String name) {
-        final String parameter = request.getParameter(name);
+        final var parameter = request.getParameter(name);
         if (StringUtils.isBlank(parameter)) {
             LOGGER.error("Missing request parameter: [{}]", name);
             return false;
@@ -56,7 +56,7 @@ public class OAuth20Validator {
             return false;
         }
 
-        final WebApplicationService service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+        final var service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
         LOGGER.debug("Check registered service: [{}]", registeredService);
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
@@ -75,7 +75,7 @@ public class OAuth20Validator {
      * @return whether the callback url is valid
      */
     public boolean checkCallbackValid(final RegisteredService registeredService, final String redirectUri) {
-        final String registeredServiceId = registeredService.getServiceId();
+        final var registeredServiceId = registeredService.getServiceId();
         LOGGER.debug("Found: [{}] vs redirectUri: [{}]", registeredService, redirectUri);
         if (!redirectUri.matches(registeredServiceId)) {
             LOGGER.error("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
@@ -112,7 +112,7 @@ public class OAuth20Validator {
      */
     public static boolean checkResponseTypes(final String type, final OAuth20ResponseTypes... expectedTypes) {
         LOGGER.debug("Response type: [{}]", type);
-        final boolean checked = Stream.of(expectedTypes).anyMatch(t -> OAuth20Utils.isResponseType(type, t));
+        final var checked = Stream.of(expectedTypes).anyMatch(t -> OAuth20Utils.isResponseType(type, t));
         if (!checked) {
             LOGGER.error("Unsupported response type: [{}]", type);
         }
