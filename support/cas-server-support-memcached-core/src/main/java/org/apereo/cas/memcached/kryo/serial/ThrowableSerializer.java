@@ -26,9 +26,9 @@ public class ThrowableSerializer extends Serializer<Throwable> {
     @Override
     public Throwable read(final Kryo kryo, final Input input, final Class<Throwable> type) {
         try {
-            final Class clazz = kryo.readObject(input, Class.class);
-            final String msg = kryo.readObject(input, String.class);
-            final Throwable throwable = (Throwable) clazz.getDeclaredConstructor(String.class).newInstance(msg);
+            final var clazz = kryo.readObject(input, Class.class);
+            final var msg = kryo.readObject(input, String.class);
+            final var throwable = (Throwable) clazz.getDeclaredConstructor(String.class).newInstance(msg);
             return throwable;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

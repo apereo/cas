@@ -83,42 +83,42 @@ public class DelegatedClientAuthenticationActionTests {
 
     @Test
     public void verifyStartAuthentication() throws Exception {
-        final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        final var mockResponse = new MockHttpServletResponse();
+        final var mockRequest = new MockHttpServletRequest();
         mockRequest.setParameter(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, MY_THEME);
         mockRequest.setParameter(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, MY_LOCALE);
         mockRequest.setParameter(CasProtocolConstants.PARAMETER_METHOD, MY_METHOD);
 
-        final ServletExternalContext servletExternalContext = mock(ServletExternalContext.class);
+        final var servletExternalContext = mock(ServletExternalContext.class);
         when(servletExternalContext.getNativeRequest()).thenReturn(mockRequest);
         when(servletExternalContext.getNativeResponse()).thenReturn(mockResponse);
 
-        final MockRequestContext mockRequestContext = new MockRequestContext();
+        final var mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
         final Service service = RegisteredServiceTestUtils.getService(MY_SERVICE);
         mockRequestContext.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
 
-        final FacebookClient facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
-        final TwitterClient twitterClient = new TwitterClient("3nJPbVTVRZWAyUgoUKQ8UA", "h6LZyZJmcW46Vu8R47MYfeXTSYGI30EqnWaSwVhFkbA");
-        final Clients clients = new Clients(MY_LOGIN_URL, facebookClient, twitterClient);
-        final AuditableExecution enforcer = mock(AuditableExecution.class);
+        final var facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
+        final var twitterClient = new TwitterClient("3nJPbVTVRZWAyUgoUKQ8UA", "h6LZyZJmcW46Vu8R47MYfeXTSYGI30EqnWaSwVhFkbA");
+        final var clients = new Clients(MY_LOGIN_URL, facebookClient, twitterClient);
+        final var enforcer = mock(AuditableExecution.class);
         when(enforcer.execute(any())).thenReturn(new AuditableExecutionResult());
 
-        final DefaultTicketRegistry ticketRegistry = new DefaultTicketRegistry();
-        final DelegatedClientWebflowManager manager = new DelegatedClientWebflowManager(ticketRegistry,
+        final var ticketRegistry = new DefaultTicketRegistry();
+        final var manager = new DelegatedClientWebflowManager(ticketRegistry,
             new DefaultTransientSessionTicketFactory(new HardTimeoutExpirationPolicy(60)),
             ThemeChangeInterceptor.DEFAULT_PARAM_NAME, LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
             new WebApplicationServiceFactory(), "https://cas.example.org",
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
-        final Ticket ticket = manager.store(Pac4jUtils.getPac4jJ2EContext(mockRequest, new MockHttpServletResponse()), facebookClient);
+        final var ticket = manager.store(Pac4jUtils.getPac4jJ2EContext(mockRequest, new MockHttpServletResponse()), facebookClient);
 
         mockRequest.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
-        final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients, null,
+        final var action = new DelegatedClientAuthenticationAction(clients, null,
             mock(CentralAuthenticationService.class),
              getServicesManagerWith(service, facebookClient), enforcer, manager,
             new DelegatedSessionCookieManager(mock(CookieRetrievingCookieGenerator.class)));
 
-        final Event event = action.execute(mockRequestContext);
+        final var event = action.execute(mockRequestContext);
         assertEquals("error", event.getId());
 
         manager.retrieve(mockRequestContext, Pac4jUtils.getPac4jJ2EContext(mockRequest, new MockHttpServletResponse()), facebookClient);
@@ -127,7 +127,7 @@ public class DelegatedClientAuthenticationActionTests {
         assertEquals(MY_LOCALE, mockRequest.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(MY_METHOD, mockRequest.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
-        final Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration> urls =
+        final var urls =
             (Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration>)
                 flowScope.get(DelegatedClientAuthenticationAction.PAC4J_URLS);
 
@@ -137,20 +137,20 @@ public class DelegatedClientAuthenticationActionTests {
 
     @Test
     public void verifyFinishAuthentication() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        final var mockRequest = new MockHttpServletRequest();
         mockRequest.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
         
         mockRequest.addParameter(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, MY_THEME);
         mockRequest.addParameter(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, MY_LOCALE);
         mockRequest.addParameter(CasProtocolConstants.PARAMETER_METHOD, MY_METHOD);
-        final Service service = CoreAuthenticationTestUtils.getService(MY_SERVICE);
+        final var service = CoreAuthenticationTestUtils.getService(MY_SERVICE);
         mockRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
 
-        final ServletExternalContext servletExternalContext = mock(ServletExternalContext.class);
+        final var servletExternalContext = mock(ServletExternalContext.class);
         when(servletExternalContext.getNativeRequest()).thenReturn(mockRequest);
         when(servletExternalContext.getNativeResponse()).thenReturn(new MockHttpServletResponse());
 
-        final MockRequestContext mockRequestContext = new MockRequestContext();
+        final var mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
 
         final FacebookClient facebookClient = new FacebookClient() {
@@ -160,37 +160,37 @@ public class DelegatedClientAuthenticationActionTests {
             }
         };
         facebookClient.setName(FacebookClient.class.getSimpleName());
-        final Clients clients = new Clients(MY_LOGIN_URL, facebookClient);
+        final var clients = new Clients(MY_LOGIN_URL, facebookClient);
         final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(TGT_ID, mock(Authentication.class), mock(ExpirationPolicy.class));
-        final CentralAuthenticationService casImpl = mock(CentralAuthenticationService.class);
+        final var casImpl = mock(CentralAuthenticationService.class);
         when(casImpl.createTicketGrantingTicket(any())).thenReturn(tgt);
 
-        final AuthenticationTransactionManager transManager = mock(AuthenticationTransactionManager.class);
-        final AuthenticationManager authNManager = mock(AuthenticationManager.class);
+        final var transManager = mock(AuthenticationTransactionManager.class);
+        final var authNManager = mock(AuthenticationManager.class);
         when(authNManager.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
         when(transManager.getAuthenticationManager()).thenReturn(authNManager);
         when(transManager.handle(any(AuthenticationTransaction.class), any(AuthenticationResultBuilder.class))).thenReturn(transManager);
 
-        final AuthenticationSystemSupport support = mock(AuthenticationSystemSupport.class);
+        final var support = mock(AuthenticationSystemSupport.class);
         when(support.getAuthenticationTransactionManager()).thenReturn(transManager);
 
-        final AuditableExecution enforcer = mock(AuditableExecution.class);
+        final var enforcer = mock(AuditableExecution.class);
         when(enforcer.execute(any())).thenReturn(new AuditableExecutionResult());
-        final DefaultTicketRegistry ticketRegistry = new DefaultTicketRegistry();
-        final DelegatedClientWebflowManager manager = new DelegatedClientWebflowManager(ticketRegistry,
+        final var ticketRegistry = new DefaultTicketRegistry();
+        final var manager = new DelegatedClientWebflowManager(ticketRegistry,
             new DefaultTransientSessionTicketFactory(new HardTimeoutExpirationPolicy(60)),
             ThemeChangeInterceptor.DEFAULT_PARAM_NAME, LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
             new WebApplicationServiceFactory(), "https://cas.example.org",
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
-        final Ticket ticket = manager.store(Pac4jUtils.getPac4jJ2EContext(mockRequest, new MockHttpServletResponse()), facebookClient);
+        final var ticket = manager.store(Pac4jUtils.getPac4jJ2EContext(mockRequest, new MockHttpServletResponse()), facebookClient);
 
         mockRequest.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
-        final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients, support, casImpl,
+        final var action = new DelegatedClientAuthenticationAction(clients, support, casImpl,
              getServicesManagerWith(service, facebookClient), enforcer, manager,
             new DelegatedSessionCookieManager(mock(CookieRetrievingCookieGenerator.class)));
 
-        final Event event = action.execute(mockRequestContext);
+        final var event = action.execute(mockRequestContext);
         assertEquals("success", event.getId());
         assertEquals(MY_THEME, mockRequest.getAttribute(ThemeChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(MY_LOCALE, mockRequest.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
@@ -204,10 +204,10 @@ public class DelegatedClientAuthenticationActionTests {
     }
 
     private ServicesManager getServicesManagerWith(final Service service, final BaseClient client) {
-        final ServicesManager mgr = mock(ServicesManager.class);
-        final AbstractRegisteredService regSvc = RegisteredServiceTestUtils.getRegisteredService(service.getId());
+        final var mgr = mock(ServicesManager.class);
+        final var regSvc = RegisteredServiceTestUtils.getRegisteredService(service.getId());
 
-        final DefaultRegisteredServiceAccessStrategy strategy = new DefaultRegisteredServiceAccessStrategy();
+        final var strategy = new DefaultRegisteredServiceAccessStrategy();
         strategy.setDelegatedAuthenticationPolicy(new DefaultRegisteredServiceDelegatedAuthenticationPolicy(CollectionUtils.wrapList(client.getName())));
         regSvc.setAccessStrategy(strategy);
         when(mgr.findServiceBy(any(Service.class))).thenReturn(regSvc);

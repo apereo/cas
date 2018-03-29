@@ -26,7 +26,7 @@ public class CompositeServiceTicketResourceEntityResponseFactory implements Serv
         resourceResolverName = "REST_API_SERVICE_TICKET_RESOURCE_RESOLVER")
     @Override
     public ResponseEntity<String> build(final String ticketGrantingTicket, final Service service, final AuthenticationResult authenticationResult) {
-        final ServiceTicketResourceEntityResponseFactory factory = chain.stream()
+        final var factory = chain.stream()
             .filter(f -> f.supports(service, authenticationResult))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Unable to locate a response entity factory to build a service ticket. "

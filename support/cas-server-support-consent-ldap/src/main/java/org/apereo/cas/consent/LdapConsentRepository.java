@@ -55,12 +55,12 @@ public class LdapConsentRepository implements ConsentRepository {
     public ConsentDecision findConsentDecision(final Service service,
                                                final RegisteredService registeredService,
                                                final Authentication authentication) {
-        final String principal = authentication.getPrincipal().getId();
-        final LdapEntry entry = readConsentEntry(principal);
+        final var principal = authentication.getPrincipal().getId();
+        final var entry = readConsentEntry(principal);
         if (entry != null) {
-            final LdapAttribute consentDecisions = entry.getAttribute(this.ldap.getConsentAttributeName());
+            final var consentDecisions = entry.getAttribute(this.ldap.getConsentAttributeName());
             if (consentDecisions != null) {
-                final Collection<String> values = consentDecisions.getStringValues();
+                final var values = consentDecisions.getStringValues();
                 LOGGER.debug("Locating consent decision(s) for [{}] and service [{}]", principal, service.getId());
                 return values
                     .stream()
@@ -75,9 +75,9 @@ public class LdapConsentRepository implements ConsentRepository {
 
     @Override
     public Collection<ConsentDecision> findConsentDecisions(final String principal) {
-        final LdapEntry entry = readConsentEntry(principal);
+        final var entry = readConsentEntry(principal);
         if (entry != null) {
-            final LdapAttribute consentDecisions = entry.getAttribute(this.ldap.getConsentAttributeName());
+            final var consentDecisions = entry.getAttribute(this.ldap.getConsentAttributeName());
             if (consentDecisions != null) {
                 LOGGER.debug("Located consent decision for [{}] at attribute [{}]", principal, this.ldap.getConsentAttributeName());
                 return consentDecisions.getStringValues()
@@ -91,7 +91,7 @@ public class LdapConsentRepository implements ConsentRepository {
 
     @Override
     public Collection<ConsentDecision> findConsentDecisions() {
-        final Collection<LdapEntry> entries = readConsentEntries();
+        final var entries = readConsentEntries();
         if (entries != null && !entries.isEmpty()) {
             final Set<ConsentDecision> decisions = new HashSet<>();
             entries
@@ -111,9 +111,9 @@ public class LdapConsentRepository implements ConsentRepository {
 
     @Override
     public boolean storeConsentDecision(final ConsentDecision decision) {
-        final LdapEntry entry = readConsentEntry(decision.getPrincipal());
+        final var entry = readConsentEntry(decision.getPrincipal());
         if (entry != null) {
-            final Set<String> newConsent = mergeDecision(entry.getAttribute(this.ldap.getConsentAttributeName()), decision);
+            final var newConsent = mergeDecision(entry.getAttribute(this.ldap.getConsentAttributeName()), decision);
             return executeModifyOperation(newConsent, entry);
         }
         return false;
@@ -122,9 +122,9 @@ public class LdapConsentRepository implements ConsentRepository {
     @Override
     public boolean deleteConsentDecision(final long id) {
         LOGGER.debug("Deleting consent decision [{}]", id);
-        final Collection<LdapEntry> entries = readConsentEntries();
+        final var entries = readConsentEntries();
         entries.forEach(entry -> {
-            final Set<String> newConsent = removeDecisionById(entry.getAttribute(this.ldap.getConsentAttributeName()), id);
+            final var newConsent = removeDecisionById(entry.getAttribute(this.ldap.getConsentAttributeName()), id);
             executeModifyOperation(newConsent, entry);
         });
         return !entries.isEmpty();
@@ -133,9 +133,9 @@ public class LdapConsentRepository implements ConsentRepository {
     @Override
     public boolean deleteConsentDecisions(final String principal) {
         LOGGER.debug("Deleting consent decisions for principal [{}]", principal);
-        final LdapEntry entry = readConsentEntry(principal);
+        final var entry = readConsentEntry(principal);
         if (entry != null) {
-            final Set<String> newConsent = removeDecision(entry.getAttribute(this.ldap.getConsentAttributeName()),
+            final var newConsent = removeDecision(entry.getAttribute(this.ldap.getConsentAttributeName()),
                 Predicates.alwaysFalse());
             return executeModifyOperation(newConsent, entry);
         }
@@ -171,8 +171,8 @@ public class LdapConsentRepository implements ConsentRepository {
         }
 
         if (ldapConsent != null) {
-            final Set<String> result = removeDecisionById(ldapConsent, decision.getId());
-            final String json = mapToJson(decision);
+            final var result = removeDecisionById(ldapConsent, decision.getId());
+            final var json = mapToJson(decision);
             if (StringUtils.isBlank(json)) {
                 throw new IllegalArgumentException("Could not map consent decision to JSON");
             }
@@ -181,7 +181,7 @@ public class LdapConsentRepository implements ConsentRepository {
             return CollectionUtils.wrap(result);
         }
         final Set<String> result = new HashSet<>();
-        final String json = mapToJson(decision);
+        final var json = mapToJson(decision);
         if (StringUtils.isBlank(json)) {
             throw new IllegalArgumentException("Could not map consent decision to JSON");
         }
@@ -222,12 +222,12 @@ public class LdapConsentRepository implements ConsentRepository {
      */
     private LdapEntry readConsentEntry(final String principal) {
         try {
-            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter, CollectionUtils.wrap(Arrays.asList(principal)));
+            final var filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter, CollectionUtils.wrap(Arrays.asList(principal)));
             LOGGER.debug("Locating consent LDAP entry via filter [{}] based on attribute [{}]", filter, this.ldap.getConsentAttributeName());
-            final Response<SearchResult> response =
+            final var response =
                 LdapUtils.executeSearchOperation(this.connectionFactory, this.ldap.getBaseDn(), filter, this.ldap.getConsentAttributeName());
             if (LdapUtils.containsResultEntry(response)) {
-                final LdapEntry entry = response.getResult().getEntry();
+                final var entry = response.getResult().getEntry();
                 LOGGER.debug("Locating consent LDAP entry [{}]", entry);
                 return entry;
             }
@@ -244,15 +244,15 @@ public class LdapConsentRepository implements ConsentRepository {
      */
     private Collection<LdapEntry> readConsentEntries() {
         try {
-            final String att = this.ldap.getConsentAttributeName();
-            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter('(' + att + "=*)");
+            final var att = this.ldap.getConsentAttributeName();
+            final var filter = LdapUtils.newLdaptiveSearchFilter('(' + att + "=*)");
 
             LOGGER.debug("Locating consent LDAP entries via filter [{}] based on attribute [{}]", filter, att);
-            final Response<SearchResult> response = LdapUtils
+            final var response = LdapUtils
                 .executeSearchOperation(this.connectionFactory, this.ldap.getBaseDn(), filter, att);
             if (LdapUtils.containsResultEntry(response)) {
 
-                final Collection<LdapEntry> results = response.getResult().getEntries();
+                final var results = response.getResult().getEntries();
                 LOGGER.debug("Locating [{}] consent LDAP entries", results.size());
                 return results;
             }
@@ -274,7 +274,7 @@ public class LdapConsentRepository implements ConsentRepository {
 
     private static String mapToJson(final ConsentDecision consent) {
         try {
-            final String json = MAPPER.writeValueAsString(consent);
+            final var json = MAPPER.writeValueAsString(consent);
             LOGGER.trace("Transformed consent object [{}] as JSON value [{}]", consent, json);
             return json;
         } catch (final Exception e) {

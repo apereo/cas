@@ -38,22 +38,22 @@ public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
     @Override
     public boolean isSatisfiedBy(final Authentication authentication) throws Exception {
         try {
-            final HttpHeaders acceptHeaders = new HttpHeaders();
+            final var acceptHeaders = new HttpHeaders();
             acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
             final HttpEntity<Principal> entity = new HttpEntity<>(authentication.getPrincipal(), acceptHeaders);
             LOGGER.warn("Checking authentication policy for [{}] via POST at [{}]", authentication.getPrincipal(), this.endpoint);
-            final ResponseEntity<String> resp = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, String.class);
+            final var resp = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, String.class);
             if (resp == null) {
                 LOGGER.warn("[{}] returned no responses", this.endpoint);
                 throw new GeneralSecurityException("No response returned from REST endpoint to determine authentication policy");
             }
             if (resp.getStatusCode() != HttpStatus.OK) {
-                final Exception ex = handleResponseStatusCode(resp.getStatusCode(), authentication.getPrincipal());
+                final var ex = handleResponseStatusCode(resp.getStatusCode(), authentication.getPrincipal());
                 throw new GeneralSecurityException(ex);
             }
             return true;
         } catch (final HttpClientErrorException e) {
-            final Exception ex = handleResponseStatusCode(e.getStatusCode(), authentication.getPrincipal());
+            final var ex = handleResponseStatusCode(e.getStatusCode(), authentication.getPrincipal());
             throw new GeneralSecurityException(ex);
         }
     }

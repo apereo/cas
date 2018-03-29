@@ -36,8 +36,8 @@ public class OAuth20DefaultUserProfileViewRendererFlatTests extends AbstractOAut
                 OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES, 
                 CollectionUtils.wrap("email", "cas@example.org", "name", "Test"),
                 "something", CollectionUtils.wrapList("something"));
-        final String json = oauthUserProfileViewRenderer.render(map, mock(AccessToken.class));
-        final JsonObject value = JsonValue.readJSON(json).asObject();
+        final var json = oauthUserProfileViewRenderer.render(map, mock(AccessToken.class));
+        final var value = JsonValue.readJSON(json).asObject();
         assertNotNull(value.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID));
         assertNotNull(value.get("email"));
         assertNotNull(value.get("name"));

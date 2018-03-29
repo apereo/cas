@@ -71,7 +71,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
 
     private RegisteredService insert(final RegisteredService rs) {
         try {
-            final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
+            final var entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
             LdapUtils.executeAddOperation(this.connectionFactory, entry);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -88,7 +88,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
     private RegisteredService update(final RegisteredService rs) {
         String currentDn = null;
         try {
-            final Response<SearchResult> response = searchForServiceById(rs.getId());
+            final var response = searchForServiceById(rs.getId());
             if (LdapUtils.containsResultEntry(response)) {
                 currentDn = response.getResult().getEntry().getDn();
             }
@@ -97,7 +97,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
         }
         if (StringUtils.isNotBlank(currentDn)) {
             LOGGER.debug("Updating registered service at [{}]", currentDn);
-            final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
+            final var entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
             LdapUtils.executeModifyOperation(currentDn, this.connectionFactory, entry);
         } else {
             LOGGER.debug("Failed to locate DN for registered service by id [{}]. Attempting to save the service anew", rs.getId());
@@ -109,9 +109,9 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
     @Override
     public boolean delete(final RegisteredService registeredService) {
         try {
-            final Response<SearchResult> response = searchForServiceById(registeredService.getId());
+            final var response = searchForServiceById(registeredService.getId());
             if (LdapUtils.containsResultEntry(response)) {
-                final LdapEntry entry = response.getResult().getEntry();
+                final var entry = response.getResult().getEntry();
                 return LdapUtils.executeDeleteOperation(this.connectionFactory, entry);
             }
         } catch (final LdapException e) {
@@ -133,7 +133,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
     @Override
     public long size() {
         try {
-            final Response<SearchResult> response = getSearchResultResponse();
+            final var response = getSearchResultResponse();
             if (LdapUtils.containsResultEntry(response)) {
                 return response.getResult().size();
             }
@@ -147,7 +147,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
     public List<RegisteredService> load() {
         final List<RegisteredService> list = new ArrayList<>();
         try {
-            final Response<SearchResult> response = getSearchResultResponse();
+            final var response = getSearchResultResponse();
             if (LdapUtils.containsResultEntry(response)) {
                 response.getResult().getEntries()
                     .stream()
@@ -171,7 +171,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService findServiceById(final long id) {
         try {
-            final Response<SearchResult> response = searchForServiceById(id);
+            final var response = searchForServiceById(id);
             if (LdapUtils.containsResultEntry(response)) {
                 return this.ldapServiceMapper.mapToRegisteredService(response.getResult().getEntry());
             }
@@ -194,7 +194,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
      * @throws LdapException the ldap exception
      */
     private Response<SearchResult> searchForServiceById(final Long id) throws LdapException {
-        final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter,
+        final var filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter,
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(id.toString()));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);
     }

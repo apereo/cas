@@ -28,34 +28,34 @@ public class TicketEncryptionDecryptionTests {
 
     @Test
     public void checkSerializationOfTgt() {
-        final byte[] bytes = SerializationUtils.serializeAndEncodeObject(cipher, tgt);
-        final Ticket obj = SerializationUtils.decodeAndDeserializeObject(bytes, cipher, Ticket.class);
+        final var bytes = SerializationUtils.serializeAndEncodeObject(cipher, tgt);
+        final var obj = SerializationUtils.decodeAndDeserializeObject(bytes, cipher, Ticket.class);
         assertNotNull(obj);
     }
 
     @Test
     public void checkSerializationOfSt() {
-        final MockServiceTicket st = new MockServiceTicket("serviceid", RegisteredServiceTestUtils.getService(), tgt);
-        final byte[] bytes = SerializationUtils.serializeAndEncodeObject(cipher, st);
-        final Ticket obj = SerializationUtils.decodeAndDeserializeObject(bytes, cipher, Ticket.class);
+        final var st = new MockServiceTicket("serviceid", RegisteredServiceTestUtils.getService(), tgt);
+        final var bytes = SerializationUtils.serializeAndEncodeObject(cipher, st);
+        final var obj = SerializationUtils.decodeAndDeserializeObject(bytes, cipher, Ticket.class);
         assertNotNull(obj);
     }
 
     @Test
     public void checkSerializationOfStBase64Encode() {
-        final MockServiceTicket st = new MockServiceTicket("serviceid", RegisteredServiceTestUtils.getService(), tgt);
-        final byte[] bytes = SerializationUtils.serializeAndEncodeObject(cipher, st);
-        final String string = EncodingUtils.encodeBase64(bytes);
+        final var st = new MockServiceTicket("serviceid", RegisteredServiceTestUtils.getService(), tgt);
+        final var bytes = SerializationUtils.serializeAndEncodeObject(cipher, st);
+        final var string = EncodingUtils.encodeBase64(bytes);
         assertNotNull(string);
-        final byte[] result = EncodingUtils.decodeBase64(string);
-        final Ticket obj = SerializationUtils.decodeAndDeserializeObject(result, cipher, Ticket.class);
+        final var result = EncodingUtils.decodeBase64(string);
+        final var obj = SerializationUtils.decodeAndDeserializeObject(result, cipher, Ticket.class);
         assertNotNull(obj);
     }
 
     @Test
     public void checkSerializationOfTgtByteSource() throws Exception {
-        final ByteSource bytes = ByteSource.wrap(SerializationUtils.serializeAndEncodeObject(cipher, tgt));
-        final Ticket obj = SerializationUtils.decodeAndDeserializeObject(bytes.read(), cipher, Ticket.class);
+        final var bytes = ByteSource.wrap(SerializationUtils.serializeAndEncodeObject(cipher, tgt));
+        final var obj = SerializationUtils.decodeAndDeserializeObject(bytes.read(), cipher, Ticket.class);
         assertNotNull(obj);
     }
 

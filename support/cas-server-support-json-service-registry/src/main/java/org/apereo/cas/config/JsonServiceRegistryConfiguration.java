@@ -44,7 +44,7 @@ public class JsonServiceRegistryConfiguration implements ServiceRegistryExecutio
     @Bean
     @SneakyThrows
     public ServiceRegistry jsonServiceRegistry() {
-        final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
+        final var registry = casProperties.getServiceRegistry();
         return new JsonServiceRegistry(registry.getJson().getLocation(),
             registry.isWatcherEnabled(), eventPublisher, registeredServiceReplicationStrategy);
     }

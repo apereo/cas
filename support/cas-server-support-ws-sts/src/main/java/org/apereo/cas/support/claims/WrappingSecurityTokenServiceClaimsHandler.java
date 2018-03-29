@@ -50,9 +50,9 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
             LOGGER.warn("No claims are available to process");
             return new ProcessedClaimCollection();
         }
-        final ProcessedClaimCollection claimCollection = new ProcessedClaimCollection();
+        final var claimCollection = new ProcessedClaimCollection();
         claims.stream().map(requestClaim -> {
-            final ProcessedClaim claim = new ProcessedClaim();
+            final var claim = new ProcessedClaim();
             claim.setClaimType(requestClaim.getClaimType());
             claim.setIssuer(this.issuer);
             claim.setOriginalIssuer(this.issuer);

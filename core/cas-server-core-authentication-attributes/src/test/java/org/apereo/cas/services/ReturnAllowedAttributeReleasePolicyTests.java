@@ -29,7 +29,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
     public void verifySerializeAReturnAllowedAttributeReleasePolicyToJson() throws IOException {
         final List<String> allowedAttributes = new ArrayList<>();
         allowedAttributes.add("attributeOne");
-        final ReturnAllowedAttributeReleasePolicy policyWritten = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
+        final var policyWritten = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
 

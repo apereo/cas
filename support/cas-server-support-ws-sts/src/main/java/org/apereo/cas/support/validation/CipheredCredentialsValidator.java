@@ -23,9 +23,9 @@ public class CipheredCredentialsValidator implements Validator {
     @Override
     public Credential validate(final Credential credential, final RequestData requestData) throws WSSecurityException {
         if (credential != null && credential.getUsernametoken() != null) {
-            final UsernameToken usernameToken = credential.getUsernametoken();
-            final String uid = usernameToken.getName();
-            final String psw = usernameToken.getPassword();
+            final var usernameToken = credential.getUsernametoken();
+            final var uid = usernameToken.getName();
+            final var psw = usernameToken.getPassword();
             if (cipherExecutor.decode(psw).equals(uid)) {
                 return credential;
             }

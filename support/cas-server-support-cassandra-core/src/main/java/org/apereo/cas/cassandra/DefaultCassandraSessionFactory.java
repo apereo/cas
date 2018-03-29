@@ -41,27 +41,27 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
 
     private static Cluster initializeCassandraCluster(final BaseCassandraProperties cassandra) {
         final Cluster cluster;
-        final PoolingOptions poolingOptions = new PoolingOptions()
+        final var poolingOptions = new PoolingOptions()
                 .setMaxRequestsPerConnection(HostDistance.LOCAL, cassandra.getMaxRequestsPerConnection())
                 .setConnectionsPerHost(HostDistance.LOCAL, cassandra.getCoreConnections(), cassandra.getMaxConnections());
 
-        final DCAwareRoundRobinPolicy.Builder dcPolicyBuilder = DCAwareRoundRobinPolicy.builder();
+        final var dcPolicyBuilder = DCAwareRoundRobinPolicy.builder();
         if (StringUtils.isNotBlank(cassandra.getLocalDc())) {
             dcPolicyBuilder.withLocalDc(cassandra.getLocalDc());
         }
 
-        final TokenAwarePolicy loadBalancingPolicy = new TokenAwarePolicy(dcPolicyBuilder.build(), cassandra.isShuffleReplicas());
+        final var loadBalancingPolicy = new TokenAwarePolicy(dcPolicyBuilder.build(), cassandra.isShuffleReplicas());
 
-        final SocketOptions socketOptions = new SocketOptions()
+        final var socketOptions = new SocketOptions()
                 .setConnectTimeoutMillis(cassandra.getConnectTimeoutMillis())
                 .setReadTimeoutMillis(cassandra.getReadTimeoutMillis());
 
-        final QueryOptions queryOptions = new QueryOptions()
+        final var queryOptions = new QueryOptions()
                 .setConsistencyLevel(ConsistencyLevel.valueOf(cassandra.getConsistencyLevel()))
                 .setSerialConsistencyLevel(ConsistencyLevel.valueOf(cassandra.getSerialConsistencyLevel()));
 
-        final RetryPolicy retryPolicy = RetryPolicyType.valueOf(cassandra.getRetryPolicy()).getRetryPolicy();
-        final Cluster.Builder builder =
+        final var retryPolicy = RetryPolicyType.valueOf(cassandra.getRetryPolicy()).getRetryPolicy();
+        final var builder =
                 Cluster.builder()
                         .withCredentials(cassandra.getUsername(), cassandra.getPassword())
                         .withPoolingOptions(poolingOptions)

@@ -31,8 +31,8 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
     @Override
     public Principal nominate(final Collection<Authentication> authentications, 
                               final Map<String, Object> principalAttributes) {
-        final Principal principal = authentications.iterator().next().getPrincipal();
-        final Principal finalPrincipal = this.principalFactory.createPrincipal(principal.getId(), principalAttributes);
+        final var principal = authentications.iterator().next().getPrincipal();
+        final var finalPrincipal = this.principalFactory.createPrincipal(principal.getId(), principalAttributes);
         LOGGER.debug("Nominated [{}] as the primary principal", finalPrincipal);
         return finalPrincipal;
     }

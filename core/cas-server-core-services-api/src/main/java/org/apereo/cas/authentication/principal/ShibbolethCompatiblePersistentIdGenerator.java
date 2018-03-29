@@ -49,16 +49,16 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         if (StringUtils.isBlank(salt)) {
             this.salt = new DefaultRandomStringGenerator(CONST_DEFAULT_SALT_COUNT).getNewString();
         }
-        final String data = String.join(CONST_SEPARATOR, service, principal);
-        final String result = StringUtils.remove(DigestUtils.shaBase64(this.salt, data, CONST_SEPARATOR), System.getProperty("line.separator"));
+        final var data = String.join(CONST_SEPARATOR, service, principal);
+        final var result = StringUtils.remove(DigestUtils.shaBase64(this.salt, data, CONST_SEPARATOR), System.getProperty("line.separator"));
         LOGGER.debug("Generated persistent id for [{}] is [{}]", data, result);
         return result;
     }
 
     @Override
     public String generate(final Principal principal, final Service service) {
-        final Map<String, Object> attributes = principal.getAttributes();
-        final String principalId = StringUtils.isNotBlank(this.attribute) && attributes.containsKey(this.attribute) ? attributes.get(this.attribute).toString() : principal.getId();
+        final var attributes = principal.getAttributes();
+        final var principalId = StringUtils.isNotBlank(this.attribute) && attributes.containsKey(this.attribute) ? attributes.get(this.attribute).toString() : principal.getId();
         return generate(principalId, service.getId());
     }
 

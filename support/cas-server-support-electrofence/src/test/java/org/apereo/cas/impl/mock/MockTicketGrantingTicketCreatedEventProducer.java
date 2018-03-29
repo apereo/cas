@@ -53,14 +53,14 @@ public class MockTicketGrantingTicketCreatedEventProducer {
         Pair.of("-38.41", "-63.61"));
 
     private static String getMockUserAgent() {
-        final int index = ThreadLocalRandom.current().nextInt(ALL_USER_AGENTS.size());
+        final var index = ThreadLocalRandom.current().nextInt(ALL_USER_AGENTS.size());
         return ALL_USER_AGENTS.get(index);
     }
 
     private static GeoLocationRequest getMockGeoLocation() {
-        final int index = ThreadLocalRandom.current().nextInt(ALL_GEOLOCS.size());
-        final GeoLocationRequest location = new GeoLocationRequest();
-        final Pair<String, String> pair = ALL_GEOLOCS.get(index);
+        final var index = ThreadLocalRandom.current().nextInt(ALL_GEOLOCS.size());
+        final var location = new GeoLocationRequest();
+        final var pair = ALL_GEOLOCS.get(index);
         location.setLatitude(pair.getKey());
         location.setLongitude(pair.getValue());
         location.setAccuracy("50");
@@ -69,12 +69,12 @@ public class MockTicketGrantingTicketCreatedEventProducer {
     }
 
     private static String getMockClientIpAddress() {
-        final int index = ThreadLocalRandom.current().nextInt(ALL_IP_ADDRS.size());
+        final var index = ThreadLocalRandom.current().nextInt(ALL_IP_ADDRS.size());
         return ALL_IP_ADDRS.get(index);
     }
 
     private static void createEvent(final int i, final CasEventRepository casEventRepository) {
-        final CasEvent dto = new CasEvent();
+        final var dto = new CasEvent();
         dto.setType(CasTicketGrantingTicketCreatedEvent.class.getName());
         dto.putTimestamp(new Date().getTime());
         dto.setCreationTime(ZonedDateTime.now(ZoneOffset.UTC).minusDays(5).toString());

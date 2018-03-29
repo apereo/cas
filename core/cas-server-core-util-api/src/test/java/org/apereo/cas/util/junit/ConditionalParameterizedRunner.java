@@ -21,8 +21,8 @@ public class ConditionalParameterizedRunner extends Parameterized {
     @Override
     @SneakyThrows
     protected void runChild(final Runner runner, final RunNotifier notifier) {
-        boolean runTests = true;
-        final ConditionalIgnore ignore = ((ParentRunner<Object>) runner).getTestClass().getAnnotation(ConditionalIgnore.class);
+        var runTests = true;
+        final var ignore = ((ParentRunner<Object>) runner).getTestClass().getAnnotation(ConditionalIgnore.class);
         if (ignore != null) {
             final IgnoreCondition condition = ignore.condition().getDeclaredConstructor().newInstance();
             runTests = condition.isSatisfied();

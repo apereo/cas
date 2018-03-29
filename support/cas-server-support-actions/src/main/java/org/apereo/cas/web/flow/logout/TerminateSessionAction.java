@@ -48,7 +48,7 @@ public class TerminateSessionAction extends AbstractAction {
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        boolean terminateSession = true;
+        var terminateSession = true;
         if (logoutProperties.isConfirmLogout()) {
             terminateSession = isLogoutRequestConfirmed(requestContext);
         }
@@ -66,17 +66,17 @@ public class TerminateSessionAction extends AbstractAction {
      */
     @SneakyThrows
     public Event terminate(final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
-        String tgtId = WebUtils.getTicketGrantingTicketId(context);
+        var tgtId = WebUtils.getTicketGrantingTicketId(context);
         // for logout, we need to get the cookie's value
         if (tgtId == null) {
             tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         }
         if (tgtId != null) {
             LOGGER.debug("Destroying SSO session linked to ticket-granting ticket [{}]", tgtId);
-            final List<LogoutRequest> logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
+            final var logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
             WebUtils.putLogoutRequests(context, logoutRequests);
         }
         LOGGER.debug("Removing CAS cookies");
@@ -97,19 +97,19 @@ public class TerminateSessionAction extends AbstractAction {
      */
     protected void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.debug("Destroying application session");
-        final ProfileManager manager = Pac4jUtils.getPac4jProfileManager(request, response);
+        final var manager = Pac4jUtils.getPac4jProfileManager(request, response);
         manager.logout();
 
-        final HttpSession session = request.getSession();
+        final var session = request.getSession();
         if (session != null) {
-            final Object requestedUrl = request.getSession().getAttribute(Pac4jConstants.REQUESTED_URL);
+            final var requestedUrl = request.getSession().getAttribute(Pac4jConstants.REQUESTED_URL);
             session.invalidate();
             request.getSession(true).setAttribute(Pac4jConstants.REQUESTED_URL, requestedUrl);
         }
     }
 
     private static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         return request.getParameterMap().containsKey("LogoutRequestConfirmed");
     }
 }

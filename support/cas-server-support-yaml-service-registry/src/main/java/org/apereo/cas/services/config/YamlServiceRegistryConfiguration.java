@@ -41,7 +41,7 @@ public class YamlServiceRegistryConfiguration implements ServiceRegistryExecutio
     @RefreshScope
     @SneakyThrows
     public ServiceRegistry yamlServiceRegistry() {
-        final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
+        final var registry = casProperties.getServiceRegistry();
         return new YamlServiceRegistry(registry.getYaml().getLocation(),
             registry.isWatcherEnabled(), eventPublisher, registeredServiceReplicationStrategy);
     }

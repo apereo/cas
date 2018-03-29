@@ -93,7 +93,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
          * @return the attribute merger
          */
         public IAttributeMerger getAttributeMerger() {
-            final String name = this.name().toUpperCase();
+            final var name = this.name().toUpperCase();
             switch(name.toUpperCase()) {
                 case "REPLACE":
                     return new ReplacingAttributeAdder();
@@ -146,10 +146,10 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      */
     private static Map<String, List<Object>> convertPrincipalAttributesToPersonAttributes(final Principal p) {
         final Map<String, List<Object>> convertedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        final Map<String, Object> principalAttributes = p.getAttributes();
+        final var principalAttributes = p.getAttributes();
         principalAttributes.entrySet().forEach(entry -> {
-            final Object values = entry.getValue();
-            final String key = entry.getKey();
+            final var values = entry.getValue();
+            final var key = entry.getKey();
             if (values instanceof List) {
                 convertedAttributes.put(key, (List) values);
             } else {
@@ -167,12 +167,12 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @return the map of attributes
      */
     protected Map<String, List<Object>> retrievePersonAttributesToPrincipalAttributes(final String id) {
-        final IPersonAttributes attrs = getAttributeRepository().getPerson(id);
+        final var attrs = getAttributeRepository().getPerson(id);
         if (attrs == null) {
             LOGGER.debug("Could not find principal [{}] in the repository so no attributes are returned.", id);
             return new HashMap<>(0);
         }
-        final Map<String, List<Object>> attributes = attrs.getAttributes();
+        final var attributes = attrs.getAttributes();
         if (attributes == null) {
             LOGGER.debug("Principal [{}] has no attributes and so none are returned.", id);
             return new HashMap<>(0);
@@ -182,7 +182,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
 
     @Override
     public Map<String, Object> getAttributes(final Principal p) {
-        final Map<String, Object> cachedAttributes = getPrincipalAttributes(p);
+        final var cachedAttributes = getPrincipalAttributes(p);
         if (cachedAttributes != null && !cachedAttributes.isEmpty()) {
             LOGGER.debug("Found [{}] cached attributes for principal [{}] that are [{}]", cachedAttributes.size(), p.getId(), cachedAttributes);
             return cachedAttributes;
@@ -191,19 +191,19 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
             LOGGER.debug("No attribute repository is defined for [{}]. Returning default principal attributes for [{}]", getClass().getName(), p.getId());
             return cachedAttributes;
         }
-        final Map<String, List<Object>> sourceAttributes = retrievePersonAttributesToPrincipalAttributes(p.getId());
+        final var sourceAttributes = retrievePersonAttributesToPrincipalAttributes(p.getId());
         LOGGER.debug("Found [{}] attributes for principal [{}] from the attribute repository.", sourceAttributes.size(), p.getId());
         if (this.mergingStrategy == null || this.mergingStrategy.getAttributeMerger() == null) {
             LOGGER.debug("No merging strategy found, so attributes retrieved from the repository will be used instead.");
             return convertAttributesToPrincipalAttributesAndCache(p, sourceAttributes);
         }
-        final Map<String, List<Object>> principalAttributes = convertPrincipalAttributesToPersonAttributes(p);
+        final var principalAttributes = convertPrincipalAttributesToPersonAttributes(p);
         LOGGER.debug("Merging current principal attributes with that of the repository via strategy [{}]", this.mergingStrategy);
         try {
-            final Map<String, List<Object>> mergedAttributes = this.mergingStrategy.getAttributeMerger().mergeAttributes(principalAttributes, sourceAttributes);
+            final var mergedAttributes = this.mergingStrategy.getAttributeMerger().mergeAttributes(principalAttributes, sourceAttributes);
             return convertAttributesToPrincipalAttributesAndCache(p, mergedAttributes);
         } catch (final Exception e) {
-            final StringBuilder builder = new StringBuilder();
+            final var builder = new StringBuilder();
             builder.append(e.getClass().getName().concat("-"));
             if (StringUtils.isNotBlank(e.getMessage())) {
                 builder.append(e.getMessage());
@@ -224,7 +224,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @return the map
      */
     private Map<String, Object> convertAttributesToPrincipalAttributesAndCache(final Principal p, final Map<String, List<Object>> sourceAttributes) {
-        final Map<String, Object> finalAttributes = convertPersonAttributesToPrincipalAttributes(sourceAttributes);
+        final var finalAttributes = convertPersonAttributesToPrincipalAttributes(sourceAttributes);
         addPrincipalAttributes(p.getId(), finalAttributes);
         return finalAttributes;
     }
@@ -249,7 +249,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     private IPersonAttributeDao getAttributeRepository() {
         try {
             if (this.attributeRepository == null) {
-                final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
+                final var context = ApplicationContextProvider.getApplicationContext();
                 if (context != null) {
                     return context.getBean("attributeRepository", IPersonAttributeDao.class);
                 }

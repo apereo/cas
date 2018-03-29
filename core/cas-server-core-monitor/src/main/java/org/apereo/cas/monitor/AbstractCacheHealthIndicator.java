@@ -30,13 +30,13 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
     @Override
     protected void doHealthCheck(final Health.Builder builder) throws Exception {
         try {
-            final CacheStatistics[] statistics = getStatistics();
+            final var statistics = getStatistics();
             if (statistics == null || statistics.length == 0) {
                 builder.outOfService().withDetail("message", "Cache statistics are not available.");
                 return;
             }
 
-            final Set<Status> statuses = Arrays.stream(statistics).map(this::status).collect(Collectors.toSet());
+            final var statuses = Arrays.stream(statistics).map(this::status).collect(Collectors.toSet());
             if (statuses.contains(Status.OUT_OF_SERVICE)) {
                 builder.outOfService();
             } else if (statuses.contains(Status.DOWN)) {

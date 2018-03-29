@@ -92,7 +92,7 @@ public class RadiusMultifactorConfiguration implements CasWebflowExecutionPlanCo
 
     @Bean
     public FlowDefinitionRegistry radiusFlowRegistry() {
-        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        final var builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-radius/*-webflow.xml");
         return builder.build();
@@ -137,7 +137,7 @@ public class RadiusMultifactorConfiguration implements CasWebflowExecutionPlanCo
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer radiusMultifactorTrustConfiguration() {
-            final boolean deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
+            final var deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
             return new RadiusMultifactorTrustWebflowConfigurer(flowBuilderServices,
                 loginFlowDefinitionRegistry, deviceRegistrationEnabled,
                 loginFlowDefinitionRegistry, applicationContext, casProperties);

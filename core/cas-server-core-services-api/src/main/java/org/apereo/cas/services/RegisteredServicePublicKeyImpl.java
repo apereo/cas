@@ -55,7 +55,7 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
     @SneakyThrows
     @Override
     public PublicKey createInstance() {
-        final PublicKeyFactoryBean factory = this.publicKeyFactoryBeanClass.getDeclaredConstructor().newInstance();
+        final var factory = this.publicKeyFactoryBeanClass.getDeclaredConstructor().newInstance();
         if (this.location.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
             factory.setResource(new ClassPathResource(StringUtils.removeStart(this.location, ResourceUtils.CLASSPATH_URL_PREFIX)));
         } else {

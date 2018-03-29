@@ -35,7 +35,7 @@ public class SurrogateRestAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public SurrogateAuthenticationService surrogateAuthenticationService() {
-        final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
+        final var su = casProperties.getAuthn().getSurrogate();
         LOGGER.debug("Using REST endpoint [{}] with method [{}] to locate surrogate accounts",
                 su.getRest().getUrl(), su.getRest().getMethod());
         return new SurrogateRestAuthenticationService(su.getRest(), servicesManager);

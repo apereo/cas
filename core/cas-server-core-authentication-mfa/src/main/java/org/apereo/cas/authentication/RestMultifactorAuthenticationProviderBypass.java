@@ -34,8 +34,8 @@ public class RestMultifactorAuthenticationProviderBypass extends DefaultMultifac
                                                                   final MultifactorAuthenticationProvider provider,
                                                                   final HttpServletRequest request) {
         try {
-            final Principal principal = authentication.getPrincipal();
-            final MultifactorAuthenticationProviderBypassProperties.Rest rest = bypassProperties.getRest();
+            final var principal = authentication.getPrincipal();
+            final var rest = bypassProperties.getRest();
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
                             + "service [{}] and provider [{}] via REST endpoint [{}]",
                     principal.getId(), registeredService, provider, rest.getUrl());
@@ -46,7 +46,7 @@ public class RestMultifactorAuthenticationProviderBypass extends DefaultMultifac
                 parameters.put("service", registeredService.getServiceId());
             }
 
-            final HttpResponse response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
+            final var response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
                     rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), parameters, new HashMap<>());
             return response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
         } catch (final Exception e) {

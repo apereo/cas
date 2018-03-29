@@ -44,8 +44,8 @@ public abstract class BaseJdbcAttributeRepositoryTests {
     public void setupDatabase() {
         this.dataSource = JpaBeans.newDataSource(casProperties.getAuthn().getAttributeRepository().getJdbc().get(0));
         @Cleanup
-        final Connection c = dataSource.getConnection();
-        final Statement s = c.createStatement();
+        final var c = dataSource.getConnection();
+        final var s = c.createStatement();
         c.setAutoCommit(true);
         prepareDatabaseTable(s);
     }
@@ -56,8 +56,8 @@ public abstract class BaseJdbcAttributeRepositoryTests {
     @SneakyThrows
     public void cleanup() {
         @Cleanup
-        final Connection c = dataSource.getConnection();
-        final Statement s = c.createStatement();
+        final var c = dataSource.getConnection();
+        final var s = c.createStatement();
         c.setAutoCommit(true);
         s.execute("delete from table_users;");
         s.execute("drop table table_users;");

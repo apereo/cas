@@ -28,9 +28,9 @@ public class StaticUserGraphicalAuthenticationRepository implements UserGraphica
     @Override
     public ByteSource getGraphics(final String username) {
         try {
-            final GraphicalUserAuthenticationProperties gua = casProperties.getAuthn().getGua();
-            final Resource resource = gua.getResource().getLocation();
-            final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            final var gua = casProperties.getAuthn().getGua();
+            final var resource = gua.getResource().getLocation();
+            final var bos = new ByteArrayOutputStream();
             IOUtils.copy(resource.getInputStream(), bos);
             return ByteSource.wrap(bos.toByteArray());
         } catch (final Exception e) {

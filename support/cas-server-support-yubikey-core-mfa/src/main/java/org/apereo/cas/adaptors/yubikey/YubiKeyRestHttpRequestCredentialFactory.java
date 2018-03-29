@@ -22,7 +22,7 @@ public class YubiKeyRestHttpRequestCredentialFactory implements RestHttpRequestC
 
     @Override
     public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
-        final String otp = requestBody.getFirst("yubikeyotp");
+        final var otp = requestBody.getFirst("yubikeyotp");
         LOGGER.debug("YubiKey token in the request body: [{}]", otp);
         if (StringUtils.isBlank(otp)) {
             return new ArrayList<>(0);

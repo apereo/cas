@@ -26,8 +26,8 @@ public class UsernamePasswordRestHttpRequestCredentialFactory implements RestHtt
 
     @Override
     public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
-        final String username = requestBody.getFirst(USERNAME);
-        final String password = requestBody.getFirst(PASSWORD);
+        final var username = requestBody.getFirst(USERNAME);
+        final var password = requestBody.getFirst(PASSWORD);
         if (username == null || password == null) {
             LOGGER.debug("Invalid payload. 'username' and 'password' form fields are required.");
             return new ArrayList<>(0);

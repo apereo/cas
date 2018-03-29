@@ -18,7 +18,7 @@ public class DuoDirectAuthenticationAction extends AbstractAction {
     
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final DuoDirectCredential c = new DuoDirectCredential(WebUtils.getAuthentication(requestContext));
+        final var c = new DuoDirectCredential(WebUtils.getAuthentication(requestContext));
         WebUtils.putCredential(requestContext, c);
         return success();
     }

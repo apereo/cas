@@ -94,13 +94,13 @@ public class CasCoreUtilConfiguration implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        final ConfigurableApplicationContext ctx = applicationContextProvider().getConfigurableApplicationContext();
-        final DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService(true);
+        final var ctx = applicationContextProvider().getConfigurableApplicationContext();
+        final var conversionService = new DefaultFormattingConversionService(true);
         conversionService.setEmbeddedValueResolver(new CasEmbeddedValueResolver(ctx));
         ctx.getEnvironment().setConversionService(conversionService);
-        final ConfigurableEnvironment env = (ConfigurableEnvironment) ctx.getParent().getEnvironment();
+        final var env = (ConfigurableEnvironment) ctx.getParent().getEnvironment();
         env.setConversionService(conversionService);
-        final ConverterRegistry registry = (ConverterRegistry) DefaultConversionService.getSharedInstance();
+        final var registry = (ConverterRegistry) DefaultConversionService.getSharedInstance();
         registry.addConverter(zonedDateTimeToStringConverter());
     }
 }

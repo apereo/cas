@@ -22,7 +22,7 @@ public class RemoteEndpointServiceAccessStrategyTests {
 
     @Test
     public void verifySerializeAX509CertificateCredentialToJson() throws IOException {
-        final RemoteEndpointServiceAccessStrategy strategyWritten = new RemoteEndpointServiceAccessStrategy();
+        final var strategyWritten = new RemoteEndpointServiceAccessStrategy();
 
         MAPPER.writeValue(JSON_FILE, strategyWritten);
 

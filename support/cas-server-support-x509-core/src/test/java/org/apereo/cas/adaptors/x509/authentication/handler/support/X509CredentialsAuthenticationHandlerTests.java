@@ -186,7 +186,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         });
 
         // Test case #12: Valid certificate on expired CRL data
-        final ThresholdExpiredCRLRevocationPolicy zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
+        final var zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
         checker = new ResourceCRLRevocationChecker(new ClassPathResource("userCA-expired.crl"), null, zeroThresholdPolicy);
         checker.init();
         handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"), checker);
@@ -207,7 +207,7 @@ public class X509CredentialsAuthenticationHandlerTests {
     public void verifyAuthenticate() {
         try {
             if (this.handler.supports(this.credential)) {
-                final AuthenticationHandlerExecutionResult result = this.handler.authenticate(this.credential);
+                final var result = this.handler.authenticate(this.credential);
                 if (this.expectedResult instanceof DefaultAuthenticationHandlerExecutionResult) {
                     assertEquals(this.expectedResult, result);
                 } else {
@@ -232,10 +232,10 @@ public class X509CredentialsAuthenticationHandlerTests {
     }
 
     protected static X509Certificate[] createCertificates(final String... files) {
-        final X509Certificate[] certs = new X509Certificate[files.length];
+        final var certs = new X509Certificate[files.length];
 
-        int i = 0;
-        for (final String file : files) {
+        var i = 0;
+        for (final var file : files) {
             try {
                 certs[i++] = CertUtil.readCertificate(new ClassPathResource(file).getInputStream());
             } catch (final Exception e) {

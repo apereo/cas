@@ -35,15 +35,15 @@ public class CasConfigurationJasyptCipherExecutorTests {
 
     @Test
     public void verifyDecryptionEncryption() {
-        final String result = jasypt.encryptValue(getClass().getSimpleName());
+        final var result = jasypt.encryptValue(getClass().getSimpleName());
         assertNotNull(result);
-        final String plain = jasypt.decryptValue(result);
+        final var plain = jasypt.decryptValue(result);
         assertEquals(plain, getClass().getSimpleName());
     }
 
     @Test
     public void verifyDecryptionEncryptionPairNotNeeded() {
-        final String result = jasypt.decryptValue("keyValue");
+        final var result = jasypt.decryptValue("keyValue");
         assertNotNull(result);
         assertEquals("keyValue", result);
 
@@ -51,15 +51,15 @@ public class CasConfigurationJasyptCipherExecutorTests {
 
     @Test
     public void verifyDecryptionEncryptionPairFails() {
-        final String encVal = CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "keyValue";
-        final String result = jasypt.decode(encVal);
+        final var encVal = CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "keyValue";
+        final var result = jasypt.decode(encVal);
         assertNull(result);
     }
 
     @Test
     public void verifyDecryptionEncryptionPairSuccess() {
-        final String value = jasypt.encryptValue("Testing");
-        final String result = jasypt.decode(value);
+        final var value = jasypt.encryptValue("Testing");
+        final var result = jasypt.decode(value);
         assertNotNull(result);
         assertEquals("Testing", result);
     }

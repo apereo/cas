@@ -24,7 +24,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
 
     @Override
     public TicketDefinition find(final String ticketId) {
-        final TicketDefinition defn = ticketMetadataMap.values().stream()
+        final var defn = ticketMetadataMap.values().stream()
             .filter(md -> ticketId.startsWith(md.getPrefix())).findFirst().orElse(null);
         if (defn == null) {
             LOGGER.error("Ticket definition for [{}] cannot be found in the ticket catalog "

@@ -47,21 +47,21 @@ public class JmsTicketRegistry extends DefaultTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        final boolean result = super.deleteSingleTicket(ticketId);
+        final var result = super.deleteSingleTicket(ticketId);
         publishMessageToQueue(new DeleteTicketMessageQueueCommand(id, ticketId));
         return result;
     }
 
     @Override
     public long deleteAll() {
-        final long result = super.deleteAll();
+        final var result = super.deleteAll();
         publishMessageToQueue(new DeleteTicketsMessageQueueCommand(id));
         return result;
     }
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        final Ticket result = super.updateTicket(ticket);
+        final var result = super.updateTicket(ticket);
         publishMessageToQueue(new UpdateTicketMessageQueueCommand(id, ticket));
         return result;
     }

@@ -38,8 +38,8 @@ public class CouchbaseTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public CouchbaseClientFactory ticketRegistryCouchbaseClientFactory() {
-        final CouchbaseTicketRegistryProperties cb = casProperties.getTicket().getRegistry().getCouchbase();
-        final Set<String> nodes = StringUtils.commaDelimitedListToSet(cb.getNodeSet());
+        final var cb = casProperties.getTicket().getRegistry().getCouchbase();
+        final var nodes = StringUtils.commaDelimitedListToSet(cb.getNodeSet());
         return new CouchbaseClientFactory(nodes, cb.getBucket(),
             cb.getPassword(),
             Beans.newDuration(cb.getTimeout()).toMillis(),
@@ -51,8 +51,8 @@ public class CouchbaseTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        final CouchbaseTicketRegistryProperties couchbase = casProperties.getTicket().getRegistry().getCouchbase();
-        final CouchbaseTicketRegistry c = new CouchbaseTicketRegistry(ticketCatalog, ticketRegistryCouchbaseClientFactory());
+        final var couchbase = casProperties.getTicket().getRegistry().getCouchbase();
+        final var c = new CouchbaseTicketRegistry(ticketCatalog, ticketRegistryCouchbaseClientFactory());
         c.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(couchbase.getCrypto(), "couchbase"));
         return c;
     }

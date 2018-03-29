@@ -39,12 +39,12 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         final Map<String, Object> allAttributes = new HashMap<>(principalAttributes);
         final List<String> grouperGroups = new ArrayList<>();
-        final Collection<WsGetGroupsResult> results = GrouperFacade.getGroupsForSubjectId(principal);
+        final var results = GrouperFacade.getGroupsForSubjectId(principal);
         if (results.isEmpty()) {
             LOGGER.warn("Subject id [{}] could not be located. Access denied", principal);
             return false;
         }
-        final boolean denied = results.stream().anyMatch(groupsResult -> {
+        final var denied = results.stream().anyMatch(groupsResult -> {
             if (groupsResult.getWsGroups() == null || groupsResult.getWsGroups().length == 0) {
                 LOGGER.warn("No groups could be found for subject [{}]. Access denied", groupsResult.getWsSubject().getName());
                 return true;

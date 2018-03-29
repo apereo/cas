@@ -53,10 +53,10 @@ public class CasCoreAuthenticationSupportConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "authenticationContextValidator")
     public AuthenticationContextValidator authenticationContextValidator() {
-        final MultifactorAuthenticationProperties mfa = casProperties.getAuthn().getMfa();
-        final String contextAttribute = mfa.getAuthenticationContextAttribute();
-        final String failureMode = mfa.getGlobalFailureMode();
-        final String authnAttributeName = mfa.getTrusted().getAuthenticationContextAttribute();
+        final var mfa = casProperties.getAuthn().getMfa();
+        final var contextAttribute = mfa.getAuthenticationContextAttribute();
+        final var failureMode = mfa.getGlobalFailureMode();
+        final var authnAttributeName = mfa.getTrusted().getAuthenticationContextAttribute();
         return new DefaultAuthenticationContextValidator(contextAttribute, failureMode, authnAttributeName);
     }
 

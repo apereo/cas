@@ -26,31 +26,31 @@ public class GenericSuccessViewActionTests {
 
     @Test
     public void verifyValidPrincipal() throws InvalidTicketException {
-        final CentralAuthenticationService cas = mock(CentralAuthenticationService.class);
-        final ServicesManager mgr = mock(ServicesManager.class);
-        final ServiceFactory factory = mock(ServiceFactory.class);
+        final var cas = mock(CentralAuthenticationService.class);
+        final var mgr = mock(ServicesManager.class);
+        final var factory = mock(ServiceFactory.class);
         
-        final Authentication authn = mock(Authentication.class);
+        final var authn = mock(Authentication.class);
         when(authn.getPrincipal()).thenReturn(
                 CoreAuthenticationTestUtils.getPrincipal("cas"));
-        final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
+        final var tgt = mock(TicketGrantingTicket.class);
         when(tgt.getAuthentication()).thenReturn(authn);
         
         when(cas.getTicket(any(String.class), any())).thenReturn(tgt);
-        final GenericSuccessViewAction action = new GenericSuccessViewAction(cas, mgr, factory, "");
-        final Principal p = action.getAuthenticationPrincipal("TGT-1");
+        final var action = new GenericSuccessViewAction(cas, mgr, factory, "");
+        final var p = action.getAuthenticationPrincipal("TGT-1");
         assertNotNull(p);
         assertEquals("cas", p.getId());
     }
 
     @Test
     public void verifyPrincipalCanNotBeDetermined() throws InvalidTicketException {
-        final CentralAuthenticationService cas = mock(CentralAuthenticationService.class);
-        final ServicesManager mgr = mock(ServicesManager.class);
-        final ServiceFactory factory = mock(ServiceFactory.class);
+        final var cas = mock(CentralAuthenticationService.class);
+        final var mgr = mock(ServicesManager.class);
+        final var factory = mock(ServiceFactory.class);
         when(cas.getTicket(any(String.class), any())).thenThrow(new InvalidTicketException("TGT-1"));
-        final GenericSuccessViewAction action = new GenericSuccessViewAction(cas, mgr, factory, "");
-        final Principal p = action.getAuthenticationPrincipal("TGT-1");
+        final var action = new GenericSuccessViewAction(cas, mgr, factory, "");
+        final var p = action.getAuthenticationPrincipal("TGT-1");
         assertNotNull(p);
         assertTrue(p instanceof NullPrincipal);
     }

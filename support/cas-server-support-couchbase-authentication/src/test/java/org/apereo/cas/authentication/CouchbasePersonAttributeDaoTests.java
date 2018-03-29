@@ -69,7 +69,7 @@ public class CouchbasePersonAttributeDaoTests {
 
     @Test
     public void verifyAttributes() {
-        final IPersonAttributes person = attributeRepository.getPerson("casuser");
+        final var person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
         final Map attributes = person.getAttributes();
         assertTrue(attributes.containsKey("firstname"));

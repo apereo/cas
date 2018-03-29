@@ -46,17 +46,17 @@ public class CasVersion {
     @SneakyThrows
     public static ZonedDateTime getDateTime() {
         final Class clazz = CasVersion.class;
-        final URL resource = clazz.getResource(clazz.getSimpleName() + ".class");
+        final var resource = clazz.getResource(clazz.getSimpleName() + ".class");
         if ("file".equals(resource.getProtocol())) {
             return DateTimeUtils.zonedDateTimeOf(new File(resource.toURI()).lastModified());
         }
         if ("jar".equals(resource.getProtocol())) {
-            final String path = resource.getPath();
-            final File file = new File(path.substring(5, path.indexOf('!')));
+            final var path = resource.getPath();
+            final var file = new File(path.substring(5, path.indexOf('!')));
             return DateTimeUtils.zonedDateTimeOf(file.lastModified());
         }
         if ("vfs".equals(resource.getProtocol())) {
-            final File file = new VfsResource(resource.openConnection().getContent()).getFile();
+            final var file = new VfsResource(resource.openConnection().getContent()).getFile();
             return DateTimeUtils.zonedDateTimeOf(file.lastModified());
         }
         LOGGER.warn("Unhandled url protocol: [{}] resource: [{}]", resource.getProtocol(), resource);

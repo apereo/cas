@@ -39,7 +39,7 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
             if (StringUtils.isBlank(this.scriptFile)) {
                 return new HashMap<>(0);
             }
-            final Matcher matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(this.scriptFile);
+            final var matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(this.scriptFile);
             if (matcherInline.find()) {
                 return getAttributesFromInlineGroovyScript(attributes, matcherInline);
             }
@@ -51,8 +51,8 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
     }
 
     private static Map<String, Object> getAttributesFromInlineGroovyScript(final Map<String, Object> attributes, final Matcher matcherInline) {
-        final String script = matcherInline.group(1).trim();
-        final Map<String, Object> args = CollectionUtils.wrap("attributes", attributes, "logger", LOGGER);
+        final var script = matcherInline.group(1).trim();
+        final var args = CollectionUtils.wrap("attributes", attributes, "logger", LOGGER);
         final Map<String, Object> map = ScriptingUtils.executeGroovyScriptEngine(script, args, Map.class);
         return ObjectUtils.defaultIfNull(map, new HashMap<>());
     }

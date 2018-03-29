@@ -17,21 +17,21 @@ public class UnauthorizedSsoServiceExceptionTests {
 
     @Test
     public void verifyGetCode() {
-        final UnauthorizedSsoServiceException e = new UnauthorizedSsoServiceException();
+        final var e = new UnauthorizedSsoServiceException();
         assertEquals(CODE, e.getMessage());
     }
 
     @Test
     public void verifyCodeConstructor() {
-        final UnauthorizedSsoServiceException e = new UnauthorizedSsoServiceException(MESSAGE);
+        final var e = new UnauthorizedSsoServiceException(MESSAGE);
 
         assertEquals(MESSAGE, e.getMessage());
     }
 
     @Test
     public void verifyThrowableConstructorWithCode() {
-        final RuntimeException r = new RuntimeException();
-        final UnauthorizedSsoServiceException e = new UnauthorizedSsoServiceException(MESSAGE, r);
+        final var r = new RuntimeException();
+        final var e = new UnauthorizedSsoServiceException(MESSAGE, r);
 
         assertEquals(MESSAGE, e.getMessage());
         assertEquals(r, e.getCause());

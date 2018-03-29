@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 public class DefaultTokenRequestExtractor implements TokenRequestExtractor {
     @Override
     public String extract(final HttpServletRequest request) {
-        String authTokenValue = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
+        var authTokenValue = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
         if (StringUtils.isBlank(authTokenValue)) {
             authTokenValue = request.getHeader(TokenConstants.PARAMETER_NAME_TOKEN);
         }

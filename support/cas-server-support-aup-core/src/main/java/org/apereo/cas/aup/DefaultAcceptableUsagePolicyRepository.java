@@ -30,8 +30,8 @@ public class DefaultAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
 
     @Override
     public Pair<Boolean, Principal> verify(final RequestContext requestContext, final Credential credential) {
-        final String key = credential.getId();
-        final Principal principal = WebUtils.getPrincipalFromRequestContext(requestContext, this.ticketRegistrySupport);
+        final var key = credential.getId();
+        final var principal = WebUtils.getPrincipalFromRequestContext(requestContext, this.ticketRegistrySupport);
         if (this.policyMap.containsKey(key)) {
             return Pair.of(this.policyMap.get(key), principal);
         }

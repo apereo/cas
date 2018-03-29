@@ -31,7 +31,7 @@ public class DefaultAuthenticationTransactionManager implements AuthenticationTr
                                                    final AuthenticationResultBuilder authenticationResult)
             throws AuthenticationException {
         if (!authenticationTransaction.getCredentials().isEmpty()) {
-            final Authentication authentication = this.authenticationManager.authenticate(authenticationTransaction);
+            final var authentication = this.authenticationManager.authenticate(authenticationTransaction);
             LOGGER.debug("Successful authentication; Collecting authentication result [{}]", authentication);
             publishEvent(new CasAuthenticationTransactionCompletedEvent(this, authentication));
             authenticationResult.collect(authentication);

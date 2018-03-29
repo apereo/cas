@@ -26,7 +26,7 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
 
     @Before
     public void prepareHttpClient() throws Exception {
-        final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
+        final var clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(new SSLConnectionSocketFactory(
                 new DefaultCasSslContext(TRUST_STORE, TRUST_STORE_PSW, KeyStore.getDefaultType()).getSslContext()));
         this.client = clientFactory.getObject();
@@ -34,13 +34,13 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
 
     @Test
     public void verifySuccessfulConnection() {
-        final boolean valid = client.isValidEndPoint("https://www.github.com");
+        final var valid = client.isValidEndPoint("https://www.github.com");
         assertTrue(valid);
     }
 
     @Test
     public void verifySuccessfulConnectionWithCustomSSLCert() {
-        final boolean valid = client.isValidEndPoint("https://self-signed.badssl.com");
+        final var valid = client.isValidEndPoint("https://self-signed.badssl.com");
         assertTrue(valid);
     }
 

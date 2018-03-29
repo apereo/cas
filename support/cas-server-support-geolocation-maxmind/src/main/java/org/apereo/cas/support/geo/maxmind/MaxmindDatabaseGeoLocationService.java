@@ -53,15 +53,15 @@ public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationServic
     @Override
     public GeoLocationResponse locate(final InetAddress address) {
         try {
-            final GeoLocationResponse location = new GeoLocationResponse();
+            final var location = new GeoLocationResponse();
             if (this.cityDatabaseReader != null) {
-                final CityResponse response = this.cityDatabaseReader.city(address);
+                final var response = this.cityDatabaseReader.city(address);
                 location.addAddress(response.getCity().getName());
                 location.setLatitude(response.getLocation().getLatitude());
                 location.setLongitude(response.getLocation().getLongitude());
             }
             if (this.countryDatabaseReader != null) {
-                final CountryResponse response = this.countryDatabaseReader.country(address);
+                final var response = this.countryDatabaseReader.country(address);
                 location.addAddress(response.getCountry().getName());
             }
             LOGGER.debug("Geo location for [{}] is calculated as [{}]", address, location);

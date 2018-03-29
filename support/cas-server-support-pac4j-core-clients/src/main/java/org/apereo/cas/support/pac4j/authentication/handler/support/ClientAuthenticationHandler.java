@@ -49,18 +49,18 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         try {
-            final ClientCredential clientCredentials = (ClientCredential) credential;
+            final var clientCredentials = (ClientCredential) credential;
             LOGGER.debug("Located client credentials as [{}]", clientCredentials);
 
-            final Credentials credentials = clientCredentials.getCredentials();
+            final var credentials = clientCredentials.getCredentials();
             LOGGER.debug("Client name: [{}]", clientCredentials.getClientName());
 
             // get client
-            final Client client = this.clients.findClient(clientCredentials.getClientName());
+            final var client = this.clients.findClient(clientCredentials.getClientName());
             LOGGER.debug("Delegated client is: [{}]", client);
 
-            final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
-            final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
+            final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
+            final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
             final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
 
             final UserProfile userProfile = client.getUserProfile(credentials, webContext);

@@ -36,9 +36,9 @@ public class CasAcceptableUsagePolicyMongoDbConfiguration {
     @RefreshScope
     @Bean
     public MongoTemplate mongoAcceptableUsagePolicyTemplate() {
-        final AcceptableUsagePolicyProperties.MongoDb mongo = casProperties.getAcceptableUsagePolicy().getMongo();
-        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
-        final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
+        final var mongo = casProperties.getAcceptableUsagePolicy().getMongo();
+        final var factory = new MongoDbConnectionFactory();
+        final var mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
@@ -46,7 +46,7 @@ public class CasAcceptableUsagePolicyMongoDbConfiguration {
     @RefreshScope
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
-        final AcceptableUsagePolicyProperties.MongoDb mongo = casProperties.getAcceptableUsagePolicy().getMongo();
+        final var mongo = casProperties.getAcceptableUsagePolicy().getMongo();
         return new MongoDbAcceptableUsagePolicyRepository(ticketRegistrySupport,
                 casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
                 mongoAcceptableUsagePolicyTemplate(),

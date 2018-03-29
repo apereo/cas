@@ -60,18 +60,18 @@ public class FortressAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticateSuccessfully() throws Exception {
-        final UUID sessionId = UUID.randomUUID();
-        final Session session = new Session(new User(CoreAuthenticationTestUtils.CONST_USERNAME), sessionId.toString());
+        final var sessionId = UUID.randomUUID();
+        final var session = new Session(new User(CoreAuthenticationTestUtils.CONST_USERNAME), sessionId.toString());
         session.setAuthenticated(true);
         Mockito.when(accessManager.createSession(Mockito.any(User.class), Mockito.anyBoolean())).thenReturn(session);
         try {
-            final AuthenticationHandlerExecutionResult handlerResult = fortressAuthenticationHandler.authenticateUsernamePasswordInternal(
+            final var handlerResult = fortressAuthenticationHandler.authenticateUsernamePasswordInternal(
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), null);
             Assert.assertEquals(CoreAuthenticationTestUtils.CONST_USERNAME,
                 handlerResult.getPrincipal().getId());
-            final JAXBContext jaxbContext = JAXBContext.newInstance(Session.class);
-            final Marshaller marshaller = jaxbContext.createMarshaller();
-            final StringWriter writer = new StringWriter();
+            final var jaxbContext = JAXBContext.newInstance(Session.class);
+            final var marshaller = jaxbContext.createMarshaller();
+            final var writer = new StringWriter();
             marshaller.marshal(session, writer);
             Assert.assertEquals(writer.toString(), handlerResult.getPrincipal()
                 .getAttributes().get(FortressAuthenticationHandler.FORTRESS_SESSION_KEY));

@@ -19,7 +19,7 @@ public class RegisteredServiceRedisTemplate extends RedisTemplate<String, Regist
 
     public RegisteredServiceRedisTemplate() {
         final RedisSerializer<String> string = new StringRedisSerializer();
-        final JdkSerializationRedisSerializer jdk = new JdkSerializationRedisSerializer();
+        final var jdk = new JdkSerializationRedisSerializer();
         setKeySerializer(string);
         setValueSerializer(jdk);
         setHashKeySerializer(string);

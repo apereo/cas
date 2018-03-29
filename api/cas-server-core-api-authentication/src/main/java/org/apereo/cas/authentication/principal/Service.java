@@ -34,8 +34,8 @@ public interface Service extends Principal {
      */
     default boolean matches(Service service) {
         try {
-            final String thisUrl = URLDecoder.decode(getId(), StandardCharsets.UTF_8.name());
-            final String serviceUrl = URLDecoder.decode(service.getId(), StandardCharsets.UTF_8.name());
+            final var thisUrl = URLDecoder.decode(getId(), StandardCharsets.UTF_8.name());
+            final var serviceUrl = URLDecoder.decode(service.getId(), StandardCharsets.UTF_8.name());
 
             LOGGER.trace("Decoded urls and comparing [{}] with [{}]", thisUrl, serviceUrl);
             return thisUrl.equalsIgnoreCase(serviceUrl);

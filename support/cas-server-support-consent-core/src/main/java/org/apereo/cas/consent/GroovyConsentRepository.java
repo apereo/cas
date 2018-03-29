@@ -24,7 +24,7 @@ public class GroovyConsentRepository extends BaseConsentRepository {
 
     @Override
     public boolean storeConsentDecision(final ConsentDecision decision) {
-        final boolean result = super.storeConsentDecision(decision);
+        final var result = super.storeConsentDecision(decision);
         writeAccountToGroovyResource(decision);
         return result;
     }

@@ -25,25 +25,25 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
 
     @Override
     public Authentication getAuthenticationFrom(final String ticketGrantingTicketId) throws RuntimeException {
-        final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        final var tgt = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
         return tgt == null || tgt.isExpired() ? null : tgt.getAuthentication();
     }
 
     @Override
     public Principal getAuthenticatedPrincipalFrom(final String ticketGrantingTicketId) throws RuntimeException {
-        final Authentication auth = getAuthenticationFrom(ticketGrantingTicketId);
+        final var auth = getAuthenticationFrom(ticketGrantingTicketId);
         return auth == null ? null : auth.getPrincipal();
     }
 
     @Override
     public Map<String, Object> getPrincipalAttributesFrom(final String ticketGrantingTicketId) throws RuntimeException {
-        final Principal principal = getAuthenticatedPrincipalFrom(ticketGrantingTicketId);
+        final var principal = getAuthenticatedPrincipalFrom(ticketGrantingTicketId);
         return principal == null ? null : principal.getAttributes();
     }
 
     @Override
     public void updateAuthentication(final String ticketGrantingTicketId, final Authentication authentication) {
-        final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        final var tgt = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
         tgt.getAuthentication().update(authentication);
         this.ticketRegistry.updateTicket(tgt);
     }

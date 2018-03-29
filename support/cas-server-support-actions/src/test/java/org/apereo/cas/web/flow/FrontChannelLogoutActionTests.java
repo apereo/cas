@@ -53,27 +53,27 @@ public class FrontChannelLogoutActionTests {
 
     @Before
     public void onSetUp() throws Exception {
-        final UrlValidator validator = new SimpleUrlValidatorFactoryBean(false).getObject();
+        final var validator = new SimpleUrlValidatorFactoryBean(false).getObject();
 
-        final DefaultSingleLogoutServiceMessageHandler handler = new DefaultSingleLogoutServiceMessageHandler(new SimpleHttpClientFactoryBean().getObject(),
+        final var handler = new DefaultSingleLogoutServiceMessageHandler(new SimpleHttpClientFactoryBean().getObject(),
             new SamlCompliantLogoutMessageCreator(), servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(validator), false,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
-        final DefaultLogoutManager logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(),
+        final var logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(),
             handler, false, mock(LogoutExecutionPlan.class));
 
         this.frontChannelLogoutAction = new FrontChannelLogoutAction(logoutManager);
 
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final var request = new MockHttpServletRequest();
+        final var response = new MockHttpServletResponse();
         this.requestContext = mock(RequestContext.class);
-        final ServletExternalContext servletExternalContext = mock(ServletExternalContext.class);
+        final var servletExternalContext = mock(ServletExternalContext.class);
         when(this.requestContext.getExternalContext()).thenReturn(servletExternalContext);
         when(servletExternalContext.getNativeRequest()).thenReturn(request);
         when(servletExternalContext.getNativeResponse()).thenReturn(response);
-        final LocalAttributeMap flowScope = new LocalAttributeMap();
+        final var flowScope = new LocalAttributeMap();
         when(this.requestContext.getFlowScope()).thenReturn(flowScope);
-        final MockFlowExecutionKey mockFlowExecutionKey = new MockFlowExecutionKey(FLOW_EXECUTION_KEY);
-        final MockFlowExecutionContext mockFlowExecutionContext = new MockFlowExecutionContext();
+        final var mockFlowExecutionKey = new MockFlowExecutionKey(FLOW_EXECUTION_KEY);
+        final var mockFlowExecutionContext = new MockFlowExecutionContext();
         mockFlowExecutionContext.setKey(mockFlowExecutionKey);
         when(this.requestContext.getFlowExecutionContext()).thenReturn(mockFlowExecutionContext);
     }
@@ -81,7 +81,7 @@ public class FrontChannelLogoutActionTests {
     @Test
     public void verifyLogoutNoIndex() throws Exception {
         WebUtils.putLogoutRequests(this.requestContext, new ArrayList<>(0));
-        final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
+        final var event = this.frontChannelLogoutAction.doExecute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
     }
 }

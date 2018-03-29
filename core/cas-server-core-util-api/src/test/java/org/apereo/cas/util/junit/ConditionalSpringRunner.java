@@ -27,7 +27,7 @@ public class ConditionalSpringRunner extends SpringJUnit4ClassRunner {
     @Override
     @SneakyThrows
     protected boolean isTestMethodIgnored(final FrameworkMethod frameworkMethod) {
-        ConditionalIgnore ignore = frameworkMethod.getDeclaringClass().getAnnotation(ConditionalIgnore.class);
+        var ignore = frameworkMethod.getDeclaringClass().getAnnotation(ConditionalIgnore.class);
         if (ignore != null) {
             final IgnoreCondition condition = ignore.condition().getDeclaredConstructor().newInstance();
             return !isIgnoreConditionSatisfied(ignore, condition);
@@ -43,7 +43,7 @@ public class ConditionalSpringRunner extends SpringJUnit4ClassRunner {
     @Override
     @SneakyThrows
     protected Statement withBeforeClasses(final Statement statement) {
-        final ConditionalIgnore ignore = getTestClass().getJavaClass().getAnnotation(ConditionalIgnore.class);
+        final var ignore = getTestClass().getJavaClass().getAnnotation(ConditionalIgnore.class);
         if (ignore != null) {
             final IgnoreCondition condition = ignore.condition().getDeclaredConstructor().newInstance();
             if (!isIgnoreConditionSatisfied(ignore, condition)) {
@@ -56,7 +56,7 @@ public class ConditionalSpringRunner extends SpringJUnit4ClassRunner {
     @Override
     @SneakyThrows
     protected Statement withAfterClasses(final Statement statement) {
-        final ConditionalIgnore ignore = getTestClass().getJavaClass().getAnnotation(ConditionalIgnore.class);
+        final var ignore = getTestClass().getJavaClass().getAnnotation(ConditionalIgnore.class);
         if (ignore != null) {
             final IgnoreCondition condition = ignore.condition().getDeclaredConstructor().newInstance();
             if (!isIgnoreConditionSatisfied(ignore, condition)) {
@@ -67,7 +67,7 @@ public class ConditionalSpringRunner extends SpringJUnit4ClassRunner {
     }
 
     private boolean isIgnoreConditionSatisfied(final ConditionalIgnore ignore, final IgnoreCondition ignoreCondition) {
-        boolean runTests = ignoreCondition.isSatisfied();
+        var runTests = ignoreCondition.isSatisfied();
         if (runTests && ignore.port() > 0) {
             runTests = !SocketUtils.isTcpPortAvailable(ignore.port());
         }

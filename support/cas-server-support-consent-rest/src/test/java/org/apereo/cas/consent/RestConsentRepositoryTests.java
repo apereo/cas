@@ -45,30 +45,30 @@ public class RestConsentRepositoryTests {
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withServerError());
 
-        final AbstractRegisteredService regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
-        final Service svc = RegisteredServiceTestUtils.getService();
-        final RestConsentRepository repo = new RestConsentRepository(this.restTemplate, "/consent");
-        final ConsentDecision d = repo.findConsentDecision(svc, regSvc, CoreAuthenticationTestUtils.getAuthentication());
+        final var regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
+        final var svc = RegisteredServiceTestUtils.getService();
+        final var repo = new RestConsentRepository(this.restTemplate, "/consent");
+        final var d = repo.findConsentDecision(svc, regSvc, CoreAuthenticationTestUtils.getAuthentication());
         assertNull(d);
         server.verify();
     }
     
     @Test
     public void verifyConsentDecisionIsFound() throws Exception {
-        final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
-        final DefaultConsentDecisionBuilder builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
-        final AbstractRegisteredService regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
-        final Service svc = RegisteredServiceTestUtils.getService();
-        final ConsentDecision decision = builder.build(svc,
+        final var mapper = new ObjectMapper().findAndRegisterModules();
+        final var builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
+        final var regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
+        final var svc = RegisteredServiceTestUtils.getService();
+        final var decision = builder.build(svc,
                 regSvc, "casuser",
                 CollectionUtils.wrap("attribute", "value"));
-        final String body = mapper.writeValueAsString(decision);
+        final var body = mapper.writeValueAsString(decision);
         server.expect(manyTimes(), requestTo("/consent"))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
 
-        final RestConsentRepository repo = new RestConsentRepository(this.restTemplate, "/consent");
-        final ConsentDecision d = repo.findConsentDecision(svc, regSvc, CoreAuthenticationTestUtils.getAuthentication());
+        final var repo = new RestConsentRepository(this.restTemplate, "/consent");
+        final var d = repo.findConsentDecision(svc, regSvc, CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(d);
         assertEquals("casuser", d.getPrincipal());
         server.verify();
@@ -80,8 +80,8 @@ public class RestConsentRepositoryTests {
                 .andExpect(method(HttpMethod.DELETE))
                 .andRespond(withSuccess());
         
-        final RestConsentRepository repo = new RestConsentRepository(this.restTemplate, "/consent");
-        final boolean b = repo.deleteConsentDecision(1);
+        final var repo = new RestConsentRepository(this.restTemplate, "/consent");
+        final var b = repo.deleteConsentDecision(1);
         assertTrue(b);
         server.verify();
     }

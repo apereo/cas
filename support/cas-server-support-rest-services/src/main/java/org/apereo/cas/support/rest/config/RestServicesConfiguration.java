@@ -45,13 +45,13 @@ public class RestServicesConfiguration {
 
     @Bean
     public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
-        final DefaultRegisteredServiceJsonSerializer serializer = new DefaultRegisteredServiceJsonSerializer();
+        final var serializer = new DefaultRegisteredServiceJsonSerializer();
         return new MappingJackson2HttpMessageConverter(serializer.getObjectMapper());
     }
 
     @Bean
     public RegisteredServiceResource registeredServiceResourceRestController() {
-        final RestProperties rest = casProperties.getRest();
+        final var rest = casProperties.getRest();
         if (StringUtils.isBlank(rest.getAttributeName())) {
             throw new BeanCreationException("No attribute name is defined to enforce authorization when adding services via CAS REST APIs. "
                 + "This is likely due to misconfiguration in CAS settings where the attribute name definition is absent");

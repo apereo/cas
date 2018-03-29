@@ -35,16 +35,16 @@ public class ConfirmConsentAction extends AbstractConsentAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        final Service service = this.authenticationRequestServiceSelectionStrategies.resolveService(WebUtils.getService(requestContext));
-        final RegisteredService registeredService = getRegisteredServiceForConsent(requestContext, service);
-        final Authentication authentication = WebUtils.getAuthentication(requestContext);
-        final int optionValue = Integer.parseInt(request.getParameter("option"));
-        final ConsentOptions option = ConsentOptions.valueOf(optionValue);
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        final var service = this.authenticationRequestServiceSelectionStrategies.resolveService(WebUtils.getService(requestContext));
+        final var registeredService = getRegisteredServiceForConsent(requestContext, service);
+        final var authentication = WebUtils.getAuthentication(requestContext);
+        final var optionValue = Integer.parseInt(request.getParameter("option"));
+        final var option = ConsentOptions.valueOf(optionValue);
 
-        final long reminder = Long.parseLong(request.getParameter("reminder"));
-        final String reminderTimeUnit = request.getParameter("reminderTimeUnit");
-        final ChronoUnit unit = ChronoUnit.valueOf(reminderTimeUnit.toUpperCase());
+        final var reminder = Long.parseLong(request.getParameter("reminder"));
+        final var reminderTimeUnit = request.getParameter("reminderTimeUnit");
+        final var unit = ChronoUnit.valueOf(reminderTimeUnit.toUpperCase());
 
         consentEngine.storeConsentDecision(service, registeredService, authentication, reminder, unit, option);
         return new EventFactorySupport().success(this);

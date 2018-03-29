@@ -23,11 +23,11 @@ public class X509SerialNumberAndIssuerDNPrincipalResolverTests extends AbstractX
 
     @Test
     public void verifyResolvePrincipalInternal() {
-        final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
+        final var c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
 
 
-        final String value = "SERIALNUMBER="
+        final var value = "SERIALNUMBER="
             + VALID_CERTIFICATE.getSerialNumber().toString()
             + ", " + VALID_CERTIFICATE.getIssuerDN().getName();
 
@@ -37,7 +37,7 @@ public class X509SerialNumberAndIssuerDNPrincipalResolverTests extends AbstractX
 
     @Test
     public void verifySupport() {
-        final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
+        final var c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         assertTrue(this.resolver.supports(c));
     }
 

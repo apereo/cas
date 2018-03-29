@@ -60,21 +60,21 @@ public class JpaServiceRegistryTests {
 
     @Before
     public void setUp() {
-        final List<RegisteredService> services = this.serviceRegistry.load();
+        final var services = this.serviceRegistry.load();
         services.forEach(service -> this.serviceRegistry.delete(service));
     }
 
     @Test
     public void verifySaveMethodWithNonExistentServiceAndNoAttributes() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("verifySaveMethodWithNonExistentServiceAndNoAttributes");
         r.setServiceId("testId");
         r.setTheme("theme");
         r.setDescription("description");
         r.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:/test.pub", "RSA"));
 
-        final RegisteredService r2 = this.serviceRegistry.save(r);
-        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
+        final var r2 = this.serviceRegistry.save(r);
+        final var r3 = this.serviceRegistry.findServiceById(r2.getId());
 
         assertEquals(r, r2);
         assertEquals(r2, r3);
@@ -82,18 +82,18 @@ public class JpaServiceRegistryTests {
 
     @Test
     public void verifySaveAttributeReleasePolicy() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("verifySaveAttributeReleasePolicy");
         r.setServiceId("testId");
         r.setTheme("theme");
         r.setDescription("description");
         r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        final DefaultRegisteredServiceAccessStrategy strategy = new DefaultRegisteredServiceAccessStrategy();
+        final var strategy = new DefaultRegisteredServiceAccessStrategy();
         strategy.setDelegatedAuthenticationPolicy(
             new DefaultRegisteredServiceDelegatedAuthenticationPolicy(CollectionUtils.wrapList("one", "two")));
         r.setAccessStrategy(strategy);
-        final RegisteredService r2 = this.serviceRegistry.save(r);
-        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
+        final var r2 = this.serviceRegistry.save(r);
+        final var r3 = this.serviceRegistry.findServiceById(r2.getId());
 
         assertEquals(r, r2);
         assertEquals(r2, r3);
@@ -103,7 +103,7 @@ public class JpaServiceRegistryTests {
 
     @Test
     public void verifySaveMethodWithExistingServiceNoAttribute() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("verifySaveMethodWithExistingServiceNoAttribute");
         r.setServiceId("testId");
         r.setTheme("theme");
@@ -111,13 +111,13 @@ public class JpaServiceRegistryTests {
 
         this.serviceRegistry.save(r);
 
-        final List<RegisteredService> services = this.serviceRegistry.load();
-        final RegisteredService r2 = services.get(0);
+        final var services = this.serviceRegistry.load();
+        final var r2 = services.get(0);
 
         r.setId(r2.getId());
         this.serviceRegistry.save(r);
 
-        final RegisteredService r3 = this.serviceRegistry.findServiceById(r.getId());
+        final var r3 = this.serviceRegistry.findServiceById(r.getId());
 
         assertEquals(r, r2);
         assertEquals(r.getTheme(), r3.getTheme());
@@ -125,7 +125,7 @@ public class JpaServiceRegistryTests {
 
     @Test
     public void verifyRegisteredServiceProperties() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("test");
         r.setServiceId("testId");
         r.setTheme("theme");
@@ -133,14 +133,14 @@ public class JpaServiceRegistryTests {
 
         final Map propertyMap = new HashMap<>();
 
-        final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
+        final var property = new DefaultRegisteredServiceProperty();
         final Set<String> values = new HashSet<>();
         values.add("value1");
         values.add("value2");
         property.setValues(values);
         propertyMap.put("field1", property);
 
-        final DefaultRegisteredServiceProperty property2 = new DefaultRegisteredServiceProperty();
+        final var property2 = new DefaultRegisteredServiceProperty();
 
         final Set<String> values2 = new HashSet<>();
         values2.add("value1");
@@ -152,7 +152,7 @@ public class JpaServiceRegistryTests {
 
         this.serviceRegistry.save(r);
 
-        final RegisteredService r2 = this.serviceRegistry.load().get(0);
+        final var r2 = this.serviceRegistry.load().get(0);
         assertEquals(2, r2.getProperties().size());
 
     }
@@ -160,12 +160,12 @@ public class JpaServiceRegistryTests {
 
     @Test
     public void verifyRegisteredServiceContacts() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("testContacts");
         r.setServiceId("testContacts");
 
         final List contacts = new ArrayList<>();
-        final DefaultRegisteredServiceContact contact = new DefaultRegisteredServiceContact();
+        final var contact = new DefaultRegisteredServiceContact();
         contact.setDepartment("department");
         contact.setId(1234);
         contact.setName("ContactName");
@@ -174,13 +174,13 @@ public class JpaServiceRegistryTests {
         r.setContacts(contacts);
 
         this.serviceRegistry.save(r);
-        final RegisteredService r2 = this.serviceRegistry.load().get(0);
+        final var r2 = this.serviceRegistry.load().get(0);
         assertEquals(1, r2.getContacts().size());
     }
 
     @Test
     public void verifyOAuthServices() {
-        final OAuthRegisteredService r = new OAuthRegisteredService();
+        final var r = new OAuthRegisteredService();
         r.setName("verifyOAuthServices");
         r.setServiceId("testId");
         r.setTheme("theme");
@@ -189,13 +189,13 @@ public class JpaServiceRegistryTests {
         r.setClientId("testoauthservice");
         r.setClientSecret("anothertest");
         r.setBypassApprovalPrompt(true);
-        final RegisteredService r2 = this.serviceRegistry.save(r);
+        final var r2 = this.serviceRegistry.save(r);
         assertEquals(r, r2);
     }
 
     @Test
     public void verifySamlService() {
-        final SamlRegisteredService r = new SamlRegisteredService();
+        final var r = new SamlRegisteredService();
         r.setName("verifySamlService");
         r.setServiceId("Testing");
         r.setDescription("description");
@@ -207,32 +207,32 @@ public class JpaServiceRegistryTests {
         r.setMetadataCriteriaRemoveEmptyEntitiesDescriptors(true);
         r.setMetadataSignatureLocation("location");
         r.setRequiredAuthenticationContextClass("Testing");
-        final SamlRegisteredService r2 = (SamlRegisteredService) this.serviceRegistry.save(r);
+        final var r2 = (SamlRegisteredService) this.serviceRegistry.save(r);
         assertEquals(r, r2);
     }
 
     @Test
     public void verifyExpiredServiceDeleted() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setServiceId("testExpired");
         r.setName("expired");
         r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, LocalDateTime.now().minusSeconds(1)));
-        final RegisteredService r2 = this.servicesManager.save(r);
+        final var r2 = this.servicesManager.save(r);
         DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis() + 2000);
         this.servicesManager.load();
-        final RegisteredService svc = this.servicesManager.findServiceBy(r2.getServiceId());
+        final var svc = this.servicesManager.findServiceBy(r2.getServiceId());
         assertNull(svc);
     }
 
     @Test
     public void verifyExpiredServiceDisabled() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setServiceId("testExpired1");
         r.setName("expired1");
-        final LocalDateTime expirationDate = LocalDateTime.now().plusSeconds(1);
+        final var expirationDate = LocalDateTime.now().plusSeconds(1);
         r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(false, expirationDate));
-        final RegisteredService r2 = this.servicesManager.save(r);
-        RegisteredService svc = this.servicesManager.findServiceBy(r2.getServiceId());
+        final var r2 = this.servicesManager.save(r);
+        var svc = this.servicesManager.findServiceBy(r2.getServiceId());
         assertNotNull(svc);
         DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis() + 2000);
         svc = this.servicesManager.findServiceBy(r2.getServiceId());

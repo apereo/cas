@@ -55,17 +55,17 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         try {
-            final RadiusTokenCredential radiusCredential = (RadiusTokenCredential) credential;
-            final String password = radiusCredential.getToken();
+            final var radiusCredential = (RadiusTokenCredential) credential;
+            final var password = radiusCredential.getToken();
 
-            final Authentication authentication = WebUtils.getInProgressAuthentication();
+            final var authentication = WebUtils.getInProgressAuthentication();
             if (authentication == null) {
                 throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
             }
-            final Principal principal = authentication.getPrincipal();
-            final String username = principal.getId();
+            final var principal = authentication.getPrincipal();
+            final var username = principal.getId();
 
-            final Pair<Boolean, Optional<Map<String, Object>>> result =
+            final var result =
                     RadiusUtils.authenticate(username, password, this.servers,
                             this.failoverOnAuthenticationFailure, this.failoverOnException);
             if (result.getKey()) {

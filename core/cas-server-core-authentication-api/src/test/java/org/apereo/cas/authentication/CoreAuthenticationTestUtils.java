@@ -52,7 +52,7 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword(final String username, final String password) {
-        final UsernamePasswordCredential usernamePasswordCredentials = new UsernamePasswordCredential();
+        final var usernamePasswordCredentials = new UsernamePasswordCredential();
         usernamePasswordCredentials.setUsername(username);
         usernamePasswordCredentials.setPassword(password);
 
@@ -72,7 +72,7 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static Service getService(final String id) {
-        final Service svc = mock(Service.class);
+        final var svc = mock(Service.class);
         when(svc.getId()).thenReturn(id);
         when(svc.matches(any(Service.class))).thenReturn(true);
         return svc;
@@ -131,13 +131,13 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static RegisteredService getRegisteredService(final String url) {
-        final RegisteredService service = mock(RegisteredService.class);
+        final var service = mock(RegisteredService.class);
         when(service.getServiceId()).thenReturn(url);
         when(service.getName()).thenReturn("service name");
         when(service.getId()).thenReturn(Long.MAX_VALUE);
         when(service.getDescription()).thenReturn("service description");
 
-        final RegisteredServiceAccessStrategy access = mock(RegisteredServiceAccessStrategy.class);
+        final var access = mock(RegisteredServiceAccessStrategy.class);
         when(access.isServiceAccessAllowed()).thenReturn(true);
         when(service.getAccessStrategy()).thenReturn(access);
         return service;

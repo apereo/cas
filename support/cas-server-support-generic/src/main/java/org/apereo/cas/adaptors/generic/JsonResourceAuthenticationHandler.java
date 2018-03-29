@@ -66,13 +66,13 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
             LOGGER.error(e.getMessage(), e);
             throw new PreventedException(e);
         }
-        final String username = credential.getUsername();
-        final String password = credential.getPassword();
+        final var username = credential.getUsername();
+        final var password = credential.getPassword();
         if (!map.containsKey(username)) {
             throw new AccountNotFoundException();
         }
 
-        final CasUserAccount account = map.get(username);
+        final var account = map.get(username);
         if (matches(password, account.getPassword())) {
             switch (account.getStatus()) {
                 case DISABLED:
@@ -90,15 +90,15 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
 
             final List<MessageDescriptor> warnings = new ArrayList<>();
             if (account.getExpirationDate() != null) {
-                final LocalDate now = LocalDate.now(ZoneOffset.UTC);
+                final var now = LocalDate.now(ZoneOffset.UTC);
                 if (now.isEqual(account.getExpirationDate()) || now.isAfter(account.getExpirationDate())) {
                     throw new AccountExpiredException();
                 }
                 if (getPasswordPolicyConfiguration() != null) {
-                    final LocalDate warningPeriod = account.getExpirationDate()
+                    final var warningPeriod = account.getExpirationDate()
                         .minusDays(getPasswordPolicyConfiguration().getPasswordWarningNumberOfDays());
                     if (now.isAfter(warningPeriod) || now.isEqual(warningPeriod)) {
-                        final long daysRemaining = ChronoUnit.DAYS.between(now, account.getExpirationDate());
+                        final var daysRemaining = ChronoUnit.DAYS.between(now, account.getExpirationDate());
                         warnings.add(new DefaultMessageDescriptor(
                             "password.expiration.loginsRemaining",
                             "You have {0} logins remaining before you MUST change your password.",
@@ -106,7 +106,7 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
                     }
                 }
             }
-            final Principal principal = this.principalFactory.createPrincipal(username, account.getAttributes());
+            final var principal = this.principalFactory.createPrincipal(username, account.getAttributes());
             return createHandlerResult(credential, principal, warnings);
         }
 

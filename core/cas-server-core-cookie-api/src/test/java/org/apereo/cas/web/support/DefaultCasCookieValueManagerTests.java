@@ -55,12 +55,12 @@ public class DefaultCasCookieValueManagerTests {
         whenGettingUserAgent().thenReturn(USER_AGENT);
 
         // test encoding first
-        final String encoded = cookieValueManager.buildCookieValue(VALUE, request);
+        final var encoded = cookieValueManager.buildCookieValue(VALUE, request);
         assertEquals(VALUE + "@" + CLIENT_IP + "@" + USER_AGENT, encoded);
 
         // now test decoding the cookie
         when(cookie.getValue()).thenReturn(encoded);
-        final String decoded = cookieValueManager.obtainCookieValue(cookie, request);
+        final var decoded = cookieValueManager.obtainCookieValue(cookie, request);
         assertEquals(VALUE, decoded);
     }
 

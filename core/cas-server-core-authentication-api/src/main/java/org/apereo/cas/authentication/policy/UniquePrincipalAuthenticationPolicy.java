@@ -28,11 +28,11 @@ public class UniquePrincipalAuthenticationPolicy implements AuthenticationPolicy
     @Override
     public boolean isSatisfiedBy(final Authentication authentication) throws Exception {
         try {
-            final Principal authPrincipal = authentication.getPrincipal();
-            final long count = this.ticketRegistry.getTickets(t -> {
-                boolean pass = TicketGrantingTicket.class.isInstance(t) && !t.isExpired();
+            final var authPrincipal = authentication.getPrincipal();
+            final var count = this.ticketRegistry.getTickets(t -> {
+                var pass = TicketGrantingTicket.class.isInstance(t) && !t.isExpired();
                 if (pass) {
-                    final Principal principal = TicketGrantingTicket.class.cast(t).getAuthentication().getPrincipal();
+                    final var principal = TicketGrantingTicket.class.cast(t).getAuthentication().getPrincipal();
                     pass = principal.getId().equalsIgnoreCase(authPrincipal.getId());
                 }
                 return pass;

@@ -15,8 +15,8 @@ import static org.junit.Assert.*;
 public class OAuthAccessTokenSovereignExpirationPolicyTests extends BaseOAuthExpirationPolicyTests {
     @Test
     public void verifyAccessTokenExpiryWhenTgtIsExpired() {
-        final TicketGrantingTicket tgt = newTicketGrantingTicket();
-        final AccessToken at = newAccessToken(tgt);
+        final var tgt = newTicketGrantingTicket();
+        final var at = newAccessToken(tgt);
 
         assertFalse("Access token must not be expired", at.isExpired());
         tgt.markTicketExpired();

@@ -34,12 +34,12 @@ public class CasMongoDbThrottlingConfiguration {
     @Bean
     @RefreshScope
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailExecutionPlan) {
-        final ThrottleProperties throttle = casProperties.getAuthn().getThrottle();
-        final ThrottleProperties.Failure failure = throttle.getFailure();
+        final var throttle = casProperties.getAuthn().getThrottle();
+        final var failure = throttle.getFailure();
 
-        final AuditMongoDbProperties mongo = casProperties.getAudit().getMongo();
-        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
-        final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
+        final var mongo = casProperties.getAudit().getMongo();
+        final var factory = new MongoDbConnectionFactory();
+        final var mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
 
         return new MongoDbThrottledSubmissionHandlerInterceptorAdapter(failure.getThreshold(),

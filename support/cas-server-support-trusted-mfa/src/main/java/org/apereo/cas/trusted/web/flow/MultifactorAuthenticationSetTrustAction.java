@@ -31,7 +31,7 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        final Authentication c = WebUtils.getAuthentication(requestContext);
+        final var c = WebUtils.getAuthentication(requestContext);
         if (c == null) {
             LOGGER.error("Could not determine authentication from the request context");
             return error();
@@ -39,15 +39,15 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
 
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(c);
 
-        final String principal = c.getPrincipal().getId();
+        final var principal = c.getPrincipal().getId();
         if (!MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
             LOGGER.debug("Attempt to store trusted authentication record for [{}]", principal);
-            final MultifactorAuthenticationTrustRecord record = MultifactorAuthenticationTrustRecord.newInstance(principal,
+            final var record = MultifactorAuthenticationTrustRecord.newInstance(principal,
                     MultifactorAuthenticationTrustUtils.generateGeography(),
                     deviceFingerprintStrategy.determineFingerprint(principal, requestContext, true));
 
             if (requestContext.getRequestParameters().contains(PARAM_NAME_DEVICE_NAME)) {
-                final String deviceName = requestContext.getRequestParameters().get(PARAM_NAME_DEVICE_NAME);
+                final var deviceName = requestContext.getRequestParameters().get(PARAM_NAME_DEVICE_NAME);
                 if (StringUtils.isNotBlank(deviceName)) {
                     record.setName(deviceName);
                 }

@@ -52,7 +52,7 @@ public class FlowExecutionExceptionResolver implements HandlerExceptionResolver 
             return null;
         }
 
-        final String urlToRedirectTo = request.getRequestURI()
+        final var urlToRedirectTo = request.getRequestURI()
                 + (request.getQueryString() != null ? '?'
                 + request.getQueryString() : StringUtils.EMPTY);
 

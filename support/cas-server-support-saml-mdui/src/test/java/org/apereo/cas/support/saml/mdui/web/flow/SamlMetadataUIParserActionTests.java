@@ -43,11 +43,11 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyEntityIdUIInfoExists() throws Exception {
-        final MockRequestContext ctx = new MockRequestContext();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var ctx = new MockRequestContext();
+        final var request = new MockHttpServletRequest();
         request.addParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, "https://carmenwiki.osu.edu/shibboleth");
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final MockServletContext sCtx = new MockServletContext();
+        final var response = new MockHttpServletResponse();
+        final var sCtx = new MockServletContext();
         ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
         ctx.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService());
         samlMetadataUIParserAction.execute(ctx);
@@ -57,13 +57,13 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyEntityIdUIInfoNoParam() throws Exception {
-        final MockRequestContext ctx = new MockRequestContext();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var ctx = new MockRequestContext();
+        final var request = new MockHttpServletRequest();
         request.addParameter("somethingelse", "https://carmenwiki.osu.edu/shibboleth");
 
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final var response = new MockHttpServletResponse();
 
-        final MockServletContext sCtx = new MockServletContext();
+        final var sCtx = new MockServletContext();
         ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
         samlMetadataUIParserAction.execute(ctx);
         assertNull(WebUtils.getServiceUserInterfaceMetadata(ctx, SamlMetadataUIInfo.class));

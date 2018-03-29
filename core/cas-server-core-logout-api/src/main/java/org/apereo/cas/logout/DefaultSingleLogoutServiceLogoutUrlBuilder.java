@@ -25,12 +25,12 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilder implements SingleLogoutS
     @SneakyThrows
     public URL determineLogoutUrl(final RegisteredService registeredService, final WebApplicationService singleLogoutService) {
 
-        final URL serviceLogoutUrl = registeredService.getLogoutUrl();
+        final var serviceLogoutUrl = registeredService.getLogoutUrl();
         if (serviceLogoutUrl != null) {
             LOGGER.debug("Logout request will be sent to [{}] for service [{}]", serviceLogoutUrl, singleLogoutService);
             return serviceLogoutUrl;
         }
-        final String originalUrl = singleLogoutService.getOriginalUrl();
+        final var originalUrl = singleLogoutService.getOriginalUrl();
         if (this.urlValidator.isValid(originalUrl)) {
             LOGGER.debug("Logout request will be sent to [{}] for service [{}]", originalUrl, singleLogoutService);
             return new URL(originalUrl);

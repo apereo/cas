@@ -67,7 +67,7 @@ public class GraphicalUserAuthenticationConfiguration implements CasWebflowExecu
     @Bean
     @ConditionalOnMissingBean(name = "userGraphicalAuthenticationRepository")
     public UserGraphicalAuthenticationRepository userGraphicalAuthenticationRepository() {
-        final GraphicalUserAuthenticationProperties gua = casProperties.getAuthn().getGua();
+        final var gua = casProperties.getAuthn().getGua();
         if (gua.getResource().getLocation() != null) {
             return new StaticUserGraphicalAuthenticationRepository();
         }

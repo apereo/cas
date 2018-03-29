@@ -28,9 +28,9 @@ public class DigestAuthenticationWebflowConfigurer extends AbstractCasWebflowCon
 
     @Override
     protected void doInitialize() {
-        final Flow flow = getLoginFlow();
+        final var flow = getLoginFlow();
         if (flow != null) {
-            final ActionState actionState = createActionState(flow, "digestAuthenticationCheck",
+            final var actionState = createActionState(flow, "digestAuthenticationCheck",
                     createEvaluateAction("digestAuthenticationAction"));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                     CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET));

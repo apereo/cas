@@ -24,19 +24,19 @@ public class PrincipalScimProvisionerAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final UsernamePasswordCredential c = (UsernamePasswordCredential) WebUtils.getCredential(requestContext);
+        final var c = (UsernamePasswordCredential) WebUtils.getCredential(requestContext);
         if (c == null) {
             LOGGER.debug("No credential found in the request context to provision");
             return success();
         }
-        final Authentication authentication = WebUtils.getAuthentication(requestContext);
+        final var authentication = WebUtils.getAuthentication(requestContext);
         if (authentication == null) {
             LOGGER.debug("No authentication found in the request context to provision");
             return success();
         }
-        final Principal p = authentication.getPrincipal();
+        final var p = authentication.getPrincipal();
         LOGGER.debug("Starting to provision principal [{}]", p);
-        final boolean res = this.scimProvisioner.create(p, c);
+        final var res = this.scimProvisioner.create(p, c);
         if (res) {
             LOGGER.debug("Provisioning of principal [{}] executed successfully", p);
         } else {

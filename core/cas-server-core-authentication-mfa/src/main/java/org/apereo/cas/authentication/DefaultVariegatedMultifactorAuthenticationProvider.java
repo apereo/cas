@@ -48,7 +48,7 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
 
     @Override
     public boolean isAvailable(final RegisteredService service) throws AuthenticationException {
-        final long count = this.providers.stream().filter(p -> p.isAvailable(service)).count();
+        final var count = this.providers.stream().filter(p -> p.isAvailable(service)).count();
         return count == providers.size();
     }
 
@@ -70,7 +70,7 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
     @Override
     public <T extends MultifactorAuthenticationProvider> T findProvider(final String identifier, @NonNull final Class<T> clazz) {
 
-        final MultifactorAuthenticationProvider provider = findProvider(identifier);
+        final var provider = findProvider(identifier);
         if (provider == null) {
             return null;
         }

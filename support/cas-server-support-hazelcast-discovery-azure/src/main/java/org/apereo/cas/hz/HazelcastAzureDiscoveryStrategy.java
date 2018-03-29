@@ -20,7 +20,7 @@ import java.util.Map;
 public class HazelcastAzureDiscoveryStrategy implements HazelcastDiscoveryStrategy {
     @Override
     public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster) {
-        final HazelcastAzureDiscoveryProperties azure = cluster.getDiscovery().getAzure();
+        final var azure = cluster.getDiscovery().getAzure();
         final Map<String, Comparable> properties = new HashMap<>();
         if (StringUtils.hasText(azure.getClientId())) {
             properties.put(HazelcastAzureDiscoveryProperties.AZURE_DISCOVERY_CLIENT_ID, azure.getClientId());

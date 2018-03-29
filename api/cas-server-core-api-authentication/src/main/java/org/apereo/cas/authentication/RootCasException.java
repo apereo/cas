@@ -55,7 +55,7 @@ public abstract class RootCasException extends RuntimeException {
      * the code itself.
      */
     public String getCode() {
-        final Throwable cause = this.getCause();
+        final var cause = this.getCause();
         if (cause instanceof RootCasException) {
             return ((RootCasException) cause).getCode();
         }

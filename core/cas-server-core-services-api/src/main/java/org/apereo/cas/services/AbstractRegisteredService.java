@@ -169,7 +169,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     @Override
     public AbstractRegisteredService clone() {
-        final AbstractRegisteredService clone = newInstance();
+        final var clone = newInstance();
         clone.copyFrom(this);
         return clone;
     }

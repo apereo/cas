@@ -43,12 +43,12 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
     public final AuthenticationRiskScore calculate(final Authentication authentication,
                                                    final RegisteredService service,
                                                    final HttpServletRequest request) {
-        final Principal principal = authentication.getPrincipal();
-        final Collection<CasEvent> events = getCasTicketGrantingTicketCreatedEventsFor(principal.getId());
+        final var principal = authentication.getPrincipal();
+        final var events = getCasTicketGrantingTicketCreatedEventsFor(principal.getId());
         if (events.isEmpty()) {
             return new AuthenticationRiskScore(HIGHEST_RISK_SCORE);
         }
-        final AuthenticationRiskScore score = new AuthenticationRiskScore(calculateScore(request, authentication, service, events));
+        final var score = new AuthenticationRiskScore(calculateScore(request, authentication, service, events));
         LOGGER.debug("Calculated authentication risk score by [{}] is [{}]", getClass().getSimpleName(), score);
         return score;
     }
@@ -76,10 +76,10 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
      * @return the cas ticket granting ticket created events for
      */
     protected Collection<CasEvent> getCasTicketGrantingTicketCreatedEventsFor(final String principal) {
-        final String type = CasTicketGrantingTicketCreatedEvent.class.getName();
+        final var type = CasTicketGrantingTicketCreatedEvent.class.getName();
         LOGGER.debug("Retrieving events of type [{}] for [{}]", type, principal);
         
-        final ZonedDateTime date = ZonedDateTime.now()
+        final var date = ZonedDateTime.now()
                 .minusDays(casProperties.getAuthn().getAdaptive().getRisk().getDaysInRecentHistory());
         return casEventRepository.getEventsOfTypeForPrincipal(type, principal, date);
     }
@@ -92,7 +92,7 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
      * @return the final averaged score
      */
     protected BigDecimal getFinalAveragedScore(final long eventCount, final long total) {
-        final BigDecimal score = BigDecimal.valueOf(eventCount).divide(BigDecimal.valueOf(total), 2, BigDecimal.ROUND_HALF_UP);
+        final var score = BigDecimal.valueOf(eventCount).divide(BigDecimal.valueOf(total), 2, BigDecimal.ROUND_HALF_UP);
         return HIGHEST_RISK_SCORE.subtract(score);
     }
 }

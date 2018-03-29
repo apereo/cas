@@ -34,11 +34,11 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
     @Override
     public ByteSource getGraphics(final String username) {
         try {
-            final GraphicalUserAuthenticationProperties gua = casProperties.getAuthn().getGua();
-            final Response<SearchResult> response = searchForId(username);
+            final var gua = casProperties.getAuthn().getGua();
+            final var response = searchForId(username);
             if (LdapUtils.containsResultEntry(response)) {
-                final LdapEntry entry = response.getResult().getEntry();
-                final LdapAttribute attribute = entry.getAttribute(gua.getLdap().getImageAttribute());
+                final var entry = response.getResult().getEntry();
+                final var attribute = entry.getAttribute(gua.getLdap().getImageAttribute());
                 if (attribute != null && attribute.isBinary()) {
                     return ByteSource.wrap(attribute.getBinaryValue());
                 }
@@ -50,8 +50,8 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
     }
 
     private Response<SearchResult> searchForId(final String id) throws LdapException {
-        final GraphicalUserAuthenticationProperties gua = casProperties.getAuthn().getGua();
-        final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(gua.getLdap().getSearchFilter(),
+        final var gua = casProperties.getAuthn().getGua();
+        final var filter = LdapUtils.newLdaptiveSearchFilter(gua.getLdap().getSearchFilter(),
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                 CollectionUtils.wrap(id));
         return LdapUtils.executeSearchOperation(

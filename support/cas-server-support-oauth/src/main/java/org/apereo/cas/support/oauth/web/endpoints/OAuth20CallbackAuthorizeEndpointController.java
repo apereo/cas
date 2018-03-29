@@ -65,13 +65,13 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL)
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) {
-        final J2EContext context = new J2EContext(request, response, this.oauthConfig.getSessionStore());
-        final DefaultCallbackLogic callback = new DefaultCallbackLogic();
+        final var context = new J2EContext(request, response, this.oauthConfig.getSessionStore());
+        final var callback = new DefaultCallbackLogic();
         callback.perform(context, oauthConfig, J2ENopHttpActionAdapter.INSTANCE,
             null, true, false,
             false, Authenticators.CAS_OAUTH_CLIENT);
-        final String url = StringUtils.remove(response.getHeader("Location"), "redirect:");
-        final ProfileManager manager = Pac4jUtils.getPac4jProfileManager(request, response);
+        final var url = StringUtils.remove(response.getHeader("Location"), "redirect:");
+        final var manager = Pac4jUtils.getPac4jProfileManager(request, response);
         return oAuth20CallbackAuthorizeViewResolver.resolve(context, manager, url);
     }
 }

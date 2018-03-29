@@ -39,8 +39,8 @@ public class MongoDbTicketRegistryConfiguration {
     @Bean
     @Autowired
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        final MongoTicketRegistryProperties mongo = casProperties.getTicket().getRegistry().getMongo();
-        final MongoDbTicketRegistry registry = new MongoDbTicketRegistry(ticketCatalog, mongoDbTicketRegistryTemplate(), mongo.isDropCollection());
+        final var mongo = casProperties.getTicket().getRegistry().getMongo();
+        final var registry = new MongoDbTicketRegistry(ticketCatalog, mongoDbTicketRegistryTemplate(), mongo.isDropCollection());
         registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(mongo.getCrypto(), "mongo"));
         return registry;
     }
@@ -50,7 +50,7 @@ public class MongoDbTicketRegistryConfiguration {
     public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("lockingStrategy") final LockingStrategy lockingStrategy,
                                                        @Qualifier("logoutManager") final LogoutManager logoutManager,
                                                        @Qualifier("ticketRegistry") final TicketRegistry ticketRegistry) {
-        final boolean isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().getSchedule().isEnabled();
+        final var isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().getSchedule().isEnabled();
         if (isCleanerEnabled) {
             LOGGER.debug("Ticket registry cleaner is enabled.");
             return new DefaultTicketRegistryCleaner(lockingStrategy, logoutManager, ticketRegistry);
@@ -64,8 +64,8 @@ public class MongoDbTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "mongoDbTicketRegistryTemplate")
     @Bean
     public MongoTemplate mongoDbTicketRegistryTemplate() {
-        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
-        final MongoTicketRegistryProperties mongo = casProperties.getTicket().getRegistry().getMongo();
+        final var factory = new MongoDbConnectionFactory();
+        final var mongo = casProperties.getTicket().getRegistry().getMongo();
         return factory.buildMongoTemplate(mongo);
     }
 }

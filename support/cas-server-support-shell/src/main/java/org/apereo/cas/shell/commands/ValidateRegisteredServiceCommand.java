@@ -49,12 +49,12 @@ public class ValidateRegisteredServiceCommand implements CommandMarker {
         }
 
         if (StringUtils.isNotBlank(file)) {
-            final File filePath = new File(file);
+            final var filePath = new File(file);
             validate(filePath);
             return;
         }
         if (StringUtils.isNotBlank(directory)) {
-            final File directoryPath = new File(directory);
+            final var directoryPath = new File(directory);
             if (directoryPath.isDirectory()) {
                 FileUtils.listFiles(directoryPath, new String[]{"json", "yml"}, false).forEach(this::validate);
             }
@@ -65,9 +65,9 @@ public class ValidateRegisteredServiceCommand implements CommandMarker {
 
     private void validate(final File filePath) {
         try {
-            final DefaultRegisteredServiceJsonSerializer validator = new DefaultRegisteredServiceJsonSerializer();
+            final var validator = new DefaultRegisteredServiceJsonSerializer();
             if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {
-                final RegisteredService svc = validator.from(filePath);
+                final var svc = validator.from(filePath);
                 LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
             } else {
                 LOGGER.warn("File [{}] is does not exist, is not readable or is empty", filePath.getCanonicalPath());

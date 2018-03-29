@@ -16,7 +16,7 @@ import org.springframework.format.support.DefaultFormattingConversionService;
 public class EnvironmentConversionServiceInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
     @Override
     public void initialize(final ConfigurableApplicationContext ctx) {
-        final DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService(true);
+        final var conversionService = new DefaultFormattingConversionService(true);
         conversionService.setEmbeddedValueResolver(new CasEmbeddedValueResolver(ctx));
         ctx.getEnvironment().setConversionService(conversionService);
 

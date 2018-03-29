@@ -98,7 +98,7 @@ public class GenerateJwtCommand implements CommandMarker {
         configureJwtSigning(signingSecretSize, signingAlgorithm, g);
         configureJwtEncryption(encryptionSecretSize, encryptionAlgorithm, encryptionMethod, g);
 
-        final CommonProfile profile = new CommonProfile();
+        final var profile = new CommonProfile();
         profile.setId(subject);
 
         LOGGER.debug(StringUtils.repeat('=', SEP_LENGTH));
@@ -107,7 +107,7 @@ public class GenerateJwtCommand implements CommandMarker {
                 subject, signingSecretSize, signingAlgorithm, encryptionSecretSize, encryptionMethod, encryptionAlgorithm);
         LOGGER.debug(StringUtils.repeat('=', SEP_LENGTH));
         
-        final String token = g.generate(profile);
+        final var token = g.generate(profile);
         LOGGER.info("==== JWT ====\n[{}]", token);
     }
 
@@ -118,10 +118,10 @@ public class GenerateJwtCommand implements CommandMarker {
             return;
         }
 
-        final String encryptionSecret = RandomStringUtils.randomAlphanumeric(encryptionSecretSize);
+        final var encryptionSecret = RandomStringUtils.randomAlphanumeric(encryptionSecretSize);
         LOGGER.info("==== Encryption Secret ====\n[{}]\n", encryptionSecret);
 
-        final String acceptedEncAlgs = Arrays.stream(JWEAlgorithm.class.getDeclaredFields())
+        final var acceptedEncAlgs = Arrays.stream(JWEAlgorithm.class.getDeclaredFields())
                 .filter(f -> f.getType().equals(JWEAlgorithm.class))
                 .map(Unchecked.function(f -> {
                     f.setAccessible(true);
@@ -130,7 +130,7 @@ public class GenerateJwtCommand implements CommandMarker {
                 .collect(Collectors.joining(","));
         LOGGER.debug("Encryption algorithm: [{}]. Available algorithms are [{}]", encryptionAlgorithm, acceptedEncAlgs);
 
-        final String acceptedEncMethods = Arrays.stream(EncryptionMethod.class.getDeclaredFields())
+        final var acceptedEncMethods = Arrays.stream(EncryptionMethod.class.getDeclaredFields())
                 .filter(f -> f.getType().equals(EncryptionMethod.class))
                 .map(Unchecked.function(f -> {
                     f.setAccessible(true);
@@ -139,8 +139,8 @@ public class GenerateJwtCommand implements CommandMarker {
                 .collect(Collectors.joining(","));
         LOGGER.debug("Encryption method: [{}]. Available methods are [{}]", encryptionMethod, acceptedEncMethods);
 
-        final JWEAlgorithm algorithm = JWEAlgorithm.parse(encryptionAlgorithm);
-        final EncryptionMethod encryptionMethodAlg = EncryptionMethod.parse(encryptionMethod);
+        final var algorithm = JWEAlgorithm.parse(encryptionAlgorithm);
+        final var encryptionMethodAlg = EncryptionMethod.parse(encryptionMethod);
         
         if (DirectDecrypter.SUPPORTED_ALGORITHMS.contains(algorithm)) {
             if (!DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethodAlg)) {
@@ -167,10 +167,10 @@ public class GenerateJwtCommand implements CommandMarker {
             return;
         }
 
-        final String signingSecret = RandomStringUtils.randomAlphanumeric(signingSecretSize);
+        final var signingSecret = RandomStringUtils.randomAlphanumeric(signingSecretSize);
         LOGGER.info("==== Signing Secret ====\n{}\n", signingSecret);
 
-        final String acceptedSigningAlgs = Arrays.stream(JWSAlgorithm.class.getDeclaredFields())
+        final var acceptedSigningAlgs = Arrays.stream(JWSAlgorithm.class.getDeclaredFields())
                 .filter(f -> f.getType().equals(JWSAlgorithm.class))
                 .map(Unchecked.function(f -> {
                     f.setAccessible(true);

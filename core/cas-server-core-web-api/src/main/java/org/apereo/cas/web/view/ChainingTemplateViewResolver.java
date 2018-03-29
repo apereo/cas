@@ -46,8 +46,8 @@ public class ChainingTemplateViewResolver extends AbstractConfigurableTemplateRe
                                                         final String characterEncoding,
                                                         final Map<String, Object> templateResolutionAttributes) {
         AnnotationAwareOrderComparator.sortIfNecessary(this.resolvers);
-        for (final AbstractTemplateResolver r : this.resolvers) {
-            final TemplateResolution resource = r.resolveTemplate(configuration, ownerTemplate, template, templateResolutionAttributes);
+        for (final var r : this.resolvers) {
+            final var resource = r.resolveTemplate(configuration, ownerTemplate, template, templateResolutionAttributes);
             if (resource != null && resource.isTemplateResourceExistenceVerified()) {
                 return resource.getTemplateResource();
             }

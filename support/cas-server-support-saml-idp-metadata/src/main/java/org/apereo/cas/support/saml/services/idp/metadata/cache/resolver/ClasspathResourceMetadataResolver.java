@@ -34,14 +34,14 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
 
     @Override
     public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
-        final String metadataLocation = service.getMetadataLocation();
+        final var metadataLocation = service.getMetadataLocation();
         LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
-        try (InputStream in = ResourceUtils.getResourceFrom(metadataLocation).getInputStream()) {
+        try (var in = ResourceUtils.getResourceFrom(metadataLocation).getInputStream()) {
             LOGGER.debug("Parsing metadata from [{}]", metadataLocation);
-            final Document document = this.configBean.getParserPool().parse(in);
+            final var document = this.configBean.getParserPool().parse(in);
 
-            final Element metadataRoot = document.getDocumentElement();
-            final DOMMetadataResolver metadataProvider = new DOMMetadataResolver(metadataRoot);
+            final var metadataRoot = document.getDocumentElement();
+            final var metadataProvider = new DOMMetadataResolver(metadataRoot);
             configureAndInitializeSingleMetadataResolver(metadataProvider, service);
             return CollectionUtils.wrap(metadataProvider);
         } catch (final Exception e) {
@@ -53,8 +53,8 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
     @Override
     public boolean supports(final SamlRegisteredService service) {
         try {
-            final String metadataLocation = service.getMetadataLocation();
-            final AbstractResource metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
+            final var metadataLocation = service.getMetadataLocation();
+            final var metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             return metadataResource instanceof ClassPathResource;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

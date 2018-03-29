@@ -46,11 +46,11 @@ public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnow
      */
     @Override
     protected boolean shouldDoSpnego(final String remoteIp) {
-        final boolean ipCheck = ipPatternCanBeChecked(remoteIp);
+        final var ipCheck = ipPatternCanBeChecked(remoteIp);
         if (ipCheck && !ipPatternMatches(remoteIp)) {
             return false;
         }
-        final String hostName = getRemoteHostName(remoteIp);
+        final var hostName = getRemoteHostName(remoteIp);
         LOGGER.debug("Retrieved host name for the remote ip is [{}]", hostName);
         return this.hostNamePatternString.matcher(hostName).find();
     }

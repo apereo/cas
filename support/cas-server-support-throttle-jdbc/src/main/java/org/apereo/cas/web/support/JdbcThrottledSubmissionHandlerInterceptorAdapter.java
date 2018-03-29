@@ -47,10 +47,10 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
 
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
-        final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
-        final String remoteAddress = clientInfo.getClientIpAddress();
+        final var clientInfo = ClientInfoHolder.getClientInfo();
+        final var remoteAddress = clientInfo.getClientIpAddress();
 
-        final List<Timestamp> failuresInAudits = this.jdbcTemplate.query(
+        final var failuresInAudits = this.jdbcTemplate.query(
             this.sqlQueryAudit,
             new Object[]{
                 remoteAddress,
@@ -61,7 +61,7 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
             new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
             (resultSet, i) -> resultSet.getTimestamp(1));
 
-        final List<Date> failures = failuresInAudits.stream().map(t -> new Date(t.getTime())).collect(Collectors.toList());
+        final var failures = failuresInAudits.stream().map(t -> new Date(t.getTime())).collect(Collectors.toList());
         return calculateFailureThresholdRateAndCompare(failures);
     }
 

@@ -39,7 +39,7 @@ public class Cas30JsonResponseViewTests extends Cas30ResponseViewTests {
 
     @Override
     protected Map getRenderedViewModelMap(final MockHttpServletRequest req) {
-        final CasJsonServiceResponse response = (CasJsonServiceResponse)
+        final var response = (CasJsonServiceResponse)
             req.getAttribute(Cas30JsonResponseView.ATTRIBUTE_NAME_MODEL_SERVICE_RESPONSE);
         return response.getAuthenticationSuccess().getAttributes();
     }

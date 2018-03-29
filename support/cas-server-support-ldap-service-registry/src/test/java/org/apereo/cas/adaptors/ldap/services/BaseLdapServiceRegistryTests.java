@@ -72,16 +72,16 @@ public class BaseLdapServiceRegistryTests {
     public void verifySavingServices() {
         this.dao.save(getRegexRegisteredService());
         this.dao.save(getRegexRegisteredService());
-        final List<RegisteredService> services = this.dao.load();
+        final var services = this.dao.load();
         assertEquals(2, services.size());
     }
 
     @Test
     public void verifyUpdatingServices() {
         this.dao.save(getRegexRegisteredService());
-        final List<RegisteredService> services = this.dao.load();
+        final var services = this.dao.load();
 
-        final AbstractRegisteredService rs = (AbstractRegisteredService) this.dao.findServiceById(services.get(0).getId());
+        final var rs = (AbstractRegisteredService) this.dao.findServiceById(services.get(0).getId());
         assertNotNull(rs);
         rs.setEvaluationOrder(9999);
         rs.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
@@ -92,7 +92,7 @@ public class BaseLdapServiceRegistryTests {
         rs.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy());
         assertNotNull(this.dao.save(rs));
 
-        final RegisteredService rs3 = this.dao.findServiceById(rs.getId());
+        final var rs3 = this.dao.findServiceById(rs.getId());
         assertEquals(rs3.getName(), rs.getName());
         assertEquals(rs3.getDescription(), rs.getDescription());
         assertEquals(rs3.getEvaluationOrder(), rs.getEvaluationOrder());
@@ -104,7 +104,7 @@ public class BaseLdapServiceRegistryTests {
 
     @Test
     public void verifySamlService() {
-        final SamlRegisteredService r = new SamlRegisteredService();
+        final var r = new SamlRegisteredService();
         r.setName("verifySamlService");
         r.setServiceId("Testing");
         r.setDescription("description");
@@ -116,13 +116,13 @@ public class BaseLdapServiceRegistryTests {
         r.setMetadataCriteriaRemoveEmptyEntitiesDescriptors(true);
         r.setMetadataSignatureLocation("location");
         r.setRequiredAuthenticationContextClass("Testing");
-        final SamlRegisteredService r2 = (SamlRegisteredService) this.dao.save(r);
+        final var r2 = (SamlRegisteredService) this.dao.save(r);
         assertEquals(r, r2);
     }
 
     @Test
     public void verifyOAuthServices() {
-        final OAuthRegisteredService r = new OAuthRegisteredService();
+        final var r = new OAuthRegisteredService();
         r.setName("test1456");
         r.setServiceId("testId");
         r.setTheme("theme");
@@ -131,17 +131,17 @@ public class BaseLdapServiceRegistryTests {
         r.setClientId("testoauthservice");
         r.setClientSecret("anothertest");
         r.setBypassApprovalPrompt(true);
-        final RegisteredService r2 = this.dao.save(r);
+        final var r2 = this.dao.save(r);
         assertEquals(r, r2);
     }
 
     @Test
     public void verifySavingServiceChangesDn() {
         this.dao.save(getRegexRegisteredService());
-        final List<RegisteredService> services = this.dao.load();
+        final var services = this.dao.load();
 
-        final AbstractRegisteredService rs = (AbstractRegisteredService) this.dao.findServiceById(services.get(0).getId());
-        final long originalId = rs.getId();
+        final var rs = (AbstractRegisteredService) this.dao.findServiceById(services.get(0).getId());
+        final var originalId = rs.getId();
         assertNotNull(rs);
         rs.setId(666);
         assertNotNull(this.dao.save(rs));
@@ -150,14 +150,14 @@ public class BaseLdapServiceRegistryTests {
 
     @Test
     public void verifyDeletingSingleService() {
-        final RegisteredService rs = getRegexRegisteredService();
-        final RegisteredService rs2 = getRegexRegisteredService();
+        final var rs = getRegexRegisteredService();
+        final var rs2 = getRegexRegisteredService();
         this.dao.save(rs2);
         this.dao.save(rs);
         this.dao.load();
         this.dao.delete(rs2);
 
-        final List<RegisteredService> services = this.dao.load();
+        final var services = this.dao.load();
         assertEquals(1, services.size());
         assertEquals(services.get(0).getId(), rs.getId());
         assertEquals(services.get(0).getName(), rs.getName());
@@ -167,7 +167,7 @@ public class BaseLdapServiceRegistryTests {
     public void verifyDeletingServices() {
         this.dao.save(getRegexRegisteredService());
         this.dao.save(getRegexRegisteredService());
-        final List<RegisteredService> services = this.dao.load();
+        final var services = this.dao.load();
         services.forEach(registeredService -> this.dao.delete(registeredService));
         assertEquals(0, this.dao.load().size());
     }
@@ -187,7 +187,7 @@ public class BaseLdapServiceRegistryTests {
         rs.setRequiredHandlers(CollectionUtils.wrapHashSet("handler1", "handler2"));
 
         final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
-        final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
+        final var property = new DefaultRegisteredServiceProperty();
 
         final Set<String> values = new HashSet<>();
         values.add("value1");

@@ -28,9 +28,9 @@ public class RemoteAddressWebflowConfigurer extends AbstractCasWebflowConfigurer
 
     @Override
     protected void doInitialize() {
-        final Flow flow = getLoginFlow();
+        final var flow = getLoginFlow();
         if (flow != null) {
-            final ActionState actionState = createActionState(flow, "startAuthenticate", createEvaluateAction("remoteAddressCheck"));
+            final var actionState = createActionState(flow, "startAuthenticate", createEvaluateAction("remoteAddressCheck"));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                     CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));

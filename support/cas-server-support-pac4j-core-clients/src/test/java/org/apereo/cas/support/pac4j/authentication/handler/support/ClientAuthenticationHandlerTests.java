@@ -52,24 +52,24 @@ public class ClientAuthenticationHandlerTests {
     @Before
     public void setUp() {
         this.fbClient = new FacebookClient();
-        final Clients clients = new Clients(CALLBACK_URL, fbClient);
+        final var clients = new Clients(CALLBACK_URL, fbClient);
         this.handler = new ClientAuthenticationHandler("", mock(ServicesManager.class), null, clients);
         this.handler.setTypedIdUsed(true);
 
         final Credentials credentials = new OAuth20Credentials(null);
         this.clientCredential = new ClientCredential(credentials, fbClient.getName());
-        final ServletExternalContext mock = new ServletExternalContext(new MockServletContext(),
+        final var mock = new ServletExternalContext(new MockServletContext(),
             new MockHttpServletRequest(), new MockHttpServletResponse());
         ExternalContextHolder.setExternalContext(mock);
     }
 
     @Test
     public void verifyOk() throws GeneralSecurityException, PreventedException {
-        final FacebookProfile facebookProfile = new FacebookProfile();
+        final var facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> facebookProfile);
-        final AuthenticationHandlerExecutionResult result = this.handler.authenticate(this.clientCredential);
-        final Principal principal = result.getPrincipal();
+        final var result = this.handler.authenticate(this.clientCredential);
+        final var principal = result.getPrincipal();
         assertEquals(FacebookProfile.class.getName() + '#' + ID, principal.getId());
     }
 
@@ -77,11 +77,11 @@ public class ClientAuthenticationHandlerTests {
     public void verifyOkWithSimpleIdentifier() throws GeneralSecurityException, PreventedException {
         this.handler.setTypedIdUsed(false);
 
-        final FacebookProfile facebookProfile = new FacebookProfile();
+        final var facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> facebookProfile);
-        final AuthenticationHandlerExecutionResult result = this.handler.authenticate(this.clientCredential);
-        final Principal principal = result.getPrincipal();
+        final var result = this.handler.authenticate(this.clientCredential);
+        final var principal = result.getPrincipal();
         assertEquals(ID, principal.getId());
     }
 

@@ -22,8 +22,8 @@ public class RejectResultCodeLdapPasswordPolicyHandlingStrategyTests {
 
     @Test
     public void verifyStrategySupportsDefault() {
-        final RejectResultCodeLdapPasswordPolicyHandlingStrategy s = new RejectResultCodeLdapPasswordPolicyHandlingStrategy();
-        final AuthenticationResponse res = mock(AuthenticationResponse.class);
+        final var s = new RejectResultCodeLdapPasswordPolicyHandlingStrategy();
+        final var res = mock(AuthenticationResponse.class);
         when(res.getAuthenticationResultCode()).thenReturn(AuthenticationResultCode.INVALID_CREDENTIAL);
         assertFalse(s.supports(null));
 

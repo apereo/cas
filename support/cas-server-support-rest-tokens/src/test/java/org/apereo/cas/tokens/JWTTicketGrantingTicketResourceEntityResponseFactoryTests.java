@@ -97,45 +97,45 @@ public class JWTTicketGrantingTicketResourceEntityResponseFactoryTests {
 
     @Test
     public void verifyTicketGrantingTicketAsDefault() throws Exception {
-        final AuthenticationResult result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport);
-        final TicketGrantingTicket tgt = centralAuthenticationService.createTicketGrantingTicket(result);
+        final var result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport);
+        final var tgt = centralAuthenticationService.createTicketGrantingTicket(result);
 
-        final ResponseEntity<String> response = ticketGrantingTicketResourceEntityResponseFactory.build(tgt, new MockHttpServletRequest());
+        final var response = ticketGrantingTicketResourceEntityResponseFactory.build(tgt, new MockHttpServletRequest());
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     @Test
     public void verifyTicketGrantingTicketAsJwt() throws Exception {
-        final AuthenticationResult result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
+        final var result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
-        final TicketGrantingTicket tgt = centralAuthenticationService.createTicketGrantingTicket(result);
+        final var tgt = centralAuthenticationService.createTicketGrantingTicket(result);
         
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var request = new MockHttpServletRequest();
         request.addParameter(TokenConstants.PARAMETER_NAME_TOKEN, Boolean.TRUE.toString());
-        final ResponseEntity<String> response = ticketGrantingTicketResourceEntityResponseFactory.build(tgt, request);
+        final var response = ticketGrantingTicketResourceEntityResponseFactory.build(tgt, request);
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         
-        final Object jwt = this.tokenCipherExecutor.decode(response.getBody());
-        final JWTClaimsSet claims = JWTClaimsSet.parse(jwt.toString());
+        final var jwt = this.tokenCipherExecutor.decode(response.getBody());
+        final var claims = JWTClaimsSet.parse(jwt.toString());
         assertEquals(claims.getSubject(), tgt.getAuthentication().getPrincipal().getId());
     }
 
     @Test
     public void verifyTicketGrantingTicketAsJwtWithHeader() throws Exception {
-        final AuthenticationResult result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
+        final var result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
-        final TicketGrantingTicket tgt = centralAuthenticationService.createTicketGrantingTicket(result);
+        final var tgt = centralAuthenticationService.createTicketGrantingTicket(result);
 
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var request = new MockHttpServletRequest();
         request.addHeader(TokenConstants.PARAMETER_NAME_TOKEN, Boolean.TRUE.toString());
-        final ResponseEntity<String> response = ticketGrantingTicketResourceEntityResponseFactory.build(tgt, request);
+        final var response = ticketGrantingTicketResourceEntityResponseFactory.build(tgt, request);
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
-        final Object jwt = this.tokenCipherExecutor.decode(response.getBody());
-        final JWTClaimsSet claims = JWTClaimsSet.parse(jwt.toString());
+        final var jwt = this.tokenCipherExecutor.decode(response.getBody());
+        final var claims = JWTClaimsSet.parse(jwt.toString());
         assertEquals(claims.getSubject(), tgt.getAuthentication().getPrincipal().getId());
     }
     

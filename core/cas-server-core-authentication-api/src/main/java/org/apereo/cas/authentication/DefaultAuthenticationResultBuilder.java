@@ -75,13 +75,13 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
     @Override
     public AuthenticationResult build(final Service service) {
-        final Authentication authentication = buildAuthentication();
+        final var authentication = buildAuthentication();
         if (authentication == null) {
             LOGGER.info("Authentication result cannot be produced because no authentication is recorded into in the chain. Returning null");
             return null;
         }
         LOGGER.debug("Building an authentication result for authentication [{}] and service [{}]", authentication, service);
-        final DefaultAuthenticationResult res = new DefaultAuthenticationResult(authentication, service);
+        final var res = new DefaultAuthenticationResult(authentication, service);
         res.setCredentialProvided(!this.providedCredentials.isEmpty());
         return res;
     }
@@ -97,10 +97,10 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         }
         final Map<String, Object> authenticationAttributes = new HashMap<>();
         final Map<String, Object> principalAttributes = new HashMap<>();
-        final AuthenticationBuilder authenticationBuilder = DefaultAuthenticationBuilder.newInstance();
+        final var authenticationBuilder = DefaultAuthenticationBuilder.newInstance();
 
         buildAuthenticationHistory(this.authentications, authenticationAttributes, principalAttributes, authenticationBuilder);
-        final Principal primaryPrincipal = getPrimaryPrincipal(this.authentications, principalAttributes);
+        final var primaryPrincipal = getPrimaryPrincipal(this.authentications, principalAttributes);
         authenticationBuilder.setPrincipal(primaryPrincipal);
         LOGGER.debug("Determined primary authentication principal to be [{}]", primaryPrincipal);
 
@@ -108,7 +108,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         LOGGER.debug("Collected authentication attributes for this result are [{}]", authenticationAttributes);
 
         authenticationBuilder.setAuthenticationDate(ZonedDateTime.now());
-        final Authentication auth = authenticationBuilder.build();
+        final var auth = authenticationBuilder.build();
         LOGGER.debug("Authentication result commenced at [{}]", auth.getAuthenticationDate());
         return auth;
     }
@@ -120,7 +120,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
         LOGGER.debug("Collecting authentication history based on [{}] authentication events", authentications.size());
         authentications.forEach(authn -> {
-            final Principal authenticatedPrincipal = authn.getPrincipal();
+            final var authenticatedPrincipal = authn.getPrincipal();
             LOGGER.debug("Evaluating authentication principal [{}] for inclusion in result", authenticatedPrincipal);
 
             principalAttributes.putAll(authenticatedPrincipal.getAttributes());
@@ -130,16 +130,16 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
             authn.getAttributes().keySet().forEach(attrName -> {
                 if (authenticationAttributes.containsKey(attrName)) {
                     LOGGER.debug("Collecting multi-valued authentication attribute [{}]", attrName);
-                    final Object oldValue = authenticationAttributes.remove(attrName);
+                    final var oldValue = authenticationAttributes.remove(attrName);
 
                     LOGGER.debug("Converting authentication attribute [{}] to a collection of values", attrName);
                     final Collection<Object> listOfValues = CollectionUtils.toCollection(oldValue);
-                    final Object newValue = authn.getAttributes().get(attrName);
+                    final var newValue = authn.getAttributes().get(attrName);
                     listOfValues.addAll(CollectionUtils.toCollection(newValue));
                     authenticationAttributes.put(attrName, listOfValues);
                     LOGGER.debug("Collected multi-valued authentication attribute [{}] -> [{}]", attrName, listOfValues);
                 } else {
-                    final Object value = authn.getAttributes().get(attrName);
+                    final var value = authn.getAttributes().get(attrName);
                     if (value != null) {
                         authenticationAttributes.put(attrName, value);
                         LOGGER.debug("Collected single authentication attribute [{}] -> [{}]", attrName, value);

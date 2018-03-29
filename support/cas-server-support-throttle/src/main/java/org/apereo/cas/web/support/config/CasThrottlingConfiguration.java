@@ -41,7 +41,7 @@ public class CasThrottlingConfiguration {
     @Bean
     @Autowired
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailExecutionPlan) {
-        final ThrottleProperties throttle = casProperties.getAuthn().getThrottle();
+        final var throttle = casProperties.getAuthn().getThrottle();
         if (StringUtils.isNotBlank(throttle.getUsernameParameter())) {
             LOGGER.debug("Activating authentication throttling based on IP address and username...");
             return new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(throttle.getFailure().getThreshold(),

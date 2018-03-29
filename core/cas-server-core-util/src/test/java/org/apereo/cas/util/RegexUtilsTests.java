@@ -16,7 +16,7 @@ public class RegexUtilsTests {
 
     @Test
     public void verifyNotValidRegex() {
-        final String notValidRegex = "***";
+        final var notValidRegex = "***";
 
         assertFalse(RegexUtils.isValidRegex(notValidRegex));
     }

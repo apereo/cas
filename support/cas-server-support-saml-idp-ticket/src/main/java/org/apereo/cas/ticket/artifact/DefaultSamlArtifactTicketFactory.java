@@ -48,8 +48,8 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
                                      final Authentication authentication,
                                      final TicketGrantingTicket ticketGrantingTicket, final String issuer,
                                      final String relyingParty, final SAMLObject samlObject) {
-        try (StringWriter w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
-            final String codeId = createTicketIdFor(artifactId);
+        try (var w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
+            final var codeId = createTicketIdFor(artifactId);
             
             final Service service = this.webApplicationServiceFactory.createService(relyingParty);
             final SamlArtifactTicket at = new SamlArtifactTicketImpl(codeId, service, authentication,

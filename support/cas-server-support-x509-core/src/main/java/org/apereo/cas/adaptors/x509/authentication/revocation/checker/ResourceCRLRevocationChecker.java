@@ -131,14 +131,14 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
         }
         
         // Fetch CRL data synchronously and throw exception to abort if any fail
-        final Collection<X509CRL> results = this.fetcher.fetch(getResources());
+        final var results = this.fetcher.fetch(getResources());
         ResourceCRLRevocationChecker.this.addCrls(results);
 
         // Set up the scheduler to fetch periodically to implement refresh
         final Runnable scheduledFetcher = () -> {
             try {
-                final Collection<Resource> resources = getResources();
-                final Collection<X509CRL> fetchedResults = getFetcher().fetch(resources);
+                final var resources = getResources();
+                final var fetchedResults = getFetcher().fetch(resources);
                 ResourceCRLRevocationChecker.this.addCrls(fetchedResults);
             } catch (final Exception e) {
                 LOGGER.debug(e.getMessage(), e);
@@ -203,7 +203,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
 
     @Override
     protected Collection<X509CRL> getCRLs(final X509Certificate cert) {
-        final X500Principal principal = cert.getIssuerX500Principal();
+        final var principal = cert.getIssuerX500Principal();
 
         if (this.crlIssuerMap.containsKey(principal)) {
             return CollectionUtils.wrap(this.crlIssuerMap.get(principal));

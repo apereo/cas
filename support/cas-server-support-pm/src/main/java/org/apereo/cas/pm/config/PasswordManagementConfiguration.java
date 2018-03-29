@@ -55,8 +55,8 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
     @RefreshScope
     @Bean
     public CipherExecutor passwordManagementCipherExecutor() {
-        final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
-        final EncryptionJwtSigningJwtCryptographyProperties crypto = pm.getReset().getCrypto();
+        final var pm = casProperties.getAuthn().getPm();
+        final var crypto = pm.getReset().getCrypto();
         if (pm.isEnabled() && crypto.isEnabled()) {
             return new PasswordResetTokenCipherExecutor(
                     crypto.getEncryption().getKey(),
@@ -70,7 +70,7 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
     @RefreshScope
     @Bean
     public PasswordValidationService passwordValidationService() {
-        final String policyPattern = casProperties.getAuthn().getPm().getPolicyPattern();
+        final var policyPattern = casProperties.getAuthn().getPm().getPolicyPattern();
         return (credential, bean) -> StringUtils.hasText(bean.getPassword())
             && bean.getPassword().equals(bean.getConfirmedPassword())
             && bean.getPassword().matches(policyPattern);
@@ -80,9 +80,9 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
     @RefreshScope
     @Bean
     public PasswordManagementService passwordChangeService() {
-        final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
+        final var pm = casProperties.getAuthn().getPm();
         if (pm.isEnabled()) {
-            final Resource location = pm.getJson().getLocation();
+            final var location = pm.getJson().getLocation();
             if (location != null) {
                 LOGGER.debug("Configuring password management based on JSON resource [{}]", location);
                 return new JsonResourcePasswordManagementService(passwordManagementCipherExecutor(),
@@ -103,7 +103,7 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
 
     @PostConstruct
     public void init() {
-        final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
+        final var pm = casProperties.getAuthn().getPm();
         if (pm.isEnabled()) {
             if (!communicationsManager.isMailSenderDefined()) {
                 LOGGER.warn("CAS is unable to send password-reset emails given no settings are defined to account for email servers, etc");

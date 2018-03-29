@@ -18,27 +18,27 @@ public class DefaultTokenRequestExtractorTests {
 
     @Test
     public void verifyTokenFromParameter() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var request = new MockHttpServletRequest();
         request.addParameter(TokenConstants.PARAMETER_NAME_TOKEN, "test");
-        final DefaultTokenRequestExtractor e = new DefaultTokenRequestExtractor();
-        final String token = e.extract(request);
+        final var e = new DefaultTokenRequestExtractor();
+        final var token = e.extract(request);
         assertEquals("test", token);
     }
 
     @Test
     public void verifyTokenFromHeader() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var request = new MockHttpServletRequest();
         request.addHeader(TokenConstants.PARAMETER_NAME_TOKEN, "test");
-        final DefaultTokenRequestExtractor e = new DefaultTokenRequestExtractor();
-        final String token = e.extract(request);
+        final var e = new DefaultTokenRequestExtractor();
+        final var token = e.extract(request);
         assertEquals("test", token);
     }
 
     @Test
     public void verifyTokenNotFound() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final DefaultTokenRequestExtractor e = new DefaultTokenRequestExtractor();
-        final String token = e.extract(request);
+        final var request = new MockHttpServletRequest();
+        final var e = new DefaultTokenRequestExtractor();
+        final var token = e.extract(request);
         assertNull(token);
     }
 }

@@ -35,8 +35,8 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     @Override
     public boolean registerAccountFor(final String uid, final String token) {
         if (getAccountValidator().isValid(uid, token)) {
-            final String yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
-            final YubiKeyAccount account = new YubiKeyAccount();
+            final var yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
+            final var account = new YubiKeyAccount();
             account.setPublicId(getCipherExecutor().encode(yubikeyPublicId));
             account.setUsername(uid);
             this.mongoTemplate.save(account, this.collectionName);
@@ -58,9 +58,9 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public Optional<YubiKeyAccount> getAccount(final String uid) {
-        final Query query = new Query();
+        final var query = new Query();
         query.addCriteria(Criteria.where("username").is(uid));
-        final YubiKeyAccount account = this.mongoTemplate.findOne(query, YubiKeyAccount.class, this.collectionName);
+        final var account = this.mongoTemplate.findOne(query, YubiKeyAccount.class, this.collectionName);
         if (account != null) {
             return Optional.of(new YubiKeyAccount(account.getId(), getCipherExecutor().decode(account.getPublicId()), account.getUsername()));
         }

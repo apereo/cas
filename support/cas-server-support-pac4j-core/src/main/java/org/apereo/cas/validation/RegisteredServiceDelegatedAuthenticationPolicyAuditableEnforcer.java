@@ -25,12 +25,12 @@ public class RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer ext
         resourceResolverName = "DELEGATED_CLIENT_RESOURCE_RESOLVER")
     @Override
     public AuditableExecutionResult execute(final AuditableContext context) {
-        final AuditableExecutionResult result = AuditableExecutionResult.of(context);
+        final var result = AuditableExecutionResult.of(context);
 
         if (context.getRegisteredService().isPresent() && context.getProperties().containsKey(Client.class.getSimpleName())) {
-            final RegisteredService registeredService = context.getRegisteredService().get();
-            final String clientName = context.getProperties().get(Client.class.getSimpleName()).toString();
-            final RegisteredServiceDelegatedAuthenticationPolicy policy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
+            final var registeredService = context.getRegisteredService().get();
+            final var clientName = context.getProperties().get(Client.class.getSimpleName()).toString();
+            final var policy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
             if (policy != null) {
                 if (!policy.isProviderAllowed(clientName, registeredService)) {
                     LOGGER.debug("Delegated authentication policy for [{}] does not allow for using client [{}]", registeredService,

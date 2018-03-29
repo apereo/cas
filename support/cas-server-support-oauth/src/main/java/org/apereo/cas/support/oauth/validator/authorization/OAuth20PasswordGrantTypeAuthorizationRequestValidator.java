@@ -27,14 +27,14 @@ public class OAuth20PasswordGrantTypeAuthorizationRequestValidator implements OA
 
     @Override
     public boolean validate(final J2EContext context) {
-        final HttpServletRequest request = context.getRequest();
+        final var request = context.getRequest();
 
         if (!validator.checkParameterExist(request, OAuth20Constants.GRANT_TYPE)) {
             LOGGER.warn("Grant type must be specified");
             return false;
         }
 
-        final String grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+        final var grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
 
         if (!validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)) {
             LOGGER.warn("Client id not specified for grant type [{}]", grantType);
@@ -56,8 +56,8 @@ public class OAuth20PasswordGrantTypeAuthorizationRequestValidator implements OA
             return false;
         }
 
-        final String clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
-        final OAuthRegisteredService registeredService = getRegisteredServiceByClientId(clientId);
+        final var clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
+        final var registeredService = getRegisteredServiceByClientId(clientId);
 
         if (!validator.checkServiceValid(registeredService)) {
             LOGGER.warn("Registered service [{}] is not found or is not authorized for access.", registeredService);
@@ -78,7 +78,7 @@ public class OAuth20PasswordGrantTypeAuthorizationRequestValidator implements OA
 
     @Override
     public boolean supports(final J2EContext context) {
-        final String grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+        final var grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.PASSWORD);
     }
 }

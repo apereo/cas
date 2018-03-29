@@ -38,23 +38,23 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
             return service.getRequiredAuthenticationContextClass();
         }
 
-        final String defClass = StringUtils.defaultIfBlank(
+        final var defClass = StringUtils.defaultIfBlank(
                 casProperties.getAuthn().getSamlIdp().getResponse().getDefaultAuthenticationContextClass(),
                 AuthnContext.PPT_AUTHN_CTX);
 
-        final RequestedAuthnContext requestedAuthnContext = (authnRequest instanceof AuthnRequest)
+        final var requestedAuthnContext = (authnRequest instanceof AuthnRequest)
                 ? AuthnRequest.class.cast(authnRequest).getRequestedAuthnContext() : null;
         if (requestedAuthnContext == null) {
             LOGGER.debug("No specific authN context is requested. Returning [{}]", defClass);
             return defClass;
         }
-        final List<AuthnContextClassRef> authnContextClassRefs = requestedAuthnContext.getAuthnContextClassRefs();
+        final var authnContextClassRefs = requestedAuthnContext.getAuthnContextClassRefs();
         if (authnContextClassRefs == null || authnContextClassRefs.isEmpty()) {
             LOGGER.debug("Requested authN context class ref is unspecified. Returning [{}]", defClass);
             return defClass;
         }
 
-        final String finalCtx = StringUtils.defaultIfBlank(getAuthenticationContextByAssertion(assertion,
+        final var finalCtx = StringUtils.defaultIfBlank(getAuthenticationContextByAssertion(assertion,
                 requestedAuthnContext, authnContextClassRefs), defClass);
         LOGGER.debug("Returning authN context [{}]", finalCtx);
         return finalCtx;

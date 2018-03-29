@@ -26,7 +26,7 @@ public class RegisteredServiceHazelcastDistributedCacheManager extends
     public RegisteredServiceHazelcastDistributedCacheManager(final HazelcastInstance instance) {
         this.instance = instance;
 
-        final String mapName = instance.getConfig().getMapConfigs().keySet().iterator().next();
+        final var mapName = instance.getConfig().getMapConfigs().keySet().iterator().next();
         LOGGER.debug("Retrieving Hazelcast map [{}] for service replication", mapName);
         this.mapInstance = instance.getMap(mapName);
     }
@@ -44,7 +44,7 @@ public class RegisteredServiceHazelcastDistributedCacheManager extends
     @Override
     public DistributedCacheObject<RegisteredService> get(final RegisteredService service) {
         if (contains(service)) {
-            final String key = buildKey(service);
+            final var key = buildKey(service);
             return this.mapInstance.get(key);
         }
         return null;
@@ -58,13 +58,13 @@ public class RegisteredServiceHazelcastDistributedCacheManager extends
 
     @Override
     public boolean contains(final RegisteredService service) {
-        final String key = buildKey(service);
+        final var key = buildKey(service);
         return this.mapInstance.containsKey(key);
     }
 
     @Override
     public void remove(final RegisteredService service, final DistributedCacheObject<RegisteredService> item) {
-        final String key = buildKey(service);
+        final var key = buildKey(service);
         this.mapInstance.remove(key);
     }
 

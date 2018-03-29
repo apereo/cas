@@ -16,9 +16,9 @@ import java.lang.reflect.Modifier;
 public class ConditionalIgnoreRule implements MethodRule {
     @Override
     public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
-        Statement result = base;
+        var result = base;
         if (hasConditionalIgnoreAnnotation(method)) {
-            final IgnoreCondition condition = getIgnoreCondition(target, method);
+            final var condition = getIgnoreCondition(target, method);
             if (condition.isSatisfied()) {
                 result = new IgnoreStatement(condition);
             }
@@ -44,7 +44,7 @@ public class ConditionalIgnoreRule implements MethodRule {
      * @return the ignore condition
      */
     private static IgnoreCondition getIgnoreCondition(final Object target, final FrameworkMethod method) {
-        final ConditionalIgnore annotation = method.getAnnotation(ConditionalIgnore.class);
+        final var annotation = method.getAnnotation(ConditionalIgnore.class);
         return new IgnoreConditionCreator(target, annotation).create();
     }
 
@@ -101,7 +101,7 @@ public class ConditionalIgnoreRule implements MethodRule {
          */
         private void checkConditionType() {
             if (!isConditionTypeStandalone() && !isConditionTypeDeclaredInTarget()) {
-                final String msg
+                final var msg
                     = "Conditional class '%s' is a member class "
                     + "but was not declared inside the test case using it.\n"
                     + "Either make this class a static class, "

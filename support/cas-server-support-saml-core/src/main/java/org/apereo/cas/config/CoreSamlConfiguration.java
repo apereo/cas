@@ -47,7 +47,7 @@ public class CoreSamlConfiguration {
     @Lazy
     @Bean(name = "shibboleth.VelocityEngine")
     public VelocityEngine velocityEngineFactoryBean() {
-        final Properties properties = new Properties();
+        final var properties = new Properties();
         properties.put(RuntimeConstants.INPUT_ENCODING, StandardCharsets.UTF_8.name());
         properties.put(RuntimeConstants.ENCODING_DEFAULT, StandardCharsets.UTF_8.name());
         properties.put(RuntimeConstants.RESOURCE_LOADER, "file, classpath, string");
@@ -68,7 +68,7 @@ public class CoreSamlConfiguration {
     @SneakyThrows
     @Bean(name = "shibboleth.ParserPool", initMethod = "initialize")
     public BasicParserPool parserPool() {
-        final BasicParserPool pool = new BasicParserPool();
+        final var pool = new BasicParserPool();
         pool.setMaxPoolSize(POOL_SIZE);
         pool.setCoalescing(true);
         pool.setIgnoreComments(true);

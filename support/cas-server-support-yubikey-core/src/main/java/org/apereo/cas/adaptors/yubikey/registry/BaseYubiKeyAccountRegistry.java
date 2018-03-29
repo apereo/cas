@@ -46,7 +46,7 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
     @Override
     public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
         try {
-            final Optional<YubiKeyAccount> account = getAccount(uid);
+            final var account = getAccount(uid);
             if (account.isPresent()) {
                 return account.get().getPublicId().equals(yubikeyPublicId);
             }

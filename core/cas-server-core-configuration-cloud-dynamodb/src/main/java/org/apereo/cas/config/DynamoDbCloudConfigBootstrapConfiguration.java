@@ -66,20 +66,20 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
-        final AmazonDynamoDB amazonDynamoDBClient = getAmazonDynamoDbClient(environment);
+        final var amazonDynamoDBClient = getAmazonDynamoDbClient(environment);
         createSettingsTable(amazonDynamoDBClient, false);
-        final ScanRequest scan = new ScanRequest(TABLE_NAME);
+        final var scan = new ScanRequest(TABLE_NAME);
         LOGGER.debug("Scanning table with request [{}]", scan);
-        final ScanResult result = amazonDynamoDBClient.scan(scan);
+        final var result = amazonDynamoDBClient.scan(scan);
         LOGGER.debug("Scanned table with result [{}]", scan);
-        final Properties props = new Properties();
+        final var props = new Properties();
         result.getItems().stream().map(DynamoDbCloudConfigBootstrapConfiguration::retrieveSetting).forEach(p -> props.put(p.getKey(), p.getValue()));
         return new PropertiesPropertySource(getClass().getSimpleName(), props);
     }
 
     private static Pair<String, Object> retrieveSetting(final Map<String, AttributeValue> entry) {
-        final String name = entry.get(ColumnNames.NAME.getColumnName()).getS();
-        final String value = entry.get(ColumnNames.VALUE.getColumnName()).getS();
+        final var name = entry.get(ColumnNames.NAME.getColumnName()).getS();
+        final var value = entry.get(ColumnNames.VALUE.getColumnName()).getS();
         return Pair.of(name, value);
     }
 
@@ -88,28 +88,28 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
     }
 
     private static AmazonDynamoDB getAmazonDynamoDbClient(final Environment environment) {
-        final ClientConfiguration cfg = new ClientConfiguration();
+        final var cfg = new ClientConfiguration();
         try {
-            final String localAddress = getSetting(environment, "localAddress");
+            final var localAddress = getSetting(environment, "localAddress");
             if (StringUtils.isNotBlank(localAddress)) {
                 cfg.setLocalAddress(InetAddress.getByName(localAddress));
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        final String key = getSetting(environment, "credentialAccessKey");
-        final String secret = getSetting(environment, "credentialSecretKey");
+        final var key = getSetting(environment, "credentialAccessKey");
+        final var secret = getSetting(environment, "credentialSecretKey");
         final AWSCredentials credentials = new BasicAWSCredentials(key, secret);
-        String region = getSetting(environment, "region");
+        var region = getSetting(environment, "region");
         if (StringUtils.isBlank(region)) {
             region = Regions.getCurrentRegion().getName();
         }
-        String regionOverride = getSetting(environment, "regionOverride");
+        var regionOverride = getSetting(environment, "regionOverride");
         if (StringUtils.isNotBlank(regionOverride)) {
             regionOverride = Regions.getCurrentRegion().getName();
         }
-        final String endpoint = getSetting(environment, "endpoint");
-        final AmazonDynamoDB client = AmazonDynamoDBClient.builder().withCredentials(new AWSStaticCredentialsProvider(credentials))
+        final var endpoint = getSetting(environment, "endpoint");
+        final var client = AmazonDynamoDBClient.builder().withCredentials(new AWSStaticCredentialsProvider(credentials))
             .withClientConfiguration(cfg).withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, regionOverride))
             .withRegion(region).build();
         return client;
@@ -117,13 +117,13 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
 
     @SneakyThrows
     private static void createSettingsTable(final AmazonDynamoDB amazonDynamoDBClient, final boolean deleteTables) {
-        final String name = ColumnNames.ID.getColumnName();
-        final CreateTableRequest request = new CreateTableRequest().withAttributeDefinitions(new AttributeDefinition(name, ScalarAttributeType.S))
+        final var name = ColumnNames.ID.getColumnName();
+        final var request = new CreateTableRequest().withAttributeDefinitions(new AttributeDefinition(name, ScalarAttributeType.S))
             .withKeySchema(new KeySchemaElement(name, KeyType.HASH))
             .withProvisionedThroughput(new ProvisionedThroughput(PROVISIONED_THROUGHPUT, PROVISIONED_THROUGHPUT))
             .withTableName(TABLE_NAME);
         if (deleteTables) {
-            final DeleteTableRequest delete = new DeleteTableRequest(request.getTableName());
+            final var delete = new DeleteTableRequest(request.getTableName());
             LOGGER.debug("Sending delete request [{}] to remove table if necessary", delete);
             TableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
         }
@@ -131,9 +131,9 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         TableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
         LOGGER.debug("Waiting until table [{}] becomes active...", request.getTableName());
         TableUtils.waitUntilActive(amazonDynamoDBClient, request.getTableName());
-        final DescribeTableRequest describeTableRequest = new DescribeTableRequest().withTableName(request.getTableName());
+        final var describeTableRequest = new DescribeTableRequest().withTableName(request.getTableName());
         LOGGER.debug("Sending request [{}] to obtain table description...", describeTableRequest);
-        final TableDescription tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
+        final var tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
         LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
     }
 }

@@ -37,9 +37,9 @@ public class DefaultAuthenticationTests {
     
     @Test
     public void verifySerializeADefaultAuthenticationToJson() throws IOException {
-        final Authentication serviceWritten = CoreAuthenticationTestUtils.getAuthentication();
+        final var serviceWritten = CoreAuthenticationTestUtils.getAuthentication();
         mapper.writeValue(JSON_FILE, serviceWritten);
-        final Authentication serviceRead = mapper.readValue(JSON_FILE, Authentication.class);
+        final var serviceRead = mapper.readValue(JSON_FILE, Authentication.class);
         assertEquals(serviceWritten, serviceRead);
     }
 }

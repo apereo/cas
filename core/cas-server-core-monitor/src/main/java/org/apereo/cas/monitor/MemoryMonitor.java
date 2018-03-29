@@ -24,9 +24,9 @@ public class MemoryMonitor extends AbstractHealthIndicator {
 
     @Override
     protected void doHealthCheck(final Health.Builder builder) throws Exception {
-        final long used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-        final long total = Runtime.getRuntime().maxMemory();
-        final long free = total - used;
+        final var used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        final var total = Runtime.getRuntime().maxMemory();
+        final var free = total - used;
         if (free * PERCENTAGE_VALUE / total < this.freeMemoryWarnThreshold) {
             buildHealthCheckStatus(builder.down(), free, total);
         } else {

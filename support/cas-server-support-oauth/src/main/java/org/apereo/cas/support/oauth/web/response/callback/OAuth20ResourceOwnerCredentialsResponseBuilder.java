@@ -31,7 +31,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder implements OAuth20Au
 
     @Override
     public View build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
-        final Pair<AccessToken, RefreshToken> accessToken = accessTokenGenerator.generate(holder);
+        final var accessToken = accessTokenGenerator.generate(holder);
         accessTokenResponseGenerator.generate(context.getRequest(),
                 context.getResponse(),
                 holder.getRegisteredService(), holder.getService(),
@@ -43,7 +43,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder implements OAuth20Au
 
     @Override
     public boolean supports(final J2EContext context) {
-        final String grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+        final var grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.PASSWORD);
     }
 }

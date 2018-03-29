@@ -24,11 +24,11 @@ public class ModifyResourceBasedRegisteredServiceWatcher extends BaseResourceBas
     @Override
     public void accept(final File file) {
         LOGGER.debug("New service definition [{}] was modified. Locating service entry from cache...", file);
-        final Collection<RegisteredService> newServices = serviceRegistryDao.load(file);
+        final var newServices = serviceRegistryDao.load(file);
         newServices.stream()
             .filter(Objects::nonNull)
             .forEach(newService -> {
-                final RegisteredService oldService = serviceRegistryDao.findServiceById(newService.getId());
+                final var oldService = serviceRegistryDao.findServiceById(newService.getId());
 
                 if (!newService.equals(oldService)) {
                     LOGGER.debug("Updating service definitions with [{}]", newService);

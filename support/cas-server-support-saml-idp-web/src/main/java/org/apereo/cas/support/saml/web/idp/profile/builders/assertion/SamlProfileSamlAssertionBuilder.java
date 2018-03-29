@@ -71,18 +71,18 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
                            final String binding) throws SamlException {
 
         final List<Statement> statements = new ArrayList<>();
-        final AuthnStatement authnStatement = this.samlProfileSamlAuthNStatementBuilder.build(authnRequest, request, response,
+        final var authnStatement = this.samlProfileSamlAuthNStatementBuilder.build(authnRequest, request, response,
             casAssertion, service, adaptor, binding);
         statements.add(authnStatement);
-        final AttributeStatement attrStatement = this.samlProfileSamlAttributeStatementBuilder.build(authnRequest, request,
+        final var attrStatement = this.samlProfileSamlAttributeStatementBuilder.build(authnRequest, request,
             response, casAssertion, service, adaptor, binding);
 
         if (!attrStatement.getAttributes().isEmpty() || !attrStatement.getEncryptedAttributes().isEmpty()) {
             statements.add(attrStatement);
         }
 
-        final String id = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
-        final Assertion assertion = newAssertion(statements, casProperties.getAuthn().getSamlIdp().getEntityId(),
+        final var id = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
+        final var assertion = newAssertion(statements, casProperties.getAuthn().getSamlIdp().getEntityId(),
             ZonedDateTime.now(ZoneOffset.UTC), id);
         assertion.setSubject(this.samlProfileSamlSubjectBuilder.build(authnRequest, request, response,
             casAssertion, service, adaptor, binding));

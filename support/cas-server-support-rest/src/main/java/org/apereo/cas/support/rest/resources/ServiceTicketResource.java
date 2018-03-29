@@ -57,7 +57,7 @@ public class ServiceTicketResource {
     public ResponseEntity<String> createServiceTicket(final HttpServletRequest httpServletRequest,
                                                       @PathVariable("tgtId") final String tgtId) {
         try {
-            final Authentication authn = this.ticketRegistrySupport.getAuthenticationFrom(tgtId);
+            final var authn = this.ticketRegistrySupport.getAuthenticationFrom(tgtId);
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(authn);
             if (authn == null) {
                 throw new InvalidTicketException(tgtId);
@@ -67,7 +67,7 @@ public class ServiceTicketResource {
             if (service == null) {
                 throw new IllegalArgumentException("Target service/application is unspecified or unrecognized in the request");
             }
-            final AuthenticationResult authenticationResult = builder.collect(authn).build(service);
+            final var authenticationResult = builder.collect(authn).build(service);
             return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<>(tgtId + " could not be found or is considered invalid", HttpStatus.NOT_FOUND);

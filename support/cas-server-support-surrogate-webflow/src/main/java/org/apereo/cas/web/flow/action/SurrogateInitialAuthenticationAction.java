@@ -35,7 +35,7 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
 
     @Override
     protected Event doPreExecute(final RequestContext context) {
-        final UsernamePasswordCredential up = WebUtils.getCredential(context, UsernamePasswordCredential.class);
+        final var up = WebUtils.getCredential(context, UsernamePasswordCredential.class);
         if (up instanceof SurrogateUsernamePasswordCredential) {
             return null;
         }
@@ -51,11 +51,11 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
     }
 
     private void convertToSurrogateCredential(final RequestContext context, final UsernamePasswordCredential up) {
-        final SurrogateUsernamePasswordCredential sc = new SurrogateUsernamePasswordCredential();
+        final var sc = new SurrogateUsernamePasswordCredential();
 
-        final String tUsername = up.getUsername();
-        final String surrogateUsername = tUsername.substring(0, tUsername.indexOf(this.separator));
-        final String realUsername = tUsername.substring(tUsername.indexOf(this.separator) + 1);
+        final var tUsername = up.getUsername();
+        final var surrogateUsername = tUsername.substring(0, tUsername.indexOf(this.separator));
+        final var realUsername = tUsername.substring(tUsername.indexOf(this.separator) + 1);
 
         if (StringUtils.isBlank(surrogateUsername)) {
             up.setUsername(realUsername);
@@ -75,10 +75,10 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
     }
 
     private static void deconvertFromSurrogatePrincipal(final RequestContext context) {
-        final Credential c = WebUtils.getCredential(context);
+        final var c = WebUtils.getCredential(context);
         if (c instanceof SurrogateUsernamePasswordCredential) {
-            final SurrogateUsernamePasswordCredential sc = SurrogateUsernamePasswordCredential.class.cast(c);
-            final UsernamePasswordCredential up = new UsernamePasswordCredential();
+            final var sc = SurrogateUsernamePasswordCredential.class.cast(c);
+            final var up = new UsernamePasswordCredential();
             up.setUsername(sc.getUsername());
             up.setPassword(sc.getPassword());
             WebUtils.putCredential(context, up);

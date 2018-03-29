@@ -165,7 +165,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean(initMethod = "initialize", destroyMethod = "destroy")
     @RefreshScope
     public SAMLArtifactMap samlArtifactMap() {
-        final CasSamlArtifactMap map = new CasSamlArtifactMap(ticketRegistry, samlArtifactTicketFactory(),
+        final var map = new CasSamlArtifactMap(ticketRegistry, samlArtifactTicketFactory(),
             ticketGrantingTicketCookieGenerator);
         map.setArtifactLifetime(TimeUnit.SECONDS.toMillis(samlArtifactTicketExpirationPolicy().getTimeToLive()));
         return map;
@@ -283,7 +283,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean
     @RefreshScope
     public SamlObjectEncrypter samlObjectEncrypter() {
-        final SamlIdPAlgorithmsProperties algs = casProperties.getAuthn().getSamlIdp().getAlgs();
+        final var algs = casProperties.getAuthn().getSamlIdp().getAlgs();
         return new SamlObjectEncrypter(algs.getOverrideDataEncryptionAlgorithms(),
             algs.getOverrideKeyEncryptionAlgorithms(),
             algs.getOverrideBlackListedEncryptionAlgorithms(),
@@ -294,7 +294,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean
     @RefreshScope
     public SamlIdPObjectSigner samlObjectSigner() {
-        final SamlIdPAlgorithmsProperties algs = casProperties.getAuthn().getSamlIdp().getAlgs();
+        final var algs = casProperties.getAuthn().getSamlIdp().getAlgs();
         return new SamlIdPObjectSigner(
             algs.getOverrideSignatureReferenceDigestMethods(),
             algs.getOverrideSignatureAlgorithms(),

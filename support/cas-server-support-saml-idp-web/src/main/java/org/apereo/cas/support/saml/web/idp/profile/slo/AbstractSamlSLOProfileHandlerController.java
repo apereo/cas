@@ -70,7 +70,7 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
     protected void handleSloProfileRequest(final HttpServletResponse response,
                                            final HttpServletRequest request,
                                            final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
-        final SamlIdPLogoutProperties logout = casProperties.getAuthn().getSamlIdp().getLogout();
+        final var logout = casProperties.getAuthn().getSamlIdp().getLogout();
         if (logout.isSingleLogoutCallbacksDisabled()) {
             LOGGER.info("Processing SAML IdP SLO requests is disabled");
             return;
@@ -78,17 +78,17 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
 
         final Pair<? extends SignableSAMLObject, MessageContext> pair =
             this.samlHttpRequestExtractor.extract(request, decoder, LogoutRequest.class);
-        final LogoutRequest logoutRequest = LogoutRequest.class.cast(pair.getKey());
-        final MessageContext ctx = pair.getValue();
+        final var logoutRequest = LogoutRequest.class.cast(pair.getKey());
+        final var ctx = pair.getValue();
 
         if (logout.isForceSignedLogoutRequests() && !SAMLBindingSupport.isMessageSigned(ctx)) {
             throw new SAMLException("Logout request is not signed but should be.");
         }
 
         if (SAMLBindingSupport.isMessageSigned(ctx)) {
-            final String entityId = SamlIdPUtils.getIssuerFromSamlRequest(logoutRequest);
-            final SamlRegisteredService registeredService = this.servicesManager.findServiceBy(entityId, SamlRegisteredService.class);
-            final SamlRegisteredServiceServiceProviderMetadataFacade facade = SamlRegisteredServiceServiceProviderMetadataFacade
+            final var entityId = SamlIdPUtils.getIssuerFromSamlRequest(logoutRequest);
+            final var registeredService = this.servicesManager.findServiceBy(entityId, SamlRegisteredService.class);
+            final var facade = SamlRegisteredServiceServiceProviderMetadataFacade
                 .get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, entityId).get();
             this.samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(logoutRequest, facade, request, ctx);
         }

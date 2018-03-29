@@ -60,13 +60,13 @@ public class SamlIdPUtils {
             throw new SamlException("No assertion consumer service could be found for entity " + adaptor.getEntityId());
         }
 
-        final SAMLPeerEntityContext peerEntityContext = outboundContext.getSubcontext(SAMLPeerEntityContext.class, true);
+        final var peerEntityContext = outboundContext.getSubcontext(SAMLPeerEntityContext.class, true);
         if (peerEntityContext == null) {
             throw new SamlException("SAMLPeerEntityContext could not be defined for entity " + adaptor.getEntityId());
         }
         peerEntityContext.setEntityId(adaptor.getEntityId());
 
-        final SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
+        final var endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
         if (endpointContext == null) {
             throw new SamlException("SAMLEndpointContext could not be defined for entity " + adaptor.getEntityId());
         }
@@ -91,9 +91,9 @@ public class SamlIdPUtils {
                                                                          final String entityID,
                                                                          final SamlRegisteredServiceCachingMetadataResolver resolver) {
 
-        final Collection<RegisteredService> registeredServices = servicesManager.findServiceBy(SamlRegisteredService.class::isInstance);
+        final var registeredServices = servicesManager.findServiceBy(SamlRegisteredService.class::isInstance);
         final List<MetadataResolver> resolvers;
-        final ChainingMetadataResolver chainingMetadataResolver = new ChainingMetadataResolver();
+        final var chainingMetadataResolver = new ChainingMetadataResolver();
 
         resolvers = registeredServices.stream()
             .filter(SamlRegisteredService.class::isInstance)
@@ -124,19 +124,19 @@ public class SamlIdPUtils {
                                                                           final ServicesManager servicesManager,
                                                                           final SamlRegisteredServiceCachingMetadataResolver resolver) {
         try {
-            final AssertionConsumerService acs = new AssertionConsumerServiceBuilder().buildObject();
+            final var acs = new AssertionConsumerServiceBuilder().buildObject();
             if (authnRequest.getAssertionConsumerServiceIndex() != null) {
-                final String issuer = getIssuerFromSamlRequest(authnRequest);
-                final MetadataResolver samlResolver = getMetadataResolverForAllSamlServices(servicesManager, issuer, resolver);
-                final CriteriaSet criteriaSet = new CriteriaSet();
+                final var issuer = getIssuerFromSamlRequest(authnRequest);
+                final var samlResolver = getMetadataResolverForAllSamlServices(servicesManager, issuer, resolver);
+                final var criteriaSet = new CriteriaSet();
                 criteriaSet.add(new EntityIdCriterion(issuer));
                 criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
                 criteriaSet.add(new BindingCriterion(CollectionUtils.wrap(SAMLConstants.SAML2_POST_BINDING_URI)));
 
-                final Iterable<EntityDescriptor> it = samlResolver.resolve(criteriaSet);
+                final var it = samlResolver.resolve(criteriaSet);
                 it.forEach(entityDescriptor -> {
-                    final SPSSODescriptor spssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
-                    final List<AssertionConsumerService> acsEndpoints = spssoDescriptor.getAssertionConsumerServices();
+                    final var spssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
+                    final var acsEndpoints = spssoDescriptor.getAssertionConsumerServices();
                     if (acsEndpoints.isEmpty()) {
                         throw new IllegalArgumentException("Metadata resolved for entity id " + issuer + " has no defined ACS endpoints");
                     }
@@ -145,7 +145,7 @@ public class SamlIdPUtils {
                         throw new IllegalArgumentException("AssertionConsumerService index specified in the request " + acsIndex + " is invalid "
                             + "since the total endpoints available to " + issuer + " is " + acsEndpoints.size());
                     }
-                    final AssertionConsumerService foundAcs = acsEndpoints.get(acsIndex);
+                    final var foundAcs = acsEndpoints.get(acsIndex);
                     acs.setBinding(foundAcs.getBinding());
                     acs.setLocation(foundAcs.getLocation());
                     acs.setResponseLocation(foundAcs.getResponseLocation());
@@ -205,7 +205,7 @@ public class SamlIdPUtils {
      */
     public static RoleDescriptorResolver getRoleDescriptorResolver(final MetadataResolver metadata,
                                                                    final boolean requireValidMetadata) throws Exception {
-        final PredicateRoleDescriptorResolver roleDescriptorResolver = new PredicateRoleDescriptorResolver(metadata);
+        final var roleDescriptorResolver = new PredicateRoleDescriptorResolver(metadata);
         roleDescriptorResolver.setSatisfyAnyPredicates(true);
         roleDescriptorResolver.setUseDefaultPredicateRegistry(true);
         roleDescriptorResolver.setRequireValidMetadata(requireValidMetadata);

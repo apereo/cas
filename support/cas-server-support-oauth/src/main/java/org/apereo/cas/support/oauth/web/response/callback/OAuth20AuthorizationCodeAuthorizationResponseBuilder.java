@@ -34,18 +34,18 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
 
     @Override
     public View build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
-        final OAuthCode code = oAuthCodeFactory.create(holder.getService(), holder.getAuthentication(),
+        final var code = oAuthCodeFactory.create(holder.getService(), holder.getAuthentication(),
             holder.getTicketGrantingTicket(), holder.getScopes());
         LOGGER.debug("Generated OAuth code: [{}]", code);
         this.ticketRegistry.addTicket(code);
 
-        final String state = holder.getAuthentication().getAttributes().get(OAuth20Constants.STATE).toString();
-        final String nonce = holder.getAuthentication().getAttributes().get(OAuth20Constants.NONCE).toString();
+        final var state = holder.getAuthentication().getAttributes().get(OAuth20Constants.STATE).toString();
+        final var nonce = holder.getAuthentication().getAttributes().get(OAuth20Constants.NONCE).toString();
 
-        final String redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
+        final var redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
         LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
 
-        String callbackUrl = redirectUri;
+        var callbackUrl = redirectUri;
         callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.CODE, code.getId());
         if (StringUtils.isNotBlank(state)) {
             callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.STATE, state);
@@ -59,7 +59,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
 
     @Override
     public boolean supports(final J2EContext context) {
-        final String responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
+        final var responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
         return StringUtils.equalsIgnoreCase(responseType, OAuth20ResponseTypes.CODE.getType());
     }
 }

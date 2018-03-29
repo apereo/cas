@@ -17,8 +17,8 @@ public class OidcAuthorizationRequestSupportTests {
 
     @Test
     public void verify() {
-        final String url = "https://tralala.whapi.com/something?prompt=value1";
-        final Set<String> authorizationRequest = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
+        final var url = "https://tralala.whapi.com/something?prompt=value1";
+        final var authorizationRequest = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
         assertEquals("value1", authorizationRequest.toArray()[0]);
     }
 }

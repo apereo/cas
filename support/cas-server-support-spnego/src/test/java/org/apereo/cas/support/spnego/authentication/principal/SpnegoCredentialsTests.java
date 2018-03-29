@@ -20,14 +20,14 @@ public class SpnegoCredentialsTests {
 
     @Test
     public void verifyToStringWithNoPrincipal() {
-        final SpnegoCredential credentials = new SpnegoCredential(new byte[] {});
+        final var credentials = new SpnegoCredential(new byte[] {});
         assertTrue(credentials.getId().contains("unknown"));
     }
 
     @Test
     public void verifyToStringWithPrincipal() {
-        final SpnegoCredential credentials = new SpnegoCredential(new byte[] {});
-        final Principal principal = new DefaultPrincipalFactory().createPrincipal("test");
+        final var credentials = new SpnegoCredential(new byte[] {});
+        final var principal = new DefaultPrincipalFactory().createPrincipal("test");
         credentials.setPrincipal(principal);
         assertEquals("test", credentials.getId());
     }
@@ -37,7 +37,7 @@ public class SpnegoCredentialsTests {
      */
     @Test
     public void verifyCredentialsHashSafelyWithoutPrincipal() {
-        final SpnegoCredential credential = new SpnegoCredential(new byte[] {});
+        final var credential = new SpnegoCredential(new byte[] {});
         final Set<SpnegoCredential> set = new HashSet<>();
         try {
             set.add(credential);
@@ -51,11 +51,11 @@ public class SpnegoCredentialsTests {
      */
     @Test
     public void verifyPrincipalAffectsHash(){
-        final SpnegoCredential credential = new SpnegoCredential(new byte[] {});
-        final int hash1 = credential.hashCode();
-        final Principal principal = new DefaultPrincipalFactory().createPrincipal("test");
+        final var credential = new SpnegoCredential(new byte[] {});
+        final var hash1 = credential.hashCode();
+        final var principal = new DefaultPrincipalFactory().createPrincipal("test");
         credential.setPrincipal(principal);
-        final int hash2 = credential.hashCode();
+        final var hash2 = credential.hashCode();
         assertNotEquals(hash1, hash2);
     }
 }

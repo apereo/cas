@@ -43,7 +43,7 @@ public class RequestParameterMultifactorAuthenticationPolicyEventResolver extend
 
     @Override
     protected List<String> resolveEventFromHttpRequest(final HttpServletRequest request) {
-        final String[] values = request.getParameterValues(mfaRequestParameter);
+        final var values = request.getParameterValues(mfaRequestParameter);
         if (values != null && values.length > 0) {
             LOGGER.debug("Received request parameter [{}] as [{}]", mfaRequestParameter, values);
             return Arrays.stream(values).collect(Collectors.toList());

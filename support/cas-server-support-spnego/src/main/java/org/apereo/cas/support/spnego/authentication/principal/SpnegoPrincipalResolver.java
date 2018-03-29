@@ -30,8 +30,8 @@ public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     @Override
     protected String extractPrincipalId(final Credential credential, final Principal currentPrincipal) {
-        final SpnegoCredential c = (SpnegoCredential) credential;
-        final String id = c.getPrincipal().getId();
+        final var c = (SpnegoCredential) credential;
+        final var id = c.getPrincipal().getId();
         return id;
     }
 

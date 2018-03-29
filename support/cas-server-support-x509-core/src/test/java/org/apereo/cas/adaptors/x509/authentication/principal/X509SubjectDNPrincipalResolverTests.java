@@ -23,7 +23,7 @@ public class X509SubjectDNPrincipalResolverTests extends AbstractX509Certificate
 
     @Test
     public void verifyResolvePrincipalInternal() {
-        final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
+        final var c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
         assertEquals(VALID_CERTIFICATE.getSubjectDN().getName(), this.resolver.resolve(c,
             CoreAuthenticationTestUtils.getPrincipal(),
@@ -32,7 +32,7 @@ public class X509SubjectDNPrincipalResolverTests extends AbstractX509Certificate
 
     @Test
     public void verifySupport() {
-        final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
+        final var c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         assertTrue(this.resolver.supports(c));
     }
 

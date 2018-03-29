@@ -52,7 +52,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     @Bean
     public ThemeChangeInterceptor themeChangeInterceptor() {
-        final ThemeChangeInterceptor bean = new ThemeChangeInterceptor();
+        final var bean = new ThemeChangeInterceptor();
         bean.setParamName(casProperties.getTheme().getParamName());
         return bean;
     }
@@ -63,7 +63,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         final CookieLocaleResolver bean = new CookieLocaleResolver() {
             @Override
             protected Locale determineDefaultLocale(final HttpServletRequest request) {
-                final Locale locale = request.getLocale();
+                final var locale = request.getLocale();
                 if (StringUtils.isBlank(casProperties.getLocale().getDefaultValue())
                         || !locale.getLanguage().equals(casProperties.getLocale().getDefaultValue())) {
                     return locale;
@@ -81,8 +81,8 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
             @Override
             protected ModelAndView handleRequestInternal(final HttpServletRequest request,
                                                          final HttpServletResponse response) {
-                final String queryString = request.getQueryString();
-                final String url = request.getContextPath() + "/login"
+                final var queryString = request.getQueryString();
+                final var url = request.getContextPath() + "/login"
                         + (queryString != null ? '?' + queryString : StringUtils.EMPTY);
                 return new ModelAndView(new RedirectView(response.encodeURL(url)));
             }
@@ -92,7 +92,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public ServletListenerRegistrationBean log4jServletContextListener() {
-        final ServletListenerRegistrationBean bean = new ServletListenerRegistrationBean();
+        final var bean = new ServletListenerRegistrationBean();
         bean.setEnabled(true);
         bean.setListener(new Log4jServletContextListener());
         return bean;
@@ -100,9 +100,9 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public SimpleUrlHandlerMapping handlerMapping() {
-        final SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
+        final var mapping = new SimpleUrlHandlerMapping();
 
-        final Controller root = rootController();
+        final var root = rootController();
         mapping.setOrder(1);
         mapping.setAlwaysUseFullPath(true);
         mapping.setRootHandler(root);

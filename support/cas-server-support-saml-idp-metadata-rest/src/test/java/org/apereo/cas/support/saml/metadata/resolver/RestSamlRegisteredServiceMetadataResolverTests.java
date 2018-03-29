@@ -119,12 +119,12 @@ public class RestSamlRegisteredServiceMetadataResolverTests {
     @Before
     @SneakyThrows
     public void setup() {
-        final SamlMetadataDocument doc = new SamlMetadataDocument();
+        final var doc = new SamlMetadataDocument();
         doc.setId(1);
         doc.setName("SAML Document");
         doc.setSignature(null);
         doc.setValue(IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8));
-        final String data = MAPPER.writeValueAsString(doc);
+        final var data = MAPPER.writeValueAsString(doc);
         
         this.webServer = new MockWebServer(8078,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
@@ -140,13 +140,13 @@ public class RestSamlRegisteredServiceMetadataResolverTests {
 
     @Test
     public void verifyRestEndpointProducesMetadata() {
-        final SamlRegisteredService service = new SamlRegisteredService();
+        final var service = new SamlRegisteredService();
         service.setName("SAML Wiki Service");
         service.setServiceId("https://carmenwiki.osu.edu/shibboleth");
         service.setDescription("Testing");
         service.setMetadataLocation("rest://");
         assertTrue(resolver.supports(service));
-        final Collection<MetadataResolver> resolvers = resolver.resolve(service);
+        final var resolvers = resolver.resolve(service);
         assertTrue(resolvers.size() == 1);
     }
 }

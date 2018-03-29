@@ -26,7 +26,7 @@ public class RegisteredServiceYamlSerializer extends DefaultRegisteredServiceJso
     @Override
     public boolean supports(final File file) {
         try {
-            final String contents = FileUtils.readFileToString(file, StandardCharsets.UTF_8.name()).trim();
+            final var contents = FileUtils.readFileToString(file, StandardCharsets.UTF_8.name()).trim();
             return contents.startsWith("--- !<");
         } catch (final Exception e) {
             return false;

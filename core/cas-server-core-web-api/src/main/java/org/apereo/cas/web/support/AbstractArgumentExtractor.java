@@ -30,7 +30,7 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
     @Override
     public WebApplicationService extractService(final HttpServletRequest request) {
-        final WebApplicationService service = extractServiceInternal(request);
+        final var service = extractServiceInternal(request);
 
         if (service == null) {
             LOGGER.debug("Extractor did not generate service.");

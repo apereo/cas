@@ -98,15 +98,15 @@ public abstract class BaseLdapSpnegoKnownClientSystemsFilterActionTests {
 
     @Test
     public void ensureLdapAttributeShouldDoSpnego() throws Exception {
-        final MockRequestContext ctx = new MockRequestContext();
-        final MockHttpServletRequest req = new MockHttpServletRequest();
+        final var ctx = new MockRequestContext();
+        final var req = new MockHttpServletRequest();
         req.setRemoteAddr("localhost");
-        final ServletExternalContext extCtx = new ServletExternalContext(
+        final var extCtx = new ServletExternalContext(
             new MockServletContext(), req,
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
-        final Event ev = action.execute(ctx);
+        final var ev = action.execute(ctx);
         assertEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
     }
 

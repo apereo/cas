@@ -39,8 +39,8 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     @Override
     public boolean registerAccountFor(final String uid, final String token) {
         if (getAccountValidator().isValid(uid, token)) {
-            final String yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
-            final YubiKeyAccount account = new YubiKeyAccount();
+            final var yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
+            final var account = new YubiKeyAccount();
             account.setPublicId(getCipherExecutor().encode(yubikeyPublicId));
             account.setUsername(uid);
             return this.entityManager.merge(account) != null;
@@ -70,7 +70,7 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     @Override
     public Optional<YubiKeyAccount> getAccount(final String uid) {
         try {
-            final YubiKeyAccount account = this.entityManager.createQuery(SELECT_QUERY.concat("where r.username = :username"),
+            final var account = this.entityManager.createQuery(SELECT_QUERY.concat("where r.username = :username"),
                 YubiKeyAccount.class)
                 .setParameter("username", uid)
                 .getSingleResult();

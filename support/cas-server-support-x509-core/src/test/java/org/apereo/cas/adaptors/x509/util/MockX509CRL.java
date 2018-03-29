@@ -128,7 +128,7 @@ public class MockX509CRL extends X509CRL {
     @Override
     public boolean isRevoked(final Certificate cert) {
         if (cert instanceof X509Certificate) {
-            final X509Certificate xcert = (X509Certificate) cert;
+            final var xcert = (X509Certificate) cert;
             return getRevokedCertificates().stream().anyMatch(entry -> entry.getSerialNumber().equals(xcert.getSerialNumber()));
         }
         return false;

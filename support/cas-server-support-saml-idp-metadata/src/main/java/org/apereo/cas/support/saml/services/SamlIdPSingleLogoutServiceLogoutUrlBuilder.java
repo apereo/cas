@@ -44,7 +44,7 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
 
         try {
             if (registeredService instanceof SamlRegisteredService) {
-                final URL location = buildLogoutUrl(registeredService, singleLogoutService);
+                final var location = buildLogoutUrl(registeredService, singleLogoutService);
                 if (location != null) {
                     LOGGER.info("Final logout URL built for [{}] is [{}]", registeredService, location);
                     return location;
@@ -59,10 +59,10 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
 
     private URL buildLogoutUrl(final RegisteredService registeredService, final WebApplicationService singleLogoutService) throws Exception {
         LOGGER.debug("Building logout url for SAML service [{}]", registeredService);
-        final String entityID = singleLogoutService.getId();
+        final var entityID = singleLogoutService.getId();
         LOGGER.debug("Located entity id [{}]", entityID);
 
-        final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor =
+        final var adaptor =
                 SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
                         SamlRegisteredService.class.cast(registeredService), entityID);
 
@@ -70,7 +70,7 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
             LOGGER.warn("Cannot find metadata linked to [{}]", entityID);
             return null;
         }
-        final String location = adaptor.get().getSingleLogoutService().getLocation();
+        final var location = adaptor.get().getSingleLogoutService().getLocation();
         return new URL(location);
     }
 }

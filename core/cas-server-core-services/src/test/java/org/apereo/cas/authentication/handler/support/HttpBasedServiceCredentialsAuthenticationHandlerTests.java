@@ -70,7 +70,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 
     @Test
     public void verifyNoAcceptableStatusCodeButOneSet() throws Exception {
-        final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
+        final var clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setAcceptableCodes(CollectionUtils.wrapList(900));
         final HttpClient httpClient = clientFactory.getObject();
         this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler("", null, null, null, httpClient);

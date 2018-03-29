@@ -63,8 +63,8 @@ public class ProxyController extends AbstractDelegateController {
 
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
-        final String proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET);
-        final Service targetService = getTargetService(request);
+        final var proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET);
+        final var targetService = getTargetService(request);
         return StringUtils.hasText(proxyGrantingTicket) && targetService != null;
     }
 
@@ -79,13 +79,13 @@ public class ProxyController extends AbstractDelegateController {
     @Override
     @GetMapping(path = "/proxy")
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
-        final String proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET);
-        final Service targetService = getTargetService(request);
+        final var proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET);
+        final var targetService = getTargetService(request);
         if (!StringUtils.hasText(proxyGrantingTicket) || targetService == null) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST_PROXY, null, request);
         }
         try {
-            final ProxyTicket proxyTicket = this.centralAuthenticationService.grantProxyTicket(proxyGrantingTicket, targetService);
+            final var proxyTicket = this.centralAuthenticationService.grantProxyTicket(proxyGrantingTicket, targetService);
             final Map model = CollectionUtils.wrap(CasProtocolConstants.PARAMETER_TICKET, proxyTicket);
             return new ModelAndView(this.successView, model);
         } catch (final AbstractTicketException e) {
@@ -114,9 +114,9 @@ public class ProxyController extends AbstractDelegateController {
      * @return the model and view
      */
     private ModelAndView generateErrorView(final String code, final Object[] args, final HttpServletRequest request) {
-        final ModelAndView modelAndView = new ModelAndView(this.failureView);
+        final var modelAndView = new ModelAndView(this.failureView);
         modelAndView.addObject("code", StringEscapeUtils.escapeHtml4(code));
-        final String desc = StringEscapeUtils.escapeHtml4(this.context.getMessage(code, args, code, request.getLocale()));
+        final var desc = StringEscapeUtils.escapeHtml4(this.context.getMessage(code, args, code, request.getLocale()));
         modelAndView.addObject("description", desc);
         return modelAndView;
     }

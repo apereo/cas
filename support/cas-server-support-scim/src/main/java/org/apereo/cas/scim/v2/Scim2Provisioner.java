@@ -31,10 +31,10 @@ public class Scim2Provisioner implements ScimProvisioner {
     public Scim2Provisioner(final String target, final String oauthToken,
                             final String username, final String password,
                             final Scim2PrincipalAttributeMapper mapper) {
-        final ClientConfig config = new ClientConfig();
-        final ApacheConnectorProvider connectorProvider = new ApacheConnectorProvider();
+        final var config = new ClientConfig();
+        final var connectorProvider = new ApacheConnectorProvider();
         config.connectorProvider(connectorProvider);
-        final Client client = ClientBuilder.newClient(config);
+        final var client = ClientBuilder.newClient(config);
         
         if (StringUtils.isNotBlank(oauthToken)) {
             client.register(OAuth2ClientSupport.feature(oauthToken));
@@ -43,7 +43,7 @@ public class Scim2Provisioner implements ScimProvisioner {
             client.register(HttpAuthenticationFeature.basic(username, password));
         }
         
-        final WebTarget webTarget = client.target(target);
+        final var webTarget = client.target(target);
         this.scimService = new ScimService(webTarget);
         this.mapper = mapper;
     }
@@ -51,7 +51,7 @@ public class Scim2Provisioner implements ScimProvisioner {
     @Override
     public boolean create(final Principal p, final UsernamePasswordCredential credential) {
         try {
-            final UserResource currentUser = scimService.retrieve("Users", p.getId(), UserResource.class);
+            final var currentUser = scimService.retrieve("Users", p.getId(), UserResource.class);
             if (currentUser != null) {
                 return updateUserResource(currentUser, p, credential);
             }
@@ -69,7 +69,7 @@ public class Scim2Provisioner implements ScimProvisioner {
     }
 
     private boolean createUserResource(final Principal p, final UsernamePasswordCredential credential) throws Exception {
-        final UserResource user = new UserResource();
+        final var user = new UserResource();
         this.mapper.map(user, p, credential);
         return scimService.create("Users", user) != null;
     }

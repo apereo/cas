@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class ShortenedReturnValueAsStringResourceResolver extends ReturnValueAsStringResourceResolver {
     @Override
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
-        final String[] resources = super.resolveFrom(auditableTarget, retval);
+        final var resources = super.resolveFrom(auditableTarget, retval);
         if (resources != null) {
             return Arrays.stream(resources)
                     .map(DigestUtils::abbreviate)

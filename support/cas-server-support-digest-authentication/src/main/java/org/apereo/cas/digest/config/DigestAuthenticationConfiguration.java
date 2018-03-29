@@ -84,7 +84,7 @@ public class DigestAuthenticationConfiguration implements CasWebflowExecutionPla
     @Bean
     @RefreshScope
     public DigestHashedCredentialRetriever defaultDigestCredentialRetriever() {
-        final DigestProperties digest = casProperties.getAuthn().getDigest();
+        final var digest = casProperties.getAuthn().getDigest();
         return new DefaultDigestHashedCredentialRetriever(digest.getUsers());
     }
 

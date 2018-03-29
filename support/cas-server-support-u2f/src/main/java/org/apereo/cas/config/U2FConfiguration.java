@@ -63,7 +63,7 @@ public class U2FConfiguration {
     @ConditionalOnMissingBean(name = "u2fDeviceRepository")
     @Bean
     public U2FDeviceRepository u2fDeviceRepository() {
-        final U2FMultifactorProperties u2f = casProperties.getAuthn().getMfa().getU2f();
+        final var u2f = casProperties.getAuthn().getMfa().getU2f();
 
         final LoadingCache<String, String> requestStorage =
                 Caffeine.newBuilder()
@@ -115,7 +115,7 @@ public class U2FConfiguration {
     @Bean
     @RefreshScope
     public CipherExecutor u2fRegistrationRecordCipherExecutor() {
-        final EncryptionJwtSigningJwtCryptographyProperties crypto = casProperties.getAuthn().getMfa().getU2f().getCrypto();
+        final var crypto = casProperties.getAuthn().getMfa().getU2f().getCrypto();
         if (crypto.isEnabled()) {
             return new U2FAuthenticationRegistrationRecordCipherExecutor(
                     crypto.getEncryption().getKey(),
