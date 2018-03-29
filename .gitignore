@@ -45,3 +45,4 @@ etc/loadtests/__pycache__/**
 webapp/resources/static/js/*-bundle.js
 **/k/
 **/dist/
+**/.sts4-cache/*

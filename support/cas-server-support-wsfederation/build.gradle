@@ -1,5 +1,7 @@
 description = "Apereo CAS WS-Federation Support"
 dependencies {
+    api libraries.opensaml
+
     implementation project(":core:cas-server-core-web-api")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":core:cas-server-core-configuration-api")
@@ -11,7 +13,7 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     
     api project(":api:cas-server-core-api-webflow")
-
+    
     testImplementation project(path: ":support:cas-server-support-saml", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
@@ -38,6 +40,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-web-api")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-services-registry")
+    testImplementation project(":support:cas-server-support-saml-core")
+    testImplementation project(":support:cas-server-support-saml")
 
     testImplementation libraries.thymeleaf
 }
