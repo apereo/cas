@@ -92,7 +92,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
         if (!HttpMethod.POST.name().equals(request.getMethod())) {
             return;
         }
-        final boolean recordEvent = response.getStatus() != HttpStatus.SC_CREATED
+        final var recordEvent = response.getStatus() != HttpStatus.SC_CREATED
             && response.getStatus() != HttpStatus.SC_OK && response.getStatus() != HttpStatus.SC_MOVED_TEMPORARILY;
         if (recordEvent) {
             LOGGER.debug("Recording submission failure for [{}]", request.getRequestURI());
@@ -126,10 +126,10 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
         if (failures.size() < 2) {
             return false;
         }
-        final long lastTime = failures.get(0).getTime();
-        final long secondToLastTime = failures.get(1).getTime();
-        final long difference = lastTime - secondToLastTime;
-        final double rate = NUMBER_OF_MILLISECONDS_IN_SECOND / difference;
+        final var lastTime = failures.get(0).getTime();
+        final var secondToLastTime = failures.get(1).getTime();
+        final var difference = lastTime - secondToLastTime;
+        final var rate = NUMBER_OF_MILLISECONDS_IN_SECOND / difference;
         LOGGER.debug("Last attempt was at [{}] and the one before that was at [{}]. Difference is [{}] calculated as rate of [{}]",
             lastTime, secondToLastTime, difference, rate);
         if (rate > getThresholdRate()) {
@@ -155,7 +155,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * @return the failure in range cut off date
      */
     protected Date getFailureInRangeCutOffDate() {
-        final ZonedDateTime cutoff = ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(getFailureRangeInSeconds());
+        final var cutoff = ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(getFailureRangeInSeconds());
         return DateTimeUtils.timestampOf(cutoff);
     }
 
@@ -166,10 +166,10 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * @param actionName Name of the action to be recorded.
      */
     protected void recordAuditAction(final HttpServletRequest request, final String actionName) {
-        final String userToUse = getUsernameParameterFromRequest(request);
-        final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
-        final String resource = StringUtils.defaultString(request.getParameter(CasProtocolConstants.PARAMETER_SERVICE), "N/A");
-        final AuditActionContext context = new AuditActionContext(
+        final var userToUse = getUsernameParameterFromRequest(request);
+        final var clientInfo = ClientInfoHolder.getClientInfo();
+        final var resource = StringUtils.defaultString(request.getParameter(CasProtocolConstants.PARAMETER_SERVICE), "N/A");
+        final var context = new AuditActionContext(
             userToUse,
             resource,
             actionName,

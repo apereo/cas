@@ -16,15 +16,15 @@ public class UnauthorizedServiceExceptionTests {
 
     @Test
     public void verifyCodeConstructor() {
-        final UnauthorizedServiceException e = new UnauthorizedServiceException(MESSAGE);
+        final var e = new UnauthorizedServiceException(MESSAGE);
 
         assertEquals(MESSAGE, e.getMessage());
     }
 
     @Test
     public void verifyThrowableConstructorWithCode() {
-        final RuntimeException r = new RuntimeException();
-        final UnauthorizedServiceException e = new UnauthorizedServiceException(MESSAGE, r);
+        final var r = new RuntimeException();
+        final var e = new UnauthorizedServiceException(MESSAGE, r);
 
         assertEquals(MESSAGE, e.getMessage());
         assertEquals(r, e.getCause());

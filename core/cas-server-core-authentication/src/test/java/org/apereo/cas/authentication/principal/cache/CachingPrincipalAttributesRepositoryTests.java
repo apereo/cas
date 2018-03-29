@@ -25,14 +25,14 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
 
     @Override
     protected AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(final String unit, final long duration) {
-        final CachingPrincipalAttributesRepository repo = new CachingPrincipalAttributesRepository(unit, duration);
+        final var repo = new CachingPrincipalAttributesRepository(unit, duration);
         repo.setAttributeRepository(this.dao);
         return repo;
     }
 
     @Test
     public void verifySerializeACachingPrincipalAttributesRepositoryToJson() throws IOException {
-        final AbstractPrincipalAttributesRepository repositoryWritten = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.toString(), 1);
+        final var repositoryWritten = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.toString(), 1);
         MAPPER.writeValue(JSON_FILE, repositoryWritten);
         final PrincipalAttributesRepository repositoryRead = MAPPER.readValue(JSON_FILE, CachingPrincipalAttributesRepository.class);
 

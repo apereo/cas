@@ -119,16 +119,16 @@ public abstract class BaseCasWebflowSessionContextConfiguration {
 
     @Test
     public void verifyFlowExecutorByClient() {
-        final RequestContext ctx = getMockRequestContext();
-        final LocalAttributeMap map = new LocalAttributeMap<>();
+        final var ctx = getMockRequestContext();
+        final var map = new LocalAttributeMap<>();
         getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());
     }
 
     private RequestContext getMockRequestContext() {
-        final MockRequestContext ctx = new MockRequestContext();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final MockServletContext sCtx = new MockServletContext();
+        final var ctx = new MockRequestContext();
+        final var request = new MockHttpServletRequest();
+        final var response = new MockHttpServletResponse();
+        final var sCtx = new MockServletContext();
         ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
         return ctx;
     }

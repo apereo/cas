@@ -22,10 +22,10 @@ public abstract class AbstractCasEventRepositoryTests {
 
     @Test
     public void verifySave() {
-        final CasEvent dto1 = getCasEvent();
+        final var dto1 = getCasEvent();
         getRepositoryInstance().save(dto1);
 
-        final CasEvent dto2 = getCasEvent();
+        final var dto2 = getCasEvent();
         getRepositoryInstance().save(dto2);
         
         final Collection<? extends CasEvent> col = getRepositoryInstance().load();
@@ -41,9 +41,9 @@ public abstract class AbstractCasEventRepositoryTests {
 
     private CasEvent getCasEvent() {
         final TicketGrantingTicket ticket = new MockTicketGrantingTicket("casuser");
-        final CasTicketGrantingTicketCreatedEvent event = new CasTicketGrantingTicketCreatedEvent(this, ticket);
+        final var event = new CasTicketGrantingTicketCreatedEvent(this, ticket);
 
-        final CasEvent dto = new CasEvent();
+        final var dto = new CasEvent();
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
         dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());

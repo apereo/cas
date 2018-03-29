@@ -39,12 +39,12 @@ public abstract class AbstractX509LdapTests extends LdapIntegrationTestsOperatio
      * @throws Exception the exception
      */
     private static void populateCertificateRevocationListAttribute(final int port) throws Exception {
-        final Collection<LdapEntry> col = getLdapDirectory(port).getLdapEntries();
-        for (final LdapEntry ldapEntry : col) {
+        final var col = getLdapDirectory(port).getLdapEntries();
+        for (final var ldapEntry : col) {
             if (ldapEntry.getDn().equals(DN)) {
-                final LdapAttribute attr = new LdapAttribute(true);
+                final var attr = new LdapAttribute(true);
 
-                byte[] value = new byte[1024];
+                var value = new byte[1024];
                 IOUtils.read(new ClassPathResource("userCA-valid.crl").getInputStream(), value);
                 value = EncodingUtils.encodeBase64ToByteArray(value);
                 attr.setName("certificateRevocationList");

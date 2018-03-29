@@ -51,7 +51,7 @@ public class LdapUserAttributesToRolesAuthorizationGenerator extends BaseUseAttr
     @Override
     protected CommonProfile generateAuthorizationForLdapEntry(final CommonProfile profile, final LdapEntry userEntry) {
         if (!userEntry.getAttributes().isEmpty()) {
-            final LdapAttribute attribute = userEntry.getAttribute(this.roleAttribute);
+            final var attribute = userEntry.getAttribute(this.roleAttribute);
             if (attribute != null) {
                 addProfileRoles(userEntry, profile, attribute, this.rolePrefix);
             } else {

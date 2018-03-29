@@ -29,7 +29,7 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
 
     @Override
     public ModelAndView resolve(final J2EContext ctx, final ProfileManager manager, final String url) {
-        final Set<String> prompt = authorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
+        final var prompt = authorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
         if (prompt.contains(OidcConstants.PROMPT_NONE)) {
             if (manager.get(true) != null) {
                 return new ModelAndView(url);

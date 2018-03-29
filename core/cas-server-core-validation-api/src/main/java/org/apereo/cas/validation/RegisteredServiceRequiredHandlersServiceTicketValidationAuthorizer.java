@@ -28,16 +28,16 @@ public class RegisteredServiceRequiredHandlersServiceTicketValidationAuthorizer 
 
     @Override
     public void authorize(final HttpServletRequest request, final Service service, final Assertion assertion) {
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        final var registeredService = this.servicesManager.findServiceBy(service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
 
         if (registeredService.getRequiredHandlers() != null && !registeredService.getRequiredHandlers().isEmpty()) {
             LOGGER.debug("Evaluating service [{}] to ensure required authentication handlers can satisfy assertion", service);
-            final Map<String, Object> attributes = assertion.getPrimaryAuthentication().getAttributes();
+            final var attributes = assertion.getPrimaryAuthentication().getAttributes();
             if (attributes.containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {
-                final Set<Object> assertedHandlers = CollectionUtils.toCollection(
+                final var assertedHandlers = CollectionUtils.toCollection(
                     attributes.get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
-                final boolean matchesAll = registeredService.getRequiredHandlers()
+                final var matchesAll = registeredService.getRequiredHandlers()
                     .stream()
                     .allMatch(assertedHandlers::contains);
                 if (!matchesAll) {

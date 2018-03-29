@@ -53,8 +53,8 @@ public class SyncopeAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "syncopeAuthenticationHandler")
     @Bean
     public AuthenticationHandler syncopeAuthenticationHandler() {
-        final SyncopeAuthenticationProperties syncope = casProperties.getAuthn().getSyncope();
-        final SyncopeAuthenticationHandler h = new SyncopeAuthenticationHandler(syncope.getName(), servicesManager,
+        final var syncope = casProperties.getAuthn().getSyncope();
+        final var h = new SyncopeAuthenticationHandler(syncope.getName(), servicesManager,
             syncopePrincipalFactory(), syncope.getUrl(), syncope.getDomain());
 
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(syncope.getPasswordEncoder()));

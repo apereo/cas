@@ -31,11 +31,11 @@ public class GroovyResourceMetadataResolver extends BaseSamlRegisteredServiceMet
     @Override
     public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
         try {
-            final String metadataLocation = service.getMetadataLocation();
+            final var metadataLocation = service.getMetadataLocation();
             LOGGER.info("Loading SAML metadata via [{}]", metadataLocation);
-            final AbstractResource metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
+            final var metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             final Object[] args = {service, this.configBean, this.samlIdPProperties, LOGGER};
-            final MetadataResolver metadataResolver =
+            final var metadataResolver =
                 ScriptingUtils.executeGroovyScript(metadataResource, args, MetadataResolver.class);
             if (metadataResolver != null) {
                 return CollectionUtils.wrap(metadataResolver);
@@ -48,7 +48,7 @@ public class GroovyResourceMetadataResolver extends BaseSamlRegisteredServiceMet
 
     @Override
     public boolean supports(final SamlRegisteredService service) {
-        final String metadataLocation = service.getMetadataLocation();
+        final var metadataLocation = service.getMetadataLocation();
         return ScriptingUtils.isExternalGroovyScript(metadataLocation);
     }
 }

@@ -71,23 +71,23 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     @SneakyThrows
     public byte[] encode(final byte[] value) {
         this.aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey);
-        final byte[] result = this.aesCipher.doFinal(value);
+        final var result = this.aesCipher.doFinal(value);
         return sign(result);
     }
 
     @Override
     @SneakyThrows
     public byte[] decode(final byte[] value) {
-        final byte[] verifiedValue = verifySignature(value);
+        final var verifiedValue = verifySignature(value);
         this.aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey);
-        final byte[] bytePlainText = aesCipher.doFinal(verifiedValue);
+        final var bytePlainText = aesCipher.doFinal(verifiedValue);
         return bytePlainText;
     }
 
     @SneakyThrows
     private static String generateOctetJsonWebKeyOfSize(final int size) {
-        final OctetSequenceJsonWebKey octetKey = OctJwkGenerator.generateJwk(size);
-        final Map<String, Object> params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
+        final var octetKey = OctJwkGenerator.generateJwk(size);
+        final var params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
         return params.get("k").toString();
     }
 
@@ -110,13 +110,13 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         if (StringUtils.isBlank(encryptionSecretKey)) {
             LOGGER.warn("Secret key for encryption is not defined under [{}]. CAS will attempt to auto-generate the encryption key",
                 getEncryptionKeySetting());
-            final String key = new Base64RandomStringGenerator(encryptionKeySize).getNewString();
+            final var key = new Base64RandomStringGenerator(encryptionKeySize).getNewString();
             LOGGER.warn("Generated encryption key [{}] of size [{}]. The generated key MUST be added to CAS settings under setting [{}].",
                 key, encryptionKeySize, getEncryptionKeySetting());
             encryptionKey = EncodingUtils.decodeBase64(key);
         } else {
-            final boolean base64 = EncodingUtils.isBase64(encryptionSecretKey);
-            byte[] key = new byte[0];
+            final var base64 = EncodingUtils.isBase64(encryptionSecretKey);
+            var key = new byte[0];
             if (base64) {
                 key = EncodingUtils.decodeBase64(encryptionSecretKey);
             }
@@ -137,7 +137,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     }
 
     private void ensureSigningKeyExists(final String signingSecretKey, final int signingKeySize) {
-        String signingKeyToUse = signingSecretKey;
+        var signingKeyToUse = signingSecretKey;
         if (StringUtils.isBlank(signingKeyToUse)) {
             LOGGER.warn("Secret key for signing is not defined under [{}]. CAS will attempt to auto-generate the signing key",
                 getSigningKeySetting());

@@ -25,7 +25,7 @@ public class MemoryHealthIndicatorTests {
 
     @Test
     public void verifyObserveWarn() {
-        final MemoryMonitor monitor = new MemoryMonitor(100);
+        final var monitor = new MemoryMonitor(100);
         assertEquals(Status.DOWN, monitor.health().getStatus());
     }
 }

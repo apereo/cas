@@ -50,19 +50,19 @@ public class GenerateYamlRegisteredServiceCommand implements CommandMarker {
             return;
         }
 
-        final File filePath = new File(file);
-        final File result = StringUtils.isBlank(destination) ? null : new File(destination);
+        final var filePath = new File(file);
+        final var result = StringUtils.isBlank(destination) ? null : new File(destination);
         generate(filePath, result);
     }
 
     private void generate(final File filePath, final File result) {
         try {
-            final DefaultRegisteredServiceJsonSerializer validator = new DefaultRegisteredServiceJsonSerializer();
+            final var validator = new DefaultRegisteredServiceJsonSerializer();
             if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {
-                final RegisteredService svc = validator.from(filePath);
+                final var svc = validator.from(filePath);
                 LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
-                final RegisteredServiceYamlSerializer yaml = new RegisteredServiceYamlSerializer();
-                try (StringWriter writer = new StringWriter()) {
+                final var yaml = new RegisteredServiceYamlSerializer();
+                try (var writer = new StringWriter()) {
                     yaml.to(writer, svc);
                     LOGGER.info(writer.toString());
                     

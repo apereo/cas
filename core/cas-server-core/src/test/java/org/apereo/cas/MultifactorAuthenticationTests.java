@@ -111,67 +111,67 @@ public class MultifactorAuthenticationTests {
 
     @Test
     public void verifyAllowsAccessToNormalSecurityServiceWithPassword() {
-        final AuthenticationResult ctx = processAuthenticationAttempt(NORMAL_SERVICE, newUserPassCredentials(ALICE, ALICE));
-        final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
+        final var ctx = processAuthenticationAttempt(NORMAL_SERVICE, newUserPassCredentials(ALICE, ALICE));
+        final var tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
-        final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), NORMAL_SERVICE, ctx);
+        final var st = cas.grantServiceTicket(tgt.getId(), NORMAL_SERVICE, ctx);
         assertNotNull(st);
     }
 
     @Test
     public void verifyAllowsAccessToNormalSecurityServiceWithOTP() {
-        final AuthenticationResult ctx = processAuthenticationAttempt(NORMAL_SERVICE, new OneTimePasswordCredential(ALICE, PASSWORD_31415));
-        final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
+        final var ctx = processAuthenticationAttempt(NORMAL_SERVICE, new OneTimePasswordCredential(ALICE, PASSWORD_31415));
+        final var tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
-        final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), NORMAL_SERVICE, ctx);
+        final var st = cas.grantServiceTicket(tgt.getId(), NORMAL_SERVICE, ctx);
         assertNotNull(st);
     }
 
     @Test
     public void verifyDeniesAccessToHighSecurityServiceWithPassword() {
-        final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials(ALICE, ALICE));
+        final var ctx = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials(ALICE, ALICE));
         this.thrown.expect(UnsatisfiedAuthenticationPolicyException.class);
-        final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
+        final var tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
         cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx);
     }
 
     @Test
     public void verifyDeniesAccessToHighSecurityServiceWithOTP() {
-        final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE, new OneTimePasswordCredential(ALICE, PASSWORD_31415));
-        final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
+        final var ctx = processAuthenticationAttempt(HIGH_SERVICE, new OneTimePasswordCredential(ALICE, PASSWORD_31415));
+        final var tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
         this.thrown.expect(UnsatisfiedAuthenticationPolicyException.class);
-        final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx);
+        final var st = cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx);
         assertNotNull(st);
     }
 
     @Test
     public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTP() {
-        final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE,
+        final var ctx = processAuthenticationAttempt(HIGH_SERVICE,
                 newUserPassCredentials(ALICE, ALICE),
                 new OneTimePasswordCredential(ALICE, PASSWORD_31415));
 
-        final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
+        final var tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
-        final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx);
+        final var st = cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx);
         assertNotNull(st);
     }
 
     @Test
     public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() {
         // Note the original credential used to start SSO session does not satisfy security policy
-        final AuthenticationResult ctx2 = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials(ALICE, ALICE),
+        final var ctx2 = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials(ALICE, ALICE),
                 new OneTimePasswordCredential(ALICE, PASSWORD_31415));
 
-        final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx2);
+        final var tgt = cas.createTicketGrantingTicket(ctx2);
         assertNotNull(tgt);
 
-        final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx2);
+        final var st = cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx2);
 
         assertNotNull(st);
         // Confirm the authentication in the assertion is the one that satisfies security policy
-        final Assertion assertion = cas.validateServiceTicket(st.getId(), HIGH_SERVICE);
+        final var assertion = cas.validateServiceTicket(st.getId(), HIGH_SERVICE);
         assertEquals(2, assertion.getPrimaryAuthentication().getSuccesses().size());
         assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey(AcceptUsersAuthenticationHandler.class.getSimpleName()));
         assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey(TestOneTimePasswordAuthenticationHandler.class.getSimpleName()));
@@ -179,7 +179,7 @@ public class MultifactorAuthenticationTests {
     }
 
     private static UsernamePasswordCredential newUserPassCredentials(final String user, final String pass) {
-        final UsernamePasswordCredential userpass = new UsernamePasswordCredential();
+        final var userpass = new UsernamePasswordCredential();
         userpass.setUsername(user);
         userpass.setPassword(pass);
         return userpass;

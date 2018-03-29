@@ -44,28 +44,28 @@ public class WebflowExecutorFactory {
     }
 
     private FlowExecutor buildFlowExecutorViaServerSessionBindingExecution() {
-        final SessionBindingConversationManager conversationManager = new SessionBindingConversationManager();
-        final WebflowSessionManagementProperties session = webflowProperties.getSession();
+        final var conversationManager = new SessionBindingConversationManager();
+        final var session = webflowProperties.getSession();
         conversationManager.setLockTimeoutSeconds((int) Beans.newDuration(session.getLockTimeout()).getSeconds());
         conversationManager.setMaxConversations(session.getMaxConversations());
 
-        final FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
-        final SerializedFlowExecutionSnapshotFactory flowExecutionSnapshotFactory =
+        final var executionFactory = new FlowExecutionImplFactory();
+        final var flowExecutionSnapshotFactory =
             new SerializedFlowExecutionSnapshotFactory(executionFactory, this.flowDefinitionRegistry);
         flowExecutionSnapshotFactory.setCompress(session.isCompress());
 
-        final DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(conversationManager,
+        final var repository = new DefaultFlowExecutionRepository(conversationManager,
             flowExecutionSnapshotFactory);
         executionFactory.setExecutionKeyFactory(repository);
         return new FlowExecutorImpl(this.flowDefinitionRegistry, executionFactory, repository);
     }
 
     private FlowExecutor buildFlowExecutorViaClientFlowExecution() {
-        final ClientFlowExecutionRepository repository = new ClientFlowExecutionRepository();
+        final var repository = new ClientFlowExecutionRepository();
         repository.setFlowDefinitionLocator(this.flowDefinitionRegistry);
         repository.setTranscoder(getWebflowStateTranscoder());
 
-        final FlowExecutionImplFactory factory = new FlowExecutionImplFactory();
+        final var factory = new FlowExecutionImplFactory();
         factory.setExecutionKeyFactory(repository);
         repository.setFlowExecutionFactory(factory);
         return new FlowExecutorImpl(this.flowDefinitionRegistry, factory, repository);

@@ -38,7 +38,7 @@ public class RestAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
         try {
-            final HttpResponse response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
+            final var response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
                     properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
                     CollectionUtils.wrap("username", credential.getId()), new HashMap<>());
             return response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();

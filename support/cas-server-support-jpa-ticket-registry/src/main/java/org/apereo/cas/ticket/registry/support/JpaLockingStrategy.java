@@ -71,12 +71,12 @@ public class JpaLockingStrategy implements LockingStrategy {
 
     @Override
     public void release() {
-        final Lock lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.OPTIMISTIC);
+        final var lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.OPTIMISTIC);
         if (lock == null) {
             return;
         }
         // Only the current owner can release the lock
-        final String owner = lock.getUniqueId();
+        final var owner = lock.getUniqueId();
         if (!this.uniqueId.equals(owner)) {
             throw new IllegalStateException("Cannot release lock owned by " + owner);
         }
@@ -128,9 +128,9 @@ public class JpaLockingStrategy implements LockingStrategy {
             LOGGER.debug("[{}] failed querying for [{}] lock.", this.uniqueId, this.applicationId, e);
             return false;
         }
-        boolean result = false;
+        var result = false;
         if (lock != null) {
-            final ZonedDateTime expDate = lock.getExpirationDate();
+            final var expDate = lock.getExpirationDate();
             if (lock.getUniqueId() == null) {
                 // No one currently possesses lock
                 LOGGER.debug("[{}] trying to acquire [{}] lock.", this.uniqueId, this.applicationId);

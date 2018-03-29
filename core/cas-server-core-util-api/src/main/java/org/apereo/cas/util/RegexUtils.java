@@ -50,7 +50,7 @@ public class RegexUtils {
      * @return the pattern
      */
     public static Pattern concatenate(final Collection<?> requiredValues, final boolean caseInsensitive) {
-        final String pattern = requiredValues
+        final var pattern = requiredValues
             .stream()
             .map(Object::toString)
             .collect(Collectors.joining("|", "(", ")"));
@@ -110,7 +110,7 @@ public class RegexUtils {
      * @return the boolean
      */
     public static boolean matches(final Pattern pattern, final String value, final boolean completeMatch) {
-        final Matcher matcher = pattern.matcher(value);
+        final var matcher = pattern.matcher(value);
         LOGGER.debug("Matching value [{}] against pattern [{}]", value, pattern.pattern());
         if (completeMatch) {
             return matcher.matches();

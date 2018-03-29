@@ -98,8 +98,8 @@ public class OAuth20AccessTokenControllerMemcachedTests extends AbstractOAuth20T
     
     @Test
     public void verifyOAuthCodeIsAddedToMemcached() {
-        final Principal p = createPrincipal();
-        final OAuthCode code = addCode(p, addRegisteredService());
+        final var p = createPrincipal();
+        final var code = addCode(p, addRegisteredService());
         final Ticket ticket = this.ticketRegistry.getTicket(code.getId(), OAuthCode.class);
         assertNotNull(ticket);
     }

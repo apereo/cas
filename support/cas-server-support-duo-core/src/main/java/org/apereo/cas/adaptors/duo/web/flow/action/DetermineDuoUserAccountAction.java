@@ -33,15 +33,15 @@ public class DetermineDuoUserAccountAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final Authentication authentication = WebUtils.getAuthentication(requestContext);
-        final Principal p = authentication.getPrincipal();
+        final var authentication = WebUtils.getAuthentication(requestContext);
+        final var p = authentication.getPrincipal();
 
-        final Collection<MultifactorAuthenticationProvider> providers = WebUtils.getResolvedMultifactorAuthenticationProviders(requestContext);
-        for (final MultifactorAuthenticationProvider pr : providers) {
-            final DuoMultifactorAuthenticationProvider duoProvider = this.provider.findProvider(pr.getId(), DuoMultifactorAuthenticationProvider.class);
-            final DuoSecurityAuthenticationService duoAuthenticationService = duoProvider.getDuoAuthenticationService();
+        final var providers = WebUtils.getResolvedMultifactorAuthenticationProviders(requestContext);
+        for (final var pr : providers) {
+            final var duoProvider = this.provider.findProvider(pr.getId(), DuoMultifactorAuthenticationProvider.class);
+            final var duoAuthenticationService = duoProvider.getDuoAuthenticationService();
 
-            final DuoUserAccount account = duoAuthenticationService.getDuoUserAccount(p.getId());
+            final var account = duoAuthenticationService.getDuoUserAccount(p.getId());
             if (account.getStatus() == DuoUserAccountAuthStatus.ENROLL && StringUtils.isNotBlank(duoProvider.getRegistrationUrl())) {
                 requestContext.getFlowScope().put("duoRegistrationUrl", duoProvider.getRegistrationUrl());
                 return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);

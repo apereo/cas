@@ -53,18 +53,18 @@ public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyAuthnRequest() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final String samlRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        final var request = new MockHttpServletRequest();
+        final var samlRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                 + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
                 + "ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" "
                 + "ProtocolBinding=\"urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\" "
                 + "ProviderName=\"https://localhost:8443/myRutgers\" AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
         request.setParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, encodeMessage(samlRequest));
 
-        final GoogleAccountsService service = (GoogleAccountsService) this.factory.createService(request);
+        final var service = (GoogleAccountsService) this.factory.createService(request);
         service.setPrincipal(CoreAuthenticationTestUtils.getPrincipal().getId());
         assertNotNull(service);
-        final Response response = googleAccountsServiceResponseBuilder.build(service, "SAMPLE_TICKET",
+        final var response = googleAccountsServiceResponseBuilder.build(service, "SAMPLE_TICKET",
                 CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
     }

@@ -34,7 +34,7 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
 
     @Override
     protected void doInitialize() {
-        final Flow flow = getLoginFlow();
+        final var flow = getLoginFlow();
 
         if (flow != null) {
             createVerifyActionState(flow);
@@ -45,7 +45,7 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
     }
 
     private void createTransitionStateToAcceptableUsagePolicy(final Flow flow) {
-        final ActionState submit = getRealSubmissionState(flow);
+        final var submit = getRealSubmissionState(flow);
         createTransitionForState(submit, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_AUP_CHECK, true);
     }
 
@@ -59,22 +59,22 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
     }
 
     private void createSubmitActionState(final Flow flow) {
-        final ActionState aupAcceptedAction = createActionState(flow, AUP_ACCEPTED_ACTION, createAcceptableUsagePolicyAction("submit"));
+        final var aupAcceptedAction = createActionState(flow, AUP_ACCEPTED_ACTION, createAcceptableUsagePolicyAction("submit"));
 
-        final String target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
+        final var target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         aupAcceptedAction.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, target));
         aupAcceptedAction.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM));
     }
 
     private void createAcceptableUsagePolicyView(final Flow flow) {
-        final ViewState viewState = createViewState(flow, ACCEPTABLE_USAGE_POLICY_VIEW, "casAcceptableUsagePolicyView");
+        final var viewState = createViewState(flow, ACCEPTABLE_USAGE_POLICY_VIEW, "casAcceptableUsagePolicyView");
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, AUP_ACCEPTED_ACTION);
     }
 
     private void createVerifyActionState(final Flow flow) {
-        final ActionState actionState = createActionState(flow, STATE_ID_AUP_CHECK, createAcceptableUsagePolicyAction("verify"));
+        final var actionState = createActionState(flow, STATE_ID_AUP_CHECK, createAcceptableUsagePolicyAction("verify"));
 
-        final String target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
+        final var target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, target));
         actionState.getTransitionSet().add(createTransition(AcceptableUsagePolicyFormAction.EVENT_ID_MUST_ACCEPT, ACCEPTABLE_USAGE_POLICY_VIEW));
     }

@@ -50,10 +50,10 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final Set<Event> resolvedEvents = getResolvedEventsAsAttribute(context);
-        final Authentication authentication = WebUtils.getAuthentication(context);
-        final RegisteredService registeredService = resolveRegisteredServiceInRequestContext(context);
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        final var resolvedEvents = getResolvedEventsAsAttribute(context);
+        final var authentication = WebUtils.getAuthentication(context);
+        final var registeredService = resolveRegisteredServiceInRequestContext(context);
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         return resolveEventsInternal(resolvedEvents, authentication, registeredService, request, context);
     }
 
@@ -73,7 +73,7 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
                                                final HttpServletRequest request, final RequestContext context) {
         LOGGER.debug("Collection of resolved events for this authentication sequence are:");
         resolveEvents.forEach(e -> LOGGER.debug("Event id [{}] resolved from [{}]", e.getId(), e.getSource().getClass().getName()));
-        final Pair<Set<Event>, Collection<MultifactorAuthenticationProvider>> pair =
+        final var pair =
                 filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request);
         WebUtils.putResolvedMultifactorAuthenticationProviders(context, pair.getValue());
         return pair.getKey();
@@ -93,7 +93,7 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
             final RegisteredService registeredService,
             final HttpServletRequest request) {
         LOGGER.debug("Locating multifactor providers to determine support for this authentication sequence");
-        final Map<String, MultifactorAuthenticationProvider> providers =
+        final var providers =
                 MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
 
         if (providers == null || providers.isEmpty()) {
@@ -101,7 +101,7 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
             return Pair.of(resolveEvents, new HashSet<>(0));
         }
 
-        final Collection<MultifactorAuthenticationProvider> flattenedProviders = flattenProviders(providers.values());
+        final var flattenedProviders = flattenProviders(providers.values());
 
         // remove providers that don't support the event
         flattenedProviders.removeIf(p -> resolveEvents.stream()

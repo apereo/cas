@@ -43,8 +43,8 @@ public class PasswordChangeAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         try {
-            final UsernamePasswordCredential c = (UsernamePasswordCredential) WebUtils.getCredential(requestContext);
-            final PasswordChangeBean bean = requestContext.getFlowScope()
+            final var c = (UsernamePasswordCredential) WebUtils.getCredential(requestContext);
+            final var bean = requestContext.getFlowScope()
                     .get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeBean.class);
 
             if (!passwordValidationService.isValid(c, bean)) {

@@ -40,10 +40,10 @@ public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcess
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
-        final WsFederationCredential wsFederationCredentials = (WsFederationCredential) credential;
+        final var wsFederationCredentials = (WsFederationCredential) credential;
         if (wsFederationCredentials != null) {
             final Map attributes = wsFederationCredentials.getAttributes();
-            final Principal principal = this.principalFactory.createPrincipal(wsFederationCredentials.getId(), attributes);
+            final var principal = this.principalFactory.createPrincipal(wsFederationCredentials.getId(), attributes);
 
             return this.createHandlerResult(wsFederationCredentials, principal, new ArrayList<>());
         }

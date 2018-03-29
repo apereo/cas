@@ -27,10 +27,10 @@ public class NullableReturnValueAuditResourceResolver implements AuditResourceRe
             return new String[0];
         }
         if (o instanceof Event) {
-            final Event event = Event.class.cast(o);
+            final var event = Event.class.cast(o);
 
-            final String sourceName = event.getSource().getClass().getSimpleName();
-            final String result =
+            final var sourceName = event.getSource().getClass().getSimpleName();
+            final var result =
                     new ToStringBuilder(event, ToStringStyle.NO_CLASS_NAME_STYLE)
                             .append("event", event.getId())
                             .append("timestamp", new Date(event.getTimestamp()))

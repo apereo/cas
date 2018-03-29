@@ -25,14 +25,14 @@ public class EncryptedCookieValueManager implements CookieValueManager {
 
     @Override
     public final String buildCookieValue(final String givenCookieValue, final HttpServletRequest request) {
-        final String res = buildCompoundCookieValue(givenCookieValue, request);
+        final var res = buildCompoundCookieValue(givenCookieValue, request);
         LOGGER.debug("Encoding cookie value [{}]", res);
         return cipherExecutor.encode(res).toString();
     }
 
     @Override
     public final String obtainCookieValue(final Cookie cookie, final HttpServletRequest request) {
-        final String cookieValue = cipherExecutor.decode(cookie.getValue()).toString();
+        final var cookieValue = cipherExecutor.decode(cookie.getValue()).toString();
         LOGGER.debug("Decoded cookie value is [{}]", cookieValue);
         if (StringUtils.isBlank(cookieValue)) {
             LOGGER.debug("Retrieved decoded cookie value is blank. Failed to decode cookie [{}]", cookie.getName());

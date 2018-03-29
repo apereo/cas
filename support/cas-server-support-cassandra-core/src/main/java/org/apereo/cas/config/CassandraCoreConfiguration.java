@@ -28,7 +28,7 @@ public class CassandraCoreConfiguration {
     @Bean
     @RefreshScope
     public CassandraSessionFactory cassandraSessionFactory() {
-        final CassandraAuthenticationProperties cassandra = casProperties.getAuthn().getCassandra();
+        final var cassandra = casProperties.getAuthn().getCassandra();
         return new DefaultCassandraSessionFactory(cassandra);
     }
 

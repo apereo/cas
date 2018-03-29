@@ -52,19 +52,19 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final RegisteredService service = resolveRegisteredServiceInRequestContext(context);
-        final Authentication authentication = WebUtils.getAuthentication(context);
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        final var service = resolveRegisteredServiceInRequestContext(context);
+        final var authentication = WebUtils.getAuthentication(context);
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
 
         if (service == null || authentication == null) {
             LOGGER.debug("No service or authentication is available to determine event for principal");
             return null;
         }
 
-        String acr = request.getParameter(OAuth20Constants.ACR_VALUES);
+        var acr = request.getParameter(OAuth20Constants.ACR_VALUES);
         if (StringUtils.isBlank(acr)) {
-            final URIBuilder builderContext = new URIBuilder(StringUtils.trimToEmpty(context.getFlowExecutionUrl()));
-            final Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
+            final var builderContext = new URIBuilder(StringUtils.trimToEmpty(context.getFlowExecutionUrl()));
+            final var parameter = builderContext.getQueryParams()
                     .stream().filter(p -> p.getName().equals(OAuth20Constants.ACR_VALUES))
                     .findFirst();
             if (parameter.isPresent()) {
@@ -75,21 +75,21 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
             LOGGER.debug("No ACR provided in the authentication request");
             return null;
         }
-        final Set<String> values = org.springframework.util.StringUtils.commaDelimitedListToSet(acr);
+        final var values = org.springframework.util.StringUtils.commaDelimitedListToSet(acr);
         if (values.isEmpty()) {
             LOGGER.debug("No ACR provided in the authentication request");
             return null;
         }
 
-        final Map<String, MultifactorAuthenticationProvider> providerMap =
+        final var providerMap =
                 MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context to handle [{}]", values);
             throw new AuthenticationException();
         }
 
-        final Collection<MultifactorAuthenticationProvider> flattenedProviders = flattenProviders(providerMap.values());
-        final Optional<MultifactorAuthenticationProvider> provider = flattenedProviders
+        final var flattenedProviders = flattenProviders(providerMap.values());
+        final var provider = flattenedProviders
                 .stream()
                 .filter(v -> values.contains(v.getId()))
                 .findAny();

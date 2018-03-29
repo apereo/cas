@@ -45,9 +45,9 @@ public class FortressAuthenticationConfiguration {
 
     @Bean
     public AccessMgr fortressAccessManager() {
-        final String rbacContext = casProperties.getAuthn().getFortress().getRbaccontext();
+        final var rbacContext = casProperties.getAuthn().getFortress().getRbaccontext();
         LOGGER.trace("Registering fortress access manager with context: [{}]", rbacContext);
-        final AccessMgrRestImpl accessMgrRestImpl = new AccessMgrRestImpl();
+        final var accessMgrRestImpl = new AccessMgrRestImpl();
         accessMgrRestImpl.setContextId(casProperties.getAuthn().getFortress().getRbaccontext());
         return accessMgrRestImpl;
     }

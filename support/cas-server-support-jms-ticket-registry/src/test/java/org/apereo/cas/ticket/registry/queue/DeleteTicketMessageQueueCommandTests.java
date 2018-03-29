@@ -24,7 +24,7 @@ public class DeleteTicketMessageQueueCommandTests extends AbstractTicketMessageQ
         final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("TGT", CoreAuthenticationTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         ticketRegistry.addTicket(ticket);
-        final DeleteTicketMessageQueueCommand cmd = new DeleteTicketMessageQueueCommand(new StringBean(), ticket.getId());
+        final var cmd = new DeleteTicketMessageQueueCommand(new StringBean(), ticket.getId());
         cmd.execute(ticketRegistry);
         assertTrue(ticketRegistry.getTickets().isEmpty());
     }

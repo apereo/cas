@@ -35,11 +35,11 @@ public class X509CertificateCredentialsRequestHeaderAction extends X509Certifica
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
-        final Credential x509Credential = super.constructCredentialsFromRequest(context);
+        final var x509Credential = super.constructCredentialsFromRequest(context);
         if (x509Credential != null) {
             return x509Credential;
         }
-        final X509Certificate[] certFromHeader = x509CertificateExtractor.extract((HttpServletRequest) context.getExternalContext().getNativeRequest());
+        final var certFromHeader = x509CertificateExtractor.extract((HttpServletRequest) context.getExternalContext().getNativeRequest());
         if (certFromHeader != null) {
             LOGGER.debug("Certificate found in HTTP request via {}", x509CertificateExtractor.getClass().getName());
             return new X509CertificateCredential(certFromHeader);

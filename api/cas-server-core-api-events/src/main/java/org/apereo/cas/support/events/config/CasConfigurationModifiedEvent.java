@@ -70,7 +70,7 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
             return true;
         }
         if (getFile() != null) {
-            final File file = getFile().toFile();
+            final var file = getFile().toFile();
             return CONFIG_FILE_PATTERN.matcher(file.getName()).find();
         }
         return false;

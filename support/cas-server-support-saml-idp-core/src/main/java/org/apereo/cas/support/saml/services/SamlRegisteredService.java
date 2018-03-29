@@ -136,7 +136,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @SneakyThrows
     public void copyFrom(final RegisteredService source) {
         super.copyFrom(source);
-        final SamlRegisteredService service = (SamlRegisteredService) source;
+        final var service = (SamlRegisteredService) source;
         setMetadataLocation(service.getMetadataLocation());
         setSignAssertions(service.isSignAssertions());
         setSignResponses(service.isSignResponses());

@@ -57,15 +57,15 @@ public class SendTicketGrantingTicketActionSsoTests extends AbstractCentralAuthe
     @Test
     public void verifySsoSessionCookieOnRenewAsParameter() throws Exception {
         
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var response = new MockHttpServletResponse();
+        final var request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
         request.setRemoteAddr(LOCALHOST_IP);
         request.setLocalAddr(LOCALHOST_IP);
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
         
-        final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
+        final var tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn(TEST_STRING);
         request.setCookies(new Cookie("TGT", "test5"));
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
@@ -76,13 +76,13 @@ public class SendTicketGrantingTicketActionSsoTests extends AbstractCentralAuthe
 
     @Test
     public void verifySsoSessionCookieOnServiceSsoDisallowed() throws Exception {
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var response = new MockHttpServletResponse();
+        final var request = new MockHttpServletRequest();
 
-        final WebApplicationService svc = mock(WebApplicationService.class);
+        final var svc = mock(WebApplicationService.class);
         when(svc.getId()).thenReturn("TestSsoFalse");
         
-        final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
+        final var tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn(TEST_STRING);
         request.setCookies(new Cookie("TGT", "test5"));
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);

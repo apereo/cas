@@ -80,10 +80,10 @@ public class DynamoDbServiceRegistryFacilitator {
      * @return the boolean
      */
     public boolean delete(final RegisteredService service) {
-        final DeleteItemRequest del = new DeleteItemRequest().withTableName(dynamoDbProperties.getTableName())
+        final var del = new DeleteItemRequest().withTableName(dynamoDbProperties.getTableName())
             .withKey(CollectionUtils.wrap(ColumnNames.ID.getColumnName(), new AttributeValue(String.valueOf(service.getId()))));
         LOGGER.debug("Submitting delete request [{}] for service [{}]", del, service);
-        final DeleteItemResult res = amazonDynamoDBClient.deleteItem(del);
+        final var res = amazonDynamoDBClient.deleteItem(del);
         LOGGER.debug("Delete request came back with result [{}]", res);
         return res != null;
     }
@@ -94,9 +94,9 @@ public class DynamoDbServiceRegistryFacilitator {
      * @return the long
      */
     public long count() {
-        final ScanRequest scan = new ScanRequest(dynamoDbProperties.getTableName());
+        final var scan = new ScanRequest(dynamoDbProperties.getTableName());
         LOGGER.debug("Scanning table with request [{}] to count items", scan);
-        final ScanResult result = this.amazonDynamoDBClient.scan(scan);
+        final var result = this.amazonDynamoDBClient.scan(scan);
         LOGGER.debug("Scanned table with result [{}]", scan);
         return result.getCount();
     }
@@ -108,9 +108,9 @@ public class DynamoDbServiceRegistryFacilitator {
      */
     public List<RegisteredService> getAll() {
         final List<RegisteredService> services = new ArrayList<>();
-        final ScanRequest scan = new ScanRequest(dynamoDbProperties.getTableName());
+        final var scan = new ScanRequest(dynamoDbProperties.getTableName());
         LOGGER.debug("Scanning table with request [{}]", scan);
-        final ScanResult result = this.amazonDynamoDBClient.scan(scan);
+        final var result = this.amazonDynamoDBClient.scan(scan);
         LOGGER.debug("Scanned table with result [{}]", scan);
         services.addAll(result.getItems().stream().map(this::deserializeServiceFromBinaryBlob)
             .sorted((o1, o2) -> Integer.valueOf(o1.getEvaluationOrder()).compareTo(o2.getEvaluationOrder()))
@@ -143,18 +143,18 @@ public class DynamoDbServiceRegistryFacilitator {
     }
 
     private RegisteredService deserializeServiceFromBinaryBlob(final Map<String, AttributeValue> returnItem) {
-        final ByteBuffer bb = returnItem.get(ColumnNames.ENCODED.getColumnName()).getB();
+        final var bb = returnItem.get(ColumnNames.ENCODED.getColumnName()).getB();
         LOGGER.debug("Located binary encoding of service item [{}]. Transforming item into service object", returnItem);
-        final ByteArrayInputStream is = new ByteArrayInputStream(bb.array());
+        final var is = new ByteArrayInputStream(bb.array());
         return this.jsonSerializer.from(is);
     }
 
     private RegisteredService getRegisteredServiceByKeys(final Map<String, AttributeValue> keys) {
-        final GetItemRequest request = new GetItemRequest().withKey(keys).withTableName(dynamoDbProperties.getTableName());
+        final var request = new GetItemRequest().withKey(keys).withTableName(dynamoDbProperties.getTableName());
         LOGGER.debug("Submitting request [{}] to get service with keys [{}]", request, keys);
-        final Map<String, AttributeValue> returnItem = amazonDynamoDBClient.getItem(request).getItem();
+        final var returnItem = amazonDynamoDBClient.getItem(request).getItem();
         if (returnItem != null) {
-            final RegisteredService service = deserializeServiceFromBinaryBlob(returnItem);
+            final var service = deserializeServiceFromBinaryBlob(returnItem);
             LOGGER.debug("Located service [{}]", service);
             return service;
         }
@@ -167,10 +167,10 @@ public class DynamoDbServiceRegistryFacilitator {
      * @param service the service
      */
     public void put(final RegisteredService service) {
-        final Map<String, AttributeValue> values = buildTableAttributeValuesMapFromService(service);
-        final PutItemRequest putItemRequest = new PutItemRequest(dynamoDbProperties.getTableName(), values);
+        final var values = buildTableAttributeValuesMapFromService(service);
+        final var putItemRequest = new PutItemRequest(dynamoDbProperties.getTableName(), values);
         LOGGER.debug("Submitting put request [{}] for service id [{}]", putItemRequest, service.getServiceId());
-        final PutItemResult putItemResult = amazonDynamoDBClient.putItem(putItemRequest);
+        final var putItemResult = amazonDynamoDBClient.putItem(putItemRequest);
         LOGGER.debug("Service added with result [{}]", putItemResult);
     }
 
@@ -182,13 +182,13 @@ public class DynamoDbServiceRegistryFacilitator {
     @SneakyThrows
     public void createServicesTable(final boolean deleteTables) {
         LOGGER.debug("Attempting to create DynamoDb services table");
-        final CreateTableRequest request = new CreateTableRequest().withAttributeDefinitions(
+        final var request = new CreateTableRequest().withAttributeDefinitions(
             new AttributeDefinition(ColumnNames.ID.getColumnName(), ScalarAttributeType.S))
             .withKeySchema(new KeySchemaElement(ColumnNames.ID.getColumnName(), KeyType.HASH))
             .withProvisionedThroughput(new ProvisionedThroughput(dynamoDbProperties.getReadCapacity(),
                 dynamoDbProperties.getWriteCapacity())).withTableName(dynamoDbProperties.getTableName());
         if (deleteTables) {
-            final DeleteTableRequest delete = new DeleteTableRequest(request.getTableName());
+            final var delete = new DeleteTableRequest(request.getTableName());
             LOGGER.debug("Sending delete request [{}] to remove table if necessary", delete);
             TableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
         }
@@ -196,9 +196,9 @@ public class DynamoDbServiceRegistryFacilitator {
         TableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
         LOGGER.debug("Waiting until table [{}] becomes active...", request.getTableName());
         TableUtils.waitUntilActive(amazonDynamoDBClient, request.getTableName());
-        final DescribeTableRequest describeTableRequest = new DescribeTableRequest().withTableName(request.getTableName());
+        final var describeTableRequest = new DescribeTableRequest().withTableName(request.getTableName());
         LOGGER.debug("Sending request [{}] to obtain table description...", describeTableRequest);
-        final TableDescription tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
+        final var tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
         LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
     }
 
@@ -214,7 +214,7 @@ public class DynamoDbServiceRegistryFacilitator {
         values.put(ColumnNames.NAME.getColumnName(), new AttributeValue(service.getName()));
         values.put(ColumnNames.DESCRIPTION.getColumnName(), new AttributeValue(service.getDescription()));
         values.put(ColumnNames.SERVICE_ID.getColumnName(), new AttributeValue(service.getServiceId()));
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final var out = new ByteArrayOutputStream();
         jsonSerializer.to(out, service);
         values.put(ColumnNames.ENCODED.getColumnName(), new AttributeValue().withB(ByteBuffer.wrap(out.toByteArray())));
         LOGGER.debug("Created attribute values [{}] based on provided service [{}]", values, service);

@@ -92,11 +92,11 @@ public class SpnegoNegotiateCredentialsAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
-        final String authorizationHeader = request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
-        final String userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
+        final var authorizationHeader = request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
+        final var userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
 
         LOGGER.debug("Authorization header [{}], User Agent header [{}]", authorizationHeader, userAgent);
         if (!StringUtils.hasText(userAgent) || this.supportedBrowser.isEmpty()) {
@@ -115,7 +115,7 @@ public class SpnegoNegotiateCredentialsAction extends AbstractAction {
                 || authorizationHeader.length() <= this.messageBeginPrefix
                 .length()) {
 
-            final String wwwHeader = this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE;
+            final var wwwHeader = this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE;
             LOGGER.debug("Authorization header not found or does not match the message prefix [{}]. Sending [{}] header [{}]",
                     this.messageBeginPrefix, SpnegoConstants.HEADER_AUTHENTICATE, wwwHeader);
             response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, wwwHeader);

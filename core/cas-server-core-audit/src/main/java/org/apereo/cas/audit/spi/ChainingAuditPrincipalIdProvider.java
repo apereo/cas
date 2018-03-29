@@ -34,7 +34,7 @@ public class ChainingAuditPrincipalIdProvider implements AuditPrincipalIdProvide
     @Override
     public String getPrincipalIdFrom(final Authentication authentication, final Object resultValue, final Exception exception) {
         AnnotationAwareOrderComparator.sort(this.providers);
-        final AuditPrincipalIdProvider result = providers.stream()
+        final var result = providers.stream()
             .filter(p -> p.supports(authentication, resultValue, exception))
             .findFirst()
             .orElse(new DefaultAuditPrincipalIdProvider());

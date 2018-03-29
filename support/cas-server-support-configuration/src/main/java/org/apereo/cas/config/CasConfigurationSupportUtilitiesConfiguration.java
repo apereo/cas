@@ -66,10 +66,10 @@ public class CasConfigurationSupportUtilitiesConfiguration {
         @SneakyThrows
         public void runNativeConfigurationDirectoryPathWatchService() {
 
-            final File config = configurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
+            final var config = configurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
             if (casProperties.getEvents().isTrackConfigurationModifications() && config.exists()) {
                 LOGGER.debug("Starting to watch configuration directory [{}]", config);
-                final PathWatcherService watcher = new PathWatcherService(config.toPath(),
+                final var watcher = new PathWatcherService(config.toPath(),
                     createConfigurationCreatedEvent.andNext(publish),
                     createConfigurationModifiedEvent.andNext(publish),
                     createConfigurationDeletedEvent.andNext(publish));

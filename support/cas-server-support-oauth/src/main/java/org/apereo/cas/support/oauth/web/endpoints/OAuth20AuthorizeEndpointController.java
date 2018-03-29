@@ -122,8 +122,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
-        final ProfileManager manager = Pac4jUtils.getPac4jProfileManager(request, response);
+        final var context = Pac4jUtils.getPac4jJ2EContext(request, response);
+        final var manager = Pac4jUtils.getPac4jProfileManager(request, response);
 
         if (!verifyAuthorizeRequest(context) || !isRequestAuthenticated(manager, context)) {
             LOGGER.error("Authorize request verification failed. Either the authorization request is missing required parameters, "
@@ -131,8 +131,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        final String clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
-        final OAuthRegisteredService registeredService = getRegisteredServiceByClientId(clientId);
+        final var clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
+        final var registeredService = getRegisteredServiceByClientId(clientId);
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
         } catch (final Exception e) {
@@ -140,7 +140,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        final ModelAndView mv = this.consentApprovalViewResolver.resolve(context, registeredService);
+        final var mv = this.consentApprovalViewResolver.resolve(context, registeredService);
         if (!mv.isEmpty() && mv.hasView()) {
             return mv;
         }
@@ -195,26 +195,26 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        final Service service = this.authenticationBuilder.buildService(registeredService, context, false);
+        final var service = this.authenticationBuilder.buildService(registeredService, context, false);
         LOGGER.debug("Created service [{}] based on registered service [{}]", service, registeredService);
 
-        final Authentication authentication = this.authenticationBuilder.build(profile.get(), registeredService, context, service);
+        final var authentication = this.authenticationBuilder.build(profile.get(), registeredService, context, service);
         LOGGER.debug("Created OAuth authentication [{}] for service [{}]", service, authentication);
 
         try {
-            final AuditableContext audit = AuditableContext.builder().service(service)
+            final var audit = AuditableContext.builder().service(service)
                 .authentication(authentication)
                 .registeredService(registeredService)
                 .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                 .build();
-            final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
         } catch (final UnauthorizedServiceException | PrincipalException e) {
             LOGGER.error(e.getMessage(), e);
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        final View view = buildAuthorizationForRequest(registeredService, context, clientId, service, authentication);
+        final var view = buildAuthorizationForRequest(registeredService, context, clientId, service, authentication);
         if (view != null) {
             return OAuth20Utils.redirectTo(view);
         }
@@ -236,19 +236,19 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                                 final J2EContext context,
                                                 final String clientId, final Service service,
                                                 final Authentication authentication) {
-        final OAuth20AuthorizationResponseBuilder builder = this.oauthAuthorizationResponseBuilders
+        final var builder = this.oauthAuthorizationResponseBuilders
             .stream()
             .filter(b -> b.supports(context))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Could not build the callback url. Response type likely not supported"));
 
-        final TicketGrantingTicket ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
+        final var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
             ticketGrantingTicketCookieGenerator, this.ticketRegistry, context.getRequest());
 
-        final String grantType = StringUtils.defaultIfEmpty(context.getRequestParameter(OAuth20Constants.GRANT_TYPE),
+        final var grantType = StringUtils.defaultIfEmpty(context.getRequestParameter(OAuth20Constants.GRANT_TYPE),
             OAuth20GrantTypes.AUTHORIZATION_CODE.getType()).toUpperCase();
-        final Set<String> scopes = OAuth20Utils.parseRequestScopes(context);
-        final AccessTokenRequestDataHolder holder = new AccessTokenRequestDataHolder(service, authentication,
+        final var scopes = OAuth20Utils.parseRequestScopes(context);
+        final var holder = new AccessTokenRequestDataHolder(service, authentication,
             registeredService, ticketGrantingTicket, OAuth20GrantTypes.valueOf(grantType), scopes);
 
         LOGGER.debug("Building authorization response for grant type [{}] with scopes [{}] for client id [{}]",
@@ -263,7 +263,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @return whether the authorize request is valid
      */
     private boolean verifyAuthorizeRequest(final J2EContext context) {
-        final OAuth20AuthorizationRequestValidator validator = this.oauthRequestValidators
+        final var validator = this.oauthRequestValidators
             .stream()
             .filter(b -> b.supports(context))
             .findFirst()

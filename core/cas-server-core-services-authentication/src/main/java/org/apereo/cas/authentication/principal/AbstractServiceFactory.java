@@ -45,11 +45,11 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
         if (url == null) {
             return null;
         }
-        final int jsessionPosition = url.indexOf(";jsession");
+        final var jsessionPosition = url.indexOf(";jsession");
         if (jsessionPosition == -1) {
             return url;
         }
-        final int questionMarkPosition = url.indexOf('?');
+        final var questionMarkPosition = url.indexOf('?');
         if (questionMarkPosition < jsessionPosition) {
             return url.substring(0, url.indexOf(";jsession"));
         }

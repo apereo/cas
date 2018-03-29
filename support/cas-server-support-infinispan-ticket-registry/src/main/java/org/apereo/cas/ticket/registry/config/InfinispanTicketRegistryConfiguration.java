@@ -34,14 +34,14 @@ public class InfinispanTicketRegistryConfiguration {
 
     @Bean
     public TicketRegistry ticketRegistry() {
-        final InfinispanProperties span = casProperties.getTicket().getRegistry().getInfinispan();
-        final InfinispanTicketRegistry r = new InfinispanTicketRegistry(getCache(span));
+        final var span = casProperties.getTicket().getRegistry().getInfinispan();
+        final var r = new InfinispanTicketRegistry(getCache(span));
         r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(span.getCrypto(), "infinispan"));
         return r;
     }
 
     private Cache<String, Ticket> getCache(final InfinispanProperties span) {
-        final String cacheName = span.getCacheName();
+        final var cacheName = span.getCacheName();
         if (StringUtils.isBlank(cacheName)) {
             return cacheManager().getCache();
         }
@@ -51,7 +51,7 @@ public class InfinispanTicketRegistryConfiguration {
     @Bean
     @SneakyThrows
     public EmbeddedCacheManager cacheManager() {
-        final Resource loc = casProperties.getTicket().getRegistry().getInfinispan().getConfigLocation();
+        final var loc = casProperties.getTicket().getRegistry().getInfinispan().getConfigLocation();
         return new DefaultCacheManager(loc.getInputStream());
     }
 }

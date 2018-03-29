@@ -97,7 +97,7 @@ public interface StringSerializer<T> extends Serializable {
      * @return the collection
      */
     default Collection<T> load(final InputStream stream) {
-        final T result = from(stream);
+        final var result = from(stream);
         if (result != null) {
             return CollectionUtils.wrapList(result);
         }

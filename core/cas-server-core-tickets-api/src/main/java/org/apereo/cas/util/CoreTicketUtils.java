@@ -40,7 +40,7 @@ public class CoreTicketUtils {
                                                                  final boolean forceIfBlankKeys,
                                                                  final String registryName) {
 
-        boolean enabled = registry.isEnabled();
+        var enabled = registry.isEnabled();
         if (!enabled && (StringUtils.isNotBlank(registry.getEncryption().getKey())) && StringUtils.isNotBlank(registry.getSigning().getKey())) {
             LOGGER.warn("Ticket registry encryption/signing for [{}] is not enabled explicitly in the configuration, yet signing/encryption keys "
                     + "are defined for ticket operations. CAS will proceed to enable the ticket registry encryption/signing functionality. "

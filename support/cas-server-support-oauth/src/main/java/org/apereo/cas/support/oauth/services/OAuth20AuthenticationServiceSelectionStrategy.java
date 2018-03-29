@@ -40,9 +40,9 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
 
     @Override
     public Service resolveServiceFrom(final Service service) {
-        final Optional<NameValuePair> clientId = resolveClientIdFromService(service);
-        final Optional<NameValuePair> redirectUri = resolveRedirectUri(service);
-        final Optional<NameValuePair> grantType = resolveGrantType(service);
+        final var clientId = resolveClientIdFromService(service);
+        final var redirectUri = resolveRedirectUri(service);
+        final var grantType = resolveGrantType(service);
 
         if (clientId.isPresent()) {
             if (redirectUri.isPresent()) {
@@ -50,10 +50,10 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
             }
             if (grantType.isPresent()) {
                 String id = null;
-                final String grantValue = grantType.get().getValue();
+                final var grantValue = grantType.get().getValue();
                 if (OAuth20Utils.isGrantType(grantValue, OAuth20GrantTypes.CLIENT_CREDENTIALS)) {
                     LOGGER.debug("Located grant type [{}]; checking for service headers", grantValue);
-                    final HttpServletRequest request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+                    final var request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
                     id = OAuth20Utils.getServiceRequestHeaderIfAny(request);
                 }
                 if (StringUtils.isBlank(id)) {
@@ -68,7 +68,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
 
     private static Optional<NameValuePair> resolveClientIdFromService(final Service service) {
         try {
-            final URIBuilder builder = new URIBuilder(service.getId());
+            final var builder = new URIBuilder(service.getId());
             return builder.getQueryParams()
                     .stream()
                     .filter(p -> p.getName()
@@ -82,7 +82,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
 
     private static Optional<NameValuePair> resolveRedirectUri(final Service service) {
         try {
-            final URIBuilder builder = new URIBuilder(service.getId());
+            final var builder = new URIBuilder(service.getId());
             return builder.getQueryParams()
                     .stream()
                     .filter(p -> p.getName().equals(OAuth20Constants.REDIRECT_URI))
@@ -95,7 +95,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
 
     private static Optional<NameValuePair> resolveGrantType(final Service service) {
         try {
-            final URIBuilder builder = new URIBuilder(service.getId());
+            final var builder = new URIBuilder(service.getId());
             return builder.getQueryParams()
                     .stream()
                     .filter(p -> p.getName()
@@ -109,8 +109,8 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
 
     @Override
     public boolean supports(final Service service) {
-        final RegisteredService svc = this.servicesManager.findServiceBy(service);
-        final boolean res = svc != null && service.getId().startsWith(this.callbackUrl);
+        final var svc = this.servicesManager.findServiceBy(service);
+        final var res = svc != null && service.getId().startsWith(this.callbackUrl);
         LOGGER.debug("Authentication request is{}identified as an OAuth request",
                 BooleanUtils.toString(res, StringUtils.EMPTY, " not "));
         return res;

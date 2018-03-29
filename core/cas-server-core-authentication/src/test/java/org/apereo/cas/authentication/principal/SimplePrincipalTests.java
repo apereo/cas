@@ -26,20 +26,20 @@ public class SimplePrincipalTests {
     public void verifySerializeACompletePrincipalToJson() throws IOException {
         final HashMap<String, Object> attributes = new HashMap<>();
         attributes.put("attribute", "value");
-        final SimplePrincipal principalWritten = new SimplePrincipal("id", attributes);
+        final var principalWritten = new SimplePrincipal("id", attributes);
 
         MAPPER.writeValue(JSON_FILE, principalWritten);
 
-        final SimplePrincipal principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);
+        final var principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);
 
         assertEquals(principalWritten, principalRead);
     }
 
     @Test
     public void verifySerializeAPrincipalWithEmptyAttributesToJson() throws IOException {
-        final SimplePrincipal principalWritten = new SimplePrincipal("id", new HashMap<>(0));
+        final var principalWritten = new SimplePrincipal("id", new HashMap<>(0));
         MAPPER.writeValue(JSON_FILE, principalWritten);
-        final SimplePrincipal principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);
+        final var principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);
         assertEquals(principalWritten, principalRead);
     }
 

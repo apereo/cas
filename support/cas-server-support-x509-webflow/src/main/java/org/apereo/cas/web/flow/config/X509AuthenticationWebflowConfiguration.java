@@ -79,7 +79,7 @@ public class X509AuthenticationWebflowConfiguration implements CasWebflowExecuti
 
     @Bean
     public Action x509Check() {
-        final boolean extractCertFromRequestHeader = casProperties.getAuthn().getX509().isExtractCert();
+        final var extractCertFromRequestHeader = casProperties.getAuthn().getX509().isExtractCert();
         if (extractCertFromRequestHeader) {
             return new X509CertificateCredentialsRequestHeaderAction(initialAuthenticationAttemptWebflowEventResolver,
                 serviceTicketRequestWebflowEventResolver,
@@ -94,7 +94,7 @@ public class X509AuthenticationWebflowConfiguration implements CasWebflowExecuti
     @ConditionalOnMissingBean(name = "x509CertificateExtractor")
     @Bean
     public X509CertificateExtractor x509CertificateExtractor() {
-        final String sslHeaderName = casProperties.getAuthn().getX509().getSslHeaderName();
+        final var sslHeaderName = casProperties.getAuthn().getX509().getSslHeaderName();
         return new RequestHeaderX509CertificateExtractor(sslHeaderName);
     }
 

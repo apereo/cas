@@ -27,9 +27,9 @@ public class JsonUtils {
      */
     @SneakyThrows
     public static void render(final Object model, final HttpServletResponse response) {
-        final MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
+        final var jsonConverter = new MappingJackson2HttpMessageConverter();
         jsonConverter.setPrettyPrint(true);
-        final MediaType jsonMimeType = MediaType.APPLICATION_JSON;
+        final var jsonMimeType = MediaType.APPLICATION_JSON;
         jsonConverter.write(model, jsonMimeType, new ServletServerHttpResponse(response));
     }
 

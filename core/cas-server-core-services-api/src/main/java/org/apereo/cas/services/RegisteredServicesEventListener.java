@@ -43,15 +43,15 @@ public class RegisteredServicesEventListener {
      */
     @EventListener
     public void handleRegisteredServiceExpiredEvent(final CasRegisteredServiceExpiredEvent event) {
-        final RegisteredService registeredService = event.getRegisteredService();
-        final List<RegisteredServiceContact> contacts = registeredService.getContacts();
+        final var registeredService = event.getRegisteredService();
+        final var contacts = registeredService.getContacts();
 
-        final EmailProperties mail = casProperties.getServiceRegistry().getMail();
-        final SmsProperties sms = casProperties.getServiceRegistry().getSms();
+        final var mail = casProperties.getServiceRegistry().getMail();
+        final var sms = casProperties.getServiceRegistry().getSms();
 
-        final String serviceName = StringUtils.defaultIfBlank(registeredService.getName(), registeredService.getServiceId());
+        final var serviceName = StringUtils.defaultIfBlank(registeredService.getName(), registeredService.getServiceId());
         if (communicationsManager.isMailSenderDefined()) {
-            final String message = String.format(mail.getText(), serviceName);
+            final var message = String.format(mail.getText(), serviceName);
             contacts
                     .stream()
                     .filter(c -> StringUtils.isNotBlank(c.getEmail()))
@@ -63,7 +63,7 @@ public class RegisteredServicesEventListener {
                             mail.getBcc()));
         }
         if (communicationsManager.isSmsSenderDefined()) {
-            final String message = String.format(sms.getText(), serviceName);
+            final var message = String.format(sms.getText(), serviceName);
             contacts
                     .stream()
                     .filter(c -> StringUtils.isNotBlank(c.getPhone()))

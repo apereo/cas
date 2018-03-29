@@ -58,10 +58,10 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
     @Override
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        final String openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
+        final var openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
         if (StringUtils.equals(openIdMode, OpenIdProtocolConstants.CHECK_AUTHENTICATION)) {
 
-            final VerifyResponse message = (VerifyResponse)
+            final var message = (VerifyResponse)
                     this.serverManager.verify(new ParameterList(request.getParameterMap()));
 
             final Map<String, String> parameters = new HashMap<>();
@@ -81,7 +81,7 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
     
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
-        final String openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
+        final var openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
         if (StringUtils.equals(openIdMode, OpenIdProtocolConstants.CHECK_AUTHENTICATION)) {
             LOGGER.info("Handling request. openid.mode : [{}]", openIdMode);
             return true;

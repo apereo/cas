@@ -35,11 +35,11 @@ public class OidcRegisteredServiceUIAction extends AbstractAction implements Ser
         Service service = WebUtils.getService(requestContext);
         if (service != null) {
             service = serviceSelectionStrategy.resolveServiceFrom(service);
-            final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+            final var registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
 
             if (registeredService instanceof OidcRegisteredService) {
-                final OidcRegisteredService oauthService = OidcRegisteredService.class.cast(registeredService);
+                final var oauthService = OidcRegisteredService.class.cast(registeredService);
                 WebUtils.putServiceUserInterfaceMetadata(requestContext, new DefaultRegisteredServiceUserInterfaceInfo(oauthService));
             }
         }

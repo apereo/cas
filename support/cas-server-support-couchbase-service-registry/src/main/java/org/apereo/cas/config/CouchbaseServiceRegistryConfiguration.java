@@ -41,8 +41,8 @@ public class CouchbaseServiceRegistryConfiguration implements ServiceRegistryExe
     @RefreshScope
     @Bean
     public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory() {
-        final CouchbaseServiceRegistryProperties couchbase = casProperties.getServiceRegistry().getCouchbase();
-        final Set<String> nodes = StringUtils.commaDelimitedListToSet(couchbase.getNodeSet());
+        final var couchbase = casProperties.getServiceRegistry().getCouchbase();
+        final var nodes = StringUtils.commaDelimitedListToSet(couchbase.getNodeSet());
         return new CouchbaseClientFactory(nodes, couchbase.getBucket(),
             couchbase.getPassword(),
             Beans.newDuration(couchbase.getTimeout()).toMillis(),

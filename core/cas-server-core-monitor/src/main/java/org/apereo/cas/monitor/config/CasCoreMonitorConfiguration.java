@@ -37,7 +37,7 @@ public class CasCoreMonitorConfiguration {
     @ConditionalOnMissingBean(name = "memoryHealthIndicator")
     @Bean
     public HealthIndicator memoryHealthIndicator() {
-        final int freeMemThreshold = casProperties.getMonitor().getFreeMemThreshold();
+        final var freeMemThreshold = casProperties.getMonitor().getFreeMemThreshold();
         if (freeMemThreshold > 0) {
             LOGGER.debug("Configured memory monitor with free-memory threshold [{}]", freeMemThreshold);
             return new MemoryMonitor(freeMemThreshold);
@@ -48,8 +48,8 @@ public class CasCoreMonitorConfiguration {
     @ConditionalOnMissingBean(name = "sessionHealthIndicator")
     @Bean
     public HealthIndicator sessionHealthIndicator() {
-        final MonitorWarningProperties warnSt = casProperties.getMonitor().getSt().getWarn();
-        final MonitorWarningProperties warnTgt = casProperties.getMonitor().getTgt().getWarn();
+        final var warnSt = casProperties.getMonitor().getSt().getWarn();
+        final var warnTgt = casProperties.getMonitor().getTgt().getWarn();
         if (warnSt.getThreshold() > 0 && warnTgt.getThreshold() > 0) {
             LOGGER.debug("Configured session monitor with service ticket threshold [{}] and session threshold [{}]",
                 warnSt.getThreshold(), warnTgt.getThreshold());

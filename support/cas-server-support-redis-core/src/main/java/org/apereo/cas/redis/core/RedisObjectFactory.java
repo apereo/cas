@@ -30,11 +30,11 @@ public class RedisObjectFactory {
      * @return the redis connection factory
      */
     public RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis) {
-        final LettucePoolingClientConfiguration poolConfig = redis.getPool() != null
+        final var poolConfig = redis.getPool() != null
             ? redisPoolConfig(redis)
             : LettucePoolingClientConfiguration.defaultConfiguration();
 
-        final LettuceConnectionFactory factory = new LettuceConnectionFactory(potentiallyGetSentinelConfig(redis), poolConfig);
+        final var factory = new LettuceConnectionFactory(potentiallyGetSentinelConfig(redis), poolConfig);
         factory.setHostName(redis.getHost());
         factory.setPort(redis.getPort());
         if (redis.getPassword() != null) {
@@ -50,8 +50,8 @@ public class RedisObjectFactory {
     }
 
     private LettucePoolingClientConfiguration redisPoolConfig(final BaseRedisProperties redis) {
-        final GenericObjectPoolConfig config = new GenericObjectPoolConfig();
-        final RedisTicketRegistryProperties.Pool props = redis.getPool();
+        final var config = new GenericObjectPoolConfig();
+        final var props = redis.getPool();
         config.setMaxTotal(props.getMaxActive());
         config.setMaxIdle(props.getMaxIdle());
         config.setMinIdle(props.getMinIdle());
@@ -92,9 +92,9 @@ public class RedisObjectFactory {
     private List<RedisNode> createRedisNodesForProperties(final BaseRedisProperties redis) {
         final List<RedisNode> redisNodes = new ArrayList<RedisNode>();
         if (redis.getSentinel().getNode() != null) {
-            final List<String> nodes = redis.getSentinel().getNode();
-            for (final String hostAndPort : nodes) {
-                final String[] args = StringUtils.split(hostAndPort, ":");
+            final var nodes = redis.getSentinel().getNode();
+            for (final var hostAndPort : nodes) {
+                final var args = StringUtils.split(hostAndPort, ":");
                 redisNodes.add(new RedisNode(args[0], Integer.parseInt(args[1])));
             }
         }

@@ -33,7 +33,7 @@ public class SerializationUtils {
      * @since 5.0.0
      */
     public static byte[] serialize(final Serializable object) {
-        final ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+        final var outBytes = new ByteArrayOutputStream();
         serialize(object, outBytes);
         return outBytes.toByteArray();
     }
@@ -47,7 +47,7 @@ public class SerializationUtils {
      */
     @SneakyThrows
     public static void serialize(final Serializable object, final OutputStream outputStream) {
-        try (ObjectOutputStream out = new ObjectOutputStream(outputStream)) {
+        try (var out = new ObjectOutputStream(outputStream)) {
             out.writeObject(object);
         }
     }
@@ -62,7 +62,7 @@ public class SerializationUtils {
      * @since 5.0.0
      */
     public static <T> T deserialize(final byte[] inBytes, final Class<T> clazz) {
-        final ByteArrayInputStream inputStream = new ByteArrayInputStream(inBytes);
+        final var inputStream = new ByteArrayInputStream(inBytes);
         return deserialize(inputStream, clazz);
     }
 
@@ -77,8 +77,8 @@ public class SerializationUtils {
      */
     @SneakyThrows
     public static <T> T deserialize(final InputStream inputStream, final Class<T> clazz) {
-        try (ObjectInputStream in = new ObjectInputStream(inputStream)) {
-            final Object obj = in.readObject();
+        try (var in = new ObjectInputStream(inputStream)) {
+            final var obj = in.readObject();
 
             if (!clazz.isAssignableFrom(obj.getClass())) {
                 throw new ClassCastException("Result [" + obj
@@ -99,7 +99,7 @@ public class SerializationUtils {
      */
     public static byte[] serializeAndEncodeObject(final CipherExecutor cipher,
                                                   final Serializable object) {
-        final byte[] outBytes = serialize(object);
+        final var outBytes = serialize(object);
         return (byte[]) cipher.encode(outBytes);
     }
 
@@ -117,7 +117,7 @@ public class SerializationUtils {
     public static <T extends Serializable> T decodeAndDeserializeObject(final byte[] object,
                                                                         final CipherExecutor cipher,
                                                                         final Class<T> type) {
-        final byte[] decoded = (byte[]) cipher.decode(object);
+        final var decoded = (byte[]) cipher.decode(object);
         return deserializeAndCheckObject(decoded, type);
     }
 

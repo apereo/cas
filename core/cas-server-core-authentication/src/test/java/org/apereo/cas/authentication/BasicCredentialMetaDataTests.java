@@ -22,7 +22,7 @@ public class BasicCredentialMetaDataTests {
 
     @Test
     public void verifySerializeABasicCredentialMetaDataToJson() throws IOException {
-        final BasicCredentialMetaData credentialMetaDataWritten = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        final var credentialMetaDataWritten = new BasicCredentialMetaData(new UsernamePasswordCredential());
 
         MAPPER.writeValue(JSON_FILE, credentialMetaDataWritten);
 

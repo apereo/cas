@@ -127,15 +127,15 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @ConditionalOnMissingBean(name = "casClientTicketValidator")
     @Bean
     public AbstractUrlBasedTicketValidator casClientTicketValidator() {
-        final String prefix = StringUtils.defaultString(casProperties.getClient().getPrefix(), casProperties.getServer().getPrefix());
-        final Cas30ServiceTicketValidator validator = new Cas30ServiceTicketValidator(prefix);
+        final var prefix = StringUtils.defaultString(casProperties.getClient().getPrefix(), casProperties.getServer().getPrefix());
+        final var validator = new Cas30ServiceTicketValidator(prefix);
         final HttpURLConnectionFactory factory = new HttpURLConnectionFactory() {
             private static final long serialVersionUID = 3692658214483917813L;
 
             @Override
             public HttpURLConnection buildHttpURLConnection(final URLConnection conn) {
                 if (conn instanceof HttpsURLConnection) {
-                    final HttpsURLConnection httpsConnection = (HttpsURLConnection) conn;
+                    final var httpsConnection = (HttpsURLConnection) conn;
                     httpsConnection.setSSLSocketFactory(sslContext.getSocketFactory());
                     httpsConnection.setHostnameVerifier(hostnameVerifier);
                 }
@@ -160,7 +160,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     @Lazy
     public ProxyTicketFactory defaultProxyTicketFactory() {
-        final boolean onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
+        final var onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
         return new DefaultProxyTicketFactory(proxyTicketExpirationPolicy(),
             uniqueIdGeneratorsMap,
             protocolTicketCipherExecutor(),
@@ -202,7 +202,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     @Lazy
     public ServiceTicketFactory defaultServiceTicketFactory() {
-        final boolean onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
+        final var onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
         return new DefaultServiceTicketFactory(serviceTicketExpirationPolicy(),
             uniqueIdGeneratorsMap,
             onlyTrackMostRecentSession,
@@ -220,7 +220,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @ConditionalOnMissingBean(name = "defaultTicketFactory")
     @Bean
     public TicketFactory defaultTicketFactory() {
-        final DefaultTicketFactory factory = new DefaultTicketFactory();
+        final var factory = new DefaultTicketFactory();
         factory.addTicketFactory(TransientSessionTicket.class, defaultTransientSessionTicketFactory())
             .addTicketFactory(ProxyGrantingTicket.class, defaultProxyGrantingTicketFactory())
             .addTicketFactory(TicketGrantingTicket.class, defaultTicketGrantingTicketFactory())
@@ -248,11 +248,11 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     public TicketRegistry ticketRegistry() {
         LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
             + "Tickets that are issued during runtime will be LOST when the web server is restarted. This MAY impact SSO functionality.");
-        final TicketRegistryProperties.InMemory mem = casProperties.getTicket().getRegistry().getInMemory();
-        final CipherExecutor cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "inMemory");
+        final var mem = casProperties.getTicket().getRegistry().getInMemory();
+        final var cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "inMemory");
 
         if (mem.isCache()) {
-            final LogoutManager logoutManager = applicationContext.getBean("logoutManager", LogoutManager.class);
+            final var logoutManager = applicationContext.getBean("logoutManager", LogoutManager.class);
             return new CachingTicketRegistry(cipher, logoutManager);
         }
         return new DefaultTicketRegistry(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency(), cipher);
@@ -267,7 +267,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @ConditionalOnMissingBean(name = "grantingTicketExpirationPolicy")
     @Bean
     public ExpirationPolicy grantingTicketExpirationPolicy() {
-        final TicketGrantingTicketProperties tgt = casProperties.getTicket().getTgt();
+        final var tgt = casProperties.getTicket().getTgt();
         if (tgt.getRememberMe().isEnabled()) {
             return rememberMeExpirationPolicy();
         }
@@ -276,10 +276,10 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
     @Bean
     public ExpirationPolicy rememberMeExpirationPolicy() {
-        final TicketGrantingTicketProperties tgt = casProperties.getTicket().getTgt();
+        final var tgt = casProperties.getTicket().getTgt();
 
-        final HardTimeoutExpirationPolicy rememberMePolicy = new HardTimeoutExpirationPolicy(tgt.getRememberMe().getTimeToKillInSeconds());
-        final RememberMeDelegatingExpirationPolicy p = new RememberMeDelegatingExpirationPolicy(ticketGrantingTicketExpirationPolicy());
+        final var rememberMePolicy = new HardTimeoutExpirationPolicy(tgt.getRememberMe().getTimeToKillInSeconds());
+        final var p = new RememberMeDelegatingExpirationPolicy(ticketGrantingTicketExpirationPolicy());
         p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.REMEMBER_ME, rememberMePolicy);
         p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.DEFAULT, ticketGrantingTicketExpirationPolicy());
         return p;
@@ -317,7 +317,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     @ConditionalOnMissingBean(name = "protocolTicketCipherExecutor")
     public CipherExecutor protocolTicketCipherExecutor() {
-        final EncryptionJwtSigningJwtCryptographyProperties crypto = casProperties.getTicket().getCrypto();
+        final var crypto = casProperties.getTicket().getCrypto();
         if (crypto.isEnabled()) {
             return new ProtocolTicketCipherExecutor(
                 crypto.getEncryption().getKey(),
@@ -331,7 +331,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @ConditionalOnMissingBean(name = "ticketGrantingTicketExpirationPolicy")
     @Bean
     public ExpirationPolicy ticketGrantingTicketExpirationPolicy() {
-        final TicketGrantingTicketProperties tgt = casProperties.getTicket().getTgt();
+        final var tgt = casProperties.getTicket().getTgt();
         if (tgt.getMaxTimeToLiveInSeconds() <= 0 && tgt.getTimeToKillInSeconds() <= 0) {
             LOGGER.warn("Ticket-granting ticket expiration policy is set to NEVER expire tickets.");
             return new NeverExpiresExpirationPolicy();
@@ -351,7 +351,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
         if (tgt.getThrottledTimeout().getTimeInBetweenUsesInSeconds() > 0
             && tgt.getThrottledTimeout().getTimeToKillInSeconds() > 0) {
-            final ThrottledUseAndTimeoutExpirationPolicy p = new ThrottledUseAndTimeoutExpirationPolicy();
+            final var p = new ThrottledUseAndTimeoutExpirationPolicy();
             p.setTimeToKillInSeconds(tgt.getThrottledTimeout().getTimeToKillInSeconds());
             p.setTimeInBetweenUsesInSeconds(tgt.getThrottledTimeout().getTimeInBetweenUsesInSeconds());
             LOGGER.debug("Ticket-granting ticket expiration policy is based on throttled timeouts");
@@ -376,9 +376,9 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Autowired
     @Bean
     public TicketCatalog ticketCatalog(final List<TicketCatalogConfigurer> configurers) {
-        final DefaultTicketCatalog plan = new DefaultTicketCatalog();
+        final var plan = new DefaultTicketCatalog();
         configurers.forEach(c -> {
-            final String name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            final var name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Configuring ticket metadata registration plan [{}]", name);
             c.configureTicketCatalog(plan);
         });

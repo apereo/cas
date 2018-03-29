@@ -32,9 +32,9 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
 
     @Override
     public SamlService createService(final HttpServletRequest request) {
-        final String service = request.getParameter(SamlProtocolConstants.CONST_PARAM_TARGET);
+        final var service = request.getParameter(SamlProtocolConstants.CONST_PARAM_TARGET);
         final String artifactId;
-        final String requestBody = getRequestBody(request);
+        final var requestBody = getRequestBody(request);
         final String requestId;
 
         if (!StringUtils.hasText(service) && !StringUtils.hasText(requestBody)) {
@@ -42,7 +42,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             return null;
         }
 
-        final String id = cleanupUrl(service);
+        final var id = cleanupUrl(service);
 
         if (StringUtils.hasText(requestBody)) {
 
@@ -55,9 +55,9 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
                 tagStart = CONST_START_ARTIFACT_XML_TAG_NO_NAMESPACE;
                 tagEnd = CONST_END_ARTIFACT_XML_TAG_NO_NAMESPACE;
             }
-            final int startTagLocation = requestBody.indexOf(tagStart);
-            final int artifactStartLocation = startTagLocation + tagStart.length();
-            final int endTagLocation = requestBody.indexOf(tagEnd);
+            final var startTagLocation = requestBody.indexOf(tagStart);
+            final var artifactStartLocation = startTagLocation + tagStart.length();
+            final var endTagLocation = requestBody.indexOf(tagEnd);
 
             artifactId = requestBody.substring(artifactStartLocation, endTagLocation).trim();
             requestId = extractRequestId(requestBody);
@@ -90,8 +90,8 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
         }
 
         try {
-            final int position = requestBody.indexOf("RequestID=\"") + CONST_REQUEST_ID_LENGTH;
-            final int nextPosition = requestBody.indexOf('"', position);
+            final var position = requestBody.indexOf("RequestID=\"") + CONST_REQUEST_ID_LENGTH;
+            final var nextPosition = requestBody.indexOf('"', position);
 
             return requestBody.substring(position, nextPosition);
         } catch (final Exception e) {
@@ -107,7 +107,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
      * @return the request body
      */
     private static String getRequestBody(final HttpServletRequest request) {
-        try(BufferedReader reader = request.getReader()) {
+        try(var reader = request.getReader()) {
             if (reader == null) {
                 LOGGER.debug("Request body could not be read because it's empty.");
                 return null;

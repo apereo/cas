@@ -98,14 +98,14 @@ public class WsFederationHelper {
      * @return an equivalent credential.
      */
     public WsFederationCredential createCredentialFromToken(final Assertion assertion) {
-        final ZonedDateTime retrievedOn = ZonedDateTime.now();
+        final var retrievedOn = ZonedDateTime.now();
         LOGGER.debug("Retrieved on [{}]", retrievedOn);
-        final WsFederationCredential credential = new WsFederationCredential();
+        final var credential = new WsFederationCredential();
         credential.setRetrievedOn(retrievedOn);
         credential.setId(assertion.getID());
         credential.setIssuer(assertion.getIssuer());
         credential.setIssuedOn(ZonedDateTime.parse(assertion.getIssueInstant().toDateTimeISO().toString()));
-        final Conditions conditions = assertion.getConditions();
+        final var conditions = assertion.getConditions();
         if (conditions != null) {
             credential.setNotBefore(ZonedDateTime.parse(conditions.getNotBefore().toDateTimeISO().toString()));
             credential.setNotOnOrAfter(ZonedDateTime.parse(conditions.getNotOnOrAfter().toDateTimeISO().toString()));
@@ -141,25 +141,25 @@ public class WsFederationHelper {
         LOGGER.debug("Result token received from ADFS is [{}]", wresult);
         try (InputStream in = new ByteArrayInputStream(wresult.getBytes(StandardCharsets.UTF_8))) {
             LOGGER.debug("Parsing token into a document");
-            final Document document = configBean.getParserPool().parse(in);
-            final Element metadataRoot = document.getDocumentElement();
-            final UnmarshallerFactory unmarshallerFactory = configBean.getUnmarshallerFactory();
-            final Unmarshaller unmarshaller = unmarshallerFactory.getUnmarshaller(metadataRoot);
+            final var document = configBean.getParserPool().parse(in);
+            final var metadataRoot = document.getDocumentElement();
+            final var unmarshallerFactory = configBean.getUnmarshallerFactory();
+            final var unmarshaller = unmarshallerFactory.getUnmarshaller(metadataRoot);
             if (unmarshaller == null) {
                 throw new IllegalArgumentException("Unmarshaller for the metadata root element cannot be determined");
             }
             LOGGER.debug("Unmarshalling the document into a security token response");
-            final RequestSecurityTokenResponse rsToken = (RequestSecurityTokenResponse) unmarshaller.unmarshall(metadataRoot);
+            final var rsToken = (RequestSecurityTokenResponse) unmarshaller.unmarshall(metadataRoot);
             if (rsToken.getRequestedSecurityToken() == null) {
                 throw new IllegalArgumentException("Request security token response is null");
             }
             LOGGER.debug("Locating list of requested security tokens");
-            final List<RequestedSecurityToken> rst = rsToken.getRequestedSecurityToken();
+            final var rst = rsToken.getRequestedSecurityToken();
             if (rst.isEmpty()) {
                 throw new IllegalArgumentException("No requested security token response is provided in the response");
             }
             LOGGER.debug("Locating the first occurrence of a requested security token in the list");
-            final RequestedSecurityToken reqToken = rst.get(0);
+            final var reqToken = rst.get(0);
             if (reqToken.getSecurityTokens() == null || reqToken.getSecurityTokens().isEmpty()) {
                 throw new IllegalArgumentException("Requested security token response is not carrying any security tokens");
             }
@@ -178,12 +178,12 @@ public class WsFederationHelper {
      * @return an assertion
      */
     public Pair<Assertion, WsFederationConfiguration> buildAndVerifyAssertion(final RequestedSecurityToken reqToken, final Collection<WsFederationConfiguration> config) {
-        final XMLObject securityToken = getSecurityTokenFromRequestedToken(reqToken, config);
+        final var securityToken = getSecurityTokenFromRequestedToken(reqToken, config);
         if (securityToken instanceof Assertion) {
             LOGGER.debug("Security token is an assertion.");
-            final Assertion assertion = Assertion.class.cast(securityToken);
+            final var assertion = Assertion.class.cast(securityToken);
             LOGGER.debug("Extracted assertion successfully: [{}]", assertion);
-            final WsFederationConfiguration cfg = config.stream()
+            final var cfg = config.stream()
                 .filter(c -> c.getIdentityProviderIdentifier().equals(assertion.getIssuer()))
                 .findFirst()
                 .orElse(null);
@@ -198,16 +198,16 @@ public class WsFederationHelper {
 
     private XMLObject getSecurityTokenFromRequestedToken(final RequestedSecurityToken reqToken, final Collection<WsFederationConfiguration> config) {
         LOGGER.debug("Locating the first occurrence of a security token from the requested security token");
-        XMLObject securityToken = getAssertionFromSecurityToken(reqToken);
+        var securityToken = getAssertionFromSecurityToken(reqToken);
         if (securityToken instanceof EncryptedData) {
             LOGGER.debug("Security token is encrypted. Attempting to decrypt to extract the assertion");
-            final EncryptedData encryptedData = EncryptedData.class.cast(securityToken);
-            final Iterator<WsFederationConfiguration> it = config.iterator();
-            boolean found = false;
+            final var encryptedData = EncryptedData.class.cast(securityToken);
+            final var it = config.iterator();
+            var found = false;
             while (!found && it.hasNext()) {
                 try {
-                    final WsFederationConfiguration c = it.next();
-                    final Decrypter decrypter = buildAssertionDecrypter(c);
+                    final var c = it.next();
+                    final var decrypter = buildAssertionDecrypter(c);
                     LOGGER.debug("Built an instance of [{}]", decrypter.getClass().getName());
                     securityToken = decrypter.decryptData(encryptedData);
                     LOGGER.debug("Decrypted assertion successfully");
@@ -244,19 +244,19 @@ public class WsFederationHelper {
             LOGGER.warn("No assertion or its configuration was provided to validate signatures");
             return false;
         }
-        boolean valid = false;
-        final Signature signature = assertion.getKey().getSignature();
+        var valid = false;
+        final var signature = assertion.getKey().getSignature();
         if (signature != null) {
             final SignaturePrevalidator validator = new SAMLSignatureProfileValidator();
             try {
                 validator.validate(signature);
-                final CriteriaSet criteriaSet = new CriteriaSet();
+                final var criteriaSet = new CriteriaSet();
                 criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
                 criteriaSet.add(new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME));
                 criteriaSet.add(new ProtocolCriterion(SAMLConstants.SAML20P_NS));
                 criteriaSet.add(new EntityIdCriterion(assertion.getValue().getIdentityProviderIdentifier()));
                 try {
-                    final SignatureTrustEngine engine = buildSignatureTrustEngine(assertion.getValue());
+                    final var engine = buildSignatureTrustEngine(assertion.getValue());
                     valid = engine.validate(signature, criteriaSet);
                 } catch (final SecurityException e) {
                     LOGGER.warn(e.getMessage(), e);
@@ -281,9 +281,9 @@ public class WsFederationHelper {
      * @return relying party id
      */
     public String getRelyingPartyIdentifier(final Service service, final WsFederationConfiguration configuration) {
-        String relyingPartyIdentifier = configuration.getRelyingPartyIdentifier();
+        var relyingPartyIdentifier = configuration.getRelyingPartyIdentifier();
         if (service != null) {
-            final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+            final var registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             if (RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.isAssignedTo(registeredService)) {
                 relyingPartyIdentifier = RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.getPropertyValue(registeredService).getValue();
@@ -301,7 +301,7 @@ public class WsFederationHelper {
      */
     @SneakyThrows
     private static SignatureTrustEngine buildSignatureTrustEngine(final WsFederationConfiguration wsFederationConfiguration) {
-        final List<Credential> signingWallet = wsFederationConfiguration.getSigningWallet();
+        final var signingWallet = wsFederationConfiguration.getSigningWallet();
         final CredentialResolver resolver = new StaticCredentialResolver(signingWallet);
         final KeyInfoCredentialResolver keyResolver = new StaticKeyInfoCredentialResolver(signingWallet);
         return new ExplicitKeySignatureTrustEngine(resolver, keyResolver);
@@ -311,29 +311,29 @@ public class WsFederationHelper {
     private static Credential getEncryptionCredential(final WsFederationConfiguration config) {
         // This will need to contain the private keypair in PEM format
         LOGGER.debug("Locating encryption credential private key [{}]", config.getEncryptionPrivateKey());
-        final BufferedReader br = new BufferedReader(new InputStreamReader(config.getEncryptionPrivateKey().getInputStream(), StandardCharsets.UTF_8));
+        final var br = new BufferedReader(new InputStreamReader(config.getEncryptionPrivateKey().getInputStream(), StandardCharsets.UTF_8));
         Security.addProvider(new BouncyCastleProvider());
         LOGGER.debug("Parsing credential private key");
-        final PEMParser pemParser = new PEMParser(br);
-        final Object privateKeyPemObject = pemParser.readObject();
-        final JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(new BouncyCastleProvider());
+        final var pemParser = new PEMParser(br);
+        final var privateKeyPemObject = pemParser.readObject();
+        final var converter = new JcaPEMKeyConverter().setProvider(new BouncyCastleProvider());
         final KeyPair kp;
         if (privateKeyPemObject instanceof PEMEncryptedKeyPair) {
             LOGGER.debug("Encryption private key is an encrypted keypair");
-            final PEMEncryptedKeyPair ckp = (PEMEncryptedKeyPair) privateKeyPemObject;
-            final PEMDecryptorProvider decProv = new JcePEMDecryptorProviderBuilder().build(config.getEncryptionPrivateKeyPassword().toCharArray());
+            final var ckp = (PEMEncryptedKeyPair) privateKeyPemObject;
+            final var decProv = new JcePEMDecryptorProviderBuilder().build(config.getEncryptionPrivateKeyPassword().toCharArray());
             LOGGER.debug("Attempting to decrypt the encrypted keypair based on the provided encryption private key password");
             kp = converter.getKeyPair(ckp.decryptKeyPair(decProv));
         } else {
             LOGGER.debug("Extracting a keypair from the private key");
             kp = converter.getKeyPair((PEMKeyPair) privateKeyPemObject);
         }
-        final X509CertParser certParser = new X509CertParser();
+        final var certParser = new X509CertParser();
         // This is the certificate shared with ADFS in DER format, i.e certificate.crt
         LOGGER.debug("Locating encryption certificate [{}]", config.getEncryptionCertificate());
         certParser.engineInit(config.getEncryptionCertificate().getInputStream());
         LOGGER.debug("Invoking certificate engine to parse the certificate [{}]", config.getEncryptionCertificate());
-        final X509CertificateObject cert = (X509CertificateObject) certParser.engineRead();
+        final var cert = (X509CertificateObject) certParser.engineRead();
         LOGGER.debug("Creating final credential based on the certificate [{}] and the private key", cert.getIssuerDN());
         return new BasicX509Credential(cert, kp.getPrivate());
 
@@ -345,11 +345,11 @@ public class WsFederationHelper {
         list.add(new EncryptedElementTypeEncryptedKeyResolver());
         list.add(new SimpleRetrievalMethodEncryptedKeyResolver());
         LOGGER.debug("Built a list of encrypted key resolvers: [{}]", list);
-        final ChainingEncryptedKeyResolver encryptedKeyResolver = new ChainingEncryptedKeyResolver(list);
+        final var encryptedKeyResolver = new ChainingEncryptedKeyResolver(list);
         LOGGER.debug("Building credential instance to decrypt data");
-        final Credential encryptionCredential = getEncryptionCredential(config);
+        final var encryptionCredential = getEncryptionCredential(config);
         final KeyInfoCredentialResolver resolver = new StaticKeyInfoCredentialResolver(encryptionCredential);
-        final Decrypter decrypter = new Decrypter(null, resolver, encryptedKeyResolver);
+        final var decrypter = new Decrypter(null, resolver, encryptedKeyResolver);
         decrypter.setRootInNewDocument(true);
         return decrypter;
     }

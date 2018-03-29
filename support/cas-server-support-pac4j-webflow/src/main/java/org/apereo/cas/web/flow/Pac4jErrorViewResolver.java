@@ -28,7 +28,7 @@ public class Pac4jErrorViewResolver implements ErrorViewResolver {
     public ModelAndView resolveErrorView(final HttpServletRequest request,
                                          final HttpStatus status, final Map<String, Object> map) {
 
-        final Optional<ModelAndView> mv = DelegatedClientAuthenticationAction.hasDelegationRequestFailed(request, status.value());
+        final var mv = DelegatedClientAuthenticationAction.hasDelegationRequestFailed(request, status.value());
         return mv.orElseGet(() -> conventionErrorViewResolver.resolveErrorView(request, status, map));
     }
 }

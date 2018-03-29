@@ -36,8 +36,8 @@ public abstract class AbstractCRLRevocationCheckerTests {
     public AbstractCRLRevocationCheckerTests(final String[] certFiles, final GeneralSecurityException expected) {
         this.expected = expected;
         this.certificates = new X509Certificate[certFiles.length];
-        int i = 0;
-        for (final String file : certFiles) {
+        var i = 0;
+        for (final var file : certFiles) {
             this.certificates[i++] = CertUtils.readCertificate(new ClassPathResource(file));
         }
     }
@@ -48,7 +48,7 @@ public abstract class AbstractCRLRevocationCheckerTests {
     @Test
     public void checkCertificate() {
         try {
-            for (final X509Certificate cert : this.certificates) {
+            for (final var cert : this.certificates) {
                 getChecker().check(cert);
             }
             if (this.expected != null) {

@@ -27,7 +27,7 @@ public class GroovyScriptMultifactorAuthenticationProviderSelector implements Mu
     public MultifactorAuthenticationProvider resolve(final Collection<MultifactorAuthenticationProvider> providers,
                                                      final RegisteredService service, final Principal principal) {
         final Object[] args = {service, principal, providers, LOGGER};
-        final String provider = ScriptingUtils.executeGroovyScript(groovyScript, args, String.class);
+        final var provider = ScriptingUtils.executeGroovyScript(groovyScript, args, String.class);
         if (StringUtils.isBlank(provider)) {
             throw new IllegalArgumentException("Multifactor provider selection via Groovy cannot use blank");
         }

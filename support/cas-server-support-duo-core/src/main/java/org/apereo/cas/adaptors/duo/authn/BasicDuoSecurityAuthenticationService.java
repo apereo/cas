@@ -54,11 +54,11 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
 
     private Pair<Boolean, String> authenticateDuoCredentialDirect(final Credential crds) {
         try {
-            final DuoDirectCredential credential = DuoDirectCredential.class.cast(crds);
-            final Principal p = credential.getAuthentication().getPrincipal();
-            final Http request = buildHttpPostAuthRequest();
+            final var credential = DuoDirectCredential.class.cast(crds);
+            final var p = credential.getAuthentication().getPrincipal();
+            final var request = buildHttpPostAuthRequest();
             signHttpAuthRequest(request, p.getId());
-            final JSONObject result = (JSONObject) request.executeRequest();
+            final var result = (JSONObject) request.executeRequest();
             LOGGER.debug("Duo authentication response: [{}]", result);
             if ("allow".equalsIgnoreCase(result.getString("result"))) {
                 return Pair.of(Boolean.TRUE, crds.getId());
@@ -70,13 +70,13 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
     }
 
     private Pair<Boolean, String> authenticateDuoCredential(final Credential creds) throws Exception {
-        final String signedRequestToken = DuoCredential.class.cast(creds).getSignedDuoResponse();
+        final var signedRequestToken = DuoCredential.class.cast(creds).getSignedDuoResponse();
         if (StringUtils.isBlank(signedRequestToken)) {
             throw new IllegalArgumentException("No signed request token was passed to verify");
         }
 
         LOGGER.debug("Calling DuoWeb.verifyResponse with signed request token '[{}]'", signedRequestToken);
-        final String result = DuoWeb.verifyResponse(duoProperties.getDuoIntegrationKey(),
+        final var result = DuoWeb.verifyResponse(duoProperties.getDuoIntegrationKey(),
                 duoProperties.getDuoSecretKey(),
                 duoProperties.getDuoApplicationKey(), signedRequestToken);
         return Pair.of(Boolean.TRUE, result);

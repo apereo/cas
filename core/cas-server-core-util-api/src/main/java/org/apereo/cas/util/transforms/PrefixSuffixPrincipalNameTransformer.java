@@ -24,7 +24,7 @@ public class PrefixSuffixPrincipalNameTransformer implements PrincipalNameTransf
 
     @Override
     public String transform(final String formUserId) {
-        final StringBuilder stringBuilder = new StringBuilder();
+        final var stringBuilder = new StringBuilder();
         if (this.prefix != null) {
             stringBuilder.append(this.prefix);
         }

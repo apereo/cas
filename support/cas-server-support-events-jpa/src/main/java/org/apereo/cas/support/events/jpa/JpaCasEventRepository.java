@@ -40,14 +40,14 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
 
     @Override
     public Collection<CasEvent> load(final ZonedDateTime dateTime) {
-        final String query = SELECT_QUERY.concat("where r.creationTime >= :creationTime");
+        final var query = SELECT_QUERY.concat("where r.creationTime >= :creationTime");
         return this.entityManager.createQuery(query, CasEvent.class)
             .setParameter(CREATION_TIME_PARAM, dateTime.toString()).getResultList();
     }
 
     @Override
     public Collection<CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal, final ZonedDateTime dateTime) {
-        final String query = SELECT_QUERY.concat("where r.type = :type and r.creationTime >= :creationTime and r.principalId = :principalId");
+        final var query = SELECT_QUERY.concat("where r.type = :type and r.creationTime >= :creationTime and r.principalId = :principalId");
         return this.entityManager.createQuery(query, CasEvent.class).setParameter(TYPE_PARAM, type)
             .setParameter(PRINCIPAL_ID_PARAM, principal)
             .setParameter(CREATION_TIME_PARAM, dateTime.toString()).getResultList();
@@ -55,14 +55,14 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
 
     @Override
     public Collection<CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal) {
-        final String query = SELECT_QUERY.concat("where r.type = :type and r.principalId = :principalId");
+        final var query = SELECT_QUERY.concat("where r.type = :type and r.principalId = :principalId");
         return this.entityManager.createQuery(query, CasEvent.class).setParameter(TYPE_PARAM, type)
             .setParameter(PRINCIPAL_ID_PARAM, principal).getResultList();
     }
 
     @Override
     public Collection<CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
-        final String query = SELECT_QUERY.concat("where r.type = :type and r.creationTime >= :creationTime");
+        final var query = SELECT_QUERY.concat("where r.type = :type and r.creationTime >= :creationTime");
         return this.entityManager.createQuery(query, CasEvent.class)
             .setParameter(TYPE_PARAM, type)
             .setParameter(CREATION_TIME_PARAM, dateTime.toString()).getResultList();
@@ -75,7 +75,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
 
     @Override
     public Collection<CasEvent> getEventsForPrincipal(final String id, final ZonedDateTime dateTime) {
-        final String query = SELECT_QUERY.concat("where r.principalId = :principalId and r.creationTime >= :creationTime");
+        final var query = SELECT_QUERY.concat("where r.principalId = :principalId and r.creationTime >= :creationTime");
         return this.entityManager.createQuery(query, CasEvent.class)
             .setParameter(PRINCIPAL_ID_PARAM, id)
             .setParameter(CREATION_TIME_PARAM, dateTime.toString()).getResultList();
@@ -83,7 +83,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
 
     @Override
     public Collection<CasEvent> getEventsForPrincipal(final String id) {
-        final String query = SELECT_QUERY.concat("where r.principalId = :principalId");
+        final var query = SELECT_QUERY.concat("where r.principalId = :principalId");
         return this.entityManager.createQuery(query, CasEvent.class).setParameter(PRINCIPAL_ID_PARAM, id).getResultList();
     }
 }

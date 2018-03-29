@@ -29,7 +29,7 @@ public class MultifactorAuthenticationTrustUtils {
      * @return the key for this trust record
      */
     public static String generateKey(final MultifactorAuthenticationTrustRecord r) {
-        final StringBuilder builder = new StringBuilder(r.getPrincipal());
+        final var builder = new StringBuilder(r.getPrincipal());
         return builder.append('@')
                 .append(r.getRecordDate())
                 .append('@')
@@ -43,8 +43,8 @@ public class MultifactorAuthenticationTrustUtils {
      * @return the geography
      */
     public static String generateGeography() {
-        final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
-        final String geography = clientInfo.getClientIpAddress().concat("@").concat(WebUtils.getHttpServletRequestUserAgentFromRequestContext());
+        final var clientInfo = ClientInfoHolder.getClientInfo();
+        final var geography = clientInfo.getClientIpAddress().concat("@").concat(WebUtils.getHttpServletRequestUserAgentFromRequestContext());
         return geography;
     }
 
@@ -58,7 +58,7 @@ public class MultifactorAuthenticationTrustUtils {
             final Authentication authn,
             final String attributeName) {
 
-        final Authentication newAuthn = DefaultAuthenticationBuilder.newInstance(authn)
+        final var newAuthn = DefaultAuthenticationBuilder.newInstance(authn)
                 .addAttribute(attributeName, Boolean.TRUE)
                 .build();
         LOGGER.debug("Updated authentication session to remember trusted multifactor record via [{}]", attributeName);

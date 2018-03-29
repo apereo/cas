@@ -24,12 +24,12 @@ public class AuthyAuthenticationRegistrationWebflowAction extends AbstractAction
 
     @Override
     protected Event doExecute(final RequestContext context) {
-        final Principal principal = WebUtils.getAuthentication(context).getPrincipal();
-        final User user = instance.getOrCreateUser(principal);
+        final var principal = WebUtils.getAuthentication(context).getPrincipal();
+        final var user = instance.getOrCreateUser(principal);
         if (!user.isOk()) {
             throw new IllegalArgumentException(AuthyClientInstance.getErrorMessage(user.getError()));
         }
-        final Hash h = instance.getAuthyUsers().requestSms(user.getId());
+        final var h = instance.getAuthyUsers().requestSms(user.getId());
         if (!h.isOk() || !h.isSuccess()) {
             throw new IllegalArgumentException(AuthyClientInstance.getErrorMessage(h.getError()).concat(h.getMessage()));
         }

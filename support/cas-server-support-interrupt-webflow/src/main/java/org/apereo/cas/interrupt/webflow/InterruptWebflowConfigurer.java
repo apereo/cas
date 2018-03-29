@@ -42,7 +42,7 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override
     protected void doInitialize() {
-        final Flow flow = getLoginFlow();
+        final var flow = getLoginFlow();
 
         if (flow != null) {
             createInquireActionState(flow);
@@ -54,21 +54,21 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void createTransitionStateForAuthenticationWarnings(final Flow flow) {
-        final ViewState state = getState(flow, CasWebflowConstants.VIEW_ID_SHOW_AUTHN_WARNING_MSGS, ViewState.class);
+        final var state = getState(flow, CasWebflowConstants.VIEW_ID_SHOW_AUTHN_WARNING_MSGS, ViewState.class);
         createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_PROCEED, STATE_ID_INQUIRE_INTERRUPT_ACTION, true);
     }
     
     private void createTransitionStateToInterrupt(final Flow flow) {
-        final ActionState submit = getRealSubmissionState(flow);
+        final var submit = getRealSubmissionState(flow);
         createTransitionForState(submit, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_INQUIRE_INTERRUPT_ACTION, true);
     }
 
     private void createTransitionStateForMultifactorSubflows(final Flow flow) {
-        final Map<String, MultifactorAuthenticationProvider> providerMap =
+        final var providerMap =
                 MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         providerMap.forEach((k, v) -> {
             if (containsSubflowState(flow, v.getId())) {
-                final SubflowState state = getState(flow, v.getId(), SubflowState.class);
+                final var state = getState(flow, v.getId(), SubflowState.class);
                 createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_INQUIRE_INTERRUPT_ACTION, true);
             }
         });
@@ -79,12 +79,12 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void createInterruptView(final Flow flow) {
-        final ViewState viewState = createViewState(flow, VIEW_ID_INTERRUPT_VIEW, INTERRUPT_VIEW_ID);
+        final var viewState = createViewState(flow, VIEW_ID_INTERRUPT_VIEW, INTERRUPT_VIEW_ID);
         viewState.getEntryActionList().add(createEvaluateAction(STATE_ID_PREPARE_INTERRUPT_VIEW_ACTION));
         createStateDefaultTransition(viewState, STATE_ID_FINALIZE_INTERRUPT_ACTION);
 
-        final String target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
-        final ActionState finalizeInterrupt = createActionState(flow, STATE_ID_FINALIZE_INTERRUPT_ACTION, 
+        final var target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
+        final var finalizeInterrupt = createActionState(flow, STATE_ID_FINALIZE_INTERRUPT_ACTION,
                 createEvaluateAction(STATE_ID_FINALIZE_INTERRUPT_ACTION));
         createTransitionForState(finalizeInterrupt, CasWebflowConstants.TRANSITION_ID_SUCCESS, target);
         createTransitionForState(finalizeInterrupt, CasWebflowConstants.TRANSITION_ID_NO, "finishedInterrupt");
@@ -92,13 +92,13 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void createInquireActionState(final Flow flow) {
-        final ActionState actionState = createActionState(flow, STATE_ID_INQUIRE_INTERRUPT_ACTION, createEvaluateAction(STATE_ID_INQUIRE_INTERRUPT_ACTION));
+        final var actionState = createActionState(flow, STATE_ID_INQUIRE_INTERRUPT_ACTION, createEvaluateAction(STATE_ID_INQUIRE_INTERRUPT_ACTION));
 
-        final String target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
-        final Transition noInterruptTransition = createTransition(CasWebflowConstants.TRANSITION_ID_NO, target);
+        final var target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
+        final var noInterruptTransition = createTransition(CasWebflowConstants.TRANSITION_ID_NO, target);
         actionState.getTransitionSet().add(noInterruptTransition);
 
-        final Transition yesInterruptTransition = createTransition(CasWebflowConstants.TRANSITION_ID_YES, VIEW_ID_INTERRUPT_VIEW);
+        final var yesInterruptTransition = createTransition(CasWebflowConstants.TRANSITION_ID_YES, VIEW_ID_INTERRUPT_VIEW);
         actionState.getTransitionSet().add(yesInterruptTransition);
     }
 }

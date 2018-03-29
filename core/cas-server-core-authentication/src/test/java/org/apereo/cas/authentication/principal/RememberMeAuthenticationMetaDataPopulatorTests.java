@@ -31,28 +31,28 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
 
     @Test
     public void verifyWithTrueRememberMeCredentials() {
-        final RememberMeUsernamePasswordCredential c = new RememberMeUsernamePasswordCredential();
+        final var c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(true);
-        final AuthenticationBuilder builder = newBuilder(c);
-        final Authentication auth = builder.build();
+        final var builder = newBuilder(c);
+        final var auth = builder.build();
 
         assertEquals(true, auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
     }
 
     @Test
     public void verifyWithFalseRememberMeCredentials() {
-        final RememberMeUsernamePasswordCredential c = new RememberMeUsernamePasswordCredential();
+        final var c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(false);
-        final AuthenticationBuilder builder = newBuilder(c);
-        final Authentication auth = builder.build();
+        final var builder = newBuilder(c);
+        final var auth = builder.build();
 
         assertNull(auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
     }
 
     @Test
     public void verifyWithoutRememberMeCredentials() {
-        final AuthenticationBuilder builder = newBuilder(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-        final Authentication auth = builder.build();
+        final var builder = newBuilder(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        final var auth = builder.build();
 
         assertNull(auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
     }
@@ -60,7 +60,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
     private AuthenticationBuilder newBuilder(final Credential credential) {
         final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal())
+        final var builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal())
                 .addCredential(meta)
                 .addSuccess("test", new DefaultAuthenticationHandlerExecutionResult(handler, meta));
 

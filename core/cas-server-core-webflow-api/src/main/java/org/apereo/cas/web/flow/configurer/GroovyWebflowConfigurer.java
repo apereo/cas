@@ -23,9 +23,9 @@ public class GroovyWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override
     public void doInitialize() {
-        final Resource script = casProperties.getWebflow().getGroovy().getLocation();
+        final var script = casProperties.getWebflow().getGroovy().getLocation();
         if (script != null) {
-            final Object[] args = new Object[]{this, applicationContext, LOGGER};
+            final var args = new Object[]{this, applicationContext, LOGGER};
             LOGGER.debug("Executing Groovy script [{}] to auto-configure the webflow context", script);
             ScriptingUtils.executeGroovyScript(script, args, Object.class);
         }

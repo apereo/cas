@@ -36,7 +36,7 @@ public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry 
     @Override
     public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
         if (devices.containsKey(uid)) {
-            final String pubId = devices.get(uid);
+            final var pubId = devices.get(uid);
             return getCipherExecutor().decode(pubId).equals(yubikeyPublicId);
         }
         return false;
@@ -45,8 +45,8 @@ public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry 
     @Override
     public boolean registerAccountFor(final String uid, final String token) {
         if (getAccountValidator().isValid(uid, token)) {
-            final String yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
-            final String pubId = getCipherExecutor().encode(yubikeyPublicId);
+            final var yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
+            final var pubId = getCipherExecutor().encode(yubikeyPublicId);
             devices.put(uid, pubId);
             return isYubiKeyRegisteredFor(uid, yubikeyPublicId);
         }
@@ -65,7 +65,7 @@ public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry 
     @Override
     public Optional<YubiKeyAccount> getAccount(final String uid) {
         if (devices.containsKey(uid)) {
-            final String publicId = getCipherExecutor().decode(devices.get(uid));
+            final var publicId = getCipherExecutor().decode(devices.get(uid));
             return Optional.of(new YubiKeyAccount(System.currentTimeMillis(), publicId, uid));
         }
         return Optional.empty();

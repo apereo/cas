@@ -98,13 +98,13 @@ public class JdbcPasswordManagementServiceTests {
 
     @Test
     public void verifyUserEmailCanBeFound() {
-        final String email = passwordChangeService.findEmail("casuser");
+        final var email = passwordChangeService.findEmail("casuser");
         assertEquals("casuser@example.org", email);
     }
 
     @Test
     public void verifyNullReturnedIfUserEmailCannotBeFound() {
-        final String email = passwordChangeService.findEmail("unknown");
+        final var email = passwordChangeService.findEmail("unknown");
         assertNull(email);
     }
 
@@ -119,10 +119,10 @@ public class JdbcPasswordManagementServiceTests {
     @Test
     public void verifyUserPasswordChange() {
         final Credential c = new UsernamePasswordCredential("casuser", "password");
-        final PasswordChangeBean bean = new PasswordChangeBean();
+        final var bean = new PasswordChangeBean();
         bean.setConfirmedPassword("newPassword1");
         bean.setPassword("newPassword1");
-        final boolean res = passwordChangeService.change(c, bean);
+        final var res = passwordChangeService.change(c, bean);
         assertTrue(res);
     }
 

@@ -95,7 +95,7 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
     @RefreshScope
     @Bean
     public ViewFactoryCreator viewFactoryCreator() {
-        final MvcViewFactoryCreator resolver = new MvcViewFactoryCreator();
+        final var resolver = new MvcViewFactoryCreator();
         resolver.setViewResolvers(CollectionUtils.wrap(this.registeredServiceViewResolver));
         return resolver;
     }
@@ -107,7 +107,7 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
 
     @Bean
     public FlowUrlHandler logoutFlowUrlHandler() {
-        final CasDefaultFlowUrlHandler handler = new CasDefaultFlowUrlHandler();
+        final var handler = new CasDefaultFlowUrlHandler();
         handler.setFlowExecutionKeyParameter("RelayState");
         return handler;
     }
@@ -124,7 +124,7 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
     @RefreshScope
     @Bean
     public FlowBuilderServices builder() {
-        final FlowBuilderServicesBuilder builder = new FlowBuilderServicesBuilder(this.applicationContext);
+        final var builder = new FlowBuilderServicesBuilder(this.applicationContext);
         builder.setViewFactoryCreator(viewFactoryCreator());
         builder.setExpressionParser(expressionParser());
         builder.setDevelopmentMode(casProperties.getWebflow().isRefresh());
@@ -143,17 +143,17 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
     @RefreshScope
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
-        final LocaleChangeInterceptor bean = new LocaleChangeInterceptor();
+        final var bean = new LocaleChangeInterceptor();
         bean.setParamName(this.casProperties.getLocale().getParamName());
         return bean;
     }
 
     @Bean
     public HandlerMapping logoutFlowHandlerMapping() {
-        final FlowHandlerMapping handler = new FlowHandlerMapping();
+        final var handler = new FlowHandlerMapping();
         handler.setOrder(LOGOUT_FLOW_HANDLER_ORDER);
         handler.setFlowRegistry(logoutFlowRegistry());
-        final Object[] interceptors = new Object[]{localeChangeInterceptor()};
+        final var interceptors = new Object[]{localeChangeInterceptor()};
         handler.setInterceptors(interceptors);
         return handler;
     }
@@ -171,7 +171,7 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
 
     @Bean
     public HandlerMapping loginFlowHandlerMapping() {
-        final FlowHandlerMapping handler = new FlowHandlerMapping();
+        final var handler = new FlowHandlerMapping();
         handler.setOrder(LOGOUT_FLOW_HANDLER_ORDER - 1);
         handler.setFlowRegistry(loginFlowRegistry());
         handler.setInterceptors(loginFlowHandlerMappingInterceptors());
@@ -180,7 +180,7 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
 
     @Bean
     public FlowDefinitionRegistry logoutFlowRegistry() {
-        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
+        final var builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
         builder.setBasePath(BASE_CLASSPATH_WEBFLOW);
         builder.addFlowLocationPattern("/logout/*-webflow.xml");
         return builder.build();
@@ -188,7 +188,7 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
 
     @Bean
     public FlowDefinitionRegistry loginFlowRegistry() {
-        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
+        final var builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
         builder.setBasePath(BASE_CLASSPATH_WEBFLOW);
         builder.addFlowLocationPattern("/login/*-webflow.xml");
         return builder.build();
@@ -197,7 +197,7 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
     @RefreshScope
     @Bean
     public FlowExecutor logoutFlowExecutor() {
-        final WebflowExecutorFactory factory = new WebflowExecutorFactory(casProperties.getWebflow(),
+        final var factory = new WebflowExecutorFactory(casProperties.getWebflow(),
             logoutFlowRegistry(), this.webflowCipherExecutor);
         return factory.build();
     }
@@ -205,7 +205,7 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
     @RefreshScope
     @Bean
     public FlowExecutor loginFlowExecutor() {
-        final WebflowExecutorFactory factory = new WebflowExecutorFactory(casProperties.getWebflow(),
+        final var factory = new WebflowExecutorFactory(casProperties.getWebflow(),
             loginFlowRegistry(), this.webflowCipherExecutor);
         return factory.build();
     }
@@ -213,7 +213,7 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
     @ConditionalOnMissingBean(name = "defaultWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer defaultWebflowConfigurer() {
-        final DefaultLoginWebflowConfigurer c = new DefaultLoginWebflowConfigurer(builder(), loginFlowRegistry(), applicationContext, casProperties);
+        final var c = new DefaultLoginWebflowConfigurer(builder(), loginFlowRegistry(), applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry());
         c.setOrder(Ordered.HIGHEST_PRECEDENCE);
         c.initialize();
@@ -223,7 +223,7 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
     @ConditionalOnMissingBean(name = "defaultLogoutWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer defaultLogoutWebflowConfigurer() {
-        final DefaultLogoutWebflowConfigurer c = new DefaultLogoutWebflowConfigurer(builder(), loginFlowRegistry(),
+        final var c = new DefaultLogoutWebflowConfigurer(builder(), loginFlowRegistry(),
             applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry());
         c.setOrder(Ordered.HIGHEST_PRECEDENCE);
@@ -234,7 +234,7 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer groovyWebflowConfigurer() {
-        final GroovyWebflowConfigurer c = new GroovyWebflowConfigurer(builder(), loginFlowRegistry(), applicationContext, casProperties);
+        final var c = new GroovyWebflowConfigurer(builder(), loginFlowRegistry(), applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry());
         return c;
     }
@@ -243,7 +243,7 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
     @Autowired
     @Bean
     public CasWebflowExecutionPlan casWebflowExecutionPlan(final List<CasWebflowExecutionPlanConfigurer> configurers) {
-        final DefaultCasWebflowExecutionPlan plan = new DefaultCasWebflowExecutionPlan();
+        final var plan = new DefaultCasWebflowExecutionPlan();
         configurers.forEach(c -> c.configureWebflowExecutionPlan(plan));
         plan.execute();
         return plan;

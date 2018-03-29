@@ -31,7 +31,7 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository {
 
     @Override
     public void save(final CasEvent event) {
-        final Point.Builder builder = Point.measurement(MEASUREMENT);
+        final var builder = Point.measurement(MEASUREMENT);
         ReflectionUtils.doWithFields(CasEvent.class, field -> {
             field.setAccessible(true);
             if (field.getType().equals(Map.class)) {
@@ -40,22 +40,22 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository {
                 builder.field(field.getName(), field.get(event));
             }
         });
-        final Point point = builder.time(System.currentTimeMillis(), TimeUnit.MILLISECONDS).build();
+        final var point = builder.time(System.currentTimeMillis(), TimeUnit.MILLISECONDS).build();
         influxDbConnectionFactory.write(point);
     }
 
     @Override
     public Collection<? extends CasEvent> load() {
         final List<CasEvent> events = new ArrayList<>();
-        final QueryResult results = influxDbConnectionFactory.query(MEASUREMENT);
+        final var results = influxDbConnectionFactory.query(MEASUREMENT);
         results.getResults().forEach(r -> r.getSeries().forEach(s -> {
             try {
-                final Iterator<List<Object>> it = s.getValues().iterator();
+                final var it = s.getValues().iterator();
                 while (it.hasNext()) {
-                    final CasEvent event = new CasEvent();
-                    final List<Object> row = it.next();
-                    for (int i = 0; i < s.getColumns().size(); i++) {
-                        final String colName = s.getColumns().get(i);
+                    final var event = new CasEvent();
+                    final var row = it.next();
+                    for (var i = 0; i < s.getColumns().size(); i++) {
+                        final var colName = s.getColumns().get(i);
                         switch (colName) {
                             case "time":
                                 break;

@@ -111,7 +111,7 @@ public class JRadiusServerImpl implements RadiusServer {
 
     @Override
     public RadiusResponse authenticate(final String username, final String password) throws Exception {
-        final AttributeList attributeList = new AttributeList();
+        final var attributeList = new AttributeList();
         attributeList.add(new Attr_UserName(username));
         attributeList.add(new Attr_UserPassword(password));
         if (StringUtils.isNotBlank(this.nasIpAddress)) {
@@ -138,11 +138,11 @@ public class JRadiusServerImpl implements RadiusServer {
         RadiusClient client = null;
         try {
             client = this.radiusClientFactory.newInstance();
-            final AccessRequest request = new AccessRequest(client, attributeList);
+            final var request = new AccessRequest(client, attributeList);
             final RadiusPacket response = client.authenticate(request, RadiusClient.getAuthProtocol(this.protocol.getName()), this.retries);
             LOGGER.debug("RADIUS response from [{}]: [{}]", client.getRemoteInetAddress().getCanonicalHostName(), response.getClass().getName());
             if (response instanceof AccessAccept) {
-                final List<RadiusAttribute> attributes = response.getAttributes().getAttributeList();
+                final var attributes = response.getAttributes().getAttributeList();
                 LOGGER.debug("Radius response code [{}] accepted with attributes [{}] and identifier [{}]", response.getCode(), attributes, response.getIdentifier());
                 return new RadiusResponse(response.getCode(), response.getIdentifier(), attributes);
             }

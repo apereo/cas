@@ -32,12 +32,12 @@ public class U2FStartAuthenticationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final Principal p = WebUtils.getAuthentication(requestContext).getPrincipal();
-        final SignRequestData requestData = u2f.startSignature(this.serverAddress, u2FDeviceRepository.getRegisteredDevices(p.getId()));
+        final var p = WebUtils.getAuthentication(requestContext).getPrincipal();
+        final var requestData = u2f.startSignature(this.serverAddress, u2FDeviceRepository.getRegisteredDevices(p.getId()));
         u2FDeviceRepository.requestDeviceAuthentication(requestData.getRequestId(), p.getId(), requestData.toJson());
 
         if (!requestData.getSignRequests().isEmpty()) {
-            final SignRequest req = requestData.getSignRequests().get(0);
+            final var req = requestData.getSignRequests().get(0);
             requestContext.getFlowScope().put("u2fAuth", new U2FAuthentication(req.getChallenge(), req.getAppId(), req.getKeyHandle()));
             return success();
         }

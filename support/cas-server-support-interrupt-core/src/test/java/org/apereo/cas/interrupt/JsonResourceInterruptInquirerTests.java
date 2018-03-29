@@ -26,15 +26,15 @@ public class JsonResourceInterruptInquirerTests {
     @Test
     public void verifyResponseCanSerializeIntoJson() throws Exception {
         final Map<String, InterruptResponse> map = new LinkedHashMap<>();
-        InterruptResponse response = new InterruptResponse("Message", 
+        var response = new InterruptResponse("Message",
                 CollectionUtils.wrap("text", "link", "text2", "link2"), false, true);
         map.put("casuser", response);
 
-        final File f = File.createTempFile("interrupt", "json");
+        final var f = File.createTempFile("interrupt", "json");
         MAPPER.writer().withDefaultPrettyPrinter().writeValue(f, map);
         assertTrue(f.exists());
         
-        final JsonResourceInterruptInquirer q = new JsonResourceInterruptInquirer(new FileSystemResource(f));
+        final var q = new JsonResourceInterruptInquirer(new FileSystemResource(f));
         response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"), CoreAuthenticationTestUtils.getRegisteredService(),
                 CoreAuthenticationTestUtils.getService());
         assertNotNull(response);

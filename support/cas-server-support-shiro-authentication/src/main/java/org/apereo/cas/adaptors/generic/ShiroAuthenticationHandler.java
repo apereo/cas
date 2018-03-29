@@ -58,14 +58,14 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
                                                                                         final String originalPassword)
         throws GeneralSecurityException {
         try {
-            final UsernamePasswordToken token = new UsernamePasswordToken(transformedCredential.getUsername(),
+            final var token = new UsernamePasswordToken(transformedCredential.getUsername(),
                 transformedCredential.getPassword());
 
             if (transformedCredential instanceof RememberMeUsernamePasswordCredential) {
                 token.setRememberMe(RememberMeUsernamePasswordCredential.class.cast(transformedCredential).isRememberMe());
             }
 
-            final Subject currentUser = getCurrentExecutingSubject();
+            final var currentUser = getCurrentExecutingSubject();
             currentUser.login(token);
 
             checkSubjectRolesAndPermissions(currentUser);
@@ -94,7 +94,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
      */
     protected void checkSubjectRolesAndPermissions(final Subject currentUser) throws FailedLoginException {
         if (this.requiredRoles != null) {
-            for (final String role : this.requiredRoles) {
+            for (final var role : this.requiredRoles) {
                 if (!currentUser.hasRole(role)) {
                     throw new FailedLoginException("Required role " + role + " does not exist");
                 }
@@ -102,7 +102,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
         }
 
         if (this.requiredPermissions != null) {
-            for (final String perm : this.requiredPermissions) {
+            for (final var perm : this.requiredPermissions) {
                 if (!currentUser.isPermitted(perm)) {
                     throw new FailedLoginException("Required permission " + perm + " cannot be located");
                 }
@@ -118,7 +118,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
      * @return the handler result
      */
     protected AuthenticationHandlerExecutionResult createAuthenticatedSubjectResult(final Credential credential, final Subject currentUser) {
-        final String username = currentUser.getPrincipal().toString();
+        final var username = currentUser.getPrincipal().toString();
         return createHandlerResult(credential, this.principalFactory.createPrincipal(username));
     }
 
@@ -139,12 +139,12 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
      */
     @SneakyThrows
     public void loadShiroConfiguration(final Resource resource) {
-        final Resource shiroResource = ResourceUtils.prepareClasspathResourceIfNeeded(resource);
+        final var shiroResource = ResourceUtils.prepareClasspathResourceIfNeeded(resource);
         if (shiroResource != null && shiroResource.exists()) {
-            final String location = shiroResource.getURI().toString();
+            final var location = shiroResource.getURI().toString();
             LOGGER.debug("Loading Shiro configuration from [{}]", location);
             final Factory<SecurityManager> factory = new IniSecurityManagerFactory(location);
-            final SecurityManager securityManager = factory.getInstance();
+            final var securityManager = factory.getInstance();
             SecurityUtils.setSecurityManager(securityManager);
         } else {
             LOGGER.debug("Shiro configuration is not defined");

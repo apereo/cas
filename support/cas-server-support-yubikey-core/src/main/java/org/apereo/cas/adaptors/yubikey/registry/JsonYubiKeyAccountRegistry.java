@@ -32,8 +32,8 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
     @Override
     public boolean registerAccountFor(final String uid, final String token) {
         if (getAccountValidator().isValid(uid, token)) {
-            final String yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
-            final File file = jsonResource.getFile();
+            final var yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
+            final var file = jsonResource.getFile();
             this.devices.put(uid, getCipherExecutor().encode(yubikeyPublicId));
             MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
             return true;
@@ -44,13 +44,13 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
     @SneakyThrows
     private static Map<String, String> getDevicesFromJsonResource(final Resource jsonResource) {
         if (!ResourceUtils.doesResourceExist(jsonResource)) {
-            final boolean res = jsonResource.getFile().createNewFile();
+            final var res = jsonResource.getFile().createNewFile();
             if (res) {
                 LOGGER.debug("Created JSON resource @ [{}]", jsonResource);
             }
         }
         if (ResourceUtils.doesResourceExist(jsonResource)) {
-            final File file = jsonResource.getFile();
+            final var file = jsonResource.getFile();
             if (file.canRead() && file.length() > 0) {
                 return MAPPER.readValue(file, Map.class);
             }

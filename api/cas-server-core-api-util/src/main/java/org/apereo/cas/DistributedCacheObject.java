@@ -46,7 +46,7 @@ public class DistributedCacheObject<V extends Serializable> implements Serializa
      */
     public <T> T getProperty(final String name, final Class<T> clazz) {
         if (containsProperty(name)) {
-            final Object item = this.properties.get(name);
+            final var item = this.properties.get(name);
             if (item == null) {
                 return null;
             }

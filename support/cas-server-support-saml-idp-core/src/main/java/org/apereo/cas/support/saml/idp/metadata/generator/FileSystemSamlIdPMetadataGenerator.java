@@ -75,11 +75,11 @@ public class FileSystemSamlIdPMetadataGenerator implements SamlIdPMetadataGenera
      * @throws Exception the exception
      */
     protected void buildSelfSignedEncryptionCert() throws Exception {
-        final File encCert = this.samlIdPMetadataLocator.getEncryptionCertificate().getFile();
+        final var encCert = this.samlIdPMetadataLocator.getEncryptionCertificate().getFile();
         if (encCert.exists()) {
             FileUtils.forceDelete(encCert);
         }
-        final File encKey = this.samlIdPMetadataLocator.getEncryptionKey().getFile();
+        final var encKey = this.samlIdPMetadataLocator.getEncryptionKey().getFile();
         if (encKey.exists()) {
             FileUtils.forceDelete(encKey);
         }
@@ -94,11 +94,11 @@ public class FileSystemSamlIdPMetadataGenerator implements SamlIdPMetadataGenera
      */
     @SneakyThrows
     protected void buildSelfSignedSigningCert() {
-        final File signingCert = this.samlIdPMetadataLocator.getSigningCertificate().getFile();
+        final var signingCert = this.samlIdPMetadataLocator.getSigningCertificate().getFile();
         if (signingCert.exists()) {
             FileUtils.forceDelete(signingCert);
         }
-        final File signingKey = this.samlIdPMetadataLocator.getSigningKey().getFile();
+        final var signingKey = this.samlIdPMetadataLocator.getSigningKey().getFile();
         if (signingKey.exists()) {
             FileUtils.forceDelete(signingKey);
         }
@@ -113,19 +113,19 @@ public class FileSystemSamlIdPMetadataGenerator implements SamlIdPMetadataGenera
      */
     @SneakyThrows
     protected void buildMetadataGeneratorParameters() {
-        final Resource template = this.resourceLoader.getResource("classpath:/template-idp-metadata.xml");
+        final var template = this.resourceLoader.getResource("classpath:/template-idp-metadata.xml");
 
-        String signingCert = FileUtils.readFileToString(this.samlIdPMetadataLocator.getSigningCertificate().getFile(), StandardCharsets.UTF_8);
+        var signingCert = FileUtils.readFileToString(this.samlIdPMetadataLocator.getSigningCertificate().getFile(), StandardCharsets.UTF_8);
         signingCert = StringUtils.remove(signingCert, BEGIN_CERTIFICATE);
         signingCert = StringUtils.remove(signingCert, END_CERTIFICATE).trim();
 
-        String encryptionCert = FileUtils.readFileToString(this.samlIdPMetadataLocator.getEncryptionCertificate().getFile(), StandardCharsets.UTF_8);
+        var encryptionCert = FileUtils.readFileToString(this.samlIdPMetadataLocator.getEncryptionCertificate().getFile(), StandardCharsets.UTF_8);
         encryptionCert = StringUtils.remove(encryptionCert, BEGIN_CERTIFICATE);
         encryptionCert = StringUtils.remove(encryptionCert, END_CERTIFICATE).trim();
 
-        try (StringWriter writer = new StringWriter()) {
+        try (var writer = new StringWriter()) {
             IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);
-            final String metadata = writer.toString()
+            final var metadata = writer.toString()
                 .replace("${entityId}", this.entityId)
                 .replace("${scope}", this.scope)
                 .replace("${idpEndpointUrl}", getIdPEndpointUrl())

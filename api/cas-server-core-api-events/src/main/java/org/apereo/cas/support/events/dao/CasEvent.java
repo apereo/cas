@@ -75,11 +75,11 @@ public class CasEvent {
      * @return the creation time
      */
     public ZonedDateTime getCreationTime() {
-        final ZonedDateTime dt = DateTimeUtils.zonedDateTimeOf(this.creationTime);
+        final var dt = DateTimeUtils.zonedDateTimeOf(this.creationTime);
         if (dt != null) {
             return dt;
         }
-        final LocalDateTime lt = DateTimeUtils.localDateTimeOf(this.creationTime);
+        final var lt = DateTimeUtils.localDateTimeOf(this.creationTime);
         return DateTimeUtils.zonedDateTimeOf(lt.atZone(ZoneId.systemDefault()));
     }
 
@@ -226,7 +226,7 @@ public class CasEvent {
      * @return the geo location
      */
     public GeoLocationRequest getGeoLocation() {
-        final GeoLocationRequest request = new GeoLocationRequest();
+        final var request = new GeoLocationRequest();
         request.setAccuracy(get("geoAccuracy"));
         request.setTimestamp(get("geoTimestamp"));
         request.setLongitude(get("geoLongitude"));

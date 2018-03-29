@@ -19,9 +19,9 @@ public class SamlResponseAuditPrincipalIdProvider extends DefaultAuditPrincipalI
 
     @Override
     public String getPrincipalIdFrom(final Authentication authentication, final Object returnValue, final Exception exception) {
-        final Response response = (Response) returnValue;
+        final var response = (Response) returnValue;
         if (response.getAssertions().size() > 0) {
-            final Assertion assertion = response.getAssertions().get(0);
+            final var assertion = response.getAssertions().get(0);
             if (assertion.getSubject() != null && assertion.getSubject().getNameID() != null) {
                 return assertion.getSubject().getNameID().getValue();
             }

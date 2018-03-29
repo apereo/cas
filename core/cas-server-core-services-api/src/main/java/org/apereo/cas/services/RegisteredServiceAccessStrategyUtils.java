@@ -46,12 +46,12 @@ public class RegisteredServiceAccessStrategyUtils {
      */
     public static void ensureServiceAccessIsAllowed(final String service, final RegisteredService registeredService) {
         if (registeredService == null) {
-            final String msg = String.format("Unauthorized Service Access. Service [%s] is not found in service registry.", service);
+            final var msg = String.format("Unauthorized Service Access. Service [%s] is not found in service registry.", service);
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            final String msg = String.format("Unauthorized Service Access. Service [%s] is not enabled in service registry.", service);
+            final var msg = String.format("Unauthorized Service Access. Service [%s] is not enabled in service registry.", service);
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
@@ -122,7 +122,7 @@ public class RegisteredServiceAccessStrategyUtils {
         throws UnauthorizedServiceException, PrincipalException {
         ensureServiceAccessIsAllowed(service, registeredService);
 
-        final Principal principal = authentication.getPrincipal();
+        final var principal = authentication.getPrincipal();
         final Map<String, Object> principalAttrs;
         if (retrievePrincipalAttributesFromReleasePolicy && registeredService != null && registeredService.getAttributeReleasePolicy() != null) {
             principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);

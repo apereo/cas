@@ -55,8 +55,8 @@ public class JmsTicketRegistryConfiguration {
 
     @Bean
     public TicketRegistry ticketRegistry() {
-        final JmsTicketRegistryProperties jms = casProperties.getTicket().getRegistry().getJms();
-        final CipherExecutor cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(jms.getCrypto(), "jms");
+        final var jms = casProperties.getTicket().getRegistry().getJms();
+        final var cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(jms.getCrypto(), "jms");
         return new JmsTicketRegistry(this.jmsTemplate, messageQueueTicketRegistryIdentifier(), cipher);
     }
 
@@ -64,14 +64,14 @@ public class JmsTicketRegistryConfiguration {
     @Bean
     public JmsListenerContainerFactory<?> messageQueueTicketRegistryFactory(final ConnectionFactory connectionFactory,
                                                                             final DefaultJmsListenerContainerFactoryConfigurer configurer) {
-        final DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
+        final var factory = new DefaultJmsListenerContainerFactory();
         configurer.configure(factory, connectionFactory);
         return factory;
     }
 
     @Bean
     public MessageConverter jacksonJmsMessageConverter() {
-        final MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
+        final var converter = new MappingJackson2MessageConverter();
         converter.setTargetType(MessageType.TEXT);
         converter.setTypeIdPropertyName("_type");
 
@@ -85,7 +85,7 @@ public class JmsTicketRegistryConfiguration {
 
             @Override
             protected ObjectMapper initializeObjectMapper() {
-                final ObjectMapper mapper = super.initializeObjectMapper();
+                final var mapper = super.initializeObjectMapper();
                 converter.setObjectMapper(mapper);
                 return mapper;
             }

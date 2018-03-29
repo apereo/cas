@@ -68,7 +68,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
      * @return the authentication trust record
      */
     public static MultifactorAuthenticationTrustRecord newInstance(final String principal, final String geography, final String fingerprint) {
-        final MultifactorAuthenticationTrustRecord r = new MultifactorAuthenticationTrustRecord();
+        final var r = new MultifactorAuthenticationTrustRecord();
         r.setRecordDate(LocalDate.now());
         r.setPrincipal(principal);
         r.setDeviceFingerprint(fingerprint);

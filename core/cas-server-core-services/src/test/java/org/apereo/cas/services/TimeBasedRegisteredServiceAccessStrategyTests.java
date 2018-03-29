@@ -27,7 +27,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkAuthorizationByRangePass() {
-        final TimeBasedRegisteredServiceAccessStrategy authz =
+        final var authz =
                 new TimeBasedRegisteredServiceAccessStrategy(true, true);
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(10).toString());
@@ -37,7 +37,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkAuthorizationByRangeFailStartTime() {
-        final TimeBasedRegisteredServiceAccessStrategy authz =
+        final var authz =
                 new TimeBasedRegisteredServiceAccessStrategy(true, true);
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(10).toString());
@@ -47,7 +47,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkAuthorizationByRangePassEndTime() {
-        final TimeBasedRegisteredServiceAccessStrategy authz =
+        final var authz =
                 new TimeBasedRegisteredServiceAccessStrategy(true, true);
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(30).toString());
@@ -56,7 +56,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
 
     @Test
     public void verifySerializeATimeBasedRegisteredServiceAccessStrategyToJson() throws IOException {
-        final TimeBasedRegisteredServiceAccessStrategy authWritten =
+        final var authWritten =
                 new TimeBasedRegisteredServiceAccessStrategy(true, true);
 
         MAPPER.writeValue(JSON_FILE, authWritten);

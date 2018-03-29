@@ -43,10 +43,10 @@ public class CasBannerProvider extends DefaultBannerProvider {
             return null;    
         }
         
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            final PrintStream ps = new PrintStream(baos, true, StandardCharsets.UTF_8.name());
+        try (var baos = new ByteArrayOutputStream()) {
+            final var ps = new PrintStream(baos, true, StandardCharsets.UTF_8.name());
             new DefaultCasBanner().printBanner(environment, getClass(), ps);
-            final String content = new String(baos.toByteArray(), StandardCharsets.UTF_8);
+            final var content = new String(baos.toByteArray(), StandardCharsets.UTF_8);
             return content;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

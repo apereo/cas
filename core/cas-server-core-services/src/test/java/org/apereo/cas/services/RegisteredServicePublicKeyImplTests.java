@@ -22,7 +22,7 @@ public class RegisteredServicePublicKeyImplTests {
 
     @Test
     public void verifySerializeAX509CertificateCredentialToJson() throws IOException {
-        final RegisteredServicePublicKeyImpl publicKeyWritten = new RegisteredServicePublicKeyImpl("location", "algorithm");
+        final var publicKeyWritten = new RegisteredServicePublicKeyImpl("location", "algorithm");
 
         MAPPER.writeValue(JSON_FILE, publicKeyWritten);
 

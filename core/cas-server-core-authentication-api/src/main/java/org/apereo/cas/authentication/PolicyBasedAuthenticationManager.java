@@ -55,7 +55,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     protected void invokeAuthenticationPostProcessors(final AuthenticationBuilder builder,
                                                       final AuthenticationTransaction transaction) {
         LOGGER.debug("Invoking authentication post processors for authentication transaction");
-        final Collection<AuthenticationPostProcessor> pops = authenticationEventExecutionPlan.getAuthenticationPostProcessors(transaction);
+        final var pops = authenticationEventExecutionPlan.getAuthenticationPostProcessors(transaction);
 
         final Collection<AuthenticationPostProcessor> supported = pops.stream().filter(processor -> transaction.getCredentials()
             .stream()
@@ -63,7 +63,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             .findFirst()
             .isPresent())
             .collect(Collectors.toList());
-        for (final AuthenticationPostProcessor p : supported) {
+        for (final var p : supported) {
             p.process(builder, transaction);
         }
     }
@@ -77,7 +77,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     protected void populateAuthenticationMetadataAttributes(final AuthenticationBuilder builder,
                                                             final AuthenticationTransaction transaction) {
         LOGGER.debug("Invoking authentication metadata populators for authentication transaction");
-        final Collection<AuthenticationMetaDataPopulator> pops = getAuthenticationMetadataPopulatorsForTransaction(transaction);
+        final var pops = getAuthenticationMetadataPopulatorsForTransaction(transaction);
         pops.forEach(populator -> transaction.getCredentials()
             .stream()
             .filter(populator::supports)
@@ -108,7 +108,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                                          final Credential credential, final Principal principal) {
         if (resolver.supports(credential)) {
             try {
-                final Principal p = resolver.resolve(credential, principal, handler);
+                final var p = resolver.resolve(credential, principal, handler);
                 LOGGER.debug("[{}] resolved [{}] from [{}]", resolver, p, credential);
                 return p;
             } catch (final Exception e) {
@@ -130,16 +130,16 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     @Timed("AUTHENTICATE_TIMER")
     public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(transaction.getCredentials());
-        final AuthenticationBuilder builder = authenticateInternal(transaction);
+        final var builder = authenticateInternal(transaction);
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(builder);
 
-        final Authentication authentication = builder.build();
+        final var authentication = builder.build();
         addAuthenticationMethodAttribute(builder, authentication);
         populateAuthenticationMetadataAttributes(builder, transaction);
         invokeAuthenticationPostProcessors(builder, transaction);
 
-        final Authentication auth = builder.build();
-        final Principal principal = auth.getPrincipal();
+        final var auth = builder.build();
+        final var principal = auth.getPrincipal();
         if (principal instanceof NullPrincipal) {
             throw new UnresolvedPrincipalException(auth);
         }
@@ -167,14 +167,14 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
         publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential));
 
-        final AuthenticationHandlerExecutionResult result = handler.authenticate(credential);
+        final var result = handler.authenticate(credential);
         builder.addSuccess(handler.getName(), result);
         LOGGER.debug("Authentication handler [{}] successfully authenticated [{}]", handler.getName(), credential);
 
         publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
-        Principal principal = result.getPrincipal();
+        var principal = result.getPrincipal();
 
-        final String resolverName = resolver != null ? resolver.getClass().getSimpleName() : "N/A";
+        final var resolverName = resolver != null ? resolver.getClass().getSimpleName() : "N/A";
         if (resolver == null) {
             LOGGER.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]", handler.getName(), principal);
         } else {
@@ -209,12 +209,12 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      */
     @SneakyThrows
     protected Set<AuthenticationHandler> getAuthenticationHandlersForThisTransaction(final AuthenticationTransaction transaction) {
-        final Set<AuthenticationHandler> handlers = authenticationEventExecutionPlan.getAuthenticationHandlersForTransaction(transaction);
+        final var handlers = authenticationEventExecutionPlan.getAuthenticationHandlersForTransaction(transaction);
         LOGGER.debug("Candidate/Registered authentication handlers for this transaction are [{}]", handlers);
-        final Collection<AuthenticationHandlerResolver> handlerResolvers = authenticationEventExecutionPlan.getAuthenticationHandlerResolvers(transaction);
+        final var handlerResolvers = authenticationEventExecutionPlan.getAuthenticationHandlerResolvers(transaction);
         LOGGER.debug("Authentication handler resolvers for this transaction are [{}]", handlerResolvers);
         
-        final Set<AuthenticationHandler> resolvedHandlers = handlerResolvers.stream()
+        final var resolvedHandlers = handlerResolvers.stream()
             .filter(r -> r.supports(handlers, transaction))
             .map(r -> r.resolve(handlers, transaction))
             .flatMap(Set::stream)
@@ -222,7 +222,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
         if (resolvedHandlers.isEmpty()) {
             LOGGER.debug("Authentication handler resolvers produced no candidate authentication handler. Using the default handler resolver instead...");
-            final DefaultAuthenticationHandlerResolver defaultHandlerResolver = new DefaultAuthenticationHandlerResolver();
+            final var defaultHandlerResolver = new DefaultAuthenticationHandlerResolver();
             if (defaultHandlerResolver.supports(handlers, transaction)) {
                 resolvedHandlers.addAll(defaultHandlerResolver.resolve(handlers, transaction));
             }
@@ -276,7 +276,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * @throws AuthenticationException the authentication exception
      */
     protected AuthenticationBuilder authenticateInternal(final AuthenticationTransaction transaction) throws AuthenticationException {
-        final Collection<Credential> credentials = transaction.getCredentials();
+        final var credentials = transaction.getCredentials();
         LOGGER.debug("Authentication credentials provided for this transaction are [{}]", credentials);
 
         if (credentials.isEmpty()) {
@@ -287,7 +287,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
         credentials.forEach(cred -> builder.addCredential(new BasicCredentialMetaData(cred)));
 
-        @NonNull final Set<AuthenticationHandler> handlerSet = getAuthenticationHandlersForThisTransaction(transaction);
+        @NonNull final var handlerSet = getAuthenticationHandlersForThisTransaction(transaction);
         LOGGER.debug("Candidate resolved authentication handlers for this transaction are [{}]", handlerSet);
 
         if (handlerSet.isEmpty()) {
@@ -296,24 +296,24 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         }
 
         try {
-            final Iterator<Credential> it = credentials.iterator();
+            final var it = credentials.iterator();
             AuthenticationCredentialsThreadLocalBinder.clearInProgressAuthentication();
             while (it.hasNext()) {
-                final Credential credential = it.next();
+                final var credential = it.next();
                 LOGGER.debug("Attempting to authenticate credential [{}]", credential);
 
-                final Iterator<AuthenticationHandler> itHandlers = handlerSet.iterator();
-                boolean proceedWithNextHandler = true;
+                final var itHandlers = handlerSet.iterator();
+                var proceedWithNextHandler = true;
                 while (proceedWithNextHandler && itHandlers.hasNext()) {
-                    final AuthenticationHandler handler = itHandlers.next();
+                    final var handler = itHandlers.next();
                     if (handler.supports(credential)) {
                         try {
-                            final PrincipalResolver resolver = getPrincipalResolverLinkedToHandlerIfAny(handler, transaction);
+                            final var resolver = getPrincipalResolverLinkedToHandlerIfAny(handler, transaction);
                             LOGGER.debug("Attempting authentication of [{}] using [{}]", credential.getId(), handler.getName());
                             authenticateAndResolvePrincipal(builder, credential, resolver, handler);
                             AuthenticationCredentialsThreadLocalBinder.bindInProgress(builder.build());
 
-                            final Pair<Boolean, Set<Throwable>> failures = evaluateAuthenticationPolicies(builder.build(), transaction);
+                            final var failures = evaluateAuthenticationPolicies(builder.build(), transaction);
                             proceedWithNextHandler = !failures.getKey();
                         } catch (final Exception e) {
                             LOGGER.error("Authentication has failed. Credentials may be incorrect or CAS cannot "
@@ -352,8 +352,8 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
 
-        final Authentication authentication = builder.build();
-        final Pair<Boolean, Set<Throwable>> failures = evaluateAuthenticationPolicies(authentication, transaction);
+        final var authentication = builder.build();
+        final var failures = evaluateAuthenticationPolicies(authentication, transaction);
         if (!failures.getKey()) {
             publishEvent(new CasAuthenticationPolicyFailureEvent(this, builder.getFailures(), transaction, authentication));
             failures.getValue().forEach(e -> handleAuthenticationException(e, e.getClass().getSimpleName(), builder));
@@ -371,13 +371,13 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     protected Pair<Boolean, Set<Throwable>> evaluateAuthenticationPolicies(final Authentication authentication,
                                                                            final AuthenticationTransaction transaction) {
         final Set<Throwable> failures = new LinkedHashSet<>();
-        final Collection<AuthenticationPolicy> policies = authenticationEventExecutionPlan.getAuthenticationPolicies(transaction);
+        final var policies = authenticationEventExecutionPlan.getAuthenticationPolicies(transaction);
 
         policies
             .stream()
             .forEach(p -> {
                 try {
-                    final String simpleName = p.getClass().getSimpleName();
+                    final var simpleName = p.getClass().getSimpleName();
                     LOGGER.debug("Executing authentication policy [{}]", simpleName);
                     if (!p.isSatisfiedBy(authentication)) {
                         failures.add(new AuthenticationException("Unable to satisfy authentication policy " + simpleName));
@@ -402,11 +402,11 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * @param builder the builder
      */
     protected void handleAuthenticationException(final Throwable ex, final String name, final AuthenticationBuilder builder) {
-        Throwable e = ex;
+        var e = ex;
         if (ex instanceof UndeclaredThrowableException) {
             e = ((UndeclaredThrowableException) ex).getUndeclaredThrowable();
         }
-        String msg = e.getMessage();
+        var msg = e.getMessage();
         if (e.getCause() != null) {
             msg += " / " + e.getCause().getMessage();
         }

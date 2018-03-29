@@ -30,9 +30,9 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket updateTicket(final Ticket ticketToUpdate) {
-        final Ticket ticket = encodeTicket(ticketToUpdate);
+        final var ticket = encodeTicket(ticketToUpdate);
         LOGGER.debug("Updating ticket [{}]", ticket);
-        final MemcachedClientIF clientFromPool = getClientFromPool();
+        final var clientFromPool = getClientFromPool();
         try {
             clientFromPool.replace(ticket.getId(), getTimeout(ticketToUpdate), ticket);
         } catch (final Exception e) {
@@ -45,9 +45,9 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public void addTicket(final Ticket ticketToAdd) {
-        final MemcachedClientIF clientFromPool = getClientFromPool();
+        final var clientFromPool = getClientFromPool();
         try {
-            final Ticket ticket = encodeTicket(ticketToAdd);
+            final var ticket = encodeTicket(ticketToAdd);
             LOGGER.debug("Adding ticket [{}]", ticket);
             clientFromPool.set(ticket.getId(), getTimeout(ticketToAdd), ticket);
         } catch (final Exception e) {
@@ -65,8 +65,8 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketIdToDelete) {
-        final MemcachedClientIF clientFromPool = getClientFromPool();
-        final String ticketId = encodeTicketId(ticketIdToDelete);
+        final var clientFromPool = getClientFromPool();
+        final var ticketId = encodeTicketId(ticketIdToDelete);
         try {
             clientFromPool.delete(ticketId);
         } catch (final Exception e) {
@@ -79,12 +79,12 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket getTicket(final String ticketIdToGet) {
-        final MemcachedClientIF clientFromPool = getClientFromPool();
-        final String ticketId = encodeTicketId(ticketIdToGet);
+        final var clientFromPool = getClientFromPool();
+        final var ticketId = encodeTicketId(ticketIdToGet);
         try {
-            final Ticket ticketFromCache = (Ticket) clientFromPool.get(ticketId);
+            final var ticketFromCache = (Ticket) clientFromPool.get(ticketId);
             if (ticketFromCache != null) {
-                final Ticket result = decodeTicket(ticketFromCache);
+                final var result = decodeTicket(ticketFromCache);
                 if (result != null && result.isExpired()) {
                     LOGGER.debug("Ticket [{}] has expired and is now removed from the memcached", result.getId());
                     deleteSingleTicket(ticketId);
@@ -121,7 +121,7 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry {
      * @return timeout in milliseconds.
      */
     private static int getTimeout(final Ticket ticket) {
-        final int ttl = ticket.getExpirationPolicy().getTimeToLive().intValue();
+        final var ttl = ticket.getExpirationPolicy().getTimeToLive().intValue();
         if (ttl == 0) {
             return 1;
         }

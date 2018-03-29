@@ -89,7 +89,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     }
 
     private void configureSigningParameters(final String secretKeySigning) {
-        String signingKeyToUse = secretKeySigning;
+        var signingKeyToUse = secretKeySigning;
         if (StringUtils.isBlank(signingKeyToUse)) {
             LOGGER.warn("Secret key for signing is not defined for [{}]. CAS will attempt to auto-generate the signing key", getName());
             signingKeyToUse = EncodingUtils.generateJsonWebKey(SIGNING_KEY_SIZE);
@@ -102,7 +102,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     }
 
     private void configureEncryptionParameters(final String secretKeyEncryption, final String contentEncryptionAlgorithmIdentifier) {
-        String secretKeyToUse = secretKeyEncryption;
+        var secretKeyToUse = secretKeyEncryption;
         if (StringUtils.isBlank(secretKeyToUse)) {
             LOGGER.warn("Secret key for encryption is not defined for [{}]; CAS will attempt to auto-generate the encryption key", getName());
             secretKeyToUse = EncodingUtils.generateJsonWebKey(ENCRYPTION_KEY_SIZE);
@@ -115,7 +115,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             if (ResourceUtils.isFile(secretKeyToUse) && ResourceUtils.doesResourceExist(secretKeyToUse)) {
                 final Resource resource = ResourceUtils.getResourceFrom(secretKeyToUse);
                 LOGGER.debug("Located encryption key resource [{}]. Attempting to extract public key...", resource);
-                final PublicKeyFactoryBean factory = new PublicKeyFactoryBean();
+                final var factory = new PublicKeyFactoryBean();
                 factory.setAlgorithm(RsaKeyUtil.RSA);
                 factory.setResource(resource);
                 factory.setSingleton(false);
@@ -136,7 +136,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
     @Override
     public String encode(final Serializable value) {
-        final String encoded = this.encryptionEnabled ? EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value, this.encryptionAlgorithm,
+        final var encoded = this.encryptionEnabled ? EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value, this.encryptionAlgorithm,
             this.contentEncryptionAlgorithmIdentifier) : value.toString();
         return new String(sign(encoded.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
     }
@@ -144,9 +144,9 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     @Override
     public String decode(final Serializable value) {
 
-        final byte[] encoded = verifySignature(value.toString().getBytes(StandardCharsets.UTF_8));
+        final var encoded = verifySignature(value.toString().getBytes(StandardCharsets.UTF_8));
         if (encoded != null && encoded.length > 0) {
-            final String encodedObj = new String(encoded, StandardCharsets.UTF_8);
+            final var encodedObj = new String(encoded, StandardCharsets.UTF_8);
             return this.encryptionEnabled ? EncodingUtils.decryptJwtValue(this.secretKeyEncryptionKey, encodedObj) : encodedObj;
         }
         return null;

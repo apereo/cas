@@ -41,17 +41,17 @@ public class JasyptListProvidersCommand implements CommandMarker {
             Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
         }
 
-        final Provider[] providers = Security.getProviders();
-        for (final Provider provider : providers) {
-            final Set<Provider.Service> services = provider.getServices();
-            final List<String> algorithms = 
+        final var providers = Security.getProviders();
+        for (final var provider : providers) {
+            final var services = provider.getServices();
+            final var algorithms =
                 services.stream()
                         .filter(service -> "Cipher".equals(service.getType()) && service.getAlgorithm().contains("PBE"))
                         .map(service -> service.getAlgorithm())
                         .collect(Collectors.toList());
             if (!algorithms.isEmpty()) {
                 LOGGER.info("Provider: Name: [{}] Class: [{}]", provider.getName(), provider.getClass().getName());
-                for (final String algorithm : algorithms) {
+                for (final var algorithm : algorithms) {
                     LOGGER.info(" - Algorithm: [{}]", algorithm);                    
                 }
             }

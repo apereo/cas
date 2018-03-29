@@ -34,7 +34,7 @@ public class JWTTicketGrantingTicketResourceEntityResponseFactory extends Defaul
 
     @Override
     public ResponseEntity<String> build(final TicketGrantingTicket ticketGrantingTicket, final HttpServletRequest request) throws Exception {
-        String tokenParam = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
+        var tokenParam = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
         if (StringUtils.isBlank(tokenParam)) {
             tokenParam = request.getHeader(TokenConstants.PARAMETER_NAME_TOKEN);    
         }
@@ -43,10 +43,10 @@ public class JWTTicketGrantingTicketResourceEntityResponseFactory extends Defaul
             return super.build(ticketGrantingTicket, request);
         }
         
-        final String jwt = this.tokenTicketBuilder.build(ticketGrantingTicket);
+        final var jwt = this.tokenTicketBuilder.build(ticketGrantingTicket);
         LOGGER.debug("Generated JWT [{}]", jwt);
 
-        final HttpHeaders headers = new HttpHeaders();
+        final var headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);
 
         final ResponseEntity<String> entity = new ResponseEntity<>(jwt, headers, HttpStatus.CREATED);

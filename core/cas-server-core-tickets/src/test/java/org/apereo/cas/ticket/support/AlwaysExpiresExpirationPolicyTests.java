@@ -23,7 +23,7 @@ public class AlwaysExpiresExpirationPolicyTests {
 
     @Test
     public void verifySerializeAnAlwaysExpiresExpirationPolicyToJson() throws IOException {
-        final AlwaysExpiresExpirationPolicy policyWritten = new AlwaysExpiresExpirationPolicy();
+        final var policyWritten = new AlwaysExpiresExpirationPolicy();
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
 

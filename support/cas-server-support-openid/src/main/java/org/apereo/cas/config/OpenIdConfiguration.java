@@ -130,7 +130,7 @@ public class OpenIdConfiguration {
     @RefreshScope
     @Bean
     public ServerManager serverManager() {
-        final ServerManager manager = new ServerManager();
+        final var manager = new ServerManager();
         manager.setOPEndpointUrl(casProperties.getServer().getLoginUrl());
         manager.setEnforceRpId(casProperties.getAuthn().getOpenid().isEnforceRpId());
         manager.setSharedAssociations(new InMemoryServerAssociationStore());
@@ -141,7 +141,7 @@ public class OpenIdConfiguration {
     @ConditionalOnMissingBean(name = "openIdServiceResponseBuilder")
     @Bean
     public ResponseBuilder openIdServiceResponseBuilder() {
-        final String openIdPrefixUrl = casProperties.getServer().getPrefix().concat("/openid");
+        final var openIdPrefixUrl = casProperties.getServer().getPrefix().concat("/openid");
         return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager(), centralAuthenticationService, servicesManager);
     }
 
@@ -173,7 +173,7 @@ public class OpenIdConfiguration {
     @Autowired
     @Bean
     public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
-        final OpenIdValidateController c = new OpenIdValidateController(cas20WithoutProxyProtocolValidationSpecification,
+        final var c = new OpenIdValidateController(cas20WithoutProxyProtocolValidationSpecification,
             authenticationSystemSupport, servicesManager,
             centralAuthenticationService, proxy20Handler,
             argumentExtractor, multifactorTriggerSelectionStrategy,
@@ -182,12 +182,12 @@ public class OpenIdConfiguration {
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             serverManager(), validationAuthorizers, casProperties.getSso().isRenewAuthnEnabled());
 
-        final DelegatingController controller = new DelegatingController();
+        final var controller = new DelegatingController();
         controller.setDelegates(CollectionUtils.wrapList(smartOpenIdAssociationController(), c));
 
-        final OpenIdPostUrlHandlerMapping m = new OpenIdPostUrlHandlerMapping();
+        final var m = new OpenIdPostUrlHandlerMapping();
         m.setOrder(1);
-        final Properties mappings = new Properties();
+        final var mappings = new Properties();
         mappings.put("/login", controller);
         m.setMappings(mappings);
         return m;

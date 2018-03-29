@@ -54,48 +54,48 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
 
     @Override
     public AccessTokenRequestDataHolder extract(final HttpServletRequest request, final HttpServletResponse response) {
-        final String clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
-        final Set<String> scopes = OAuth20Utils.parseRequestScopes(request);
+        final var clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+        final var scopes = OAuth20Utils.parseRequestScopes(request);
         LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
 
-        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+        final var registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
-        final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
-        final ProfileManager manager = Pac4jUtils.getPac4jProfileManager(request, response);
+        final var context = Pac4jUtils.getPac4jJ2EContext(request, response);
+        final var manager = Pac4jUtils.getPac4jProfileManager(request, response);
         final Optional<UserProfile> profile = manager.get(true);
         if (!profile.isPresent()) {
             throw new UnauthorizedServiceException("OAuth user profile cannot be determined");
         }
-        final UserProfile uProfile = profile.get();
+        final var uProfile = profile.get();
         LOGGER.debug("Creating matching service request based on [{}]", registeredService);
-        final boolean requireServiceHeader = oAuthProperties.getGrants().getResourceOwner().isRequireServiceHeader();
+        final var requireServiceHeader = oAuthProperties.getGrants().getResourceOwner().isRequireServiceHeader();
         if (requireServiceHeader) {
             LOGGER.debug("Using request headers to identify and build the target service url");
         }
-        final Service service = this.authenticationBuilder.buildService(registeredService, context, requireServiceHeader);
+        final var service = this.authenticationBuilder.buildService(registeredService, context, requireServiceHeader);
 
         LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
-        final Authentication authentication = this.authenticationBuilder.build(uProfile, registeredService, context, service);
+        final var authentication = this.authenticationBuilder.build(uProfile, registeredService, context, service);
 
 
-        final AuditableContext audit = AuditableContext.builder().service(service)
+        final var audit = AuditableContext.builder().service(service)
             .authentication(authentication)
             .registeredService(registeredService)
             .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
             .build();
-        final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();
 
         final AuthenticationResult result = new DefaultAuthenticationResult(authentication, requireServiceHeader ? service : null);
-        final TicketGrantingTicket ticketGrantingTicket = this.centralAuthenticationService.createTicketGrantingTicket(result);
+        final var ticketGrantingTicket = this.centralAuthenticationService.createTicketGrantingTicket(result);
 
         return new AccessTokenRequestDataHolder(service, authentication, registeredService, ticketGrantingTicket, getGrantType(), scopes);
     }
 
     @Override
     public boolean supports(final HttpServletRequest context) {
-        final String grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
+        final var grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, getGrantType());
     }
 

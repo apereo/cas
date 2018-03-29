@@ -36,20 +36,20 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
 
     @Test
     public void verifyLegacyServiceDefn() throws Exception {
-        final ClassPathResource resource = new ClassPathResource("Legacy-10000003.json");
-        final DefaultRegisteredServiceJsonSerializer serializer = new DefaultRegisteredServiceJsonSerializer();
-        final RegisteredService service = serializer.from(resource.getInputStream());
+        final var resource = new ClassPathResource("Legacy-10000003.json");
+        final var serializer = new DefaultRegisteredServiceJsonSerializer();
+        final var service = serializer.from(resource.getInputStream());
         assertNotNull(service);
     }
 
     @Test
     public void verifyExistingDefinitionForCompatibility2() throws IOException {
         final Resource resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest2.json");
-        final DefaultRegisteredServiceJsonSerializer serializer = new DefaultRegisteredServiceJsonSerializer();
-        final RegisteredService service = serializer.from(resource.getInputStream());
+        final var serializer = new DefaultRegisteredServiceJsonSerializer();
+        final var service = serializer.from(resource.getInputStream());
         assertNotNull(service);
         assertNotNull(service.getAttributeReleasePolicy());
-        final ReturnMappedAttributeReleasePolicy policy = (ReturnMappedAttributeReleasePolicy) service.getAttributeReleasePolicy();
+        final var policy = (ReturnMappedAttributeReleasePolicy) service.getAttributeReleasePolicy();
         assertNotNull(policy);
         assertEquals(2, policy.getAllowedAttributes().size());
     }
@@ -57,11 +57,11 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
     @Test
     public void verifyExistingDefinitionForCompatibility1() throws IOException {
         final Resource resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest1.json");
-        final DefaultRegisteredServiceJsonSerializer serializer = new DefaultRegisteredServiceJsonSerializer();
-        final RegisteredService service = serializer.from(resource.getInputStream());
+        final var serializer = new DefaultRegisteredServiceJsonSerializer();
+        final var service = serializer.from(resource.getInputStream());
         assertNotNull(service);
         assertNotNull(service.getAttributeReleasePolicy());
-        final ReturnMappedAttributeReleasePolicy policy = (ReturnMappedAttributeReleasePolicy) service.getAttributeReleasePolicy();
+        final var policy = (ReturnMappedAttributeReleasePolicy) service.getAttributeReleasePolicy();
         assertNotNull(policy);
         assertEquals(2, policy.getAllowedAttributes().size());
     }

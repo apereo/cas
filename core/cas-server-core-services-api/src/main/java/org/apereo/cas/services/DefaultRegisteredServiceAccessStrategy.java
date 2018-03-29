@@ -279,14 +279,14 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * @return the boolean
      */
     protected boolean requiredAttributesFoundInMap(final Map<String, Object> principalAttributes, final Map<String, Set<String>> requiredAttributes) {
-        final Set<String> difference = requiredAttributes.keySet().stream().filter(a -> principalAttributes.keySet().contains(a)).collect(Collectors.toSet());
+        final var difference = requiredAttributes.keySet().stream().filter(a -> principalAttributes.keySet().contains(a)).collect(Collectors.toSet());
         if (this.requireAllAttributes && difference.size() < requiredAttributes.size()) {
             return false;
         }
         return difference.stream().anyMatch(key -> {
-            final Set<String> values = requiredAttributes.get(key);
-            final Set<Object> availableValues = CollectionUtils.toCollection(principalAttributes.get(key));
-            final Pattern pattern = RegexUtils.concatenate(values, this.caseInsensitive);
+            final var values = requiredAttributes.get(key);
+            final var availableValues = CollectionUtils.toCollection(principalAttributes.get(key));
+            final var pattern = RegexUtils.concatenate(values, this.caseInsensitive);
             if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
                 return availableValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
             }

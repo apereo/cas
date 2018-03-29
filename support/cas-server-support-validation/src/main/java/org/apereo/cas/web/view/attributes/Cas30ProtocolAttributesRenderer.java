@@ -25,9 +25,9 @@ public class Cas30ProtocolAttributesRenderer implements CasProtocolAttributesRen
         final List<String> formattedAttributes = new ArrayList<>(attributes.size());
         LOGGER.debug("Beginning to format/render attributes for the response");
         attributes.forEach((k, v) -> {
-            final Set<Object> values = CollectionUtils.toCollection(v);
+            final var values = CollectionUtils.toCollection(v);
             values.forEach(value -> {
-                final String fmt = new StringBuilder()
+                final var fmt = new StringBuilder()
                     .append("<cas:".concat(k).concat(">"))
                     .append(StringEscapeUtils.escapeXml10(value.toString().trim()))
                     .append("</cas:".concat(k).concat(">"))

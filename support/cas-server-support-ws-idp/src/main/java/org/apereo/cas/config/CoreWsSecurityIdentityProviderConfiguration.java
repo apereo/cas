@@ -142,10 +142,10 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
 
     @Override
     public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        final Service callbackService = wsFederationCallbackService();
+        final var callbackService = wsFederationCallbackService();
         LOGGER.debug("Initializing callback service [{}]", callbackService);
 
-        final RegexRegisteredService service = new RegexRegisteredService();
+        final var service = new RegexRegisteredService();
         service.setId(Math.abs(RandomUtils.getNativeInstance().nextLong()));
         service.setEvaluationOrder(0);
         service.setName(service.getClass().getSimpleName());

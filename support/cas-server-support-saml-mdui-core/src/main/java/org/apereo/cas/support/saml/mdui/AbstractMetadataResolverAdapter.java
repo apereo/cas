@@ -92,7 +92,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
     @Override
     @SneakyThrows
     public EntityDescriptor getEntityDescriptorForEntityId(final String entityId) {
-        final CriteriaSet criterions = new CriteriaSet(new EntityIdCriterion(entityId));
+        final var criterions = new CriteriaSet(new EntityIdCriterion(entityId));
         if (this.metadataResolver != null) {
             return this.metadataResolver.resolveSingle(criterions);
         }
@@ -118,9 +118,9 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
         LOGGER.debug("Building metadata resolver aggregate");
         this.metadataResolver = new ChainingMetadataResolver();
         final List<MetadataResolver> resolvers = new ArrayList<>();
-        final Set<Map.Entry<Resource, MetadataFilterChain>> entries = this.metadataResources.entrySet();
+        final var entries = this.metadataResources.entrySet();
         entries.forEach(entry -> {
-            final Resource resource = entry.getKey();
+            final var resource = entry.getKey();
             LOGGER.debug("Loading [{}]", resource.getFilename());
             resolvers.addAll(loadMetadataFromResource(entry.getValue(), resource, entityId));
         });
@@ -141,10 +141,10 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      */
     private List<MetadataResolver> loadMetadataFromResource(final MetadataFilter metadataFilter, final Resource resource, final String entityId) {
         LOGGER.debug("Evaluating metadata resource [{}]", resource.getFilename());
-        try (InputStream in = getResourceInputStream(resource, entityId)) {
+        try (var in = getResourceInputStream(resource, entityId)) {
             if (in.available() > 0 && in.markSupported()) {
                 LOGGER.debug("Parsing [{}]", resource.getFilename());
-                final Document document = this.configBean.getParserPool().parse(in);
+                final var document = this.configBean.getParserPool().parse(in);
                 return buildSingleMetadataResolver(metadataFilter, resource, document);
             }
             LOGGER.warn("Input stream from resource [{}] appears empty. Moving on...", resource.getFilename());
@@ -164,8 +164,8 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      */
     private List<MetadataResolver> buildSingleMetadataResolver(final MetadataFilter metadataFilterChain, final Resource resource, final Document document) {
         try {
-            final Element metadataRoot = document.getDocumentElement();
-            final DOMMetadataResolver metadataProvider = new DOMMetadataResolver(metadataRoot);
+            final var metadataRoot = document.getDocumentElement();
+            final var metadataProvider = new DOMMetadataResolver(metadataRoot);
             metadataProvider.setParserPool(this.configBean.getParserPool());
             metadataProvider.setFailFastInitialization(true);
             metadataProvider.setRequireValidMetadata(this.requireValidMetadata);

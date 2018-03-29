@@ -31,7 +31,7 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
 
     @Override
     protected String getDefaultMessage(final String code) {
-        final String messageToReturn = super.getDefaultMessage(code);
+        final var messageToReturn = super.getDefaultMessage(code);
         if (!StringUtils.isBlank(messageToReturn) && messageToReturn.equals(code)) {
             LOGGER.warn("The code [{}] cannot be found in the default language bundle and will "
                     + "be used as the message itself.", code);
@@ -45,10 +45,10 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
         
         if (!locale.equals(Locale.ENGLISH)) {
             foundCode = IntStream.range(0, this.basenames.length).filter(i -> {
-                final String filename = this.basenames[i] + '_' + locale;
+                final var filename = this.basenames[i] + '_' + locale;
 
                 LOGGER.trace("Examining language bundle [{}] for the code [{}]", filename, code);
-                final PropertiesHolder holder = this.getProperties(filename);
+                final var holder = this.getProperties(filename);
                 return holder != null && holder.getProperties() != null
                         && holder.getProperty(code) != null;
             }).findFirst().isPresent();

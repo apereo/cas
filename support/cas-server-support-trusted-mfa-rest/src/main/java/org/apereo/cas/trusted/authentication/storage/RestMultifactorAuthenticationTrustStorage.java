@@ -27,32 +27,32 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
-        final String url = (!this.endpoint.endsWith("/") ? this.endpoint.concat("/") : this.endpoint).concat(principal);
+        final var url = (!this.endpoint.endsWith("/") ? this.endpoint.concat("/") : this.endpoint).concat(principal);
         return getResults(url);
     }
 
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
-        final String url = (!this.endpoint.endsWith("/") ? this.endpoint.concat("/") : this.endpoint).concat(onOrAfterDate.toString());
+        final var url = (!this.endpoint.endsWith("/") ? this.endpoint.concat("/") : this.endpoint).concat(onOrAfterDate.toString());
         return getResults(url);
     }
     
     @Override
     public void expire(final LocalDate onOrBefore) {
-        final RestTemplate restTemplate = new RestTemplate();
+        final var restTemplate = new RestTemplate();
         restTemplate.postForEntity(this.endpoint, onOrBefore, Object.class);
     }
 
     @Override
     public void expire(final String key) {
-        final RestTemplate restTemplate = new RestTemplate();
+        final var restTemplate = new RestTemplate();
         restTemplate.postForEntity(this.endpoint, key, Object.class);
     }
 
     @Override
     protected MultifactorAuthenticationTrustRecord setInternal(final MultifactorAuthenticationTrustRecord record) {
-        final RestTemplate restTemplate = new RestTemplate();
-        final ResponseEntity<Object> response = restTemplate.postForEntity(this.endpoint, record, Object.class);
+        final var restTemplate = new RestTemplate();
+        final var response = restTemplate.postForEntity(this.endpoint, record, Object.class);
         if (response != null && response.getStatusCode() == HttpStatus.OK) {
             return record;
         }
@@ -60,11 +60,11 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
     
     private static Set<MultifactorAuthenticationTrustRecord> getResults(final String url) {
-        final RestTemplate restTemplate = new RestTemplate();
-        final ResponseEntity<MultifactorAuthenticationTrustRecord[]> responseEntity =
+        final var restTemplate = new RestTemplate();
+        final var responseEntity =
                 restTemplate.getForEntity(url, MultifactorAuthenticationTrustRecord[].class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            final MultifactorAuthenticationTrustRecord[] results = responseEntity.getBody();
+            final var results = responseEntity.getBody();
             return Stream.of(results).collect(Collectors.toSet());
         }
 

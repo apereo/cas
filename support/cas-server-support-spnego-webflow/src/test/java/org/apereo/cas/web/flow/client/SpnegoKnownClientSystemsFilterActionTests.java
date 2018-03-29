@@ -28,110 +28,110 @@ public class SpnegoKnownClientSystemsFilterActionTests {
 
     @Test
     public void ensureRemoteIpShouldBeChecked() {
-        final BaseSpnegoKnownClientSystemsFilterAction action =
+        final var action =
         new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^192\\.158\\..+"), "", 0);
 
-        final MockRequestContext ctx = new MockRequestContext();
-        final MockHttpServletRequest req = new MockHttpServletRequest();
+        final var ctx = new MockRequestContext();
+        final var req = new MockHttpServletRequest();
         req.setRemoteAddr("192.158.5.781");
-        final ServletExternalContext extCtx = new ServletExternalContext(
+        final var extCtx = new ServletExternalContext(
             new MockServletContext(), req,
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
-        final Event ev = action.doExecute(ctx);
+        final var ev = action.doExecute(ctx);
         assertEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
     }
 
     @Test
     public void ensureRemoteIpShouldNotBeChecked() {
-        final BaseSpnegoKnownClientSystemsFilterAction action =
+        final var action =
             new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^192\\.158\\..+"),
                 "", 0);
 
-        final MockRequestContext ctx = new MockRequestContext();
-        final MockHttpServletRequest req = new MockHttpServletRequest();
+        final var ctx = new MockRequestContext();
+        final var req = new MockHttpServletRequest();
         req.setRemoteAddr("193.158.5.781");
-        final ServletExternalContext extCtx = new ServletExternalContext(
+        final var extCtx = new ServletExternalContext(
             new MockServletContext(), req,
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
-        final Event ev = action.doExecute(ctx);
+        final var ev = action.doExecute(ctx);
         assertNotEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
     }
 
     @Test
     public void ensureAltRemoteIpHeaderShouldBeChecked() {
-        final BaseSpnegoKnownClientSystemsFilterAction action =
+        final var action =
             new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^74\\.125\\..+"),
                 "alternateRemoteIp", 120);
 
-        final MockRequestContext ctx = new MockRequestContext();
-        final MockHttpServletRequest req = new MockHttpServletRequest();
+        final var ctx = new MockRequestContext();
+        final var req = new MockHttpServletRequest();
         req.setRemoteAddr("555.555.555.555");
         req.addHeader("alternateRemoteIp", ALTERNATE_REMOTE_IP);
-        final ServletExternalContext extCtx = new ServletExternalContext(
+        final var extCtx = new ServletExternalContext(
             new MockServletContext(), req,
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
-        final Event ev = action.doExecute(ctx);
+        final var ev = action.doExecute(ctx);
         assertEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
     }
 
     @Test
     public void ensureHostnameShouldDoSpnego() {
-        final HostNameSpnegoKnownClientSystemsFilterAction action =
+        final var action =
             new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(""),
                 "", 0, "\\w+\\.\\w+\\.\\w+");
 
-        final MockRequestContext ctx = new MockRequestContext();
-        final MockHttpServletRequest req = new MockHttpServletRequest();
+        final var ctx = new MockRequestContext();
+        final var req = new MockHttpServletRequest();
         req.setRemoteAddr(ALTERNATE_REMOTE_IP);
-        final ServletExternalContext extCtx = new ServletExternalContext(
+        final var extCtx = new ServletExternalContext(
             new MockServletContext(), req,
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
-        final Event ev = action.doExecute(ctx);
+        final var ev = action.doExecute(ctx);
         assertEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
     }
 
     @Test
     public void ensureHostnameAndIpShouldDoSpnego() {
-        final HostNameSpnegoKnownClientSystemsFilterAction action =
+        final var action =
             new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("74\\..+"),
                 "", 0, "\\w+\\.\\w+\\.\\w+");
 
-        final MockRequestContext ctx = new MockRequestContext();
-        final MockHttpServletRequest req = new MockHttpServletRequest();
+        final var ctx = new MockRequestContext();
+        final var req = new MockHttpServletRequest();
         req.setRemoteAddr(ALTERNATE_REMOTE_IP);
-        final ServletExternalContext extCtx = new ServletExternalContext(
+        final var extCtx = new ServletExternalContext(
             new MockServletContext(), req,
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
-        final Event ev = action.doExecute(ctx);
+        final var ev = action.doExecute(ctx);
         assertEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
 
     }
 
     @Test
     public void verifyIpMismatchWhenCheckingHostnameForSpnego() {
-        final HostNameSpnegoKnownClientSystemsFilterAction action =
+        final var action =
             new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("14\\..+"),
                 "", 0, "\\w+\\.\\w+\\.\\w+");
 
-        final MockRequestContext ctx = new MockRequestContext();
-        final MockHttpServletRequest req = new MockHttpServletRequest();
+        final var ctx = new MockRequestContext();
+        final var req = new MockHttpServletRequest();
         req.setRemoteAddr(ALTERNATE_REMOTE_IP);
-        final ServletExternalContext extCtx = new ServletExternalContext(
+        final var extCtx = new ServletExternalContext(
             new MockServletContext(), req,
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
-        final Event ev = action.doExecute(ctx);
+        final var ev = action.doExecute(ctx);
         assertEquals(ev.getId(), new EventFactorySupport().no(this).getId());
 
     }

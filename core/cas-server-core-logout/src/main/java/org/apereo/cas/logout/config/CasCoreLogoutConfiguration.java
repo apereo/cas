@@ -99,9 +99,9 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
     @Autowired
     @Bean
     public LogoutExecutionPlan logoutExecutionPlan(final List<LogoutExecutionPlanConfigurer> configurers) {
-        final DefaultLogoutExecutionPlan plan = new DefaultLogoutExecutionPlan();
+        final var plan = new DefaultLogoutExecutionPlan();
         configurers.forEach(c -> {
-            final String name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            final var name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Configuring logout execution plan [{}]", name);
             c.configureLogoutExecutionPlan(plan);
         });

@@ -20,12 +20,12 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
     @Override
     protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress) throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final var request = new MockHttpServletRequest();
+        final var response = new MockHttpServletResponse();
         request.setMethod("POST");
         request.setParameter("username", username);
         request.setRemoteAddr(fromAddress);
-        final MockRequestContext context = new MockRequestContext();
+        final var context = new MockRequestContext();
         context.setCurrentEvent(new Event(StringUtils.EMPTY, "error"));
         request.setAttribute("flowRequestContext", context);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());

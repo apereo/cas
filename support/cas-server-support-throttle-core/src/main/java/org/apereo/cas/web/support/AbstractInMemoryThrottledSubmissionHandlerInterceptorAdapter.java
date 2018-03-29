@@ -39,7 +39,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
-        final ZonedDateTime last = this.ipMap.get(constructKey(request));
+        final var last = this.ipMap.get(constructKey(request));
         return last != null && submissionRate(ZonedDateTime.now(ZoneOffset.UTC), last) > getThresholdRate();
     }
 
@@ -56,12 +56,12 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     public void decrement() {
         LOGGER.info("Beginning audit cleanup...");
 
-        final Set<Entry<String, ZonedDateTime>> keys = this.ipMap.entrySet();
+        final var keys = this.ipMap.entrySet();
         LOGGER.debug("Decrementing counts for throttler.  Starting key count: [{}]", keys.size());
 
-        final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
-        for (final Iterator<Entry<String, ZonedDateTime>> iter = keys.iterator(); iter.hasNext();) {
-            final Entry<String, ZonedDateTime> entry = iter.next();
+        final var now = ZonedDateTime.now(ZoneOffset.UTC);
+        for (final var iter = keys.iterator(); iter.hasNext();) {
+            final var entry = iter.next();
             if (submissionRate(now, entry.getValue()) < getThresholdRate()) {
                 LOGGER.trace("Removing entry for key [{}]", entry.getKey());
                 iter.remove();

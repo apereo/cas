@@ -54,18 +54,18 @@ public class Cas30ResponseView extends Cas20ResponseView {
                                             final HttpServletResponse response) throws Exception {
         super.prepareMergedOutputModel(model, request, response);
 
-        final Service service = authenticationRequestServiceSelectionStrategies.resolveService(getServiceFrom(model));
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        final var service = authenticationRequestServiceSelectionStrategies.resolveService(getServiceFrom(model));
+        final var registeredService = this.servicesManager.findServiceBy(service);
 
         final Map<String, Object> attributes = new HashMap<>();
 
-        final Map<String, Object> principalAttributes = getCasPrincipalAttributes(model, registeredService);
+        final var principalAttributes = getCasPrincipalAttributes(model, registeredService);
         attributes.putAll(principalAttributes);
 
         LOGGER.debug("Processed principal attributes from the output model to be [{}]", principalAttributes.keySet());
         if (this.releaseProtocolAttributes) {
             LOGGER.debug("CAS is configured to release protocol-level attributes. Processing...");
-            final Map<String, Object> protocolAttributes = getCasProtocolAuthenticationAttributes(model, registeredService);
+            final var protocolAttributes = getCasProtocolAuthenticationAttributes(model, registeredService);
             attributes.putAll(protocolAttributes);
             LOGGER.debug("Processed protocol/authentication attributes from the output model to be [{}]", protocolAttributes.keySet());
         }
@@ -92,12 +92,12 @@ public class Cas30ResponseView extends Cas20ResponseView {
             return new LinkedHashMap<>(0);
         }
 
-        final Map<String, Object> filteredAuthenticationAttributes = authenticationAttributeReleasePolicy
+        final var filteredAuthenticationAttributes = authenticationAttributeReleasePolicy
             .getAuthenticationAttributesForRelease(getPrimaryAuthenticationFrom(model));
 
         filterCasProtocolAttributes(model, filteredAuthenticationAttributes);
 
-        final String contextProvider = getSatisfiedMultifactorAuthenticationProviderId(model);
+        final var contextProvider = getSatisfiedMultifactorAuthenticationProviderId(model);
         if (StringUtils.isNotBlank(contextProvider) && StringUtils.isNotBlank(authenticationContextAttribute)) {
             filteredAuthenticationAttributes.put(this.authenticationContextAttribute, CollectionUtils.wrap(contextProvider));
         }
@@ -137,12 +137,12 @@ public class Cas30ResponseView extends Cas20ResponseView {
                                                      final RegisteredService registeredService) {
 
         LOGGER.debug("Beginning to encode attributes for the response");
-        final Map<String, Object> encodedAttributes = this.protocolAttributeEncoder.encodeAttributes(attributes, registeredService);
+        final var encodedAttributes = this.protocolAttributeEncoder.encodeAttributes(attributes, registeredService);
 
         LOGGER.debug("Encoded attributes for the response are [{}]", encodedAttributes);
         super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES, encodedAttributes);
 
-        final Collection<String> formattedAttributes = this.attributesRenderer.render(encodedAttributes);
+        final var formattedAttributes = this.attributesRenderer.render(encodedAttributes);
         super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES, formattedAttributes);
     }
 }

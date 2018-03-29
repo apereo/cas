@@ -24,16 +24,16 @@ public class UriRealmParser implements RealmParser {
 
     @Override
     public String parseRealm(final Map<String, Object> messageContext) throws STSException {
-        final String url = (String) messageContext.get("org.apache.cxf.request.url");
+        final var url = (String) messageContext.get("org.apache.cxf.request.url");
 
-        final StringTokenizer st = new StringTokenizer(url, "/");
+        final var st = new StringTokenizer(url, "/");
         String realm = null;
-        int count = st.countTokens();
+        var count = st.countTokens();
         if (count <= 1) {
             return null;
         }
         count--;
-        for (int i = 0; i < count; i++) {
+        for (var i = 0; i < count; i++) {
             realm = st.nextToken();
         }
         realm = realm.toUpperCase();

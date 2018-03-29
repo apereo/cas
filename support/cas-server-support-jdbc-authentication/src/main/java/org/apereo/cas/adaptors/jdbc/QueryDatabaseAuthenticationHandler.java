@@ -66,34 +66,34 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         }
 
         final Map<String, Object> attributes = new LinkedHashMap<>(this.principalAttributeMap.size());
-        final String username = credential.getUsername();
-        final String password = credential.getPassword();
+        final var username = credential.getUsername();
+        final var password = credential.getPassword();
         try {
-            final Map<String, Object> dbFields = getJdbcTemplate().queryForMap(this.sql, username);
-            final String dbPassword = (String) dbFields.get(this.fieldPassword);
+            final var dbFields = getJdbcTemplate().queryForMap(this.sql, username);
+            final var dbPassword = (String) dbFields.get(this.fieldPassword);
 
             if ((StringUtils.isNotBlank(originalPassword) && !matches(originalPassword, dbPassword))
                 || (StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword))) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
             if (StringUtils.isNotBlank(this.fieldDisabled)) {
-                final Object dbDisabled = dbFields.get(this.fieldDisabled);
+                final var dbDisabled = dbFields.get(this.fieldDisabled);
                 if (dbDisabled != null && (Boolean.TRUE.equals(BooleanUtils.toBoolean(dbDisabled.toString())) || dbDisabled.equals(Integer.valueOf(1)))) {
                     throw new AccountDisabledException("Account has been disabled");
                 }
             }
             if (StringUtils.isNotBlank(this.fieldExpired)) {
-                final Object dbExpired = dbFields.get(this.fieldExpired);
+                final var dbExpired = dbFields.get(this.fieldExpired);
                 if (dbExpired != null && (Boolean.TRUE.equals(BooleanUtils.toBoolean(dbExpired.toString())) || dbExpired.equals(1))) {
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }
             }
             this.principalAttributeMap.forEach((key, names) -> {
-                final Object attribute = dbFields.get(key);
+                final var attribute = dbFields.get(key);
 
                 if (attribute != null) {
                     LOGGER.debug("Found attribute [{}] from the query results", key);
-                    final Collection<String> attributeNames = (Collection<String>) names;
+                    final var attributeNames = (Collection<String>) names;
                     attributeNames.forEach(s -> {
                         LOGGER.debug("Principal attribute [{}] is virtually remapped/renamed to [{}]", key, s);
                         attributes.put(s, CollectionUtils.wrap(attribute.toString()));

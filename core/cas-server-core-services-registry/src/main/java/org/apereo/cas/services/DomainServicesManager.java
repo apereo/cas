@@ -45,19 +45,19 @@ public class DomainServicesManager extends AbstractServicesManager {
 
     @Override
     protected void deleteInternal(final RegisteredService service) {
-        final String domain = extractDomain(service.getServiceId());
+        final var domain = extractDomain(service.getServiceId());
         this.domains.get(domain).remove(service);
     }
 
     @Override
     protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
-        final String mappedDomain = StringUtils.isNotBlank(serviceId) ? extractDomain(serviceId) : StringUtils.EMPTY;
+        final var mappedDomain = StringUtils.isNotBlank(serviceId) ? extractDomain(serviceId) : StringUtils.EMPTY;
         LOGGER.debug("Domain mapped to the service identifier is [{}]", mappedDomain);
 
-        final String domain = domains.containsKey(mappedDomain) ? mappedDomain : DEFAULT_DOMAIN_NAME;
+        final var domain = domains.containsKey(mappedDomain) ? mappedDomain : DEFAULT_DOMAIN_NAME;
         LOGGER.debug("Looking up services under domain [{}] for service identifier [{}]", domain, serviceId);
 
-        final Collection<RegisteredService> registeredServices = getServicesForDomain(domain);
+        final var registeredServices = getServicesForDomain(domain);
         if (registeredServices == null || registeredServices.isEmpty()) {
             LOGGER.debug("No services could be located for domain [{}]", domain);
             return new ArrayList<>(0);
@@ -90,18 +90,18 @@ public class DomainServicesManager extends AbstractServicesManager {
 
 
     private String extractDomain(final String service) {
-        final Matcher extractor = this.domainExtractor.matcher(service.toLowerCase());
+        final var extractor = this.domainExtractor.matcher(service.toLowerCase());
         return extractor.lookingAt() ? validateDomain(extractor.group(1)) : "default";
     }
 
     private String validateDomain(final String providedDomain) {
-        final String domain = StringUtils.remove(providedDomain, "\\");
-        final Matcher match = domainPattern.matcher(StringUtils.remove(domain, "\\"));
+        final var domain = StringUtils.remove(providedDomain, "\\");
+        final var match = domainPattern.matcher(StringUtils.remove(domain, "\\"));
         return match.matches() ? domain : "default";
     }
 
     private void addToDomain(final RegisteredService r, final Map<String, TreeSet<RegisteredService>> map) {
-        final String domain = extractDomain(r.getServiceId());
+        final var domain = extractDomain(r.getServiceId());
         final TreeSet<RegisteredService> services;
         if (map.containsKey(domain)) {
             services = map.get(domain);

@@ -28,7 +28,7 @@ public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
 
     @Override
     public String getDeviceRegistrationRequest(final String requestId, final String username) {
-        final String request = requestStorage.get(requestId);
+        final var request = requestStorage.get(requestId);
         requestStorage.invalidate(requestId);
         requestStorage.cleanUp();
         return request;
@@ -36,7 +36,7 @@ public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
 
     @Override
     public String getDeviceAuthenticationRequest(final String requestId, final String username) {
-        final String request = requestStorage.get(requestId);
+        final var request = requestStorage.get(requestId);
         requestStorage.invalidate(requestId);
         requestStorage.cleanUp();
         return request;

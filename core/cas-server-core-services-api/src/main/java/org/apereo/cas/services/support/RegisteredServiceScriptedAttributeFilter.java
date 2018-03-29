@@ -39,8 +39,8 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
 
     @Override
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
-        final Matcher matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(script);
-        final Matcher matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(script);
+        final var matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(script);
+        final var matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(script);
         if (matcherInline.find()) {
             return filterInlinedGroovyAttributeValues(givenAttributes, matcherInline.group(1));
         }
@@ -51,21 +51,21 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
     }
 
     private static Map<String, Object> getGroovyAttributeValue(final String groovyScript, final Map<String, Object> resolvedAttributes) {
-        final Map<String, Object> args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
+        final var args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
         return ScriptingUtils.executeGroovyShellScript(groovyScript, args, Map.class);
     }
 
     private static Map<String, Object> filterInlinedGroovyAttributeValues(final Map<String, Object> resolvedAttributes, final String script) {
         LOGGER.debug("Found inline groovy script to execute [{}]", script);
-        final Map<String, Object> attributesToRelease = getGroovyAttributeValue(script, resolvedAttributes);
+        final var attributesToRelease = getGroovyAttributeValue(script, resolvedAttributes);
         return attributesToRelease;
     }
 
     private static Map<String, Object> filterFileBasedGroovyAttributeValues(final Map<String, Object> resolvedAttributes, final String scriptFile) {
         try {
             LOGGER.debug("Found groovy script file to execute [{}]", scriptFile);
-            final String script = FileUtils.readFileToString(new File(scriptFile), StandardCharsets.UTF_8);
-            final Map<String, Object> attributesToRelease = getGroovyAttributeValue(script, resolvedAttributes);
+            final var script = FileUtils.readFileToString(new File(scriptFile), StandardCharsets.UTF_8);
+            final var attributesToRelease = getGroovyAttributeValue(script, resolvedAttributes);
             return attributesToRelease;
         } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);

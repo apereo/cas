@@ -37,7 +37,7 @@ public class SamlIdPObjectSignatureValidator extends SamlObjectSignatureValidato
     protected RoleDescriptorResolver getRoleDescriptorResolver(final MetadataResolver resolver, final MessageContext context,
                                                                final RequestAbstractType profileRequest) throws Exception {
 
-        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
+        final var idp = casProperties.getAuthn().getSamlIdp();
         return SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, idp.getMetadata().isRequireValidMetadata());
     }
 

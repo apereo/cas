@@ -45,7 +45,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator swivelAuthenticationMetaDataPopulator() {
-        final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        final var authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute,
                 swivelAuthenticationHandler(), swivelAuthenticationProvider());
     }
@@ -65,7 +65,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public SwivelAuthenticationHandler swivelAuthenticationHandler() {
-        final SwivelMultifactorProperties swivel = this.casProperties.getAuthn().getMfa().getSwivel();
+        final var swivel = this.casProperties.getAuthn().getMfa().getSwivel();
         return new SwivelAuthenticationHandler(swivel.getName(),
                 servicesManager, swivelPrincipalFactory(), swivel);
     }
@@ -73,8 +73,8 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider swivelAuthenticationProvider() {
-        final SwivelMultifactorProperties swivel = this.casProperties.getAuthn().getMfa().getSwivel();
-        final SwivelMultifactorAuthenticationProvider p = new SwivelMultifactorAuthenticationProvider(swivel.getSwivelUrl());
+        final var swivel = this.casProperties.getAuthn().getMfa().getSwivel();
+        final var p = new SwivelMultifactorAuthenticationProvider(swivel.getSwivelUrl());
         p.setBypassEvaluator(swivelBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getSwivel().getRank());

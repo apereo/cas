@@ -16,9 +16,9 @@ public class GroovyRegisteredServiceUsernameProviderTests {
 
     @Test
     public void verifyUsernameProvider() {
-        final GroovyRegisteredServiceUsernameProvider p = new GroovyRegisteredServiceUsernameProvider();
+        final var p = new GroovyRegisteredServiceUsernameProvider();
         p.setGroovyScript("file:src/test/resources/uid.groovy");
-        final String id =
+        final var id =
             p.resolveUsername(RegisteredServiceTestUtils.getPrincipal(), RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getRegisteredService());
         assertEquals("test", id);

@@ -34,7 +34,7 @@ public class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X50
      */
     @Override
     public void apply(final X509CRL crl) throws ExpiredCRLException {
-        final ZonedDateTime cutoff = ZonedDateTime.now(ZoneOffset.UTC);
+        final var cutoff = ZonedDateTime.now(ZoneOffset.UTC);
         if (CertUtils.isExpired(crl, cutoff)) {
             if (CertUtils.isExpired(crl, cutoff.minusSeconds(this.threshold))) {
                 throw new ExpiredCRLException(crl.toString(), cutoff, this.threshold);

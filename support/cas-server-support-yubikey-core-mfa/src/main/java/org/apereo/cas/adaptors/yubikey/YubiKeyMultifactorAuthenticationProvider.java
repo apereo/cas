@@ -32,13 +32,13 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
     @Override
     protected boolean isAvailable() {
         try {
-            final String[] endpoints = client.getWsapiUrls();
-            for (final String endpoint : endpoints) {
+            final var endpoints = client.getWsapiUrls();
+            for (final var endpoint : endpoints) {
                 LOGGER.debug("Pinging YubiKey API endpoint at [{}]", endpoint);
-                final HttpMessage msg = this.httpClient.sendMessageToEndPoint(new URL(endpoint));
-                final String message = msg != null ? msg.getMessage() : null;
+                final var msg = this.httpClient.sendMessageToEndPoint(new URL(endpoint));
+                final var message = msg != null ? msg.getMessage() : null;
                 if (StringUtils.isNotBlank(message)) {
-                    final String response = EncodingUtils.urlDecode(message);
+                    final var response = EncodingUtils.urlDecode(message);
                     LOGGER.debug("Received YubiKey ping response [{}]", response);
                     return true;
                 }

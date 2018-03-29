@@ -25,8 +25,8 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
 
     @Override
     public OidcServerDiscoverySettings getObject() {
-        final OidcProperties oidc = casProperties.getAuthn().getOidc();
-        final OidcServerDiscoverySettings discoveryProperties =
+        final var oidc = casProperties.getAuthn().getOidc();
+        final var discoveryProperties =
             new OidcServerDiscoverySettings(casProperties, oidc.getIssuer());
 
         discoveryProperties.setClaimsSupported(oidc.getClaims());

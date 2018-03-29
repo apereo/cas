@@ -110,7 +110,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
         this.lastTimeUsed = ZonedDateTime.now(ZoneOffset.UTC);
         this.countOfUses++;
         if (getTicketGrantingTicket() != null && !getTicketGrantingTicket().isExpired()) {
-            final TicketState state = TicketState.class.cast(getTicketGrantingTicket());
+            final var state = TicketState.class.cast(getTicketGrantingTicket());
             state.update();
         }
     }

@@ -37,7 +37,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      * @return the description
      */
     public String getDescription() {
-        final Collection<String> items = getDescriptions();
+        final var items = getDescriptions();
         if (items.isEmpty()) {
             return this.registeredService.getDescription();
         }
@@ -50,7 +50,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      * @return the display name
      */
     public String getDisplayName() {
-        final Collection<String> items = getDisplayNames();
+        final var items = getDisplayNames();
         if (items.isEmpty()) {
             return this.registeredService.getName();
         }
@@ -76,7 +76,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      * @return the information uRL
      */
     public String getInformationURL() {
-        final Collection<String> items = getInformationURLs();
+        final var items = getInformationURLs();
         if (items.isEmpty()) {
             return this.registeredService.getInformationUrl();
         }
@@ -98,7 +98,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      * @return the privacy statement uRL
      */
     public String getPrivacyStatementURL() {
-        final Collection<String> items = getPrivacyStatementURLs();
+        final var items = getPrivacyStatementURLs();
         if (items.isEmpty()) {
             return this.registeredService.getPrivacyUrl();
         }
@@ -121,7 +121,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      */
     public long getLogoWidth() {
         try {
-            final Collection<Logo> items = getLogoUrls();
+            final var items = getLogoUrls();
             if (!items.isEmpty()) {
                 return items.iterator().next().getWidth();
             }
@@ -138,7 +138,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      */
     public long getLogoHeight() {
         try {
-            final Collection<Logo> items = getLogoUrls();
+            final var items = getLogoUrls();
             if (!items.isEmpty()) {
                 return items.iterator().next().getHeight();
             }
@@ -155,7 +155,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      */
     public String getLogoUrl() {
         try {
-            final Collection<Logo> items = getLogoUrls();
+            final var items = getLogoUrls();
             if (!items.isEmpty()) {
                 return items.iterator().next().getUrl();
             }

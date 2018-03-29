@@ -25,7 +25,7 @@ public class DenyAllAttributeReleasePolicyTests {
 
     @Test
     public void verifySerializeADenyAllAttributeReleasePolicyToJson() throws IOException {
-        final DenyAllAttributeReleasePolicy policyWritten = new DenyAllAttributeReleasePolicy();
+        final var policyWritten = new DenyAllAttributeReleasePolicy();
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
 

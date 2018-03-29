@@ -81,15 +81,15 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
     public ResponseEntity<String> handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
+        final var context = Pac4jUtils.getPac4jJ2EContext(request, response);
         
-        final String accessToken = getAccessTokenFromRequest(request);
+        final var accessToken = getAccessTokenFromRequest(request);
         if (StringUtils.isBlank(accessToken)) {
             LOGGER.error("Missing [{}] from the request", OAuth20Constants.ACCESS_TOKEN);
             return buildUnauthorizedResponseEntity(OAuth20Constants.MISSING_ACCESS_TOKEN);
         }
 
-        final AccessToken accessTokenTicket = this.ticketRegistry.getTicket(accessToken, AccessToken.class);
+        final var accessTokenTicket = this.ticketRegistry.getTicket(accessToken, AccessToken.class);
         if (accessTokenTicket == null) {
             LOGGER.error("Access token [{}] cannot be found in the ticket registry.", accessToken);
             return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
@@ -101,7 +101,7 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         }
 
         if (casProperties.getLogout().isRemoveDescendantTickets()) {
-            final TicketGrantingTicket ticketGrantingTicket = accessTokenTicket.getTicketGrantingTicket();
+            final var ticketGrantingTicket = accessTokenTicket.getTicketGrantingTicket();
             if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
                 LOGGER.error("Ticket granting ticket [{}] parenting access token [{}] has expired or is not found", ticketGrantingTicket, accessTokenTicket);
                 this.ticketRegistry.deleteTicket(accessToken);
@@ -110,13 +110,13 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         }
         updateAccessTokenUsage(accessTokenTicket);
 
-        final Map<String, Object> map = this.userProfileDataCreator.createFrom(accessTokenTicket, context);
-        final String value = this.userProfileViewRenderer.render(map, accessTokenTicket);
+        final var map = this.userProfileDataCreator.createFrom(accessTokenTicket, context);
+        final var value = this.userProfileViewRenderer.render(map, accessTokenTicket);
         return new ResponseEntity<>(value, HttpStatus.OK);
     }
 
     private void updateAccessTokenUsage(final AccessToken accessTokenTicket) {
-        final TicketState accessTokenState = TicketState.class.cast(accessTokenTicket);
+        final var accessTokenState = TicketState.class.cast(accessTokenTicket);
         accessTokenState.update();
         if (accessTokenTicket.isExpired()) {
             this.ticketRegistry.deleteTicket(accessTokenTicket.getId());
@@ -132,9 +132,9 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
      * @return the access token from request
      */
     protected String getAccessTokenFromRequest(final HttpServletRequest request) {
-        String accessToken = request.getParameter(OAuth20Constants.ACCESS_TOKEN);
+        var accessToken = request.getParameter(OAuth20Constants.ACCESS_TOKEN);
         if (StringUtils.isBlank(accessToken)) {
-            final String authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
+            final var authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
             if (StringUtils.isNotBlank(authHeader) && authHeader.toLowerCase().startsWith(OAuth20Constants.BEARER_TOKEN.toLowerCase() + ' ')) {
                 accessToken = authHeader.substring(OAuth20Constants.BEARER_TOKEN.length() + 1);
             }
@@ -152,7 +152,7 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
     private static ResponseEntity buildUnauthorizedResponseEntity(final String code) {
         final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);
         map.add(OAuth20Constants.ERROR, code);
-        final String value = OAuth20Utils.jsonify(map);
+        final var value = OAuth20Utils.jsonify(map);
         return new ResponseEntity<>(value, HttpStatus.UNAUTHORIZED);
     }
 }

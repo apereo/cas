@@ -43,7 +43,7 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
     @Override
     @SneakyThrows
     public String build(final String serviceTicketId, final Service service) {
-        final Assertion assertion = this.ticketValidator.validate(serviceTicketId, service.getId());
+        final var assertion = this.ticketValidator.validate(serviceTicketId, service.getId());
         final Map<String, Object> attributes = new LinkedHashMap<>(assertion.getAttributes());
         attributes.putAll(assertion.getPrincipal().getAttributes());
 
@@ -51,7 +51,7 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
         if (assertion.getValidUntilDate() != null) {
             validUntilDate = assertion.getValidUntilDate();
         } else {
-            final ZonedDateTime dt = ZonedDateTime.now().plusSeconds(expirationPolicy.getTimeToLive());
+            final var dt = ZonedDateTime.now().plusSeconds(expirationPolicy.getTimeToLive());
             validUntilDate = DateTimeUtils.dateOf(dt);
         }
         return buildJwt(serviceTicketId, service.getId(), assertion.getAuthenticationDate(),
@@ -62,12 +62,12 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
     @SneakyThrows
     public String build(final TicketGrantingTicket ticketGrantingTicket) {
 
-        final Authentication authentication = ticketGrantingTicket.getAuthentication();
+        final var authentication = ticketGrantingTicket.getAuthentication();
         final Map<String, Object> attributes = new LinkedHashMap<>(authentication.getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());
 
-        final ZonedDateTime dt = ZonedDateTime.now().plusSeconds(expirationPolicy.getTimeToLive());
-        final Date validUntilDate = DateTimeUtils.dateOf(dt);
+        final var dt = ZonedDateTime.now().plusSeconds(expirationPolicy.getTimeToLive());
+        final var validUntilDate = DateTimeUtils.dateOf(dt);
         return buildJwt(ticketGrantingTicket.getId(), casSeverPrefix,
             DateTimeUtils.dateOf(ticketGrantingTicket.getCreationTime()),
             authentication.getPrincipal().getId(),
@@ -78,7 +78,7 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
     private String buildJwt(final String jwtId, final String audience,
                             final Date issueDate, final String subject,
                             final Date validUntilDate, final Map<String, Object> attributes) {
-        final JWTClaimsSet.Builder claims =
+        final var claims =
             new JWTClaimsSet.Builder()
                 .audience(audience)
                 .issuer(casSeverPrefix)
@@ -89,15 +89,15 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
         attributes.forEach(claims::claim);
         claims.expirationTime(validUntilDate);
 
-        final JWTClaimsSet claimsSet = claims.build();
-        final JSONObject object = claimsSet.toJSONObject();
+        final var claimsSet = claims.build();
+        final var object = claimsSet.toJSONObject();
 
-        final String jwtJson = object.toJSONString();
+        final var jwtJson = object.toJSONString();
         LOGGER.debug("Generated JWT [{}]", JsonValue.readJSON(jwtJson).toString(Stringify.FORMATTED));
         if (tokenCipherExecutor.isEnabled()) {
             return tokenCipherExecutor.encode(jwtJson);
         }
-        final String token = new PlainJWT(claimsSet).serialize();
+        final var token = new PlainJWT(claimsSet).serialize();
         return token;
     }
 

@@ -40,7 +40,7 @@ public class CoreAuthenticationUtils {
      * @return the map
      */
     public static Map<String, Object> transformPrincipalAttributesListIntoMap(final List<String> list) {
-        final Multimap<String, Object> map = transformPrincipalAttributesListIntoMultiMap(list);
+        final var map = transformPrincipalAttributesListIntoMultiMap(list);
         return CollectionUtils.wrap(map);
     }
 
@@ -57,11 +57,11 @@ public class CoreAuthenticationUtils {
             LOGGER.debug("No principal attributes are defined");
         } else {
             list.forEach(a -> {
-                final String attributeName = a.trim();
+                final var attributeName = a.trim();
                 if (attributeName.contains(":")) {
-                    final List<String> attrCombo = Splitter.on(":").splitToList(attributeName);
-                    final String name = attrCombo.get(0).trim();
-                    final String value = attrCombo.get(1).trim();
+                    final var attrCombo = Splitter.on(":").splitToList(attributeName);
+                    final var name = attrCombo.get(0).trim();
+                    final var value = attrCombo.get(1).trim();
                     LOGGER.debug("Mapped principal attribute name [{}] to [{}]", name, value);
                     multimap.put(name, value);
                 } else {
@@ -88,10 +88,10 @@ public class CoreAuthenticationUtils {
 
             if (selectionCriteria.endsWith(".groovy")) {
                 final ResourceLoader loader = new DefaultResourceLoader();
-                final Resource resource = loader.getResource(selectionCriteria);
+                final var resource = loader.getResource(selectionCriteria);
                 if (resource != null) {
-                    final String script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-                    final GroovyClassLoader classLoader = new GroovyClassLoader(Beans.class.getClassLoader(),
+                    final var script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+                    final var classLoader = new GroovyClassLoader(Beans.class.getClassLoader(),
                         new CompilerConfiguration(), true);
                     final Class<Predicate> clz = classLoader.parseClass(script);
                     return clz.getDeclaredConstructor().newInstance();
@@ -101,7 +101,7 @@ public class CoreAuthenticationUtils {
             final Class predicateClazz = ClassUtils.getClass(selectionCriteria);
             return (Predicate<org.apereo.cas.authentication.Credential>) predicateClazz.getDeclaredConstructor().newInstance();
         } catch (final Exception e) {
-            final Predicate<String> predicate = Pattern.compile(selectionCriteria).asPredicate();
+            final var predicate = Pattern.compile(selectionCriteria).asPredicate();
             return credential -> predicate.test(credential.getId());
         }
     }

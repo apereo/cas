@@ -24,7 +24,7 @@ public class MongoDbAuthenticationHandler extends UsernamePasswordWrapperAuthent
     @Override
     public void close() {
         try {
-            final MongoProfileService service = MongoProfileService.class.cast(authenticator);
+            final var service = MongoProfileService.class.cast(authenticator);
             service.getMongoClient().close();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

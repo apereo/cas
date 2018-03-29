@@ -63,7 +63,7 @@ public class SamlMetadataUIConfiguration {
 
     private MetadataResolverAdapter configureAdapter(final AbstractMetadataResolverAdapter adapter) {
         final Map<Resource, MetadataFilterChain> resources = new HashMap<>();
-        final MetadataFilterChain chain = new MetadataFilterChain();
+        final var chain = new MetadataFilterChain();
         casProperties.getSamlMetadataUi().getResources().forEach(Unchecked.consumer(r -> configureResource(resources, chain, r)));
         adapter.setRequireValidMetadata(casProperties.getSamlMetadataUi().isRequireValidMetadata());
         adapter.setMetadataResources(resources);
@@ -73,21 +73,21 @@ public class SamlMetadataUIConfiguration {
 
     private void configureResource(final Map<Resource, MetadataFilterChain> resources,
                                    final MetadataFilterChain chain, final String r) {
-        final String[] splitArray = org.springframework.util.StringUtils.commaDelimitedListToStringArray(r);
+        final var splitArray = org.springframework.util.StringUtils.commaDelimitedListToStringArray(r);
 
         Arrays.stream(splitArray).forEach(Unchecked.consumer(entry -> {
-            final List<String> arr = Splitter.on(DEFAULT_SEPARATOR).splitToList(entry);
-            final String metadataFile = arr.get(0);
-            final String signingKey = arr.size() > 1 ? arr.get(1) : null;
+            final var arr = Splitter.on(DEFAULT_SEPARATOR).splitToList(entry);
+            final var metadataFile = arr.get(0);
+            final var signingKey = arr.size() > 1 ? arr.get(1) : null;
 
             final List<MetadataFilter> filters = new ArrayList<>();
             if (casProperties.getSamlMetadataUi().getMaxValidity() > 0) {
                 filters.add(new RequiredValidUntilFilter(casProperties.getSamlMetadataUi().getMaxValidity()));
             }
 
-            boolean addResource = true;
+            var addResource = true;
             if (StringUtils.isNotBlank(signingKey)) {
-                final SignatureValidationFilter sigFilter = SamlUtils.buildSignatureValidationFilter(this.resourceLoader, signingKey);
+                final var sigFilter = SamlUtils.buildSignatureValidationFilter(this.resourceLoader, signingKey);
                 if (sigFilter != null) {
                     sigFilter.setRequireSignedRoot(casProperties.getSamlMetadataUi().isRequireSignedRoot());
                     filters.add(sigFilter);
@@ -98,7 +98,7 @@ public class SamlMetadataUIConfiguration {
             }
             chain.setFilters(filters);
 
-            final Resource resource = this.resourceLoader.getResource(metadataFile);
+            final var resource = this.resourceLoader.getResource(metadataFile);
             if (addResource && ResourceUtils.doesResourceExist(resource)) {
                 resources.put(resource, chain);
             } else {
@@ -108,13 +108,13 @@ public class SamlMetadataUIConfiguration {
     }
 
     private MetadataResolverAdapter getDynamicMetadataResolverAdapter() {
-        final DynamicMetadataResolverAdapter adapter = new DynamicMetadataResolverAdapter();
+        final var adapter = new DynamicMetadataResolverAdapter();
         configureAdapter(adapter);
         return adapter;
     }
 
     private MetadataResolverAdapter getStaticMetadataResolverAdapter() {
-        final StaticMetadataResolverAdapter adapter = new StaticMetadataResolverAdapter();
+        final var adapter = new StaticMetadataResolverAdapter();
         configureAdapter(adapter);
         adapter.buildMetadataResolverAggregate();
         return adapter;

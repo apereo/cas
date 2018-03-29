@@ -61,7 +61,7 @@ public class CasConsentReviewController {
     @GetMapping
     public ModelAndView showConsent(final HttpServletRequest request,
                                         final HttpServletResponse response) {
-        final ModelAndView view = new ModelAndView(CONSENT_REVIEW_VIEW);
+        final var view = new ModelAndView(CONSENT_REVIEW_VIEW);
         view.getModel().put("principal", Pac4jUtils.getPac4jAuthenticatedUsername());
         return view;
     }
@@ -78,10 +78,10 @@ public class CasConsentReviewController {
     public WebAsyncTask<Collection<Map<String, Object>>> getConsentDecisions(final HttpServletRequest request,
                                                             final HttpServletResponse response) {
         final Callable<Collection<Map<String, Object>>> asyncTask = () -> {
-            final String principal = Pac4jUtils.getPac4jAuthenticatedUsername();
+            final var principal = Pac4jUtils.getPac4jAuthenticatedUsername();
             if (!PrincipalResolver.UNKNOWN_USER.equals(principal)) {
                 LOGGER.debug("Fetching consent decisions for principal [{}]", principal);
-                final Collection<ConsentDecision> consentDecisions = this.consentRepository.findConsentDecisions(principal);
+                final var consentDecisions = this.consentRepository.findConsentDecisions(principal);
                 LOGGER.debug("Resolved consent decisions for principal [{}]: {}", principal, consentDecisions);
                 final Collection<Map<String, Object>> result = new HashSet<>();
                 consentDecisions.forEach(d -> {
@@ -94,7 +94,7 @@ public class CasConsentReviewController {
             }
             return null;
         };
-        final long timeout = Beans.newDuration(casProperties.getHttpClient().getAsyncTimeout()).toMillis();
+        final var timeout = Beans.newDuration(casProperties.getHttpClient().getAsyncTimeout()).toMillis();
         return new WebAsyncTask<>(timeout, asyncTask);
     }
     
@@ -107,7 +107,7 @@ public class CasConsentReviewController {
     @PostMapping("/deleteConsentDecision")
     @ResponseBody
     public boolean deleteConsentDecision(@RequestParam final Long decisionId) {
-        final String principal = Pac4jUtils.getPac4jAuthenticatedUsername();
+        final var principal = Pac4jUtils.getPac4jAuthenticatedUsername();
         LOGGER.debug("Deleting consent decision with id [{}] for principal [{}].", decisionId, principal);        
         return this.consentRepository.deleteConsentDecision(decisionId, principal);
     }
@@ -122,7 +122,7 @@ public class CasConsentReviewController {
     @GetMapping("/logout")
     public String logout(final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.debug("Performing Pac4j logout...");
-        final ProfileManager manager = Pac4jUtils.getPac4jProfileManager(request, response);
+        final var manager = Pac4jUtils.getPac4jProfileManager(request, response);
         manager.logout();
         return CONSENT_LOGOUT_VIEW;
     }
@@ -137,9 +137,9 @@ public class CasConsentReviewController {
     public void callback(final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.debug("Callback endpoint hit...");
         
-        final CallbackLogic logic = this.pac4jConfig.getCallbackLogic();
-        final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
-        final String defaultUrl = this.casProperties.getServer().getPrefix().concat("/consentReview");
+        final var logic = this.pac4jConfig.getCallbackLogic();
+        final var context = Pac4jUtils.getPac4jJ2EContext(request, response);
+        final var defaultUrl = this.casProperties.getServer().getPrefix().concat("/consentReview");
         logic.perform(context, this.pac4jConfig, J2ENopHttpActionAdapter.INSTANCE,
             defaultUrl, false, false, false, null);
     }

@@ -137,11 +137,11 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                                                 final Collection<StringSerializer<RegisteredService>> serializers, final boolean enableWatcher,
                                                 final ApplicationEventPublisher eventPublisher,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) throws Exception {
-        final Resource servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, getExtension());
+        final var servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, getExtension());
         if (servicesDirectory == null) {
             throw new IllegalArgumentException("Could not determine the services configuration directory from " + configDirectory);
         }
-        final File file = servicesDirectory.getFile();
+        final var file = servicesDirectory.getFile();
         initializeRegistry(Paths.get(file.getCanonicalPath()), serializers, enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
     }
 
@@ -188,13 +188,13 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        final RegisteredService service = this.serviceMap.get(id);
+        final var service = this.serviceMap.get(id);
         return this.registeredServiceReplicationStrategy.getRegisteredServiceFromCacheIfAny(service, id, this);
     }
 
     @Override
     public RegisteredService findServiceById(final String id) {
-        final RegisteredService service = this.serviceMap.values().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
+        final var service = this.serviceMap.values().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
         return this.registeredServiceReplicationStrategy.getRegisteredServiceFromCacheIfAny(service, id, this);
     }
 
@@ -202,9 +202,9 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     @SneakyThrows
     public synchronized boolean delete(final RegisteredService service) {
 
-        final File f = getRegisteredServiceFileName(service);
+        final var f = getRegisteredServiceFileName(service);
         publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
-        final boolean result = f.exists() ? f.delete() : true;
+        final var result = f.exists() ? f.delete() : true;
         if (!result) {
             LOGGER.warn("Failed to delete service definition file [{}]", f.getCanonicalPath());
         } else {
@@ -227,12 +227,12 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     @Override
     public synchronized List<RegisteredService> load() {
-        final Collection<File> files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true);
+        final var files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true);
         this.serviceMap = files.stream().map(this::load).filter(Objects::nonNull).flatMap(Collection::stream)
             .sorted().collect(Collectors.toMap(RegisteredService::getId, Function.identity(),
                 LOG_DUPLICATE_AND_RETURN_FIRST_ONE, LinkedHashMap::new));
         final List<RegisteredService> services = new ArrayList<>(this.serviceMap.values());
-        final List<RegisteredService> results =
+        final var results =
             this.registeredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache(services, this);
         results.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)));
         return results;
@@ -265,7 +265,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                     + "Future CAS versions may try to strictly force the naming syntax, refusing to load the file.",
                 file.getName(), this.serviceFileNamePattern.pattern());
         }
-        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+        try (var in = new BufferedInputStream(new FileInputStream(file))) {
             return this.registeredServiceSerializers.stream().filter(s -> s.supports(file)).map(s -> s.load(in))
                 .filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toList());
         } catch (final Exception e) {
@@ -280,9 +280,9 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             LOGGER.debug("Service id not set. Calculating id based on system time...");
             service.setId(System.currentTimeMillis());
         }
-        final File f = getRegisteredServiceFileName(service);
-        try (LockedOutputStream out = new LockedOutputStream(new FileOutputStream(f))) {
-            final boolean result = this.registeredServiceSerializers.stream().anyMatch(s -> {
+        final var f = getRegisteredServiceFileName(service);
+        try (var out = new LockedOutputStream(new FileOutputStream(f))) {
+            final var result = this.registeredServiceSerializers.stream().anyMatch(s -> {
                 try {
                     s.to(out, service);
                     return true;
@@ -317,14 +317,14 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      * @return the registered service from file
      */
     protected RegisteredService getRegisteredServiceFromFile(final File file) {
-        final Matcher matcher = this.serviceFileNamePattern.matcher(file.getName());
+        final var matcher = this.serviceFileNamePattern.matcher(file.getName());
         if (matcher.find()) {
-            final String serviceId = matcher.group(2);
+            final var serviceId = matcher.group(2);
             if (NumberUtils.isCreatable(serviceId)) {
-                final long id = Long.parseLong(serviceId);
+                final var id = Long.parseLong(serviceId);
                 return findServiceById(id);
             }
-            final String serviceName = matcher.group(1);
+            final var serviceName = matcher.group(1);
             return findServiceByExactServiceName(serviceName);
         }
         LOGGER.warn("Provided file [{}} does not match the recommended service definition file pattern [{}]",
@@ -343,9 +343,9 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      */
     @SneakyThrows
     protected File getRegisteredServiceFileName(final RegisteredService service) {
-        final String fileName = StringUtils.remove(buildServiceDefinitionFileName(service), " ");
+        final var fileName = StringUtils.remove(buildServiceDefinitionFileName(service), " ");
 
-        final File svcFile = new File(this.serviceRegistryDirectory.toFile(), fileName);
+        final var svcFile = new File(this.serviceRegistryDirectory.toFile(), fileName);
         LOGGER.debug("Using [{}] as the service definition file", svcFile.getCanonicalPath());
         return svcFile;
 

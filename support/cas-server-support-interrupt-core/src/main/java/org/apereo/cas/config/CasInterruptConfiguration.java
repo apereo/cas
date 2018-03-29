@@ -31,7 +31,7 @@ public class CasInterruptConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "interruptInquirer")
     public InterruptInquirer interruptInquirer() {
-        final InterruptProperties ip = casProperties.getInterrupt();
+        final var ip = casProperties.getInterrupt();
         if (ip.getJson().getLocation() != null) {
             return new JsonResourceInterruptInquirer(ip.getJson().getLocation());
         }

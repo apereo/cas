@@ -32,20 +32,20 @@ public class SamlCompliantLogoutMessageCreatorTests {
     @Test
     public void verifyMessageBuilding() throws Exception {
 
-        final WebApplicationService service = mock(WebApplicationService.class);
+        final var service = mock(WebApplicationService.class);
         when(service.getOriginalUrl()).thenReturn(CONST_TEST_URL);
-        final URL logoutUrl = new URL(service.getOriginalUrl());
-        final DefaultLogoutRequest request = new DefaultLogoutRequest("TICKET-ID", service, logoutUrl);
+        final var logoutUrl = new URL(service.getOriginalUrl());
+        final var request = new DefaultLogoutRequest("TICKET-ID", service, logoutUrl);
 
-        final String msg = builder.create(request);
+        final var msg = builder.create(request);
 
-        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        final DocumentBuilder builder = factory.newDocumentBuilder();
+        final var factory = DocumentBuilderFactory.newInstance();
+        final var builder = factory.newDocumentBuilder();
 
         final InputStream is = new ByteArrayInputStream(msg.getBytes(StandardCharsets.UTF_8));
-        final Document document = builder.parse(is);
+        final var document = builder.parse(is);
         
-        final NodeList list = document.getDocumentElement().getElementsByTagName("samlp:SessionIndex");
+        final var list = document.getDocumentElement().getElementsByTagName("samlp:SessionIndex");
         assertEquals(1, list.getLength());
         
         assertEquals(list.item(0).getTextContent(), request.getTicketId());

@@ -49,10 +49,10 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
 
     @Override
     public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
-        final RemoteAddressCredential c = (RemoteAddressCredential) credential;
+        final var c = (RemoteAddressCredential) credential;
         if (this.inetNetmask != null && this.inetNetworkRange != null) {
             try {
-                final InetAddress inetAddress = InetAddress.getByName(c.getRemoteAddress().trim());
+                final var inetAddress = InetAddress.getByName(c.getRemoteAddress().trim());
                 if (containsAddress(this.inetNetworkRange, this.inetNetmask, inetAddress)) {
                     return new DefaultAuthenticationHandlerExecutionResult(this, c, this.principalFactory.createPrincipal(c.getId()));
                 }
@@ -78,17 +78,17 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
      */
     private static boolean containsAddress(final InetAddress network, final InetAddress netmask, final InetAddress ip) {
         LOGGER.debug("Checking IP address: [{}] in [{}] by [{}]", ip, network, netmask);
-        final byte[] networkBytes = network.getAddress();
-        final byte[] netmaskBytes = netmask.getAddress();
-        final byte[] ipBytes = ip.getAddress();
+        final var networkBytes = network.getAddress();
+        final var netmaskBytes = netmask.getAddress();
+        final var ipBytes = ip.getAddress();
         /* check IPv4/v6-compatibility or parameters: */
         if (networkBytes.length != netmaskBytes.length || netmaskBytes.length != ipBytes.length) {
             LOGGER.debug("Network address [{}], subnet mask [{}] and/or host address [{}]" + " have different sizes! (return false ...)", network, netmask, ip);
             return false;
         }
         /* Check if the masked network and ip addresses match: */
-        for (int i = 0; i < netmaskBytes.length; i++) {
-            final int mask = netmaskBytes[i] & HEX_RIGHT_SHIFT_COEFFICIENT;
+        for (var i = 0; i < netmaskBytes.length; i++) {
+            final var mask = netmaskBytes[i] & HEX_RIGHT_SHIFT_COEFFICIENT;
             if ((networkBytes[i] & mask) != (ipBytes[i] & mask)) {
                 LOGGER.debug("[{}] is not in [{}]/[{}]", ip, network, netmask);
                 return false;
@@ -107,12 +107,12 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
 
         if (StringUtils.isNotBlank(ipAddressRange)) {
 
-            final List<String> splitAddress = Splitter.on("/").splitToList(ipAddressRange);
+            final var splitAddress = Splitter.on("/").splitToList(ipAddressRange);
 
             if (splitAddress.size() == 2) {
                 // A valid ip address/netmask was supplied parse values
-                final String network = splitAddress.get(0).trim();
-                final String netmask = splitAddress.get(1).trim();
+                final var network = splitAddress.get(0).trim();
+                final var netmask = splitAddress.get(1).trim();
 
                 try {
                     this.inetNetworkRange = InetAddress.getByName(network);

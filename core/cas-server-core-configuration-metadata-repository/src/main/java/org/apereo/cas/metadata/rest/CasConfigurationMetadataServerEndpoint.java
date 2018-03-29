@@ -54,13 +54,13 @@ public class CasConfigurationMetadataServerEndpoint {
     @ReadOperation
     public List<ConfigurationMetadataSearchResult> search(@Selector final String name) {
         List results = new ArrayList<>();
-        final Map<String, ConfigurationMetadataProperty> allProps = repository.getRepository().getAllProperties();
+        final var allProps = repository.getRepository().getAllProperties();
 
         if (StringUtils.isNotBlank(name) && RegexUtils.isValidRegex(name)) {
-            final String names = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(name).spliterator(), false)
+            final var names = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(name).spliterator(), false)
                 .map(Object::toString)
                 .collect(Collectors.joining("|"));
-            final Pattern pattern = RegexUtils.createPattern(names);
+            final var pattern = RegexUtils.createPattern(names);
             results = allProps.entrySet()
                 .stream()
                 .filter(propEntry -> RegexUtils.find(pattern, propEntry.getKey()))

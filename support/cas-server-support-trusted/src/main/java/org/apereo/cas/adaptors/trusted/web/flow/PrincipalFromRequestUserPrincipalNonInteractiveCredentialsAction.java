@@ -39,7 +39,7 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction ex
 
     @Override
     protected String getRemotePrincipalId(final HttpServletRequest request) {
-        final Principal principal = request.getUserPrincipal();
+        final var principal = request.getUserPrincipal();
 
         if (principal != null) {
             LOGGER.debug("Principal [{}] found in HttpServletRequest", principal.getName());

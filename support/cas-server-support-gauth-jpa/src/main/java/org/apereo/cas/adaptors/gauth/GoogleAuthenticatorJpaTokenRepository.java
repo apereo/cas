@@ -35,7 +35,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
 
     @Override
     public void cleanInternal() {
-        final int count = this.entityManager.createQuery("DELETE FROM " + GoogleAuthenticatorToken.class.getSimpleName()
+        final var count = this.entityManager.createQuery("DELETE FROM " + GoogleAuthenticatorToken.class.getSimpleName()
                 + " r where r.issuedDateTime>= :expired")
                 .setParameter("expired", LocalDateTime.now().minusSeconds(this.expireTokensInSeconds))
                 .executeUpdate();
@@ -50,7 +50,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     @Override
     public GoogleAuthenticatorToken get(final String uid, final Integer otp) {
         try {
-            final GoogleAuthenticatorToken r =
+            final var r =
                     this.entityManager.createQuery("SELECT r FROM " + GoogleAuthenticatorToken.class.getSimpleName()
                             + " r where r.userId = :userId and r.token = :token", GoogleAuthenticatorToken.class)
                             .setParameter("userId", uid)

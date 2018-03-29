@@ -60,7 +60,7 @@ public abstract class AbstractRandomStringGenerator implements RandomStringGener
 
     @Override
     public String getNewString(final int size) {
-        final byte[] random = getNewStringAsBytes(size);
+        final var random = getNewStringAsBytes(size);
         return this.convertBytesToString(random);
     }
 
@@ -71,7 +71,7 @@ public abstract class AbstractRandomStringGenerator implements RandomStringGener
 
     @Override
     public byte[] getNewStringAsBytes(final int size) {
-        final byte[] random = new byte[size];
+        final var random = new byte[size];
         this.randomizer.nextBytes(random);
         return random;
     }

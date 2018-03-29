@@ -26,7 +26,7 @@ public class CreateResourceBasedRegisteredServiceWatcher extends BaseResourceBas
     @Override
     public void accept(final File file) {
         LOGGER.debug("New service definition [{}] was created. Locating service entry from cache...", file);
-        final Collection<RegisteredService> services = serviceRegistryDao.load(file);
+        final var services = serviceRegistryDao.load(file);
         services.stream()
             .filter(Objects::nonNull)
             .forEach(service -> {

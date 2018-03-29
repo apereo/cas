@@ -28,9 +28,9 @@ public class MongoDbMonitoringConfiguration {
 
     @Bean
     public HealthIndicator mongoHealthIndicator() {
-        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
-        final MonitorProperties.MongoDb mongoProps = casProperties.getMonitor().getMongo();
-        final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongoProps);
+        final var factory = new MongoDbConnectionFactory();
+        final var mongoProps = casProperties.getMonitor().getMongo();
+        final var mongoTemplate = factory.buildMongoTemplate(mongoProps);
         return new MongoDbHealthIndicator(mongoTemplate,
             casProperties.getMonitor().getWarn().getEvictionThreshold(),
             casProperties.getMonitor().getWarn().getThreshold());

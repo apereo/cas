@@ -30,7 +30,7 @@ public class MongoDbCloudConfigBootstrapConfiguration {
     @Bean
     @SneakyThrows
     public MongoDbPropertySourceLocator mongoDbPropertySourceLocator() {
-        final MongoTemplate mongoTemplate = mongoDbCloudConfigurationTemplate();
+        final var mongoTemplate = mongoDbCloudConfigurationTemplate();
         if (!mongoTemplate.collectionExists(MongoDbPropertySource.class.getSimpleName())) {
             mongoTemplate.createCollection(MongoDbPropertySource.class.getSimpleName());
         }
@@ -39,8 +39,8 @@ public class MongoDbCloudConfigBootstrapConfiguration {
 
     @Bean
     public MongoTemplate mongoDbCloudConfigurationTemplate() {
-        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
-        final String uri = environment.getProperty("cas.spring.cloud.mongo.uri");
+        final var factory = new MongoDbConnectionFactory();
+        final var uri = environment.getProperty("cas.spring.cloud.mongo.uri");
         return factory.buildMongoTemplate(uri);
     }
 }

@@ -35,7 +35,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     @Override
     public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket, final Service service,
                                        final boolean credentialProvided, final Class<T> clazz) {
-        String ticketId = produceTicketIdentifier(service, ticketGrantingTicket, credentialProvided);
+        var ticketId = produceTicketIdentifier(service, ticketGrantingTicket, credentialProvided);
         if (this.cipherExecutor != null) {
             LOGGER.debug("Attempting to encode service ticket [{}]", ticketId);
             ticketId = this.cipherExecutor.encode(ticketId);
@@ -57,7 +57,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
      */
     protected <T extends Ticket> T produceTicket(final TicketGrantingTicket ticketGrantingTicket, final Service service,
                                                  final boolean credentialProvided, final String ticketId, final Class<T> clazz) {
-        final ServiceTicket result = ticketGrantingTicket.grantServiceTicket(
+        final var result = ticketGrantingTicket.grantServiceTicket(
             ticketId,
             service,
             this.serviceTicketExpirationPolicy,
@@ -82,7 +82,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
      */
     protected String produceTicketIdentifier(final Service service, final TicketGrantingTicket ticketGrantingTicket,
                                              final boolean credentialProvided) {
-        final String uniqueTicketIdGenKey = service.getClass().getName();
+        final var uniqueTicketIdGenKey = service.getClass().getName();
         UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator = null;
         if (this.uniqueTicketIdGeneratorsForService != null && !this.uniqueTicketIdGeneratorsForService.isEmpty()) {
             LOGGER.debug("Looking up service ticket id generator for [{}]", uniqueTicketIdGenKey);

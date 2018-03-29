@@ -34,14 +34,14 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
     @Override
     protected boolean validateInternal(final J2EContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) {
-        final HttpServletRequest request = context.getRequest();
+        final var request = context.getRequest();
         if (!this.validator.checkParameterExist(request, OAuth20Constants.REFRESH_TOKEN)
             || !this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
             || !this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_SECRET)) {
             return false;
         }
-        final String token = request.getParameter(OAuth20Constants.REFRESH_TOKEN);
-        final Ticket refreshToken = ticketRegistry.getTicket(token);
+        final var token = request.getParameter(OAuth20Constants.REFRESH_TOKEN);
+        final var refreshToken = ticketRegistry.getTicket(token);
         if (refreshToken == null) {
             LOGGER.warn("Provided refresh token [{}] cannot be found in the registry", token);
             return false;

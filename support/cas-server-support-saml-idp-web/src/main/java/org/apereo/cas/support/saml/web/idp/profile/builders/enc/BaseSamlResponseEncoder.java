@@ -54,10 +54,10 @@ public abstract class BaseSamlResponseEncoder {
     @SneakyThrows
     public final Response encode(final Response samlResponse, final String relayState) throws SamlException {
         if (httpResponse != null) {
-            final BaseSAML2MessageEncoder encoder = getMessageEncoderInstance();
+            final var encoder = getMessageEncoderInstance();
             encoder.setHttpServletResponse(httpResponse);
 
-            final MessageContext ctx = getEncoderMessageContext(samlResponse, relayState);
+            final var ctx = getEncoderMessageContext(samlResponse, relayState);
             encoder.setMessageContext(ctx);
             finalizeEncode(encoder, samlResponse, relayState);
         }
@@ -73,11 +73,11 @@ public abstract class BaseSamlResponseEncoder {
      * @return the message context
      */
     protected MessageContext getEncoderMessageContext(final Response samlResponse, final String relayState) {
-        final MessageContext ctx = new MessageContext<>();
+        final var ctx = new MessageContext<>();
         ctx.setMessage(samlResponse);
         SAMLBindingSupport.setRelayState(ctx, relayState);
         SamlIdPUtils.preparePeerEntitySamlEndpointContext(ctx, adaptor, getBinding());
-        final SAMLSelfEntityContext self = ctx.getSubcontext(SAMLSelfEntityContext.class, true);
+        final var self = ctx.getSubcontext(SAMLSelfEntityContext.class, true);
         self.setEntityId(samlResponse.getIssuer().getValue());
         return ctx;
     }

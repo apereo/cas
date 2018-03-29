@@ -67,7 +67,7 @@ public class CasCommandLineParser {
      * Print help information.
      */
     public void printHelp() {
-        final HelpFormatter formatter = new HelpFormatter();
+        final var formatter = new HelpFormatter();
         formatter.printHelp(WIDTH, "java -jar [cas-server-support-shell-X-Y-Z.jar]",
                 "\nCAS Command-line Shell\n", options,
                 "\nThe CAS command-line shell provides the ability to query the CAS server "
@@ -230,8 +230,8 @@ public class CasCommandLineParser {
      * @return the banner mode
      */
     public static Banner.Mode getBannerMode(final String[] args) {
-        final CasCommandLineParser parser = new CasCommandLineParser();
-        final CommandLine line = parser.parse(args);
+        final var parser = new CasCommandLineParser();
+        final var line = parser.parse(args);
         return (line != null && parser.isSkippingBanner(line)) || isShell(args) ? Banner.Mode.OFF : Banner.Mode.CONSOLE;
     }
 
@@ -242,8 +242,8 @@ public class CasCommandLineParser {
      * @return the boolean
      */
     public static boolean isShell(final String[] args) {
-        final CasCommandLineParser parser = new CasCommandLineParser();
-        final CommandLine line = parser.parse(args);
+        final var parser = new CasCommandLineParser();
+        final var line = parser.parse(args);
         return line != null && parser.hasOption(line, CommandLineOptions.OPTION_SHELL);
     }
 
@@ -253,11 +253,11 @@ public class CasCommandLineParser {
      * @param args the args
      */
     public static void convertToSystemProperties(final String[] args) {
-        final CasCommandLineParser parser = new CasCommandLineParser();
-        final CommandLine line = parser.parse(args);
+        final var parser = new CasCommandLineParser();
+        final var line = parser.parse(args);
         parser.getOptions().getOptions().forEach(o -> {
             if (parser.hasOption(line, o)) {
-                final String optionValue = parser.getOptionValue(line, o, null);
+                final var optionValue = parser.getOptionValue(line, o, null);
                 System.setProperty(o.getOpt(), StringUtils.defaultIfBlank(optionValue, StringUtils.EMPTY));
             }
         });

@@ -36,7 +36,7 @@ public abstract class BaseCasSamlSPConfiguration {
 
     @PostConstruct
     public void init() {
-        final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(getServiceProvider(),
+        final var service = SamlSPUtils.newSamlServiceProviderService(getServiceProvider(),
             samlRegisteredServiceCachingMetadataResolver);
         if (service != null) {
             finalizeRegisteredService(service);

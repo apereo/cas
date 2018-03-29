@@ -40,14 +40,14 @@ public class OAuthProtocolTicketCatalogConfiguration extends BaseTicketCatalogCo
 
     protected void buildAndRegisterAccessTokenDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         metadata.getProperties().setStorageName("oauthAccessTokensCache");
-        final long timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds()).getSeconds();
+        final var timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds()).getSeconds();
         metadata.getProperties().setStorageTimeout(timeout);
         registerTicketDefinition(plan, metadata);
     }
 
     protected void buildAndRegisterRefreshTokenDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         metadata.getProperties().setStorageName("oauthRefreshTokensCache");
-        final long timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds()).getSeconds();
+        final var timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds()).getSeconds();
         metadata.getProperties().setStorageTimeout(timeout);
         registerTicketDefinition(plan, metadata);
     }

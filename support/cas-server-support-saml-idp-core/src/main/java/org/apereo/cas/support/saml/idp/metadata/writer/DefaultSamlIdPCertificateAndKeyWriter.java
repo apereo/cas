@@ -49,15 +49,15 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
     @SneakyThrows
     @Override
     public void writeCertificateAndKey(final Writer privateKeyWriter, final Writer certificateWriter) {
-        final KeyPair keypair = generateKeyPair();
-        final X509Certificate certificate = generateCertificate(keypair);
+        final var keypair = generateKeyPair();
+        final var certificate = generateCertificate(keypair);
 
-        try (JcaPEMWriter keyOut = new JcaPEMWriter(privateKeyWriter)) {
+        try (var keyOut = new JcaPEMWriter(privateKeyWriter)) {
             keyOut.writeObject(keypair.getPrivate());
             keyOut.flush();
         }
 
-        try (JcaPEMWriter certOut = new JcaPEMWriter(certificateWriter)) {
+        try (var certOut = new JcaPEMWriter(certificateWriter)) {
             certOut.writeObject(certificate);
             certOut.flush();
         }
@@ -65,15 +65,15 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
 
     @SneakyThrows
     private KeyPair generateKeyPair() {
-        final KeyPairGenerator generator = KeyPairGenerator.getInstance(keyType);
+        final var generator = KeyPairGenerator.getInstance(keyType);
         generator.initialize(keySize);
         return generator.generateKeyPair();
     }
 
     private X509Certificate generateCertificate(final KeyPair keypair) throws Exception {
-        final X500Name dn = new X500Name("CN=" + hostname);
-        final GregorianCalendar notBefore = new GregorianCalendar();
-        final GregorianCalendar notOnOrAfter = new GregorianCalendar();
+        final var dn = new X500Name("CN=" + hostname);
+        final var notBefore = new GregorianCalendar();
+        final var notOnOrAfter = new GregorianCalendar();
         notOnOrAfter.set(GregorianCalendar.YEAR, notOnOrAfter.get(GregorianCalendar.YEAR) + certificateLifetimeInYears);
 
         final X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(
@@ -85,12 +85,12 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
             keypair.getPublic()
         );
 
-        final JcaX509ExtensionUtils extUtils = new JcaX509ExtensionUtils();
+        final var extUtils = new JcaX509ExtensionUtils();
         builder.addExtension(Extension.subjectKeyIdentifier, false, extUtils.createSubjectKeyIdentifier(keypair.getPublic()));
         builder.addExtension(Extension.subjectAlternativeName, false, GeneralNames.getInstance(new DERSequence(buildSubjectAltNames())));
 
-        final X509CertificateHolder certHldr = builder.build(new JcaContentSignerBuilder(certificateAlgorithm).build(keypair.getPrivate()));
-        final X509Certificate cert = new JcaX509CertificateConverter().getCertificate(certHldr);
+        final var certHldr = builder.build(new JcaContentSignerBuilder(certificateAlgorithm).build(keypair.getPrivate()));
+        final var cert = new JcaX509CertificateConverter().getCertificate(certHldr);
         cert.checkValidity(new Date());
         cert.verify(keypair.getPublic());
 

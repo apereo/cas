@@ -24,13 +24,13 @@ public class OidcCasClientRedirectActionBuilder extends OAuth20DefaultCasClientR
 
     @Override
     public RedirectAction build(final CasClient casClient, final WebContext context) {
-        final Optional<Authentication> auth = oidcAuthorizationRequestSupport.isCasAuthenticationAvailable(context);
+        final var auth = oidcAuthorizationRequestSupport.isCasAuthenticationAvailable(context);
         auth.ifPresent(authentication -> oidcAuthorizationRequestSupport.configureClientForMaxAgeAuthorizationRequest(casClient, context, authentication));
 
         OidcAuthorizationRequestSupport.configureClientForPromptLoginAuthorizationRequest(casClient, context);
         OidcAuthorizationRequestSupport.configureClientForPromptNoneAuthorizationRequest(casClient, context);
 
-        final RedirectAction action = super.build(casClient, context);
+        final var action = super.build(casClient, context);
         LOGGER.debug("Final redirect action is [{}]", action);
         return action;
     }

@@ -29,20 +29,20 @@ public class PrincipalNameTransformerUtils {
      * @return the principal name transformer
      */
     public static PrincipalNameTransformer newPrincipalNameTransformer(final PrincipalTransformationProperties p) {
-        final ChainingPrincipalNameTransformer chain = new ChainingPrincipalNameTransformer();
+        final var chain = new ChainingPrincipalNameTransformer();
 
         if (p.getGroovy().getLocation() != null) {
-            final GroovyPrincipalNameTransformer t = new GroovyPrincipalNameTransformer(p.getGroovy().getLocation());
+            final var t = new GroovyPrincipalNameTransformer(p.getGroovy().getLocation());
             chain.addTransformer(t);
         }
         
         if (StringUtils.isNotBlank(p.getPattern())) {
-            final RegexPrincipalNameTransformer t = new RegexPrincipalNameTransformer(p.getPattern());
+            final var t = new RegexPrincipalNameTransformer(p.getPattern());
             chain.addTransformer(t);
         }
 
         if (StringUtils.isNotBlank(p.getPrefix()) || StringUtils.isNotBlank(p.getSuffix())) {
-            final PrefixSuffixPrincipalNameTransformer t = new PrefixSuffixPrincipalNameTransformer();
+            final var t = new PrefixSuffixPrincipalNameTransformer();
             t.setPrefix(p.getPrefix());
             t.setSuffix(p.getSuffix());
             chain.addTransformer(t);
@@ -51,13 +51,13 @@ public class PrincipalNameTransformerUtils {
         }
 
         if (p.getCaseConversion() == PrincipalTransformationProperties.CaseConversion.UPPERCASE) {
-            final ConvertCasePrincipalNameTransformer t = new ConvertCasePrincipalNameTransformer();
+            final var t = new ConvertCasePrincipalNameTransformer();
             t.setToUpperCase(true);
             chain.addTransformer(t);
         }
 
         if (p.getCaseConversion() == PrincipalTransformationProperties.CaseConversion.LOWERCASE) {
-            final ConvertCasePrincipalNameTransformer t = new ConvertCasePrincipalNameTransformer();
+            final var t = new ConvertCasePrincipalNameTransformer();
             t.setToUpperCase(false);
             chain.addTransformer(t);
         }

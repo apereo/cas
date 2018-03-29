@@ -65,7 +65,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
     private CasConfigurationProperties casProperties;
 
     private WsFederationConfiguration getWsFederationConfiguration(final WsFederationDelegationProperties wsfed) {
-        final WsFederationConfiguration config = new WsFederationConfiguration();
+        final var config = new WsFederationConfiguration();
         config.setAttributesType(WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.valueOf(wsfed.getAttributesType()));
         config.setIdentityAttribute(wsfed.getIdentityAttribute());
         config.setIdentityProviderIdentifier(wsfed.getIdentityProviderIdentifier());
@@ -88,8 +88,8 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         config.setName(wsfed.getName());
 
 
-        final WsFederationDelegatedCookieProperties cookie = wsfed.getCookie();
-        final EncryptionJwtSigningJwtCryptographyProperties crypto = cookie.getCrypto();
+        final var cookie = wsfed.getCookie();
+        final var crypto = cookie.getCrypto();
         final CipherExecutor cipher;
         if (crypto.isEnabled()) {
             cipher = new WsFederationCookieCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey(), crypto.getAlg());
@@ -115,7 +115,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
     public Collection<WsFederationConfiguration> wsFederationConfigurations() {
         final Collection<WsFederationConfiguration> col = new HashSet<>();
         casProperties.getAuthn().getWsfed().forEach(wsfed -> {
-            final WsFederationConfiguration cfg = getWsFederationConfiguration(wsfed);
+            final var cfg = getWsFederationConfiguration(wsfed);
             col.add(cfg);
         });
         return col;
@@ -142,7 +142,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                 if (!wsfed.isAttributeResolverEnabled()) {
                     plan.registerAuthenticationHandler(handler);
                 } else {
-                    final WsFederationCredentialsToPrincipalResolver r =
+                    final var r =
                         new WsFederationCredentialsToPrincipalResolver(attributeRepository, adfsPrincipalFactory(),
                             wsfed.getPrincipal().isReturnNull(), wsfed.getPrincipal().getPrincipalAttribute(),
                             getWsFederationConfiguration(wsfed));

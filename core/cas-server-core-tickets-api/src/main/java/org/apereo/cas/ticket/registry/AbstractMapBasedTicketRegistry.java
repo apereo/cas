@@ -31,19 +31,19 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
 
     @Override
     public void addTicket(@NonNull final Ticket ticket) {
-        final Ticket encTicket = encodeTicket(ticket);
+        final var encTicket = encodeTicket(ticket);
         LOGGER.debug("Added ticket [{}] to registry.", ticket.getId());
         getMapInstance().put(encTicket.getId(), encTicket);
     }
 
     @Override
     public Ticket getTicket(final String ticketId) {
-        final String encTicketId = encodeTicketId(ticketId);
+        final var encTicketId = encodeTicketId(ticketId);
         if (StringUtils.isBlank(ticketId)) {
             return null;
         }
-        final Ticket found = getMapInstance().get(encTicketId);
-        final Ticket result = decodeTicket(found);
+        final var found = getMapInstance().get(encTicketId);
+        final var result = decodeTicket(found);
         if (result != null && result.isExpired()) {
             LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
             getMapInstance().remove(encTicketId);
@@ -54,7 +54,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        final String encTicketId = encodeTicketId(ticketId);
+        final var encTicketId = encodeTicketId(ticketId);
         if (encTicketId == null) {
             return false;
         }
@@ -63,7 +63,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
 
     @Override
     public long deleteAll() {
-        final int size = getMapInstance().size();
+        final var size = getMapInstance().size();
         getMapInstance().clear();
         return size;
     }

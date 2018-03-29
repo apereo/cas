@@ -47,7 +47,7 @@ public class Scim1PrincipalAttributeMapper {
         user.setNickName(getPrincipalAttributeValue(p, "nickName"));
         user.setDisplayName(getPrincipalAttributeValue(p, "displayName"));
 
-        final Name name = new Name(getPrincipalAttributeValue(p, "formattedName"),
+        final var name = new Name(getPrincipalAttributeValue(p, "formattedName"),
                 getPrincipalAttributeValue(p, "familyName"),
                 getPrincipalAttributeValue(p, "middleName"),
                 getPrincipalAttributeValue(p, "givenName"),
@@ -55,7 +55,7 @@ public class Scim1PrincipalAttributeMapper {
                 getPrincipalAttributeValue(p, "honorificSuffix"));
         user.setName(name);
 
-        Entry entry = new Entry(getPrincipalAttributeValue(p, "mail"), "primary");
+        var entry = new Entry(getPrincipalAttributeValue(p, "mail"), "primary");
         user.setEmails(CollectionUtils.wrap(entry));
 
         entry = new Entry(getPrincipalAttributeValue(p, "phoneNumber"), "primary");

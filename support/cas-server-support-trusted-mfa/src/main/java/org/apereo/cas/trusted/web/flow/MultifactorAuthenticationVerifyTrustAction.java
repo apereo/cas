@@ -32,21 +32,21 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final Authentication c = WebUtils.getAuthentication(requestContext);
+        final var c = WebUtils.getAuthentication(requestContext);
         if (c == null) {
             LOGGER.warn("Could not determine authentication from the request context");
             return no();
         }
-        final String principal = c.getPrincipal().getId();
-        final LocalDate onOrAfter = LocalDate.now().minus(trustedProperties.getExpiration(),
+        final var principal = c.getPrincipal().getId();
+        final var onOrAfter = LocalDate.now().minus(trustedProperties.getExpiration(),
                 DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit()));
         LOGGER.warn("Retrieving trusted authentication records for [{}] that are on/after [{}]", principal, onOrAfter);
-        final Set<MultifactorAuthenticationTrustRecord> results = storage.get(principal, onOrAfter);
+        final var results = storage.get(principal, onOrAfter);
         if (results.isEmpty()) {
             LOGGER.debug("No valid trusted authentication records could be found for [{}]", principal);
             return no();
         }
-        final String fingerprint = deviceFingerprintStrategy.determineFingerprint(principal, requestContext, false);
+        final var fingerprint = deviceFingerprintStrategy.determineFingerprint(principal, requestContext, false);
         LOGGER.debug("Retrieving authentication records for [{}] that matches [{}]", principal, fingerprint);
         if (results.stream()
                 .noneMatch(entry -> entry.getDeviceFingerprint().equals(fingerprint))) {

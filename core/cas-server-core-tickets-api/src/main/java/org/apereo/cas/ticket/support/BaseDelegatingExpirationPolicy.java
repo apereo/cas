@@ -77,13 +77,13 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        final Optional<ExpirationPolicy> match = getExpirationPolicyFor(ticketState);
+        final var match = getExpirationPolicyFor(ticketState);
         if (!match.isPresent()) {
             LOGGER.warn("No expiration policy was found for ticket state [{}]. "
                 + "Consider configuring a predicate that delegates to an expiration policy.", ticketState);
             return super.isExpired(ticketState);
         }
-        final ExpirationPolicy policy = match.get();
+        final var policy = match.get();
         LOGGER.debug("Activating expiration policy [{}] for ticket [{}]", policy, ticketState);
         return policy.isExpired(ticketState);
     }
@@ -113,10 +113,10 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
      * @return the expiration policy for
      */
     protected Optional<ExpirationPolicy> getExpirationPolicyFor(final TicketState ticketState) {
-        final String name = getExpirationPolicyNameFor(ticketState);
+        final var name = getExpirationPolicyNameFor(ticketState);
         LOGGER.debug("Received expiration policy name [{}] to activate", name);
         if (StringUtils.isNotBlank(name) && policies.containsKey(name)) {
-            final ExpirationPolicy policy = policies.get(name);
+            final var policy = policies.get(name);
             LOGGER.debug("Located expiration policy [{}] by name [{}]", policy, name);
             return Optional.of(policy);
         }

@@ -66,12 +66,12 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Before
     public void setUp() throws Exception {
-        final Connection c = this.dataSource.getConnection();
-        final Statement s = c.createStatement();
+        final var c = this.dataSource.getConnection();
+        final var s = c.createStatement();
         c.setAutoCommit(true);
 
         s.execute(getSqlInsertStatementToCreateUserAccount(0, Boolean.FALSE.toString(), Boolean.FALSE.toString()));
-        for (int i = 0; i < 10; i++) {
+        for (var i = 0; i < 10; i++) {
             s.execute(getSqlInsertStatementToCreateUserAccount(i, Boolean.FALSE.toString(), Boolean.FALSE.toString()));
         }
         s.execute(getSqlInsertStatementToCreateUserAccount(20, Boolean.TRUE.toString(), Boolean.FALSE.toString()));
@@ -81,7 +81,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     }
 
     private static String getSqlInsertStatementToCreateUserAccount(final int i, final String expired, final String disabled) {
-        final String psw = genPassword("user" + i, "salt" + i, NUM_ITERATIONS);
+        final var psw = genPassword("user" + i, "salt" + i, NUM_ITERATIONS);
 
         return String.format(
             "insert into users (username, password, salt, numIterations, expired, disabled) values('%s', '%s', '%s', %s, '%s', '%s');",
@@ -90,11 +90,11 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @After
     public void tearDown() throws Exception {
-        final Connection c = this.dataSource.getConnection();
-        final Statement s = c.createStatement();
+        final var c = this.dataSource.getConnection();
+        final var s = c.createStatement();
         c.setAutoCommit(true);
 
-        for (int i = 0; i < 5; i++) {
+        for (var i = 0; i < 5; i++) {
             s.execute("delete from users;");
         }
         c.close();
@@ -102,7 +102,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationFailsToFindUser() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+        final var q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
             buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
 
         this.thrown.expect(AccountNotFoundException.class);
@@ -113,7 +113,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationInvalidSql() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+        final var q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
             buildSql("makesNoSenseInSql"), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
 
         this.thrown.expect(PreventedException.class);
@@ -124,7 +124,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationMultipleAccounts() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+        final var q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
             buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
 
         this.thrown.expect(FailedLoginException.class);
@@ -135,11 +135,11 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationSuccessful() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+        final var q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
             buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
 
-        final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user1");
-        final AuthenticationHandlerExecutionResult r = q.authenticate(c);
+        final var c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user1");
+        final var r = q.authenticate(c);
 
         assertNotNull(r);
         assertEquals("user1", r.getPrincipal().getId());
@@ -147,7 +147,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationWithExpiredField() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+        final var q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
             buildSql(), PASSWORD_FIELD_NAME, "salt", EXPIRED_FIELD_NAME, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
 
         this.thrown.expect(AccountPasswordMustChangeException.class);
@@ -159,7 +159,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationWithDisabledField() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+        final var q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
             buildSql(), PASSWORD_FIELD_NAME, "salt", null, DISABLED_FIELD_NAME, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
 
         this.thrown.expect(AccountDisabledException.class);
@@ -171,7 +171,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationSuccessfulWithAPasswordEncoder() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+        final var q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
             buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
         q.setPasswordEncoder(new PasswordEncoder() {
             @Override
@@ -186,7 +186,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         });
 
         q.setPrincipalNameTransformer(new PrefixSuffixPrincipalNameTransformer("user", null));
-        final AuthenticationHandlerExecutionResult r = q.authenticate(
+        final var r = q.authenticate(
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("1", "user"));
 
         assertNotNull(r);
@@ -203,7 +203,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @SneakyThrows
     private static String genPassword(final String psw, final String salt, final int iter) {
-        final DefaultHashService hash = new DefaultHashService();
+        final var hash = new DefaultHashService();
         hash.setPrivateSalt(ByteSource.Util.bytes(STATIC_SALT));
         hash.setHashIterations(iter);
         hash.setGeneratePublicSalt(false);

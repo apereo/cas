@@ -84,7 +84,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      */
     public Ticket getRawTicket(final String ticketId) {
         try {
-            final TicketDefinition tkt = this.ticketCatalog.find(ticketId);
+            final var tkt = this.ticketCatalog.find(ticketId);
             return this.entityManager.find(tkt.getImplementationClass(), ticketId, this.lockType);
         } catch (final Exception e) {
             LOGGER.error("Error getting ticket [{}] from registry.", ticketId, e);
@@ -116,7 +116,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             .map(t -> this.entityManager.createQuery("select t from " + getTicketEntityName(t) + " t", t.getImplementationClass()))
             // Unwrap to Hibernate Query, which supports streams
             .map(q -> {
-                final org.hibernate.query.Query<Ticket> hq = (org.hibernate.query.Query<Ticket>) q.unwrap(org.hibernate.query.Query.class);
+                final var hq = (org.hibernate.query.Query<Ticket>) q.unwrap(org.hibernate.query.Query.class);
                 hq.setFetchSize(STREAM_BATCH_SIZE);
                 hq.setLockOptions(LockOptions.NONE);
                 return hq;
@@ -126,27 +126,27 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long sessionCount() {
-        final TicketDefinition md = this.ticketCatalog.find(TicketGrantingTicket.PREFIX);
+        final var md = this.ticketCatalog.find(TicketGrantingTicket.PREFIX);
         return countToLong(this.entityManager.createQuery("select count(t) from " + getTicketEntityName(md) + " t").getSingleResult());
     }
 
     @Override
     public long serviceTicketCount() {
-        final TicketDefinition md = this.ticketCatalog.find(ServiceTicket.PREFIX);
+        final var md = this.ticketCatalog.find(ServiceTicket.PREFIX);
         return countToLong(this.entityManager.createQuery("select count(t) from " + getTicketEntityName(md) + " t").getSingleResult());
     }
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        int totalCount = 0;
-        final TicketDefinition md = this.ticketCatalog.find(ticketId);
+        var totalCount = 0;
+        final var md = this.ticketCatalog.find(ticketId);
 
         if (md.getProperties().isCascade()) {
             totalCount = deleteTicketGrantingTickets(ticketId);
         } else {
-            final String ticketEntityName = getTicketEntityName(md);
+            final var ticketEntityName = getTicketEntityName(md);
             try {
-                final Query query = entityManager.createQuery("delete from " + ticketEntityName + " o where o.id = :id");
+                final var query = entityManager.createQuery("delete from " + ticketEntityName + " o where o.id = :id");
                 query.setParameter("id", ticketId);
                 totalCount = query.executeUpdate();
             } catch (final EntityNotFoundException e) {
@@ -169,16 +169,16 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * @return the int
      */
     private int deleteTicketGrantingTickets(final String ticketId) {
-        int totalCount = 0;
+        var totalCount = 0;
 
-        final TicketDefinition st = this.ticketCatalog.find(ServiceTicket.PREFIX);
+        final var st = this.ticketCatalog.find(ServiceTicket.PREFIX);
 
-        Query query = entityManager.createQuery("delete from " + getTicketEntityName(st) + " s where s.ticketGrantingTicket.id = :id");
+        var query = entityManager.createQuery("delete from " + getTicketEntityName(st) + " s where s.ticketGrantingTicket.id = :id");
 
         query.setParameter("id", ticketId);
         totalCount += query.executeUpdate();
 
-        final TicketDefinition tgt = this.ticketCatalog.find(TicketGrantingTicket.PREFIX);
+        final var tgt = this.ticketCatalog.find(TicketGrantingTicket.PREFIX);
         query = entityManager.createQuery("delete from " + getTicketEntityName(tgt) + " t where t.ticketGrantingTicket.id = :id");
         query.setParameter("id", ticketId);
         totalCount += query.executeUpdate();

@@ -26,13 +26,13 @@ public class MessageBundleAwareResourceResolver extends ReturnValueAsStringResou
     
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Exception e) {
-        final String[] resolved = super.resolveFrom(joinPoint, e);
+        final var resolved = super.resolveFrom(joinPoint, e);
         return resolveMessagesFromBundleOrDefault(resolved, e);
     }
 
     private String[] resolveMessagesFromBundleOrDefault(final String[] resolved, final Exception e) {
-        final Locale locale = LocaleContextHolder.getLocale();
-        final String defaultKey = Stream.of(StringUtils.splitByCharacterTypeCamelCase(e.getClass().getSimpleName()))
+        final var locale = LocaleContextHolder.getLocale();
+        final var defaultKey = Stream.of(StringUtils.splitByCharacterTypeCamelCase(e.getClass().getSimpleName()))
                 .collect(Collectors.joining("_"))
                 .toUpperCase();
 

@@ -19,11 +19,11 @@ import static org.junit.Assert.*;
 public class ChainingPrincipalNameTransformerTests {
     @Test
     public void verifyChain() {
-        final ChainingPrincipalNameTransformer t = new ChainingPrincipalNameTransformer();
+        final var t = new ChainingPrincipalNameTransformer();
         t.addTransformer(new RegexPrincipalNameTransformer("(.+)@example.org"));
         t.addTransformer(new PrefixSuffixPrincipalNameTransformer("prefix-", "-suffix"));
         t.addTransformer(new ConvertCasePrincipalNameTransformer(true));
-        final String uid = t.transform("casuser@example.org");
+        final var uid = t.transform("casuser@example.org");
         assertTrue("PREFIX-CASUSER-SUFFIX".equals(uid));
     }
 

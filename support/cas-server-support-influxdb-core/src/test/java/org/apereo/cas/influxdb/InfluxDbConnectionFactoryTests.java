@@ -49,14 +49,14 @@ public class InfluxDbConnectionFactoryTests {
 
     @Test
     public void verifyWritePoint() {
-        final Point p = Point.measurement("events")
+        final var p = Point.measurement("events")
             .time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
             .addField("hostname", "cas.example.org")
             .build();
         factory.write(p, CAS_EVENTS_DATABASE);
-        final QueryResult result = factory.query("*", "events", CAS_EVENTS_DATABASE);
-        final InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
-        final List<InfluxEvent> resultEvents = resultMapper.toPOJO(result, InfluxEvent.class);
+        final var result = factory.query("*", "events", CAS_EVENTS_DATABASE);
+        final var resultMapper = new InfluxDBResultMapper();
+        final var resultEvents = resultMapper.toPOJO(result, InfluxEvent.class);
         assertNotNull(resultEvents);
         assertEquals(1, resultEvents.size());
         assertEquals("cas.example.org", resultEvents.iterator().next().hostname);

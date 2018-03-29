@@ -61,7 +61,7 @@ public class CasOAuthWebflowConfiguration implements CasWebflowExecutionPlanConf
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer oauth20LogoutWebflowConfigurer() {
-        final OAuth20WebflowConfigurer c = new OAuth20WebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+        final var c = new OAuth20WebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
                 oauth20RegisteredServiceUIAction(), applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(this.logoutFlowDefinitionRegistry);
         return c;

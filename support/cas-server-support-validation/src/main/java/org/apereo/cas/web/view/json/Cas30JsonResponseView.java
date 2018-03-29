@@ -74,7 +74,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
     }
 
     private static MappingJackson2JsonView createDelegatedView() {
-        final MappingJackson2JsonView view = new MappingJackson2JsonView();
+        final var view = new MappingJackson2JsonView();
         view.setPrettyPrint(true);
         view.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).findAndRegisterModules();
         return view;
@@ -82,18 +82,18 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
 
     @Override
     protected void prepareMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request, final HttpServletResponse response) {
-        final CasJsonServiceResponse casResponse = new CasJsonServiceResponse();
+        final var casResponse = new CasJsonServiceResponse();
         try {
             super.prepareMergedOutputModel(model, request, response);
             if (getAssertionFrom(model) != null) {
-                final CasJsonServiceResponseAuthenticationSuccess success = createAuthenticationSuccess(model);
+                final var success = createAuthenticationSuccess(model);
                 casResponse.setAuthenticationSuccess(success);
             } else {
-                final CasJsonServiceResponseAuthenticationFailure failure = createAuthenticationFailure(model);
+                final var failure = createAuthenticationFailure(model);
                 casResponse.setAuthenticationFailure(failure);
             }
         } catch (final Exception e) {
-            final CasJsonServiceResponseAuthenticationFailure failure = createAuthenticationFailure(model);
+            final var failure = createAuthenticationFailure(model);
             casResponse.setAuthenticationFailure(failure);
         } finally {
             final Map<String, Object> casModel = new HashMap<>();
@@ -104,21 +104,21 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
     }
 
     private CasJsonServiceResponseAuthenticationFailure createAuthenticationFailure(final Map<String, Object> model) {
-        final CasJsonServiceResponseAuthenticationFailure failure = new CasJsonServiceResponseAuthenticationFailure();
+        final var failure = new CasJsonServiceResponseAuthenticationFailure();
         failure.setCode(getErrorCodeFrom(model));
         failure.setDescription(getErrorDescriptionFrom(model));
         return failure;
     }
 
     private CasJsonServiceResponseAuthenticationSuccess createAuthenticationSuccess(final Map<String, Object> model) {
-        final CasJsonServiceResponseAuthenticationSuccess success = new CasJsonServiceResponseAuthenticationSuccess();
+        final var success = new CasJsonServiceResponseAuthenticationSuccess();
         success.setAttributes(getModelAttributes(model));
-        final Principal principal = getPrincipal(model);
+        final var principal = getPrincipal(model);
         success.setUser(principal.getId());
         success.setProxyGrantingTicket(getProxyGrantingTicketIou(model));
-        final Collection<Authentication> chainedAuthentications = getChainedAuthentications(model);
+        final var chainedAuthentications = getChainedAuthentications(model);
         if (chainedAuthentications != null && !chainedAuthentications.isEmpty()) {
-            final List<String> proxies = chainedAuthentications.stream().map(authn -> authn.getPrincipal().getId()).collect(Collectors.toList());
+            final var proxies = chainedAuthentications.stream().map(authn -> authn.getPrincipal().getId()).collect(Collectors.toList());
             success.setProxies(proxies);
         }
         return success;

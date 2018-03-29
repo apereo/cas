@@ -24,8 +24,8 @@ public class ChainingPrincipalNameTransformer implements PrincipalNameTransforme
 
     @Override
     public String transform(final String formUserId) {
-        String idToTransform = formUserId;
-        for (final PrincipalNameTransformer t : this.transformers) {
+        var idToTransform = formUserId;
+        for (final var t : this.transformers) {
             idToTransform = t.transform(idToTransform);
         }
         return idToTransform;

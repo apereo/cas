@@ -62,7 +62,7 @@ public class RequestHeaderX509CertificateExtractor implements X509CertificateExt
      * @return Base64 encoded certificate
      */
     private String getCertFromHeader(final HttpServletRequest request) {
-        final String certHeaderValue = request.getHeader(sslClientCertHeader);
+        final var certHeaderValue = request.getHeader(sslClientCertHeader);
         if (StringUtils.isBlank(certHeaderValue)) {
             return null;
         }
@@ -92,19 +92,19 @@ public class RequestHeaderX509CertificateExtractor implements X509CertificateExt
     @Override
     public X509Certificate[] extract(final HttpServletRequest request) {
 
-        String certHeaderValue = getCertFromHeader(request);
+        var certHeaderValue = getCertFromHeader(request);
         if (StringUtils.isNotBlank(certHeaderValue)) {
             certHeaderValue = StringUtils.trim(certHeaderValue);
             if (certHeaderValue.length() > X509_HEADER.length()) {
-                String body = certHeaderValue.substring(X509_HEADER.length(), certHeaderValue.length() - X509_FOOTER.length());
+                var body = certHeaderValue.substring(X509_HEADER.length(), certHeaderValue.length() - X509_FOOTER.length());
                 body = body.replace(' ', '\n');
                 body = body.replace('\t', '\n');
-                final String certString = X509_HEADER.concat("\n").concat(body).concat("\n").concat(X509_FOOTER).concat("\n");
-                final ByteArrayInputStream bais = new ByteArrayInputStream(certString.getBytes(StandardCharsets.ISO_8859_1));
+                final var certString = X509_HEADER.concat("\n").concat(body).concat("\n").concat(X509_FOOTER).concat("\n");
+                final var bais = new ByteArrayInputStream(certString.getBytes(StandardCharsets.ISO_8859_1));
                 X509Certificate[] jsseCerts = null;
                 try {
-                    final CertificateFactory cf = CertificateFactory.getInstance("X.509");
-                    final X509Certificate cert = (X509Certificate) cf.generateCertificate(bais);
+                    final var cf = CertificateFactory.getInstance("X.509");
+                    final var cert = (X509Certificate) cf.generateCertificate(bais);
                     jsseCerts = new X509Certificate[1];
                     jsseCerts[0] = cert;
                     LOGGER.debug("Certificate extracted from header [{}] with subject: [{}]", sslClientCertHeader,

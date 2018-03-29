@@ -68,7 +68,7 @@ public class JpaYubiKeyConfiguration {
     @Autowired
     @Bean
     public PlatformTransactionManager transactionManagerYubiKey(@Qualifier("yubiKeyEntityManagerFactory") final EntityManagerFactory emf) {
-        final JpaTransactionManager mgmr = new JpaTransactionManager();
+        final var mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }
@@ -76,7 +76,7 @@ public class JpaYubiKeyConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean yubiKeyEntityManagerFactory() {
-        final LocalContainerEntityManagerFactoryBean bean =
+        final var bean =
             JpaBeans.newHibernateEntityManagerFactoryBean(
                 new JpaConfigDataHolder(
                     jpaYubiKeyVendorAdapter(),
@@ -90,7 +90,7 @@ public class JpaYubiKeyConfiguration {
 
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
-        final JpaYubiKeyAccountRegistry registry = new JpaYubiKeyAccountRegistry(yubiKeyAccountValidator);
+        final var registry = new JpaYubiKeyAccountRegistry(yubiKeyAccountValidator);
         registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
         return registry;
     }

@@ -66,7 +66,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      */
     @Override
     protected Event doExecute(final RequestContext context) {
-        final String remoteIp = getRemoteIp(context);
+        final var remoteIp = getRemoteIp(context);
         LOGGER.debug("Current user IP [{}]", remoteIp);
         if (shouldDoSpnego(remoteIp)) {
             LOGGER.info("Spnego should be activated for [{}]", remoteIp);
@@ -102,7 +102,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * @return whether the remote ip received should be queried
      */
     protected boolean ipPatternMatches(final String remoteIp) {
-        final Matcher matcher = this.ipsToCheckPattern.matcher(remoteIp);
+        final var matcher = this.ipsToCheckPattern.matcher(remoteIp);
         if (matcher.find()) {
             LOGGER.debug("Remote IP address [{}] should be checked based on the defined pattern [{}]", remoteIp, this.ipsToCheckPattern.pattern());
             return true;
@@ -120,8 +120,8 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * @return the remote ip
      */
     private String getRemoteIp(final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        String userAddress = request.getRemoteAddr();
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        var userAddress = request.getRemoteAddr();
         LOGGER.debug("Remote Address = [{}]", userAddress);
         if (StringUtils.isNotBlank(this.alternativeRemoteHostAttribute)) {
             userAddress = request.getHeader(this.alternativeRemoteHostAttribute);
@@ -142,15 +142,15 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * @return the remote host name
      */
     protected String getRemoteHostName(final String remoteIp) {
-        final ReverseDNSRunnable revDNS = new ReverseDNSRunnable(remoteIp);
-        final Thread t = new Thread(revDNS);
+        final var revDNS = new ReverseDNSRunnable(remoteIp);
+        final var t = new Thread(revDNS);
         t.start();
         try {
             t.join(this.timeout);
         } catch (final InterruptedException e) {
             LOGGER.debug("Threaded lookup failed.  Defaulting to IP [{}].", remoteIp, e);
         }
-        final String remoteHostName = revDNS.getHostName();
+        final var remoteHostName = revDNS.getHostName();
         LOGGER.debug("Found remote host name [{}].", remoteHostName);
         return StringUtils.isNotBlank(remoteHostName) ? remoteHostName : remoteIp;
     }

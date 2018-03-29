@@ -15,9 +15,9 @@ import static org.junit.Assert.*;
 public class ScriptedRegisteredServiceUsernameProviderTests {
     @Test
     public void verifyUsernameProvider() {
-        final ScriptedRegisteredServiceUsernameProvider p = new ScriptedRegisteredServiceUsernameProvider();
+        final var p = new ScriptedRegisteredServiceUsernameProvider();
         p.setScript("file:src/test/resources/uidscript.groovy");
-        final String id =
+        final var id =
                 p.resolveUsername(RegisteredServiceTestUtils.getPrincipal(), RegisteredServiceTestUtils.getService(),
                     RegisteredServiceTestUtils.getRegisteredService());
         assertEquals("test", id);

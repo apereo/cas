@@ -23,23 +23,23 @@ import java.util.Optional;
 public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRequestValidator {
     @Override
     public boolean validate(final J2EContext context) {
-        final HttpServletRequest request = context.getRequest();
-        final HttpServletResponse response = context.getResponse();
+        final var request = context.getRequest();
+        final var response = context.getResponse();
 
-        final String grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
+        final var grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
         if (!isGrantTypeSupported(grantType, OAuth20GrantTypes.values())) {
             LOGGER.warn("Grant type is not supported: [{}]", grantType);
             return false;
         }
 
-        final ProfileManager manager = Pac4jUtils.getPac4jProfileManager(request, response);
+        final var manager = Pac4jUtils.getPac4jProfileManager(request, response);
         final Optional<UserProfile> profile = manager.get(true);
         if (profile == null || !profile.isPresent()) {
             LOGGER.warn("Could not locate authenticated profile for this request");
             return false;
         }
 
-        final UserProfile uProfile = profile.get();
+        final var uProfile = profile.get();
         if (uProfile == null) {
             LOGGER.warn("Could not locate authenticated profile for this request as null");
             return false;
@@ -71,7 +71,7 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
 
     @Override
     public boolean supports(final J2EContext context) {
-        final String grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+        final var grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, getGrantType());
     }
 
@@ -84,7 +84,7 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
      */
     private static boolean isGrantTypeSupported(final String type, final OAuth20GrantTypes... expectedTypes) {
         LOGGER.debug("Grant type received: [{}]", type);
-        for (final OAuth20GrantTypes expectedType : expectedTypes) {
+        for (final var expectedType : expectedTypes) {
             if (OAuth20Utils.isGrantType(type, expectedType)) {
                 return true;
             }

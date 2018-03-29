@@ -38,7 +38,7 @@ public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapCon
     @BeforeClass
     @SneakyThrows
     public static void bootstrap() {
-        final LDAPConnection localhost = new LDAPConnection("localhost", LDAP_PORT,
+        final var localhost = new LDAPConnection("localhost", LDAP_PORT,
             "cn=Directory Manager", "password");
         LdapIntegrationTestsOperations.populateEntries(
             localhost,

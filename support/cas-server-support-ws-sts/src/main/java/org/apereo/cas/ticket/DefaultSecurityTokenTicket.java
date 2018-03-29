@@ -58,7 +58,7 @@ public class DefaultSecurityTokenTicket extends AbstractTicket implements Securi
 
     @Override
     public SecurityToken getSecurityToken() {
-        final byte[] securityTokenBin = EncodingUtils.decodeBase64(this.securityToken);
+        final var securityTokenBin = EncodingUtils.decodeBase64(this.securityToken);
         return SerializationUtils.deserialize(securityTokenBin);
     }
 }

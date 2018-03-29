@@ -30,14 +30,14 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
         try {
-            final MemcachedClientIF client = getClientFromPool();
+            final var client = getClientFromPool();
             if (client.getAvailableServers().isEmpty()) {
                 builder.outOfService().withDetail("message", "No memcached servers available.");
                 return;
             }
-            final Collection<SocketAddress> unavailableList = client.getUnavailableServers();
+            final var unavailableList = client.getUnavailableServers();
             if (!unavailableList.isEmpty()) {
-                final String description = "One or more memcached servers is unavailable: " + unavailableList;
+                final var description = "One or more memcached servers is unavailable: " + unavailableList;
                 builder.down().withDetail("message", description);
                 return;
             }
@@ -61,13 +61,13 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
     protected CacheStatistics[] getStatistics() {
         final List<CacheStatistics> statsList = new ArrayList<>();
         try {
-            final MemcachedClientIF client = getClientFromPool();
+            final var client = getClientFromPool();
             client.getStats()
                 .forEach((key, statsMap) -> {
                     if (!statsMap.isEmpty()) {
-                        final long size = Long.parseLong(statsMap.get("bytes"));
-                        final long capacity = Long.parseLong(statsMap.get("limit_maxbytes"));
-                        final long evictions = Long.parseLong(statsMap.get("evictions"));
+                        final var size = Long.parseLong(statsMap.get("bytes"));
+                        final var capacity = Long.parseLong(statsMap.get("limit_maxbytes"));
+                        final var evictions = Long.parseLong(statsMap.get("evictions"));
 
                         final String name;
                         if (key instanceof InetSocketAddress) {

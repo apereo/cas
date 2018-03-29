@@ -21,7 +21,7 @@ public class DefaultWebApplicationResponseBuilderLocator implements ResponseBuil
     private final transient List<ResponseBuilder> builders;
 
     public DefaultWebApplicationResponseBuilderLocator(final ApplicationContext applicationContext) {
-        final Map<String, ResponseBuilder> beans = applicationContext.getBeansOfType(ResponseBuilder.class, false, true);
+        final var beans = applicationContext.getBeansOfType(ResponseBuilder.class, false, true);
         this.builders = beans.values().stream().collect(Collectors.toList());
         AnnotationAwareOrderComparator.sortIfNecessary(builders);
     }

@@ -17,7 +17,7 @@ public class RememberMePasswordCredentialTests {
 
     @Test
     public void verifyGettersAndSetters() {
-        final RememberMeUsernamePasswordCredential c = new RememberMeUsernamePasswordCredential();
+        final var c = new RememberMeUsernamePasswordCredential();
         c.setPassword("password");
         c.setUsername("username");
         c.setRememberMe(true);

@@ -45,7 +45,7 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        final boolean expired = isRefreshTokenExpired(ticketState);
+        final var expired = isRefreshTokenExpired(ticketState);
         if (!expired) {
             return super.isExpired(ticketState);
         }
@@ -71,7 +71,7 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
      */
     @JsonIgnore
     protected boolean isRefreshTokenExpired(final TicketState ticketState) {
-        final ZonedDateTime expiringTime = ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        final var expiringTime = ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
         return ticketState == null || expiringTime.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
     }
 

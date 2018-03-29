@@ -49,24 +49,24 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
     protected Envelope buildResponse(final Assertion assertion, final Object casAssertion, final RequestAbstractType authnRequest, 
                                      final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor, 
                                      final HttpServletRequest request, final HttpServletResponse response, final String binding) throws SamlException {
-        final org.jasig.cas.client.validation.Assertion castedAssertion = org.jasig.cas.client.validation.Assertion.class.cast(casAssertion);
-        final SamlArtifactTicket ticket = (SamlArtifactTicket) castedAssertion.getAttributes().get("artifact");
-        final ArtifactResponse artifactResponse = new ArtifactResponseBuilder().buildObject();
+        final var castedAssertion = org.jasig.cas.client.validation.Assertion.class.cast(casAssertion);
+        final var ticket = (SamlArtifactTicket) castedAssertion.getAttributes().get("artifact");
+        final var artifactResponse = new ArtifactResponseBuilder().buildObject();
         artifactResponse.setIssueInstant(DateTime.now());
         artifactResponse.setIssuer(newIssuer(ticket.getIssuer()));
         artifactResponse.setInResponseTo(ticket.getRelyingPartyId());
         artifactResponse.setID(ticket.getId());
         artifactResponse.setStatus(newStatus(StatusCode.SUCCESS, "Success"));
         
-        final SAMLObject samlResponse = SamlUtils.transformSamlObject(configBean, ticket.getObject(), SAMLObject.class);
+        final var samlResponse = SamlUtils.transformSamlObject(configBean, ticket.getObject(), SAMLObject.class);
         artifactResponse.setMessage(samlResponse);
         
-        final Header header = newSoapObject(Header.class);
+        final var header = newSoapObject(Header.class);
         
-        final Body body = newSoapObject(Body.class);
+        final var body = newSoapObject(Body.class);
         body.getUnknownXMLObjects().add(artifactResponse);
         
-        final Envelope envelope = newSoapObject(Envelope.class);
+        final var envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
         SamlUtils.logSamlObject(this.configBean, envelope);

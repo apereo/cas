@@ -58,9 +58,9 @@ public class CasServiceRegistryInitializationConfiguration {
     @RefreshScope
     @Bean
     public ServiceRegistryInitializer serviceRegistryInitializer() {
-        final ServiceRegistryProperties props = casProperties.getServiceRegistry();
-        final ServiceRegistry serviceRegistryInstance = serviceRegistry.getIfAvailable();
-        final ServiceRegistryInitializer initializer =
+        final var props = casProperties.getServiceRegistry();
+        final var serviceRegistryInstance = serviceRegistry.getIfAvailable();
+        final var initializer =
             new ServiceRegistryInitializer(embeddedJsonServiceRegistry(), serviceRegistryInstance,
                 servicesManager.getIfAvailable(), props.isInitFromJson());
 
@@ -77,12 +77,12 @@ public class CasServiceRegistryInitializationConfiguration {
     @Bean
     @SneakyThrows
     public ServiceRegistry embeddedJsonServiceRegistry() {
-        final Resource location = getServiceRegistryInitializerServicesDirectoryResource();
+        final var location = getServiceRegistryInitializerServicesDirectoryResource();
         return new EmbeddedServiceRegistry(eventPublisher, location);
     }
 
     private Resource getServiceRegistryInitializerServicesDirectoryResource() {
-        final JsonServiceRegistryProperties registry = casProperties.getServiceRegistry().getJson();
+        final var registry = casProperties.getServiceRegistry().getJson();
         return ObjectUtils.defaultIfNull(registry.getLocation(), new ClassPathResource("services"));
     }
 

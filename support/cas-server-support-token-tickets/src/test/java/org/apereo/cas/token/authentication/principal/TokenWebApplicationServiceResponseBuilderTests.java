@@ -84,7 +84,7 @@ public class TokenWebApplicationServiceResponseBuilderTests {
 
     @Test
     public void verifyDecrypt() {
-        final String jwt = "eyJhbGciOiJIUzUxMiJ9.WlhsS05tRllRV2xQYVVwRlVsVlphVXhEU21oaVIyTnBUMmxLYT"
+        final var jwt = "eyJhbGciOiJIUzUxMiJ9.WlhsS05tRllRV2xQYVVwRlVsVlphVXhEU21oaVIyTnBUMmxLYT"
                 + "JGWVNXbE1RMHBzWW0xTmFVOXBTa0pOVkVrMFVUQktSRXhWYUZSTmFsVXlTVzR3TGk0M2JEVnNWVk5PWW5OTGFYbDNh"
                 + "MHhoTUhoUlIxZEJMa053VmpVNVEzTlpTVlprUm5wUVRYbFBjakoyU1MxdVJ6TlVZVGx2Y0ZSM1JUVXdhMnhZWW1sNmNu"
                 + "Wm5VM00zUW5OTk1FRTVNWGQxWldobFdFUndUVk5DWkhRek4yaDRlV3RuTjJGUWIydGFkMjlxZEdkQmVUQXpWV0k0UWpkSF"
@@ -96,11 +96,11 @@ public class TokenWebApplicationServiceResponseBuilderTests {
                 + "alExUzNOdFVURmZabU54UkU5SGNsUlVTa2g1ZEVwS2JWaEdla0pDY3pGUlZVMXdXVWs0TjFwVE9IVnVPSFJ4VlZrdWEzSkNOMFk0T1hKc"
                 + "U5td3lhMXB1WVZOcE1WUndVUT09.RFGa_ZuEtvPm7vnl0O3Z5D1waPDIbqxiDFTE8WU5zm7ssKACNPA0hRiJIM0Lo5Vs4ATh06LitXmhzxY5Ix9iyA";
 
-        final String signingSecret = "EihBwA3OuDQMm4gdWzkqRJ87596G7o7a_naJAJipxFoRJbXK7APRcnCA91Y30rJdh4q-C2dmpfV6eNhQT0bR5A";
-        final String encryptionSecret = "dJ2YpUd-r_Qd7e3nDm79WiIHkqaLT8yZt6nN5eG0YnE";
+        final var signingSecret = "EihBwA3OuDQMm4gdWzkqRJ87596G7o7a_naJAJipxFoRJbXK7APRcnCA91Y30rJdh4q-C2dmpfV6eNhQT0bR5A";
+        final var encryptionSecret = "dJ2YpUd-r_Qd7e3nDm79WiIHkqaLT8yZt6nN5eG0YnE";
 
-        final TokenTicketCipherExecutor cipher = new TokenTicketCipherExecutor(encryptionSecret, signingSecret, true);
-        final String result = cipher.decode(jwt);
+        final var cipher = new TokenTicketCipherExecutor(encryptionSecret, signingSecret, true);
+        final var result = cipher.decode(jwt);
         assertNotNull(result);
     }
 

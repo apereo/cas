@@ -30,15 +30,15 @@ public class TicketValidationResourceResolver extends TicketAsFirstParameterReso
     public String[] resolveFrom(final JoinPoint joinPoint, final Object object) {
         final List<String> auditResourceResults = new ArrayList<>();
 
-        final String ticketId = AopUtils.unWrapJoinPoint(joinPoint).getArgs()[0].toString();
+        final var ticketId = AopUtils.unWrapJoinPoint(joinPoint).getArgs()[0].toString();
         auditResourceResults.add(ticketId);
 
         if (object instanceof Assertion) {
-            final Assertion assertion = Assertion.class.cast(object);
-            final Authentication authn = assertion.getPrimaryAuthentication();
+            final var assertion = Assertion.class.cast(object);
+            final var authn = assertion.getPrimaryAuthentication();
 
-            try (StringWriter writer = new StringWriter()) {
-                final ObjectWriter objectWriter = mapper.writer();
+            try (var writer = new StringWriter()) {
+                final var objectWriter = mapper.writer();
 
                 final Map<String, Object> results = new LinkedHashMap<>();
                 results.put("principal", authn.getPrincipal().getId());

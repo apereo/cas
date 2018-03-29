@@ -18,27 +18,27 @@ public class ConvertCasePrincipalNameTransformerTests {
 
     @Test
     public void verifyUpperCaseTransformerWithTrimAndDelegate() {
-        final PrefixSuffixPrincipalNameTransformer suffixTrans = new PrefixSuffixPrincipalNameTransformer();
+        final var suffixTrans = new PrefixSuffixPrincipalNameTransformer();
         suffixTrans.setPrefix("a");
         suffixTrans.setSuffix("z");
-        final ConvertCasePrincipalNameTransformer transformer = new ConvertCasePrincipalNameTransformer();
+        final var transformer = new ConvertCasePrincipalNameTransformer();
         transformer.setToUpperCase(true);
-        final String result = transformer.transform(suffixTrans.transform("   uid  "));
+        final var result = transformer.transform(suffixTrans.transform("   uid  "));
         assertEquals("A   UID  Z", result);
     }
 
     @Test
     public void verifyUpperCaseTransformerWithTrim() {
-        final ConvertCasePrincipalNameTransformer transformer = new ConvertCasePrincipalNameTransformer();
+        final var transformer = new ConvertCasePrincipalNameTransformer();
         transformer.setToUpperCase(true);
-        final String result = transformer.transform("   uid  ");
+        final var result = transformer.transform("   uid  ");
         assertEquals("UID", result);
     }
 
     @Test
     public void verifyLowerCaseTransformerWithTrim() {
-        final ConvertCasePrincipalNameTransformer transformer = new ConvertCasePrincipalNameTransformer();
-        final String result = transformer.transform("   UID  ");
+        final var transformer = new ConvertCasePrincipalNameTransformer();
+        final var result = transformer.transform("   UID  ");
         assertEquals("uid", result);
     }
 }

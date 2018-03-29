@@ -38,9 +38,9 @@ public class RelaxedPropertyNames implements Iterable<String> {
         if (values.contains(name)) {
             return;
         }
-        for (final Variation variation : Variation.values()) {
-            for (final Manipulation manipulation : Manipulation.values()) {
-                String result = name;
+        for (final var variation : Variation.values()) {
+            for (final var manipulation : Manipulation.values()) {
+                var result = name;
                 result = manipulation.apply(result);
                 result = variation.apply(result);
                 values.add(result);
@@ -125,12 +125,12 @@ public class RelaxedPropertyNames implements Iterable<String> {
                 if (value.isEmpty()) {
                     return value;
                 }
-                Matcher matcher = CAMEL_CASE_PATTERN.matcher(value);
+                var matcher = CAMEL_CASE_PATTERN.matcher(value);
                 if (!matcher.find()) {
                     return value;
                 }
                 matcher = matcher.reset();
-                final StringBuffer result = new StringBuffer();
+                final var result = new StringBuffer();
                 while (matcher.find()) {
                     matcher.appendReplacement(result, matcher.group(1) + '_'
                         + StringUtils.uncapitalize(matcher.group(2)));
@@ -147,12 +147,12 @@ public class RelaxedPropertyNames implements Iterable<String> {
                 if (value.isEmpty()) {
                     return value;
                 }
-                Matcher matcher = CAMEL_CASE_PATTERN.matcher(value);
+                var matcher = CAMEL_CASE_PATTERN.matcher(value);
                 if (!matcher.find()) {
                     return value;
                 }
                 matcher = matcher.reset();
-                final StringBuffer result = new StringBuffer();
+                final var result = new StringBuffer();
                 while (matcher.find()) {
                     matcher.appendReplacement(result, matcher.group(1) + '-'
                         + StringUtils.uncapitalize(matcher.group(2)));
@@ -187,14 +187,14 @@ public class RelaxedPropertyNames implements Iterable<String> {
             if (value.isEmpty()) {
                 return value;
             }
-            final StringBuilder builder = new StringBuilder();
-            for (final String field : SEPARATED_TO_CAMEL_CASE_PATTERN.split(value)) {
-                final String fieldCased = caseInsensitive ? field.toLowerCase() : field;
+            final var builder = new StringBuilder();
+            for (final var field : SEPARATED_TO_CAMEL_CASE_PATTERN.split(value)) {
+                final var fieldCased = caseInsensitive ? field.toLowerCase() : field;
                 builder.append(
                     builder.length() == 0 ? field : StringUtils.capitalize(fieldCased));
             }
-            final char lastChar = value.charAt(value.length() - 1);
-            for (final char suffix : SUFFIXES) {
+            final var lastChar = value.charAt(value.length() - 1);
+            for (final var suffix : SUFFIXES) {
                 if (lastChar == suffix) {
                     builder.append(suffix);
                     break;
@@ -212,8 +212,8 @@ public class RelaxedPropertyNames implements Iterable<String> {
      * @return the relaxed names
      */
     public static RelaxedPropertyNames forCamelCase(final String name) {
-        final StringBuilder result = new StringBuilder();
-        for (final char c : name.toCharArray()) {
+        final var result = new StringBuilder();
+        for (final var c : name.toCharArray()) {
             result.append(Character.isUpperCase(c) && result.length() > 0
                 && result.charAt(result.length() - 1) != '-'
                 ? "-" + Character.toLowerCase(c) : c);

@@ -55,8 +55,8 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler fileAuthenticationHandler() {
-        final FileAuthenticationProperties fileProperties = casProperties.getAuthn().getFile();
-        final FileAuthenticationHandler h = new FileAuthenticationHandler(fileProperties.getName(), servicesManager, filePrincipalFactory(),
+        final var fileProperties = casProperties.getAuthn().getFile();
+        final var h = new FileAuthenticationHandler(fileProperties.getName(), servicesManager, filePrincipalFactory(),
             fileProperties.getFilename(), fileProperties.getSeparator());
 
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(fileProperties.getPasswordEncoder()));
@@ -70,7 +70,7 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer fileAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            final Resource file = casProperties.getAuthn().getFile().getFilename();
+            final var file = casProperties.getAuthn().getFile().getFilename();
             if (file != null) {
                 LOGGER.debug("Added file-based authentication handler for the target file [{}]", file.getDescription());
                 plan.registerAuthenticationHandlerWithPrincipalResolver(fileAuthenticationHandler(), personDirectoryPrincipalResolver);

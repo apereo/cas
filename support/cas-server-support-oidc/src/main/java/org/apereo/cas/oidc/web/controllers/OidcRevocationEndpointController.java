@@ -62,16 +62,16 @@ public class OidcRevocationEndpointController extends BaseOAuth20Controller {
                                                         final HttpServletResponse response) {
         try {
             final CredentialsExtractor<UsernamePasswordCredentials> authExtractor = new BasicAuthExtractor();
-            final UsernamePasswordCredentials credentials = authExtractor.extract(Pac4jUtils.getPac4jJ2EContext(request, response));
+            final var credentials = authExtractor.extract(Pac4jUtils.getPac4jJ2EContext(request, response));
             if (credentials == null) {
                 throw new IllegalArgumentException("No credentials are provided to verify introspection on the access token");
             }
 
-            final OAuthRegisteredService service = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, credentials.getUsername());
+            final var service = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, credentials.getUsername());
             if (this.validator.checkServiceValid(service)
                     && this.validator.checkParameterExist(request, OAuth20Constants.ACCESS_TOKEN)
                     && this.validator.checkClientSecret(service, credentials.getPassword())) {
-                final String token = request.getParameter(OidcConstants.TOKEN);
+                final var token = request.getParameter(OidcConstants.TOKEN);
                 if (StringUtils.isNotBlank(token)) {
                     this.ticketRegistry.deleteTicket(token);
                 }

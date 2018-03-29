@@ -51,8 +51,8 @@ public class GrouperFacade {
      */
     public static Collection<WsGetGroupsResult> getGroupsForSubjectId(final String subjectId) {
         try {
-            final GcGetGroups groupsClient = new GcGetGroups().addSubjectId(subjectId);
-            final WsGetGroupsResult[] results = groupsClient.execute().getResults();
+            final var groupsClient = new GcGetGroups().addSubjectId(subjectId);
+            final var results = groupsClient.execute().getResults();
             if (results == null || results.length == 0) {
                 LOGGER.warn("Subject id [{}] could not be located.", subjectId);
                 return new ArrayList<>(0);

@@ -48,7 +48,7 @@ public class EhCacheStatistics implements CacheStatistics {
      */
     @Override
     public long getSize() {
-        final StatisticsGateway statistics = this.cache.getStatistics();
+        final var statistics = this.cache.getStatistics();
         if (this.useBytes) {
             this.diskSize = statistics.getLocalDiskSizeInBytes();
             this.heapSize = statistics.getLocalHeapSizeInBytes();
@@ -67,7 +67,7 @@ public class EhCacheStatistics implements CacheStatistics {
      */
     @Override
     public long getCapacity() {
-        final CacheConfiguration config = this.cache.getCacheConfiguration();
+        final var config = this.cache.getCacheConfiguration();
         if (this.useBytes) {
             return config.getMaxBytesLocalDisk();
         }
@@ -81,7 +81,7 @@ public class EhCacheStatistics implements CacheStatistics {
 
     @Override
     public int getPercentFree() {
-        final long capacity = getCapacity();
+        final var capacity = getCapacity();
         if (capacity == 0) {
             return 0;
         }
@@ -95,12 +95,12 @@ public class EhCacheStatistics implements CacheStatistics {
 
     @Override
     public void toString(final StringBuilder builder) {
-        final String name = this.getName();
+        final var name = this.getName();
         if (StringUtils.isNotBlank(name)) {
             builder.append(name).append(':');
         }
-        final int free = getPercentFree();
-        try (Formatter formatter = new Formatter(builder)) {
+        final var free = getPercentFree();
+        try (var formatter = new Formatter(builder)) {
             if (this.useBytes) {
                 formatter.format("%.2f", this.heapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
                 builder.append("MB heap, ");

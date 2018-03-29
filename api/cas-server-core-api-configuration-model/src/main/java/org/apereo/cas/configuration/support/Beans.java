@@ -36,7 +36,7 @@ public class Beans {
      * @return the thread pool executor factory bean
      */
     public static ThreadPoolExecutorFactoryBean newThreadPoolExecutorFactoryBean(final ConnectionPoolingProperties config) {
-        final ThreadPoolExecutorFactoryBean bean = newThreadPoolExecutorFactoryBean(config.getMaxSize(), config.getMaxSize());
+        final var bean = newThreadPoolExecutorFactoryBean(config.getMaxSize(), config.getMaxSize());
         bean.setCorePoolSize(config.getMinSize());
         return bean;
     }
@@ -50,7 +50,7 @@ public class Beans {
      */
     public static ThreadPoolExecutorFactoryBean newThreadPoolExecutorFactoryBean(final long keepAlive,
                                                                                  final long maxSize) {
-        final ThreadPoolExecutorFactoryBean bean = new ThreadPoolExecutorFactoryBean();
+        final var bean = new ThreadPoolExecutorFactoryBean();
         bean.setMaxPoolSize((int) maxSize);
         bean.setKeepAliveSeconds((int) keepAlive);
         return bean;
@@ -64,10 +64,10 @@ public class Beans {
      */
     @SneakyThrows
     public static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties p) {
-        final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
+        final var dao = new NamedStubPersonAttributeDao();
         final Map<String, List<Object>> pdirMap = new HashMap<>();
         p.getStub().getAttributes().forEach((key, value) -> {
-            final String[] vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(value);
+            final var vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(value);
             pdirMap.put(key, Arrays.stream(vals).collect(Collectors.toList()));
         });
         dao.setBackingMap(pdirMap);

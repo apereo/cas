@@ -48,15 +48,15 @@ public class SamlProfileAttributeQueryResponseBuilder extends SamlProfileSamlSoa
     public Envelope build(final RequestAbstractType authnRequest, final HttpServletRequest request,
                           final HttpServletResponse response, final Object casAssertion, final SamlRegisteredService service,
                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor, final String binding) throws SamlException {
-        final AttributeQuery query = (AttributeQuery) authnRequest;
-        final Header header = newSoapObject(Header.class);
+        final var query = (AttributeQuery) authnRequest;
+        final var header = newSoapObject(Header.class);
 
-        final Body body = newSoapObject(Body.class);
-        final Response saml2Response = buildSaml2Response(casAssertion, query, service,
+        final var body = newSoapObject(Body.class);
+        final var saml2Response = buildSaml2Response(casAssertion, query, service,
             adaptor, request, SAMLConstants.SAML2_POST_BINDING_URI);
         body.getUnknownXMLObjects().add(saml2Response);
 
-        final Envelope envelope = newSoapObject(Envelope.class);
+        final var envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
         SamlUtils.logSamlObject(this.configBean, envelope);

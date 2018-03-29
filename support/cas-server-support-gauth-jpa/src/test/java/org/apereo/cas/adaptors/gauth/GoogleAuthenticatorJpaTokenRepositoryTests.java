@@ -83,7 +83,7 @@ public class GoogleAuthenticatorJpaTokenRepositoryTests {
 
     @Test
     public void verifyTokenSave() {
-        final GoogleAuthenticatorToken token = new GoogleAuthenticatorToken(1234, "casuser");
+        final var token = new GoogleAuthenticatorToken(1234, "casuser");
         repository.store(token);
         assertTrue(repository.exists("casuser", 1234));
     }

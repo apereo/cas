@@ -90,11 +90,11 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
 
     private boolean shouldHttpHeaderBeInjectedIntoResponse(final HttpServletRequest request,
                                                            final RegisteredServiceProperty.RegisteredServiceProperties property) {
-        final Optional<RegisteredService> result = getRegisteredServiceFromRequest(request);
+        final var result = getRegisteredServiceFromRequest(request);
         if (result.isPresent()) {
-            final Map<String, RegisteredServiceProperty> properties = result.get().getProperties();
+            final var properties = result.get().getProperties();
             if (properties.containsKey(property.getPropertyName())) {
-                final RegisteredServiceProperty prop = properties.get(property.getPropertyName());
+                final var prop = properties.get(property.getPropertyName());
                 return BooleanUtils.toBoolean(prop.getValue());
             }
         }
@@ -102,7 +102,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     }
 
     private Optional<RegisteredService> getRegisteredServiceFromRequest(final HttpServletRequest request) {
-        final WebApplicationService service = this.argumentExtractor.extractService(request);
+        final var service = this.argumentExtractor.extractService(request);
         if (service != null) {
             return Optional.of(this.servicesManager.findServiceBy(service));
         }

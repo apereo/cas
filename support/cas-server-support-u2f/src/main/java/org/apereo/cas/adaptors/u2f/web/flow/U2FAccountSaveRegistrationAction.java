@@ -31,12 +31,12 @@ public class U2FAccountSaveRegistrationAction extends AbstractAction {
     @Override
     @SneakyThrows
     protected Event doExecute(final RequestContext requestContext) {
-        final Principal p = WebUtils.getAuthentication(requestContext).getPrincipal();
-        final String response = requestContext.getRequestParameters().get("tokenResponse");
-        final RegisterResponse registerResponse = RegisterResponse.fromJson(response);
-        final String regReqJson = u2FDeviceRepository.getDeviceRegistrationRequest(registerResponse.getRequestId(), p.getId());
-        final RegisterRequestData registerRequestData = RegisterRequestData.fromJson(regReqJson);
-        final DeviceRegistration registration = u2f.finishRegistration(registerRequestData, registerResponse);
+        final var p = WebUtils.getAuthentication(requestContext).getPrincipal();
+        final var response = requestContext.getRequestParameters().get("tokenResponse");
+        final var registerResponse = RegisterResponse.fromJson(response);
+        final var regReqJson = u2FDeviceRepository.getDeviceRegistrationRequest(registerResponse.getRequestId(), p.getId());
+        final var registerRequestData = RegisterRequestData.fromJson(regReqJson);
+        final var registration = u2f.finishRegistration(registerRequestData, registerResponse);
         u2FDeviceRepository.registerDevice(p.getId(), registration);
         return success();
     }

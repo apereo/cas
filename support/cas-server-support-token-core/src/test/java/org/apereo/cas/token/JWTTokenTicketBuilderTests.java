@@ -58,20 +58,20 @@ public class JWTTokenTicketBuilderTests {
 
     @Test
     public void verifyJwtForServiceTicket() throws Exception {
-        final String jwt = tokenTicketBuilder.build("ST-123455", CoreAuthenticationTestUtils.getService());
+        final var jwt = tokenTicketBuilder.build("ST-123455", CoreAuthenticationTestUtils.getService());
         assertNotNull(jwt);
-        final Object result = tokenCipherExecutor.decode(jwt);
-        final JWTClaimsSet claims = JWTClaimsSet.parse(result.toString());
+        final var result = tokenCipherExecutor.decode(jwt);
+        final var claims = JWTClaimsSet.parse(result.toString());
         assertEquals("casuser", claims.getSubject());
     }
 
     @Test
     public void verifyJwtForTicketGrantingTicket() throws Exception {
-        final MockTicketGrantingTicket tgt = new MockTicketGrantingTicket("casuser");
-        final String jwt = tokenTicketBuilder.build(tgt);
+        final var tgt = new MockTicketGrantingTicket("casuser");
+        final var jwt = tokenTicketBuilder.build(tgt);
         assertNotNull(jwt);
-        final Object result = tokenCipherExecutor.decode(jwt);
-        final JWTClaimsSet claims = JWTClaimsSet.parse(result.toString());
+        final var result = tokenCipherExecutor.decode(jwt);
+        final var claims = JWTClaimsSet.parse(result.toString());
         assertEquals(claims.getSubject(), tgt.getAuthentication().getPrincipal().getId());
     }
 

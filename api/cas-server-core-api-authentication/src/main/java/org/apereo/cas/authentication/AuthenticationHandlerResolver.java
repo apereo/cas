@@ -25,7 +25,7 @@ public interface AuthenticationHandlerResolver extends Ordered {
      * @return the set
      */
     default Set<AuthenticationHandler> resolve(Set<AuthenticationHandler> candidateHandlers, AuthenticationTransaction transaction) {
-        final String handlers = candidateHandlers.stream().map(AuthenticationHandler::getName).collect(Collectors.joining(","));
+        final var handlers = candidateHandlers.stream().map(AuthenticationHandler::getName).collect(Collectors.joining(","));
         LOGGER.debug("Default authentication handlers used for this transaction are [{}]", handlers);
         return candidateHandlers;
     }

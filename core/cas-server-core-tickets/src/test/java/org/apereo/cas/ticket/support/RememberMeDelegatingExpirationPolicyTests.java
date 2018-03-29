@@ -41,7 +41,7 @@ public class RememberMeDelegatingExpirationPolicyTests {
 
     @Before
     public void setUp() {
-        final MultiTimeUseOrTimeoutExpirationPolicy rememberMe = new MultiTimeUseOrTimeoutExpirationPolicy(1, 20000);
+        final var rememberMe = new MultiTimeUseOrTimeoutExpirationPolicy(1, 20000);
         p = new RememberMeDelegatingExpirationPolicy(rememberMe);
         p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.REMEMBER_ME, rememberMe);
         p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.DEFAULT,
@@ -50,11 +50,11 @@ public class RememberMeDelegatingExpirationPolicyTests {
 
     @Test
     public void verifyTicketExpirationWithRememberMe() {
-        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication(
+        final var authentication = CoreAuthenticationTestUtils.getAuthentication(
                 this.principalFactory.createPrincipal("test"),
                 Collections.singletonMap(
                         RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
-        final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
+        final var t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());
         t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(), this.p, false, true);
         assertTrue(t.isExpired());
@@ -62,8 +62,8 @@ public class RememberMeDelegatingExpirationPolicyTests {
 
     @Test
     public void verifyTicketExpirationWithoutRememberMe() {
-        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication();
-        final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
+        final var authentication = CoreAuthenticationTestUtils.getAuthentication();
+        final var t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());
         t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(), this.p, false, true);
         assertFalse(t.isExpired());

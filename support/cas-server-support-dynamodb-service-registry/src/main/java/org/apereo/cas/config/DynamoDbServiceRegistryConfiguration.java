@@ -33,7 +33,7 @@ public class DynamoDbServiceRegistryConfiguration implements ServiceRegistryExec
     @RefreshScope
     @Bean
     public DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator() {
-        final DynamoDbServiceRegistryProperties db = casProperties.getServiceRegistry().getDynamoDb();
+        final var db = casProperties.getServiceRegistry().getDynamoDb();
         return new DynamoDbServiceRegistryFacilitator(db, amazonDynamoDbClient());
     }
 
@@ -52,8 +52,8 @@ public class DynamoDbServiceRegistryConfiguration implements ServiceRegistryExec
     @Bean
     @SneakyThrows
     public AmazonDynamoDB amazonDynamoDbClient() {
-        final DynamoDbServiceRegistryProperties dynamoDbProperties = casProperties.getServiceRegistry().getDynamoDb();
-        final AmazonDynamoDbClientFactory factory = new AmazonDynamoDbClientFactory();
+        final var dynamoDbProperties = casProperties.getServiceRegistry().getDynamoDb();
+        final var factory = new AmazonDynamoDbClientFactory();
         return factory.createAmazonDynamoDb(dynamoDbProperties);
     }
 }

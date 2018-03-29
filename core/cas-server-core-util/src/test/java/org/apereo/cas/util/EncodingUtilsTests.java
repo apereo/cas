@@ -27,45 +27,45 @@ public class EncodingUtilsTests {
 
     @Test
     public void verifyAesKeyForJwtSigning() {
-        final String secret = EncodingUtils.generateJsonWebKey(512);
+        final var secret = EncodingUtils.generateJsonWebKey(512);
         final Key key = new AesKey(secret.getBytes(StandardCharsets.UTF_8));
-        final String value = "ThisValue";
-        final byte[] signed = EncodingUtils.signJwsHMACSha512(key, value.getBytes(StandardCharsets.UTF_8));
-        final byte[] jwt = EncodingUtils.verifyJwsSignature(key, signed);
-        final String result = new String(jwt, StandardCharsets.UTF_8);
+        final var value = "ThisValue";
+        final var signed = EncodingUtils.signJwsHMACSha512(key, value.getBytes(StandardCharsets.UTF_8));
+        final var jwt = EncodingUtils.verifyJwsSignature(key, signed);
+        final var result = new String(jwt, StandardCharsets.UTF_8);
         assertTrue(result.equals(value));
     }
 
     @Test
     public void verifyRsaKeyForJwtSigning() {
-        final String value = "ThisValue";
-        final byte[] signed = EncodingUtils.signJwsRSASha512(getPrivateKey(), value.getBytes(StandardCharsets.UTF_8));
-        final byte[] jwt = EncodingUtils.verifyJwsSignature(getPublicKey(), signed);
-        final String result = new String(jwt, StandardCharsets.UTF_8);
+        final var value = "ThisValue";
+        final var signed = EncodingUtils.signJwsRSASha512(getPrivateKey(), value.getBytes(StandardCharsets.UTF_8));
+        final var jwt = EncodingUtils.verifyJwsSignature(getPublicKey(), signed);
+        final var result = new String(jwt, StandardCharsets.UTF_8);
         assertTrue(result.equals(value));
     }
 
     @Test
     public void verifyAesKeyForJwtEncryption() {
-        final String secret = EncodingUtils.generateJsonWebKey(256);
-        final Key key = EncodingUtils.generateJsonWebKey(secret);
-        final String value = "ThisValue";
-        final String found = EncodingUtils.encryptValueAsJwtDirectAes128Sha256(key, value);
-        final String jwt = EncodingUtils.decryptJwtValue(key, found);
+        final var secret = EncodingUtils.generateJsonWebKey(256);
+        final var key = EncodingUtils.generateJsonWebKey(secret);
+        final var value = "ThisValue";
+        final var found = EncodingUtils.encryptValueAsJwtDirectAes128Sha256(key, value);
+        final var jwt = EncodingUtils.decryptJwtValue(key, found);
         assertTrue(jwt.equals(value));
     }
 
     @Test
     public void verifyRsaKeyForJwtEncryption() {
-        final String value = "ThisValue";
-        final String found = EncodingUtils.encryptValueAsJwtRsaOeap256Aes256Sha512(getPublicKey(), value);
-        final String jwt = EncodingUtils.decryptJwtValue(getPrivateKey(), found);
+        final var value = "ThisValue";
+        final var found = EncodingUtils.encryptValueAsJwtRsaOeap256Aes256Sha512(getPublicKey(), value);
+        final var jwt = EncodingUtils.decryptJwtValue(getPrivateKey(), found);
         assertTrue(jwt.equals(value));
     }
 
     @SneakyThrows
     private static PrivateKey getPrivateKey() {
-        final PrivateKeyFactoryBean factory = new PrivateKeyFactoryBean();
+        final var factory = new PrivateKeyFactoryBean();
         factory.setAlgorithm(RsaKeyUtil.RSA);
         factory.setLocation(new ClassPathResource("keys/RSA2048Private.key"));
         factory.setSingleton(false);
@@ -74,7 +74,7 @@ public class EncodingUtilsTests {
 
     @SneakyThrows
     private static PublicKey getPublicKey() {
-        final PublicKeyFactoryBean factory = new PublicKeyFactoryBean();
+        final var factory = new PublicKeyFactoryBean();
         factory.setAlgorithm(RsaKeyUtil.RSA);
         factory.setResource(new ClassPathResource("keys/RSA2048Public.key"));
         factory.setSingleton(false);

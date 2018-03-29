@@ -49,12 +49,12 @@ public class SamlRegisteredServiceTests {
 
     @Test
     public void verifySavingSamlService() throws Exception {
-        final SamlRegisteredService service = new SamlRegisteredService();
+        final var service = new SamlRegisteredService();
         service.setName(SAML_SERVICE);
         service.setServiceId("http://mmoayyed.unicon.net");
         service.setMetadataLocation(METADATA_LOCATION);
 
-        final JsonServiceRegistry dao = new JsonServiceRegistry(RESOURCE, false,
+        final var dao = new JsonServiceRegistry(RESOURCE, false,
                 mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy());
         dao.save(service);
         dao.load();
@@ -62,16 +62,16 @@ public class SamlRegisteredServiceTests {
 
     @Test
     public void verifySavingInCommonSamlService() throws Exception {
-        final SamlRegisteredService service = new SamlRegisteredService();
+        final var service = new SamlRegisteredService();
         service.setName(SAML_SERVICE);
         service.setServiceId("http://mmoayyed.unicon.net");
         service.setMetadataLocation(METADATA_LOCATION);
-        final InCommonRSAttributeReleasePolicy policy = new InCommonRSAttributeReleasePolicy();
-        final ChainingAttributeReleasePolicy chain = new ChainingAttributeReleasePolicy();
+        final var policy = new InCommonRSAttributeReleasePolicy();
+        final var chain = new ChainingAttributeReleasePolicy();
         chain.setPolicies(Arrays.asList(policy, new DenyAllAttributeReleasePolicy()));
         service.setAttributeReleasePolicy(chain);
 
-        final JsonServiceRegistry dao = new JsonServiceRegistry(RESOURCE, false,
+        final var dao = new JsonServiceRegistry(RESOURCE, false,
                 mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy());
         dao.save(service);
         dao.load();
@@ -79,24 +79,24 @@ public class SamlRegisteredServiceTests {
 
     @Test
     public void checkPattern() {
-        final SamlRegisteredService service = new SamlRegisteredService();
+        final var service = new SamlRegisteredService();
         service.setName(SAML_SERVICE);
         service.setServiceId("^http://.+");
         service.setMetadataLocation(METADATA_LOCATION);
 
-        final InMemoryServiceRegistry dao = new InMemoryServiceRegistry();
+        final var dao = new InMemoryServiceRegistry();
         dao.setRegisteredServices(Collections.singletonList(service));
-        final DefaultServicesManager impl = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class));
+        final var impl = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class));
         impl.load();
 
-        final RegisteredService s = impl.findServiceBy(new WebApplicationServiceFactory()
+        final var s = impl.findServiceBy(new WebApplicationServiceFactory()
                 .createService("http://mmoayyed.unicon.net:8081/sp/saml/SSO"));
         assertNotNull(s);
     }
 
     @Test
     public void verifySerializeAReturnMappedAttributeReleasePolicyToJson() throws IOException {
-        final SamlRegisteredService serviceWritten = new SamlRegisteredService();
+        final var serviceWritten = new SamlRegisteredService();
         serviceWritten.setName(SAML_SERVICE);
         serviceWritten.setServiceId("http://mmoayyed.unicon.net");
         serviceWritten.setMetadataLocation(METADATA_LOCATION);

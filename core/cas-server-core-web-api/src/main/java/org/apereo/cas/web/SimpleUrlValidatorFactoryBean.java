@@ -39,8 +39,8 @@ public class SimpleUrlValidatorFactoryBean implements FactoryBean<org.apereo.cas
             return null;
         }
         
-        final RegexValidator authorityValidator = new RegexValidator(authorityValidationRegEx, authorityValidationRegExCaseSensitive);
-        final long options = allowLocalUrls ? UrlValidator.ALLOW_LOCAL_URLS : 0;
+        final var authorityValidator = new RegexValidator(authorityValidationRegEx, authorityValidationRegExCaseSensitive);
+        final var options = allowLocalUrls ? UrlValidator.ALLOW_LOCAL_URLS : 0;
         return new UrlValidator(authorityValidator, options);
     }
 

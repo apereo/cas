@@ -31,9 +31,9 @@ public class CasCoreUtilSerializationConfiguration implements ComponentSerializa
     @Autowired
     @Bean
     public ComponentSerializationPlan componentSerializationPlan(final List<ComponentSerializationPlanConfigurator> configurers) {
-        final DefaultComponentSerializationPlan plan = new DefaultComponentSerializationPlan();
+        final var plan = new DefaultComponentSerializationPlan();
         configurers.forEach(c -> {
-            final String name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            final var name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Configuring component serialization plan [{}]", name);
             c.configureComponentSerializationPlan(plan);
         });

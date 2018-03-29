@@ -39,7 +39,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Before
     public void setup() {
-        final GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
+        final var bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
         this.google = new GoogleAuthenticator(bldr.build());
     }
 
@@ -48,9 +48,9 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests {
         if (JSON_FILE.exists()) {
             FileUtils.forceDelete(JSON_FILE.getFile());
         }
-        final JsonGoogleAuthenticatorTokenCredentialRepository repo =
+        final var repo =
             new JsonGoogleAuthenticatorTokenCredentialRepository(JSON_FILE, google, CipherExecutor.noOpOfStringToString());
-        final OneTimeTokenAccount acct = repo.create("casuser");
+        final var acct = repo.create("casuser");
         assertNotNull(acct);
     }
 
@@ -59,9 +59,9 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests {
         if (JSON_FILE.exists()) {
             FileUtils.forceDelete(JSON_FILE.getFile());
         }
-        final JsonGoogleAuthenticatorTokenCredentialRepository repo =
+        final var repo =
             new JsonGoogleAuthenticatorTokenCredentialRepository(JSON_FILE, google, CipherExecutor.noOpOfStringToString());
-        OneTimeTokenAccount acct = repo.get("casuser");
+        var acct = repo.get("casuser");
         assertNull(acct);
         acct = repo.create("casuser");
         repo.save(acct.getUsername(), acct.getSecretKey(), acct.getValidationCode(), acct.getScratchCodes());

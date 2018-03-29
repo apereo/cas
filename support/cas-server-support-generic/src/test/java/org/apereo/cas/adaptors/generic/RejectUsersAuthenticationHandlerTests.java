@@ -40,7 +40,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test
     public void verifySupportsProperUserCredentials() throws Exception {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
+        final var c = new UsernamePasswordCredential();
 
         c.setUsername("fff");
         c.setPassword("rutgers");
@@ -60,7 +60,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsUserInMap() throws Exception {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
+        final var c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
         c.setPassword("rutgers");
@@ -72,7 +72,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyPassesUserNotInMap() throws Exception {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
+        final var c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
         c.setPassword("rutgers");
@@ -82,7 +82,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyPassesNullUserName() throws Exception {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
+        final var c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword("user");

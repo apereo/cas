@@ -61,8 +61,8 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final RegisteredService service = resolveRegisteredServiceInRequestContext(context);
-        final Authentication authentication = WebUtils.getAuthentication(context);
+        final var service = resolveRegisteredServiceInRequestContext(context);
+        final var authentication = WebUtils.getAuthentication(context);
 
         if (service == null || authentication == null) {
             LOGGER.debug("No service or authentication is available to determine event for principal");
@@ -74,14 +74,14 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
             return null;
         }
 
-        final Map<String, MultifactorAuthenticationProvider> providerMap =
+        final var providerMap =
                 MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
 
-        final Set<Event> providerFound = checkTimedMultifactorProvidersForRequest(context, service, authentication);
+        final var providerFound = checkTimedMultifactorProvidersForRequest(context, service, authentication);
         if (providerFound != null && !providerFound.isEmpty()) {
             LOGGER.warn("Found multifactor authentication providers [{}] required for this authentication event", providerFound);
             return providerFound;
@@ -94,17 +94,17 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
     private Set<Event> checkTimedMultifactorProvidersForRequest(final RequestContext context, final RegisteredService service,
                                                                 final Authentication authentication) {
 
-        final LocalDateTime now = LocalDateTime.now();
-        final DayOfWeek dow = DayOfWeek.from(now);
-        final List<String> dayNamesForToday = Arrays.stream(TextStyle.values())
+        final var now = LocalDateTime.now();
+        final var dow = DayOfWeek.from(now);
+        final var dayNamesForToday = Arrays.stream(TextStyle.values())
                 .map(style -> dow.getDisplayName(style, Locale.getDefault()))
                 .collect(Collectors.toList());
 
-        final Map<String, MultifactorAuthenticationProvider> providerMap =
+        final var providerMap =
                 MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        final TimeBasedAuthenticationProperties timed = this.timedMultifactor.stream()
+        final var timed = this.timedMultifactor.stream()
                 .filter(t -> {
-                    boolean providerEvent = false;
+                    var providerEvent = false;
                     if (!t.getOnDays().isEmpty()) {
                         providerEvent = t.getOnDays().stream().filter(dayNamesForToday::contains).findAny().isPresent();
                     }
@@ -120,7 +120,7 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
                 .orElse(null);
 
         if (timed != null) {
-            final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, timed.getProviderId());
+            final var providerFound = resolveProvider(providerMap, timed.getProviderId());
             if (!providerFound.isPresent()) {
                 LOGGER.error("Adaptive authentication is configured to require [{}] for [{}], yet [{}] absent in the configuration.",
                         timed.getProviderId(), service, timed.getProviderId());
@@ -137,7 +137,7 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
         if (provider.isAvailable(service)) {
             LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
                     provider, service.getName());
-            final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
+            final var event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
                     buildEventAttributeMap(authentication.getPrincipal(), service, provider));
             return CollectionUtils.wrapSet(event);
         }

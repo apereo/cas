@@ -50,8 +50,8 @@ public class RememberMeDelegatingExpirationPolicy extends BaseDelegatingExpirati
 
     @Override
     protected String getExpirationPolicyNameFor(final TicketState ticketState) {
-        final Map<String, Object> attrs = ticketState.getAuthentication().getAttributes();
-        final Boolean b = (Boolean) attrs.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+        final var attrs = ticketState.getAuthentication().getAttributes();
+        final var b = (Boolean) attrs.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
 
         if (b == null || b.equals(Boolean.FALSE)) {
             LOGGER.debug("Ticket is not associated with a remember-me authentication.");

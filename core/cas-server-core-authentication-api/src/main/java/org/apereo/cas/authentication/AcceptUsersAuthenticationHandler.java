@@ -67,8 +67,8 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
         if (this.users == null || this.users.isEmpty()) {
             throw new FailedLoginException("No user can be accepted because none is defined");
         }
-        final String username = credential.getUsername();
-        final String cachedPassword = this.users.get(username);
+        final var username = credential.getUsername();
+        final var cachedPassword = this.users.get(username);
         if (cachedPassword == null) {
             LOGGER.debug("[{}] was not found in the map.", username);
             throw new AccountNotFoundException(username + " not found in backing map.");

@@ -30,7 +30,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
     public void store(final OneTimeToken token) {
         if (exists(token.getUserId(), token.getToken())) {
             try {
-                final Collection<OneTimeToken> tokens = this.storage.get(token.getUserId());
+                final var tokens = this.storage.get(token.getUserId());
                 tokens.add(token);
 
                 LOGGER.debug("Storing previously used tokens [{}] for user [{}]", tokens, token.getUserId());
@@ -50,7 +50,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
     @Override
     public OneTimeToken get(final String uid, final Integer otp) {
         try {
-            final Collection<OneTimeToken> tokens = this.storage.getIfPresent(uid);
+            final var tokens = this.storage.getIfPresent(uid);
             LOGGER.debug("Found used tokens [{}]", tokens);
             if (tokens != null) {
                 return tokens

@@ -43,11 +43,11 @@ public class GrouperRegisteredServiceAccessStrategyRegistryTests {
         v1.add("admin");
         attributes.put("memberOf", v1);
 
-        final AbstractRegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
-        final GrouperRegisteredServiceAccessStrategy grouper = new GrouperRegisteredServiceAccessStrategy();
+        final var service = RegisteredServiceTestUtils.getRegisteredService("test");
+        final var grouper = new GrouperRegisteredServiceAccessStrategy();
         grouper.setRequiredAttributes(attributes);
         service.setAccessStrategy(grouper);
-        final JsonServiceRegistry dao = new JsonServiceRegistry(RESOURCE, false,
+        final var dao = new JsonServiceRegistry(RESOURCE, false,
                 mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy());
         dao.save(service);
         dao.load();

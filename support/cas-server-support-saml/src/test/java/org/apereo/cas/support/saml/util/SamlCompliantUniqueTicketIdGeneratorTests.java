@@ -16,13 +16,13 @@ public class SamlCompliantUniqueTicketIdGeneratorTests extends AbstractOpenSamlT
 
     @Test
     public void verifySaml1Compliant() {
-        final SamlCompliantUniqueTicketIdGenerator g = new SamlCompliantUniqueTicketIdGenerator("http://www.cnn.com");
+        final var g = new SamlCompliantUniqueTicketIdGenerator("http://www.cnn.com");
         assertNotNull(g.getNewTicketId("TT"));
     }
 
     @Test
     public void verifySaml2Compliant() {
-        final SamlCompliantUniqueTicketIdGenerator g = new SamlCompliantUniqueTicketIdGenerator("http://www.cnn.com");
+        final var g = new SamlCompliantUniqueTicketIdGenerator("http://www.cnn.com");
         g.setSaml2compliant(true);
         assertNotNull(g.getNewTicketId("TT"));
 

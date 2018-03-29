@@ -41,7 +41,7 @@ public class RestfulPersonAttributeDaoTests {
 
     @Before
     public void setup() {
-        final String data = "{"
+        final var data = "{"
             + "   \"name\" :\"casuser\","
             + "\"age\" : 29,"
             + "\"messages\": [\"msg 1\", \"msg 2\", \"msg 3\"]      "
@@ -60,7 +60,7 @@ public class RestfulPersonAttributeDaoTests {
     @Test
     public void verifyRestAttributeRepository() {
         assertNotNull(attributeRepository);
-        final IPersonAttributes person = attributeRepository.getPerson("casuser");
+        final var person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
         assertNotNull(person.getAttributes());
         assertFalse(person.getAttributes().isEmpty());

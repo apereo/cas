@@ -40,15 +40,15 @@ public class RestServiceRegistryConfiguration implements ServiceRegistryExecutio
     @SneakyThrows
     public ServiceRegistry restfulServiceRegistry() {
 
-        final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
-        final RestTemplate restTemplate = new RestTemplate();
+        final var registry = casProperties.getServiceRegistry();
+        final var restTemplate = new RestTemplate();
         final MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
 
         if (StringUtils.isNotBlank(registry.getRest().getBasicAuthUsername())
             && StringUtils.isNotBlank(registry.getRest().getBasicAuthPassword())) {
-            final String auth = registry.getRest().getBasicAuthUsername() + ":" + registry.getRest().getBasicAuthPassword();
-            final byte[] encodedAuth = EncodingUtils.encodeBase64ToByteArray(auth.getBytes(StandardCharsets.UTF_8));
-            final String authHeader = "Basic " + new String(encodedAuth, StandardCharsets.UTF_8);
+            final var auth = registry.getRest().getBasicAuthUsername() + ":" + registry.getRest().getBasicAuthPassword();
+            final var encodedAuth = EncodingUtils.encodeBase64ToByteArray(auth.getBytes(StandardCharsets.UTF_8));
+            final var authHeader = "Basic " + new String(encodedAuth, StandardCharsets.UTF_8);
             headers.put("Authorization", CollectionUtils.wrap(authHeader));
         }
         return new RestServiceRegistry(restTemplate, registry.getRest().getUrl(), headers);

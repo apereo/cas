@@ -96,7 +96,7 @@ public class U2FWebflowConfiguration implements CasWebflowExecutionPlanConfigure
 
     @Bean
     public FlowDefinitionRegistry u2fFlowRegistry() {
-        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        final var builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-u2f/*-webflow.xml");
         return builder.build();

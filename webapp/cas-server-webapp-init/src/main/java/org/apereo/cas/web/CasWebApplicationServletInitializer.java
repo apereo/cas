@@ -18,7 +18,7 @@ public class CasWebApplicationServletInitializer extends SpringBootServletInitia
 
     @Override
     protected SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
-        final Map<String, Object> properties = CasEmbeddedContainerUtils.getRuntimeProperties(Boolean.FALSE);
+        final var properties = CasEmbeddedContainerUtils.getRuntimeProperties(Boolean.FALSE);
         return builder
             .sources(CasWebApplication.class)
             .properties(properties)

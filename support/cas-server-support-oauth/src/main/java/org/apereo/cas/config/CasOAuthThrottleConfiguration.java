@@ -70,7 +70,7 @@ public class CasOAuthThrottleConfiguration extends WebMvcConfigurerAdapter {
         private final Pattern pattern;
 
         public OAuth20ThrottledHandlerInterceptorAdapter() {
-            final String throttledUrl = OAuth20Constants.BASE_OAUTH20_URL.concat("/")
+            final var throttledUrl = OAuth20Constants.BASE_OAUTH20_URL.concat("/")
                 .concat(OAuth20Constants.ACCESS_TOKEN_URL + "|" + OAuth20Constants.TOKEN_URL);
             this.pattern = RegexUtils.createPattern(throttledUrl);
             LOGGER.debug("Authentication throttler instance for OAuth shall intercept the URL pattern [{}]", pattern.pattern());

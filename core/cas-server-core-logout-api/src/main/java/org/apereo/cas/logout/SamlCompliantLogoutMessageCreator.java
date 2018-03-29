@@ -26,7 +26,7 @@ public class SamlCompliantLogoutMessageCreator implements LogoutMessageCreator {
 
     @Override
     public String create(final LogoutRequest request) {
-        final String logoutRequest = String.format(LOGOUT_REQUEST_TEMPLATE, GENERATOR.getNewTicketId("LR"),
+        final var logoutRequest = String.format(LOGOUT_REQUEST_TEMPLATE, GENERATOR.getNewTicketId("LR"),
                 new ISOStandardDateFormat().getCurrentDateAndTime(), request.getTicketId());
         
         LOGGER.debug("Generated logout message: [{}]", logoutRequest);

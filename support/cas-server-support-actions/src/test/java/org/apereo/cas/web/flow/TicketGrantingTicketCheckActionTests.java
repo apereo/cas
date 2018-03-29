@@ -30,38 +30,38 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
 
     @Test
     public void verifyNullTicket() throws Exception {
-        final MockRequestContext ctx = new MockRequestContext();
-        final TicketGrantingTicketCheckAction action = new
+        final var ctx = new MockRequestContext();
+        final var action = new
             TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
-        final Event event = action.doExecute(ctx);
+        final var event = action.doExecute(ctx);
         assertEquals(TicketGrantingTicketCheckAction.NOT_EXISTS, event.getId());
     }
 
     @Test
     public void verifyInvalidTicket() throws Exception {
 
-        final MockRequestContext ctx = new MockRequestContext();
-        final MockTicketGrantingTicket tgt = new MockTicketGrantingTicket("user");
+        final var ctx = new MockRequestContext();
+        final var tgt = new MockTicketGrantingTicket("user");
 
         WebUtils.putTicketGrantingTicketInScopes(ctx, tgt);
-        final TicketGrantingTicketCheckAction action = new
+        final var action = new
             TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
-        final Event event = action.doExecute(ctx);
+        final var event = action.doExecute(ctx);
         assertEquals(TicketGrantingTicketCheckAction.INVALID, event.getId());
     }
 
     @Test
     public void verifyValidTicket() throws Exception {
 
-        final MockRequestContext ctx = new MockRequestContext();
-        final AuthenticationResult ctxAuthN = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
+        final var ctx = new MockRequestContext();
+        final var ctxAuthN = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
 
-        final TicketGrantingTicket tgt = this.getCentralAuthenticationService().createTicketGrantingTicket(ctxAuthN);
+        final var tgt = this.getCentralAuthenticationService().createTicketGrantingTicket(ctxAuthN);
 
         WebUtils.putTicketGrantingTicketInScopes(ctx, tgt);
-        final TicketGrantingTicketCheckAction action = new
+        final var action = new
             TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
-        final Event event = action.doExecute(ctx);
+        final var event = action.doExecute(ctx);
         assertEquals(TicketGrantingTicketCheckAction.VALID, event.getId());
     }
 

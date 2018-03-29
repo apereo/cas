@@ -51,7 +51,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
 
     @Before
     public void setUp() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var request = new MockHttpServletRequest();
         request.setRemoteAddr(IP_ADDRESS);
         request.setLocalAddr(IP_ADDRESS);
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
@@ -81,11 +81,11 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
         // Seed with something to compare against
         loginUnsuccessfully("mog", "1.2.3.4");
 
-        for (int i = 0; i < trials; i++) {
+        for (var i = 0; i < trials; i++) {
             LOGGER.debug("Waiting for [{}] ms", period);
             Thread.sleep(period);
 
-            final MockHttpServletResponse status = loginUnsuccessfully("mog", "1.2.3.4");
+            final var status = loginUnsuccessfully("mog", "1.2.3.4");
             assertEquals(expected, status.getStatus());
         }
     }

@@ -24,15 +24,15 @@ public class SamlAuthenticationRequestTests extends AbstractOpenSamlTests {
 
     @Test
     public void ensureDeflation() throws Exception {
-        final String deflator = CompressionUtils.deflate(SAML_REQUEST);
-        final String deflatorStream = deflateViaStream(SAML_REQUEST);
+        final var deflator = CompressionUtils.deflate(SAML_REQUEST);
+        final var deflatorStream = deflateViaStream(SAML_REQUEST);
         assertEquals(deflatorStream, deflator);
     }
 
     private static String deflateViaStream(final String samlRequest) throws IOException {
-        final byte[] xmlBytes = samlRequest.getBytes(StandardCharsets.UTF_8);
-        final ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
-        final DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(
+        final var xmlBytes = samlRequest.getBytes(StandardCharsets.UTF_8);
+        final var byteOutputStream = new ByteArrayOutputStream();
+        final var deflaterOutputStream = new DeflaterOutputStream(
                 byteOutputStream);
         deflaterOutputStream.write(xmlBytes, 0, xmlBytes.length);
         deflaterOutputStream.close();

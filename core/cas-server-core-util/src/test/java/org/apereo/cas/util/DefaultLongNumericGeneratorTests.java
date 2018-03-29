@@ -32,7 +32,7 @@ public class DefaultLongNumericGeneratorTests {
 
     @Test
     public void verifyIncrementWithNoWrap2() {
-        final DefaultLongNumericGenerator g = new DefaultLongNumericGenerator();
+        final var g = new DefaultLongNumericGenerator();
         g.getNextLong();
         assertEquals(1, g.getNextLong());
     }

@@ -43,11 +43,11 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
             return null;
         }
 
-        final WebApplicationService selectedService = WebApplicationService.class.cast(
+        final var selectedService = WebApplicationService.class.cast(
                 this.authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService));
 
         LOGGER.debug("Processing logout request for service [{}]...", selectedService);
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
+        final var registeredService = this.servicesManager.findServiceBy(selectedService);
 
         if (!serviceSupportsSingleLogout(registeredService)) {
             LOGGER.debug("Service [{}] does not support single logout.", selectedService);
@@ -55,7 +55,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
         }
         LOGGER.debug("Service [{}] supports single logout and is found in the registry as [{}]. Proceeding...", selectedService, registeredService);
 
-        final URL logoutUrl = this.singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, selectedService);
+        final var logoutUrl = this.singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, selectedService);
         LOGGER.debug("Prepared logout url [{}] for service [{}]", logoutUrl, selectedService);
         if (logoutUrl == null) {
             LOGGER.debug("Service [{}] does not support logout operations given no logout url could be determined.", selectedService);
@@ -63,10 +63,10 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
         }
 
         LOGGER.debug("Creating logout request for [{}] and ticket id [{}]", selectedService, ticketId);
-        final DefaultLogoutRequest logoutRequest = new DefaultLogoutRequest(ticketId, selectedService, logoutUrl);
+        final var logoutRequest = new DefaultLogoutRequest(ticketId, selectedService, logoutUrl);
         LOGGER.debug("Logout request [{}] created for [{}] and ticket id [{}]", logoutRequest, selectedService, ticketId);
 
-        final RegisteredService.LogoutType type = registeredService.getLogoutType() == null
+        final var type = registeredService.getLogoutType() == null
                 ? RegisteredService.LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
         LOGGER.debug("Logout type registered for [{}] is [{}]", selectedService, type);
 
@@ -97,12 +97,12 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
     public boolean performBackChannelLogout(final LogoutRequest request) {
         try {
             LOGGER.debug("Creating back-channel logout request based on [{}]", request);
-            final String logoutRequest = this.logoutMessageBuilder.create(request);
-            final WebApplicationService logoutService = request.getService();
+            final var logoutRequest = this.logoutMessageBuilder.create(request);
+            final var logoutService = request.getService();
             logoutService.setLoggedOutAlready(true);
 
             LOGGER.debug("Preparing logout request for [{}] to [{}]", logoutService.getId(), request.getLogoutUrl());
-            final LogoutHttpMessage msg = new LogoutHttpMessage(request.getLogoutUrl(), logoutRequest, this.asynchronous);
+            final var msg = new LogoutHttpMessage(request.getLogoutUrl(), logoutRequest, this.asynchronous);
             LOGGER.debug("Prepared logout message to send is [{}]. Sending...", msg);
             return this.httpClient.sendMessageToEndPoint(msg);
         } catch (final Exception e) {

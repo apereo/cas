@@ -142,7 +142,7 @@ public class LdapUtils {
      * @return {@code true} if the attribute's value matches (case-insensitive) {@code "true"}, otherwise false
      */
     public static Boolean getBoolean(final LdapEntry ctx, final String attribute, final Boolean nullValue) {
-        final String v = getString(ctx, attribute, nullValue.toString());
+        final var v = getString(ctx, attribute, nullValue.toString());
         if (v != null) {
             return v.equalsIgnoreCase(Boolean.TRUE.toString());
         }
@@ -169,7 +169,7 @@ public class LdapUtils {
      * @return the long value
      */
     public static Long getLong(final LdapEntry entry, final String attribute, final Long nullValue) {
-        final String v = getString(entry, attribute, nullValue.toString());
+        final var v = getString(entry, attribute, nullValue.toString());
         if (v != null && NumberUtils.isCreatable(v)) {
             return Long.valueOf(v);
         }
@@ -196,14 +196,14 @@ public class LdapUtils {
      * @return the string
      */
     public static String getString(final LdapEntry entry, final String attribute, final String nullValue) {
-        final LdapAttribute attr = entry.getAttribute(attribute);
+        final var attr = entry.getAttribute(attribute);
         if (attr == null) {
             return nullValue;
         }
 
         final String v;
         if (attr.isBinary()) {
-            final byte[] b = attr.getBinaryValue();
+            final var b = attr.getBinaryValue();
             v = new String(b, StandardCharsets.UTF_8);
         } else {
             v = attr.getStringValue();
@@ -248,9 +248,9 @@ public class LdapUtils {
                                                                 final SearchFilter filter,
                                                                 final String[] binaryAttributes,
                                                                 final String[] returnAttributes) throws LdapException {
-        try (Connection connection = createConnection(connectionFactory)) {
-            final SearchOperation searchOperation = new SearchOperation(connection);
-            final SearchRequest request = LdapUtils.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);
+        try (var connection = createConnection(connectionFactory)) {
+            final var searchOperation = new SearchOperation(connection);
+            final var request = LdapUtils.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);
             request.setReferralHandler(new SearchReferralHandler());
             return searchOperation.execute(request);
         }
@@ -279,7 +279,7 @@ public class LdapUtils {
      */
     public static boolean containsResultEntry(final Response<SearchResult> response) {
         if (response != null) {
-            final SearchResult result = response.getResult();
+            final var result = response.getResult();
             return result != null && result.getEntry() != null;
         }
         return false;
@@ -294,7 +294,7 @@ public class LdapUtils {
      * @throws LdapException the ldap exception
      */
     public static Connection createConnection(final ConnectionFactory connectionFactory) throws LdapException {
-        final Connection c = connectionFactory.getConnection();
+        final var c = connectionFactory.getConnection();
         if (!c.isOpen()) {
             c.open();
         }
@@ -316,7 +316,7 @@ public class LdapUtils {
                                                          final String oldPassword,
                                                          final String newPassword,
                                                          final AbstractLdapProperties.LdapType type) {
-        try (Connection modifyConnection = createConnection(connectionFactory)) {
+        try (var modifyConnection = createConnection(connectionFactory)) {
             if (!modifyConnection.getConnectionConfig().getUseSSL()
                     && !modifyConnection.getConnectionConfig().getUseStartTLS()) {
                 LOGGER.warn("Executing password modification op under a non-secure LDAP connection; "
@@ -325,7 +325,7 @@ public class LdapUtils {
             if (type == AbstractLdapProperties.LdapType.AD) {
                 LOGGER.debug("Executing password modification op for active directory based on "
                         + "[https://support.microsoft.com/en-us/kb/269190]");
-                final ModifyOperation operation = new ModifyOperation(modifyConnection);
+                final var operation = new ModifyOperation(modifyConnection);
                 final Response response = operation.execute(new ModifyRequest(currentDn,
                         new AttributeModification(AttributeModificationType.REPLACE, new UnicodePwdAttribute(newPassword))));
                 LOGGER.debug("Result code [{}], message: [{}]", response.getResult(), response.getMessage());
@@ -333,7 +333,7 @@ public class LdapUtils {
             }
 
             LOGGER.debug("Executing password modification op for generic LDAP");
-            final PasswordModifyOperation operation = new PasswordModifyOperation(modifyConnection);
+            final var operation = new PasswordModifyOperation(modifyConnection);
             final Response response = operation.execute(new PasswordModifyRequest(currentDn,
                     StringUtils.isNotBlank(oldPassword) ? new Credential(oldPassword) : null,
                     new Credential(newPassword)));
@@ -355,14 +355,14 @@ public class LdapUtils {
      */
     public static boolean executeModifyOperation(final String currentDn, final ConnectionFactory connectionFactory,
                                                  final Map<String, Set<String>> attributes) {
-        try (Connection modifyConnection = createConnection(connectionFactory)) {
-            final ModifyOperation operation = new ModifyOperation(modifyConnection);
-            final List<AttributeModification> mods = attributes.entrySet()
+        try (var modifyConnection = createConnection(connectionFactory)) {
+            final var operation = new ModifyOperation(modifyConnection);
+            final var mods = attributes.entrySet()
                     .stream()
                     .map(entry -> new AttributeModification(AttributeModificationType.REPLACE,
                             new LdapAttribute(entry.getKey(), entry.getValue().toArray(new String[]{}))))
                     .collect(Collectors.toList());
-            final ModifyRequest request = new ModifyRequest(currentDn, mods.toArray(new AttributeModification[]{}));
+            final var request = new ModifyRequest(currentDn, mods.toArray(new AttributeModification[]{}));
             request.setReferralHandler(new ModifyReferralHandler());
             operation.execute(request);
             return true;
@@ -395,8 +395,8 @@ public class LdapUtils {
      * @return true/false
      */
     public static boolean executeAddOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) {
-        try (Connection connection = createConnection(connectionFactory)) {
-            final AddOperation operation = new AddOperation(connection);
+        try (var connection = createConnection(connectionFactory)) {
+            final var operation = new AddOperation(connection);
             operation.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
             return true;
         } catch (final LdapException e) {
@@ -413,11 +413,11 @@ public class LdapUtils {
      * @return true/false
      */
     public static boolean executeDeleteOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) {
-        try (Connection connection = createConnection(connectionFactory)) {
-            final DeleteOperation delete = new DeleteOperation(connection);
-            final DeleteRequest request = new DeleteRequest(entry.getDn());
+        try (var connection = createConnection(connectionFactory)) {
+            final var delete = new DeleteOperation(connection);
+            final var request = new DeleteRequest(entry.getDn());
             request.setReferralHandler(new DeleteReferralHandler());
-            final Response<Void> res = delete.execute(request);
+            final var res = delete.execute(request);
             return res.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);
@@ -468,7 +468,7 @@ public class LdapUtils {
                                                          final SearchFilter filter,
                                                          final String[] binaryAttributes,
                                                          final String[] returnAttributes) {
-        final SearchRequest sr = new SearchRequest(baseDn, filter);
+        final var sr = new SearchRequest(baseDn, filter);
         sr.setBinaryAttributes(binaryAttributes);
         sr.setReturnAttributes(returnAttributes);
         sr.setSearchScope(SearchScope.SUBTREE);
@@ -521,7 +521,7 @@ public class LdapUtils {
      * @return Search filter with parameters applied.
      */
     public static SearchFilter newLdaptiveSearchFilter(final String filterQuery, final String paramName, final List<String> params) {
-        final SearchFilter filter = new SearchFilter();
+        final var filter = new SearchFilter();
         filter.setFilter(filterQuery);
         if (params != null) {
             IntStream.range(0, params.size()).forEach(i -> {
@@ -575,7 +575,7 @@ public class LdapUtils {
     public static SearchExecutor newLdaptiveSearchExecutor(final String baseDn, final String filterQuery,
                                                            final List<String> params,
                                                            final String[] returnAttributes) {
-        final SearchExecutor executor = new SearchExecutor();
+        final var executor = new SearchExecutor();
         executor.setBaseDn(baseDn);
         executor.setSearchFilter(newLdaptiveSearchFilter(filterQuery, params));
         executor.setReturnAttributes(returnAttributes);
@@ -624,8 +624,8 @@ public class LdapUtils {
         if (StringUtils.isBlank(l.getSearchFilter())) {
             throw new IllegalArgumentException("User filter cannot be empty/blank for authenticated/anonymous authentication");
         }
-        final PooledConnectionFactory connectionFactoryForSearch = newLdaptivePooledConnectionFactory(l);
-        final PooledSearchDnResolver resolver = new PooledSearchDnResolver();
+        final var connectionFactoryForSearch = newLdaptivePooledConnectionFactory(l);
+        final var resolver = new PooledSearchDnResolver();
         resolver.setBaseDn(l.getBaseDn());
         resolver.setSubtreeSearch(l.isSubtreeSearch());
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
@@ -654,8 +654,8 @@ public class LdapUtils {
         if (StringUtils.isBlank(l.getDnFormat())) {
             throw new IllegalArgumentException("Dn format cannot be empty/blank for direct bind authentication");
         }
-        final FormatDnResolver resolver = new FormatDnResolver(l.getDnFormat());
-        final Authenticator authenticator = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
+        final var resolver = new FormatDnResolver(l.getDnFormat());
+        final var authenticator = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
 
         if (l.isEnhanceWithEntryResolver()) {
             authenticator.setEntryResolver(newLdaptiveSearchEntryResolver(l, newLdaptivePooledConnectionFactory(l)));
@@ -667,8 +667,8 @@ public class LdapUtils {
         if (StringUtils.isBlank(l.getDnFormat())) {
             throw new IllegalArgumentException("Dn format cannot be empty/blank for active directory authentication");
         }
-        final FormatDnResolver resolver = new FormatDnResolver(l.getDnFormat());
-        final Authenticator authn = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
+        final var resolver = new FormatDnResolver(l.getDnFormat());
+        final var authn = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
 
         if (l.isEnhanceWithEntryResolver()) {
             authn.setEntryResolver(newLdaptiveSearchEntryResolver(l, newLdaptivePooledConnectionFactory(l)));
@@ -678,14 +678,14 @@ public class LdapUtils {
 
     private static PooledBindAuthenticationHandler getPooledBindAuthenticationHandler(final AbstractLdapAuthenticationProperties l,
                                                                                       final PooledConnectionFactory factory) {
-        final PooledBindAuthenticationHandler handler = new PooledBindAuthenticationHandler(factory);
+        final var handler = new PooledBindAuthenticationHandler(factory);
         handler.setAuthenticationControls(new PasswordPolicyControl());
         return handler;
     }
 
     private static PooledCompareAuthenticationHandler getPooledCompareAuthenticationHandler(final AbstractLdapAuthenticationProperties l,
                                                                                             final PooledConnectionFactory factory) {
-        final PooledCompareAuthenticationHandler handler = new PooledCompareAuthenticationHandler(factory);
+        final var handler = new PooledCompareAuthenticationHandler(factory);
         handler.setPasswordAttribute(l.getPrincipalAttributePassword());
         return handler;
     }
@@ -697,7 +697,7 @@ public class LdapUtils {
      * @return the pooled connection factory
      */
     public static PooledConnectionFactory newLdaptivePooledConnectionFactory(final AbstractLdapProperties l) {
-        final ConnectionPool cp = newLdaptiveBlockingConnectionPool(l);
+        final var cp = newLdaptiveBlockingConnectionPool(l);
         return new PooledConnectionFactory(cp);
     }
 
@@ -713,9 +713,9 @@ public class LdapUtils {
         }
 
         LOGGER.debug("Creating LDAP connection configuration for [{}]", l.getLdapUrl());
-        final ConnectionConfig cc = new ConnectionConfig();
+        final var cc = new ConnectionConfig();
 
-        final String urls = l.getLdapUrl().contains(" ")
+        final var urls = l.getLdapUrl().contains(" ")
                 ? l.getLdapUrl()
                 : Arrays.stream(l.getLdapUrl().split(",")).collect(Collectors.joining(" "));
         LOGGER.debug("Transformed LDAP urls from [{}] to [{}]", l.getLdapUrl(), urls);
@@ -727,7 +727,7 @@ public class LdapUtils {
         cc.setResponseTimeout(Beans.newDuration(l.getResponseTimeout()));
 
         if (StringUtils.isNotBlank(l.getConnectionStrategy())) {
-            final AbstractLdapProperties.LdapConnectionStrategy strategy =
+            final var strategy =
                     AbstractLdapProperties.LdapConnectionStrategy.valueOf(l.getConnectionStrategy());
             switch (strategy) {
                 case RANDOM:
@@ -751,13 +751,13 @@ public class LdapUtils {
 
         if (l.getTrustCertificates() != null) {
             LOGGER.debug("Creating LDAP SSL configuration via trust certificates [{}]", l.getTrustCertificates());
-            final X509CredentialConfig cfg = new X509CredentialConfig();
+            final var cfg = new X509CredentialConfig();
             cfg.setTrustCertificates(l.getTrustCertificates());
             cc.setSslConfig(new SslConfig(cfg));
 
         } else if (l.getKeystore() != null) {
             LOGGER.debug("Creating LDAP SSL configuration via keystore [{}]", l.getKeystore());
-            final KeyStoreCredentialConfig cfg = new KeyStoreCredentialConfig();
+            final var cfg = new KeyStoreCredentialConfig();
             cfg.setKeyStore(l.getKeystore());
             cfg.setKeyStorePassword(l.getKeystorePassword());
             cfg.setKeyStoreType(l.getKeystoreType());
@@ -769,7 +769,7 @@ public class LdapUtils {
         if (StringUtils.isNotBlank(l.getSaslMechanism())) {
             LOGGER.debug("Creating LDAP SASL mechanism via [{}]", l.getSaslMechanism());
 
-            final BindConnectionInitializer bc = new BindConnectionInitializer();
+            final var bc = new BindConnectionInitializer();
             final SaslConfig sc;
             switch (Mechanism.valueOf(l.getSaslMechanism())) {
                 case DIGEST_MD5:
@@ -818,7 +818,7 @@ public class LdapUtils {
      */
     public static PoolConfig newLdaptivePoolConfig(final AbstractLdapProperties l) {
         LOGGER.debug("Creating LDAP connection pool configuration for [{}]", l.getLdapUrl());
-        final PoolConfig pc = new PoolConfig();
+        final var pc = new PoolConfig();
         pc.setMinPoolSize(l.getMinPoolSize());
         pc.setMaxPoolSize(l.getMaxPoolSize());
         pc.setValidateOnCheckOut(l.isValidateOnCheckout());
@@ -836,8 +836,8 @@ public class LdapUtils {
      */
     public static DefaultConnectionFactory newLdaptiveConnectionFactory(final AbstractLdapProperties l) {
         LOGGER.debug("Creating LDAP connection factory for [{}]", l.getLdapUrl());
-        final ConnectionConfig cc = newLdaptiveConnectionConfig(l);
-        final DefaultConnectionFactory bindCf = new DefaultConnectionFactory(cc);
+        final var cc = newLdaptiveConnectionConfig(l);
+        final var bindCf = new DefaultConnectionFactory(cc);
         if (l.getProviderClass() != null) {
             try {
                 final Class clazz = ClassUtils.getClass(l.getProviderClass());
@@ -856,14 +856,14 @@ public class LdapUtils {
      * @return the connection pool
      */
     public static ConnectionPool newLdaptiveBlockingConnectionPool(final AbstractLdapProperties l) {
-        final DefaultConnectionFactory bindCf = newLdaptiveConnectionFactory(l);
-        final PoolConfig pc = newLdaptivePoolConfig(l);
-        final BlockingConnectionPool cp = new BlockingConnectionPool(pc, bindCf);
+        final var bindCf = newLdaptiveConnectionFactory(l);
+        final var pc = newLdaptivePoolConfig(l);
+        final var cp = new BlockingConnectionPool(pc, bindCf);
 
         cp.setBlockWaitTime(Beans.newDuration(l.getBlockWaitTime()));
         cp.setPoolConfig(pc);
 
-        final IdlePruneStrategy strategy = new IdlePruneStrategy();
+        final var strategy = new IdlePruneStrategy();
         strategy.setIdleTime(Beans.newDuration(l.getIdleTime()));
         strategy.setPrunePeriod(Beans.newDuration(l.getPrunePeriod()));
 
@@ -871,7 +871,7 @@ public class LdapUtils {
 
         switch (l.getValidator().getType().trim().toLowerCase()) {
             case "compare":
-                final CompareRequest compareRequest = new CompareRequest();
+                final var compareRequest = new CompareRequest();
                 compareRequest.setDn(l.getValidator().getDn());
                 compareRequest.setAttribute(new LdapAttribute(l.getValidator().getAttributeName(),
                         l.getValidator().getAttributeValues().toArray(new String[]{})));
@@ -883,7 +883,7 @@ public class LdapUtils {
                 break;
             case "search":
             default:
-                final SearchRequest searchRequest = new SearchRequest();
+                final var searchRequest = new SearchRequest();
                 searchRequest.setBaseDn(l.getValidator().getBaseDn());
                 searchRequest.setSearchFilter(new SearchFilter(l.getValidator().getSearchFilter()));
                 searchRequest.setReturnAttributes(ReturnAttributes.NONE.value());
@@ -897,7 +897,7 @@ public class LdapUtils {
         cp.setFailFastInitialize(l.isFailFast());
 
         if (StringUtils.isNotBlank(l.getPoolPassivator())) {
-            final AbstractLdapProperties.LdapConnectionPoolPassivator pass =
+            final var pass =
                     AbstractLdapProperties.LdapConnectionPoolPassivator.valueOf(l.getPoolPassivator().toUpperCase());
             switch (pass) {
                 case CLOSE:
@@ -906,7 +906,7 @@ public class LdapUtils {
                     break;
                 case BIND:
                     if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNoneBlank(l.getBindCredential())) {
-                        final BindRequest bindRequest = new BindRequest();
+                        final var bindRequest = new BindRequest();
                         bindRequest.setDn(l.getBindDn());
                         bindRequest.setCredential(new Credential(l.getBindCredential()));
                         cp.setPassivator(new BindPassivator(bindRequest));
@@ -948,7 +948,7 @@ public class LdapUtils {
             throw new IllegalArgumentException("To create a search entry resolver, user filter cannot be empty/blank");
         }
 
-        final PooledSearchEntryResolver entryResolver = new PooledSearchEntryResolver();
+        final var entryResolver = new PooledSearchEntryResolver();
         entryResolver.setBaseDn(l.getBaseDn());
         entryResolver.setUserFilter(l.getSearchFilter());
         entryResolver.setSubtreeSearch(l.isSubtreeSearch());
@@ -961,7 +961,7 @@ public class LdapUtils {
         l.getSearchEntryHandlers().forEach(h -> {
             switch (h.getType()) {
                 case CASE_CHANGE:
-                    final CaseChangeEntryHandler eh = new CaseChangeEntryHandler();
+                    final var eh = new CaseChangeEntryHandler();
                     eh.setAttributeNameCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getAttributeNameCaseChange()));
                     eh.setAttributeNames(h.getCasChange().getAttributeNames().toArray(new String[]{}));
                     eh.setAttributeValueCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getAttributeValueCaseChange()));
@@ -969,13 +969,13 @@ public class LdapUtils {
                     handlers.add(eh);
                     break;
                 case DN_ATTRIBUTE_ENTRY:
-                    final DnAttributeEntryHandler ehd = new DnAttributeEntryHandler();
+                    final var ehd = new DnAttributeEntryHandler();
                     ehd.setAddIfExists(h.getDnAttribute().isAddIfExists());
                     ehd.setDnAttributeName(h.getDnAttribute().getDnAttributeName());
                     handlers.add(ehd);
                     break;
                 case MERGE:
-                    final MergeAttributeEntryHandler ehm = new MergeAttributeEntryHandler();
+                    final var ehm = new MergeAttributeEntryHandler();
                     ehm.setAttributeNames(h.getMergeAttribute().getAttributeNames().toArray(new String[]{}));
                     ehm.setMergeAttributeName(h.getMergeAttribute().getMergeAttributeName());
                     handlers.add(ehm);
@@ -987,7 +987,7 @@ public class LdapUtils {
                     handlers.add(new ObjectSidHandler());
                     break;
                 case PRIMARY_GROUP:
-                    final PrimaryGroupIdHandler ehp = new PrimaryGroupIdHandler();
+                    final var ehp = new PrimaryGroupIdHandler();
                     ehp.setBaseDn(h.getPrimaryGroupId().getBaseDn());
                     ehp.setGroupFilter(h.getPrimaryGroupId().getGroupFilter());
                     handlers.add(ehp);

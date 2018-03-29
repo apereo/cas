@@ -145,8 +145,8 @@ public class CouchbaseClientFactory {
 
         LOGGER.debug("Running query [{}] on bucket [{}]", statement.toString(), getBucket().name());
 
-        final SimpleN1qlQuery query = N1qlQuery.simple(statement);
-        final N1qlQueryResult result = getBucket().query(query, timeout, TimeUnit.MILLISECONDS);
+        final var query = N1qlQuery.simple(statement);
+        final var result = getBucket().query(query, timeout, TimeUnit.MILLISECONDS);
         if (!result.finalSuccess()) {
             LOGGER.error("Couchbase query failed with [{}]", result.errors().stream().map(JsonObject::toString).collect(Collectors.joining(",")));
             throw new GeneralSecurityException("Could not locate account for user " + usernameValue);
@@ -176,8 +176,8 @@ public class CouchbaseClientFactory {
     private void createDesignDocumentAndViewIfNeeded() {
         if (this.views != null && this.designDocument != null) {
             LOGGER.debug("Ensure that indexes exist in bucket [{}]", this.bucket.name());
-            final BucketManager bucketManager = this.bucket.bucketManager();
-            final DesignDocument newDocument = DesignDocument.create(this.designDocument, new ArrayList<>(views));
+            final var bucketManager = this.bucket.bucketManager();
+            final var newDocument = DesignDocument.create(this.designDocument, new ArrayList<>(views));
             try {
                 if (!newDocument.equals(bucketManager.getDesignDocument(this.designDocument))) {
                     LOGGER.warn("Missing indexes in bucket [{}] for document [{}]", this.bucket.name(), this.designDocument);

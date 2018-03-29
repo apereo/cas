@@ -27,7 +27,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseIn
 
     @Override
     public OneTimeTokenAccount create(final String username) {
-        final GoogleAuthenticatorKey key = this.googleAuthenticator.createCredentials();
+        final var key = this.googleAuthenticator.createCredentials();
         return new GoogleAuthenticatorAccount(username, key.getKey(), key.getVerificationCode(), key.getScratchCodes());
     }
 }

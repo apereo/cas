@@ -56,7 +56,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
         }
         credentials.setUserProfile(profile);
         credentials.setTypedIdUsed(isTypedIdUsed);
-        final Principal principal = this.principalFactory.createPrincipal(id, new LinkedHashMap<>(profile.getAttributes()));
+        final var principal = this.principalFactory.createPrincipal(id, new LinkedHashMap<>(profile.getAttributes()));
         LOGGER.debug("Constructed authenticated principal [{}] based on user profile [{}]", principal, profile);
         return createHandlerResult(credentials, principal, new ArrayList<>(0));
     }

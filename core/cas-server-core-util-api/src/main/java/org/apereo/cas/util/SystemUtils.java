@@ -37,7 +37,7 @@ public class SystemUtils {
      * @return the system info
      */
     public static Map<String, Object> getSystemInfo() {
-        final Properties properties = System.getProperties();
+        final var properties = System.getProperties();
 
         final Map<String, Object> info = new LinkedHashMap<>();
         info.put("CAS Version", StringUtils.defaultString(CasVersion.getVersion(), "Not Available"));
@@ -50,7 +50,7 @@ public class SystemUtils {
         info.put("Java Vendor", properties.get("java.vendor"));
         info.put("Java Version", properties.get("java.version"));
 
-        final Runtime runtime = Runtime.getRuntime();
+        final var runtime = Runtime.getRuntime();
         info.put("JVM Free Memory", FileUtils.byteCountToDisplaySize(runtime.freeMemory()));
         info.put("JVM Maximum Memory", FileUtils.byteCountToDisplaySize(runtime.maxMemory()));
         info.put("JVM Total Memory", FileUtils.byteCountToDisplaySize(runtime.totalMemory()));
@@ -69,35 +69,35 @@ public class SystemUtils {
 
     @SneakyThrows
     private static void injectUpdateInfoIntoBannerIfNeeded(final Map<String, Object> info) {
-        final Properties properties = System.getProperties();
+        final var properties = System.getProperties();
         if (!properties.containsKey("CAS_UPDATE_CHECK_ENABLED")) {
             return;
         }
 
-        final URL url = new URL(UPDATE_CHECK_MAVEN_URL);
-        final Map results = MAPPER.readValue(url, Map.class);
+        final var url = new URL(UPDATE_CHECK_MAVEN_URL);
+        final var results = MAPPER.readValue(url, Map.class);
         if (!results.containsKey("response")) {
             return;
         }
-        final Map response = (Map) results.get("response");
+        final var response = (Map) results.get("response");
         if (!response.containsKey("numFound") && (int) response.get("numFound") != 1) {
             return;
         }
 
-        final List docs = (List) response.get("docs");
+        final var docs = (List) response.get("docs");
         if (docs.isEmpty()) {
             return;
         }
 
-        final Map entry = (Map) docs.get(0);
-        final String latestVersion = (String) entry.get("latestVersion");
+        final var entry = (Map) docs.get(0);
+        final var latestVersion = (String) entry.get("latestVersion");
         if (StringUtils.isNotBlank(latestVersion)) {
-            final String currentVersion = CasVersion.getVersion();
-            final Semver latestSem = new Semver(latestVersion);
-            final Semver currentSem = new Semver(currentVersion);
+            final var currentVersion = CasVersion.getVersion();
+            final var latestSem = new Semver(latestVersion);
+            final var currentSem = new Semver(currentVersion);
 
             if (currentSem.isLowerThan(latestSem)) {
-                final String updateString = String.format("[Latest Version: %s / Stable: %s]", latestVersion,
+                final var updateString = String.format("[Latest Version: %s / Stable: %s]", latestVersion,
                     StringUtils.capitalize(BooleanUtils.toStringYesNo(latestSem.isStable())));
                 info.put("Update Availability", updateString);
             }

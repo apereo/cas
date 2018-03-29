@@ -35,13 +35,13 @@ public abstract class BaseInMemoryOneTimeTokenCredentialRepository extends BaseO
     public void save(final String userName, final String secretKey,
                      final int validationCode,
                      final List<Integer> scratchCodes) {
-        final OneTimeTokenAccount account = new OneTimeTokenAccount(userName, secretKey, validationCode, scratchCodes);
+        final var account = new OneTimeTokenAccount(userName, secretKey, validationCode, scratchCodes);
         update(account);
     }
 
     @Override
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
-        final OneTimeTokenAccount encoded = encode(account);
+        final var encoded = encode(account);
         this.accounts.put(account.getUsername(), encoded);
         return encoded;
     }

@@ -52,11 +52,11 @@ public class SamlIdPMetadataController {
     @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_METADATA)
     public void generateMetadataForIdp(final HttpServletResponse response) throws IOException {
         this.metadataAndCertificatesGenerationService.generate();
-        final InputStream md = this.samlIdPMetadataLocator.getMetadata().getInputStream();
-        final String contents = IOUtils.toString(md, StandardCharsets.UTF_8);
+        final var md = this.samlIdPMetadataLocator.getMetadata().getInputStream();
+        final var contents = IOUtils.toString(md, StandardCharsets.UTF_8);
         response.setContentType(CONTENT_TYPE);
         response.setStatus(HttpServletResponse.SC_OK);
-        try (PrintWriter writer = response.getWriter()) {
+        try (var writer = response.getWriter()) {
             LOGGER.debug("Producing metadata for the response");
             writer.write(contents);
             writer.flush();

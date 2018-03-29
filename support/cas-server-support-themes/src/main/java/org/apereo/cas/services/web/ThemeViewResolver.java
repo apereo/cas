@@ -38,19 +38,19 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
 
     @Override
     protected View loadView(final String viewName, final Locale locale) throws Exception {
-        final View view = delegate.resolveViewName(viewName, locale);
+        final var view = delegate.resolveViewName(viewName, locale);
         if (view instanceof AbstractThymeleafView) {
-            final AbstractThymeleafView thymeleafView = (AbstractThymeleafView) view;
+            final var thymeleafView = (AbstractThymeleafView) view;
             configureTemplateThemeDefaultLocation(thymeleafView);
         }
         return view;
     }
 
     private void configureTemplateThemeDefaultLocation(final AbstractThymeleafView thymeleafView) {
-        final String baseTemplateName = thymeleafView.getTemplateName();
-        final String templateName = theme + "/" + baseTemplateName;
-        final String path = thymeleafProperties.getPrefix().concat(templateName).concat(thymeleafProperties.getSuffix());
-        final TemplateLocation location = new TemplateLocation(path);
+        final var baseTemplateName = thymeleafView.getTemplateName();
+        final var templateName = theme + "/" + baseTemplateName;
+        final var path = thymeleafProperties.getPrefix().concat(templateName).concat(thymeleafProperties.getSuffix());
+        final var location = new TemplateLocation(path);
         if (location.exists(getApplicationContext())) {
             thymeleafView.setTemplateName(templateName);
         }
@@ -79,7 +79,7 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
 
         @Override
         public ThemeViewResolver create(final String theme) {
-            final ThemeViewResolver resolver = new ThemeViewResolver(delegate, thymeleafProperties, casProperties, theme);
+            final var resolver = new ThemeViewResolver(delegate, thymeleafProperties, casProperties, theme);
             resolver.setApplicationContext(applicationContext);
             resolver.setCache(thymeleafProperties.isCache());
             return resolver;

@@ -29,9 +29,9 @@ public class OAuth20ClientAuthenticator implements Authenticator<UsernamePasswor
             throws CredentialsException {
         LOGGER.debug("Authenticating credential [{}]", credentials);
         
-        final String id = credentials.getUsername();
-        final String secret = credentials.getPassword();
-        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
+        final var id = credentials.getUsername();
+        final var secret = credentials.getPassword();
+        final var registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
 
         if (!this.validator.checkServiceValid(registeredService)) {
             throw new CredentialsException("Service invalid for client identifier: " + id);
@@ -41,7 +41,7 @@ public class OAuth20ClientAuthenticator implements Authenticator<UsernamePasswor
             throw new CredentialsException("Bad secret for client identifier: " + id);
         }
 
-        final OAuthClientProfile profile = new OAuthClientProfile();
+        final var profile = new OAuthClientProfile();
         profile.setId(id);
         credentials.setUserProfile(profile);
         LOGGER.debug("Authenticated user profile [{}]", profile);

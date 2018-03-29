@@ -37,12 +37,12 @@ public class GenericSuccessViewAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         if (StringUtils.isNotBlank(this.redirectUrl)) {
-            final Service service = this.serviceFactory.createService(this.redirectUrl);
-            final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+            final var service = this.serviceFactory.createService(this.redirectUrl);
+            final var registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             requestContext.getExternalContext().requestExternalRedirect(service.getId());
         } else {
-            final String tgt = WebUtils.getTicketGrantingTicketId(requestContext);
+            final var tgt = WebUtils.getTicketGrantingTicketId(requestContext);
             WebUtils.putPrincipal(requestContext, getAuthenticationPrincipal(tgt));
         }
         return success();
@@ -57,7 +57,7 @@ public class GenericSuccessViewAction extends AbstractAction {
      */
     public Principal getAuthenticationPrincipal(final String ticketGrantingTicketId) {
         try {
-            final TicketGrantingTicket ticketGrantingTicket = this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+            final var ticketGrantingTicket = this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
             return ticketGrantingTicket.getAuthentication().getPrincipal();
         } catch (final InvalidTicketException e) {
             LOGGER.warn("Ticket-granting ticket [{}] cannot be found in the ticket registry.", e.getMessage());

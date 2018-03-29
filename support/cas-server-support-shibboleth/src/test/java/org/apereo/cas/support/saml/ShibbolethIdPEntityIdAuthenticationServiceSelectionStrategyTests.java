@@ -39,7 +39,7 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     @Test
     public void verifyServiceNotFound() {
         final Service svc = RegisteredServiceTestUtils.getService("https://www.example.org?param1=value1");
-        final Service result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
+        final var result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
         assertEquals(svc.getId(), result.getId());
         assertFalse(shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.supports(svc));
     }
@@ -47,16 +47,16 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     @Test
     public void verifyServiceFound() {
         final Service svc = RegisteredServiceTestUtils.getService("https://www.example.org?entityId=https://idp.example.org");
-        final Service result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
+        final var result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
         assertEquals("https://idp.example.org", result.getId());
     }
 
     @Test
     public void verifyServiceFoundEncoded() {
-        final String serviceUrl = "https%3A%2F%2Fidp.example.com%2Fidp%2FAuthn%2FExtCas%3Fconversation%3De1s1&entityId=https%3A%2F%2Fservice.example.com";
+        final var serviceUrl = "https%3A%2F%2Fidp.example.com%2Fidp%2FAuthn%2FExtCas%3Fconversation%3De1s1&entityId=https%3A%2F%2Fservice.example.com";
         final Service svc = RegisteredServiceTestUtils.getService(
             "https://cas.example.com/login?service=" + serviceUrl);
-        final Service result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
+        final var result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
         assertEquals("https://service.example.com", result.getId());
     }
 

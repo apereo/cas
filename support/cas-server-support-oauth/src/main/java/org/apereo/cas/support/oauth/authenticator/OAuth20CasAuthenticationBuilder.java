@@ -99,18 +99,18 @@ public class OAuth20CasAuthenticationBuilder {
                                 final J2EContext context,
                                 final Service service) {
 
-        final Map<String, Object> profileAttributes = getPrincipalAttributesFromProfile(profile);
-        final Principal newPrincipal = this.principalFactory.createPrincipal(profile.getId(), profileAttributes);
+        final var profileAttributes = getPrincipalAttributesFromProfile(profile);
+        final var newPrincipal = this.principalFactory.createPrincipal(profile.getId(), profileAttributes);
         LOGGER.debug("Created final principal [{}] after filtering attributes based on [{}]", newPrincipal, registeredService);
 
-        final String authenticator = profile.getClass().getCanonicalName();
+        final var authenticator = profile.getClass().getCanonicalName();
         final CredentialMetaData metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(profile.getId()));
         final AuthenticationHandlerExecutionResult handlerResult =
             new DefaultAuthenticationHandlerExecutionResult(authenticator, metadata, newPrincipal, new ArrayList<>());
-        final Set<Object> scopes = CollectionUtils.toCollection(context.getRequest().getParameterValues(OAuth20Constants.SCOPE));
+        final var scopes = CollectionUtils.toCollection(context.getRequest().getParameterValues(OAuth20Constants.SCOPE));
 
-        final String state = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.STATE), StringUtils.EMPTY);
-        final String nonce = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.NONCE), StringUtils.EMPTY);
+        final var state = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.STATE), StringUtils.EMPTY);
+        final var nonce = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.NONCE), StringUtils.EMPTY);
         LOGGER.debug("OAuth [{}] is [{}], and [{}] is [{}]", OAuth20Constants.STATE, state, OAuth20Constants.NONCE, nonce);
 
         /*
@@ -118,7 +118,7 @@ public class OAuth20CasAuthenticationBuilder {
          * happily serializes to json but is unable to deserialize.
          * We have to of it to HashSet to avoid such problem
          */
-        final AuthenticationBuilder bldr = DefaultAuthenticationBuilder.newInstance()
+        final var bldr = DefaultAuthenticationBuilder.newInstance()
                 .addAttribute("permissions", new HashSet<>(profile.getPermissions()))
                 .addAttribute("roles", new HashSet<>(profile.getRoles()))
                 .addAttribute("scopes", scopes)

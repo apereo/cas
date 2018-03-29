@@ -33,7 +33,7 @@ public class RestMultifactorAuthenticationTrustConfiguration {
     @RefreshScope
     @Bean
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
-        final RestMultifactorAuthenticationTrustStorage m =
+        final var m =
                 new RestMultifactorAuthenticationTrustStorage(
                         casProperties.getAuthn().getMfa().getTrusted().getRest().getEndpoint());
         m.setCipherExecutor(this.mfaTrustCipherExecutor);

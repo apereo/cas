@@ -78,7 +78,7 @@ public class CasThemesConfiguration {
 
     @Bean
     public ViewResolver registeredServiceViewResolver() {
-        final ThemeBasedViewResolver resolver = new ThemeBasedViewResolver(themeResolver(), themeViewResolverFactory());
+        final var resolver = new ThemeBasedViewResolver(themeResolver(), themeViewResolverFactory());
         resolver.setOrder(thymeleafViewResolver.getOrder() - 1);
         return resolver;
     }
@@ -86,7 +86,7 @@ public class CasThemesConfiguration {
     @ConditionalOnMissingBean(name = "themeViewResolverFactory")
     @Bean
     public ThemeViewResolverFactory themeViewResolverFactory() {
-        final ThemeViewResolver.Factory factory = new ThemeViewResolver.Factory(nonCachingThymeleafViewResolver(), thymeleafProperties, casProperties);
+        final var factory = new ThemeViewResolver.Factory(nonCachingThymeleafViewResolver(), thymeleafProperties, casProperties);
         factory.setApplicationContext(applicationContext);
         return factory;
     }
@@ -105,16 +105,16 @@ public class CasThemesConfiguration {
     @ConditionalOnMissingBean(name = "themeResolver")
     @Bean
     public ThemeResolver themeResolver() {
-        final String defaultThemeName = casProperties.getTheme().getDefaultThemeName();
+        final var defaultThemeName = casProperties.getTheme().getDefaultThemeName();
 
-        final FixedThemeResolver fixedResolver = new FixedThemeResolver();
+        final var fixedResolver = new FixedThemeResolver();
         fixedResolver.setDefaultThemeName(defaultThemeName);
 
-        final SessionThemeResolver sessionThemeResolver = new SessionThemeResolver();
+        final var sessionThemeResolver = new SessionThemeResolver();
         sessionThemeResolver.setDefaultThemeName(defaultThemeName);
 
-        final TicketGrantingCookieProperties tgc = casProperties.getTgc();
-        final CookieThemeResolver cookieThemeResolver = new CookieThemeResolver();
+        final var tgc = casProperties.getTgc();
+        final var cookieThemeResolver = new CookieThemeResolver();
         cookieThemeResolver.setDefaultThemeName(defaultThemeName);
         cookieThemeResolver.setCookieDomain(tgc.getDomain());
         cookieThemeResolver.setCookieHttpOnly(tgc.isHttpOnly());
@@ -122,15 +122,15 @@ public class CasThemesConfiguration {
         cookieThemeResolver.setCookiePath(tgc.getPath());
         cookieThemeResolver.setCookieSecure(tgc.isSecure());
 
-        final RegisteredServiceThemeResolver serviceThemeResolver = new RegisteredServiceThemeResolver(servicesManager,
+        final var serviceThemeResolver = new RegisteredServiceThemeResolver(servicesManager,
             serviceThemeResolverSupportedBrowsers(), authenticationRequestServiceSelectionStrategies,
             this.resourceLoader, new CasConfigurationProperties());
         serviceThemeResolver.setDefaultThemeName(defaultThemeName);
 
-        final RequestHeaderThemeResolver header = new RequestHeaderThemeResolver();
+        final var header = new RequestHeaderThemeResolver();
         header.setDefaultThemeName(defaultThemeName);
 
-        final ChainingThemeResolver chainingThemeResolver = new ChainingThemeResolver();
+        final var chainingThemeResolver = new ChainingThemeResolver();
         chainingThemeResolver.addResolver(cookieThemeResolver)
             .addResolver(sessionThemeResolver)
             .addResolver(header)
@@ -141,7 +141,7 @@ public class CasThemesConfiguration {
     }
 
     private ThymeleafViewResolver nonCachingThymeleafViewResolver() {
-        final ThymeleafViewResolver r = new ThymeleafViewResolver();
+        final var r = new ThymeleafViewResolver();
 
         r.setAlwaysProcessRedirectAndForward(this.thymeleafViewResolver.getAlwaysProcessRedirectAndForward());
         r.setApplicationContext(this.thymeleafViewResolver.getApplicationContext());
@@ -155,7 +155,7 @@ public class CasThemesConfiguration {
         r.setStaticVariables(this.thymeleafViewResolver.getStaticVariables());
         r.setForceContentType(this.thymeleafViewResolver.getForceContentType());
 
-        final SpringTemplateEngine engine = SpringTemplateEngine.class.cast(this.thymeleafViewResolver.getTemplateEngine());
+        final var engine = SpringTemplateEngine.class.cast(this.thymeleafViewResolver.getTemplateEngine());
         engine.addDialect(new IPostProcessorDialect() {
             @Override
             public int getDialectPostProcessorPrecedence() {

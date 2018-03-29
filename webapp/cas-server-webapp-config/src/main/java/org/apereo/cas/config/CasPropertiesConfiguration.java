@@ -30,8 +30,8 @@ public class CasPropertiesConfiguration {
      */
     @PostConstruct
     public void init() {
-        final Properties sysProps = System.getProperties();
-        final Properties properties = new Properties();
+        final var sysProps = System.getProperties();
+        final var properties = new Properties();
         if (CasVersion.getVersion() != null) {
             properties.put("info.cas.version", CasVersion.getVersion());
         }
@@ -39,7 +39,7 @@ public class CasPropertiesConfiguration {
         properties.put("info.cas.java.home", sysProps.get("java.home"));
         properties.put("info.cas.java.vendor", sysProps.get("java.vendor"));
         properties.put("info.cas.java.version", sysProps.get("java.version"));
-        final PropertiesPropertySource src = new PropertiesPropertySource(CasVersion.class.getName(), properties);
+        final var src = new PropertiesPropertySource(CasVersion.class.getName(), properties);
         this.environment.getPropertySources().addFirst(src);
     }
 }

@@ -77,23 +77,23 @@ public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSam
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML1_SOAP_ARTIFACT_RESOLUTION)
     protected void handlePostRequest(final HttpServletResponse response,
                                      final HttpServletRequest request) {
-        final MessageContext ctx = decodeSoapRequest(request);
-        final ArtifactResolve artifactMsg = (ArtifactResolve) ctx.getMessage();
+        final var ctx = decodeSoapRequest(request);
+        final var artifactMsg = (ArtifactResolve) ctx.getMessage();
         try {
-            final String issuer = artifactMsg.getIssuer().getValue();
-            final SamlRegisteredService service = verifySamlRegisteredService(issuer);
-            final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor = getSamlMetadataFacadeFor(service, artifactMsg);
+            final var issuer = artifactMsg.getIssuer().getValue();
+            final var service = verifySamlRegisteredService(issuer);
+            final var adaptor = getSamlMetadataFacadeFor(service, artifactMsg);
             if (!adaptor.isPresent()) {
                 throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
             }
-            final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
+            final var facade = adaptor.get();
             verifyAuthenticationContextSignature(ctx, request, artifactMsg, facade);
-            final String artifactId = artifactMsg.getArtifact().getArtifact();
-            final String ticketId = artifactTicketFactory.createTicketIdFor(artifactId);
-            final SamlArtifactTicket ticket = this.ticketRegistry.getTicket(ticketId, SamlArtifactTicket.class);
+            final var artifactId = artifactMsg.getArtifact().getArtifact();
+            final var ticketId = artifactTicketFactory.createTicketIdFor(artifactId);
+            final var ticket = this.ticketRegistry.getTicket(ticketId, SamlArtifactTicket.class);
 
             final Service issuerService = webApplicationServiceFactory.createService(issuer);
-            final Assertion casAssertion = buildCasAssertion(ticket.getTicketGrantingTicket().getAuthentication(),
+            final var casAssertion = buildCasAssertion(ticket.getTicketGrantingTicket().getAuthentication(),
                     issuerService, service,
                     CollectionUtils.wrap("artifact", ticket));
             this.responseBuilder.build(artifactMsg, request, response, casAssertion,

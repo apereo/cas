@@ -75,22 +75,22 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
      * @since 4.1.0
      */
     protected boolean isRequestAskingForServiceTicket(final RequestContext context) {
-        final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
+        final var ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         LOGGER.debug("Located ticket-granting ticket [{}] from the request context", ticketGrantingTicketId);
 
         final Service service = WebUtils.getService(context);
         LOGGER.debug("Located service [{}] from the request context", service);
 
-        final String renewParam = casProperties.getSso().isRenewAuthnEnabled()
+        final var renewParam = casProperties.getSso().isRenewAuthnEnabled()
             ? context.getRequestParameters().get(CasProtocolConstants.PARAMETER_RENEW)
             : StringUtils.EMPTY;
         LOGGER.debug("Provided value for [{}] request parameter is [{}]", CasProtocolConstants.PARAMETER_RENEW, renewParam);
 
         if (StringUtils.isNotBlank(ticketGrantingTicketId) && service != null) {
-            final Authentication authn = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);
+            final var authn = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);
             if (StringUtils.isNotBlank(renewParam)) {
                 LOGGER.debug("Request identifies itself as one asking for service tickets. Checking for authentication context validity...");
-                final boolean validAuthn = authn != null;
+                final var validAuthn = authn != null;
                 if (validAuthn) {
                     LOGGER.debug("Existing authentication context linked to ticket-granting ticket [{}] is valid. "
                         + "CAS should begin to issue service tickets for [{}] once credentials are renewed", ticketGrantingTicketId, service);
@@ -116,29 +116,29 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
      * @since 4.1.0
      */
     protected Event grantServiceTicket(final RequestContext context) {
-        final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
-        final Credential credential = getCredentialFromContext(context);
+        final var ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
+        final var credential = getCredentialFromContext(context);
 
         try {
             final Service service = WebUtils.getService(context);
-            final Authentication authn = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);
-            final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+            final var authn = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);
+            final var registeredService = this.servicesManager.findServiceBy(service);
 
             if (authn != null && registeredService != null) {
                 LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
 
-                final AuditableContext audit = AuditableContext.builder().service(service)
+                final var audit = AuditableContext.builder().service(service)
                     .authentication(authn)
                     .registeredService(registeredService)
                     .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                     .build();
-                final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+                final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
                 accessResult.throwExceptionIfNeeded();
             }
 
-            final AuthenticationResult authenticationResult =
+            final var authenticationResult =
                 this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
-            final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, authenticationResult);
+            final var serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, authenticationResult);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             WebUtils.putWarnCookieIfRequestParameterPresent(this.warnCookieGenerator, context);
             return newEvent(CasWebflowConstants.TRANSITION_ID_WARN);

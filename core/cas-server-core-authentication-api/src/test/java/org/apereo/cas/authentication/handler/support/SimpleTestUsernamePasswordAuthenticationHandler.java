@@ -66,10 +66,10 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
                                                                                         final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
-        final String username = credential.getUsername();
-        final String password = credential.getPassword();
+        final var username = credential.getUsername();
+        final var password = credential.getPassword();
 
-        final Exception exception = this.usernameErrorMap.get(username);
+        final var exception = this.usernameErrorMap.get(username);
         if (exception instanceof GeneralSecurityException) {
             throw (GeneralSecurityException) exception;
         }

@@ -55,7 +55,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     public MultifactorAuthenticationProvider radiusAuthenticationProvider() {
-        final RadiusMultifactorAuthenticationProvider p = new RadiusMultifactorAuthenticationProvider(radiusTokenServers());
+        final var p = new RadiusMultifactorAuthenticationProvider(radiusTokenServers());
         p.setBypassEvaluator(radiusBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getRadius().getRank());
@@ -73,14 +73,14 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public List<RadiusServer> radiusTokenServers() {
         final List<RadiusServer> list = new ArrayList<>();
-        final RadiusClientProperties client = casProperties.getAuthn().getMfa().getRadius().getClient();
-        final RadiusServerProperties server = casProperties.getAuthn().getMfa().getRadius().getServer();
+        final var client = casProperties.getAuthn().getMfa().getRadius().getClient();
+        final var server = casProperties.getAuthn().getMfa().getRadius().getServer();
 
-        final RadiusClientFactory factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(), client.getSocketTimeout(),
+        final var factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(), client.getSocketTimeout(),
                 client.getInetAddress(), client.getSharedSecret());
 
-        final RadiusProtocol protocol = RadiusProtocol.valueOf(server.getProtocol());
-        final JRadiusServerImpl impl = new JRadiusServerImpl(protocol, factory, server.getRetries(),
+        final var protocol = RadiusProtocol.valueOf(server.getProtocol());
+        final var impl = new JRadiusServerImpl(protocol, factory, server.getRetries(),
                 server.getNasIpAddress(), server.getNasIpv6Address(),
                 server.getNasPort(), server.getNasPortId(), server.getNasIdentifier(), server.getNasRealPort());
 
@@ -97,7 +97,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     public RadiusTokenAuthenticationHandler radiusTokenAuthenticationHandler() {
-        final RadiusMultifactorProperties radius = casProperties.getAuthn().getMfa().getRadius();
+        final var radius = casProperties.getAuthn().getMfa().getRadius();
         return new RadiusTokenAuthenticationHandler(radius.getName(), servicesManager, radiusTokenPrincipalFactory(), radiusTokenServers(),
                 radius.isFailoverOnException(), radius.isFailoverOnAuthenticationFailure());
     }
@@ -105,7 +105,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator() {
-        final String attribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        final var attribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(attribute, radiusTokenAuthenticationHandler(), radiusAuthenticationProvider());
     }
 

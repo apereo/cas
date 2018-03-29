@@ -29,28 +29,28 @@ public class ServiceAuthorizationCheck extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext context) {
-        final WebApplicationService serviceInContext = WebUtils.getService(context);
-        final Service service = authenticationRequestServiceSelectionStrategies.resolveService(serviceInContext);
+        final var serviceInContext = WebUtils.getService(context);
+        final var service = authenticationRequestServiceSelectionStrategies.resolveService(serviceInContext);
         if (service == null) {
             return success();
         }
 
         if (this.servicesManager.getAllServices().isEmpty()) {
-            final String msg = String.format("No service definitions are found in the service manager. "
+            final var msg = String.format("No service definitions are found in the service manager. "
                     + "Service [%s] will not be automatically authorized to request authentication.", service.getId());
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_EMPTY_SVC_MGMR, msg);
         }
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        final var registeredService = this.servicesManager.findServiceBy(service);
 
         if (registeredService == null) {
-            final String msg = String.format("Service Management: missing service. "
+            final var msg = String.format("Service Management: missing service. "
                     + "Service [%s] is not found in service registry.", service.getId());
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            final String msg = String.format("Service Management: Unauthorized Service Access. "
+            final var msg = String.format("Service Management: Unauthorized Service Access. "
                     + "Service [%s] is not allowed access via the service registry.", service.getId());
 
             LOGGER.warn(msg);

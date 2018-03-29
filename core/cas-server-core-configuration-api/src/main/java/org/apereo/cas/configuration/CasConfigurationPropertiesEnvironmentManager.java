@@ -63,10 +63,10 @@ public class CasConfigurationPropertiesEnvironmentManager {
      */
     @SneakyThrows
     public void savePropertyForStandaloneProfile(final Pair<String, String> pair) {
-        final File file = getStandaloneProfileConfigurationDirectory();
-        final Parameters params = new Parameters();
+        final var file = getStandaloneProfileConfigurationDirectory();
+        final var params = new Parameters();
 
-        final FileBasedConfigurationBuilder<FileBasedConfiguration> builder =
+        final var builder =
             new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
                 .configure(params.properties().setFile(new File(file, getApplicationName() + ".properties")));
 
@@ -93,12 +93,12 @@ public class CasConfigurationPropertiesEnvironmentManager {
     public static void rebindCasConfigurationProperties(@NonNull final ConfigurationPropertiesBindingPostProcessor binder,
                                                         final ApplicationContext applicationContext) {
 
-        final Map<String, CasConfigurationProperties> map = applicationContext.getBeansOfType(CasConfigurationProperties.class);
-        final String name = map.keySet().iterator().next();
+        final var map = applicationContext.getBeansOfType(CasConfigurationProperties.class);
+        final var name = map.keySet().iterator().next();
         LOGGER.debug("Reloading CAS configuration via [{}]", name);
-        final Object e = applicationContext.getBean(name);
+        final var e = applicationContext.getBean(name);
         binder.postProcessBeforeInitialization(e, name);
-        final Object bean = applicationContext.getAutowireCapableBeanFactory().initializeBean(e, name);
+        final var bean = applicationContext.getAutowireCapableBeanFactory().initializeBean(e, name);
         applicationContext.getAutowireCapableBeanFactory().autowireBean(bean);
         LOGGER.debug("Reloaded CAS configuration [{}]", name);
     }

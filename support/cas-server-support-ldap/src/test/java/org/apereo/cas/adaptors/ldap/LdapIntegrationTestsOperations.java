@@ -30,11 +30,11 @@ public class LdapIntegrationTestsOperations {
      */
     public static synchronized void initDirectoryServer(final InputStream ldifFile, final int port) {
         try {
-            final InMemoryTestLdapDirectoryServer directory = DIRECTORY_MAP.get(port);
-            final boolean createInstance = directory == null || !directory.isAlive();
+            final var directory = DIRECTORY_MAP.get(port);
+            final var createInstance = directory == null || !directory.isAlive();
             if (createInstance) {
-                final ClassPathResource properties = new ClassPathResource("ldapserver.properties");
-                final ClassPathResource schema = new ClassPathResource("schema/standard-ldap.schema");
+                final var properties = new ClassPathResource("ldapserver.properties");
+                final var schema = new ClassPathResource("schema/standard-ldap.schema");
                 DIRECTORY_MAP.put(port, new InMemoryTestLdapDirectoryServer(properties.getInputStream(), ldifFile, schema.getInputStream(), port));
             }
         } catch (final Exception e) {

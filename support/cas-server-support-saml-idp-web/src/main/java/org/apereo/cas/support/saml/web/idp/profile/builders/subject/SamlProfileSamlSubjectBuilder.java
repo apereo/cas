@@ -60,18 +60,18 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                  final String binding) throws SamlException {
 
-        final Assertion assertion = Assertion.class.cast(casAssertion);
-        final ZonedDateTime validFromDate = ZonedDateTime.ofInstant(assertion.getValidFromDate().toInstant(), ZoneOffset.UTC);
+        final var assertion = Assertion.class.cast(casAssertion);
+        final var validFromDate = ZonedDateTime.ofInstant(assertion.getValidFromDate().toInstant(), ZoneOffset.UTC);
         LOGGER.debug("Locating the assertion consumer service url for binding [{}]", binding);
         @NonNull
-        final AssertionConsumerService acs = adaptor.getAssertionConsumerService(binding);
-        final String location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
+        final var acs = adaptor.getAssertionConsumerService(binding);
+        final var location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
         if (StringUtils.isBlank(location)) {
             LOGGER.warn("Subject recipient is not defined from either authentication request or metadata for [{}]", adaptor.getEntityId());
         }
 
-        final NameID nameId = getNameIdForService(request, response, authnRequest, service, adaptor, binding, assertion);
-        final Subject subject = newSubject(nameId,
+        final var nameId = getNameIdForService(request, response, authnRequest, service, adaptor, binding, assertion);
+        final var subject = newSubject(nameId,
             service.isSkipGeneratingSubjectConfirmationRecipient() ? null : location,
             service.isSkipGeneratingSubjectConfirmationNotOnOrAfter() ? null : validFromDate.plusSeconds(this.skewAllowance),
             service.isSkipGeneratingSubjectConfirmationInResponseTo() ? null : authnRequest.getID(),

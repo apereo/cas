@@ -49,7 +49,7 @@ public class DigestAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler digestAuthenticationHandler() {
-        final DigestProperties digest = casProperties.getAuthn().getDigest();
+        final var digest = casProperties.getAuthn().getDigest();
         return new DigestAuthenticationHandler(digest.getName(), servicesManager, digestAuthenticationPrincipalFactory());
     }
 

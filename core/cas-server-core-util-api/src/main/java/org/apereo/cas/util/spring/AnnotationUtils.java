@@ -47,14 +47,14 @@ public class AnnotationUtils {
     public static List<String> getBeansWithAnnotation(final ConfigurableApplicationContext applicationContext,
                                                       final Class<? extends Annotation> type, final Predicate<Map<String, Object>> attributeFilter) {
         final List<String> result = new ArrayList<>();
-        final ConfigurableListableBeanFactory factory = applicationContext.getBeanFactory();
-        for (final String name : factory.getBeanDefinitionNames()) {
-            final BeanDefinition bd = factory.getBeanDefinition(name);
+        final var factory = applicationContext.getBeanFactory();
+        for (final var name : factory.getBeanDefinitionNames()) {
+            final var bd = factory.getBeanDefinition(name);
 
             if (bd.getSource() instanceof StandardMethodMetadata) {
-                final StandardMethodMetadata metadata = (StandardMethodMetadata) bd.getSource();
+                final var metadata = (StandardMethodMetadata) bd.getSource();
 
-                final Map<String, Object> attributes = metadata.getAnnotationAttributes(type.getName());
+                final var attributes = metadata.getAnnotationAttributes(type.getName());
                 if (null == attributes) {
                     continue;
                 }

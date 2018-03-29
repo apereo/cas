@@ -35,16 +35,16 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
     @Override
     protected WebApplicationService buildInternal(final WebApplicationService service,
                                                   final Map<String, String> parameters) {
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        final var registeredService = this.servicesManager.findServiceBy(service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-        final boolean tokenAsResponse = RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService);
+        final var tokenAsResponse = RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService);
 
         if (!tokenAsResponse) {
             return super.buildInternal(service, parameters);
         }
 
-        final String jwt = generateToken(service, parameters);
-        final TokenWebApplicationService jwtService = new TokenWebApplicationService(service.getId(), service.getOriginalUrl(), service.getArtifactId());
+        final var jwt = generateToken(service, parameters);
+        final var jwtService = new TokenWebApplicationService(service.getId(), service.getOriginalUrl(), service.getArtifactId());
         jwtService.setFormat(service.getFormat());
         jwtService.setLoggedOutAlready(service.isLoggedOutAlready());
         parameters.put(CasProtocolConstants.PARAMETER_TICKET, jwt);
@@ -60,7 +60,7 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
      */
     @SneakyThrows
     protected String generateToken(final Service service, final Map<String, String> parameters) {
-        final String ticketId = parameters.get(CasProtocolConstants.PARAMETER_TICKET);
+        final var ticketId = parameters.get(CasProtocolConstants.PARAMETER_TICKET);
         return this.tokenTicketBuilder.build(ticketId, service);
     }
 }

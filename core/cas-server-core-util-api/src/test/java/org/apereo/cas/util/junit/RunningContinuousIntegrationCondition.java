@@ -9,8 +9,8 @@ package org.apereo.cas.util.junit;
 public class RunningContinuousIntegrationCondition implements IgnoreCondition {
     @Override
     public boolean isSatisfied() {
-        final String sysProp = System.getProperty("CI", Boolean.FALSE.toString());
-        final String envProp = System.getenv("CI");
+        final var sysProp = System.getProperty("CI", Boolean.FALSE.toString());
+        final var envProp = System.getenv("CI");
         return "true".equals(sysProp) || "true".equals(envProp);
     }
 }

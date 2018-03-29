@@ -61,23 +61,23 @@ public class GenerateServiceTicketAction extends AbstractAction {
         final Service service = WebUtils.getService(context);
         LOGGER.debug("Service asking for service ticket is [{}]", service);
 
-        final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
+        final var ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
         LOGGER.debug("Ticket-granting ticket found in the context is [{}]", ticketGrantingTicket);
 
         try {
-            final Authentication authentication = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
+            final var authentication = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
             if (authentication == null) {
                 throw new InvalidTicketException(new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket), ticketGrantingTicket);
             }
 
-            final Service selectedService = authenticationRequestServiceSelectionStrategies.resolveService(service);
-            final RegisteredService registeredService = servicesManager.findServiceBy(selectedService);
+            final var selectedService = authenticationRequestServiceSelectionStrategies.resolveService(service);
+            final var registeredService = servicesManager.findServiceBy(selectedService);
             LOGGER.debug("Registered service asking for service ticket is [{}]", registeredService);
             WebUtils.putRegisteredService(context, registeredService);
             WebUtils.putService(context, service);
 
             if (registeredService != null) {
-                final URI url = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl();
+                final var url = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl();
                 if (url != null) {
                     LOGGER.debug("Registered service may redirect to [{}] for unauthorized access requests", url);
                 }
@@ -88,12 +88,12 @@ public class GenerateServiceTicketAction extends AbstractAction {
                 return result(CasWebflowConstants.STATE_ID_WARN);
             }
 
-            final Credential credential = WebUtils.getCredential(context);
-            final AuthenticationResultBuilder builder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
-            final AuthenticationResult authenticationResult = builder.build(service);
+            final var credential = WebUtils.getCredential(context);
+            final var builder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
+            final var authenticationResult = builder.build(service);
 
             LOGGER.debug("Built the final authentication result [{}] to grant service ticket to [{}]", authenticationResult, service);
-            final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
+            final var serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             LOGGER.debug("Granted service ticket [{}] and added it to the request scope", serviceTicketId);
             return success();

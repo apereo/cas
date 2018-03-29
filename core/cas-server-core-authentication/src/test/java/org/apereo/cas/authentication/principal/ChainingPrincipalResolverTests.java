@@ -26,41 +26,41 @@ public class ChainingPrincipalResolverTests {
 
     @Test
     public void examineSupports() {
-        final Credential credential = mock(Credential.class);
+        final var credential = mock(Credential.class);
         when(credential.getId()).thenReturn("a");
 
-        final PrincipalResolver resolver1 = mock(PrincipalResolver.class);
+        final var resolver1 = mock(PrincipalResolver.class);
         when(resolver1.supports(eq(credential))).thenReturn(true);
 
-        final PrincipalResolver resolver2 = mock(PrincipalResolver.class);
+        final var resolver2 = mock(PrincipalResolver.class);
         when(resolver2.supports(eq(credential))).thenReturn(false);
 
-        final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
+        final var resolver = new ChainingPrincipalResolver();
         resolver.setChain(Arrays.asList(resolver1, resolver2));
         assertTrue(resolver.supports(credential));
     }
 
     @Test
     public void examineResolve() {
-        final Principal principalOut = principalFactory.createPrincipal("output");
-        final Credential credential = mock(Credential.class);
+        final var principalOut = principalFactory.createPrincipal("output");
+        final var credential = mock(Credential.class);
         when(credential.getId()).thenReturn("input");
 
-        final PrincipalResolver resolver1 = mock(PrincipalResolver.class);
+        final var resolver1 = mock(PrincipalResolver.class);
         when(resolver1.supports(eq(credential))).thenReturn(true);
         when(resolver1.resolve(eq(credential), any(Principal.class),
                 any(AuthenticationHandler.class)))
                 .thenReturn(principalOut);
 
-        final PrincipalResolver resolver2 = mock(PrincipalResolver.class);
+        final var resolver2 = mock(PrincipalResolver.class);
         when(resolver2.supports(any(Credential.class))).thenReturn(true);
         when(resolver2.resolve(any(Credential.class), any(Principal.class),
                 any(AuthenticationHandler.class)))
                 .thenReturn(principalFactory.createPrincipal("output", Collections.singletonMap("mail", "final@example.com")));
 
-        final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
+        final var resolver = new ChainingPrincipalResolver();
         resolver.setChain(Arrays.asList(resolver1, resolver2));
-        final Principal principal = resolver.resolve(credential,
+        final var principal = resolver.resolve(credential,
                 principalOut, 
                 new SimpleTestUsernamePasswordAuthenticationHandler());
         assertEquals("output", principal.getId());

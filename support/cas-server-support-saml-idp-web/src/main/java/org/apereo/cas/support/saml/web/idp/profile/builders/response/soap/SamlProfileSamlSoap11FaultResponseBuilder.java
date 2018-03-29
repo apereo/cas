@@ -55,26 +55,26 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
                           final SamlRegisteredService service,
                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                           final String binding) throws SamlException {
-        final Header header = newSoapObject(Header.class);
+        final var header = newSoapObject(Header.class);
 
-        final Body body = newSoapObject(Body.class);
-        final Fault fault = newSoapObject(Fault.class);
+        final var body = newSoapObject(Body.class);
+        final var fault = newSoapObject(Fault.class);
 
-        final FaultCode faultCode = newSoapObject(FaultCode.class);
+        final var faultCode = newSoapObject(FaultCode.class);
         faultCode.setValue(FaultCode.SERVER);
         fault.setCode(faultCode);
 
-        final FaultActor faultActor = newSoapObject(FaultActor.class);
+        final var faultActor = newSoapObject(FaultActor.class);
         faultActor.setValue(SamlIdPUtils.getIssuerFromSamlRequest(authnRequest));
         fault.setActor(faultActor);
 
-        final FaultString faultString = newSoapObject(FaultString.class);
+        final var faultString = newSoapObject(FaultString.class);
         faultString.setValue(request.getAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR).toString());
         fault.setMessage(faultString);
 
         body.getUnknownXMLObjects().add(fault);
 
-        final Envelope envelope = newSoapObject(Envelope.class);
+        final var envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
         encodeFinalResponse(request, response, service, adaptor, envelope, binding, authnRequest, casAssertion);

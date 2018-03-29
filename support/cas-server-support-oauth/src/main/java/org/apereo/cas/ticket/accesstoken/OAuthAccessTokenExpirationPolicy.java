@@ -47,7 +47,7 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        final boolean expired = isAccessTokenExpired(ticketState);
+        final var expired = isAccessTokenExpired(ticketState);
         if (!expired) {
             return super.isExpired(ticketState);
         }
@@ -72,10 +72,10 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
      */
     @JsonIgnore
     protected boolean isAccessTokenExpired(final TicketState ticketState) {
-        final ZonedDateTime currentSystemTime = ZonedDateTime.now(ZoneOffset.UTC);
-        final ZonedDateTime creationTime = ticketState.getCreationTime();
+        final var currentSystemTime = ZonedDateTime.now(ZoneOffset.UTC);
+        final var creationTime = ticketState.getCreationTime();
         // token has been used, check maxTimeToLive (hard window)
-        ZonedDateTime expirationTime = creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
+        var expirationTime = creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
         if (currentSystemTime.isAfter(expirationTime)) {
             LOGGER.debug("Access token is expired because the time since creation is greater than maxTimeToLiveInSeconds");
             return true;

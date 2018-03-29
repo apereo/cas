@@ -110,17 +110,17 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             LOGGER.debug("Setting kerberos system property [{}] to [{}]", SYS_PROP_KRB5_REALM, this.kerberosRealmSystemProperty);
             System.setProperty(SYS_PROP_KRB5_REALM, this.kerberosRealmSystemProperty);
         }
-        final String username = credential.getUsername();
-        final String password = credential.getPassword();
+        final var username = credential.getUsername();
+        final var password = credential.getPassword();
         Principal principal = null;
-        final LoginContext lc = new LoginContext(this.realm, new UsernamePasswordCallbackHandler(username, password));
+        final var lc = new LoginContext(this.realm, new UsernamePasswordCallbackHandler(username, password));
         try {
             LOGGER.debug("Attempting authentication for: [{}]", username);
             lc.login();
-            final Set<java.security.Principal> principals = lc.getSubject().getPrincipals();
+            final var principals = lc.getSubject().getPrincipals();
             LOGGER.debug("JAAS principals extracted from subject are [{}}", principals);
             if (principals != null && !principals.isEmpty()) {
-                final java.security.Principal secPrincipal = principals.iterator().next();
+                final var secPrincipal = principals.iterator().next();
                 LOGGER.debug("JAAS principal detected from subject login context is [{}}", secPrincipal.getName());
                 principal = this.principalFactory.createPrincipal(secPrincipal.getName());
             }

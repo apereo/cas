@@ -27,15 +27,15 @@ public class DisplayUserGraphicsBeforeAuthenticationAction extends AbstractActio
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final String username = requestContext.getRequestParameters().get("username");
+        final var username = requestContext.getRequestParameters().get("username");
         if (StringUtils.isBlank(username)) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
-        final ByteSource graphics = repository.getGraphics(username);
+        final var graphics = repository.getGraphics(username);
         if (graphics == null || graphics.isEmpty()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
-        final byte[] image = EncodingUtils.encodeBase64ToByteArray(graphics.read());
+        final var image = EncodingUtils.encodeBase64ToByteArray(graphics.read());
         requestContext.getFlowScope().put("guaUsername", username);
         requestContext.getFlowScope().put("guaUserImage", new String(image, StandardCharsets.UTF_8));
         return success();

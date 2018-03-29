@@ -44,7 +44,7 @@ public class CasAddonsRegisteredServicesJsonSerializer extends DefaultRegistered
             final Iterator<Map> it = servicesMap.get(SERVICES_KEY).iterator();
             while (it.hasNext()) {
                 final Map<?, ?> record = it.next();
-                final RegisteredService svc = convertServiceProperties(record);
+                final var svc = convertServiceProperties(record);
                 LOGGER.debug("Loaded service [{}] from legacy syntax", svc);
                 results.add(svc);
             }
@@ -54,7 +54,7 @@ public class CasAddonsRegisteredServicesJsonSerializer extends DefaultRegistered
                     + "Future CAS version may decide to entirely ignore the legacy syntax altogether.", 
                     results.size());
             results.forEach(Unchecked.consumer(s -> {
-                final File fileName = new File(FileUtils.getTempDirectory(), s.getName() + "-" + s.getId() + ".json");
+                final var fileName = new File(FileUtils.getTempDirectory(), s.getName() + "-" + s.getId() + ".json");
                 to(fileName, s);
                 LOGGER.warn("Converted legacy service definition for [{}] may be reviewed at [{}]", s.getServiceId(), fileName);
             }));
@@ -65,7 +65,7 @@ public class CasAddonsRegisteredServicesJsonSerializer extends DefaultRegistered
     }
 
     private RegisteredService convertServiceProperties(final Map serviceDataMap) {
-        final RegexRegisteredService service = new RegexRegisteredService();
+        final var service = new RegexRegisteredService();
         
         service.setId(Long.parseLong(serviceDataMap.get("id").toString()));
         service.setName(serviceDataMap.get("name").toString());
@@ -74,10 +74,10 @@ public class CasAddonsRegisteredServicesJsonSerializer extends DefaultRegistered
         service.setTheme(serviceDataMap.getOrDefault("theme", StringUtils.EMPTY).toString());
         service.setEvaluationOrder(Integer.parseInt(serviceDataMap.getOrDefault("evaluationOrder", Integer.MAX_VALUE).toString()));
 
-        final boolean allowedProxy = Boolean.parseBoolean(serviceDataMap.getOrDefault("allowedToProxy", Boolean.FALSE).toString());
-        final boolean enabled = Boolean.parseBoolean(serviceDataMap.getOrDefault("enabled", Boolean.TRUE).toString());
-        final boolean ssoEnabled = Boolean.parseBoolean(serviceDataMap.getOrDefault("ssoEnabled", Boolean.TRUE).toString());
-        final boolean anonymousAccess = Boolean.parseBoolean(serviceDataMap.getOrDefault("anonymousAccess", Boolean.TRUE).toString());
+        final var allowedProxy = Boolean.parseBoolean(serviceDataMap.getOrDefault("allowedToProxy", Boolean.FALSE).toString());
+        final var enabled = Boolean.parseBoolean(serviceDataMap.getOrDefault("enabled", Boolean.TRUE).toString());
+        final var ssoEnabled = Boolean.parseBoolean(serviceDataMap.getOrDefault("ssoEnabled", Boolean.TRUE).toString());
+        final var anonymousAccess = Boolean.parseBoolean(serviceDataMap.getOrDefault("anonymousAccess", Boolean.TRUE).toString());
 
         if (allowedProxy) {
             service.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(".+"));
@@ -86,7 +86,7 @@ public class CasAddonsRegisteredServicesJsonSerializer extends DefaultRegistered
         if (anonymousAccess) {
             service.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider());
         }
-        final List<String> attributes = (List<String>) serviceDataMap.getOrDefault("allowedAttributes", new ArrayList<>());
+        final var attributes = (List<String>) serviceDataMap.getOrDefault("allowedAttributes", new ArrayList<>());
         service.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(attributes));
         return service;
     }

@@ -39,8 +39,8 @@ public class CasJdbcThrottlingConfiguration {
     @Bean
     @RefreshScope
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailManager) {
-        final ThrottleProperties throttle = casProperties.getAuthn().getThrottle();
-        final ThrottleProperties.Failure failure = throttle.getFailure();
+        final var throttle = casProperties.getAuthn().getThrottle();
+        final var failure = throttle.getFailure();
         return new JdbcThrottledSubmissionHandlerInterceptorAdapter(failure.getThreshold(),
             failure.getRangeSeconds(),
             throttle.getUsernameParameter(),

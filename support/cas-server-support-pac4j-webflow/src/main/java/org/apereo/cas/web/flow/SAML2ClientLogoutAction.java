@@ -45,13 +45,13 @@ public class SAML2ClientLogoutAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         try {
-            final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-            final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
+            final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+            final var context = Pac4jUtils.getPac4jJ2EContext(request, response);
 
             Client<?, ?> client;
             try {
-                final String currentClientName = findCurrentClientName(context);
+                final var currentClientName = findCurrentClientName(context);
                 client = (currentClientName == null) ? null : clients.findClient(currentClientName);
             } catch (final TechnicalException e) {
                 LOGGER.debug("No SAML2 client found: " + e.getMessage(), e);
@@ -59,9 +59,9 @@ public class SAML2ClientLogoutAction extends AbstractAction {
             }
 
             if (client instanceof SAML2Client) {
-                final SAML2Client saml2Client = (SAML2Client) client;
+                final var saml2Client = (SAML2Client) client;
                 LOGGER.debug("Located SAML2 client [{}]", saml2Client);
-                final RedirectAction action = saml2Client.getLogoutAction(context, null, null);
+                final var action = saml2Client.getLogoutAction(context, null, null);
                 LOGGER.debug("Preparing logout message to send is [{}]", action.getLocation());
                 action.perform(context);
             } else {

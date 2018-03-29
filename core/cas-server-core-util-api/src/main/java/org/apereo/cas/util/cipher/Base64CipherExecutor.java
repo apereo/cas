@@ -40,7 +40,7 @@ public class Base64CipherExecutor extends AbstractCipherExecutor<Serializable, S
 
     @Override
     public String decode(final Serializable value) {
-        final byte[] decoded = EncodingUtils.decodeBase64(value.toString());
+        final var decoded = EncodingUtils.decodeBase64(value.toString());
         return new String(decoded, StandardCharsets.UTF_8);
     }
 }

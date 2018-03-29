@@ -33,9 +33,9 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
     @Override
     public GoogleAuthenticatorToken get(final String uid, final Integer otp) {
         try {
-            final Query query = new Query();
+            final var query = new Query();
             query.addCriteria(Criteria.where("userId").is(uid).and("token").is(otp));
-            final GoogleAuthenticatorToken r = this.mongoTemplate.findOne(query, GoogleAuthenticatorToken.class, this.collectionName);
+            final var r = this.mongoTemplate.findOne(query, GoogleAuthenticatorToken.class, this.collectionName);
             return r;
         } catch (final NoResultException e) {
             LOGGER.debug("No record could be found for google authenticator id [{}]", uid);
@@ -46,7 +46,7 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
     @Override
     protected void cleanInternal() {
         try {
-            final Query query = new Query();
+            final var query = new Query();
             query.addCriteria(Criteria.where("issuedDateTime").gte(LocalDateTime.now().minusSeconds(this.expireTokensInSeconds)));
             this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {

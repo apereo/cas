@@ -81,7 +81,7 @@ public class DefaultPrincipalAttributesRepositoryTests {
 
     @Test
     public void checkInitialAttributes() {
-        final Principal p = this.principalFactory.createPrincipal("uid", Collections.singletonMap("mail", "final@example.com"));
+        final var p = this.principalFactory.createPrincipal("uid", Collections.singletonMap("mail", "final@example.com"));
         final PrincipalAttributesRepository rep = new DefaultPrincipalAttributesRepository();
         assertEquals(1, rep.getAttributes(p).size());
         assertTrue(rep.getAttributes(p).containsKey("mail"));

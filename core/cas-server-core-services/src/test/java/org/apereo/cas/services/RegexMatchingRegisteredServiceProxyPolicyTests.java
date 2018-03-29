@@ -22,7 +22,7 @@ public class RegexMatchingRegisteredServiceProxyPolicyTests {
 
     @Test
     public void verifySerializeARegexMatchingRegisteredServiceProxyPolicyToJson() throws IOException {
-        final RegexMatchingRegisteredServiceProxyPolicy policyWritten = new RegexMatchingRegisteredServiceProxyPolicy("pattern");
+        final var policyWritten = new RegexMatchingRegisteredServiceProxyPolicy("pattern");
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
 

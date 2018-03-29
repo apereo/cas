@@ -31,10 +31,10 @@ public class SamlAuthenticationMetaDataPopulatorTests {
 
     @Test
     public void verifyAuthenticationTypeFound() {
-        final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
-        final AuthenticationBuilder builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        final var credentials = new UsernamePasswordCredential();
+        final var builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         this.populator.populateAttributes(builder, AuthenticationTransaction.of(credentials));
-        final Authentication auth = builder.build();
+        final var auth = builder.build();
 
         assertEquals(SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_PASSWORD,
             auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
@@ -42,26 +42,26 @@ public class SamlAuthenticationMetaDataPopulatorTests {
 
     @Test
     public void verifyAuthenticationTypeNotFound() {
-        final CustomCredential credentials = new CustomCredential();
-        final AuthenticationBuilder builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        final var credentials = new CustomCredential();
+        final var builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         this.populator.populateAttributes(builder, AuthenticationTransaction.of(credentials));
-        final Authentication auth = builder.build();
+        final var auth = builder.build();
 
         assertNull(auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
     }
 
     @Test
     public void verifyAuthenticationTypeFoundCustom() {
-        final CustomCredential credentials = new CustomCredential();
+        final var credentials = new CustomCredential();
 
         final Map<String, String> added = new HashMap<>();
         added.put(CustomCredential.class.getName(), "FF");
 
         this.populator.setUserDefinedMappings(added);
 
-        final AuthenticationBuilder builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        final var builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         this.populator.populateAttributes(builder, AuthenticationTransaction.of(credentials));
-        final Authentication auth = builder.build();
+        final var auth = builder.build();
 
         assertEquals(
             "FF",

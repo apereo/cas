@@ -32,7 +32,7 @@ public class Scim1Provisioner implements ScimProvisioner {
                             final Scim1PrincipalAttributeMapper mapper) {
         this.mapper = mapper;
 
-        final URI uri = URI.create(target);
+        final var uri = URI.create(target);
         final SCIMService scimService;
 
         if (StringUtils.isNotBlank(oauthToken)) {
@@ -47,13 +47,13 @@ public class Scim1Provisioner implements ScimProvisioner {
     @Override
     public boolean create(final Principal p, final UsernamePasswordCredential credential) {
         try {
-            final Resources<UserResource> resources = endpoint.query("userName eq \"" + p.getId() + "\"");
+            final var resources = endpoint.query("userName eq \"" + p.getId() + "\"");
             if (resources.getItemsPerPage() == 0) {
                 LOGGER.debug("User [{}] not found", p.getId());
                 return false;
             }
 
-            final UserResource user = resources.iterator().next();
+            final var user = resources.iterator().next();
             if (user != null) {
                 return updateUserResource(user, p, credential);
             }
@@ -65,7 +65,7 @@ public class Scim1Provisioner implements ScimProvisioner {
     }
 
     private boolean createUserResource(final Principal p, final UsernamePasswordCredential credential) throws Exception {
-        final UserResource user = new UserResource(CoreSchema.USER_DESCRIPTOR);
+        final var user = new UserResource(CoreSchema.USER_DESCRIPTOR);
         this.mapper.map(user, p, credential);
         return endpoint.create(user) != null;
     }

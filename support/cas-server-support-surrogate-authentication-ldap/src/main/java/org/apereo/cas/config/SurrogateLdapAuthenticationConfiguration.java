@@ -38,7 +38,7 @@ public class SurrogateLdapAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public SurrogateAuthenticationService surrogateAuthenticationService() {
-        final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
+        final var su = casProperties.getAuthn().getSurrogate();
         LOGGER.debug("Using LDAP [{}] with baseDn [{}] to locate surrogate accounts",
                 su.getLdap().getLdapUrl(), su.getLdap().getBaseDn());
         final ConnectionFactory factory = LdapUtils.newLdaptivePooledConnectionFactory(su.getLdap());

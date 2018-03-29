@@ -36,7 +36,7 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
                                         final String failureMsg) {
 
         if (subTypeId.contains("org.jasig.")) {
-            final String newTypeName = subTypeId.replaceAll("jasig", "apereo");
+            final var newTypeName = subTypeId.replaceAll("jasig", "apereo");
             LOGGER.warn("Found legacy CAS JSON definition type identified as [{}]. "
                     + "While CAS will attempt to convert the legacy definition to [{}] for the time being, "
                     + "the definition SHOULD manually be upgraded to the new supported syntax",
@@ -51,19 +51,19 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
     public boolean handleUnknownProperty(final DeserializationContext ctxt, final JsonParser p,
                                          final JsonDeserializer<?> deserializer,
                                          final Object beanOrClass, final String propertyName) throws IOException {
-        boolean handled = false;
+        var handled = false;
         if (beanOrClass instanceof CachingPrincipalAttributesRepository) {
-            final CachingPrincipalAttributesRepository repo = CachingPrincipalAttributesRepository.class.cast(beanOrClass);
+            final var repo = CachingPrincipalAttributesRepository.class.cast(beanOrClass);
             switch (propertyName) {
                 case "duration":
-                    for (int i = 1; i <= TOKEN_COUNT_DURATION; i++) {
+                    for (var i = 1; i <= TOKEN_COUNT_DURATION; i++) {
                         p.nextToken();
                     }
-                    final String timeUnit = p.getText();
-                    for (int i = 1; i <= TOKEN_COUNT_EXPIRATION; i++) {
+                    final var timeUnit = p.getText();
+                    for (var i = 1; i <= TOKEN_COUNT_EXPIRATION; i++) {
                         p.nextToken();
                     }
-                    final int expiration = p.getValueAsInt();
+                    final var expiration = p.getValueAsInt();
 
                     repo.setTimeUnit(timeUnit);
                     repo.setExpiration(expiration);

@@ -50,11 +50,11 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
-        final C credentials = convertToPac4jCredentials((I) credential);
+        final var credentials = convertToPac4jCredentials((I) credential);
         LOGGER.debug("credentials: [{}]", credentials);
         try {
             @NonNull
-            final Authenticator authenticator = getAuthenticator(credential);
+            final var authenticator = getAuthenticator(credential);
             if (authenticator instanceof InitializableObject) {
                 ((InitializableObject) authenticator).init();
             }

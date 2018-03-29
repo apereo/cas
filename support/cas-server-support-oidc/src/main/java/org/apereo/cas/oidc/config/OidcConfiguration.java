@@ -268,7 +268,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
 
     @Bean
     public HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor() {
-        final String clients = Stream.of(
+        final var clients = Stream.of(
             Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
             Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
             Authenticators.CAS_OAUTH_CLIENT_USER_FORM).collect(Collectors.joining(","));
@@ -277,7 +277,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
 
     @Bean
     public HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor() {
-        final String name = oauthSecConfig.getClients().findClient(CasClient.class).getName();
+        final var name = oauthSecConfig.getClients().findClient(CasClient.class).getName();
         return new OidcSecurityInterceptor(oauthSecConfig, name, oidcAuthorizationRequestSupport());
     }
 
@@ -314,7 +314,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
 
     @Bean
     public OidcAttributeToScopeClaimMapper oidcAttributeToScopeClaimMapper() {
-        final Map<String, String> mappings = casProperties.getAuthn().getOidc().getClaimsMap();
+        final var mappings = casProperties.getAuthn().getOidc().getClaimsMap();
         return new DefaultOidcAttributeToScopeClaimMapper(mappings);
     }
 
@@ -445,7 +445,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer oidcWebflowConfigurer() {
-        final OidcWebflowConfigurer cfg = new OidcWebflowConfigurer(flowBuilderServices,
+        final var cfg = new OidcWebflowConfigurer(flowBuilderServices,
             loginFlowDefinitionRegistry, oidcRegisteredServiceUIAction(), applicationContext, casProperties);
         cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
         return cfg;
@@ -459,7 +459,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
 
     @Bean
     public OidcIdTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
-        final OidcProperties oidc = casProperties.getAuthn().getOidc();
+        final var oidc = casProperties.getAuthn().getOidc();
         return new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
             oidc.getIssuer());
@@ -467,8 +467,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
 
     @Bean
     public LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCache() {
-        final OidcProperties oidc = casProperties.getAuthn().getOidc();
-        final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> cache =
+        final var oidc = casProperties.getAuthn().getOidc();
+        final var cache =
             Caffeine.newBuilder().maximumSize(1)
                 .expireAfterWrite(oidc.getJwksCacheInMinutes(), TimeUnit.MINUTES)
                 .build(oidcServiceJsonWebKeystoreCacheLoader());
@@ -477,8 +477,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
 
     @Bean
     public LoadingCache<String, Optional<RsaJsonWebKey>> oidcDefaultJsonWebKeystoreCache() {
-        final OidcProperties oidc = casProperties.getAuthn().getOidc();
-        final LoadingCache<String, Optional<RsaJsonWebKey>> cache =
+        final var oidc = casProperties.getAuthn().getOidc();
+        final var cache =
             Caffeine.newBuilder().maximumSize(1)
                 .expireAfterWrite(oidc.getJwksCacheInMinutes(), TimeUnit.MINUTES)
                 .build(oidcDefaultJsonWebKeystoreCacheLoader());
@@ -507,8 +507,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
 
     @Bean
     public HandlerInterceptorAdapter oauthInterceptor() {
-        final OidcProperties oidc = casProperties.getAuthn().getOidc();
-        final OidcConstants.DynamicClientRegistrationMode mode =
+        final var oidc = casProperties.getAuthn().getOidc();
+        final var mode =
             OidcConstants.DynamicClientRegistrationMode.valueOf(StringUtils.defaultIfBlank(
                 oidc.getDynamicClientRegistrationMode(),
                 OidcConstants.DynamicClientRegistrationMode.PROTECTED.name()));
@@ -522,7 +522,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @RefreshScope
     @Bean
     public Collection<BaseOidcScopeAttributeReleasePolicy> userDefinedScopeBasedAttributeReleasePolicies() {
-        final OidcProperties oidc = casProperties.getAuthn().getOidc();
+        final var oidc = casProperties.getAuthn().getOidc();
         return oidc.getUserDefinedScopes().entrySet()
             .stream()
             .map(k -> new OidcCustomScopeAttributeReleasePolicy(k.getKey(), CollectionUtils.wrapList(k.getValue().split(","))))

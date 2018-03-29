@@ -49,10 +49,10 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
                 return true;
             }
 
-            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSurrogateSearchFilter(), CollectionUtils.wrap(surrogate));
+            final var filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSurrogateSearchFilter(), CollectionUtils.wrap(surrogate));
             LOGGER.debug("Using search filter: [{}]", filter);
 
-            final Response<SearchResult> response = LdapUtils.executeSearchOperation(this.connectionFactory,
+            final var response = LdapUtils.executeSearchOperation(this.connectionFactory,
                     ldapProperties.getBaseDn(), filter);
             LOGGER.debug("LDAP response: [{}]", response);
             return LdapUtils.containsResultEntry(response);
@@ -66,10 +66,10 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
     public Collection<String> getEligibleAccountsForSurrogateToProxy(final String username) {
         final Collection<String> eligible = new LinkedHashSet<>();
         try {
-            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(), CollectionUtils.wrap(username));
+            final var filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(), CollectionUtils.wrap(username));
             LOGGER.debug("Using search filter: [{}]", filter);
 
-            final Response<SearchResult> response = LdapUtils.executeSearchOperation(this.connectionFactory,
+            final var response = LdapUtils.executeSearchOperation(this.connectionFactory,
                     ldapProperties.getBaseDn(), filter);
             LOGGER.debug("LDAP response: [{}]", response);
 
@@ -77,13 +77,13 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
                 return eligible;
             }
 
-            final LdapEntry ldapEntry = response.getResult().getEntry();
-            final LdapAttribute attribute = ldapEntry.getAttribute(ldapProperties.getMemberAttributeName());
+            final var ldapEntry = response.getResult().getEntry();
+            final var attribute = ldapEntry.getAttribute(ldapProperties.getMemberAttributeName());
             if (attribute == null || attribute.getStringValues().isEmpty()) {
                 return eligible;
             }
 
-            final Pattern pattern = RegexUtils.createPattern(ldapProperties.getMemberAttributeValueRegex());
+            final var pattern = RegexUtils.createPattern(ldapProperties.getMemberAttributeValueRegex());
             eligible.addAll(
                     attribute.getStringValues()
                             .stream()

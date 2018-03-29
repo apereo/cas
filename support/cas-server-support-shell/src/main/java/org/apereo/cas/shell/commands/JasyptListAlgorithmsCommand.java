@@ -39,14 +39,14 @@ public class JasyptListAlgorithmsCommand implements CommandMarker {
         } else {
             Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
         }
-        final Provider[] providers = Security.getProviders();
+        final var providers = Security.getProviders();
         LOGGER.info("Loaded providers: ");
-        for (final Provider provider : providers) {
+        for (final var provider : providers) {
             LOGGER.info("Provider: [{}] [{}]", provider.getName(), provider.getClass().getName());
         }
         final Set<String> pbeAlgos = AlgorithmRegistry.getAllPBEAlgorithms();
         LOGGER.info("==== JASYPT Password Based Encryption Algorithms ====\n");
-        for (final String pbeAlgo : pbeAlgos) {
+        for (final var pbeAlgo : pbeAlgos) {
             LOGGER.info(pbeAlgo);
         }
     }

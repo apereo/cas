@@ -160,14 +160,14 @@ public class MockWebServer {
 
         private void writeResponse(final Socket socket) throws IOException {
             LOGGER.debug("Socket response for resource [{}]", resource.getFilename());
-            final OutputStream out = socket.getOutputStream();
+            final var out = socket.getOutputStream();
             out.write(STATUS_LINE.getBytes(StandardCharsets.UTF_8));
             out.write(header("Content-Length", this.resource.contentLength()));
             out.write(header("Content-Type", this.contentType));
             out.write(SEPARATOR.getBytes(StandardCharsets.UTF_8));
 
-            final byte[] buffer = new byte[BUFFER_SIZE];
-            try (InputStream in = this.resource.getInputStream()) {
+            final var buffer = new byte[BUFFER_SIZE];
+            try (var in = this.resource.getInputStream()) {
                 int count;
                 while ((count = in.read(buffer)) > -1) {
                     out.write(buffer, 0, count);

@@ -95,7 +95,7 @@ public class CasRestConfiguration implements RestHttpRequestCredentialFactoryCon
     @Autowired
     public ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory(
         final List<ServiceTicketResourceEntityResponseFactoryConfigurer> configurers) {
-        final DefaultServiceTicketResourceEntityResponseFactoryPlan plan = new DefaultServiceTicketResourceEntityResponseFactoryPlan();
+        final var plan = new DefaultServiceTicketResourceEntityResponseFactoryPlan();
         configurers.forEach(c -> c.configureEntityResponseFactory(plan));
         return new CompositeServiceTicketResourceEntityResponseFactory(plan.getFactories());
     }
@@ -135,7 +135,7 @@ public class CasRestConfiguration implements RestHttpRequestCredentialFactoryCon
     @Autowired
     @Bean
     public RestHttpRequestCredentialFactory restHttpRequestCredentialFactory(final List<RestHttpRequestCredentialFactoryConfigurer> configurers) {
-        final ChainingRestHttpRequestCredentialFactory factory = new ChainingRestHttpRequestCredentialFactory();
+        final var factory = new ChainingRestHttpRequestCredentialFactory();
         configurers.forEach(c -> c.configureCredentialFactory(factory));
         return factory;
     }

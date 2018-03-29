@@ -64,8 +64,8 @@ public class CasRestAuthenticationConfiguration {
     @SneakyThrows
     public RestTemplate restAuthenticationTemplate() {
 
-        final URI casHost = new URI(casProperties.getServer().getName());
-        final HttpHost host = new HttpHost(casHost.getHost(), casHost.getPort(), casHost.getScheme());
+        final var casHost = new URI(casProperties.getServer().getName());
+        final var host = new HttpHost(casHost.getHost(), casHost.getPort(), casHost.getScheme());
         final ClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactoryBasicAuth(host);
         return new RestTemplate(factory);
 
@@ -87,8 +87,8 @@ public class CasRestAuthenticationConfiguration {
 
     @Bean
     public AuthenticationHandler restAuthenticationHandler() {
-        final RestAuthenticationProperties rest = casProperties.getAuthn().getRest();
-        final RestAuthenticationHandler r = new RestAuthenticationHandler(rest.getName(), restAuthenticationApi(),
+        final var rest = casProperties.getAuthn().getRest();
+        final var r = new RestAuthenticationHandler(rest.getName(), restAuthenticationApi(),
             servicesManager, restAuthenticationPrincipalFactory());
         r.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rest.getPasswordEncoder()));
         return r;
@@ -116,9 +116,9 @@ public class CasRestAuthenticationConfiguration {
 
         private HttpContext createHttpContext() {
             final AuthCache authCache = new BasicAuthCache();
-            final BasicScheme basicAuth = new BasicScheme();
+            final var basicAuth = new BasicScheme();
             authCache.put(host, basicAuth);
-            final BasicHttpContext localcontext = new BasicHttpContext();
+            final var localcontext = new BasicHttpContext();
             localcontext.setAttribute(HttpClientContext.AUTH_CACHE, authCache);
             return localcontext;
         }

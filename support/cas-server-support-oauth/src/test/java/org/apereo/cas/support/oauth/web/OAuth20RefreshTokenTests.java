@@ -27,24 +27,24 @@ public class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyTicketGrantingRemovalDoesNotRemoveAccessToken() throws Exception {
-        final OAuthRegisteredService service = addRegisteredService();
+        final var service = addRegisteredService();
         service.setGenerateRefreshToken(true);
         service.setJsonFormat(true);
 
-        final Pair<String, String> result = internalVerifyClientOK(service, true, true);
+        final var result = internalVerifyClientOK(service, true, true);
 
-        final AccessToken at = this.ticketRegistry.getTicket(result.getKey(), AccessToken.class);
+        final var at = this.ticketRegistry.getTicket(result.getKey(), AccessToken.class);
         assertNotNull(at);
         assertNotNull(at.getTicketGrantingTicket());
 
         this.ticketRegistry.deleteTicket(at.getTicketGrantingTicket().getId());
-        final AccessToken at2 = this.ticketRegistry.getTicket(at.getId(), AccessToken.class);
+        final var at2 = this.ticketRegistry.getTicket(at.getId(), AccessToken.class);
         assertNotNull(at2);
 
-        final RefreshToken rt = this.ticketRegistry.getTicket(result.getRight(), RefreshToken.class);
+        final var rt = this.ticketRegistry.getTicket(result.getRight(), RefreshToken.class);
         assertNotNull(rt);
 
-        final Pair<AccessToken, RefreshToken> result2 = internalVerifyRefreshTokenOk(service, true, rt, createPrincipal());
+        final var result2 = internalVerifyRefreshTokenOk(service, true, rt, createPrincipal());
         assertNotNull(result2.getKey());
     }
 

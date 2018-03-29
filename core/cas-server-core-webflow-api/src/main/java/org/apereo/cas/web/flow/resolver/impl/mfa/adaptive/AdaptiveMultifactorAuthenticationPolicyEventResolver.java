@@ -61,8 +61,8 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final RegisteredService service = resolveRegisteredServiceInRequestContext(context);
-        final Authentication authentication = WebUtils.getAuthentication(context);
+        final var service = resolveRegisteredServiceInRequestContext(context);
+        final var authentication = WebUtils.getAuthentication(context);
 
         if (service == null || authentication == null) {
             LOGGER.debug("No service or authentication is available to determine event for principal");
@@ -74,14 +74,14 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
             return null;
         }
         
-        final Map<String, MultifactorAuthenticationProvider> providerMap =
+        final var providerMap =
                 MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
         
-        final Set<Event> providerFound = checkRequireMultifactorProvidersForRequest(context, service, authentication);
+        final var providerFound = checkRequireMultifactorProvidersForRequest(context, service, authentication);
         if (providerFound != null && !providerFound.isEmpty()) {
             LOGGER.warn("Found multifactor authentication providers [{}] required for this authentication event", providerFound);
             return providerFound;
@@ -92,19 +92,19 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
 
     private Set<Event> checkRequireMultifactorProvidersForRequest(final RequestContext context, final RegisteredService service,
                                                                   final Authentication authentication) {
-        final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
-        final String clientIp = clientInfo.getClientIpAddress();
+        final var clientInfo = ClientInfoHolder.getClientInfo();
+        final var clientIp = clientInfo.getClientIpAddress();
         LOGGER.debug("Located client IP address as [{}]", clientIp);
 
-        final String agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext();
-        final Map<String, MultifactorAuthenticationProvider> providerMap =
+        final var agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext();
+        final var providerMap =
                 MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        final Set<Map.Entry<String, String>> entries = multifactorMap.entrySet();
+        final var entries = multifactorMap.entrySet();
         for (final Map.Entry entry : entries) {
-            final String mfaMethod = entry.getKey().toString();
-            final String pattern = entry.getValue().toString();
+            final var mfaMethod = entry.getKey().toString();
+            final var pattern = entry.getValue().toString();
 
-            final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, mfaMethod);
+            final var providerFound = resolveProvider(providerMap, mfaMethod);
 
             if (!providerFound.isPresent()) {
                 LOGGER.error("Adaptive authentication is configured to require [{}] for [{}], yet [{}] is absent in the configuration.",
@@ -125,10 +125,10 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
 
     private boolean checkRequestGeoLocation(final String clientIp, final String mfaMethod, final String pattern) {
         if (this.geoLocationService != null) {
-            final GeoLocationRequest location = WebUtils.getHttpServletRequestGeoLocationFromRequestContext();
-            final GeoLocationResponse loc = this.geoLocationService.locate(clientIp, location);
+            final var location = WebUtils.getHttpServletRequestGeoLocationFromRequestContext();
+            final var loc = this.geoLocationService.locate(clientIp, location);
             if (loc != null) {
-                final String address = loc.build();
+                final var address = loc.build();
                 if (address.matches(pattern)) {
                     LOGGER.debug("Current address [{}] at [{}] matches the provided pattern [{}] for "
                                     + "adaptive authentication and is required to use [{}]",
@@ -157,7 +157,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
         if (provider.isAvailable(service)) {
             LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
                     provider, service.getName());
-            final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
+            final var event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
                     buildEventAttributeMap(authentication.getPrincipal(), service, provider));
             return CollectionUtils.wrapSet(event);
         }

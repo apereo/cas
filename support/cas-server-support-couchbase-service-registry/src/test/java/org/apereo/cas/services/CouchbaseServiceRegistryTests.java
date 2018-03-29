@@ -43,18 +43,18 @@ public class CouchbaseServiceRegistryTests {
 
     @Before
     public void setUp() {
-        final List<RegisteredService> services = this.serviceRegistry.load();
+        final var services = this.serviceRegistry.load();
         services.forEach(service -> this.serviceRegistry.delete(service));
     }
 
     @Test
     public void verifySaveAndLoad() {
         final List<RegisteredService> list = new ArrayList<>();
-        for (int i = 0; i < LOAD_SIZE; i++) {
-            final RegisteredService svc = buildService(i);
+        for (var i = 0; i < LOAD_SIZE; i++) {
+            final var svc = buildService(i);
             list.add(svc);
             this.serviceRegistry.save(svc);
-            final RegisteredService svc2 = this.serviceRegistry.findServiceById(svc.getId());
+            final var svc2 = this.serviceRegistry.findServiceById(svc.getId());
             assertNotNull(svc2);
             this.serviceRegistry.delete(svc2);
         }
@@ -62,10 +62,10 @@ public class CouchbaseServiceRegistryTests {
     }
 
     private static RegisteredService buildService(final int i) {
-        final AbstractRegisteredService rs = RegisteredServiceTestUtils.getRegisteredService("^http://www.serviceid" + i + ".org");
+        final var rs = RegisteredServiceTestUtils.getRegisteredService("^http://www.serviceid" + i + ".org");
 
         final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
-        final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
+        final var property = new DefaultRegisteredServiceProperty();
         final Set<String> values = new HashSet<>();
         values.add("value1");
         values.add("value2");

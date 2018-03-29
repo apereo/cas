@@ -26,7 +26,7 @@ public class ServiceRegistryInitializer {
      * Init service registry if necessary.
      */
     public void initServiceRegistryIfNecessary() {
-        final long size = this.serviceRegistry.size();
+        final var size = this.serviceRegistry.size();
         LOGGER.debug("Service registry contains [{}] service definitions", size);
 
         if (!this.initFromJson) {
@@ -43,10 +43,10 @@ public class ServiceRegistryInitializer {
                 + "Consider turning off this behavior via the setting [cas.serviceRegistry.initFromJson=false] "
                 + "and explicitly register definitions in the services registry.", this.serviceRegistry.getName());
 
-        final List<RegisteredService> servicesLoaded = this.jsonServiceRegistry.load();
+        final var servicesLoaded = this.jsonServiceRegistry.load();
         LOGGER.debug("Loading JSON services are [{}]", servicesLoaded);
 
-        for (final RegisteredService r : servicesLoaded) {
+        for (final var r : servicesLoaded) {
             if (findExistingMatchForService(r)) {
                 continue;
             }
@@ -59,7 +59,7 @@ public class ServiceRegistryInitializer {
     }
 
     private boolean findExistingMatchForService(final RegisteredService r) {
-        RegisteredService match = this.serviceRegistry.findServiceById(r.getServiceId());
+        var match = this.serviceRegistry.findServiceById(r.getServiceId());
         if (match != null) {
             LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match.getName());
             return true;

@@ -61,8 +61,8 @@ public class CasWebApplication {
      * @param args the args
      */
     public static void main(final String[] args) {
-        final Map<String, Object> properties = CasEmbeddedContainerUtils.getRuntimeProperties(Boolean.TRUE);
-        final Banner banner = CasEmbeddedContainerUtils.getCasBannerInstance();
+        final var properties = CasEmbeddedContainerUtils.getRuntimeProperties(Boolean.TRUE);
+        final var banner = CasEmbeddedContainerUtils.getCasBannerInstance();
         new SpringApplicationBuilder(CasWebApplication.class)
             .banner(banner).web(true)
             .properties(properties)

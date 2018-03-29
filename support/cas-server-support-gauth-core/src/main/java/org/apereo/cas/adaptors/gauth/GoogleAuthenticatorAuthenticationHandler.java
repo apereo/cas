@@ -51,21 +51,21 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
-        final GoogleAuthenticatorTokenCredential tokenCredential = (GoogleAuthenticatorTokenCredential) credential;
+        final var tokenCredential = (GoogleAuthenticatorTokenCredential) credential;
 
         if (!StringUtils.isNumeric(tokenCredential.getToken())) {
             throw new PreventedException("Invalid non-numeric OTP format specified.",
                 new IllegalArgumentException("Invalid token " + tokenCredential.getToken()));
         }
-        final int otp = Integer.parseInt(tokenCredential.getToken());
+        final var otp = Integer.parseInt(tokenCredential.getToken());
         LOGGER.debug("Received OTP [{}]", otp);
 
         @NonNull
-        final Authentication authentication = WebUtils.getInProgressAuthentication();
-        final String uid = authentication.getPrincipal().getId();
+        final var authentication = WebUtils.getInProgressAuthentication();
+        final var uid = authentication.getPrincipal().getId();
 
         LOGGER.debug("Received principal id [{}]", uid);
-        final OneTimeTokenAccount acct = this.credentialRepository.get(uid);
+        final var acct = this.credentialRepository.get(uid);
         if (acct == null || StringUtils.isBlank(acct.getSecretKey())) {
             throw new AccountNotFoundException(uid + " cannot be found in the registry");
         }
@@ -74,7 +74,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
             throw new AccountExpiredException(uid + " cannot reuse OTP " + otp + " as it may be expired/invalid");
         }
 
-        boolean isCodeValid = this.googleAuthenticatorInstance.authorize(acct.getSecretKey(), otp);
+        var isCodeValid = this.googleAuthenticatorInstance.authorize(acct.getSecretKey(), otp);
 
         if (!isCodeValid && acct.getScratchCodes().contains(otp)) {
             LOGGER.warn("Using scratch code [{}] to authenticate user [{}]. Scratch code will be removed", otp, uid);

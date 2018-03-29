@@ -70,39 +70,39 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         try {
-            final Credential credential = getCredentialFromContext(context);
+            final var credential = getCredentialFromContext(context);
             final Service service = WebUtils.getService(context);
             if (credential != null) {
-                final AuthenticationResultBuilder builder = this.authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credential);
+                final var builder = this.authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credential);
                 if (builder.getInitialAuthentication().isPresent()) {
                     WebUtils.putAuthenticationResultBuilder(builder, context);
                     WebUtils.putAuthentication(builder.getInitialAuthentication().get(), context);
                 }
             }
-            final RegisteredService registeredService = determineRegisteredServiceForEvent(context, service);
+            final var registeredService = determineRegisteredServiceForEvent(context, service);
             LOGGER.debug("Attempting to resolve candidate authentication events for service [{}]", service);
-            final Set<Event> resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
+            final var resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
             if (!resolvedEvents.isEmpty()) {
                 LOGGER.debug("The set of authentication events resolved for [{}] are [{}]. Beginning to select the final event...", service, resolvedEvents);
                 putResolvedEventsAsAttribute(context, resolvedEvents);
-                final Event finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
+                final var finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
                 LOGGER.debug("The final authentication event resolved for [{}] is [{}]", service, finalResolvedEvent);
                 if (finalResolvedEvent != null) {
                     return CollectionUtils.wrapSet(finalResolvedEvent);
                 }
             }
-            final AuthenticationResultBuilder builder = WebUtils.getAuthenticationResultBuilder(context);
+            final var builder = WebUtils.getAuthenticationResultBuilder(context);
             if (builder == null) {
                 throw new IllegalArgumentException("No authentication result builder can be located in the context");
             }
             return CollectionUtils.wrapSet(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Exception e) {
-            Event event = returnAuthenticationExceptionEventIfNeeded(e);
+            var event = returnAuthenticationExceptionEventIfNeeded(e);
             if (event == null) {
                 LOGGER.warn(e.getMessage(), e);
                 event = newEvent(CasWebflowConstants.TRANSITION_ID_ERROR, e);
             }
-            final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+            final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return CollectionUtils.wrapSet(event);
         }
@@ -114,16 +114,16 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             LOGGER.debug("Locating service [{}] in service registry to determine authentication policy", service);
             registeredService = this.servicesManager.findServiceBy(service);
             LOGGER.debug("Locating authentication event in the request context...");
-            final Authentication authn = WebUtils.getAuthentication(context);
+            final var authn = WebUtils.getAuthentication(context);
 
             LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
 
-            final AuditableContext audit = AuditableContext.builder().service(service)
+            final var audit = AuditableContext.builder().service(service)
                 .authentication(authn)
                 .registeredService(registeredService)
                 .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
                 .build();
-            final AuditableExecutionResult result = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            final var result = this.registeredServiceAccessStrategyEnforcer.execute(audit);
             result.throwExceptionIfNeeded();
         }
         return registeredService;

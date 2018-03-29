@@ -35,10 +35,10 @@ public class RadiusUtils {
                                                                             final List<RadiusServer> servers,
                                                                             final boolean failoverOnAuthenticationFailure,
                                                                             final boolean failoverOnException) throws Exception {
-        for (final RadiusServer radiusServer : servers) {
+        for (final var radiusServer : servers) {
             LOGGER.debug("Attempting to authenticate [{}] at [{}]", username, radiusServer);
             try {
-                final RadiusResponse response = radiusServer.authenticate(username, password);
+                final var response = radiusServer.authenticate(username, password);
                 if (response != null) {
                     final Map<String, Object> attributes = new HashMap<>();
                     response.getAttributes().forEach(attribute -> attributes.put(attribute.getAttributeName(), attribute.getValue().toString()));

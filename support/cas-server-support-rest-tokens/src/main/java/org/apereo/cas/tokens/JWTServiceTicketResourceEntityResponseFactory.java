@@ -42,11 +42,11 @@ public class JWTServiceTicketResourceEntityResponseFactory extends CasProtocolSe
     @Override
     protected String grantServiceTicket(final String ticketGrantingTicket, final Service service,
                                         final AuthenticationResult authenticationResult) {
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        final var registeredService = this.servicesManager.findServiceBy(service);
 
         LOGGER.debug("Located registered service [{}] for [{}]", registeredService, service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-        final boolean tokenAsResponse = RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_RESPONSE.isAssignedTo(registeredService)
+        final var tokenAsResponse = RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_RESPONSE.isAssignedTo(registeredService)
             || RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService);
 
         if (!tokenAsResponse) {
@@ -54,8 +54,8 @@ public class JWTServiceTicketResourceEntityResponseFactory extends CasProtocolSe
             return super.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
         }
 
-        final String serviceTicket = super.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
-        final String jwt = this.tokenTicketBuilder.build(serviceTicket, service);
+        final var serviceTicket = super.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
+        final var jwt = this.tokenTicketBuilder.build(serviceTicket, service);
         LOGGER.debug("Generated JWT [{}] for service [{}]", jwt, service);
         return jwt;
     }

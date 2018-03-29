@@ -40,8 +40,8 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
 
         super.generateJsonInternal(request, response, jsonGenerator, accessTokenId,
                 refreshTokenId, timeout, service, registeredService, responseType);
-        final OidcRegisteredService oidcRegisteredService = (OidcRegisteredService) registeredService;
-        final String idToken = this.idTokenGenerator.generate(request, response, accessTokenId,
+        final var oidcRegisteredService = (OidcRegisteredService) registeredService;
+        final var idToken = this.idTokenGenerator.generate(request, response, accessTokenId,
                 timeout, responseType, oidcRegisteredService);
         jsonGenerator.writeStringField(OidcConstants.ID_TOKEN, idToken);
     }

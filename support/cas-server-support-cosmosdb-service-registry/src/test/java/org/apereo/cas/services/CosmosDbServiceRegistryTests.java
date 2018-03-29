@@ -37,7 +37,7 @@ public class CosmosDbServiceRegistryTests {
     private ServiceRegistry serviceRegistry;
 
     private void deleteAll() {
-        final List<RegisteredService> services = this.serviceRegistry.load();
+        final var services = this.serviceRegistry.load();
         services.forEach(service -> this.serviceRegistry.delete(service));
     }
 
@@ -52,11 +52,11 @@ public class CosmosDbServiceRegistryTests {
             list.add(buildService(i));
             this.serviceRegistry.save(list.get(i));
         });
-        final List<RegisteredService> results = this.serviceRegistry.load();
+        final var results = this.serviceRegistry.load();
         assertEquals(results.size(), list.size());
         results.forEach(r -> {
-            final RegisteredService s1 = this.serviceRegistry.findServiceById(r.getId());
-            final RegisteredService s2 = this.serviceRegistry.findServiceById(r.getServiceId());
+            final var s1 = this.serviceRegistry.findServiceById(r.getId());
+            final var s2 = this.serviceRegistry.findServiceById(r.getServiceId());
             assertEquals(s1, s2);
         });
         deleteAll();

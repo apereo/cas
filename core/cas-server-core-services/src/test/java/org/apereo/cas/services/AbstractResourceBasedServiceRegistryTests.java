@@ -69,31 +69,31 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
 
     @Test
     public void checkSaveMethodWithNonExistentServiceAndNoAttributes() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("testSaveMethodWithNonExistentServiceAndNoAttributes");
         r.setServiceId(SERVICE_ID);
         r.setTheme(THEME);
         r.setDescription(DESCRIPTION);
 
-        final RegisteredService r2 = this.dao.save(r);
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        final var r2 = this.dao.save(r);
+        final var r3 = this.dao.findServiceById(r2.getId());
         assertEquals(r, r2);
         assertEquals(r2, r3);
     }
 
     @Test
     public void checkSaveMethodWithDelegatedAuthnPolicy() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("checkSaveMethodWithDelegatedAuthnPolicy");
         r.setServiceId(SERVICE_ID);
         r.setDescription(DESCRIPTION);
 
-        final DefaultRegisteredServiceAccessStrategy strategy = new DefaultRegisteredServiceAccessStrategy();
+        final var strategy = new DefaultRegisteredServiceAccessStrategy();
         strategy.setDelegatedAuthenticationPolicy(
             new DefaultRegisteredServiceDelegatedAuthenticationPolicy(CollectionUtils.wrapList("one", "two")));
         r.setAccessStrategy(strategy);
-        final RegisteredService r2 = this.dao.save(r);
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        final var r2 = this.dao.save(r);
+        final var r3 = this.dao.findServiceById(r2.getId());
         assertEquals(r, r2);
         assertEquals(r2, r3);
     }
@@ -101,13 +101,13 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
 
     @Test
     public void execSaveWithAuthnMethodPolicy() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("execSaveWithAuthnMethodPolicy");
         r.setServiceId(SERVICE_ID);
         r.setTheme(THEME);
         r.setDescription(DESCRIPTION);
 
-        final DefaultRegisteredServiceMultifactorPolicy policy =
+        final var policy =
             new DefaultRegisteredServiceMultifactorPolicy();
         policy.setFailureMode(RegisteredServiceMultifactorPolicy.FailureModes.PHANTOM);
 
@@ -117,52 +117,52 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
         policy.setPrincipalAttributeNameTrigger("memberOf");
         policy.setPrincipalAttributeValueToMatch("cas|CAS|admin");
         r.setMultifactorPolicy(policy);
-        final RegisteredService r2 = this.dao.save(r);
+        final var r2 = this.dao.save(r);
         assertEquals(r2, r);
     }
 
     @Test
     public void execSaveMethodWithDefaultUsernameAttribute() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("testSaveMethodWithDefaultUsernameAttribute");
         r.setServiceId(SERVICE_ID);
         r.setTheme(THEME);
         r.setDescription(DESCRIPTION);
         r.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
-        final RegisteredService r2 = this.dao.save(r);
+        final var r2 = this.dao.save(r);
         assertEquals(r2, r);
     }
 
     @Test
     public void execSaveMethodWithConsentPolicy() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("execSaveMethodWithConsentPolicy");
         r.setServiceId(SERVICE_ID);
         r.setTheme(THEME);
         r.setDescription(DESCRIPTION);
-        final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
+        final var policy = new ReturnAllAttributeReleasePolicy();
         policy.setConsentPolicy(new DefaultRegisteredServiceConsentPolicy(CollectionUtils.wrapSet("test"),
             CollectionUtils.wrapSet("test")));
         r.setAttributeReleasePolicy(policy);
-        final RegisteredService r2 = this.dao.save(r);
+        final var r2 = this.dao.save(r);
         assertEquals(r2, r);
     }
 
     @Test
     public void ensureSaveMethodWithDefaultPrincipalAttribute() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("testSaveMethodWithDefaultPrincipalAttribute");
         r.setServiceId(SERVICE_ID);
         r.setTheme(THEME);
         r.setDescription(DESCRIPTION);
         r.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("cn", "UPPER"));
-        final RegisteredService r2 = this.dao.save(r);
+        final var r2 = this.dao.save(r);
         assertEquals(r2, r);
     }
 
     @Test
     public void verifySaveMethodWithDefaultAnonymousAttribute() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("testSaveMethodWithDefaultAnonymousAttribute");
         r.setServiceId(SERVICE_ID);
         r.setTheme(THEME);
@@ -170,12 +170,12 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
         r.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider(
             new ShibbolethCompatiblePersistentIdGenerator("helloworld")
         ));
-        final RegisteredService r2 = this.dao.save(r);
+        final var r2 = this.dao.save(r);
         this.dao.load();
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
-        final AnonymousRegisteredServiceUsernameAttributeProvider anon =
+        final var r3 = this.dao.findServiceById(r2.getId());
+        final var anon =
             (AnonymousRegisteredServiceUsernameAttributeProvider) r3.getUsernameAttributeProvider();
-        final ShibbolethCompatiblePersistentIdGenerator ss =
+        final var ss =
             (ShibbolethCompatiblePersistentIdGenerator) anon.getPersistentIdGenerator();
         assertEquals("helloworld", ss.getSalt());
         assertEquals(r2, r3);
@@ -183,13 +183,13 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
 
     @Test
     public void verifyServiceExpirationPolicy() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("verifyServiceExpirationPolicy");
         r.setServiceId(SERVICE_ID);
         r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, LocalDate.now()));
 
-        final RegisteredService r2 = this.dao.save(r);
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        final var r2 = this.dao.save(r);
+        final var r3 = this.dao.findServiceById(r2.getId());
 
         assertEquals(r, r2);
         assertEquals(r2, r3);
@@ -199,15 +199,15 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
 
     @Test
     public void verifySaveAttributeReleasePolicy() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("testSaveAttributeReleasePolicy");
         r.setServiceId(SERVICE_ID);
         r.setTheme(THEME);
         r.setDescription(DESCRIPTION);
         r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
 
-        final RegisteredService r2 = this.dao.save(r);
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        final var r2 = this.dao.save(r);
+        final var r3 = this.dao.findServiceById(r2.getId());
 
         assertEquals(r, r2);
         assertEquals(r2, r3);
@@ -217,7 +217,7 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
 
     @Test
     public void verifySaveMethodWithExistingServiceNoAttribute() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("testSaveMethodWithExistingServiceNoAttribute");
         r.setServiceId(SERVICE_ID);
         r.setTheme(THEME);
@@ -227,13 +227,13 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
 
         this.dao.save(r);
 
-        final RegisteredService r3 = this.dao.findServiceById(r.getId());
+        final var r3 = this.dao.findServiceById(r.getId());
         assertEquals(r, r3);
     }
 
     @Test
     public void verifySaveAttributeReleasePolicyMappingRules() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("testSaveAttributeReleasePolicyMappingRules");
         r.setServiceId(SERVICE_ID);
 
@@ -242,12 +242,12 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
         map.put("attr2", "newattr2");
         map.put("attr2", "newattr3");
 
-        final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
+        final var policy = new ReturnMappedAttributeReleasePolicy();
         policy.setAllowedAttributes(CollectionUtils.wrap(map));
         r.setAttributeReleasePolicy(policy);
 
-        final RegisteredService r2 = this.dao.save(r);
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        final var r2 = this.dao.save(r);
+        final var r3 = this.dao.findServiceById(r2.getId());
 
         assertEquals(r, r2);
         assertEquals(r2, r3);
@@ -257,16 +257,16 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
 
     @Test
     public void verifySaveAttributeReleasePolicyAllowedAttrRules() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("testSaveAttributeReleasePolicyAllowedAttrRules");
         r.setServiceId(SERVICE_ID);
 
-        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
+        final var policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("1", "2", "3"));
         r.setAttributeReleasePolicy(policy);
 
-        final RegisteredService r2 = this.dao.save(r);
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        final var r2 = this.dao.save(r);
+        final var r3 = this.dao.findServiceById(r2.getId());
 
         assertEquals(r, r2);
         assertEquals(r2, r3);
@@ -276,7 +276,7 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
 
     @Test
     public void verifySaveAttributeReleasePolicyAllowedAttrRulesAndFilter() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("testSaveAttributeReleasePolicyAllowedAttrRulesAndFilter");
         r.setServiceId(SERVICE_ID);
         r.setTheme("testtheme");
@@ -285,13 +285,13 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
         r.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("https://.+"));
         r.setRequiredHandlers(CollectionUtils.wrapHashSet("h1", "h2"));
 
-        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
+        final var policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("1", "2", "3"));
         r.setAttributeReleasePolicy(policy);
         r.getAttributeReleasePolicy().setAttributeFilter(new RegisteredServiceRegexAttributeFilter("\\w+"));
 
-        final RegisteredService r2 = this.dao.save(r);
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        final var r2 = this.dao.save(r);
+        final var r3 = this.dao.findServiceById(r2.getId());
 
         assertEquals(r, r2);
         assertEquals(r2, r3);
@@ -301,19 +301,19 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
 
     @Test
     public void verifyServiceType() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("testServiceType");
         r.setTheme("testtheme");
         r.setEvaluationOrder(1000);
 
-        final RegisteredService r2 = this.dao.save(r);
+        final var r2 = this.dao.save(r);
         assertTrue(r2 instanceof RegexRegisteredService);
     }
 
     @Test
     public void verifyServiceWithInvalidFileName() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("hell/o@world:*");
         r.setEvaluationOrder(1000);
@@ -326,7 +326,7 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
     public void verifyServiceRemovals() {
         final List<RegisteredService> list = new ArrayList<>(5);
         IntStream.range(1, 5).forEach(i -> {
-            final RegexRegisteredService r = new RegexRegisteredService();
+            final var r = new RegexRegisteredService();
             r.setServiceId(HTTPS_SERVICE_ID);
             r.setName("testServiceType");
             r.setTheme("testtheme");
@@ -345,12 +345,12 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
 
     @Test
     public void checkForAuthorizationStrategy() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("checkForAuthorizationStrategy");
         r.setId(42);
 
-        final DefaultRegisteredServiceAccessStrategy authz =
+        final var authz =
             new DefaultRegisteredServiceAccessStrategy(false, false);
 
         final Map<String, Set<String>> attrs = new HashMap<>();
@@ -359,19 +359,19 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
         authz.setRequiredAttributes(attrs);
         r.setAccessStrategy(authz);
 
-        final RegisteredService r2 = this.dao.save(r);
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        final var r2 = this.dao.save(r);
+        final var r3 = this.dao.findServiceById(r2.getId());
         assertEquals(r2, r3);
     }
 
     @Test
     public void verifyAccessStrategyWithStarEndDate() throws Exception {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("verifyAAccessStrategyWithStarEndDate");
         r.setId(62);
 
-        final TimeBasedRegisteredServiceAccessStrategy authz =
+        final var authz =
             new TimeBasedRegisteredServiceAccessStrategy(true, false);
 
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1).toString());
@@ -380,27 +380,27 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
         authz.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
         r.setAccessStrategy(authz);
 
-        final RegisteredService r2 = this.dao.save(r);
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        final var r2 = this.dao.save(r);
+        final var r3 = this.dao.findServiceById(r2.getId());
         assertEquals(r2, r3);
     }
 
     @Test
     public void verifyAccessStrategyWithEndpoint() throws Exception {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("verifyAccessStrategyWithEndpoint");
         r.setId(62);
 
-        final RemoteEndpointServiceAccessStrategy authz = new RemoteEndpointServiceAccessStrategy();
+        final var authz = new RemoteEndpointServiceAccessStrategy();
 
         authz.setEndpointUrl("http://www.google.com?this=that");
         authz.setAcceptableResponseCodes("200,405,403");
         authz.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
         r.setAccessStrategy(authz);
 
-        final RegisteredService r2 = this.dao.save(r);
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        final var r2 = this.dao.save(r);
+        final var r3 = this.dao.findServiceById(r2.getId());
         assertEquals(r2, r3);
     }
 
@@ -409,7 +409,7 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
         final RegisteredServicePublicKey publicKey = new RegisteredServicePublicKeyImpl(
             "classpath:RSA1024Public.key", "RSA");
 
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("serializePublicKeyForServiceAndVerify");
         r.setId(4245);
@@ -422,27 +422,27 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
 
     @Test
     public void checkNullabilityOfAccessStrategy() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("checkNullabilityOfAccessStrategy");
         r.setId(43210);
         r.setAccessStrategy(null);
         this.dao.save(r);
         this.dao.load();
-        final RegisteredService s = this.dao.findServiceById(43210);
+        final var s = this.dao.findServiceById(43210);
         assertNotNull(s);
         assertNotNull(s.getAccessStrategy());
     }
 
     @Test
     public void verifyMappedRegexAttributeFilter() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setServiceId("something");
         r.setName("verifyMappedRegexAttributeFilter");
         r.setId(4245);
 
-        final ReturnAllowedAttributeReleasePolicy p = new ReturnAllowedAttributeReleasePolicy();
-        final RegisteredServiceMappedRegexAttributeFilter filter = new RegisteredServiceMappedRegexAttributeFilter();
+        final var p = new ReturnAllowedAttributeReleasePolicy();
+        final var filter = new RegisteredServiceMappedRegexAttributeFilter();
         filter.setCompleteMatch(true);
         filter.setPatterns(CollectionUtils.wrap("one", "two"));
         p.setAttributeFilter(filter);
@@ -454,12 +454,12 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
 
     @Test
     public void verifyServiceContacts() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setServiceId("verifyServiceContacts");
         r.setName("verifyServiceContacts");
         r.setId(5000);
 
-        final DefaultRegisteredServiceContact contact = new DefaultRegisteredServiceContact();
+        final var contact = new DefaultRegisteredServiceContact();
         contact.setDepartment("Department");
         contact.setEmail("cas@example.org");
         contact.setName("Contact");
@@ -471,20 +471,20 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
 
     @Test
     public void persistCustomServiceProperties() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setServiceId(HTTPS_SERVICE_ID);
         r.setName("persistCustomServiceProperties");
         r.setId(4245);
 
         final Map<String, RegisteredServiceProperty> properties = new HashMap<>();
-        final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
+        final var property = new DefaultRegisteredServiceProperty();
         final Set<String> values = new HashSet<>();
         values.add("value1");
         values.add("value2");
         property.setValues(values);
         properties.put("field1", property);
 
-        final DefaultRegisteredServiceProperty property2 = new DefaultRegisteredServiceProperty();
+        final var property2 = new DefaultRegisteredServiceProperty();
         final Set<String> values2 = new HashSet<>();
         values2.add("value12");
         values2.add("value22");
@@ -499,7 +499,7 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
         assertEquals(2, r.getProperties().size());
         assertNotNull(r.getProperties().get("field1"));
 
-        final RegisteredServiceProperty prop = r.getProperties().get("field1");
+        final var prop = r.getProperties().get("field1");
         assertEquals(2, prop.getValues().size());
     }
 }

@@ -37,11 +37,11 @@ public class U2FMongoDbConfiguration {
     
     @Bean
     public U2FDeviceRepository u2fDeviceRepository() {
-        final U2FMultifactorProperties u2f = casProperties.getAuthn().getMfa().getU2f();
+        final var u2f = casProperties.getAuthn().getMfa().getU2f();
         
-        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
-        final U2FMultifactorProperties.MongoDb mongoProps = u2f.getMongo();
-        final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongoProps);
+        final var factory = new MongoDbConnectionFactory();
+        final var mongoProps = u2f.getMongo();
+        final var mongoTemplate = factory.buildMongoTemplate(mongoProps);
 
         factory.createCollection(mongoTemplate, mongoProps.getCollection(), mongoProps.isDropCollection());
         
@@ -49,7 +49,7 @@ public class U2FMongoDbConfiguration {
                 Caffeine.newBuilder()
                         .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
                         .build(key -> StringUtils.EMPTY);
-        final U2FMongoDbDeviceRepository repo = new U2FMongoDbDeviceRepository(requestStorage, mongoTemplate, u2f.getExpireRegistrations(),
+        final var repo = new U2FMongoDbDeviceRepository(requestStorage, mongoTemplate, u2f.getExpireRegistrations(),
                 u2f.getExpireDevicesTimeUnit(), mongoProps.getCollection());
         repo.setCipherExecutor(this.u2fRegistrationRecordCipherExecutor);
         return repo;

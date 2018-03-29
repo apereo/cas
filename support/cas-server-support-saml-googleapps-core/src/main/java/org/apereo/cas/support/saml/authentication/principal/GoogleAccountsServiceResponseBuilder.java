@@ -91,10 +91,10 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     @Override
     public Response build(final WebApplicationService webApplicationService, final String serviceTicket,
                           final Authentication authentication) {
-        final GoogleAccountsService service = (GoogleAccountsService) webApplicationService;
+        final var service = (GoogleAccountsService) webApplicationService;
         final Map<String, String> parameters = new HashMap<>();
-        final String samlResponse = constructSamlResponse(service, authentication);
-        final String signedResponse = this.samlObjectBuilder.signSamlResponse(samlResponse, this.privateKey, this.publicKey);
+        final var samlResponse = constructSamlResponse(service, authentication);
+        final var signedResponse = this.samlObjectBuilder.signSamlResponse(samlResponse, this.privateKey, this.publicKey);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, signedResponse);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, service.getRelayState());
         return buildPost(service, parameters);
@@ -110,37 +110,37 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
      */
     protected String constructSamlResponse(final GoogleAccountsService service,
                                            final Authentication authentication) {
-        final ZonedDateTime currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
-        final ZonedDateTime notBeforeIssueInstant = ZonedDateTime.parse("2003-04-17T00:46:02Z");
-        final RegisteredService registeredService = servicesManager.findServiceBy(service);
+        final var currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
+        final var notBeforeIssueInstant = ZonedDateTime.parse("2003-04-17T00:46:02Z");
+        final var registeredService = servicesManager.findServiceBy(service);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
 
-        final Principal principal = authentication.getPrincipal();
-        final String userId = registeredService.getUsernameAttributeProvider()
+        final var principal = authentication.getPrincipal();
+        final var userId = registeredService.getUsernameAttributeProvider()
             .resolveUsername(principal, service, registeredService);
 
-        final org.opensaml.saml.saml2.core.Response response = this.samlObjectBuilder.newResponse(
+        final var response = this.samlObjectBuilder.newResponse(
             this.samlObjectBuilder.generateSecureRandomId(), currentDateTime, null, service);
         response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
 
-        final String sessionIndex = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
-        final AuthnStatement authnStatement = this.samlObjectBuilder.newAuthnStatement(AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime, sessionIndex);
-        final Assertion assertion = this.samlObjectBuilder.newAssertion(authnStatement, casServerPrefix,
+        final var sessionIndex = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
+        final var authnStatement = this.samlObjectBuilder.newAuthnStatement(AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime, sessionIndex);
+        final var assertion = this.samlObjectBuilder.newAssertion(authnStatement, casServerPrefix,
             notBeforeIssueInstant, this.samlObjectBuilder.generateSecureRandomId());
 
-        final Conditions conditions = this.samlObjectBuilder.newConditions(notBeforeIssueInstant,
+        final var conditions = this.samlObjectBuilder.newConditions(notBeforeIssueInstant,
             currentDateTime.plusSeconds(this.skewAllowance), service.getId());
         assertion.setConditions(conditions);
 
-        final Subject subject = this.samlObjectBuilder.newSubject(NameID.EMAIL, userId,
+        final var subject = this.samlObjectBuilder.newSubject(NameID.EMAIL, userId,
             service.getId(), currentDateTime.plusSeconds(this.skewAllowance), service.getRequestId(), null);
         assertion.setSubject(subject);
 
         response.getAssertions().add(assertion);
 
-        final String result = SamlUtils.transformSamlObject(this.samlObjectBuilder.getConfigBean(), response, true).toString();
+        final var result = SamlUtils.transformSamlObject(this.samlObjectBuilder.getConfigBean(), response, true).toString();
         LOGGER.debug("Generated Google SAML response: [{}]", result);
         return result;
     }
@@ -156,7 +156,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             return;
         }
 
-        final PrivateKeyFactoryBean bean = new PrivateKeyFactoryBean();
+        final var bean = new PrivateKeyFactoryBean();
 
         if (this.privateKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
             bean.setLocation(new ClassPathResource(StringUtils.removeStart(this.privateKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
@@ -185,7 +185,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             return;
         }
 
-        final PublicKeyFactoryBean bean = new PublicKeyFactoryBean();
+        final var bean = new PublicKeyFactoryBean();
         if (this.publicKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
             bean.setResource(new ClassPathResource(StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
         } else if (this.publicKeyLocation.startsWith(ResourceUtils.FILE_URL_PREFIX)) {

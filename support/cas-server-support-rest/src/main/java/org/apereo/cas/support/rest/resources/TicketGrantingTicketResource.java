@@ -63,7 +63,7 @@ public class TicketGrantingTicketResource {
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                              final HttpServletRequest request) {
         try {
-            final TicketGrantingTicket tgtId = createTicketGrantingTicketForRequest(requestBody, request);
+            final var tgtId = createTicketGrantingTicketForRequest(requestBody, request);
             return createResponseEntityForTicket(request, tgtId);
         } catch (final AuthenticationException e) {
             return RestResourceUtils.createResponseEntityForAuthnFailure(e);
@@ -115,8 +115,8 @@ public class TicketGrantingTicketResource {
         if (credential == null || credential.isEmpty()) {
             throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
         }
-        final Service service = this.serviceFactory.createService(request);
-        final AuthenticationResult authenticationResult =
+        final var service = this.serviceFactory.createService(request);
+        final var authenticationResult =
             authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
         return centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
     }

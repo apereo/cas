@@ -33,15 +33,15 @@ public class Cas20ProxyHandler implements ProxyHandler {
 
     @Override
     public String handle(final Credential credential, final TicketGrantingTicket proxyGrantingTicketId) {
-        final HttpBasedServiceCredential serviceCredentials = (HttpBasedServiceCredential) credential;
-        final String proxyIou = this.uniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX);
+        final var serviceCredentials = (HttpBasedServiceCredential) credential;
+        final var proxyIou = this.uniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX);
 
-        final URL callbackUrl = serviceCredentials.getCallbackUrl();
-        final String serviceCredentialsAsString = callbackUrl.toExternalForm();
-        final int bufferLength = serviceCredentialsAsString.length() + proxyIou.length()
+        final var callbackUrl = serviceCredentials.getCallbackUrl();
+        final var serviceCredentialsAsString = callbackUrl.toExternalForm();
+        final var bufferLength = serviceCredentialsAsString.length() + proxyIou.length()
                 + proxyGrantingTicketId.getId().length() + BUFFER_LENGTH_ADDITIONAL_CHARGE;
 
-        final StringBuilder stringBuffer = new StringBuilder(bufferLength)
+        final var stringBuffer = new StringBuilder(bufferLength)
                 .append(serviceCredentialsAsString);
 
         if (callbackUrl.getQuery() != null) {

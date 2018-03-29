@@ -37,21 +37,21 @@ public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository
     }
 
     private ListIndexResult getIndexResult(final String username) {
-        final ObjectReference reference = CloudDirectoryUtils.getObjectRefByPath(cloudDirectoryProperties.getUsernameIndexPath());
-        final ListIndexRequest listIndexRequest = CloudDirectoryUtils.getListIndexRequest(
+        final var reference = CloudDirectoryUtils.getObjectRefByPath(cloudDirectoryProperties.getUsernameIndexPath());
+        final var listIndexRequest = CloudDirectoryUtils.getListIndexRequest(
                 cloudDirectoryProperties.getUsernameAttributeName(),
                 username, reference, cloudDirectoryProperties);
         return amazonCloudDirectory.listIndex(listIndexRequest);
     }
 
     private Map<String, Object> getUserInfoFromIndexResult(final ListIndexResult indexResult) {
-        final IndexAttachment attachment = indexResult.getIndexAttachments().stream().findFirst().orElse(null);
+        final var attachment = indexResult.getIndexAttachments().stream().findFirst().orElse(null);
 
         if (attachment != null) {
-            final String identifier = attachment.getObjectIdentifier();
-            final ListObjectAttributesRequest listObjectAttributesRequest =
+            final var identifier = attachment.getObjectIdentifier();
+            final var listObjectAttributesRequest =
                     CloudDirectoryUtils.getListObjectAttributesRequest(cloudDirectoryProperties.getDirectoryArn(), identifier);
-            final ListObjectAttributesResult attributesResult = amazonCloudDirectory.listObjectAttributes(
+            final var attributesResult = amazonCloudDirectory.listObjectAttributes(
                     listObjectAttributesRequest);
 
             if (attributesResult != null && attributesResult.getAttributes() != null) {
@@ -60,7 +60,7 @@ public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository
                         .map(a -> {
                             Object value = null;
 
-                            final TypedAttributeValue attributeValue = a.getValue();
+                            final var attributeValue = a.getValue();
                             LOGGER.debug("Examining attribute [{}]", a);
                             
                             if (StringUtils.isNotBlank(attributeValue.getNumberValue())) {

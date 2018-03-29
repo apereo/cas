@@ -21,7 +21,7 @@ public class InterruptSingleSignOnParticipationStrategy extends DefaultSingleSig
 
     @Override
     public boolean isParticipating(final RequestContext ctx) {
-        final InterruptResponse response = InterruptUtils.getInterruptFrom(ctx);
+        final var response = InterruptUtils.getInterruptFrom(ctx);
         if (response != null && !response.isSsoEnabled()) {
             return false;
         }

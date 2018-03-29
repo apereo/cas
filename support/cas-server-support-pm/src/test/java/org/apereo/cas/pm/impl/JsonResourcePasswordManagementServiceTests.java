@@ -76,13 +76,13 @@ public class JsonResourcePasswordManagementServiceTests {
 
     @Test
     public void verifyUserEmailCanBeFound() {
-        final String email = passwordChangeService.findEmail("casuser");
+        final var email = passwordChangeService.findEmail("casuser");
         assertEquals("casuser@example.org", email);
     }
 
     @Test
     public void verifyUserEmailCanNotBeFound() {
-        final String email = passwordChangeService.findEmail("casusernotfound");
+        final var email = passwordChangeService.findEmail("casusernotfound");
         assertNull(email);
     }
 
@@ -96,20 +96,20 @@ public class JsonResourcePasswordManagementServiceTests {
     @Test
     public void verifyUserPasswordChange() {
         final Credential c = new UsernamePasswordCredential("casuser", "password");
-        final PasswordChangeBean bean = new PasswordChangeBean();
+        final var bean = new PasswordChangeBean();
         bean.setConfirmedPassword("newPassword");
         bean.setPassword("newPassword");
-        final boolean res = passwordChangeService.change(c, bean);
+        final var res = passwordChangeService.change(c, bean);
         assertTrue(res);
     }
 
     @Test
     public void verifyPasswordValidationService() {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential("casuser", "password");
-        final PasswordChangeBean bean = new PasswordChangeBean();
+        final var c = new UsernamePasswordCredential("casuser", "password");
+        final var bean = new PasswordChangeBean();
         bean.setConfirmedPassword("Test@1234");
         bean.setPassword("Test@1234");
-        final boolean isValid = passwordValidationService.isValid(c, bean);
+        final var isValid = passwordValidationService.isValid(c, bean);
         assertTrue(isValid);
     }
 }

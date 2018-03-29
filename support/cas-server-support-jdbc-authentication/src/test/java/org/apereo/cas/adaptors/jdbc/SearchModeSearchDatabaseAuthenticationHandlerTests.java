@@ -52,12 +52,12 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
     public void setUp() throws Exception {
         this.handler = new SearchModeSearchDatabaseAuthenticationHandler("", null, null, null, this.dataSource, "username", "password", "cassearchusers");
 
-        final Connection c = this.dataSource.getConnection();
-        final Statement s = c.createStatement();
+        final var c = this.dataSource.getConnection();
+        final var s = c.createStatement();
         c.setAutoCommit(true);
 
         s.execute(getSqlInsertStatementToCreateUserAccount(0));
-        for (int i = 0; i < 10; i++) {
+        for (var i = 0; i < 10; i++) {
             s.execute(getSqlInsertStatementToCreateUserAccount(i));
         }
 
@@ -66,11 +66,11 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
 
     @After
     public void tearDown() throws Exception {
-        final Connection c = this.dataSource.getConnection();
-        final Statement s = c.createStatement();
+        final var c = this.dataSource.getConnection();
+        final var s = c.createStatement();
         c.setAutoCommit(true);
 
-        for (int i = 0; i < 5; i++) {
+        for (var i = 0; i < 5; i++) {
             s.execute("delete from casusers;");
         }
         c.close();
@@ -92,7 +92,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyNotFoundUser() throws Exception {
-        final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("hello", "world");
+        final var c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("hello", "world");
 
         this.thrown.expect(FailedLoginException.class);
 
@@ -102,13 +102,13 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyFoundUser() throws Exception {
-        final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3");
+        final var c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3");
         assertNotNull(this.handler.authenticate(c));
     }
 
     @Test
     public void verifyMultipleUsersFound() throws Exception {
-        final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0");
+        final var c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0");
         assertNotNull(this.handler.authenticate(c));
     }
 }

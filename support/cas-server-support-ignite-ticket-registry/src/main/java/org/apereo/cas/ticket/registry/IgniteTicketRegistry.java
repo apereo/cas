@@ -67,9 +67,9 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public void addTicket(final Ticket ticket) {
-        final Ticket encodedTicket = encodeTicket(ticket);
-        final TicketDefinition metadata = this.ticketCatalog.find(ticket);
-        final IgniteCache<String, Ticket> cache = getIgniteCacheFromMetadata(metadata);
+        final var encodedTicket = encodeTicket(ticket);
+        final var metadata = this.ticketCatalog.find(ticket);
+        final var cache = getIgniteCacheFromMetadata(metadata);
         LOGGER.debug("Adding ticket [{}] to the cache [{}]", ticket.getId(), cache.getName());
         cache.withExpiryPolicy(new IgniteInternalTicketExpiryPolicy(ticket)).put(encodedTicket.getId(), encodedTicket);
     }
@@ -77,7 +77,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     @Override
     public long deleteAll() {
         return this.ticketCatalog.findAll().stream().map(this::getIgniteCacheFromMetadata).filter(Objects::nonNull).mapToLong(instance -> {
-            final int size = instance.size();
+            final var size = instance.size();
             instance.removeAll();
             return size;
         }).sum();
@@ -85,14 +85,14 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        final Ticket ticket = getTicket(ticketId);
+        final var ticket = getTicket(ticketId);
         if (ticket != null) {
-            final TicketDefinition metadata = this.ticketCatalog.find(ticket);
+            final var metadata = this.ticketCatalog.find(ticket);
             if (metadata == null) {
                 LOGGER.warn("Ticket [{}] is not registered in the catalog and is unrecognized", ticketId);
                 return false;
             }
-            final IgniteCache<String, Ticket> cache = getIgniteCacheFromMetadata(metadata);
+            final var cache = getIgniteCacheFromMetadata(metadata);
             return cache.remove(encodeTicketId(ticket.getId()));
         }
         return true;
@@ -100,17 +100,17 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket getTicket(final String ticketIdToGet) {
-        final String ticketId = encodeTicketId(ticketIdToGet);
+        final var ticketId = encodeTicketId(ticketIdToGet);
         if (StringUtils.isBlank(ticketId)) {
             return null;
         }
-        final TicketDefinition metadata = this.ticketCatalog.find(ticketIdToGet);
+        final var metadata = this.ticketCatalog.find(ticketIdToGet);
         if (metadata == null) {
             LOGGER.warn("Ticket [{}] is not registered in the catalog and is unrecognized", ticketIdToGet);
             return null;
         }
-        final IgniteCache<String, Ticket> cache = getIgniteCacheFromMetadata(metadata);
-        final Ticket ticket = cache.get(ticketId);
+        final var cache = getIgniteCacheFromMetadata(metadata);
+        final var ticket = cache.get(ticketId);
         if (ticket == null) {
             LOGGER.debug("No ticket by id [{}] is found in the ignite ticket registry", ticketId);
             return null;
@@ -132,10 +132,10 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     }
 
     private void configureSecureTransport() {
-        final String nullKey = "NULL";
+        final var nullKey = "NULL";
         if (StringUtils.isNotBlank(properties.getKeyStoreFilePath()) && StringUtils.isNotBlank(properties.getKeyStorePassword())
             && StringUtils.isNotBlank(properties.getTrustStoreFilePath()) && StringUtils.isNotBlank(properties.getTrustStorePassword())) {
-            final SslContextFactory sslContextFactory = new SslContextFactory();
+            final var sslContextFactory = new SslContextFactory();
             sslContextFactory.setKeyStoreFilePath(properties.getKeyStoreFilePath());
             sslContextFactory.setKeyStorePassword(properties.getKeyStorePassword().toCharArray());
             if (nullKey.equals(properties.getTrustStoreFilePath()) && nullKey.equals(properties.getTrustStorePassword())) {
@@ -186,7 +186,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     }
 
     private IgniteCache<String, Ticket> getIgniteCacheFromMetadata(final TicketDefinition metadata) {
-        final String mapName = metadata.getProperties().getStorageName();
+        final var mapName = metadata.getProperties().getStorageName();
         LOGGER.debug("Locating cache name [{}] for ticket definition [{}]", mapName, metadata);
         return getIgniteCacheInstanceByName(mapName);
     }

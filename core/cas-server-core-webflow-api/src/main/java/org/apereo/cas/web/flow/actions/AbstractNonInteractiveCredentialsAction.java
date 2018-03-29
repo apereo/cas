@@ -30,7 +30,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAu
 
     @Override
     protected Event doPreExecute(final RequestContext context) throws Exception {
-        final Credential credential = constructCredentialsFromRequest(context);
+        final var credential = constructCredentialsFromRequest(context);
         if (credential == null) {
             LOGGER.warn("No credentials detected. Navigating to error...");
             return error();
@@ -41,7 +41,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAu
 
     @Override
     protected void onError(final RequestContext requestContext) {
-        final MessageResolver resolver = new MessageBuilder()
+        final var resolver = new MessageBuilder()
                 .error()
                 .code(BAD_X509_CREDENTIALS_MSG_CODE)
                 .defaultText(BAD_X509_CREDENTIALS_MSG_CODE)

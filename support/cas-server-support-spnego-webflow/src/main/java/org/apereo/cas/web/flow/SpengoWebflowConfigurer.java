@@ -34,12 +34,12 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override
     protected void doInitialize() {
-        final Flow flow = getLoginFlow();
+        final var flow = getLoginFlow();
         if (flow != null) {
             createStartSpnegoAction(flow);
             createEvaluateSpnegoClientAction(flow);
 
-            final ActionState spnego = createSpnegoActionState(flow);
+            final var spnego = createSpnegoActionState(flow);
             registerMultifactorProvidersStateTransitionsIntoWebflow(spnego);
 
             augmentWebflowToStartSpnego(flow);
@@ -47,19 +47,19 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void augmentWebflowToStartSpnego(final Flow flow) {
-        final ActionState state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
+        final var state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
         createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS, START_SPNEGO_AUTHENTICATE, true);
     }
 
     private void createStartSpnegoAction(final Flow flow) {
-        final ActionState actionState = createActionState(flow, START_SPNEGO_AUTHENTICATE, createEvaluateAction(SPNEGO_NEGOTIATE));
+        final var actionState = createActionState(flow, START_SPNEGO_AUTHENTICATE, createEvaluateAction(SPNEGO_NEGOTIATE));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, SPNEGO));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
     }
 
     private ActionState createSpnegoActionState(final Flow flow) {
-        final ActionState spnego = createActionState(flow, SPNEGO, createEvaluateAction(SPNEGO));
-        final TransitionSet transitions = spnego.getTransitionSet();
+        final var spnego = createActionState(flow, SPNEGO, createEvaluateAction(SPNEGO));
+        final var transitions = spnego.getTransitionSet();
         transitions.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET));
         transitions.add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
         transitions.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
@@ -68,7 +68,7 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void createEvaluateSpnegoClientAction(final Flow flow) {
-        final ActionState evaluateClientRequest = createActionState(flow, EVALUATE_SPNEGO_CLIENT,
+        final var evaluateClientRequest = createActionState(flow, EVALUATE_SPNEGO_CLIENT,
                 createEvaluateAction(casProperties.getAuthn().getSpnego().getHostNameClientActionStrategy()));
         evaluateClientRequest.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_YES, START_SPNEGO_AUTHENTICATE));
         evaluateClientRequest.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_NO, getStartState(flow)));

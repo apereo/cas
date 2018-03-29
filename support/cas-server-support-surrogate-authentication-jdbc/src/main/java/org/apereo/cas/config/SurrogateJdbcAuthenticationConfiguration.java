@@ -37,7 +37,7 @@ public class SurrogateJdbcAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public SurrogateAuthenticationService surrogateAuthenticationService() {
-        final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
+        final var su = casProperties.getAuthn().getSurrogate();
         return new SurrogateJdbcAuthenticationService(su.getJdbc().getSurrogateSearchQuery(),
                 JpaBeans.newDataSource(su.getJdbc()),
                 su.getJdbc().getSurrogateAccountQuery(), 

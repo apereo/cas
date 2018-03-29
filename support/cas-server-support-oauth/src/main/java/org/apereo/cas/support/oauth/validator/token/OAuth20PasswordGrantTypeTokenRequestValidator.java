@@ -34,10 +34,10 @@ public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20To
     @Override
     protected boolean validateInternal(final J2EContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) {
-        final HttpServletRequest request = context.getRequest();
-        final String clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+        final var request = context.getRequest();
+        final var clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
         LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
-        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+        final var registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
 
         return this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
             && this.validator.checkServiceValid(registeredService);

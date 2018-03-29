@@ -27,7 +27,7 @@ public class GroovyScriptInterruptInquirer extends BaseInterruptInquirer {
     @Override
     public InterruptResponse inquire(final Authentication authentication, final RegisteredService registeredService, final Service service) {
         if (ResourceUtils.doesResourceExist(resource)) {
-            final Principal principal = authentication.getPrincipal();
+            final var principal = authentication.getPrincipal();
             final Map<String, Object> attributes = new LinkedHashMap<>(principal.getAttributes());
             attributes.putAll(authentication.getAttributes());
             final Object[] args = {principal.getId(), attributes, service != null ? service.getId() : null, LOGGER};

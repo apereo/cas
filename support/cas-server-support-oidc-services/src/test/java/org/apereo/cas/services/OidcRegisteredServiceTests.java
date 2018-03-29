@@ -41,16 +41,16 @@ public class OidcRegisteredServiceTests {
 
     @Test
     public void checkSaveMethod() {
-        final OidcRegisteredService r = new OidcRegisteredService();
+        final var r = new OidcRegisteredService();
         r.setName("checkSaveMethod");
         r.setServiceId("testId");
         r.setJwks("file:/etc/cas/thekeystorehere.jwks");
         r.setSignIdToken(true);
         r.setBypassApprovalPrompt(true);
-        final RegisteredService r2 = this.dao.save(r);
+        final var r2 = this.dao.save(r);
         assertTrue(r2 instanceof OidcRegisteredService);
         this.dao.load();
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        final var r3 = this.dao.findServiceById(r2.getId());
         assertTrue(r3 instanceof OidcRegisteredService);
         assertEquals(r, r2);
         assertEquals(r2, r3);
@@ -58,7 +58,7 @@ public class OidcRegisteredServiceTests {
 
     @Test
     public void verifySerializeAOidcRegisteredServiceToJson() throws IOException {
-        final OidcRegisteredService serviceWritten = new OidcRegisteredService();
+        final var serviceWritten = new OidcRegisteredService();
         serviceWritten.setName("verifySerializeAOidcRegisteredServiceToJson");
         serviceWritten.setServiceId("testId");
         serviceWritten.setJwks("file:/etc/cas/thekeystorehere.jwks");

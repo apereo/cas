@@ -43,14 +43,14 @@ public class CosmosDbServiceRegistryConfiguration implements ServiceRegistryExec
     @Bean
     @RefreshScope
     public ServiceRegistry cosmosDbServiceRegistry() {
-        final CosmosDbObjectFactory factory = new CosmosDbObjectFactory(this.applicationContext);
-        final CosmosDbServiceRegistryProperties cosmosDb = casProperties.getServiceRegistry().getCosmosDb();
-        final DocumentDbFactory dbFactory = factory.createDocumentDbFactory(cosmosDb);
-        final DocumentDbTemplate db = factory.createDocumentDbTemplate(dbFactory, cosmosDb);
+        final var factory = new CosmosDbObjectFactory(this.applicationContext);
+        final var cosmosDb = casProperties.getServiceRegistry().getCosmosDb();
+        final var dbFactory = factory.createDocumentDbFactory(cosmosDb);
+        final var db = factory.createDocumentDbTemplate(dbFactory, cosmosDb);
 
         if (cosmosDb.isDropCollection()) {
-            final String collectionLink = CosmosDbObjectFactory.getCollectionLink(cosmosDb.getDatabase(), cosmosDb.getCollection());
-            final RequestOptions options = new RequestOptions();
+            final var collectionLink = CosmosDbObjectFactory.getCollectionLink(cosmosDb.getDatabase(), cosmosDb.getCollection());
+            final var options = new RequestOptions();
             options.setConsistencyLevel(ConsistencyLevel.valueOf(cosmosDb.getConsistencyLevel()));
             options.setOfferThroughput(cosmosDb.getThroughput());
             try {

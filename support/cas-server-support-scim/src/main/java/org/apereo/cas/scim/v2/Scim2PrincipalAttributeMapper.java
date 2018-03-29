@@ -46,12 +46,12 @@ public class Scim2PrincipalAttributeMapper {
         user.setPassword(credential.getPassword());
         user.setActive(Boolean.TRUE);
 
-        String attr = getPrincipalAttributeValue(p, "nickName");
+        var attr = getPrincipalAttributeValue(p, "nickName");
         user.setNickName(attr);
         attr = getPrincipalAttributeValue(p, "displayName");
         user.setDisplayName(attr);
         
-        final Name name = new Name();
+        final var name = new Name();
         attr = getPrincipalAttributeValue(p, "givenName");
         name.setGivenName(attr);
         attr = getPrincipalAttributeValue(p, "familyName");
@@ -61,7 +61,7 @@ public class Scim2PrincipalAttributeMapper {
 
         user.setName(name);
 
-        final Email email = new Email();
+        final var email = new Email();
         email.setPrimary(Boolean.TRUE);
         attr = getPrincipalAttributeValue(p, "mail");
         if (StringUtils.isBlank(attr)) {
@@ -70,7 +70,7 @@ public class Scim2PrincipalAttributeMapper {
         email.setValue(attr);
         user.setEmails(CollectionUtils.wrap(email));
 
-        final PhoneNumber phone = new PhoneNumber();
+        final var phone = new PhoneNumber();
         phone.setPrimary(Boolean.TRUE);
         attr = getPrincipalAttributeValue(p, "phone");
         if (StringUtils.isBlank(attr)) {

@@ -72,12 +72,12 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
                                                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                final SamlRegisteredService service, final String binding) throws SamlException {
 
-        final Assertion assertion = Assertion.class.cast(casAssertion);
-        final String authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
-        final String id = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
-        final AuthnStatement statement = newAuthnStatement(authenticationMethod, DateTimeUtils.zonedDateTimeOf(assertion.getAuthenticationDate()), id);
+        final var assertion = Assertion.class.cast(casAssertion);
+        final var authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
+        final var id = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
+        final var statement = newAuthnStatement(authenticationMethod, DateTimeUtils.zonedDateTimeOf(assertion.getAuthenticationDate()), id);
         if (assertion.getValidUntilDate() != null) {
-            final ZonedDateTime dt = DateTimeUtils.zonedDateTimeOf(assertion.getValidUntilDate());
+            final var dt = DateTimeUtils.zonedDateTimeOf(assertion.getValidUntilDate());
             statement.setSessionNotOnOrAfter(
                     DateTimeUtils.dateTimeOf(dt.plusSeconds(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance())));
         }
@@ -99,10 +99,10 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                    final String binding)
             throws SamlException {
-        final SubjectLocality subjectLocality = newSamlObject(SubjectLocality.class);
-        final AssertionConsumerService acs = adaptor.getAssertionConsumerService(binding);
+        final var subjectLocality = newSamlObject(SubjectLocality.class);
+        final var acs = adaptor.getAssertionConsumerService(binding);
         if (acs != null && StringUtils.isNotBlank(acs.getLocation())) {
-            final InetAddress ip = InetAddressUtils.getByName(acs.getLocation());
+            final var ip = InetAddressUtils.getByName(acs.getLocation());
             if (ip != null) {
                 subjectLocality.setAddress(ip.getHostName());
             }

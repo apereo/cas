@@ -20,7 +20,7 @@ public class DefaultPersonDirectoryAttributeRepositoryPlan implements PersonDire
 
     @Override
     public void registerAttributeRepository(final IPersonAttributeDao repository) {
-        final String name = AopUtils.isAopProxy(repository) ? AopUtils.getTargetClass(repository).getSimpleName() : repository.getClass().getSimpleName();
+        final var name = AopUtils.isAopProxy(repository) ? AopUtils.getTargetClass(repository).getSimpleName() : repository.getClass().getSimpleName();
         LOGGER.debug("Registering attribute repository [{}] into the person directory plan", name);
         attributeRepositories.add(repository);
     }

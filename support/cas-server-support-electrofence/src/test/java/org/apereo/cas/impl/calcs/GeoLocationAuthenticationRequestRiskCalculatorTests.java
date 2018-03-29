@@ -24,22 +24,22 @@ public class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAut
 
     @Test
     public void verifyTestWhenNoAuthnEventsFoundForUser() {
-        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("geoperson");
+        final var authentication = CoreAuthenticationTestUtils.getAuthentication("geoperson");
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);
+        final var request = new MockHttpServletRequest();
+        final var score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isHighestRisk());
     }
 
     @Test
     public void verifyTestWhenAuthnEventsFoundForUser() {
-        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
+        final var authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var request = new MockHttpServletRequest();
         request.setRemoteAddr("107.181.69.221");
         request.setLocalAddr("127.0.0.1");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
-        final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);
+        final var score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isHighestRisk());
     }
 }

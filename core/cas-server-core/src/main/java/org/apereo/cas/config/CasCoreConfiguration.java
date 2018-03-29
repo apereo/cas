@@ -81,9 +81,9 @@ public class CasCoreConfiguration {
     @Autowired
     @Bean
     public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan(final List<AuthenticationServiceSelectionStrategyConfigurer> configurers) {
-        final DefaultAuthenticationServiceSelectionPlan plan = new DefaultAuthenticationServiceSelectionPlan();
+        final var plan = new DefaultAuthenticationServiceSelectionPlan();
         configurers.forEach(c -> {
-            final String name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            final var name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Configuring authentication request service selection strategy plan [{}]", name);
             c.configureAuthenticationServiceSelectionStrategy(plan);
         });

@@ -37,24 +37,24 @@ public class OAuth20UserAuthenticator implements Authenticator<UsernamePasswordC
 
     @Override
     public void validate(final UsernamePasswordCredentials credentials, final WebContext context) throws CredentialsException {
-        final UsernamePasswordCredential casCredential = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
+        final var casCredential = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
         try {
-            final String clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
-            final Service service = this.webApplicationServiceFactory.createService(clientId);
+            final var clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
+            final var service = this.webApplicationServiceFactory.createService(clientId);
             final RegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
-            final AuthenticationResult authenticationResult = this.authenticationSystemSupport
+            final var authenticationResult = this.authenticationSystemSupport
                 .handleAndFinalizeSingleAuthenticationTransaction(null, casCredential);
-            final Authentication authentication = authenticationResult.getAuthentication();
-            final Principal principal = authentication.getPrincipal();
+            final var authentication = authenticationResult.getAuthentication();
+            final var principal = authentication.getPrincipal();
 
-            final OAuthUserProfile profile = new OAuthUserProfile();
-            final String id = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
+            final var profile = new OAuthUserProfile();
+            final var id = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
             LOGGER.debug("Created profile id [{}]", id);
 
             profile.setId(id);
-            final Map<String, Object> attributes = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
+            final var attributes = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
             profile.addAttributes(attributes);
             LOGGER.debug("Authenticated user profile [{}]", profile);
             credentials.setUserProfile(profile);

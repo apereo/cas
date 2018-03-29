@@ -84,13 +84,13 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         Security.addProvider(new BouncyCastleProvider());
         this.jasyptInstance = new StandardPBEStringEncryptor();
 
-        final String alg = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ALGORITHM);
+        final var alg = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ALGORITHM);
         setAlgorithm(alg);
-        final String psw = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PASSWORD);
+        final var psw = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PASSWORD);
         setPassword(psw);
-        final String pName = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PROVIDER);
+        final var pName = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PROVIDER);
         setProviderName(pName);
-        final String iter = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ITERATIONS);
+        final var iter = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ITERATIONS);
         setKeyObtentionIterations(iter);
     }
 
@@ -208,9 +208,9 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         if (StringUtils.isNotBlank(value) && value.startsWith(ENCRYPTED_VALUE_PREFIX)) {
             initializeJasyptInstanceIfNecessary();
 
-            final String encValue = value.substring(ENCRYPTED_VALUE_PREFIX.length());
+            final var encValue = value.substring(ENCRYPTED_VALUE_PREFIX.length());
             LOGGER.trace("Decrypting value [{}]...", encValue);
-            final String result = this.jasyptInstance.decrypt(encValue);
+            final var result = this.jasyptInstance.decrypt(encValue);
 
             if (StringUtils.isNotBlank(result)) {
                 LOGGER.debug("Decrypted value [{}] successfully.", encValue);

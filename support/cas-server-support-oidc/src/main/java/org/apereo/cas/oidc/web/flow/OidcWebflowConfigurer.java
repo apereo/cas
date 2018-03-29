@@ -31,9 +31,9 @@ public class OidcWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override
     protected void doInitialize() {
-        final Flow loginFlow = getLoginFlow();
+        final var loginFlow = getLoginFlow();
         if (loginFlow != null) {
-            final ViewState state = getTransitionableState(loginFlow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
+            final var state = getTransitionableState(loginFlow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
             state.getEntryActionList().add(this.oidcRegisteredServiceUIAction);
         }
     }

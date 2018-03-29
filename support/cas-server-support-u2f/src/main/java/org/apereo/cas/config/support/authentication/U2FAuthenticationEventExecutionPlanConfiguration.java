@@ -52,7 +52,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator u2fAuthenticationMetaDataPopulator() {
-        final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        final var authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute,
                 u2fAuthenticationHandler(),
                 u2fAuthenticationProvider());
@@ -73,14 +73,14 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public U2FAuthenticationHandler u2fAuthenticationHandler() {
-        final U2FMultifactorProperties u2f = this.casProperties.getAuthn().getMfa().getU2f();
+        final var u2f = this.casProperties.getAuthn().getMfa().getU2f();
         return new U2FAuthenticationHandler(u2f.getName(), servicesManager, u2fPrincipalFactory(), u2fDeviceRepository);
     }
 
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider u2fAuthenticationProvider() {
-        final U2FMultifactorAuthenticationProvider p = new U2FMultifactorAuthenticationProvider();
+        final var p = new U2FMultifactorAuthenticationProvider();
         p.setBypassEvaluator(u2fBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getU2f().getRank());

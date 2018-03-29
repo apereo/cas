@@ -53,8 +53,8 @@ public class MongoDbAuditTrailManager implements AuditTrailManager {
 
     @Override
     public Set<AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
-        final Date dt = DateTimeUtils.dateOf(localDate);
-        final Query query = new Query().addCriteria(Criteria.where("whenActionWasPerformed").lte(dt));
+        final var dt = DateTimeUtils.dateOf(localDate);
+        final var query = new Query().addCriteria(Criteria.where("whenActionWasPerformed").lte(dt));
         return new LinkedHashSet<>(this.mongoTemplate.find(query, AuditActionContext.class, this.collectionName));
     }
 }

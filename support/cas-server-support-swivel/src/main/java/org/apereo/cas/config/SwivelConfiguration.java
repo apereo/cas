@@ -92,7 +92,7 @@ public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Bean
     public FlowDefinitionRegistry swivelAuthenticatorFlowRegistry() {
-        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        final var builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-swivel/*-webflow.xml");
         return builder.build();
@@ -120,7 +120,7 @@ public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Bean
     public SwivelTuringImageGeneratorController swivelTuringImageGeneratorController() {
-        final SwivelMultifactorProperties swivel = this.casProperties.getAuthn().getMfa().getSwivel();
+        final var swivel = this.casProperties.getAuthn().getMfa().getSwivel();
         return new SwivelTuringImageGeneratorController(swivel);
     }
 

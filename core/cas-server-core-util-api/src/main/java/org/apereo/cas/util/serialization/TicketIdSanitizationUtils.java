@@ -36,12 +36,12 @@ public class TicketIdSanitizationUtils {
      * @return the modified message with tgt id removed
      */
     public static String sanitize(final String msg) {
-        String modifiedMessage = msg;
+        var modifiedMessage = msg;
         if (StringUtils.isNotBlank(msg) && !Boolean.getBoolean("CAS_TICKET_ID_SANITIZE_SKIP")) {
-            final Matcher matcher = TICKET_ID_PATTERN.matcher(msg);
+            final var matcher = TICKET_ID_PATTERN.matcher(msg);
             while (matcher.find()) {
-                final String match = matcher.group();
-                final String newId = matcher.group(1) + '-'
+                final var match = matcher.group();
+                final var newId = matcher.group(1) + '-'
                         + StringUtils.repeat("*", match.length() - VISIBLE_TAIL_LENGTH)
                         + StringUtils.right(match, VISIBLE_TAIL_LENGTH);
                 modifiedMessage = modifiedMessage.replaceAll(match, newId);

@@ -33,11 +33,11 @@ public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResour
     }
 
     private String[] getPrincipalIdFromSamlEcpResponse(final Envelope envelope) {
-        final List<XMLObject> objects = envelope.getBody().getUnknownXMLObjects();
+        final var objects = envelope.getBody().getUnknownXMLObjects();
         if (objects.isEmpty()) {
             return new String[]{};
         }
-        final XMLObject object = objects.get(0);
+        final var object = objects.get(0);
         if (object instanceof Response) {
             return getPrincipalIdFromSamlResponse((Response) object);
         }
@@ -48,7 +48,7 @@ public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResour
     }
 
     private String[] getPrincipalIdFromSamlResponse(final Response response) {
-        final String result =
+        final var result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append("issuer", response.getIssuer().getValue())
                 .append("destination", response.getDestination())
@@ -57,7 +57,7 @@ public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResour
     }
 
     private String[] getPrincipalIdFromSamlEcpFault(final Fault fault) {
-        final String result =
+        final var result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append("actor", fault.getActor().getValue())
                 .append("message", fault.getMessage().getValue())

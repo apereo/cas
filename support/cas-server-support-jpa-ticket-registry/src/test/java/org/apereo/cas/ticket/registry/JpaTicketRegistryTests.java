@@ -138,14 +138,14 @@ public class JpaTicketRegistryTests {
 
     @Test
     public void verifyTicketDeletionInBulk() {
-        final TicketGrantingTicket newTgt = newTGT();
+        final var newTgt = newTGT();
         addTicketInTransaction(newTgt);
-        final TicketGrantingTicket tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
-        final ServiceTicket newSt = grantServiceTicketInTransaction(tgtFromDb);
-        final ServiceTicket stFromDb = (ServiceTicket) getTicketInTransaction(newSt.getId());
-        final ProxyGrantingTicket newPgt = grantProxyGrantingTicketInTransaction(stFromDb);
-        final ProxyGrantingTicket pgtFromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt.getId());
-        final ProxyTicket newPt = grantProxyTicketInTransaction(pgtFromDb);
+        final var tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
+        final var newSt = grantServiceTicketInTransaction(tgtFromDb);
+        final var stFromDb = (ServiceTicket) getTicketInTransaction(newSt.getId());
+        final var newPgt = grantProxyGrantingTicketInTransaction(stFromDb);
+        final var pgtFromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt.getId());
+        final var newPt = grantProxyTicketInTransaction(pgtFromDb);
 
         getTicketInTransaction(newPt.getId());
         deleteTicketsInTransaction();
@@ -155,22 +155,22 @@ public class JpaTicketRegistryTests {
     @Test
     public void verifyTicketCreationAndDeletion() {
         // TGT
-        final TicketGrantingTicket newTgt = newTGT();
+        final var newTgt = newTGT();
         addTicketInTransaction(newTgt);
-        TicketGrantingTicket tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
+        var tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
         assertNotNull(tgtFromDb);
         assertEquals(newTgt.getId(), tgtFromDb.getId());
 
         // ST
-        final ServiceTicket newSt = grantServiceTicketInTransaction(tgtFromDb);
-        final ServiceTicket stFromDb = (ServiceTicket) getTicketInTransaction(newSt.getId());
+        final var newSt = grantServiceTicketInTransaction(tgtFromDb);
+        final var stFromDb = (ServiceTicket) getTicketInTransaction(newSt.getId());
         assertNotNull(stFromDb);
         assertEquals(newSt.getId(), stFromDb.getId());
 
         // PGT
-        final ProxyGrantingTicket newPgt = grantProxyGrantingTicketInTransaction(stFromDb);
+        final var newPgt = grantProxyGrantingTicketInTransaction(stFromDb);
         updateTicketInTransaction(stFromDb.getTicketGrantingTicket());
-        final ProxyGrantingTicket pgtFromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt.getId());
+        final var pgtFromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt.getId());
         assertNotNull(pgtFromDb);
         assertEquals(newPgt.getId(), pgtFromDb.getId());
 
@@ -179,21 +179,21 @@ public class JpaTicketRegistryTests {
         assertEquals(1, tgtFromDb.getProxyGrantingTickets().size());
 
         // PT
-        final ProxyTicket newPt = grantProxyTicketInTransaction(pgtFromDb);
-        final ProxyTicket ptFromDb = (ProxyTicket) getTicketInTransaction(newPt.getId());
+        final var newPt = grantProxyTicketInTransaction(pgtFromDb);
+        final var ptFromDb = (ProxyTicket) getTicketInTransaction(newPt.getId());
         assertNotNull(ptFromDb);
         assertEquals(newPt.getId(), ptFromDb.getId());
 
         // ST 2
-        final ServiceTicket newSt2 = grantServiceTicketInTransaction(tgtFromDb);
-        final ServiceTicket st2FromDb = (ServiceTicket) getTicketInTransaction(newSt2.getId());
+        final var newSt2 = grantServiceTicketInTransaction(tgtFromDb);
+        final var st2FromDb = (ServiceTicket) getTicketInTransaction(newSt2.getId());
         assertNotNull(st2FromDb);
         assertEquals(newSt2.getId(), st2FromDb.getId());
 
         // PGT 2
-        final ProxyGrantingTicket newPgt2 = grantProxyGrantingTicketInTransaction(st2FromDb);
+        final var newPgt2 = grantProxyGrantingTicketInTransaction(st2FromDb);
         updateTicketInTransaction(st2FromDb.getTicketGrantingTicket());
-        final ProxyGrantingTicket pgt2FromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt2.getId());
+        final var pgt2FromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt2.getId());
         assertNotNull(pgt2FromDb);
         assertEquals(newPgt2.getId(), pgt2FromDb.getId());
 
@@ -220,16 +220,16 @@ public class JpaTicketRegistryTests {
 
     @Test
     public void verifyConcurrentServiceTicketGeneration() {
-        final TicketGrantingTicket newTgt = newTGT();
+        final var newTgt = newTGT();
         addTicketInTransaction(newTgt);
-        final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
+        final var executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
             final List<ServiceTicketGenerator> generators = new ArrayList<>(CONCURRENT_SIZE);
-            for (int i = 0; i < CONCURRENT_SIZE; i++) {
+            for (var i = 0; i < CONCURRENT_SIZE; i++) {
                 generators.add(new ServiceTicketGenerator(newTgt.getId(), this.ticketRegistry, this.txManager));
             }
-            final List<Future<String>> results = executor.invokeAll(generators);
-            for (final Future<String> result : results) {
+            final var results = executor.invokeAll(generators);
+            for (final var result : results) {
                 assertNotNull(result.get());
             }
         } catch (final Exception e) {
@@ -243,7 +243,7 @@ public class JpaTicketRegistryTests {
     }
 
     static TicketGrantingTicket newTGT() {
-        final Principal principal = new DefaultPrincipalFactory().createPrincipal(
+        final var principal = new DefaultPrincipalFactory().createPrincipal(
             "bob", Collections.singletonMap("displayName", "Bob"));
         return new TicketGrantingTicketImpl(
             ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
@@ -312,7 +312,7 @@ public class JpaTicketRegistryTests {
 
     private ServiceTicket grantServiceTicketInTransaction(final TicketGrantingTicket parent) {
         return new TransactionTemplate(txManager).execute(status -> {
-            final ServiceTicket st = newST(parent);
+            final var st = newST(parent);
             ticketRegistry.addTicket(st);
             return st;
         });
@@ -320,7 +320,7 @@ public class JpaTicketRegistryTests {
 
     private ProxyGrantingTicket grantProxyGrantingTicketInTransaction(final ServiceTicket parent) {
         return new TransactionTemplate(txManager).execute(status -> {
-            final ProxyGrantingTicket pgt = newPGT(parent);
+            final var pgt = newPGT(parent);
             ticketRegistry.addTicket(pgt);
             return pgt;
         });
@@ -328,7 +328,7 @@ public class JpaTicketRegistryTests {
 
     private ProxyTicket grantProxyTicketInTransaction(final ProxyGrantingTicket parent) {
         return new TransactionTemplate(txManager).execute(status -> {
-            final ProxyTicket st = newPT(parent);
+            final var st = newPT(parent);
             ticketRegistry.addTicket(st);
             return st;
         });
@@ -349,7 +349,7 @@ public class JpaTicketRegistryTests {
         @Override
         public String call() {
             return new TransactionTemplate(txManager).execute(status -> {
-                final ServiceTicket st = newST((TicketGrantingTicket) jpaTicketRegistry.getTicket(parentTgtId));
+                final var st = newST((TicketGrantingTicket) jpaTicketRegistry.getTicket(parentTgtId));
                 jpaTicketRegistry.addTicket(st);
                 return st.getId();
             });

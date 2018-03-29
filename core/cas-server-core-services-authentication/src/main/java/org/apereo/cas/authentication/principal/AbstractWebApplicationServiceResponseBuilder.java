@@ -73,10 +73,10 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
      * @return the response type
      */
     protected Response.ResponseType getWebApplicationServiceResponseType(final WebApplicationService finalService) {
-        final HttpServletRequest request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-        String method = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_METHOD) : null;
+        final var request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+        var method = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_METHOD) : null;
         if (StringUtils.isBlank(method)) {
-            final RegisteredService registeredService = this.servicesManager.findServiceBy(finalService);
+            final var registeredService = this.servicesManager.findServiceBy(finalService);
             if (registeredService != null) {
                 method = registeredService.getResponseType();
             }

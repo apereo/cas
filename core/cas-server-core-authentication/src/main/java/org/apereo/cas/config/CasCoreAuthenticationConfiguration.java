@@ -66,9 +66,9 @@ public class CasCoreAuthenticationConfiguration {
     @Autowired
     @Bean
     public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(final List<AuthenticationEventExecutionPlanConfigurer> configurers) {
-        final DefaultAuthenticationEventExecutionPlan plan = new DefaultAuthenticationEventExecutionPlan();
+        final var plan = new DefaultAuthenticationEventExecutionPlan();
         configurers.forEach(c -> {
-            final String name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            final var name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Configuring authentication execution plan [{}]", name);
             c.configureAuthenticationExecutionPlan(plan);
         });
@@ -79,11 +79,11 @@ public class CasCoreAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy() {
-        final AuthenticationAttributeReleaseProperties authenticationAttributeRelease =
+        final var authenticationAttributeRelease =
             casProperties.getAuthn().getAuthenticationAttributeRelease();
-        final DefaultAuthenticationAttributeReleasePolicy policy = new DefaultAuthenticationAttributeReleasePolicy();
+        final var policy = new DefaultAuthenticationAttributeReleasePolicy();
         policy.setAttributesToRelease(authenticationAttributeRelease.getOnlyRelease());
-        final Set<String> attributesToNeverRelease = CollectionUtils.wrapSet(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
+        final var attributesToNeverRelease = CollectionUtils.wrapSet(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
             RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
         attributesToNeverRelease.addAll(authenticationAttributeRelease.getNeverRelease());
         policy.setAttributesToNeverRelease(attributesToNeverRelease);

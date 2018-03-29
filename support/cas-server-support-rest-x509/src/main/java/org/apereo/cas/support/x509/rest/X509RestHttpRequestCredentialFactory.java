@@ -34,15 +34,15 @@ public class X509RestHttpRequestCredentialFactory implements RestHttpRequestCred
 
     @Override
     public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
-        final String cert = requestBody.getFirst(CERTIFICATE);
+        final var cert = requestBody.getFirst(CERTIFICATE);
         LOGGER.debug("Certificate in the request body: [{}]", cert);
         if (StringUtils.isBlank(cert)) {
             return new ArrayList<>(0);
         }
         final InputStream is = new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8));
         final InputStreamSource iso = new InputStreamResource(is);
-        final X509Certificate certificate = CertUtils.readCertificate(iso);
-        final X509CertificateCredential credential = new X509CertificateCredential(new X509Certificate[]{certificate});
+        final var certificate = CertUtils.readCertificate(iso);
+        final var credential = new X509CertificateCredential(new X509Certificate[]{certificate});
         credential.setCertificate(certificate);
         return CollectionUtils.wrap(credential);
     }

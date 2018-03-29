@@ -29,14 +29,14 @@ public class RestEndpointInterruptInquirerTests {
     @Before
     @SneakyThrows
     public void setup() {
-        final InterruptResponse response = new InterruptResponse();
+        final var response = new InterruptResponse();
         response.setSsoEnabled(true);
         response.setInterrupt(true);
         response.setBlock(true);
         response.setMessage(getClass().getSimpleName());
         response.setLinks(CollectionUtils.wrap("text1", "link1", "text2", "link2"));
 
-        final String data = new ObjectMapper()
+        final var data = new ObjectMapper()
             .findAndRegisterModules()
             .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -50,11 +50,11 @@ public class RestEndpointInterruptInquirerTests {
 
     @Test
     public void verifyResponseCanBeFoundFromRest() {
-        final InterruptProperties.Rest restProps = new InterruptProperties.Rest();
+        final var restProps = new InterruptProperties.Rest();
         restProps.setUrl("http://localhost:8888");
 
-        final RestEndpointInterruptInquirer q = new RestEndpointInterruptInquirer(restProps);
-        final InterruptResponse response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
+        final var q = new RestEndpointInterruptInquirer(restProps);
+        final var response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             CoreAuthenticationTestUtils.getRegisteredService(),
             CoreAuthenticationTestUtils.getService());
         assertNotNull(response);

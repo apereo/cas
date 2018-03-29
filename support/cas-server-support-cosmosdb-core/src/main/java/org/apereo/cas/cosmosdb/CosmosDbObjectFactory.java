@@ -37,8 +37,8 @@ public class CosmosDbObjectFactory {
      * @return the document client
      */
     public DocumentClient createDocumentClient(final BaseCosmosDbProperties properties) {
-        final ConnectionPolicy policy = ConnectionPolicy.GetDefault();
-        String userAgent = (policy.getUserAgentSuffix() == null
+        final var policy = ConnectionPolicy.GetDefault();
+        var userAgent = (policy.getUserAgentSuffix() == null
             ? StringUtils.EMPTY
             : ";" + policy.getUserAgentSuffix()) + ";" + USER_AGENT_SUFFIX;
         if (properties.isAllowTelemetry() && GetHashMac.getHashMac() != null) {
@@ -56,7 +56,7 @@ public class CosmosDbObjectFactory {
      * @return the document db factory
      */
     public DocumentDbFactory createDocumentDbFactory(final BaseCosmosDbProperties properties) {
-        final DocumentClient documentClient = createDocumentClient(properties);
+        final var documentClient = createDocumentClient(properties);
         return new DocumentDbFactory(documentClient);
     }
 
@@ -67,9 +67,9 @@ public class CosmosDbObjectFactory {
      * @return the document db template
      */
     public DocumentDbTemplate createDocumentDbTemplate(final BaseCosmosDbProperties properties) {
-        final DocumentDbFactory documentDbFactory = createDocumentDbFactory(properties);
-        final DocumentDbMappingContext documentDbMappingContext = createDocumentDbMappingContext();
-        final MappingDocumentDbConverter mappingDocumentDbConverter = createMappingDocumentDbConverter(documentDbMappingContext);
+        final var documentDbFactory = createDocumentDbFactory(properties);
+        final var documentDbMappingContext = createDocumentDbMappingContext();
+        final var mappingDocumentDbConverter = createMappingDocumentDbConverter(documentDbMappingContext);
         return new DocumentDbTemplate(documentDbFactory, mappingDocumentDbConverter, properties.getDatabase());
     }
 
@@ -82,8 +82,8 @@ public class CosmosDbObjectFactory {
      */
     public DocumentDbTemplate createDocumentDbTemplate(final DocumentDbFactory documentDbFactory,
                                                        final BaseCosmosDbProperties properties) {
-        final DocumentDbMappingContext documentDbMappingContext = createDocumentDbMappingContext();
-        final MappingDocumentDbConverter mappingDocumentDbConverter = createMappingDocumentDbConverter(documentDbMappingContext);
+        final var documentDbMappingContext = createDocumentDbMappingContext();
+        final var mappingDocumentDbConverter = createMappingDocumentDbConverter(documentDbMappingContext);
         return new DocumentDbTemplate(documentDbFactory, mappingDocumentDbConverter, properties.getDatabase());
     }
 
@@ -94,7 +94,7 @@ public class CosmosDbObjectFactory {
      */
     @SneakyThrows
     public DocumentDbMappingContext createDocumentDbMappingContext() {
-        final DocumentDbMappingContext documentDbMappingContext = new DocumentDbMappingContext();
+        final var documentDbMappingContext = new DocumentDbMappingContext();
         documentDbMappingContext.setInitialEntitySet(new EntityScanner(applicationContext).scan(Persistent.class));
         return documentDbMappingContext;
     }

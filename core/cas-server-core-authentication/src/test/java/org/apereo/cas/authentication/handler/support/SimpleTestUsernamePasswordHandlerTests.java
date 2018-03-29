@@ -49,7 +49,7 @@ public class SimpleTestUsernamePasswordHandlerTests {
 
     @Test
     public void verifyValidUsernamePassword() throws Exception {
-        final AuthenticationHandlerExecutionResult result =
+        final var result =
             authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertEquals("SimpleTestUsernamePasswordAuthenticationHandler", result.getHandlerName());
     }

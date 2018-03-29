@@ -49,10 +49,10 @@ public class RestAuthenticationApi {
      * @return the http headers
      */
     public static HttpHeaders createHeaders(final UsernamePasswordCredential c) {
-        final HttpHeaders acceptHeaders = new HttpHeaders();
+        final var acceptHeaders = new HttpHeaders();
         acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-        final String authorization = c.getUsername() + ':' + c.getPassword();
-        final String basic = EncodingUtils.encodeBase64(authorization.getBytes(Charset.forName("US-ASCII")));
+        final var authorization = c.getUsername() + ':' + c.getPassword();
+        final var basic = EncodingUtils.encodeBase64(authorization.getBytes(Charset.forName("US-ASCII")));
         acceptHeaders.set("Authorization", "Basic " + basic);
         return acceptHeaders;
     }

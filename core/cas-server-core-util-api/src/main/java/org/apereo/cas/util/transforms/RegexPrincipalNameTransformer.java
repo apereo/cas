@@ -27,7 +27,7 @@ public class RegexPrincipalNameTransformer implements PrincipalNameTransformer {
 
     @Override
     public String transform(final String username) {
-        final Matcher matcher = this.pattern.matcher(username);
+        final var matcher = this.pattern.matcher(username);
         if (matcher.find()) {
             return matcher.group(1);
         }

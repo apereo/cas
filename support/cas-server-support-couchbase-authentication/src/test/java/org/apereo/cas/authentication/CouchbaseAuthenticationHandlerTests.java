@@ -67,11 +67,11 @@ public class CouchbaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAccount() throws Exception {
-        final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
-        final AuthenticationHandlerExecutionResult result = couchbaseAuthenticationHandler.authenticate(c);
+        final var c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
+        final var result = couchbaseAuthenticationHandler.authenticate(c);
         assertNotNull(result);
         assertEquals("casuser", result.getPrincipal().getId());
-        final Map<String, Object> attributes = result.getPrincipal().getAttributes();
+        final var attributes = result.getPrincipal().getAttributes();
         assertEquals(2, attributes.size());
         assertTrue(attributes.containsKey("firstname"));
         assertTrue(attributes.containsKey("lastname"));

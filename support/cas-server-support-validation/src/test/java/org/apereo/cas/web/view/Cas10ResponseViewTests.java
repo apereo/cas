@@ -40,8 +40,8 @@ public class Cas10ResponseViewTests {
 
     @Test
     public void verifySuccessView() throws Exception {
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final Cas10ResponseView view = new Cas10ResponseView(true, null,
+        final var response = new MockHttpServletResponse();
+        final var view = new Cas10ResponseView(true, null,
                 null, null, null);
         view.render(this.model, new MockHttpServletRequest(), response);
         assertEquals("yes\ntest\n", response.getContentAsString());
@@ -49,8 +49,8 @@ public class Cas10ResponseViewTests {
 
     @Test
     public void verifyFailureView() throws Exception {
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final Cas10ResponseView view = new Cas10ResponseView(false, null,
+        final var response = new MockHttpServletResponse();
+        final var view = new Cas10ResponseView(false, null,
                 null, null, null);
         view.render(this.model, new MockHttpServletRequest(), response);
         assertEquals("no\n\n", response.getContentAsString());

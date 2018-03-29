@@ -41,10 +41,10 @@ public class DefaultSSOSamlHttpRequestExtractor implements SSOSamlHttpRequestExt
         decoder.initialize();
         decoder.decode();
 
-        final MessageContext messageContext = decoder.getMessageContext();
+        final var messageContext = decoder.getMessageContext();
         LOGGER.debug("Locating SAML object from message context...");
         @NonNull
-        final SignableSAMLObject object = (SignableSAMLObject) messageContext.getMessage();
+        final var object = (SignableSAMLObject) messageContext.getMessage();
         if (!clazz.isAssignableFrom(object.getClass())) {
             throw new ClassCastException("SAML object [" + object.getClass().getName() + " type does not match " + clazz);
         }

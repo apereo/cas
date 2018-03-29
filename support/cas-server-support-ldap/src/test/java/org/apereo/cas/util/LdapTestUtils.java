@@ -57,7 +57,7 @@ public class LdapTestUtils {
      */
     public static Collection<LdapEntry> readLdif(final InputStream ldif, final String baseDn) throws IOException {
         final String ldapString;
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(ldif, StandardCharsets.UTF_8))) {
+        try (var reader = new BufferedReader(new InputStreamReader(ldif, StandardCharsets.UTF_8))) {
             ldapString = reader.lines()
                     .map(line -> {
                         if (line.contains(BASE_DN_PLACEHOLDER)) {
@@ -78,12 +78,12 @@ public class LdapTestUtils {
      */
     public static void createLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries) {
         try {
-            for (final LdapEntry entry : entries) {
+            for (final var entry : entries) {
                 final Collection<Attribute> attrs = new ArrayList<>(entry.getAttributeNames().length);
                 attrs.addAll(entry.getAttributes().stream()
                         .map(a -> new Attribute(a.getName(), a.getStringValues())).collect(Collectors.toList()));
 
-                final AddRequest ad = new AddRequest(entry.getDn(), attrs);
+                final var ad = new AddRequest(entry.getDn(), attrs);
                 connection.add(ad);
             }
         } catch (final Exception e) {
@@ -102,11 +102,11 @@ public class LdapTestUtils {
     public static void modifyLdapEntry(final LDAPConnection serverCon, final String dn, final LdapAttribute attr,
                                        final AttributeModificationType add) {
         try {
-            final String address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
-            try (Connection conn = DefaultConnectionFactory.getConnection(address)) {
+            final var address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
+            try (var conn = DefaultConnectionFactory.getConnection(address)) {
                 try {
                     conn.open();
-                    final ModifyOperation modify = new ModifyOperation(conn);
+                    final var modify = new ModifyOperation(conn);
                     modify.execute(new ModifyRequest(dn, new AttributeModification(add, attr)));
                 } catch (final Exception e) {
                     LOGGER.debug(e.getMessage(), e);

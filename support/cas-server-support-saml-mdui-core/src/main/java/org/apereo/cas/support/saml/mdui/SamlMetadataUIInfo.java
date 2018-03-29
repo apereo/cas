@@ -137,7 +137,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      */
     public String getDescription(final String locale) {
         if (this.uiInfo != null) {
-            final String description = getLocalizedValues(locale, this.uiInfo.getDescriptions());
+            final var description = getLocalizedValues(locale, this.uiInfo.getDescriptions());
             return (description != null) ? description : super.getDescription();
         }
         return super.getDescription();
@@ -156,7 +156,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      */
     public String getDisplayName(final String locale) {
         if (this.uiInfo != null) {
-            final String displayName = getLocalizedValues(locale, this.uiInfo.getDisplayNames());
+            final var displayName = getLocalizedValues(locale, this.uiInfo.getDisplayNames());
             return (displayName != null) ? displayName : super.getDisplayName();
         }
         return super.getDisplayName();
@@ -175,7 +175,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      */
     public String getInformationURL(final String locale) {
         if (this.uiInfo != null) {
-            final String informationUrl = getLocalizedValues(locale, this.uiInfo.getInformationURLs());
+            final var informationUrl = getLocalizedValues(locale, this.uiInfo.getInformationURLs());
             return (informationUrl != null) ? informationUrl : super.getInformationURL();
         }
         return super.getInformationURL();
@@ -194,7 +194,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      */
     public String getPrivacyStatementURL(final String locale) {
         if (this.uiInfo != null) {
-            final String privacyStatementURL = getLocalizedValues(locale, this.uiInfo.getPrivacyStatementURLs());
+            final var privacyStatementURL = getLocalizedValues(locale, this.uiInfo.getPrivacyStatementURLs());
             return (privacyStatementURL != null) ? privacyStatementURL : super.getPrivacyStatementURL();
         }
         return super.getPrivacyStatementURL();
@@ -215,9 +215,9 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
     private String getLocalizedValues(final String locale, final List<?> items) {
         if (locale != null) {
             LOGGER.trace("Looking for locale [{}]", locale);
-            for (int i = 0; i < items.size(); i++) {
+            for (var i = 0; i < items.size(); i++) {
                 if (items.get(i) instanceof LocalizedName) {
-                    final Pattern p = Pattern.compile(locale, Pattern.CASE_INSENSITIVE);
+                    final var p = Pattern.compile(locale, Pattern.CASE_INSENSITIVE);
                     if (p.matcher(((LocalizedName) items.get(i)).getXMLLang()).matches()) {
                         return ((LocalizedName) items.get(i)).getValue();
                     }
@@ -226,9 +226,9 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
             LOGGER.trace("Locale [{}] not found.", locale);
         }
         LOGGER.trace("Looking for locale [en]");
-        for (int i = 0; i < items.size(); i++) {
+        for (var i = 0; i < items.size(); i++) {
             if (items.get(i) instanceof LocalizedName) {
-                final Pattern p = Pattern.compile("en", Pattern.CASE_INSENSITIVE);
+                final var p = Pattern.compile("en", Pattern.CASE_INSENSITIVE);
                 if (p.matcher(((LocalizedName) items.get(i)).getXMLLang()).matches()) {
                     return ((LocalizedName) items.get(i)).getValue();
                 }

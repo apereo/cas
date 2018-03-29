@@ -45,27 +45,27 @@ public class MemcachedUtils {
                                            final Collection<Class> kryoSerializableClasses) {
         switch (StringUtils.trimToEmpty(memcachedProperties.getTranscoder()).toLowerCase()) {
             case "serial":
-                final SerializingTranscoder serial = new SerializingTranscoder();
+                final var serial = new SerializingTranscoder();
                 serial.setCompressionThreshold(memcachedProperties.getTranscoderCompressionThreshold());
                 LOGGER.debug("Creating memcached transcoder [{}]", serial.getClass().getName());
                 return serial;
             case "whalin":
-                final WhalinTranscoder whalin = new WhalinTranscoder();
+                final var whalin = new WhalinTranscoder();
                 whalin.setCompressionThreshold(memcachedProperties.getTranscoderCompressionThreshold());
                 LOGGER.debug("Creating memcached transcoder [{}]", whalin.getClass().getName());
                 return whalin;
             case "whalinv1":
-                final WhalinV1Transcoder whalinv1 = new WhalinV1Transcoder();
+                final var whalinv1 = new WhalinV1Transcoder();
                 whalinv1.setCompressionThreshold(memcachedProperties.getTranscoderCompressionThreshold());
                 LOGGER.debug("Creating memcached transcoder [{}]", whalinv1.getClass().getName());
                 return whalinv1;
             case "kryo":
             default:
-                final CasKryoPool kryoPool = new CasKryoPool(kryoSerializableClasses, true,
+                final var kryoPool = new CasKryoPool(kryoSerializableClasses, true,
                         memcachedProperties.isKryoRegistrationRequired(),
                         memcachedProperties.isKryoObjectsByReference(),
                         memcachedProperties.isKryoAutoReset());
-                final CasKryoTranscoder kryo = new CasKryoTranscoder(kryoPool);
+                final var kryo = new CasKryoTranscoder(kryoPool);
                 LOGGER.debug("Creating memcached transcoder [{}]", kryo.getClass().getName());
                 return kryo;
         }

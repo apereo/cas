@@ -21,7 +21,7 @@ public class HazelcastAwsDiscoveryStrategy implements HazelcastDiscoveryStrategy
 
     @Override
     public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster) {
-        final HazelcastAwsDiscoveryProperties aws = cluster.getDiscovery().getAws();
+        final var aws = cluster.getDiscovery().getAws();
         final Map<String, Comparable> properties = new HashMap<>();
         if (StringUtils.hasText(aws.getAccessKey())) {
             properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_ACCESS_KEY, aws.getAccessKey());

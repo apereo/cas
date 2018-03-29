@@ -31,7 +31,7 @@ public class JmsTicketRegistryTests extends AbstractTicketRegistryTests {
 
     @Override
     public TicketRegistry getNewTicketRegistry() {
-        final JmsTemplate jms = Mockito.mock(JmsTemplate.class);
+        final var jms = Mockito.mock(JmsTemplate.class);
         return new JmsTicketRegistry(jms, new StringBean());
     }
 }

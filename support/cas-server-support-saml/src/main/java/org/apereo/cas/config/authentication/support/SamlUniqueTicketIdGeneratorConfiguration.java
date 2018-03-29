@@ -30,7 +30,7 @@ public class SamlUniqueTicketIdGeneratorConfiguration implements UniqueTicketIdG
 
     @Bean
     public UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator() {
-        final SamlCompliantUniqueTicketIdGenerator gen = new SamlCompliantUniqueTicketIdGenerator(casProperties.getServer().getName());
+        final var gen = new SamlCompliantUniqueTicketIdGenerator(casProperties.getServer().getName());
         gen.setSaml2compliant(casProperties.getSamlCore().isTicketidSaml2());
         return gen;
     }

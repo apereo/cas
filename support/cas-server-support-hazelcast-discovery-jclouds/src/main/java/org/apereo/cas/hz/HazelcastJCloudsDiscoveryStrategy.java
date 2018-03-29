@@ -21,7 +21,7 @@ public class HazelcastJCloudsDiscoveryStrategy implements HazelcastDiscoveryStra
 
     @Override
     public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster) {
-        final HazelcastJCloudsDiscoveryProperties jclouds = cluster.getDiscovery().getJclouds();
+        final var jclouds = cluster.getDiscovery().getJclouds();
         final Map<String, Comparable> properties = new HashMap<>();
         if (StringUtils.hasText(jclouds.getCredential())) {
             properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_CREDENTIAL, jclouds.getCredential());

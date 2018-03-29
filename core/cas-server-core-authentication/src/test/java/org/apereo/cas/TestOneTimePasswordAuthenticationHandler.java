@@ -37,8 +37,8 @@ public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthentica
     @Override
     public AuthenticationHandlerExecutionResult authenticate(final Credential credential)
             throws GeneralSecurityException {
-        final OneTimePasswordCredential otp = (OneTimePasswordCredential) credential;
-        final String valueOnRecord = credentialMap.get(otp.getId());
+        final var otp = (OneTimePasswordCredential) credential;
+        final var valueOnRecord = credentialMap.get(otp.getId());
         if (otp.getPassword().equals(valueOnRecord)) {
             return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(otp),
                     new DefaultPrincipalFactory().createPrincipal(otp.getId()));

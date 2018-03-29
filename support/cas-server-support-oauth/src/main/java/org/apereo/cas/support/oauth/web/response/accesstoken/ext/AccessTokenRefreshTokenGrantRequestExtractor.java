@@ -43,7 +43,7 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
 
     @Override
     public boolean supports(final HttpServletRequest context) {
-        final String grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
+        final var grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, getGrantType());
     }
 
@@ -54,8 +54,8 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
 
     @Override
     protected OAuthRegisteredService getOAuthRegisteredServiceBy(final HttpServletRequest request) {
-        final String clientId = getRegisteredServiceIdentifierFromRequest(request);
-        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+        final var clientId = getRegisteredServiceIdentifierFromRequest(request);
+        final var registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
         LOGGER.debug("Located registered service [{}]", registeredService);
         return registeredService;
     }

@@ -65,7 +65,7 @@ public class RegisteredServiceResource {
     public ResponseEntity<String> createService(@RequestBody final RegisteredService service,
                                                 final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            final Authentication auth = authenticateRequest(request, response);
+            final var auth = authenticateRequest(request, response);
             if (isAuthenticatedPrincipalAuthorized(auth)) {
                 this.servicesManager.save(service);
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -80,13 +80,13 @@ public class RegisteredServiceResource {
     }
 
     private boolean isAuthenticatedPrincipalAuthorized(final Authentication auth) {
-        final Map<String, Object> attributes = auth.getPrincipal().getAttributes();
+        final var attributes = auth.getPrincipal().getAttributes();
         LOGGER.debug("Evaluating principal attributes [{}]", attributes.keySet());
         if (StringUtils.isBlank(this.attributeName) || StringUtils.isBlank(this.attributeValue)) {
             LOGGER.error("No attribute name or value is defined to authorize this request");
             return false;
         }
-        final Pattern pattern = RegexUtils.createPattern(this.attributeValue);
+        final var pattern = RegexUtils.createPattern(this.attributeValue);
         if (attributes.containsKey(this.attributeName)) {
             final Collection<Object> values = CollectionUtils.toCollection(attributes.get(this.attributeName));
             return values.stream().anyMatch(t -> RegexUtils.matches(pattern, t.toString()));
@@ -95,14 +95,14 @@ public class RegisteredServiceResource {
     }
 
     private Authentication authenticateRequest(final HttpServletRequest request, final HttpServletResponse response) {
-        final BasicAuthExtractor extractor = new BasicAuthExtractor();
+        final var extractor = new BasicAuthExtractor();
         final WebContext webContext = new J2EContext(request, response);
-        final UsernamePasswordCredentials credentials = extractor.extract(webContext);
+        final var credentials = extractor.extract(webContext);
         if (credentials != null) {
             LOGGER.debug("Received basic authentication request from credentials [{}]", credentials);
             final Credential c = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
-            final Service serviceRequest = this.serviceFactory.createService(request);
-            final AuthenticationResult result = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceRequest, c);
+            final var serviceRequest = this.serviceFactory.createService(request);
+            final var result = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceRequest, c);
             return result.getAuthentication();
         }
         throw new BadRestRequestException("Could not authenticate request");

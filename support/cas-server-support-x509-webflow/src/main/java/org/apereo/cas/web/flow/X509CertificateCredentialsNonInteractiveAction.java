@@ -32,7 +32,7 @@ public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonI
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
-        final X509Certificate[] certificates = (X509Certificate[]) context.getExternalContext().getRequestMap().get(CERTIFICATE_REQUEST_ATTRIBUTE);
+        final var certificates = (X509Certificate[]) context.getExternalContext().getRequestMap().get(CERTIFICATE_REQUEST_ATTRIBUTE);
 
         if (certificates == null || certificates.length == 0) {
             LOGGER.debug("Certificates not found in request attribute: {}", CERTIFICATE_REQUEST_ATTRIBUTE);

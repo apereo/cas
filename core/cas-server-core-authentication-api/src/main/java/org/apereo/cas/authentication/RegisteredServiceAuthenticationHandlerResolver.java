@@ -31,9 +31,9 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
 
     @Override
     public boolean supports(final Set<AuthenticationHandler> handlers, final AuthenticationTransaction transaction) {
-        final Service service = transaction.getService();
+        final var service = transaction.getService();
         if (service != null) {
-            final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+            final var registeredService = this.servicesManager.findServiceBy(service);
             LOGGER.debug("Located registered service definition [{}] for this authentication transaction", registeredService);
             if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO.", registeredService);
@@ -46,17 +46,17 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
 
     @Override
     public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers, final AuthenticationTransaction transaction) {
-        final Service service = transaction.getService();
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        final var service = transaction.getService();
+        final var registeredService = this.servicesManager.findServiceBy(service);
 
-        final Set<String> requiredHandlers = registeredService.getRequiredHandlers();
+        final var requiredHandlers = registeredService.getRequiredHandlers();
         LOGGER.debug("Authentication transaction requires [{}] for service [{}]", requiredHandlers, service);
         final Set<AuthenticationHandler> handlerSet = new LinkedHashSet<>(candidateHandlers);
         LOGGER.info("Candidate authentication handlers examined this transaction are [{}]", handlerSet);
 
-        final Iterator<AuthenticationHandler> it = handlerSet.iterator();
+        final var it = handlerSet.iterator();
         while (it.hasNext()) {
-            final AuthenticationHandler handler = it.next();
+            final var handler = it.next();
             if (!(handler instanceof HttpBasedServiceCredentialsAuthenticationHandler) && !requiredHandlers.contains(handler.getName())) {
                 LOGGER.debug("Authentication handler [{}] is not required for this transaction and is removed", handler.getName());
                 it.remove();

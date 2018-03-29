@@ -27,7 +27,7 @@ public class OAuth20ClientCredentialsResponseBuilder extends OAuth20ResourceOwne
 
     @Override
     public boolean supports(final J2EContext context) {
-        final String grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+        final var grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.CLIENT_CREDENTIALS);
     }
 }

@@ -56,10 +56,10 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
     public RegisteredService getRegisteredServiceFromCacheByPredicate(final RegisteredService service,
                                                                       final Predicate<DistributedCacheObject<RegisteredService>> predicate,
                                                                       final ServiceRegistry serviceRegistry) {
-        final Optional<DistributedCacheObject<RegisteredService>> result = this.distributedCacheManager.find(predicate);
+        final var result = this.distributedCacheManager.find(predicate);
         if (result.isPresent()) {
-            final DistributedCacheObject<RegisteredService> item = result.get();
-            final RegisteredService cachedService = item.getValue();
+            final var item = result.get();
+            final var cachedService = item.getValue();
             LOGGER.debug("Located cache entry [{}] in service registry cache [{}]", item, this.distributedCacheManager.getName());
             if (isRegisteredServiceMarkedAsDeletedInCache(item)) {
                 LOGGER.debug("Service found in the cache [{}] is marked as a deleted service. CAS will update the service registry "
@@ -104,10 +104,10 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
     @Override
     public List<RegisteredService> updateLoadedRegisteredServicesFromCache(final List<RegisteredService> services,
                                                                            final ServiceRegistry serviceRegistry) {
-        final Collection<DistributedCacheObject<RegisteredService>> cachedServices = this.distributedCacheManager.getAll();
+        final var cachedServices = this.distributedCacheManager.getAll();
 
-        for (final DistributedCacheObject<RegisteredService> entry : cachedServices) {
-            final RegisteredService cachedService = entry.getValue();
+        for (final var entry : cachedServices) {
+            final var cachedService = entry.getValue();
             LOGGER.debug("Found cached service definition [{}] in the replication cache [{}]", cachedService, distributedCacheManager.getName());
 
             if (isRegisteredServiceMarkedAsDeletedInCache(entry)) {
@@ -118,7 +118,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
                 continue;
             }
 
-            final RegisteredService matchingService = services.stream()
+            final var matchingService = services.stream()
                 .filter(s -> s.getId() == cachedService.getId())
                 .findFirst()
                 .orElse(null);
@@ -160,7 +160,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
 
     private boolean isRegisteredServiceMarkedAsDeletedInCache(final DistributedCacheObject<RegisteredService> item) {
         if (item.containsProperty("event")) {
-            final BaseCasRegisteredServiceEvent event = item.getProperty("event", BaseCasRegisteredServiceEvent.class);
+            final var event = item.getProperty("event", BaseCasRegisteredServiceEvent.class);
             return event instanceof CasRegisteredServiceDeletedEvent;
         }
         return false;

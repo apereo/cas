@@ -64,11 +64,11 @@ public class GenerateSamlIdPMetadataCommand implements CommandMarker {
             optionContext = "Force metadata generation, disregarding anything that might already be available at the specified location") final boolean force) {
 
         final SamlIdPMetadataLocator locator = new DefaultSamlIdPMetadataLocator(new File(metadataLocation));
-        final DefaultSamlIdPCertificateAndKeyWriter writer = new DefaultSamlIdPCertificateAndKeyWriter();
-        final FileSystemSamlIdPMetadataGenerator generator = new FileSystemSamlIdPMetadataGenerator(entityId, this.resourceLoader,
+        final var writer = new DefaultSamlIdPCertificateAndKeyWriter();
+        final var generator = new FileSystemSamlIdPMetadataGenerator(entityId, this.resourceLoader,
             serverPrefix, scope, locator, writer);
 
-        boolean generateMetadata = true;
+        var generateMetadata = true;
         if (!locator.exists()) {
             LOGGER.warn("Metadata artifacts are available at the specified location: [{}]", metadataLocation);
             generateMetadata = force;

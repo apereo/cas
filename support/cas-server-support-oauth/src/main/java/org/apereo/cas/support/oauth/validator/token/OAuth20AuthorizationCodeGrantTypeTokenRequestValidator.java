@@ -38,18 +38,18 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
     @Override
     protected boolean validateInternal(final J2EContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) {
-        final HttpServletRequest request = context.getRequest();
-        final String clientId = uProfile.getId();
-        final String redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
-        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+        final var request = context.getRequest();
+        final var clientId = uProfile.getId();
+        final var redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
+        final var registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
 
         LOGGER.debug("Received grant type [{}] with client id [{}] and redirect URI [{}]", grantType, clientId, redirectUri);
-        final boolean valid = this.validator.checkParameterExist(request, OAuth20Constants.REDIRECT_URI)
+        final var valid = this.validator.checkParameterExist(request, OAuth20Constants.REDIRECT_URI)
             && this.validator.checkParameterExist(request, OAuth20Constants.CODE)
             && this.validator.checkCallbackValid(registeredService, redirectUri);
 
         if (valid) {
-            final String code = context.getRequestParameter(OAuth20Constants.CODE);
+            final var code = context.getRequestParameter(OAuth20Constants.CODE);
             final OAuthToken token = ticketRegistry.getTicket(code, OAuthCode.class);
             if (token == null || token.isExpired()) {
                 LOGGER.warn("Request OAuth code [{}] is not found or has expired", code);

@@ -18,7 +18,7 @@ public class AcceptUserGraphicsForAuthenticationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final String username = requestContext.getRequestParameters().get("username");
+        final var username = requestContext.getRequestParameters().get("username");
         WebUtils.putCredential(requestContext, new UsernamePasswordCredential(username, null));
         requestContext.getFlowScope().put("guaUsername", username);
         return success();

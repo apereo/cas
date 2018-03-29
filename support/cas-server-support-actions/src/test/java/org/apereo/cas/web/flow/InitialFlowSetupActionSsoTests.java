@@ -108,8 +108,8 @@ public class InitialFlowSetupActionSsoTests {
 
     @Test
     public void disableFlowIfNoService() throws Exception {
-        final MockRequestContext context = new MockRequestContext();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var context = new MockRequestContext();
+        final var request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         this.thrown.expect(NoSuchFlowExecutionException.class);

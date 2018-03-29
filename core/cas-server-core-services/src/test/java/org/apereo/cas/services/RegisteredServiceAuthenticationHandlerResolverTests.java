@@ -35,10 +35,10 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
 
     @Before
     public void setUp() {
-        final InMemoryServiceRegistry dao = new InMemoryServiceRegistry();
+        final var dao = new InMemoryServiceRegistry();
         final List<RegisteredService> list = new ArrayList<>();
 
-        AbstractRegisteredService svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1");
+        var svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1");
         svc.setRequiredHandlers(CollectionUtils.wrapHashSet("handler1", "handler2"));
         list.add(svc);
 
@@ -51,31 +51,31 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         this.defaultServicesManager = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class));
         this.defaultServicesManager.load();
 
-        final AcceptUsersAuthenticationHandler handler1 = new AcceptUsersAuthenticationHandler("handler1");
-        final AcceptUsersAuthenticationHandler handler2 = new AcceptUsersAuthenticationHandler("handler2");
-        final AcceptUsersAuthenticationHandler handler3 = new AcceptUsersAuthenticationHandler("handler3");
+        final var handler1 = new AcceptUsersAuthenticationHandler("handler1");
+        final var handler2 = new AcceptUsersAuthenticationHandler("handler2");
+        final var handler3 = new AcceptUsersAuthenticationHandler("handler3");
 
         this.handlers = Stream.of(handler1, handler2, handler3).collect(Collectors.toSet());
     }
 
     @Test
     public void checkAuthenticationHandlerResolutionDefault() {
-        final RegisteredServiceAuthenticationHandlerResolver resolver =
+        final var resolver =
             new RegisteredServiceAuthenticationHandlerResolver(this.defaultServicesManager);
-        final AuthenticationTransaction transaction = AuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid1"),
+        final var transaction = AuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid1"),
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
-        final Set<AuthenticationHandler> handlers = resolver.resolve(this.handlers, transaction);
+        final var handlers = resolver.resolve(this.handlers, transaction);
         assertEquals(2, handlers.size());
     }
 
     @Test
     public void checkAuthenticationHandlerResolution() {
-        final DefaultAuthenticationHandlerResolver resolver =
+        final var resolver =
             new DefaultAuthenticationHandlerResolver();
-        final AuthenticationTransaction transaction = AuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid2"),
+        final var transaction = AuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid2"),
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
-        final Set<AuthenticationHandler> handlers = resolver.resolve(this.handlers, transaction);
+        final var handlers = resolver.resolve(this.handlers, transaction);
         assertEquals(handlers.size(), this.handlers.size());
     }
 }

@@ -28,7 +28,7 @@ public class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAu
     @Override
     public AuthenticationHandlerExecutionResult authenticate(final Credential credential) {
         LOGGER.debug("Trusting credential for: [{}]", credential);
-        final PrincipalBearingCredential bearingCredential = (PrincipalBearingCredential) credential;
+        final var bearingCredential = (PrincipalBearingCredential) credential;
         return new DefaultAuthenticationHandlerExecutionResult(this, bearingCredential, bearingCredential.getPrincipal());
     }
 

@@ -109,19 +109,19 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     @Override
     @SneakyThrows
     protected List<X509CRL> getCRLs(final X509Certificate cert) {
-        final URI[] urls = getDistributionPoints(cert);
+        final var urls = getDistributionPoints(cert);
         LOGGER.debug("Distribution points for [{}]: [{}].", CertUtils.toString(cert), CollectionUtils.wrap(urls));
         final List<X509CRL> listOfLocations = new ArrayList<>(urls.length);
-        boolean stopFetching = false;
+        var stopFetching = false;
         
-        for (int index = 0; !stopFetching && index < urls.length; index++) {
-            final URI url = urls[index];
-            final Element item = this.crlCache.get(url);
+        for (var index = 0; !stopFetching && index < urls.length; index++) {
+            final var url = urls[index];
+            final var item = this.crlCache.get(url);
 
             if (item != null) {
                 LOGGER.debug("Found CRL in cache for [{}]", CertUtils.toString(cert));
-                final byte[] encodedCrl = (byte[]) item.getObjectValue();
-                final X509CRL crlFetched = this.fetcher.fetch(new ByteArrayResource(encodedCrl));
+                final var encodedCrl = (byte[]) item.getObjectValue();
+                final var crlFetched = this.fetcher.fetch(new ByteArrayResource(encodedCrl));
 
                 if (crlFetched != null) {
                     listOfLocations.add(crlFetched);
@@ -131,7 +131,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
             } else {
                 LOGGER.debug("CRL for [{}] is not cached. Fetching and caching...", CertUtils.toString(cert));
                 try {
-                    final X509CRL crl = this.fetcher.fetch(url);
+                    final var crl = this.fetcher.fetch(url);
                     if (crl != null) {
                         LOGGER.info("Success. Caching fetched CRL at [{}].", url);
                         addCRL(url, crl);
@@ -189,7 +189,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
 
         if (points != null) {
             points.stream().map(DistributionPoint::getDistributionPoint).filter(Objects::nonNull).forEach(pointName -> {
-                final ASN1Sequence nameSequence = ASN1Sequence.getInstance(pointName.getName());
+                final var nameSequence = ASN1Sequence.getInstance(pointName.getName());
                 IntStream.range(0, nameSequence.size()).mapToObj(i -> GeneralName.getInstance(nameSequence.getObjectAt(i))).forEach(name -> {
                     LOGGER.debug("Found CRL distribution point [{}].", name);
                     try {
@@ -219,7 +219,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         try {
             URI uri;
             try {
-                final URL url = new URL(URLDecoder.decode(uriString, StandardCharsets.UTF_8.name()));
+                final var url = new URL(URLDecoder.decode(uriString, StandardCharsets.UTF_8.name()));
                 uri = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null);
             } catch (final MalformedURLException e) {
                 uri = new URI(uriString);

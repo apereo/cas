@@ -128,22 +128,22 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
             throw new GeneralSecurityException("Authentication handler is not configured correctly");
         }
 
-        final String username = transformedCredential.getUsername();
+        final var username = transformedCredential.getUsername();
         try {
-            final Map<String, Object> values = getJdbcTemplate().queryForMap(this.sql, username);
-            final String digestedPassword = digestEncodedPassword(transformedCredential.getPassword(), values);
+            final var values = getJdbcTemplate().queryForMap(this.sql, username);
+            final var digestedPassword = digestEncodedPassword(transformedCredential.getPassword(), values);
 
             if (!values.get(this.passwordFieldName).equals(digestedPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
             if (StringUtils.isNotBlank(this.expiredFieldName)) {
-                final Object dbExpired = values.get(this.expiredFieldName);
+                final var dbExpired = values.get(this.expiredFieldName);
                 if (dbExpired != null && (Boolean.TRUE.equals(BooleanUtils.toBoolean(dbExpired.toString())) || dbExpired.equals(Integer.valueOf(1)))) {
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }
             }
             if (StringUtils.isNotBlank(this.disabledFieldName)) {
-                final Object dbDisabled = values.get(this.disabledFieldName);
+                final var dbDisabled = values.get(this.disabledFieldName);
                 if (dbDisabled != null && (Boolean.TRUE.equals(BooleanUtils.toBoolean(dbDisabled.toString())) || dbDisabled.equals(1))) {
                     throw new AccountDisabledException("Account has been disabled");
                 }
@@ -176,7 +176,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
 
         Long numOfIterations = this.numberOfIterations;
         if (values.containsKey(this.numberOfIterationsFieldName)) {
-            final String longAsStr = values.get(this.numberOfIterationsFieldName).toString();
+            final var longAsStr = values.get(this.numberOfIterationsFieldName).toString();
             numOfIterations = Long.valueOf(longAsStr);
         }
 
@@ -185,8 +185,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
             throw new IllegalArgumentException("Specified field name for salt does not exist in the results");
         }
 
-        final String dynaSalt = values.get(this.saltFieldName).toString();
-        final HashRequest request = new HashRequest.Builder()
+        final var dynaSalt = values.get(this.saltFieldName).toString();
+        final var request = new HashRequest.Builder()
             .setSalt(dynaSalt)
             .setSource(encodedPassword)
             .build();

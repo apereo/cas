@@ -158,22 +158,22 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     }
 
     private static HttpServletRequest mockRequest(final String provider) {
-        final HttpServletRequest request = mockRequest();
+        final var request = mockRequest();
         when(request.getParameter(REQUEST_PARAM)).thenReturn(provider);
         return request;
     }
 
     private static RegexRegisteredService mockService(final String... providers) {
-        final DefaultRegisteredServiceMultifactorPolicy policy = new DefaultRegisteredServiceMultifactorPolicy();
+        final var policy = new DefaultRegisteredServiceMultifactorPolicy();
         policy.setMultifactorAuthenticationProviders(Stream.of(providers).collect(Collectors.toCollection(LinkedHashSet::new)));
-        final RegexRegisteredService service = new RegexRegisteredService();
+        final var service = new RegexRegisteredService();
         service.setMultifactorPolicy(policy);
         return service;
     }
 
     private static RegexRegisteredService mockPrincipalService(final String provider, final String attrName, final String attrValue) {
-        final RegexRegisteredService service = mockService(provider);
-        final DefaultRegisteredServiceMultifactorPolicy policy = (DefaultRegisteredServiceMultifactorPolicy) service.getMultifactorPolicy();
+        final var service = mockService(provider);
+        final var policy = (DefaultRegisteredServiceMultifactorPolicy) service.getMultifactorPolicy();
         policy.setPrincipalAttributeNameTrigger(attrName);
         policy.setPrincipalAttributeValueToMatch(attrValue);
 

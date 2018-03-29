@@ -52,7 +52,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     public void onSetUp() {
         this.request = new MockHttpServletRequest();
         this.requestContext = mock(RequestContext.class);
-        final ServletExternalContext servletExternalContext = mock(ServletExternalContext.class);
+        final var servletExternalContext = mock(ServletExternalContext.class);
         when(this.requestContext.getExternalContext()).thenReturn(servletExternalContext);
         when(servletExternalContext.getNativeRequest()).thenReturn(request);
         when(servletExternalContext.getNativeResponse()).thenReturn(new MockHttpServletResponse());
@@ -64,23 +64,23 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
 
     @Test
     public void verifyLogoutNoCookie() throws Exception {
-        final LogoutProperties properties = new LogoutProperties();
+        final var properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
-        final Event event = this.logoutAction.doExecute(this.requestContext);
+        final var event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
     }
 
     @Test
     public void verifyLogoutForServiceWithFollowRedirectsAndMatchingService() throws Exception {
         this.request.addParameter("service", TEST_SERVICE_ID);
-        final RegexRegisteredService impl = new RegexRegisteredService();
+        final var impl = new RegexRegisteredService();
         impl.setServiceId(TEST_SERVICE_ID);
         impl.setName(TEST_SERVICE_ID);
         this.serviceManager.save(impl);
-        final LogoutProperties properties = new LogoutProperties();
+        final var properties = new LogoutProperties();
         properties.setFollowServiceRedirects(true);
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
-        final Event event = this.logoutAction.doExecute(this.requestContext);
+        final var event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
         assertEquals(TEST_SERVICE_ID, this.requestContext.getFlowScope().get("logoutRedirectUrl"));
     }
@@ -88,9 +88,9 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     @Test
     public void logoutForServiceWithNoFollowRedirects() throws Exception {
         this.request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST_SERVICE_ID);
-        final LogoutProperties properties = new LogoutProperties();
+        final var properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
-        final Event event = this.logoutAction.doExecute(this.requestContext);
+        final var event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
         assertNull(this.requestContext.getFlowScope().get("logoutRedirectUrl"));
     }
@@ -98,52 +98,52 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     @Test
     public void logoutForServiceWithFollowRedirectsNoAllowedService() throws Exception {
         this.request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST_SERVICE_ID);
-        final RegexRegisteredService impl = new RegexRegisteredService();
+        final var impl = new RegexRegisteredService();
         impl.setServiceId("http://FooBar");
         impl.setName("FooBar");
         this.serviceManager.save(impl);
-        final LogoutProperties properties = new LogoutProperties();
+        final var properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
-        final Event event = this.logoutAction.doExecute(this.requestContext);
+        final var event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
         assertNull(this.requestContext.getFlowScope().get("logoutRedirectUrl"));
     }
 
     @Test
     public void verifyLogoutCookie() throws Exception {
-        final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
+        final var cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
-        final LogoutProperties properties = new LogoutProperties();
+        final var properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
-        final Event event = this.logoutAction.doExecute(this.requestContext);
+        final var event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
     }
 
     @Test
     public void verifyLogoutRequestBack() throws Exception {
-        final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
+        final var cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
         final LogoutRequest logoutRequest = new DefaultLogoutRequest(StringUtils.EMPTY, null, null);
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
-        final LogoutProperties properties = new LogoutProperties();
+        final var properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
-        final Event event = this.logoutAction.doExecute(this.requestContext);
+        final var event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void verifyLogoutRequestFront() throws Exception {
-        final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
+        final var cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
         final LogoutRequest logoutRequest = new DefaultLogoutRequest(StringUtils.EMPTY, null, null);
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
-        final LogoutProperties properties = new LogoutProperties();
+        final var properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
-        final Event event = this.logoutAction.doExecute(this.requestContext);
+        final var event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FRONT, event.getId());
-        final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(this.requestContext);
+        final var logoutRequests = WebUtils.getLogoutRequests(this.requestContext);
         assertEquals(1, logoutRequests.size());
         assertEquals(logoutRequest, logoutRequests.get(0));
     }

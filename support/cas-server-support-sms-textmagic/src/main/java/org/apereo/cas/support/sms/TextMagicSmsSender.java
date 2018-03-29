@@ -25,7 +25,7 @@ public class TextMagicSmsSender implements SmsSender {
     @Override
     public boolean send(final String from, final String to, final String message) {
         try {
-            final TMNewMessage m = this.client.getResource(TMNewMessage.class);
+            final var m = this.client.getResource(TMNewMessage.class);
             m.setText(message);
             m.setPhones(CollectionUtils.wrap(to));
             m.setFrom(from);

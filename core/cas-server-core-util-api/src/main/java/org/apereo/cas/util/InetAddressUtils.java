@@ -25,7 +25,7 @@ public class InetAddressUtils {
      */
     public static InetAddress getByName(final String urlAddr) {
         try {
-            final URL url = new URL(urlAddr);
+            final var url = new URL(urlAddr);
             return InetAddress.getByName(url.getHost());
         } catch (final Exception e) {
             LOGGER.debug("Host name could not be determined automatically.", e);
@@ -41,8 +41,8 @@ public class InetAddressUtils {
      */
     @SneakyThrows
     public static String getCasServerHostName() {
-        final String hostName = InetAddress.getLocalHost().getHostName();
-        final int index = hostName.indexOf('.');
+        final var hostName = InetAddress.getLocalHost().getHostName();
+        final var index = hostName.indexOf('.');
         if (index > 0) {
             return hostName.substring(0, index);
         }

@@ -51,7 +51,7 @@ public class JsonResourceAuthenticationHandlerTests {
     public JsonResourceAuthenticationHandlerTests() throws Exception {
         final Map<String, CasUserAccount> accounts = new LinkedHashMap<>();
 
-        CasUserAccount acct = new CasUserAccount();
+        var acct = new CasUserAccount();
         acct.setPassword("Mellon");
         acct.setExpirationDate(LocalDate.now(ZoneOffset.UTC).plusWeeks(2));
         acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
@@ -89,7 +89,7 @@ public class JsonResourceAuthenticationHandlerTests {
 
         this.resource = new FileSystemResource(File.createTempFile("account", ".json"));
 
-        final ObjectMapper mapper = Jackson2ObjectMapperBuilder.json()
+        final var mapper = Jackson2ObjectMapperBuilder.json()
             .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
             .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .build();
@@ -107,15 +107,15 @@ public class JsonResourceAuthenticationHandlerTests {
 
     @Test
     public void verifyExpiringAccount() throws Exception {
-        final UsernamePasswordCredential c =
+        final var c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casexpiring", "Mellon");
-        final AuthenticationHandlerExecutionResult result = handler.authenticate(c);
+        final var result = handler.authenticate(c);
         assertFalse(result.getWarnings().isEmpty());
     }
 
     @Test
     public void verifyOkAccount() throws Exception {
-        final UsernamePasswordCredential c =
+        final var c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         assertNotNull(handler.authenticate(c));
     }
@@ -123,7 +123,7 @@ public class JsonResourceAuthenticationHandlerTests {
     @Test
     public void verifyNotFoundAccount() throws Exception {
         this.thrown.expect(AccountNotFoundException.class);
-        final UsernamePasswordCredential c =
+        final var c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("nobody", "Mellon");
         handler.authenticate(c);
     }
@@ -131,7 +131,7 @@ public class JsonResourceAuthenticationHandlerTests {
     @Test
     public void verifyExpiredAccount() throws Exception {
         this.thrown.expect(AccountExpiredException.class);
-        final UsernamePasswordCredential c =
+        final var c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casexpired", "Mellon");
         handler.authenticate(c);
     }
@@ -139,7 +139,7 @@ public class JsonResourceAuthenticationHandlerTests {
     @Test
     public void verifyDisabledAccount() throws Exception {
         this.thrown.expect(AccountDisabledException.class);
-        final UsernamePasswordCredential c =
+        final var c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casdisabled", "Mellon");
         handler.authenticate(c);
     }
@@ -147,7 +147,7 @@ public class JsonResourceAuthenticationHandlerTests {
     @Test
     public void verifyLockedAccount() throws Exception {
         this.thrown.expect(AccountLockedException.class);
-        final UsernamePasswordCredential c =
+        final var c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("caslocked", "Mellon");
         handler.authenticate(c);
     }
@@ -155,7 +155,7 @@ public class JsonResourceAuthenticationHandlerTests {
     @Test
     public void verifyMustChangePswAccount() throws Exception {
         this.thrown.expect(AccountPasswordMustChangeException.class);
-        final UsernamePasswordCredential c =
+        final var c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casmustchange", "Mellon");
         handler.authenticate(c);
     }

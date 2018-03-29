@@ -48,7 +48,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         super(samlIdPProperties, configBean);
 
         this.httpClient = httpClient;
-        final SamlIdPMetadataProperties md = samlIdPProperties.getMetadata();
+        final var md = samlIdPProperties.getMetadata();
         this.metadataBackupDirectory = new File(md.getLocation().getFile(), "metadata-backups");
         try {
             FileUtils.forceMkdir(this.metadataBackupDirectory);
@@ -62,18 +62,18 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
     @Override
     public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
         try {
-            final String metadataLocation = service.getMetadataLocation();
+            final var metadataLocation = service.getMetadataLocation();
             LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
-            final AbstractResource metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
+            final var metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
 
-            final File backupFile = getMetadataBackupFile(metadataResource, service);
-            final String canonicalPath = backupFile.getCanonicalPath();
+            final var backupFile = getMetadataBackupFile(metadataResource, service);
+            final var canonicalPath = backupFile.getCanonicalPath();
             LOGGER.debug("Metadata backup file will be at [{}]", canonicalPath);
             FileUtils.forceMkdirParent(backupFile);
 
             cleanUpExpiredBackupMetadataFilesFor(metadataResource, service);
 
-            final FileBackedHTTPMetadataResolver metadataProvider = new FileBackedHTTPMetadataResolver(
+            final var metadataProvider = new FileBackedHTTPMetadataResolver(
                 this.httpClient.getWrappedHttpClient(), metadataResource.getURL().toExternalForm(),
                 canonicalPath);
             configureAndInitializeSingleMetadataResolver(metadataProvider, service);
@@ -85,8 +85,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
     }
 
     private void cleanUpExpiredBackupMetadataFilesFor(final AbstractResource metadataResource, final SamlRegisteredService service) {
-        final String prefix = getBackupMetadataFilenamePrefix(metadataResource, service);
-        final Collection<File> backups = FileUtils.listFiles(this.metadataBackupDirectory,
+        final var prefix = getBackupMetadataFilenamePrefix(metadataResource, service);
+        final var backups = FileUtils.listFiles(this.metadataBackupDirectory,
             new AndFileFilter(CollectionUtils.wrapList(new PrefixFileFilter(prefix, IOCase.INSENSITIVE),
                 new SuffixFileFilter(".xml", IOCase.INSENSITIVE),
                 CanWriteFileFilter.CAN_WRITE, CanReadFileFilter.CAN_READ)), TrueFileFilter.INSTANCE);
@@ -105,10 +105,10 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
 
         LOGGER.debug("Metadata backup directory is at [{}]", this.metadataBackupDirectory.getCanonicalPath());
 
-        final String metadataFileName = getBackupMetadataFilenamePrefix(metadataResource, service)
+        final var metadataFileName = getBackupMetadataFilenamePrefix(metadataResource, service)
             .concat(getBackupMetadataFilenameSuffix(metadataResource, service));
 
-        final File backupFile = new File(this.metadataBackupDirectory, metadataFileName);
+        final var backupFile = new File(this.metadataBackupDirectory, metadataFileName);
         if (backupFile.exists()) {
             LOGGER.warn("Metadata file designated for service [{}] already exists at path [{}].", service.getName(), backupFile.getCanonicalPath());
         } else {
@@ -133,8 +133,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
     @Override
     public boolean supports(final SamlRegisteredService service) {
         try {
-            final String metadataLocation = service.getMetadataLocation();
-            final AbstractResource metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
+            final var metadataLocation = service.getMetadataLocation();
+            final var metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             return metadataResource instanceof UrlResource;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

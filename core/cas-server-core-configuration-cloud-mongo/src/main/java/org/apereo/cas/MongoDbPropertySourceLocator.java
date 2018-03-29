@@ -23,9 +23,9 @@ public class MongoDbPropertySourceLocator implements PropertySourceLocator {
     @Override
     public PropertySource<?> locate(final Environment environment) {
         if (environment instanceof ConfigurableEnvironment) {
-            final String sourceName = MongoDbPropertySource.class.getSimpleName();
-            final CompositePropertySource composite = new CompositePropertySource(sourceName);
-            final MongoDbPropertySource source = new MongoDbPropertySource(sourceName, mongo);
+            final var sourceName = MongoDbPropertySource.class.getSimpleName();
+            final var composite = new CompositePropertySource(sourceName);
+            final var source = new MongoDbPropertySource(sourceName, mongo);
             composite.addFirstPropertySource(source);
             return composite;
         }

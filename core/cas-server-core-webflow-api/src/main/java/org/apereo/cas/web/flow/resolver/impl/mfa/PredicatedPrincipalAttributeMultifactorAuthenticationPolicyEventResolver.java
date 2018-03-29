@@ -77,7 +77,7 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventRes
             return null;
         }
 
-        final MultifactorAuthenticationProvider provider = providers
+        final var provider = providers
             .stream()
             .filter(predicate)
             .sorted(Comparator.comparingInt(MultifactorAuthenticationProvider::getOrder))

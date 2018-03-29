@@ -41,7 +41,7 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
 
     @Override
     public <T extends TicketGrantingTicket> T create(final Authentication authentication, final Class<T> clazz) {
-        final String tgtId = produceTicketIdentifier(authentication);
+        final var tgtId = produceTicketIdentifier(authentication);
         return produceTicket(authentication, tgtId, clazz);
     }
 
@@ -78,7 +78,7 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
      * @return the ticket id.
      */
     protected String produceTicketIdentifier(final Authentication authentication) {
-        String tgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
+        var tgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
         if (this.cipherExecutor != null) {
             LOGGER.debug("Attempting to encode ticket-granting ticket [{}]", tgtId);
             tgtId = this.cipherExecutor.encode(tgtId);

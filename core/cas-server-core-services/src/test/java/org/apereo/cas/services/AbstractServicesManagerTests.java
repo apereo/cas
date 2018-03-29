@@ -27,7 +27,7 @@ public abstract class AbstractServicesManagerTests {
     protected final List<RegisteredService> listOfDefaultServices = new ArrayList<>();
 
     public AbstractServicesManagerTests() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setId(2500);
         r.setServiceId("serviceId");
         r.setName("serviceName");
@@ -52,7 +52,7 @@ public abstract class AbstractServicesManagerTests {
 
     @Test
     public void verifySaveAndGet() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setId(1000);
         r.setName(TEST);
         r.setServiceId(TEST);

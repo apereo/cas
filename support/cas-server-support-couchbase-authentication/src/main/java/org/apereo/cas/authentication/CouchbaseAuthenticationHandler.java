@@ -40,7 +40,7 @@ public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuth
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
                                                                                         final String originalPassword) throws GeneralSecurityException {
-        final N1qlQueryResult result = couchbase.query(couchbaseProperties.getUsernameAttribute(), transformedCredential.getUsername());
+        final var result = couchbase.query(couchbaseProperties.getUsernameAttribute(), transformedCredential.getUsername());
         if (result.allRows().isEmpty()) {
             LOGGER.error("Couchbase query did not return any results/rows.");
             throw new AccountNotFoundException("Could not locate account for user " + transformedCredential.getUsername());
@@ -50,12 +50,12 @@ public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuth
             throw new FailedLoginException("More then one row found for user " + transformedCredential.getId());
         }
 
-        final N1qlQueryRow row = result.allRows().get(0);
+        final var row = result.allRows().get(0);
         if (!row.value().containsKey(couchbase.getBucket().name())) {
             throw new AccountNotFoundException("Couchbase query row does not contain this bucket [{}]" + couchbase.getBucket().name());
         }
 
-        final JsonObject value = (JsonObject) row.value().get(couchbase.getBucket().name());
+        final var value = (JsonObject) row.value().get(couchbase.getBucket().name());
         if (!value.containsKey(couchbaseProperties.getUsernameAttribute())) {
             throw new FailedLoginException("No user attribute found for " + transformedCredential.getId());
         }
@@ -68,9 +68,9 @@ public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuth
             throw new FailedLoginException();
         }
 
-        final Map<String, Object> attributes = couchbase.collectAttributesFromEntity(value, s ->
+        final var attributes = couchbase.collectAttributesFromEntity(value, s ->
             !s.equals(couchbaseProperties.getPasswordAttribute()) && !s.equals(couchbaseProperties.getUsernameAttribute()));
-        final Principal principal = this.principalFactory.createPrincipal(transformedCredential.getId(), attributes);
+        final var principal = this.principalFactory.createPrincipal(transformedCredential.getId(), attributes);
         return createHandlerResult(transformedCredential, principal, new ArrayList<>());
     }
 }

@@ -62,9 +62,9 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     private GoogleAccountsService googleAccountsService;
 
     public GoogleAccountsService getGoogleAccountsService() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var request = new MockHttpServletRequest();
 
-        final String samlRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        final var samlRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
             + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
             + "ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" "
             + "ProtocolBinding=\"urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\" "
@@ -72,10 +72,10 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
         request.setParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, encodeMessage(samlRequest));
         request.setParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "RelayStateAddedHere");
 
-        final RegisteredService regSvc = mock(RegisteredService.class);
+        final var regSvc = mock(RegisteredService.class);
         when(regSvc.getUsernameAttributeProvider()).thenReturn(new DefaultRegisteredServiceUsernameProvider());
 
-        final ServicesManager servicesManager = mock(ServicesManager.class);
+        final var servicesManager = mock(ServicesManager.class);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(regSvc);
 
         return (GoogleAccountsService) factory.createService(request);
@@ -88,20 +88,20 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyResponse() {
-        final Response resp = googleAccountsServiceResponseBuilder.build(googleAccountsService, "SAMPLE_TICKET",
+        final var resp = googleAccountsServiceResponseBuilder.build(googleAccountsService, "SAMPLE_TICKET",
             CoreAuthenticationTestUtils.getAuthentication());
         assertEquals(DefaultResponse.ResponseType.POST, resp.getResponseType());
-        final String response = resp.getAttributes().get(SamlProtocolConstants.PARAMETER_SAML_RESPONSE);
+        final var response = resp.getAttributes().get(SamlProtocolConstants.PARAMETER_SAML_RESPONSE);
         assertNotNull(response);
         assertTrue(response.contains("NotOnOrAfter"));
 
-        final Pattern pattern = Pattern.compile("NotOnOrAfter\\s*=\\s*\"(.+Z)\"");
-        final Matcher matcher = pattern.matcher(response);
-        final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
+        final var pattern = Pattern.compile("NotOnOrAfter\\s*=\\s*\"(.+Z)\"");
+        final var matcher = pattern.matcher(response);
+        final var now = ZonedDateTime.now(ZoneOffset.UTC);
 
         while (matcher.find()) {
-            final String onOrAfter = matcher.group(1);
-            final ZonedDateTime dt = ZonedDateTime.parse(onOrAfter);
+            final var onOrAfter = matcher.group(1);
+            final var dt = ZonedDateTime.parse(onOrAfter);
             assertTrue(dt.isAfter(now));
         }
         assertTrue(resp.getAttributes().containsKey(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
@@ -114,9 +114,9 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
     @Test
     public void serializeGoogleAccountService() throws Exception {
-        final GoogleAccountsService service = getGoogleAccountsService();
+        final var service = getGoogleAccountsService();
         MAPPER.writeValue(FILE, service);
-        final GoogleAccountsService service2 = MAPPER.readValue(FILE, GoogleAccountsService.class);
+        final var service2 = MAPPER.readValue(FILE, GoogleAccountsService.class);
         assertEquals(service, service2);
     }
 }

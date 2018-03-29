@@ -35,13 +35,13 @@ public class RestSamlRegisteredServiceMetadataResolver extends BaseSamlRegistere
     @Override
     public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
         try {
-            final RestSamlMetadataProperties rest = samlIdPProperties.getMetadata().getRest();
-            final HttpResponse response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
+            final var rest = samlIdPProperties.getMetadata().getRest();
+            final var response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
                 rest.getBasicAuthUsername(), rest.getBasicAuthPassword(),
                 CollectionUtils.wrap("entityId", service.getServiceId()),
                 CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_XML_VALUE));
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                final SamlMetadataDocument doc = MAPPER.readValue(response.getEntity().getContent(), SamlMetadataDocument.class);
+                final var doc = MAPPER.readValue(response.getEntity().getContent(), SamlMetadataDocument.class);
                 final MetadataResolver resolver = buildMetadataResolverFrom(service, doc);
                 return CollectionUtils.wrapList(resolver);
             }
@@ -54,7 +54,7 @@ public class RestSamlRegisteredServiceMetadataResolver extends BaseSamlRegistere
     @Override
     public boolean supports(final SamlRegisteredService service) {
         try {
-            final String metadataLocation = service.getMetadataLocation();
+            final var metadataLocation = service.getMetadataLocation();
             return metadataLocation.trim().startsWith("rest://");
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

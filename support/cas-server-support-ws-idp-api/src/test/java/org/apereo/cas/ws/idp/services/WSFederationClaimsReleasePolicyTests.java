@@ -25,22 +25,22 @@ public class WSFederationClaimsReleasePolicyTests {
     @Test
     public void verifyAttributeReleaseNone() {
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
-        final WSFederationClaimsReleasePolicy policy = new WSFederationClaimsReleasePolicy(
+        final var policy = new WSFederationClaimsReleasePolicy(
                 CollectionUtils.wrap("uid", "casuser", "cn", "CAS"));
-        final Principal principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
+        final var principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("uid", "casuser", "cn", "CAS", "givenName", "CAS User"));
-        final Map<String, Object> results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), service);
+        final var results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), service);
         assertTrue(results.isEmpty());
     }
 
     @Test
     public void verifyAttributeRelease() {
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
-        final WSFederationClaimsReleasePolicy policy = new WSFederationClaimsReleasePolicy(
+        final var policy = new WSFederationClaimsReleasePolicy(
                 CollectionUtils.wrap(WSFederationClaims.COMMON_NAME.name(), "cn", WSFederationClaims.EMAIL_ADDRESS.name(), "email"));
-        final Principal principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
+        final var principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("cn", "casuser", "email", "cas@example.org"));
-        final Map<String, Object> results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), service);
+        final var results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), service);
         assertSame(2, results.size());
         assertTrue(results.containsKey(WSFederationClaims.COMMON_NAME.getUri()));
         assertTrue(results.containsKey(WSFederationClaims.EMAIL_ADDRESS.getUri()));

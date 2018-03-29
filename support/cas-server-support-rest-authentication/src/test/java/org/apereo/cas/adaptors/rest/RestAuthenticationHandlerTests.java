@@ -109,15 +109,15 @@ public class RestAuthenticationHandlerTests {
 
     @Test
     public void verifySuccess() throws Exception {
-        final Principal principalWritten = new DefaultPrincipalFactory().createPrincipal("casuser");
+        final var principalWritten = new DefaultPrincipalFactory().createPrincipal("casuser");
 
-        final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
-        final StringWriter writer = new StringWriter();
+        final var mapper = new ObjectMapper().findAndRegisterModules();
+        final var writer = new StringWriter();
         mapper.writeValue(writer, principalWritten);
 
         server.andRespond(withSuccess(writer.toString(), MediaType.APPLICATION_JSON));
 
-        final AuthenticationHandlerExecutionResult res =
+        final var res =
             authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertEquals("casuser", res.getPrincipal().getId());
     }

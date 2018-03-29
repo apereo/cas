@@ -30,15 +30,15 @@ public class MockLoginModule implements LoginModule {
 
     @Override
     public boolean login() throws LoginException {
-        final Callback[] callbacks = new Callback[] {new NameCallback("f"), new PasswordCallback("f", false)};
+        final var callbacks = new Callback[] {new NameCallback("f"), new PasswordCallback("f", false)};
         try {
             this.callbackHandler.handle(callbacks);
         } catch (final Exception e) {
             throw new LoginException();
         }
 
-        final String userName = ((NameCallback) callbacks[0]).getName();
-        final String password = new String(((PasswordCallback) callbacks[1]).getPassword());
+        final var userName = ((NameCallback) callbacks[0]).getName();
+        final var password = new String(((PasswordCallback) callbacks[1]).getPassword());
 
         if ("test".equals(userName) && "test".equals(password)) {
             this.subject.getPrincipals().add(new BasicUserPrincipal(userName));

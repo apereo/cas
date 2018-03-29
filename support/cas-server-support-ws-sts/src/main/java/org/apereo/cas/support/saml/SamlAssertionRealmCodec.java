@@ -27,9 +27,9 @@ public class SamlAssertionRealmCodec implements SAMLRealmCodec {
 
     @Override
     public String getRealmFromToken(final SamlAssertionWrapper assertion) {
-        final SAMLKeyInfo ki = assertion.getSignatureKeyInfo();
-        final X509Certificate[] certs = ki.getCerts();
-        final String parsed = parseCNValue(certs[0].getSubjectX500Principal().getName());
+        final var ki = assertion.getSignatureKeyInfo();
+        final var certs = ki.getCerts();
+        final var parsed = parseCNValue(certs[0].getSubjectX500Principal().getName());
         LOGGER.debug("Realm parsed from certificate CN of the SAML assertion: [{}]", parsed);
         if (parsed.equals(realm)) {
             return parsed;
@@ -41,8 +41,8 @@ public class SamlAssertionRealmCodec implements SAMLRealmCodec {
     }
 
     private String parseCNValue(final String name) {
-        final int len = name.indexOf(',') > 0 ? name.indexOf(',') : name.length();
-        String realm = name.substring(name.indexOf("CN=") + "CN=".length(), len);
+        final var len = name.indexOf(',') > 0 ? name.indexOf(',') : name.length();
+        var realm = name.substring(name.indexOf("CN=") + "CN=".length(), len);
 
         if (uppercase) {
             realm = realm.toUpperCase();

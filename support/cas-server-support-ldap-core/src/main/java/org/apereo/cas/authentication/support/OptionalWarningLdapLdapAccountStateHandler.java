@@ -38,8 +38,8 @@ public class OptionalWarningLdapLdapAccountStateHandler extends DefaultLdapLdapA
             LOGGER.debug("No warning attribute value to match is defined");
             return;
         }
-        final LdapAttribute attribute = response.getLdapEntry().getAttribute(this.warnAttributeName);
-        boolean matches = false;
+        final var attribute = response.getLdapEntry().getAttribute(this.warnAttributeName);
+        var matches = false;
         if (attribute != null) {
             LOGGER.debug("Found warning attribute [{}] with value [{}]", attribute.getName(), attribute.getStringValue());
             matches = this.warningAttributeValue.equals(attribute.getStringValue());

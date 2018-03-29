@@ -23,7 +23,7 @@ public class DefaultRegisteredServiceMultifactorPolicyTests {
 
     @Test
     public void verifySerializeADefaultRegisteredServiceMultifactorPolicyToJson() throws IOException {
-        final DefaultRegisteredServiceMultifactorPolicy policyWritten = new DefaultRegisteredServiceMultifactorPolicy();
+        final var policyWritten = new DefaultRegisteredServiceMultifactorPolicy();
         policyWritten.setPrincipalAttributeNameTrigger("trigger");
         policyWritten.setPrincipalAttributeValueToMatch("attribute");
         final HashSet<String> providers = new HashSet<>();

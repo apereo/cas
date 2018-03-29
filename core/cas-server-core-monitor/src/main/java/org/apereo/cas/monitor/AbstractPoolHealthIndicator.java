@@ -33,8 +33,8 @@ public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicato
 
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
-        Health.Builder poolBuilder = builder.up();
-        final Future<Health.Builder> result = this.executor.submit(new Validator(this, builder));
+        var poolBuilder = builder.up();
+        final var result = this.executor.submit(new Validator(this, builder));
         String message;
         try {
             poolBuilder = result.get(this.maxWait, TimeUnit.MILLISECONDS);

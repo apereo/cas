@@ -62,24 +62,24 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
             return;
         }
 
-        final File filePath = new File(file);
+        final var filePath = new File(file);
         if (filePath.exists() && (filePath.isDirectory() || !filePath.canRead() || !filePath.canWrite())) {
             LOGGER.warn("Configuration file [{}] is not readable/writable or is not a path to a file", filePath.getCanonicalPath());
             return;
         }
 
-        final Map<String, ConfigurationMetadataProperty> results = findProperties(group);
+        final var results = findProperties(group);
         LOGGER.info("Located [{}] properties matching [{}]", results.size(), group);
 
         switch (FilenameUtils.getExtension(filePath.getName()).toLowerCase()) {
             case "properties":
                 createConfigurationFileIfNeeded(filePath);
-                final Properties props = loadPropertiesFromConfigurationFile(filePath);
+                final var props = loadPropertiesFromConfigurationFile(filePath);
                 writeConfigurationPropertiesToFile(filePath, results, props);
                 break;
             case "yml":
                 createConfigurationFileIfNeeded(filePath);
-                final Properties yamlProps = loadYamlPropertiesFromConfigurationFile(filePath);
+                final var yamlProps = loadYamlPropertiesFromConfigurationFile(filePath);
                 writeYamlConfigurationPropertiesToFile(filePath, results, yamlProps);
                 break;
             default:
@@ -90,12 +90,12 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
 
     private void writeYamlConfigurationPropertiesToFile(final File filePath, final Map<String, ConfigurationMetadataProperty> results, 
                                                         final Properties yamlProps) throws Exception {
-        final DumperOptions options = new DumperOptions();
+        final var options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.AUTO);
         options.setDefaultScalarStyle(DumperOptions.ScalarStyle.PLAIN);
         options.setPrettyFlow(true);
         options.setAllowUnicode(true);
-        final Yaml yaml = new Yaml(options);
+        final var yaml = new Yaml(options);
         try (Writer writer = Files.newBufferedWriter(filePath.toPath(), StandardCharsets.UTF_8)) {
             putResultsIntoProperties(results, yamlProps);
             yaml.dump(yamlProps, writer);
@@ -103,7 +103,7 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
     }
 
     private Properties loadYamlPropertiesFromConfigurationFile(final File filePath) {
-        final YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
+        final var factory = new YamlPropertiesFactoryBean();
         factory.setResolutionMethod(YamlProcessor.ResolutionMethod.OVERRIDE);
         factory.setResources(new FileSystemResource(filePath));
         factory.setSingleton(true);
@@ -115,13 +115,13 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
                                                     final Properties p) throws Exception {
         LOGGER.info("Located [{}] properties in configuration file [{}]", results.size(), filePath.getCanonicalPath());
         putResultsIntoProperties(results, p);
-        final List<String> lines = p.stringPropertyNames().stream().map(s -> s + "=" + p.get(s)).collect(Collectors.toList());
+        final var lines = p.stringPropertyNames().stream().map(s -> s + "=" + p.get(s)).collect(Collectors.toList());
         Collections.sort(lines, Comparator.naturalOrder());
         FileUtils.writeLines(filePath, lines);
     }
 
     private void putResultsIntoProperties(final Map<String, ConfigurationMetadataProperty> results, final Properties p) {
-        final List<ConfigurationMetadataProperty> lines = results.values().stream().collect(Collectors.toList());
+        final var lines = results.values().stream().collect(Collectors.toList());
         Collections.sort(lines, Comparator.comparing(ConfigurationMetadataProperty::getName));
         
         lines.forEach(v -> {
@@ -137,7 +137,7 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
     }
 
     private Properties loadPropertiesFromConfigurationFile(final File filePath) throws IOException {
-        final Properties p = new Properties();
+        final var p = new Properties();
         try (Reader f = Files.newBufferedReader(filePath.toPath(), StandardCharsets.UTF_8)) {
             p.load(f);
         }
@@ -145,15 +145,15 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
     }
 
     private Map<String, ConfigurationMetadataProperty> findProperties(final String group) {
-        final FindPropertiesCommand find = new FindPropertiesCommand();
-        final Map<String, ConfigurationMetadataProperty> results = find.findByProperty(group);
+        final var find = new FindPropertiesCommand();
+        final var results = find.findByProperty(group);
         return results;
     }
 
     private void createConfigurationFileIfNeeded(final File filePath) throws IOException {
         if (!filePath.exists()) {
             LOGGER.debug("Creating configuration file [{}]", filePath.getCanonicalPath());
-            final boolean created = filePath.createNewFile();
+            final var created = filePath.createNewFile();
             if (created) {
                 LOGGER.info("Created configuration file [{}]", filePath.getCanonicalPath());
             }

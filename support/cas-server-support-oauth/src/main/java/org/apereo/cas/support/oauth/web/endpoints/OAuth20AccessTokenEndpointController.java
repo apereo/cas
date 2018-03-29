@@ -118,8 +118,8 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             return;
         }
 
-        final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
-        final Pair<AccessToken, RefreshToken> accessToken = accessTokenGenerator.generate(requestHolder);
+        final var context = Pac4jUtils.getPac4jJ2EContext(request, response);
+        final var accessToken = accessTokenGenerator.generate(requestHolder);
         LOGGER.debug("Access token generated is: [{}]. Refresh token generated is [{}]", accessToken.getKey(), accessToken.getValue());
         generateAccessTokenResponse(request, response, requestHolder, context, accessToken.getKey(), accessToken.getValue());
         response.setStatus(HttpServletResponse.SC_OK);
@@ -144,7 +144,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
                                              final J2EContext context, final AccessToken accessToken,
                                              final RefreshToken refreshToken) {
         LOGGER.debug("Generating access token response for [{}]", accessToken);
-        final OAuth20ResponseTypes type = OAuth20Utils.getResponseType(context);
+        final var type = OAuth20Utils.getResponseType(context);
         LOGGER.debug("Located response type as [{}]", type);
 
         this.accessTokenResponseGenerator.generate(request, response,
@@ -177,7 +177,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             LOGGER.warn("No validators are defined to examine the access token request for eligibility");
             return false;
         }
-        final J2EContext context = new J2EContext(request, response);
+        final var context = new J2EContext(request, response);
         return this.accessTokenGrantRequestValidators.stream()
             .filter(ext -> ext.supports(context))
             .findFirst()

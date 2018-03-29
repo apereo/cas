@@ -34,21 +34,21 @@ public class JsonConsentRepository extends BaseConsentRepository {
 
     @Override
     public boolean storeConsentDecision(final ConsentDecision decision) {
-        final boolean result = super.storeConsentDecision(decision);
+        final var result = super.storeConsentDecision(decision);
         writeAccountToJsonResource();
         return result;
     }
 
     @Override
     public boolean deleteConsentDecision(final long decisionId) {
-        final boolean result = super.deleteConsentDecision(decisionId);
+        final var result = super.deleteConsentDecision(decisionId);
         writeAccountToJsonResource();
         return result;
     }
 
     @Override
     public boolean deleteConsentDecisions(final String principal) {
-        final boolean result = super.deleteConsentDecisions(principal);
+        final var result = super.deleteConsentDecisions(principal);
         writeAccountToJsonResource();
         return result;
     }

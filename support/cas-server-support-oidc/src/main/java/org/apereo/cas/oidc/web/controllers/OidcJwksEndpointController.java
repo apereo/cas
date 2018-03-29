@@ -78,20 +78,20 @@ public class OidcJwksEndpointController extends BaseOAuth20Controller {
                                                         final HttpServletResponse response,
                                                         final Model model) {
         try {
-            final String jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), StandardCharsets.UTF_8);
-            final JsonWebKeySet jsonWebKeySet = new JsonWebKeySet(jsonJwks);
+            final var jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), StandardCharsets.UTF_8);
+            final var jsonWebKeySet = new JsonWebKeySet(jsonJwks);
 
             this.servicesManager.getAllServices()
                     .stream()
                     .filter(s -> s instanceof OidcRegisteredService && StringUtils.isNotBlank(((OidcRegisteredService) s).getJwks()))
                     .forEach(
                             Unchecked.consumer(s -> {
-                                final OidcRegisteredService service = (OidcRegisteredService) s;
-                                final Resource resource = this.resourceLoader.getResource(service.getJwks());
-                                final JsonWebKeySet set = new JsonWebKeySet(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
+                                final var service = (OidcRegisteredService) s;
+                                final var resource = this.resourceLoader.getResource(service.getJwks());
+                                final var set = new JsonWebKeySet(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
                                 set.getJsonWebKeys().forEach(jsonWebKeySet::addJsonWebKey);
                             }));
-            final String body = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
+            final var body = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             return new ResponseEntity<>(body, HttpStatus.OK);
         } catch (final Exception e) {

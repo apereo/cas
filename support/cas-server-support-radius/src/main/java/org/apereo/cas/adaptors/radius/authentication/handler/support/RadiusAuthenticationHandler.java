@@ -69,8 +69,8 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
                                                                                         final String originalPassword) throws GeneralSecurityException {
 
         try {
-            final String username = credential.getUsername();
-            final Pair<Boolean, Optional<Map<String, Object>>> result =
+            final var username = credential.getUsername();
+            final var result =
                 RadiusUtils.authenticate(username, credential.getPassword(), this.servers,
                     this.failoverOnAuthenticationFailure, this.failoverOnException);
             if (result.getKey()) {

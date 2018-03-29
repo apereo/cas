@@ -24,7 +24,7 @@ public class AddTicketMessageQueueCommandTests extends AbstractTicketMessageQueu
         TicketGrantingTicket ticket = new TicketGrantingTicketImpl("TGT", CoreAuthenticationTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         ticketRegistry.addTicket(ticket);
-        final AddTicketMessageQueueCommand cmd = new AddTicketMessageQueueCommand(new StringBean(), ticket);
+        final var cmd = new AddTicketMessageQueueCommand(new StringBean(), ticket);
         cmd.execute(ticketRegistry);
         ticket = ticketRegistry.getTicket(ticket.getId(), ticket.getClass());
         assertNotNull(ticket);

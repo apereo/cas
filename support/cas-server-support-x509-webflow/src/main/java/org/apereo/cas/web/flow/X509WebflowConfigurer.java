@@ -45,9 +45,9 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override
     protected void doInitialize() {
-        final Flow flow = getLoginFlow();
+        final var flow = getLoginFlow();
         if (flow != null) {
-            final ActionState actionState = createActionState(flow, EVENT_ID_START_X509, createEvaluateAction("x509Check"));
+            final var actionState = createActionState(flow, EVENT_ID_START_X509, createEvaluateAction("x509Check"));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                     CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN,
@@ -60,7 +60,7 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
             actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
             registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
 
-            final ActionState state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
+            final var state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
             createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS, EVENT_ID_START_X509, true);
         }
     }

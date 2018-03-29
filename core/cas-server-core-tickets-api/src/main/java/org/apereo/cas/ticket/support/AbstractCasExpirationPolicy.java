@@ -35,7 +35,7 @@ public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        final TicketGrantingTicket tgt = ticketState.getTicketGrantingTicket();
+        final var tgt = ticketState.getTicketGrantingTicket();
         return tgt != null && tgt.isExpired();
     }
 }

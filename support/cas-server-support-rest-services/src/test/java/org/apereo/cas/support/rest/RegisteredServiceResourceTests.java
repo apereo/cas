@@ -71,8 +71,8 @@ public class RegisteredServiceResourceTests {
     }
 
     private MockMvc configureMockMvcFor(final RegisteredServiceResource registeredServiceResource) {
-        final DefaultRegisteredServiceJsonSerializer sz = new DefaultRegisteredServiceJsonSerializer();
-        final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter(sz.getObjectMapper());
+        final var sz = new DefaultRegisteredServiceJsonSerializer();
+        final var converter = new MappingJackson2HttpMessageConverter(sz.getObjectMapper());
         return MockMvcBuilders.standaloneSetup(registeredServiceResource)
             .defaultRequest(get("/")
                 .contextPath("/cas")
@@ -82,7 +82,7 @@ public class RegisteredServiceResourceTests {
     }
 
     private RegisteredServiceResource getRegisteredServiceResource(final String attrName, final String attrValue) {
-        final AuthenticationManager mgmr = mock(AuthenticationManager.class);
+        final var mgmr = mock(AuthenticationManager.class);
         when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("test")))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("testfail")))).thenThrow(AuthenticationException.class);
         
@@ -94,10 +94,10 @@ public class RegisteredServiceResourceTests {
     }
 
     private void runTest(final String attrName, final String attrValue, final String credentials, final ResultMatcher result) throws Exception {
-        final RegisteredServiceResource registeredServiceResource = getRegisteredServiceResource(attrName, attrValue);
+        final var registeredServiceResource = getRegisteredServiceResource(attrName, attrValue);
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService();
-        final DefaultRegisteredServiceJsonSerializer sz = new DefaultRegisteredServiceJsonSerializer();
-        try (StringWriter writer = new StringWriter()) {
+        final var sz = new DefaultRegisteredServiceJsonSerializer();
+        try (var writer = new StringWriter()) {
             sz.to(writer, service);
             configureMockMvcFor(registeredServiceResource)
                 .perform(post("/cas/v1/services")

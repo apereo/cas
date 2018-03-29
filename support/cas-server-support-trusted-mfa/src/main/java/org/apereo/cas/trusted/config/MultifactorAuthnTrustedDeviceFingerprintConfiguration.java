@@ -52,9 +52,9 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @Bean
     @RefreshScope
     public DeviceFingerprintComponentExtractor deviceFingerprintClientIpComponent() {
-        final ClientIp properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getClientIp();
+        final var properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getClientIp();
         if (properties.isEnabled()) {
-            final ClientIpDeviceFingerprintComponentExtractor component =
+            final var component =
                     new ClientIpDeviceFingerprintComponentExtractor();
             component.setOrder(properties.getOrder());
             return component;
@@ -67,9 +67,9 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @Bean
     @RefreshScope
     public DeviceFingerprintComponentExtractor deviceFingerprintCookieComponent() {
-        final Cookie properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
+        final var properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
         if (properties.isEnabled()) {
-            final CookieDeviceFingerprintComponentExtractor component = new CookieDeviceFingerprintComponentExtractor(
+            final var component = new CookieDeviceFingerprintComponentExtractor(
                     deviceFingerprintCookieGenerator(), deviceFingerprintCookieRandomStringGenerator());
             component.setOrder(properties.getOrder());
             return component;
@@ -82,10 +82,10 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @Bean
     @RefreshScope
     public DeviceFingerprintComponentExtractor deviceFingerprintUserAgentComponent() {
-        final UserAgent properties =
+        final var properties =
                 casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getUserAgent();
         if (properties.isEnabled()) {
-            final UserAgentDeviceFingerprintComponentExtractor component =
+            final var component =
                     new UserAgentDeviceFingerprintComponentExtractor();
             component.setOrder(properties.getOrder());
             return component;
@@ -100,7 +100,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @RefreshScope
     public DeviceFingerprintStrategy deviceFingerprintStrategy(
             final List<DeviceFingerprintComponentExtractor> extractors) {
-        final DeviceFingerprintProperties properties =
+        final var properties =
                 casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint();
         return new DefaultDeviceFingerprintStrategy(extractors, properties.getComponentSeparator());
     }
@@ -109,7 +109,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @Bean(BEAN_DEVICE_FINGERPRINT_COOKIE_GENERATOR)
     @RefreshScope
     public CookieRetrievingCookieGenerator deviceFingerprintCookieGenerator() {
-        final Cookie cookie = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
+        final var cookie = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
         return new TrustedDeviceCookieRetrievingCookieGenerator(
                 cookie.getName(),
                 cookie.getPath(),
@@ -136,10 +136,10 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @Bean(BEAN_DEVICE_FINGERPRINT_COOKIE_CIPHER_EXECUTOR)
     @RefreshScope
     public CipherExecutor deviceFingerprintCookieCipherExecutor() {
-        final EncryptionJwtSigningJwtCryptographyProperties crypto =
+        final var crypto =
                 casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie().getCrypto();
 
-        boolean enabled = crypto.isEnabled();
+        var enabled = crypto.isEnabled();
         if (!enabled && (StringUtils.isNotBlank(crypto.getEncryption().getKey())) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
             LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet "
                     + "signing/encryption keys are defined for operations. CAS will proceed to enable the cookie "

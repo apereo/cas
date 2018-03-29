@@ -29,13 +29,13 @@ public class Pac4jUtils {
      * @return the authenticated username.
      */
     public static String getPac4jAuthenticatedUsername() {
-        final HttpServletRequest request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-        final HttpServletResponse response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
+        final var request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+        final var response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
         if (request != null && response != null) {
-            final ProfileManager manager = getPac4jProfileManager(request, response);
+            final var manager = getPac4jProfileManager(request, response);
             final Optional<UserProfile> profile = manager.get(true);
             if (profile != null && profile.isPresent()) {
-                final String id = profile.get().getId();
+                final var id = profile.get().getId();
                 if (id != null) {
                     return id;
                 }
@@ -53,7 +53,7 @@ public class Pac4jUtils {
      */
     public static ProfileManager getPac4jProfileManager(final HttpServletRequest request,
                                                         final HttpServletResponse response) {
-        final J2EContext context = getPac4jJ2EContext(request, response, new J2ESessionStore());
+        final var context = getPac4jJ2EContext(request, response, new J2ESessionStore());
         return getPac4jProfileManager(context);
     }
 
@@ -68,7 +68,7 @@ public class Pac4jUtils {
     public static ProfileManager getPac4jProfileManager(final HttpServletRequest request,
                                                         final HttpServletResponse response,
                                                         final SessionStore sessionStore) {
-        final J2EContext context = getPac4jJ2EContext(request, response, sessionStore);
+        final var context = getPac4jJ2EContext(request, response, sessionStore);
         return getPac4jProfileManager(context);
     }
 

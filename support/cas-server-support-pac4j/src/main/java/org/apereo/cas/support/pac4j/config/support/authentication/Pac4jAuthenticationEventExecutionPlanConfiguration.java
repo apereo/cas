@@ -65,7 +65,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
 
     @Bean
     public Clients builtClients() {
-        final Set<BaseClient> clients = pac4jDelegatedClientFactory().build();
+        final var clients = pac4jDelegatedClientFactory().build();
         LOGGER.debug("The following clients are built: [{}]", clients);
         if (clients.isEmpty()) {
             LOGGER.warn("No delegated authentication clients are defined/configured");
@@ -90,8 +90,8 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
     @Bean
     @ConditionalOnMissingBean(name = "clientAuthenticationHandler")
     public AuthenticationHandler clientAuthenticationHandler() {
-        final Pac4jDelegatedAuthenticationProperties pac4j = casProperties.getAuthn().getPac4j();
-        final ClientAuthenticationHandler h = new ClientAuthenticationHandler(pac4j.getName(), servicesManager,
+        final var pac4j = casProperties.getAuthn().getPac4j();
+        final var h = new ClientAuthenticationHandler(pac4j.getName(), servicesManager,
             clientPrincipalFactory(), builtClients());
         h.setTypedIdUsed(pac4j.isTypedIdUsed());
         return h;

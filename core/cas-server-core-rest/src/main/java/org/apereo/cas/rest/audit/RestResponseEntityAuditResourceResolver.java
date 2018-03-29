@@ -27,8 +27,8 @@ public class RestResponseEntityAuditResourceResolver extends ReturnValueAsString
     }
 
     private String[] getAuditResourceFromResponseEntity(final ResponseEntity entity) {
-        final HttpHeaders headers = entity.getHeaders();
-        final ToStringBuilder result =
+        final var headers = entity.getHeaders();
+        final var result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE);
         result.append("status", entity.getStatusCodeValue() + "-" + entity.getStatusCode().name());
         if (headers.getLocation() != null) {

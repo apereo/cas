@@ -57,7 +57,7 @@ public class CasCoreAuthenticationPolicyConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer authenticationPolicyExecutionPlanConfigurer() {
         return plan -> {
-            final AuthenticationPolicyProperties police = casProperties.getAuthn().getPolicy();
+            final var police = casProperties.getAuthn().getPolicy();
 
             if (police.getReq().isEnabled()) {
                 LOGGER.debug("Activating authentication policy [{}]", RequiredHandlerAuthenticationPolicy.class.getSimpleName());
@@ -92,7 +92,7 @@ public class CasCoreAuthenticationPolicyConfiguration {
     @ConditionalOnMissingBean(name = "adaptiveAuthenticationPolicy")
     @Bean
     public AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy() {
-        final DefaultAdaptiveAuthenticationPolicy p = new DefaultAdaptiveAuthenticationPolicy();
+        final var p = new DefaultAdaptiveAuthenticationPolicy();
         p.setGeoLocationService(this.geoLocationService.getIfAvailable());
         p.setAdaptiveAuthenticationProperties(casProperties.getAuthn().getAdaptive());
         return p;

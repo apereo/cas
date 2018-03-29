@@ -28,7 +28,7 @@ public class PasswordEncoderUtils {
      * @return the password encoder
      */
     public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties) {
-        final String type = properties.getType();
+        final var type = properties.getType();
         if (StringUtils.isBlank(type)) {
             LOGGER.debug("No password encoder type is defined, and so none shall be created");
             return NoOpPasswordEncoder.getInstance();
@@ -42,7 +42,7 @@ public class PasswordEncoderUtils {
         if (type.contains(".")) {
             try {
                 LOGGER.debug("Configuration indicates use of a custom password encoder [{}]", type);
-                final Class<PasswordEncoder> clazz = (Class<PasswordEncoder>) Class.forName(type);
+                final var clazz = (Class<PasswordEncoder>) Class.forName(type);
                 return clazz.getDeclaredConstructor().newInstance();
             } catch (final Exception e) {
                 LOGGER.error("Falling back to a no-op password encoder as CAS has failed to create "
@@ -51,7 +51,7 @@ public class PasswordEncoderUtils {
             }
         }
 
-        final PasswordEncoderProperties.PasswordEncoderTypes encoderType = PasswordEncoderProperties.PasswordEncoderTypes.valueOf(type);
+        final var encoderType = PasswordEncoderProperties.PasswordEncoderTypes.valueOf(type);
         switch (encoderType) {
             case DEFAULT:
                 LOGGER.debug("Creating default password encoder with encoding alg [{}] and character encoding [{}]",
@@ -77,7 +77,7 @@ public class PasswordEncoderUtils {
                     LOGGER.debug("Creating PBKDF2 encoder without secret");
                     return new Pbkdf2PasswordEncoder();
                 }
-                final int hashWidth = 256;
+                final var hashWidth = 256;
                 return new Pbkdf2PasswordEncoder(properties.getSecret(), properties.getStrength(), hashWidth);
             case NONE:
             default:

@@ -70,7 +70,7 @@ public class PathWatcherService implements Runnable, Closeable {
                     further watch events. If the key is no longer valid, the directory
                     is inaccessible so exit the loop.
                  */
-                final boolean valid = key != null && key.reset();
+                final var valid = key != null && key.reset();
                 if (!valid) {
                     LOGGER.info("Directory key is no longer valid. Quitting watcher service");
                 }
@@ -88,15 +88,15 @@ public class PathWatcherService implements Runnable, Closeable {
     private void handleEvent(final WatchKey key) {
         try {
             key.pollEvents().forEach(event -> {
-                final String eventName = event.kind().name();
+                final var eventName = event.kind().name();
 
                 // The filename is the context of the event.
-                final WatchEvent<Path> ev = (WatchEvent<Path>) event;
-                final Path filename = ev.context();
+                final var ev = (WatchEvent<Path>) event;
+                final var filename = ev.context();
 
-                final Path parent = (Path) key.watchable();
-                final Path fullPath = parent.resolve(filename);
-                final File file = fullPath.toFile();
+                final var parent = (Path) key.watchable();
+                final var fullPath = parent.resolve(filename);
+                final var file = fullPath.toFile();
 
                 LOGGER.trace("Detected event [{}] on file [{}]", eventName, file);
                 if (eventName.equals(ENTRY_CREATE.name()) && file.exists()) {

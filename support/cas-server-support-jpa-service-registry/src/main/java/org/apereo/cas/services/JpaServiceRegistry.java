@@ -37,7 +37,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public List<RegisteredService> load() {
-        final List<RegisteredService> list = this.entityManager.createQuery("select r from AbstractRegisteredService r",
+        final var list = this.entityManager.createQuery("select r from AbstractRegisteredService r",
             RegisteredService.class).getResultList();
         list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
         return list;
@@ -45,8 +45,8 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
-        final boolean isNew = registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE;
-        final RegisteredService r = this.entityManager.merge(registeredService);
+        final var isNew = registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE;
+        final var r = this.entityManager.merge(registeredService);
         if (!isNew) {
             this.entityManager.persist(r);
         }

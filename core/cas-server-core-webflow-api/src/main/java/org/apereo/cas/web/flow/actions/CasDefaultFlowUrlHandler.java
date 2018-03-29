@@ -48,7 +48,7 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
     @Override
     public String createFlowExecutionUrl(final String flowId, final String flowExecutionKey, final HttpServletRequest request) {
-        final String encoding = getEncodingScheme(request);
+        final var encoding = getEncodingScheme(request);
 
         return request.getParameterMap().entrySet().stream()
                 .flatMap(entry -> encodeMultiParameter(entry.getKey(), entry.getValue(), encoding))

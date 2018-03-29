@@ -25,7 +25,7 @@ public class ConvertCasePrincipalNameTransformer implements PrincipalNameTransfo
 
     @Override
     public String transform(final String formUserId) {
-        final String result = formUserId.trim();
+        final var result = formUserId.trim();
         return this.toUpperCase ? result.toUpperCase() : result.toLowerCase();
     }
 }

@@ -29,8 +29,8 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext context) {
-        final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
-        final String ticketGrantingTicketValueFromCookie = (String) context.getFlowScope().get(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID);
+        final var ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
+        final var ticketGrantingTicketValueFromCookie = (String) context.getFlowScope().get(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID);
 
         if (StringUtils.isBlank(ticketGrantingTicketId)) {
             LOGGER.debug("No ticket-granting ticket is found in the context.");

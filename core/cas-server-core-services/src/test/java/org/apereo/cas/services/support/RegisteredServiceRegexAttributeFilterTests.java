@@ -77,7 +77,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     @Test
     public void verifyPatternFilter() {
 
-        final Map<String, Object> attrs = this.filter.filter(this.givenAttributesMap);
+        final var attrs = this.filter.filter(this.givenAttributesMap);
         assertEquals(7, attrs.size());
 
         assertFalse(attrs.containsKey(PHONE));
@@ -87,7 +87,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
         assertTrue(attrs.containsKey("memberOf"));
         assertTrue(attrs.containsKey("mapAttribute"));
 
-        final Map<String, String> mapAttributes = (Map<String, String>) attrs.get("mapAttribute");
+        final var mapAttributes = (Map<String, String>) attrs.get("mapAttribute");
         assertTrue(mapAttributes.containsKey(UID));
         assertTrue(mapAttributes.containsKey(FAMILY_NAME));
         assertFalse(mapAttributes.containsKey(PHONE));
@@ -98,10 +98,10 @@ public class RegisteredServiceRegexAttributeFilterTests {
 
     @Test
     public void verifyServiceAttributeFilterAllowedAttributesWithARegexFilter() {
-        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
+        final var policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("attr1", "attr3", "another"));
         policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("v3"));
-        final Principal p = mock(Principal.class);
+        final var p = mock(Principal.class);
 
         final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
@@ -111,13 +111,13 @@ public class RegisteredServiceRegexAttributeFilterTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
 
-        final Map<String, Object> attr = policy.getAttributes(p, RegisteredServiceTestUtils.getService(),
+        final var attr = policy.getAttributes(p, RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getRegisteredService("test"));
         assertEquals(1, attr.size());
         assertTrue(attr.containsKey("attr3"));
 
-        final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnAllowedAttributeReleasePolicy p2 =
+        final var data = SerializationUtils.serialize(policy);
+        final var p2 =
                 SerializationUtils.deserializeAndCheckObject(data, ReturnAllowedAttributeReleasePolicy.class);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
@@ -126,8 +126,8 @@ public class RegisteredServiceRegexAttributeFilterTests {
 
     @Test
     public void verifySerialization() {
-        final byte[] data = SerializationUtils.serialize(this.filter);
-        final RegisteredServiceAttributeFilter secondFilter =
+        final var data = SerializationUtils.serialize(this.filter);
+        final var secondFilter =
                 SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
         assertEquals(secondFilter, this.filter);
     }

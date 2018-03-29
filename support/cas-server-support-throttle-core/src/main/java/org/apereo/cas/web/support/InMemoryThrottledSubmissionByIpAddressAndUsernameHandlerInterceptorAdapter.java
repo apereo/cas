@@ -30,7 +30,7 @@ public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     @Override
     public String constructKey(final HttpServletRequest request) {
-        final String username = request.getParameter(getUsernameParameter());
+        final var username = request.getParameter(getUsernameParameter());
 
         if (StringUtils.isBlank(username)) {
             return request.getRemoteAddr();

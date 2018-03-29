@@ -33,7 +33,7 @@ public class MultifactorTrustedDevicesReportEndpoint {
      */
     @ReadOperation
     public Set<MultifactorAuthenticationTrustRecord> devices() {
-        final LocalDate onOrAfter = LocalDate.now().minus(properties.getExpiration(),
+        final var onOrAfter = LocalDate.now().minus(properties.getExpiration(),
             DateTimeUtils.toChronoUnit(properties.getTimeUnit()));
         this.mfaTrustEngine.expire(onOrAfter);
         return this.mfaTrustEngine.get(onOrAfter);

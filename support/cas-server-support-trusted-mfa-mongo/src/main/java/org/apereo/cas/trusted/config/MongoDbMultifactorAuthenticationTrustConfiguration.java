@@ -43,10 +43,10 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
     @RefreshScope
     @Bean
     public MongoTemplate mongoMfaTrustedAuthnTemplate() {
-        final TrustedDevicesMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getTrusted().getMongo();
-        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
+        final var mongo = casProperties.getAuthn().getMfa().getTrusted().getMongo();
+        final var factory = new MongoDbConnectionFactory();
 
-        final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
+        final var mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
@@ -54,8 +54,8 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
     @RefreshScope
     @Bean
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
-        final TrustedDevicesMultifactorProperties.MongoDb mongodb = casProperties.getAuthn().getMfa().getTrusted().getMongo();
-        final MongoDbMultifactorAuthenticationTrustStorage m = 
+        final var mongodb = casProperties.getAuthn().getMfa().getTrusted().getMongo();
+        final var m =
                 new MongoDbMultifactorAuthenticationTrustStorage(
                         mongodb.getCollection(),
                         mongoMfaTrustedAuthnTemplate());

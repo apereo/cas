@@ -69,8 +69,8 @@ public class WsFederationAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext context) {
         try {
-            final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-            final String wa = request.getParameter(WA);
+            final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+            final var wa = request.getParameter(WA);
             if (StringUtils.isNotBlank(wa) && wa.equalsIgnoreCase(WSIGNIN)) {
                 return handleWsFederationAuthenticationRequest(context);
             }
@@ -84,13 +84,13 @@ public class WsFederationAction extends AbstractAction {
 
     private void prepareLoginViewWithWsFederationClients(final RequestContext context) {
         final List<WsFedClient> clients = new ArrayList<>();
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final Service service = (Service) context.getFlowScope().get(CasProtocolConstants.PARAMETER_SERVICE);
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        final var service = (Service) context.getFlowScope().get(CasProtocolConstants.PARAMETER_SERVICE);
         this.configurations.forEach(cfg -> {
-            final WsFedClient c = new WsFedClient();
+            final var c = new WsFedClient();
             c.setName(cfg.getName());
-            final String id = UUID.randomUUID().toString();
-            final String rpId = wsFederationHelper.getRelyingPartyIdentifier(service, cfg);
+            final var id = UUID.randomUUID().toString();
+            final var rpId = wsFederationHelper.getRelyingPartyIdentifier(service, cfg);
             c.setAuthorizationUrl(cfg.getAuthorizationUrl(rpId, id));
             c.setReplyingPartyId(rpId);
             c.setId(id);
@@ -104,26 +104,26 @@ public class WsFederationAction extends AbstractAction {
 
     private Event handleWsFederationAuthenticationRequest(final RequestContext context) {
 
-        final Service service = wsFederationCookieManager.retrieve(context);
+        final var service = wsFederationCookieManager.retrieve(context);
         LOGGER.debug("Retrieved service [{}] from the session cookie", service);
 
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final String wResult = request.getParameter(WRESULT);
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        final var wResult = request.getParameter(WRESULT);
         LOGGER.debug("Parameter [{}] received: [{}]", WRESULT, wResult);
         if (StringUtils.isBlank(wResult)) {
             LOGGER.error("No [{}] parameter is found", WRESULT);
             return error();
         }
         LOGGER.debug("Attempting to create an assertion from the token parameter");
-        final RequestedSecurityToken rsToken = this.wsFederationHelper.getRequestSecurityTokenFromResult(wResult);
-        final Pair<Assertion, WsFederationConfiguration> assertion = this.wsFederationHelper.buildAndVerifyAssertion(rsToken, configurations);
+        final var rsToken = this.wsFederationHelper.getRequestSecurityTokenFromResult(wResult);
+        final var assertion = this.wsFederationHelper.buildAndVerifyAssertion(rsToken, configurations);
         if (assertion == null) {
             LOGGER.error("Could not validate assertion via parsing the token from [{}]", WRESULT);
             return error();
         }
         LOGGER.debug("Attempting to validate the signature on the assertion");
         if (!this.wsFederationHelper.validateSignature(assertion)) {
-            final String msg = "WS Requested Security Token is blank or the signature is not valid.";
+            final var msg = "WS Requested Security Token is blank or the signature is not valid.";
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }
@@ -135,9 +135,9 @@ public class WsFederationAction extends AbstractAction {
                                                 final Service service) {
         try {
             LOGGER.debug("Creating credential based on the provided assertion");
-            final WsFederationCredential credential = this.wsFederationHelper.createCredentialFromToken(assertion.getKey());
-            final WsFederationConfiguration configuration = assertion.getValue();
-            final String rpId = wsFederationHelper.getRelyingPartyIdentifier(service, configuration);
+            final var credential = this.wsFederationHelper.createCredentialFromToken(assertion.getKey());
+            final var configuration = assertion.getValue();
+            final var rpId = wsFederationHelper.getRelyingPartyIdentifier(service, configuration);
 
             if (credential == null) {
                 LOGGER.error("SAML no credential could be extracted from [{}] based on RP identifier [{}] and IdP identifier [{}]",
@@ -157,7 +157,7 @@ public class WsFederationAction extends AbstractAction {
             }
             context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
             LOGGER.debug("Creating final authentication result based on the given credential");
-            final AuthenticationResult authenticationResult = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+            final var authenticationResult = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
             LOGGER.debug("Attempting to create a ticket-granting ticket for the authentication result");
             WebUtils.putTicketGrantingTicketInScopes(context, this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult));
             LOGGER.info("Token validated and new [{}] created: [{}]", credential.getClass().getName(), credential);

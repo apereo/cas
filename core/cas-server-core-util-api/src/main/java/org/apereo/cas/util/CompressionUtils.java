@@ -39,17 +39,17 @@ public class CompressionUtils {
      * @return the array as a string with {@code UTF-8} encoding
      */
     public static String inflate(final byte[] bytes) {
-        final Inflater inflater = new Inflater(true);
-        final byte[] xmlMessageBytes = new byte[INFLATED_ARRAY_LENGTH];
+        final var inflater = new Inflater(true);
+        final var xmlMessageBytes = new byte[INFLATED_ARRAY_LENGTH];
 
-        final byte[] extendedBytes = new byte[bytes.length + 1];
+        final var extendedBytes = new byte[bytes.length + 1];
         System.arraycopy(bytes, 0, extendedBytes, 0, bytes.length);
         extendedBytes[bytes.length] = 0;
 
         inflater.setInput(extendedBytes);
 
         try {
-            final int resultLength = inflater.inflate(xmlMessageBytes);
+            final var resultLength = inflater.inflate(xmlMessageBytes);
             inflater.end();
 
             if (!inflater.finished()) {
@@ -71,7 +71,7 @@ public class CompressionUtils {
      * @return the converted string
      */
     public static String deflate(final byte[] bytes) {
-        final String data = new String(bytes, StandardCharsets.UTF_8);
+        final var data = new String(bytes, StandardCharsets.UTF_8);
         return deflate(data);
     }
 
@@ -82,12 +82,12 @@ public class CompressionUtils {
      * @return base64 encoded string
      */
     public static String deflate(final String data) {
-        final Deflater deflater = new Deflater();
+        final var deflater = new Deflater();
         deflater.setInput(data.getBytes(StandardCharsets.UTF_8));
         deflater.finish();
-        final byte[] buffer = new byte[data.length()];
-        final int resultSize = deflater.deflate(buffer);
-        final byte[] output = new byte[resultSize];
+        final var buffer = new byte[data.length()];
+        final var resultSize = deflater.deflate(buffer);
+        final var output = new byte[resultSize];
         System.arraycopy(buffer, 0, output, 0, resultSize);
         return EncodingUtils.encodeBase64(output);
     }
@@ -99,11 +99,11 @@ public class CompressionUtils {
      * @return the new string
      */
     public static String decodeByteArrayToString(final byte[] bytes) {
-        final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final byte[] buf = new byte[bytes.length];
-        try (InflaterInputStream iis = new InflaterInputStream(bais)) {
-            int count = iis.read(buf);
+        final var bais = new ByteArrayInputStream(bytes);
+        final var baos = new ByteArrayOutputStream();
+        final var buf = new byte[bytes.length];
+        try (var iis = new InflaterInputStream(bais)) {
+            var count = iis.read(buf);
             while (count != -1) {
                 baos.write(buf, 0, count);
                 count = iis.read(buf);
@@ -124,9 +124,9 @@ public class CompressionUtils {
      */
     @SneakyThrows
     public static String decompress(final String zippedBase64Str) {
-        final byte[] bytes = EncodingUtils.decodeBase64(zippedBase64Str);
+        final var bytes = EncodingUtils.decodeBase64(zippedBase64Str);
         @Cleanup
-        final GZIPInputStream zi = new GZIPInputStream(new ByteArrayInputStream(bytes));
+        final var zi = new GZIPInputStream(new ByteArrayInputStream(bytes));
         return IOUtils.toString(zi, Charset.defaultCharset());
     }
 
@@ -140,14 +140,14 @@ public class CompressionUtils {
     @SneakyThrows
     public static String compress(final String srcTxt) {
         @Cleanup
-        final ByteArrayOutputStream rstBao = new ByteArrayOutputStream();
+        final var rstBao = new ByteArrayOutputStream();
         @Cleanup
-        final GZIPOutputStream zos = new GZIPOutputStream(rstBao);
+        final var zos = new GZIPOutputStream(rstBao);
         zos.write(srcTxt.getBytes(StandardCharsets.UTF_8));
         zos.flush();
         zos.finish();
-        final byte[] bytes = rstBao.toByteArray();
-        final String base64 = StringUtils.remove(EncodingUtils.encodeBase64(bytes), '\0');
+        final var bytes = rstBao.toByteArray();
+        final var base64 = StringUtils.remove(EncodingUtils.encodeBase64(bytes), '\0');
         return new String(StandardCharsets.UTF_8.encode(base64).array(), StandardCharsets.UTF_8);
 
     }

@@ -21,7 +21,7 @@ public class JdbcMultiRowAttributeRepositoryTests extends BaseJdbcAttributeRepos
     @Test
     public void verifyMultiRowAttributeRepository() {
         assertNotNull(attributeRepository);
-        final IPersonAttributes person = attributeRepository.getPerson("casuser");
+        final var person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
         assertNotNull(person.getAttributes());
         assertFalse(person.getAttributes().isEmpty());

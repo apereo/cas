@@ -40,10 +40,10 @@ public class CasConfigurationMetadataRepository {
      */
     @SneakyThrows
     public CasConfigurationMetadataRepository(final String resource) {
-        final Resource[] resources = new PathMatchingResourcePatternResolver().getResources(resource);
-        final ConfigurationMetadataRepositoryJsonBuilder builder = ConfigurationMetadataRepositoryJsonBuilder.create();
+        final var resources = new PathMatchingResourcePatternResolver().getResources(resource);
+        final var builder = ConfigurationMetadataRepositoryJsonBuilder.create();
         Arrays.stream(resources).forEach(Unchecked.consumer(r -> {
-            try (InputStream in = r.getInputStream()) {
+            try (var in = r.getInputStream()) {
                 builder.withJsonResource(in);
             }
         }));

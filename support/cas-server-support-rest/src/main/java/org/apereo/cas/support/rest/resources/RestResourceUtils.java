@@ -47,7 +47,7 @@ public class RestResourceUtils {
      */
     public static ResponseEntity<String> createResponseEntityForAuthnFailure(final AuthenticationException e) {
         try {
-            final List<String> authnExceptions = e.getHandlerErrors().values()
+            final var authnExceptions = e.getHandlerErrors().values()
                 .stream()
                 .map(ex -> ex.getClass().getSimpleName()
                     + ": "

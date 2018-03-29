@@ -131,7 +131,7 @@ public class SamlIdPObjectSigner {
      */
     protected <T extends SAMLObject> void prepareSamlOutboundProtocolMessageSigningHandler(final MessageContext<T> outboundContext) throws Exception {
         LOGGER.debug("Attempting to sign the outbound SAML message...");
-        final SAMLOutboundProtocolMessageSigningHandler handler = new SAMLOutboundProtocolMessageSigningHandler();
+        final var handler = new SAMLOutboundProtocolMessageSigningHandler();
         handler.setSignErrorResponses(casProperties.getAuthn().getSamlIdp().getResponse().isSignError());
         handler.invoke(outboundContext);
         LOGGER.debug("Signed SAML message successfully");
@@ -145,7 +145,7 @@ public class SamlIdPObjectSigner {
      * @throws Exception the exception
      */
     protected <T extends SAMLObject> void prepareSamlOutboundDestinationHandler(final MessageContext<T> outboundContext) throws Exception {
-        final SAMLOutboundDestinationHandler handlerDest = new SAMLOutboundDestinationHandler();
+        final var handlerDest = new SAMLOutboundDestinationHandler();
         handlerDest.initialize();
         handlerDest.invoke(outboundContext);
     }
@@ -158,7 +158,7 @@ public class SamlIdPObjectSigner {
      * @throws Exception the exception
      */
     protected <T extends SAMLObject> void prepareEndpointURLSchemeSecurityHandler(final MessageContext<T> outboundContext) throws Exception {
-        final EndpointURLSchemeSecurityHandler handlerEnd = new EndpointURLSchemeSecurityHandler();
+        final var handlerEnd = new EndpointURLSchemeSecurityHandler();
         handlerEnd.initialize();
         handlerEnd.invoke(outboundContext);
     }
@@ -176,9 +176,9 @@ public class SamlIdPObjectSigner {
                                                                            final MessageContext<T> outboundContext,
                                                                            final SamlRegisteredService service) throws SAMLException {
         @NonNull
-        final SecurityParametersContext secParametersContext = outboundContext.getSubcontext(SecurityParametersContext.class, true);
+        final var secParametersContext = outboundContext.getSubcontext(SecurityParametersContext.class, true);
         final RoleDescriptor roleDesc = adaptor.getSsoDescriptor();
-        final SignatureSigningParameters signingParameters = buildSignatureSigningParameters(roleDesc, service);
+        final var signingParameters = buildSignatureSigningParameters(roleDesc, service);
         secParametersContext.setSignatureSigningParameters(signingParameters);
     }
 
@@ -213,14 +213,14 @@ public class SamlIdPObjectSigner {
     @SneakyThrows
     protected SignatureSigningParameters buildSignatureSigningParameters(final RoleDescriptor descriptor,
                                                                          final SamlRegisteredService service) throws SAMLException {
-        final CriteriaSet criteria = new CriteriaSet();
-        final SignatureSigningConfiguration signatureSigningConfiguration = getSignatureSigningConfiguration(descriptor, service);
+        final var criteria = new CriteriaSet();
+        final var signatureSigningConfiguration = getSignatureSigningConfiguration(descriptor, service);
         criteria.add(new SignatureSigningConfigurationCriterion(signatureSigningConfiguration));
         criteria.add(new RoleDescriptorCriterion(descriptor));
-        final SAMLMetadataSignatureSigningParametersResolver resolver = new SAMLMetadataSignatureSigningParametersResolver();
+        final var resolver = new SAMLMetadataSignatureSigningParametersResolver();
         LOGGER.debug("Resolving signature signing parameters for [{}]", descriptor.getElementQName().getLocalPart());
         @NonNull
-        final SignatureSigningParameters params = resolver.resolveSingle(criteria);
+        final var params = resolver.resolveSingle(criteria);
         LOGGER.debug("Created signature signing parameters."
                 + "\nSignature algorithm: [{}]"
                 + "\nSignature canonicalization algorithm: [{}]"
@@ -242,9 +242,9 @@ public class SamlIdPObjectSigner {
      */
     protected SignatureSigningConfiguration getSignatureSigningConfiguration(final RoleDescriptor roleDescriptor,
                                                                              final SamlRegisteredService service) throws Exception {
-        final BasicSignatureSigningConfiguration config =
+        final var config =
             DefaultSecurityConfigurationBootstrap.buildDefaultSignatureSigningConfiguration();
-        final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
+        final var samlIdp = casProperties.getAuthn().getSamlIdp();
 
         if (this.overrideBlackListedSignatureAlgorithms != null
             && !samlIdp.getAlgs().getOverrideBlackListedSignatureSigningAlgorithms().isEmpty()) {
@@ -272,15 +272,15 @@ public class SamlIdPObjectSigner {
         LOGGER.debug("Signature signing whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
         LOGGER.debug("Signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
 
-        final PrivateKey privateKey = getSigningPrivateKey();
-        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
+        final var privateKey = getSigningPrivateKey();
+        final var idp = casProperties.getAuthn().getSamlIdp();
 
-        final MetadataCredentialResolver kekCredentialResolver = new MetadataCredentialResolver();
+        final var kekCredentialResolver = new MetadataCredentialResolver();
         kekCredentialResolver.setRoleDescriptorResolver(SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver,
             idp.getMetadata().isRequireValidMetadata()));
         kekCredentialResolver.setKeyInfoCredentialResolver(DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
         kekCredentialResolver.initialize();
-        final CriteriaSet criteriaSet = new CriteriaSet();
+        final var criteriaSet = new CriteriaSet();
         criteriaSet.add(new SignatureSigningConfigurationCriterion(config));
         criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
         criteriaSet.add(new EntityIdCriterion(casProperties.getAuthn().getSamlIdp().getEntityId()));
@@ -290,7 +290,7 @@ public class SamlIdPObjectSigner {
         final List<Credential> creds = new ArrayList<>();
 
         credentials.forEach(c -> {
-            final AbstractCredential cred = getResolvedSigningCredential(c, privateKey, service);
+            final var cred = getResolvedSigningCredential(c, privateKey, service);
             if (cred != null) {
                 creds.add(cred);
             }
@@ -304,10 +304,10 @@ public class SamlIdPObjectSigner {
 
     private AbstractCredential getResolvedSigningCredential(final Credential c, final PrivateKey privateKey,
                                                             final SamlRegisteredService service) {
-        final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
+        final var samlIdp = casProperties.getAuthn().getSamlIdp();
 
         try {
-            final SamlIdPResponseProperties.SignatureCredentialTypes credType = SamlIdPResponseProperties.SignatureCredentialTypes.valueOf(
+            final var credType = SamlIdPResponseProperties.SignatureCredentialTypes.valueOf(
                 StringUtils.defaultIfBlank(service.getSigningCredentialType(), samlIdp.getResponse().getCredentialType().name()).toUpperCase());
             LOGGER.debug("Requested credential type [{}] is found for service [{}]", credType, service);
 
@@ -318,13 +318,13 @@ public class SamlIdPObjectSigner {
                 case X509:
                 default:
                     if (c instanceof BasicX509Credential) {
-                        final X509Certificate certificate = BasicX509Credential.class.cast(c).getEntityCertificate();
+                        final var certificate = BasicX509Credential.class.cast(c).getEntityCertificate();
                         LOGGER.debug("Locating signature signing certificate from credential [{}]", CertUtils.toString(certificate));
                         return new BasicX509Credential(certificate, privateKey);
                     }
-                    final Resource signingCert = samlIdPMetadataLocator.getSigningCertificate();
+                    final var signingCert = samlIdPMetadataLocator.getSigningCertificate();
                     LOGGER.debug("Locating signature signing certificate file from [{}]", signingCert);
-                    final X509Certificate certificate = SamlUtils.readCertificate(signingCert);
+                    final var certificate = SamlUtils.readCertificate(signingCert);
                     return new BasicX509Credential(certificate, privateKey);
             }
         } catch (final Exception e) {
@@ -340,9 +340,9 @@ public class SamlIdPObjectSigner {
      * @throws Exception the exception
      */
     protected PrivateKey getSigningPrivateKey() throws Exception {
-        final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
-        final Resource signingKey = samlIdPMetadataLocator.getSigningKey();
-        final PrivateKeyFactoryBean privateKeyFactoryBean = new PrivateKeyFactoryBean();
+        final var samlIdp = casProperties.getAuthn().getSamlIdp();
+        final var signingKey = samlIdPMetadataLocator.getSigningKey();
+        final var privateKeyFactoryBean = new PrivateKeyFactoryBean();
         privateKeyFactoryBean.setLocation(new FileSystemResource(signingKey.getFile()));
         privateKeyFactoryBean.setAlgorithm(samlIdp.getMetadata().getPrivateKeyAlgName());
         privateKeyFactoryBean.setSingleton(false);

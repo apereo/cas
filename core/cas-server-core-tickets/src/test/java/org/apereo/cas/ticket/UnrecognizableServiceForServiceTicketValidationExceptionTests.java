@@ -19,7 +19,7 @@ public class UnrecognizableServiceForServiceTicketValidationExceptionTests {
 
     @Test
     public void verifyThrowableConstructor() {
-        final UnrecognizableServiceForServiceTicketValidationException t =
+        final var t =
             new UnrecognizableServiceForServiceTicketValidationException(this.service);
 
         assertSame(UnrecognizableServiceForServiceTicketValidationException.CODE, t.getCode());

@@ -54,14 +54,14 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
         final Map<String, Object> attributesToRelease = new HashMap<>();
         givenAttributes.entrySet().stream().filter(filterProvidedGivenAttributes()).forEach(entry -> {
-            final String attributeName = entry.getKey();
+            final var attributeName = entry.getKey();
             if (patterns.containsKey(attributeName)) {
-                final Set<Object> attributeValues = CollectionUtils.toCollection(entry.getValue());
+                final var attributeValues = CollectionUtils.toCollection(entry.getValue());
                 LOGGER.debug("Found attribute [{}] in pattern definitions with value(s) [{}]", attributeName, attributeValues);
-                final Collection<Pattern> patterns = createPatternForMappedAttribute(attributeName);
+                final var patterns = createPatternForMappedAttribute(attributeName);
                 patterns.forEach(pattern -> {
                     LOGGER.debug("Found attribute [{}] in the pattern definitions. Processing pattern [{}]", attributeName, pattern.pattern());
-                    final List<Object> filteredValues = filterAttributeValuesByPattern(attributeValues, pattern);
+                    final var filteredValues = filterAttributeValuesByPattern(attributeValues, pattern);
                     LOGGER.debug("Filtered attribute values for [{}] are [{}]", attributeName, filteredValues);
                     if (filteredValues.isEmpty()) {
                         LOGGER.debug("Attribute [{}] has no values remaining and shall be excluded", attributeName);
@@ -101,8 +101,8 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
      * @return the pattern
      */
     protected Collection<Pattern> createPatternForMappedAttribute(final String attributeName) {
-        final String matchingPattern = patterns.get(attributeName).toString();
-        final Pattern pattern = RegexUtils.createPattern(matchingPattern, this.caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
+        final var matchingPattern = patterns.get(attributeName).toString();
+        final var pattern = RegexUtils.createPattern(matchingPattern, this.caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
         LOGGER.debug("Created pattern for mapped attribute filter [{}]", pattern.pattern());
         return CollectionUtils.wrap(pattern);
     }
@@ -126,8 +126,8 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
      */
     protected Predicate<Map.Entry<String, Object>> filterProvidedGivenAttributes() {
         return entry -> {
-            final String attributeName = entry.getKey();
-            final Object attributeValue = entry.getValue();
+            final var attributeName = entry.getKey();
+            final var attributeValue = entry.getValue();
             LOGGER.debug("Received attribute [{}] with value(s) [{}]", attributeName, attributeValue);
             return attributeValue != null;
         };

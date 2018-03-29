@@ -69,7 +69,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean googleAuthenticatorEntityManagerFactory() {
-        final LocalContainerEntityManagerFactoryBean bean =
+        final var bean =
             JpaBeans.newHibernateEntityManagerFactoryBean(
                 new JpaConfigDataHolder(
                     jpaGoogleAuthenticatorVendorAdapter(),
@@ -85,7 +85,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     @Bean
     public PlatformTransactionManager transactionManagerGoogleAuthenticator(
         @Qualifier("googleAuthenticatorEntityManagerFactory") final EntityManagerFactory emf) {
-        final JpaTransactionManager mgmr = new JpaTransactionManager();
+        final var mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }

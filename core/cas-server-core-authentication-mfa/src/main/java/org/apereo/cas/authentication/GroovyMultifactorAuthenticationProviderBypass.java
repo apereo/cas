@@ -33,7 +33,7 @@ public class GroovyMultifactorAuthenticationProviderBypass extends DefaultMultif
                                                                   final MultifactorAuthenticationProvider provider,
                                                                   final HttpServletRequest request) {
         try {
-            final Principal principal = authentication.getPrincipal();
+            final var principal = authentication.getPrincipal();
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
                     + "service [{}] and provider [{}] via Groovy script [{}]",
                 principal.getId(), registeredService, provider, this.groovyScript);

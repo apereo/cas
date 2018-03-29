@@ -18,18 +18,18 @@ import static org.junit.Assert.*;
 public class GroovySurrogateRegisteredServiceAccessStrategyTests {
     @Test
     public void verifySurrogateDisabled() {
-        final GroovySurrogateRegisteredServiceAccessStrategy a = new GroovySurrogateRegisteredServiceAccessStrategy();
+        final var a = new GroovySurrogateRegisteredServiceAccessStrategy();
         a.setGroovyScript("classpath:/surrogate-access.groovy");
-        final boolean result = a.doPrincipalAttributesAllowServiceAccess("casuser-disabled",
+        final var result = a.doPrincipalAttributesAllowServiceAccess("casuser-disabled",
             CollectionUtils.wrap(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true));
         assertFalse(result);
     }
 
     @Test
     public void verifySurrogateAllowed() {
-        final GroovySurrogateRegisteredServiceAccessStrategy a = new GroovySurrogateRegisteredServiceAccessStrategy();
+        final var a = new GroovySurrogateRegisteredServiceAccessStrategy();
         a.setGroovyScript("classpath:/surrogate-access.groovy");
-        final boolean result = a.doPrincipalAttributesAllowServiceAccess("casuser-enabled",
+        final var result = a.doPrincipalAttributesAllowServiceAccess("casuser-enabled",
             CollectionUtils.wrap(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true));
         assertTrue(result);
     }

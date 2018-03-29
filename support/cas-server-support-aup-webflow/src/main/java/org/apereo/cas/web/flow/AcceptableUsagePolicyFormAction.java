@@ -39,7 +39,7 @@ public class AcceptableUsagePolicyFormAction extends AbstractAction {
      * @return success if policy is accepted. {@link #EVENT_ID_MUST_ACCEPT} otherwise.
      */
     public Event verify(final RequestContext context, final Credential credential, final MessageContext messageContext) {
-        final Pair<Boolean, Principal> res = repository.verify(context, credential);
+        final var res = repository.verify(context, credential);
         context.getFlowScope().put("principal", res.getValue());
         if (res.getKey()) {
             return success();

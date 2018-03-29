@@ -51,14 +51,14 @@ public class JpaBeans {
      */
     @SneakyThrows
     public static DataSource newDataSource(final AbstractJpaProperties jpaProperties) {
-        final String dataSourceName = jpaProperties.getDataSourceName();
-        final boolean proxyDataSource = jpaProperties.isDataSourceProxy();
+        final var dataSourceName = jpaProperties.getDataSourceName();
+        final var proxyDataSource = jpaProperties.isDataSourceProxy();
 
         if (StringUtils.isNotBlank(dataSourceName)) {
             try {
-                final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
+                final var dsLookup = new JndiDataSourceLookup();
                 dsLookup.setResourceRef(false);
-                final DataSource containerDataSource = dsLookup.getDataSource(dataSourceName);
+                final var containerDataSource = dsLookup.getDataSource(dataSourceName);
                 if (!proxyDataSource) {
                     return containerDataSource;
                 }
@@ -69,7 +69,7 @@ public class JpaBeans {
             }
         }
 
-        final HikariDataSource bean = new HikariDataSource();
+        final var bean = new HikariDataSource();
         if (StringUtils.isNotBlank(jpaProperties.getDriverClass())) {
             bean.setDriverClassName(jpaProperties.getDriverClass());
         }
@@ -97,7 +97,7 @@ public class JpaBeans {
      * @return the hibernate jpa vendor adapter
      */
     public static HibernateJpaVendorAdapter newHibernateJpaVendorAdapter(final DatabaseProperties databaseProperties) {
-        final HibernateJpaVendorAdapter bean = new HibernateJpaVendorAdapter();
+        final var bean = new HibernateJpaVendorAdapter();
         bean.setGenerateDdl(databaseProperties.isGenDdl());
         bean.setShowSql(databaseProperties.isShowSql());
         return bean;
@@ -113,7 +113,7 @@ public class JpaBeans {
      */
     public static LocalContainerEntityManagerFactoryBean newHibernateEntityManagerFactoryBean(final JpaConfigDataHolder config,
                                                                                               final AbstractJpaProperties jpaProperties) {
-        final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
+        final var bean = new LocalContainerEntityManagerFactoryBean();
         bean.setJpaVendorAdapter(config.getJpaVendorAdapter());
 
         if (StringUtils.isNotBlank(config.getPersistenceUnitName())) {
@@ -125,7 +125,7 @@ public class JpaBeans {
             bean.setDataSource(config.getDataSource());
         }
 
-        final Properties properties = new Properties();
+        final var properties = new Properties();
         properties.put(Environment.DIALECT, jpaProperties.getDialect());
         properties.put(Environment.HBM2DDL_AUTO, jpaProperties.getDdlAuto());
         properties.put(Environment.STATEMENT_BATCH_SIZE, jpaProperties.getBatchSize());

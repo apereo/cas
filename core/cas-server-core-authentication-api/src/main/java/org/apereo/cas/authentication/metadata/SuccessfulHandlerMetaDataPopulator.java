@@ -26,7 +26,7 @@ public class SuccessfulHandlerMetaDataPopulator extends BaseAuthenticationMetaDa
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
-        Set<String> successes = builder.getSuccesses().keySet();
+        var successes = builder.getSuccesses().keySet();
         if (successes.isEmpty()) {
             successes = new HashSet(successes);
         }

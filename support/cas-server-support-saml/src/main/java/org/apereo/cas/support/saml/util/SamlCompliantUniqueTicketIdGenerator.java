@@ -84,7 +84,7 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
      * @return the byte[] array of size {@link #ASSERTION_HANDLE_SIZE}
      */
     private byte[] newAssertionHandle() {
-        final byte[] handle = new byte[ASSERTION_HANDLE_SIZE];
+        final var handle = new byte[ASSERTION_HANDLE_SIZE];
         this.random.nextBytes(handle);
         return handle;
     }

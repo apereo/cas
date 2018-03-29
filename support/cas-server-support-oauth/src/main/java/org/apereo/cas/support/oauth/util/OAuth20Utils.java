@@ -71,7 +71,7 @@ public class OAuth20Utils {
      * @return a null view
      */
     public static ModelAndView writeText(final HttpServletResponse response, final String text, final int status) {
-        try (PrintWriter printWriter = response.getWriter()) {
+        try (var printWriter = response.getWriter()) {
             response.setStatus(status);
             printWriter.print(text);
         } catch (final IOException e) {
@@ -124,7 +124,7 @@ public class OAuth20Utils {
 
     private static OAuthRegisteredService getRegisteredOAuthServiceByPredicate(final ServicesManager servicesManager,
                                                                                final Predicate<OAuthRegisteredService> predicate) {
-        final Collection<RegisteredService> services = servicesManager.getAllServices();
+        final var services = servicesManager.getAllServices();
         return services.stream()
             .filter(OAuthRegisteredService.class::isInstance)
             .map(OAuthRegisteredService.class::cast)
@@ -145,7 +145,7 @@ public class OAuth20Utils {
         return attributes.stream()
             .filter(a -> StringUtils.isNotBlank(context.getParameter(a)))
             .map(m -> {
-                final String[] values = context.getParameterValues(m);
+                final var values = context.getParameterValues(m);
                 final Collection<String> valuesSet = new LinkedHashSet<>();
                 if (values != null && values.length > 0) {
                     Arrays.stream(values).forEach(v -> valuesSet.addAll(Arrays.stream(v.split(" ")).collect(Collectors.toSet())));
@@ -172,7 +172,7 @@ public class OAuth20Utils {
      * @return the requested scopes
      */
     public static Collection<String> getRequestedScopes(final HttpServletRequest context) {
-        final Map<String, Object> map = getRequestParameters(CollectionUtils.wrap(OAuth20Constants.SCOPE), context);
+        final var map = getRequestParameters(CollectionUtils.wrap(OAuth20Constants.SCOPE), context);
         if (map == null || map.isEmpty()) {
             return new ArrayList<>(0);
         }
@@ -228,8 +228,8 @@ public class OAuth20Utils {
      * @return the response type
      */
     public static OAuth20ResponseTypes getResponseType(final J2EContext context) {
-        final String responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
-        final OAuth20ResponseTypes type = Arrays.stream(OAuth20ResponseTypes.values())
+        final var responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
+        final var type = Arrays.stream(OAuth20ResponseTypes.values())
             .filter(t -> t.getType().equalsIgnoreCase(responseType))
             .findFirst()
             .orElse(OAuth20ResponseTypes.CODE);
@@ -268,7 +268,7 @@ public class OAuth20Utils {
      * @return the boolean
      */
     public static boolean isAuthorizedResponseTypeForService(final J2EContext context, final OAuthRegisteredService registeredService) {
-        final String responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
+        final var responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
         if (registeredService.getSupportedResponseTypes() != null && !registeredService.getSupportedResponseTypes().isEmpty()) {
             LOGGER.debug("Checking response type [{}] against supported response types [{}]", responseType, registeredService.getSupportedResponseTypes());
             return registeredService.getSupportedResponseTypes().stream().anyMatch(s -> s.equalsIgnoreCase(responseType));
@@ -288,7 +288,7 @@ public class OAuth20Utils {
      * @return true/false
      */
     public static boolean isAuthorizedGrantTypeForService(final J2EContext context, final OAuthRegisteredService registeredService) {
-        final String grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+        final var grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
         if (registeredService.getSupportedGrantTypes() != null && !registeredService.getSupportedGrantTypes().isEmpty()) {
             LOGGER.debug("Checking grant type [{}] against supported grant types [{}]", grantType, registeredService.getSupportedGrantTypes());
             return registeredService.getSupportedGrantTypes().stream().anyMatch(s -> s.equalsIgnoreCase(grantType));
@@ -317,7 +317,7 @@ public class OAuth20Utils {
      * @return the set
      */
     public static Set<String> parseRequestScopes(final HttpServletRequest context) {
-        final String parameterValues = context.getParameter(OAuth20Constants.SCOPE);
+        final var parameterValues = context.getParameter(OAuth20Constants.SCOPE);
         if (StringUtils.isBlank(parameterValues)) {
             return new HashSet<>(0);
         }
@@ -334,7 +334,7 @@ public class OAuth20Utils {
         if (context == null) {
             return null;
         }
-        String id = context.getHeader(CasProtocolConstants.PARAMETER_SERVICE);
+        var id = context.getHeader(CasProtocolConstants.PARAMETER_SERVICE);
         if (StringUtils.isBlank(id)) {
             id = context.getHeader("X-".concat(CasProtocolConstants.PARAMETER_SERVICE));
         }

@@ -60,10 +60,10 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
     }
 
     private boolean loadSurrogates(final RequestContext requestContext) {
-        final Credential c = WebUtils.getCredential(requestContext);
+        final var c = WebUtils.getCredential(requestContext);
         if (c instanceof UsernamePasswordCredential) {
-            final String username = c.getId();
-            final Collection<String> surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
+            final var username = c.getId();
+            final var surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
             if (!surrogates.isEmpty()) {
                 surrogates.add(username);
                 requestContext.getFlowScope().put("surrogates", surrogates);

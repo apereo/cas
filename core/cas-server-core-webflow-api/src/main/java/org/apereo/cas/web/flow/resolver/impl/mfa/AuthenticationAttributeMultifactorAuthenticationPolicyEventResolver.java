@@ -60,8 +60,8 @@ public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final RegisteredService service = resolveRegisteredServiceInRequestContext(context);
-        final Authentication authentication = WebUtils.getAuthentication(context);
+        final var service = resolveRegisteredServiceInRequestContext(context);
+        final var authentication = WebUtils.getAuthentication(context);
 
         if (authentication == null) {
             LOGGER.debug("No authentication is available to determine event for principal");
@@ -73,16 +73,16 @@ public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver
             return null;
         }
 
-        final Map<String, MultifactorAuthenticationProvider> providerMap =
+        final var providerMap =
                 MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             return null;
         }
 
-        final Collection<MultifactorAuthenticationProvider> providers = flattenProviders(providerMap.values());
+        final var providers = flattenProviders(providerMap.values());
         if (providers.size() == 1 && StringUtils.isNotBlank(globalAuthenticationAttributeValueRegex)) {
-            final MultifactorAuthenticationProvider provider = providers.iterator().next();
+            final var provider = providers.iterator().next();
             LOGGER.debug("Found a single multifactor provider [{}] in the application context", provider);
             return resolveEventViaAuthenticationAttribute(authentication, attributeNames, service, context, providers,
                 input -> input != null && input.matches(globalAuthenticationAttributeValueRegex));

@@ -62,8 +62,8 @@ public class CasConsentCoreConfiguration implements AuditTrailRecordResolutionPl
     @Bean
     @RefreshScope
     public CipherExecutor consentCipherExecutor() {
-        final ConsentProperties consent = casProperties.getConsent();
-        final EncryptionJwtSigningJwtCryptographyProperties crypto = consent.getCrypto();
+        final var consent = casProperties.getConsent();
+        final var crypto = consent.getCrypto();
         if (crypto.isEnabled()) {
             return new AttributeReleaseConsentCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey(), crypto.getAlg());
         }
@@ -82,14 +82,14 @@ public class CasConsentCoreConfiguration implements AuditTrailRecordResolutionPl
     @Bean
     @RefreshScope
     public ConsentRepository consentRepository() {
-        final Resource location = casProperties.getConsent().getJson().getLocation();
+        final var location = casProperties.getConsent().getJson().getLocation();
         if (location != null) {
             LOGGER.warn("Storing consent records in [{}]. This MAY NOT be appropriate in production. "
                 + "Consider choosing an alternative repository format for storing consent decisions", location);
             return new JsonConsentRepository(location);
         }
 
-        final Resource groovy = casProperties.getConsent().getGroovy().getLocation();
+        final var groovy = casProperties.getConsent().getGroovy().getLocation();
         if (groovy != null) {
             return new GroovyConsentRepository(groovy);
         }

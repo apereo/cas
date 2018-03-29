@@ -48,11 +48,11 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
         resolvedAttributes.putAll(attrs);
         final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());
         getAllowedAttributes().entrySet().stream().filter(entry -> WSFederationClaims.contains(entry.getKey().toUpperCase())).forEach(entry -> {
-            final String claimName = entry.getKey();
-            final String attributeName = entry.getValue();
-            final WSFederationClaims claim = WSFederationClaims.valueOf(claimName.toUpperCase());
+            final var claimName = entry.getKey();
+            final var attributeName = entry.getValue();
+            final var claim = WSFederationClaims.valueOf(claimName.toUpperCase());
             LOGGER.debug("Evaluating claimName [{}] mapped to attribute name [{}]", claim.getUri(), attributeName);
-            final Object value = resolvedAttributes.get(attributeName);
+            final var value = resolvedAttributes.get(attributeName);
             if (value != null) {
                 LOGGER.debug("Adding claimName [{}] to the collection of released attributes", claim.getUri());
                 attributesToRelease.put(claim.getUri(), value);

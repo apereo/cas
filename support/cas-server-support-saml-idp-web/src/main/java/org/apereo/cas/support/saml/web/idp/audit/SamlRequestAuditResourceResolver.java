@@ -27,7 +27,7 @@ public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourc
     }
 
     private String[] getAuditResourceFromSamlRequest(final Pair result) {
-        final XMLObject returnValue = (XMLObject) result.getLeft();
+        final var returnValue = (XMLObject) result.getLeft();
         if (returnValue instanceof AuthnRequest) {
             return getAuditResourceFromSamlAuthnRequest((AuthnRequest) returnValue);
         }
@@ -38,8 +38,8 @@ public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourc
     }
 
     private String[] getAuditResourceFromSamlLogoutRequest(final LogoutRequest returnValue) {
-        final LogoutRequest request = returnValue;
-        final String result =
+        final var request = returnValue;
+        final var result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append("issuer", request.getIssuer().getValue())
                 .toString();
@@ -47,8 +47,8 @@ public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourc
     }
 
     private String[] getAuditResourceFromSamlAuthnRequest(final AuthnRequest returnValue) {
-        final AuthnRequest request = returnValue;
-        final String result =
+        final var request = returnValue;
+        final var result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append("issuer", request.getIssuer().getValue())
                 .append("binding", request.getProtocolBinding())

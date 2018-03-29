@@ -24,7 +24,7 @@ public class SchedulingUtils {
      */
     public static StringValueResolver prepScheduledAnnotationBeanPostProcessor(final ApplicationContext applicationContext) {
         final StringValueResolver resolver = new CasEmbeddedValueResolver(applicationContext);
-        final ScheduledAnnotationBeanPostProcessor sch = applicationContext.getBean(ScheduledAnnotationBeanPostProcessor.class);
+        final var sch = applicationContext.getBean(ScheduledAnnotationBeanPostProcessor.class);
         sch.setEmbeddedValueResolver(resolver);
         return resolver;
     }

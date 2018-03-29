@@ -69,7 +69,7 @@ public class CasScimConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Bean
     public ScimProvisioner scimProvisioner() {
-        final ScimProperties scim = casProperties.getScim();
+        final var scim = casProperties.getScim();
         if (casProperties.getScim().getVersion() == 1) {
             return new Scim1Provisioner(scim.getTarget(),
                     scim.getOauthToken(), scim.getUsername(),

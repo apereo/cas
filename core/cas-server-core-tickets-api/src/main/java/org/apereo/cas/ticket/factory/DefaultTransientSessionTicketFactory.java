@@ -34,7 +34,7 @@ public class DefaultTransientSessionTicketFactory implements TransientSessionTic
      */
     @Override
     public TransientSessionTicket create(final Service service, final Map<String, Serializable> properties) {
-        final String id = ticketIdGenerator.getNewTicketId(TransientSessionTicket.PREFIX);
+        final var id = ticketIdGenerator.getNewTicketId(TransientSessionTicket.PREFIX);
         return new TransientSessionTicketImpl(id, expirationPolicy, service, properties);
     }
 

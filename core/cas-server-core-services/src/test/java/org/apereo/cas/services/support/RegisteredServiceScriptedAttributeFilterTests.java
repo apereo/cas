@@ -34,9 +34,9 @@ public class RegisteredServiceScriptedAttributeFilterTests {
 
     @Test
     public void verifyScriptedAttributeFilter() throws Exception {
-        final RegisteredServiceScriptedAttributeFilter filter = new RegisteredServiceScriptedAttributeFilter();
-        final File f = File.createTempFile("attr", ".groovy");
-        final InputStream stream = new ClassPathResource("groovy-attr-filter.groovy").getInputStream();
+        final var filter = new RegisteredServiceScriptedAttributeFilter();
+        final var f = File.createTempFile("attr", ".groovy");
+        final var stream = new ClassPathResource("groovy-attr-filter.groovy").getInputStream();
         FileUtils.copyInputStreamToFile(stream, f);
         filter.setScript("file:" + f.getCanonicalPath());
         final Map results = filter.filter(this.givenAttributesMap);

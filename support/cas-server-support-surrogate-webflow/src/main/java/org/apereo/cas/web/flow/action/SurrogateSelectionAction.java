@@ -23,10 +23,10 @@ public class SurrogateSelectionAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final Credential credential = WebUtils.getCredential(requestContext);
+        final var credential = WebUtils.getCredential(requestContext);
         if (credential instanceof UsernamePasswordCredential) {
-            final UsernamePasswordCredential upc = UsernamePasswordCredential.class.cast(credential);
-            final String target = requestContext.getExternalContext().getRequestParameterMap().get("surrogateTarget");
+            final var upc = UsernamePasswordCredential.class.cast(credential);
+            final var target = requestContext.getExternalContext().getRequestParameterMap().get("surrogateTarget");
 
             if (StringUtils.isNotBlank(target)) {
                 upc.setUsername(target + this.separator + upc.getUsername());

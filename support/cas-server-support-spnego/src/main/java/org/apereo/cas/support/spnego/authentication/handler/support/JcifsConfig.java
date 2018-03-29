@@ -90,23 +90,23 @@ public class JcifsConfig {
     @SneakyThrows
     protected void configureJaasLoginConfig() {
 
-        final String propValue = System.getProperty(SYS_PROP_LOGIN_CONF);
+        final var propValue = System.getProperty(SYS_PROP_LOGIN_CONF);
         if (StringUtils.isNotBlank(propValue)) {
             LOGGER.info("Found login config [{}] in system property [{}]", propValue, SYS_PROP_LOGIN_CONF);
             if (StringUtils.isNotBlank(this.loginConf)) {
                 LOGGER.warn("Configured login config for CAS under [{}] will be ignored", this.loginConf);
             }
         } else {
-            final String loginConf = StringUtils.isBlank(this.loginConf) ? DEFAULT_LOGIN_CONFIG : this.loginConf;
+            final var loginConf = StringUtils.isBlank(this.loginConf) ? DEFAULT_LOGIN_CONFIG : this.loginConf;
             LOGGER.debug("Attempting to load login config from [{}]", loginConf);
 
-            final Resource res = this.resourceLoader.getResource(loginConf);
+            final var res = this.resourceLoader.getResource(loginConf);
             if (res != null && res.exists()) {
-                final String urlPath = res.getURL().toExternalForm();
+                final var urlPath = res.getURL().toExternalForm();
                 LOGGER.debug("Located login config [{}] and configured it under [{}]", urlPath, SYS_PROP_LOGIN_CONF);
                 System.setProperty(SYS_PROP_LOGIN_CONF, urlPath);
             } else {
-                final URL url = getClass().getResource("/jcifs/http/login.conf");
+                final var url = getClass().getResource("/jcifs/http/login.conf");
                 if (url != null) {
                     LOGGER.debug("Falling back unto default login config [{}] under [{}]", url.toExternalForm(), SYS_PROP_LOGIN_CONF);
                     System.setProperty(SYS_PROP_LOGIN_CONF, url.toExternalForm());

@@ -46,7 +46,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     @Override
     public void expire(final LocalDate onOrBefore) {
-        final Set<MultifactorAuthenticationTrustRecord> results = storage
+        final var results = storage
             .values()
             .stream()
             .filter(entry -> entry.getRecordDate().isEqual(onOrBefore) || entry.getRecordDate().isBefore(onOrBefore))

@@ -38,7 +38,7 @@ public class SamlIdPMongoDbMetadataConfiguration implements SamlRegisteredServic
 
     @Bean
     public SamlRegisteredServiceMetadataResolver mongoDbSamlRegisteredServiceMetadataResolver() {
-        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
+        final var idp = casProperties.getAuthn().getSamlIdp();
         return new MongoDbSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean,
             mongoDbSamlMetadataResolverTemplate());
     }
@@ -46,9 +46,9 @@ public class SamlIdPMongoDbMetadataConfiguration implements SamlRegisteredServic
     @ConditionalOnMissingBean(name = "mongoDbSamlMetadataResolverTemplate")
     @Bean
     public MongoTemplate mongoDbSamlMetadataResolverTemplate() {
-        final MongoDbSamlMetadataProperties mongo = casProperties.getAuthn().getSamlIdp().getMetadata().getMongo();
-        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
-        final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
+        final var mongo = casProperties.getAuthn().getSamlIdp().getMetadata().getMongo();
+        final var factory = new MongoDbConnectionFactory();
+        final var mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }

@@ -31,7 +31,7 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
 
     @Override
     public Service resolveServiceFrom(final Service service) {
-        final String entityId = getEntityIdAsParameter(service).get().getValue();
+        final var entityId = getEntityIdAsParameter(service).get().getValue();
         LOGGER.trace("Located entity id [{}] from service authentication request at [{}]", entityId, service.getId());
         return this.webApplicationServiceFactory.createService(entityId);
     }
@@ -49,8 +49,8 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
      * @return the entity id as parameter
      */
     protected static Optional<URIBuilder.BasicNameValuePair> getEntityIdAsParameter(final Service service) {
-        final URIBuilder builder = new URIBuilder(service.getId());
-        final Optional<URIBuilder.BasicNameValuePair> param = builder.getQueryParams().stream()
+        final var builder = new URIBuilder(service.getId());
+        final var param = builder.getQueryParams().stream()
                 .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID)).findFirst();
         return param;
     }

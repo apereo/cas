@@ -45,8 +45,8 @@ public class RequestSessionAttributeMultifactorAuthenticationPolicyEventResolver
 
     @Override
     protected List<String> resolveEventFromHttpRequest(final HttpServletRequest request) {
-        final HttpSession session = request.getSession();
-        Object attributeValue = session != null ? session.getAttribute(attributeName) : null;
+        final var session = request.getSession();
+        var attributeValue = session != null ? session.getAttribute(attributeName) : null;
         if (attributeValue == null) {
             LOGGER.debug("No value could be found for session attribute [{}]. Checking request attributes...", this.attributeName);
             attributeValue = request.getAttribute(attributeName);
@@ -57,7 +57,7 @@ public class RequestSessionAttributeMultifactorAuthenticationPolicyEventResolver
             return null;
         }
 
-        final Set<Object> values = CollectionUtils.toCollection(attributeValue);
+        final var values = CollectionUtils.toCollection(attributeValue);
         LOGGER.debug("Found values [{}] mapped to attribute name [{}]", values, this.attributeName);
         return values.stream().map(Object::toString).collect(Collectors.toList());
     }

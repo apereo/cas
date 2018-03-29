@@ -88,11 +88,11 @@ public class LdapAuthenticationHandlerTests {
         assertNotEquals(handler.size(), 0);
 
         this.handler.forEach(Unchecked.consumer(h -> {
-            final UsernamePasswordCredential credential = new UsernamePasswordCredential("castest1", "castest1");
-            final AuthenticationHandlerExecutionResult result = h.authenticate(credential);
+            final var credential = new UsernamePasswordCredential("castest1", "castest1");
+            final var result = h.authenticate(credential);
             assertNotNull(result.getPrincipal());
             assertEquals(credential.getUsername(), result.getPrincipal().getId());
-            final Map<String, Object> attributes = result.getPrincipal().getAttributes();
+            final var attributes = result.getPrincipal().getAttributes();
             assertTrue(attributes.containsKey("givenName"));
             assertTrue(attributes.containsKey("mail"));
         }));

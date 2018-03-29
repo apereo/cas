@@ -44,7 +44,7 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
             if (registeredService != null) {
                 parameters.put("registeredService", registeredService.getServiceId());
             }
-            final HttpResponse response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
+            final var response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
                     restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                     parameters, new HashMap<>());
             if (response != null && response.getEntity() != null) {

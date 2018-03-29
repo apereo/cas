@@ -62,7 +62,7 @@ public class DelegatedClientWebflowManager {
     public Ticket store(final WebContext webContext, final BaseClient client) {
         final Map<String, Serializable> properties = new LinkedHashMap<>();
 
-        final Service service = determineService(webContext);
+        final var service = determineService(webContext);
         properties.put(CasProtocolConstants.PARAMETER_SERVICE, service);
 
         properties.put(this.themeParamName, StringUtils.defaultString(webContext.getRequestParameter(this.themeParamName)));
@@ -70,8 +70,8 @@ public class DelegatedClientWebflowManager {
         properties.put(CasProtocolConstants.PARAMETER_METHOD,
             StringUtils.defaultString(webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)));
 
-        final TransientSessionTicketFactory transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
-        final TransientSessionTicket ticket = transientFactory.create(service, properties);
+        final var transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
+        final var ticket = transientFactory.create(service, properties);
         LOGGER.debug("Storing delegated authentication request ticket [{}] for service [{}] with properties [{}]",
             ticket.getId(), ticket.getService(), ticket.getProperties());
         this.ticketRegistry.addTicket(ticket);
@@ -81,25 +81,25 @@ public class DelegatedClientWebflowManager {
             webContext.getSessionStore().set(webContext, SAML2Client.SAML_RELAY_STATE_ATTRIBUTE, ticket.getId());
         }
         if (client instanceof OAuth20Client) {
-            final OAuth20Client oauthClient = (OAuth20Client) client;
+            final var oauthClient = (OAuth20Client) client;
             oauthClient.getConfiguration().setWithState(true);
             oauthClient.getConfiguration().setStateData(ticket.getId());
         }
         if (client instanceof OidcClient) {
-            final OidcClient oidcClient = (OidcClient) client;
+            final var oidcClient = (OidcClient) client;
             oidcClient.getConfiguration().setCustomParams(CollectionUtils.wrap(PARAMETER_CLIENT_ID, ticket.getId()));
             oidcClient.getConfiguration().setWithState(true);
             oidcClient.getConfiguration().setStateData(ticket.getId());
         }
         if (client instanceof CasClient) {
-            final CasClient casClient = (CasClient) client;
+            final var casClient = (CasClient) client;
             casClient.getConfiguration().addCustomParam(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
         }
         return ticket;
     }
 
     private Service determineService(final WebContext ctx) {
-        final String serviceParameter = StringUtils.defaultIfBlank(ctx.getRequestParameter(CasProtocolConstants.PARAMETER_SERVICE), casLoginEndpoint);
+        final var serviceParameter = StringUtils.defaultIfBlank(ctx.getRequestParameter(CasProtocolConstants.PARAMETER_SERVICE), casLoginEndpoint);
         return this.authenticationRequestServiceSelectionStrategies.resolveService(webApplicationServiceFactory.createService(serviceParameter));
     }
 
@@ -112,8 +112,8 @@ public class DelegatedClientWebflowManager {
      * @return the service
      */
     public Service retrieve(final RequestContext requestContext, final WebContext webContext, final BaseClient client) {
-        final String clientId = getDelegatedClientId(webContext, client);
-        final TransientSessionTicket ticket = this.ticketRegistry.getTicket(clientId, TransientSessionTicket.class);
+        final var clientId = getDelegatedClientId(webContext, client);
+        final var ticket = this.ticketRegistry.getTicket(clientId, TransientSessionTicket.class);
         if (ticket == null) {
             LOGGER.error("Delegated client identifier cannot be located in the authentication request [{}]", webContext.getFullRequestURL());
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
@@ -132,7 +132,7 @@ public class DelegatedClientWebflowManager {
 
     private Service restoreDelegatedAuthenticationRequest(final RequestContext requestContext, final WebContext webContext,
                                                           final TransientSessionTicket ticket) {
-        final Service service = ticket.getService();
+        final var service = ticket.getService();
         LOGGER.debug("Restoring requested service [{}] back in the authentication flow", service);
 
         requestContext.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
@@ -144,7 +144,7 @@ public class DelegatedClientWebflowManager {
     }
 
     private String getDelegatedClientId(final WebContext webContext, final BaseClient client) {
-        String clientId = webContext.getRequestParameter(PARAMETER_CLIENT_ID);
+        var clientId = webContext.getRequestParameter(PARAMETER_CLIENT_ID);
         if (StringUtils.isBlank(clientId)) {
             if (client instanceof SAML2Client) {
                 LOGGER.debug("Client identifier could not found as part of the request parameters. Looking at relay-state for the SAML2 client");

@@ -53,8 +53,8 @@ public class ShiroAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler shiroAuthenticationHandler() {
-        final ShiroAuthenticationProperties shiro = casProperties.getAuthn().getShiro();
-        final ShiroAuthenticationHandler h = new ShiroAuthenticationHandler(shiro.getName(), servicesManager, shiroPrincipalFactory(),
+        final var shiro = casProperties.getAuthn().getShiro();
+        final var h = new ShiroAuthenticationHandler(shiro.getName(), servicesManager, shiroPrincipalFactory(),
             shiro.getRequiredRoles(), shiro.getRequiredPermissions());
 
         h.loadShiroConfiguration(shiro.getLocation());
@@ -68,7 +68,7 @@ public class ShiroAuthenticationConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer shiroAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            final Resource shiroConfigFile = casProperties.getAuthn().getShiro().getLocation();
+            final var shiroConfigFile = casProperties.getAuthn().getShiro().getLocation();
             if (shiroConfigFile != null) {
                 LOGGER.debug("Injecting shiro authentication handler configured at [{}]", shiroConfigFile.getDescription());
                 plan.registerAuthenticationHandlerWithPrincipalResolver(shiroAuthenticationHandler(), personDirectoryPrincipalResolver);

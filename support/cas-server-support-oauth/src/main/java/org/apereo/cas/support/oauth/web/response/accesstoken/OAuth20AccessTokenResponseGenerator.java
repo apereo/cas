@@ -59,7 +59,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
 
         if (registeredService.isJsonFormat()) {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            try (JsonGenerator jsonGenerator = getResponseJsonGenerator(response)) {
+            try (var jsonGenerator = getResponseJsonGenerator(response)) {
                 jsonGenerator.writeStartObject();
                 generateJsonInternal(request, response, jsonGenerator, accessTokenId,
                     refreshTokenId, timeout, service, registeredService, responseType);
@@ -95,7 +95,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                                         final AccessToken accessTokenId,
                                         final RefreshToken refreshTokenId,
                                         final long timeout) {
-        final StringBuilder builder = new StringBuilder(
+        final var builder = new StringBuilder(
                 String.format("%s=%s&%s=%s", OAuth20Constants.ACCESS_TOKEN, accessTokenId.getId(),
                         OAuth20Constants.EXPIRES_IN, timeout));
 

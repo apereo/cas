@@ -54,7 +54,7 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     @Override
     public boolean supports(final SamlRegisteredService service) {
         try {
-            final String metadataLocation = service.getMetadataLocation();
+            final var metadataLocation = service.getMetadataLocation();
             return metadataLocation.trim().startsWith("jdbc://");
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

@@ -57,7 +57,7 @@ public class UniquePrincipalAuthenticationPolicyTests {
     @Test
     public void verifyPolicyIsGoodUserNotFound() throws Exception {
         this.ticketRegistry.deleteAll();
-        final UniquePrincipalAuthenticationPolicy p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
+        final var p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
         assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser")));
     }
 
@@ -66,7 +66,7 @@ public class UniquePrincipalAuthenticationPolicyTests {
         this.ticketRegistry.deleteAll();
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TGT-1", CoreAuthenticationTestUtils.getAuthentication("casuser"), 
                 new NeverExpiresExpirationPolicy()));
-        final UniquePrincipalAuthenticationPolicy p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
+        final var p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
         assertFalse(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser")));
     }
 }

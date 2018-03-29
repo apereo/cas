@@ -59,7 +59,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
         final List<Principal> principals = new ArrayList<>();
         chain.stream().filter(resolver -> resolver.supports(credential)).forEach(resolver -> {
             LOGGER.debug("Invoking principal resolver [{}]", resolver);
-            final Principal p = resolver.resolve(credential, principal, handler);
+            final var p = resolver.resolve(credential, principal, handler);
             if (p != null) {
                 principals.add(p);
             }
@@ -84,8 +84,8 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
                 + "with different identifiers which typically is the result of a configuration issue.",
                 new HashMap<>(0), new HashMap<>(0));
         }
-        final String principalId = principal != null ? principal.getId() : principals.get(0).getId();
-        final Principal finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
+        final var principalId = principal != null ? principal.getId() : principals.get(0).getId();
+        final var finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
         LOGGER.debug("Final principal constructed by the chain of resolvers is [{}]", finalPrincipal);
         return finalPrincipal;
     }
@@ -104,7 +104,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
 
     @Override
     public IPersonAttributeDao getAttributeRepository() {
-        final MergingPersonAttributeDaoImpl dao = new MergingPersonAttributeDaoImpl();
+        final var dao = new MergingPersonAttributeDaoImpl();
         dao.setPersonAttributeDaos(this.chain.stream().map(PrincipalResolver::getAttributeRepository).collect(Collectors.toList()));
         return dao;
     }

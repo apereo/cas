@@ -39,16 +39,16 @@ public class MemcachedTicketRegistryConfiguration {
 
     @Bean
     public Transcoder memcachedTicketRegistryTranscoder() {
-        final MemcachedTicketRegistryProperties memcached = casProperties.getTicket().getRegistry().getMemcached();
+        final var memcached = casProperties.getTicket().getRegistry().getMemcached();
         return MemcachedUtils.newTranscoder(memcached, componentSerializationPlan.getRegisteredClasses());
     }
 
     @Bean
     public TicketRegistry ticketRegistry() {
-        final MemcachedTicketRegistryProperties memcached = casProperties.getTicket().getRegistry().getMemcached();
-        final MemcachedPooledClientConnectionFactory factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedTicketRegistryTranscoder());
-        final MemcachedTicketRegistry registry = new MemcachedTicketRegistry(factory.getObjectPool());
-        final CipherExecutor cipherExecutor = CoreTicketUtils.newTicketRegistryCipherExecutor(memcached.getCrypto(), "memcached");
+        final var memcached = casProperties.getTicket().getRegistry().getMemcached();
+        final var factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedTicketRegistryTranscoder());
+        final var registry = new MemcachedTicketRegistry(factory.getObjectPool());
+        final var cipherExecutor = CoreTicketUtils.newTicketRegistryCipherExecutor(memcached.getCrypto(), "memcached");
         registry.setCipherExecutor(cipherExecutor);
         return registry;
     }

@@ -86,8 +86,8 @@ public class CasRemoteAuthenticationConfiguration implements CasWebflowExecution
     @Bean
     @RefreshScope
     public AuthenticationHandler remoteAddressAuthenticationHandler() {
-        final RemoteAddressAuthenticationProperties remoteAddress = casProperties.getAuthn().getRemoteAddress();
-        final RemoteAddressAuthenticationHandler bean = new RemoteAddressAuthenticationHandler(remoteAddress.getName(),
+        final var remoteAddress = casProperties.getAuthn().getRemoteAddress();
+        final var bean = new RemoteAddressAuthenticationHandler(remoteAddress.getName(),
             servicesManager,
             remoteAddressPrincipalFactory());
         bean.configureIpNetworkRange(remoteAddress.getIpAddressRange());

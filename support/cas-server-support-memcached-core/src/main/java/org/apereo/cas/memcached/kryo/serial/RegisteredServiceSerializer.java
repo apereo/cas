@@ -56,7 +56,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getDescription(), StringUtils.EMPTY));
         kryo.writeObject(output, service.getId());
         kryo.writeObject(output, service.getEvaluationOrder());
-        final URL emptyUrl = getEmptyUrl();
+        final var emptyUrl = getEmptyUrl();
         kryo.writeObject(output, ObjectUtils.defaultIfNull(service.getLogo(), emptyUrl));
         kryo.writeObject(output, service.getLogoutType());
         kryo.writeObject(output, ObjectUtils.defaultIfNull(service.getLogoutUrl(), emptyUrl));
@@ -117,7 +117,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
      * @param obj    the obj
      */
     private static void writeObjectByReflection(final Kryo kryo, final Output output, final Object obj) {
-        final String className = obj.getClass().getCanonicalName();
+        final var className = obj.getClass().getCanonicalName();
         kryo.writeObject(output, className);
         kryo.writeObject(output, obj);
     }
@@ -133,8 +133,8 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
      */
     @SneakyThrows
     private static <T> T readObjectByReflection(final Kryo kryo, final Input input, final Class<T> clazz) {
-        final String className = kryo.readObject(input, String.class);
-        final Class<T> foundClass = (Class<T>) Class.forName(className);
+        final var className = kryo.readObject(input, String.class);
+        final var foundClass = (Class<T>) Class.forName(className);
         final Object result = kryo.readObject(input, foundClass);
 
         if (!clazz.isAssignableFrom(result.getClass())) {

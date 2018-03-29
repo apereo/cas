@@ -27,9 +27,9 @@ public class CookieUtils {
      */
     public static TicketGrantingTicket getTicketGrantingTicketFromRequest(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                                                           final TicketRegistry ticketRegistry, final HttpServletRequest request) {
-        final String cookieValue = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+        final var cookieValue = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         if (StringUtils.isNotBlank(cookieValue)) {
-            final TicketGrantingTicket tgt = ticketRegistry.getTicket(cookieValue, TicketGrantingTicket.class);
+            final var tgt = ticketRegistry.getTicket(cookieValue, TicketGrantingTicket.class);
             if (tgt != null && !tgt.isExpired()) {
                 return tgt;
             }

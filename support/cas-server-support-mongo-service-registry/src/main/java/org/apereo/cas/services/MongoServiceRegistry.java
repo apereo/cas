@@ -45,13 +45,13 @@ public class MongoServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceById(final String id) {
-        final Pattern pattern = Pattern.compile(id, Pattern.CASE_INSENSITIVE);
+        final var pattern = Pattern.compile(id, Pattern.CASE_INSENSITIVE);
         return this.mongoTemplate.findOne(new Query(Criteria.where("serviceId").regex(pattern)), RegisteredService.class, this.collectionName);
     }
 
     @Override
     public List<RegisteredService> load() {
-        final List<RegisteredService> list = this.mongoTemplate.findAll(RegisteredService.class, this.collectionName);
+        final var list = this.mongoTemplate.findAll(RegisteredService.class, this.collectionName);
         list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
         return list;
     }

@@ -70,10 +70,10 @@ public class CasCommandLineShellApplication {
     public CommandLineRunner commandLineRunner() {
         return args -> {
             if (CasCommandLineParser.isShell(args)) {
-                final CasCommandLineShellBootstrapper sh = new CasCommandLineShellBootstrapper();
+                final var sh = new CasCommandLineShellBootstrapper();
                 sh.execute(args);
             } else {
-                final CasCommandLineEngine engine = new CasCommandLineEngine();
+                final var engine = new CasCommandLineEngine();
                 engine.execute(args);
             }
         };

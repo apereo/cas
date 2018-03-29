@@ -111,21 +111,21 @@ public class SessionHealthIndicatorJpaTests {
     public void verifyObserveOkJpaTicketRegistry() {
         addTicketsToRegistry(jpaRegistry, 5, 5);
         assertEquals(10, jpaRegistry.getTickets().size());
-        final SessionMonitor monitor = new SessionMonitor(jpaRegistry, -1, -1);
-        final Health status = monitor.health();
+        final var monitor = new SessionMonitor(jpaRegistry, -1, -1);
+        final var status = monitor.health();
         assertEquals(Status.UP, status.getStatus());
     }
 
     private static void addTicketsToRegistry(final TicketRegistry registry, final int tgtCount, final int stCount) {
         TicketGrantingTicketImpl ticket = null;
-        for (int i = 0; i < tgtCount; i++) {
+        for (var i = 0; i < tgtCount; i++) {
             ticket = new TicketGrantingTicketImpl(GENERATOR.getNewTicketId("TGT"), CoreAuthenticationTestUtils.getAuthentication(), TEST_EXP_POLICY);
             registry.addTicket(ticket);
         }
 
         if (ticket != null) {
             final Service testService = RegisteredServiceTestUtils.getService("junit");
-            for (int i = 0; i < stCount; i++) {
+            for (var i = 0; i < stCount; i++) {
                 registry.addTicket(ticket.grantServiceTicket(GENERATOR.getNewTicketId("ST"),
                     testService,
                     TEST_EXP_POLICY,

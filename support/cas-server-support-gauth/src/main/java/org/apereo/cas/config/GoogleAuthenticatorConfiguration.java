@@ -50,7 +50,7 @@ public class GoogleAuthenticatorConfiguration implements CasWebflowExecutionPlan
 
     @Bean
     public FlowDefinitionRegistry googleAuthenticatorFlowRegistry() {
-        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        final var builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-gauth/*-webflow.xml");
         return builder.build();

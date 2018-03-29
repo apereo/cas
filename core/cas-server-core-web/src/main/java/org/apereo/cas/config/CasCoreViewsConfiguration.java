@@ -35,18 +35,18 @@ public class CasCoreViewsConfiguration {
 
     @Bean
     public AbstractTemplateResolver chainingTemplateViewResolver() {
-        final ChainingTemplateViewResolver chain = new ChainingTemplateViewResolver();
+        final var chain = new ChainingTemplateViewResolver();
 
         casProperties.getView().getTemplatePrefixes().forEach(Unchecked.consumer(prefix -> {
-            final String prefixPath = ResourceUtils.getFile(prefix).getCanonicalPath();
-            final String viewPath = StringUtils.appendIfMissing(prefixPath, "/");
+            final var prefixPath = ResourceUtils.getFile(prefix).getCanonicalPath();
+            final var viewPath = StringUtils.appendIfMissing(prefixPath, "/");
             
-            final ThemeFileTemplateResolver theme = new ThemeFileTemplateResolver(casProperties);
+            final var theme = new ThemeFileTemplateResolver(casProperties);
             configureTemplateViewResolver(theme);
             theme.setPrefix(viewPath + "themes/%s/");
             chain.addResolver(theme);
 
-            final FileTemplateResolver file = new FileTemplateResolver();
+            final var file = new FileTemplateResolver();
             configureTemplateViewResolver(file);
             file.setPrefix(viewPath);
             chain.addResolver(file);
