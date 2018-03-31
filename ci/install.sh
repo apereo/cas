@@ -5,7 +5,7 @@ branchName="master"
 prepCommand="echo 'Running command...'; "
 gradle="sudo ./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
 
 isActiveBranchCommit=[ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ]
 
