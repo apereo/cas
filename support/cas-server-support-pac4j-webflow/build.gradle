@@ -7,4 +7,7 @@ dependencies {
     implementation project(":support:cas-server-support-pac4j")
     implementation project(":support:cas-server-support-pac4j-core-clients")
     implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":support:cas-server-support-cookie")
+    implementation project(":support:cas-server-support-actions")
 }
