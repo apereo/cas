@@ -2,18 +2,21 @@ package org.apereo.cas.adaptors.radius.authentication;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.cas.adaptors.radius.AccessChallengedException;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.RadiusUtils;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.security.auth.login.FailedLoginException;
+
+import java.io.Serializable;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,28 +57,31 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+        final RadiusTokenCredential radiusCredential = (RadiusTokenCredential) credential;
+        final String password = radiusCredential.getToken();
+
+        final RequestContext context = RequestContextHolder.getRequestContext();
+        final String username = WebUtils.getAuthentication(context).getPrincipal().getId();
+
+        final Pair<Boolean, Optional<Map<String, Object>>> result;
         try {
-            final RadiusTokenCredential radiusCredential = (RadiusTokenCredential) credential;
-            final String password = radiusCredential.getToken();
-
-            final Authentication authentication = WebUtils.getInProgressAuthentication();
-            if (authentication == null) {
-                throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
-            }
-            final Principal principal = authentication.getPrincipal();
-            final String username = principal.getId();
-
-            final Pair<Boolean, Optional<Map<String, Object>>> result =
-                    RadiusUtils.authenticate(username, password, this.servers,
-                            this.failoverOnAuthenticationFailure, this.failoverOnException);
-            if (result.getKey()) {
-                return createHandlerResult(credential,
-                        this.principalFactory.createPrincipal(username, result.getValue().get()),
-                        new ArrayList<>());
-            }
-            throw new FailedLoginException("Radius authentication failed for user " + username);
+            final Serializable state = radiusCredential.getState();
+            radiusCredential.setState(null);
+            result = RadiusUtils.authenticate(username, password, state, this.servers,
+                    this.failoverOnAuthenticationFailure, this.failoverOnException);
         } catch (final Exception e) {
             throw new FailedLoginException("Radius authentication failed " + e.getMessage());
         }
+        if (result.getLeft()) {
+            return createHandlerResult(credential, this.principalFactory.createPrincipal(username, result.getRight().get()),
+                    new ArrayList<>());
+        } else if (result.getRight().isPresent()) {
+            final Serializable state = (Serializable) result.getRight().get().getOrDefault("State", null);
+            radiusCredential.setState(state);
+            final String message = result.getRight().get().getOrDefault("Reply-Message", "?").toString();
+            radiusCredential.setMessage(message);
+            throw new AccessChallengedException(message);
+        }
+        throw new FailedLoginException("Radius authentication failed for user " + username);
     }
 }

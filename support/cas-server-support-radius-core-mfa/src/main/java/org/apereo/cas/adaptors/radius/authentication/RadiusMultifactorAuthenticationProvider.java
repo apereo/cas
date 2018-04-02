@@ -52,7 +52,7 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
             LOGGER.debug("Attempting to ping RADIUS server [{}] via simulating an authentication request. If the server responds "
                 + "successfully, mock authentication will fail correctly.", server);
             try {
-                server.authenticate(uidPsw, uidPsw);
+                server.authenticate(uidPsw, uidPsw, null);
             } catch (final TimeoutException | SocketTimeoutException e) {
                 LOGGER.debug("Server [{}] is not available", server);
                 continue;

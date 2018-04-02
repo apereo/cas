@@ -27,6 +27,10 @@ public class RadiusTokenCredential implements Credential {
     private static final long serialVersionUID = -7570675701132111037L;
 
     private String token;
+    /** Stores interim state when access is challenged */
+    private Serializable state;
+    /** Describes reason for access challenged */
+    private String message;
 
     @Override
     public String getId() {

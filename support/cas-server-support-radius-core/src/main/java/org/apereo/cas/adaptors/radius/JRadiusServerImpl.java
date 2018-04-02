@@ -2,25 +2,32 @@ package org.apereo.cas.adaptors.radius;
 
 import lombok.extern.slf4j.Slf4j;
 import net.jradius.client.RadiusClient;
+import net.jradius.client.auth.RadiusAuthenticator;
 import net.jradius.dictionary.Attr_NASIPAddress;
 import net.jradius.dictionary.Attr_NASIPv6Address;
 import net.jradius.dictionary.Attr_NASIdentifier;
 import net.jradius.dictionary.Attr_NASPort;
 import net.jradius.dictionary.Attr_NASPortId;
 import net.jradius.dictionary.Attr_NASPortType;
+import net.jradius.dictionary.Attr_State;
 import net.jradius.dictionary.Attr_UserName;
 import net.jradius.dictionary.Attr_UserPassword;
 import net.jradius.dictionary.vsa_redback.Attr_NASRealPort;
+import net.jradius.exception.RadiusException;
 import net.jradius.packet.AccessAccept;
+import net.jradius.packet.AccessChallenge;
+import net.jradius.packet.AccessReject;
 import net.jradius.packet.AccessRequest;
 import net.jradius.packet.RadiusPacket;
 import net.jradius.packet.attribute.AttributeFactory;
 import net.jradius.packet.attribute.AttributeList;
-import net.jradius.packet.attribute.RadiusAttribute;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import java.io.Serializable;
+
+import java.security.NoSuchAlgorithmException;
 import java.security.Security;
-import java.util.List;
 import lombok.ToString;
 import lombok.Setter;
 
@@ -110,10 +117,15 @@ public class JRadiusServerImpl implements RadiusServer {
     }
 
     @Override
-    public RadiusResponse authenticate(final String username, final String password) throws Exception {
+    public RadiusResponse authenticate(final String username, final String password, final Serializable state) throws Exception {
         final AttributeList attributeList = new AttributeList();
         attributeList.add(new Attr_UserName(username));
         attributeList.add(new Attr_UserPassword(password));
+
+        if (state != null) {
+            attributeList.add(new Attr_State(state));
+        }
+
         if (StringUtils.isNotBlank(this.nasIpAddress)) {
             attributeList.add(new Attr_NASIPAddress(this.nasIpAddress));
         }
@@ -139,14 +151,29 @@ public class JRadiusServerImpl implements RadiusServer {
         try {
             client = this.radiusClientFactory.newInstance();
             final AccessRequest request = new AccessRequest(client, attributeList);
-            final RadiusPacket response = client.authenticate(request, RadiusClient.getAuthProtocol(this.protocol.getName()), this.retries);
-            LOGGER.debug("RADIUS response from [{}]: [{}]", client.getRemoteInetAddress().getCanonicalHostName(), response.getClass().getName());
+            LOGGER.debug("RADIUS response from [{}]: [{}]", client.getRemoteInetAddress().getCanonicalHostName(),
+                    request.toString(true, true));
+
+            // SECURID_PAP is fake protocol, only to avoid JRadius default authenticatios call
+            RadiusPacket response = RadiusProtocol.SECURID_PAP.equals(this.protocol)
+                    ? authenticateInternal(client, request, RadiusClient.getAuthProtocol(RadiusProtocol.PAP.name()), this.retries)
+                    : client.authenticate(request, RadiusClient.getAuthProtocol(this.protocol.name()), this.retries);
+
+            LOGGER.debug("RADIUS response from [{}]: [{}]",
+                    client.getRemoteInetAddress().getCanonicalHostName(),
+                    response.toString(true, true));
+
             if (response instanceof AccessAccept) {
-                final List<RadiusAttribute> attributes = response.getAttributes().getAttributeList();
-                LOGGER.debug("Radius response code [{}] accepted with attributes [{}] and identifier [{}]", response.getCode(), attributes, response.getIdentifier());
-                return new RadiusResponse(response.getCode(), response.getIdentifier(), attributes);
+                final AccessAccept acceptedResponse = (AccessAccept) response;
+                return new RadiusResponse(acceptedResponse.getCode(), acceptedResponse.getIdentifier(), acceptedResponse.getAttributes().getAttributeList());
+            } else if (response instanceof AccessChallenge) {
+                final AccessChallenge challenge = (AccessChallenge) response;
+                return new RadiusResponse(challenge.getCode(), challenge.getIdentifier(), challenge.getAttributes().getAttributeList());
+            } else if (response instanceof AccessReject) {
+                LOGGER.debug("Access Rejected");
+            } else {
+                LOGGER.warn("Response is not recognized ([])", response.getClass().getSimpleName());
             }
-            LOGGER.debug("Response is not recognized");
         } finally {
             if (client != null) {
                 client.close();
@@ -154,4 +181,18 @@ public class JRadiusServerImpl implements RadiusServer {
         }
         return null;
     }
+
+    /**
+     * Local implementation of RADIUS authentication that accepts AccessChallenge as valid response.
+     *
+     */
+    private net.jradius.packet.RadiusResponse authenticateInternal(final RadiusClient client, final AccessRequest p, final RadiusAuthenticator auth, final int retries)
+            throws RadiusException, NoSuchAlgorithmException
+    {
+        auth.setupRequest(client, p);
+        auth.processRequest(p);
+
+        return client.sendReceive(p, retries);
+    }
+
 }
