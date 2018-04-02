@@ -66,8 +66,6 @@ CAS development is powered by the following tools, projects and services.
     <td><a href="https://www.jetbrains.com/idea/"><img src="https://user-images.githubusercontent.com/1205228/31548576-1ac3d688-b038-11e7-9565-ffd89501872e.png" width="180" height="70"></a></td>
     <td><a href="https://www.eclipse.org"><img width="180" height="50" src="https://user-images.githubusercontent.com/1205228/32225495-ac7b1e94-be5a-11e7-8f83-5c7399398fb8.png"></a></td>
     <td><a href="http://projects.spring.io/spring-boot/"><img width="180" height="50" src="https://user-images.githubusercontent.com/1205228/32322526-0b58ac44-bfda-11e7-822e-ad763eb80faf.png"></a></td>
+    <td><a href="https://www.yourkit.com"><img width="180" height="50" src="https://www.yourkit.com/images/yklogo.png"></a><span>YourKit supports open source projects with its full-featured Java Profiler. YourKit, LLC is the creator of [YourKit Java Profiler](https://www.yourkit.com/java/profiler/) and [YourKit .NET Profiler](https://www.yourkit.com/.net/profiler/), innovative and intelligent tools for profiling Java and .NET applications.</span></td>
   </tr>
 </table>
-
-<img width="180" height="50" src="https://www.yourkit.com/images/yklogo.png">
-YourKit supports open source projects with its full-featured Java Profiler. YourKit, LLC is the creator of [YourKit Java Profiler](https://www.yourkit.com/java/profiler/) and [YourKit .NET Profiler](https://www.yourkit.com/.net/profiler/), innovative and intelligent tools for profiling Java and .NET applications.
