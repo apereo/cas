@@ -69,5 +69,5 @@ CAS development is powered by the following tools, projects and services.
   </tr>
 </table>
 
-<img width="180" height="50" src="https://www.yourkit.com/images/yklogo.png"><p/>
+<img width="180" height="50" src="https://www.yourkit.com/images/yklogo.png"><p/> 
 YourKit supports open source projects with its full-featured Java Profiler. YourKit, LLC is the creator of [YourKit Java Profiler](https://www.yourkit.com/java/profiler/) and [YourKit .NET Profiler](https://www.yourkit.com/.net/profiler/), innovative and intelligent tools for profiling Java and .NET applications.
