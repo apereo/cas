@@ -41,12 +41,12 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
         final HttpServletRequest request = context.getRequest();
         final String clientId = uProfile.getId();
         final String redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
-        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+        final OAuthRegisteredService clientRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
 
         LOGGER.debug("Received grant type [{}] with client id [{}] and redirect URI [{}]", grantType, clientId, redirectUri);
         final boolean valid = this.validator.checkParameterExist(request, OAuth20Constants.REDIRECT_URI)
-            && this.validator.checkParameterExist(request, OAuth20Constants.CODE)
-            && this.validator.checkCallbackValid(registeredService, redirectUri);
+                && this.validator.checkParameterExist(request, OAuth20Constants.CODE)
+                && this.validator.checkCallbackValid(clientRegisteredService, redirectUri);
 
         if (valid) {
             final String code = context.getRequestParameter(OAuth20Constants.CODE);
@@ -55,9 +55,12 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
                 LOGGER.warn("Request OAuth code [{}] is not found or has expired", code);
                 return false;
             }
-            if (!registeredService.matches(token.getService())) {
+            final String serviceId = token.getService().getId();
+            final OAuthRegisteredService codeRegisteredService =
+                    OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, serviceId);
+            if (!clientRegisteredService.equals(codeRegisteredService)) {
                 LOGGER.warn("The OAuth code [{}] issued to service [{}] does not match the registered service [{}] provided in the request given the redirect URI [{}]",
-                    code, token.getService().getId(), registeredService.getName(), redirectUri);
+                        code, serviceId, clientRegisteredService.getName(), redirectUri);
                 return false;
             }
             return true;
