@@ -662,6 +662,9 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 # cas.view.cas3.success=protocol/3.0/casServiceValidationSuccess
 # cas.view.cas3.failure=protocol/3.0/casServiceValidationFailure
 
+# Indicates how attributes should be rendered in the validation response
+# cas.view.cas3.attributeRendererType=DEFAULT|INLINE
+
 # Defines a default URL to which CAS may redirect if there is no service
 # provided in the authentication request.
 # cas.view.defaultRedirectUrl=https://www.github.com
