@@ -167,43 +167,6 @@ public abstract class AbstractRegisteredService implements RegisteredService {
      */
     public abstract void setServiceId(String id);
 
-    @Override
-    public AbstractRegisteredService clone() {
-        final AbstractRegisteredService clone = newInstance();
-        clone.copyFrom(this);
-        return clone;
-    }
-
-    /**
-     * Copies the properties of the source service into this instance.
-     *
-     * @param source Source service from which to copy properties.
-     */
-    public void copyFrom(final RegisteredService source) {
-        setId(source.getId());
-        setProxyPolicy(source.getProxyPolicy());
-        setDescription(source.getDescription());
-        setName(source.getName());
-        setServiceId(source.getServiceId());
-        setTheme(source.getTheme());
-        setResponseType(source.getResponseType());
-        setEvaluationOrder(source.getEvaluationOrder());
-        setUsernameAttributeProvider(source.getUsernameAttributeProvider());
-        setLogoutType(source.getLogoutType());
-        setAttributeReleasePolicy(source.getAttributeReleasePolicy());
-        setAccessStrategy(source.getAccessStrategy());
-        setLogo(source.getLogo());
-        setLogoutUrl(source.getLogoutUrl());
-        setPublicKey(source.getPublicKey());
-        setRequiredHandlers(new HashSet<>(source.getRequiredHandlers()));
-        setProperties(source.getProperties());
-        setMultifactorPolicy(source.getMultifactorPolicy());
-        setInformationUrl(source.getInformationUrl());
-        setPrivacyUrl(source.getPrivacyUrl());
-        setContacts(source.getContacts());
-        setExpirationPolicy(source.getExpirationPolicy());
-    }
-
     /**
      * {@inheritDoc}
      * Compares this instance with the {@code other} registered service based on

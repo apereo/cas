@@ -36,7 +36,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public abstract class AbstractServicesManager implements ServicesManager {
-    
+
     private static final long serialVersionUID = -8581398063126547772L;
 
     private final ServiceRegistry serviceRegistry;
@@ -54,10 +54,10 @@ public abstract class AbstractServicesManager implements ServicesManager {
     @Override
     public Collection<RegisteredService> getAllServices() {
         return this.services.values()
-                .stream()
-                .filter(getRegisteredServicesFilteringPredicate())
-                .sorted()
-                .collect(Collectors.toList());
+            .stream()
+            .filter(getRegisteredServicesFilteringPredicate())
+            .sorted()
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -65,12 +65,12 @@ public abstract class AbstractServicesManager implements ServicesManager {
         if (predicate == null) {
             return new ArrayList<>(0);
         }
-        
+
         return getAllServices()
-                .stream()
-                .filter(getRegisteredServicesFilteringPredicate(predicate))
-                .sorted()
-                .collect(Collectors.toSet());
+            .stream()
+            .filter(getRegisteredServicesFilteringPredicate(predicate))
+            .sorted()
+            .collect(Collectors.toSet());
     }
 
     @Override
@@ -78,12 +78,12 @@ public abstract class AbstractServicesManager implements ServicesManager {
         if (StringUtils.isBlank(serviceId)) {
             return null;
         }
-        
+
         final RegisteredService service = getCandidateServicesToMatch(serviceId)
-                .stream()
-                .filter(r -> r.matches(serviceId))
-                .findFirst()
-                .orElse(null);
+            .stream()
+            .filter(r -> r.matches(serviceId))
+            .findFirst()
+            .orElse(null);
         final RegisteredService result = validateRegisteredService(service);
         return result;
     }
@@ -112,8 +112,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     @Override
     public RegisteredService findServiceBy(final long id) {
-        final RegisteredService r = this.services.get(id);
-        return r == null ? null : r.clone();
+        return this.services.get(id);
     }
 
     @Override
@@ -132,8 +131,8 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     @Audit(action = "DELETE_SERVICE",
-            actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
-            resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
+        actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
+        resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService delete(final long id) {
         final RegisteredService service = findServiceBy(id);
@@ -141,8 +140,8 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     @Audit(action = "DELETE_SERVICE",
-            actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
-            resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
+        actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
+        resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService delete(final RegisteredService service) {
         if (service != null) {
@@ -156,16 +155,16 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     @Audit(action = "SAVE_SERVICE",
-            actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
-            resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
+        actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
+        resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
         return save(registeredService, true);
     }
 
     @Audit(action = "SAVE_SERVICE",
-            actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
-            resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
+        actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
+        resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
         publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService));
@@ -183,17 +182,17 @@ public abstract class AbstractServicesManager implements ServicesManager {
      * Load services that are provided by the DAO.
      */
     @Scheduled(initialDelayString = "${cas.serviceRegistry.schedule.startDelay:20000}",
-            fixedDelayString = "${cas.serviceRegistry.schedule.repeatInterval:60000}")
+        fixedDelayString = "${cas.serviceRegistry.schedule.repeatInterval:60000}")
     @Override
     @PostConstruct
     public void load() {
         LOGGER.debug("Loading services from [{}]", this.serviceRegistry);
         this.services = this.serviceRegistry.load()
-                .stream()
-                .collect(Collectors.toConcurrentMap(r -> {
-                    LOGGER.debug("Adding registered service [{}]", r.getServiceId());
-                    return r.getId();
-                }, Function.identity(), (r, s) -> s == null ? r : s));
+            .stream()
+            .collect(Collectors.toConcurrentMap(r -> {
+                LOGGER.debug("Adding registered service [{}]", r.getServiceId());
+                return r.getId();
+            }, Function.identity(), (r, s) -> s == null ? r : s));
         loadInternal();
         publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices()));
         evaluateExpiredServiceDefinitions();
@@ -202,10 +201,10 @@ public abstract class AbstractServicesManager implements ServicesManager {
 
     private void evaluateExpiredServiceDefinitions() {
         this.services.values()
-                .stream()
-                .filter(getRegisteredServicesFilteringPredicate().negate())
-                .filter(Objects::nonNull)
-                .forEach(this::processExpiredRegisteredService);
+            .stream()
+            .filter(getRegisteredServicesFilteringPredicate().negate())
+            .filter(Objects::nonNull)
+            .forEach(this::processExpiredRegisteredService);
     }
 
     private Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(final Predicate<RegisteredService>... p) {

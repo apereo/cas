@@ -5,12 +5,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.RegisteredService;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
 import javax.persistence.CollectionTable;
@@ -130,38 +128,6 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Override
     protected AbstractRegisteredService newInstance() {
         return new SamlRegisteredService();
-    }
-
-    @Override
-    @SneakyThrows
-    public void copyFrom(final RegisteredService source) {
-        super.copyFrom(source);
-        final SamlRegisteredService service = (SamlRegisteredService) source;
-        setMetadataLocation(service.getMetadataLocation());
-        setSignAssertions(service.isSignAssertions());
-        setSignResponses(service.isSignResponses());
-        setRequiredAuthenticationContextClass(service.getRequiredAuthenticationContextClass());
-        setMetadataMaxValidity(service.getMetadataMaxValidity());
-        setMetadataSignatureLocation(service.getMetadataSignatureLocation());
-        setEncryptAssertions(service.isEncryptAssertions());
-        setRequiredNameIdFormat(service.getRequiredNameIdFormat());
-        setMetadataCriteriaDirection(service.getMetadataCriteriaDirection());
-        setMetadataCriteriaPattern(service.getMetadataCriteriaPattern());
-        setMetadataExpirationDuration(service.metadataExpirationDuration);
-        setMetadataCriteriaRemoveEmptyEntitiesDescriptors(service.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
-        setMetadataCriteriaRemoveRolelessEntityDescriptors(service.isMetadataCriteriaRemoveRolelessEntityDescriptors());
-        setMetadataCriteriaRoles(service.getMetadataCriteriaRoles());
-        setAttributeNameFormats(service.getAttributeNameFormats());
-        setAttributeFriendlyNames(service.getAttributeFriendlyNames());
-        setNameIdQualifier(service.getNameIdQualifier());
-        setServiceProviderNameIdQualifier(service.serviceProviderNameIdQualifier);
-        setSkipGeneratingAssertionNameId(service.isSkipGeneratingAssertionNameId());
-        setSkipGeneratingSubjectConfirmationInResponseTo(service.skipGeneratingSubjectConfirmationInResponseTo);
-        setSkipGeneratingSubjectConfirmationNotBefore(service.skipGeneratingSubjectConfirmationNotBefore);
-        setSkipGeneratingSubjectConfirmationNotOnOrAfter(service.skipGeneratingSubjectConfirmationNotOnOrAfter);
-        setSkipGeneratingSubjectConfirmationRecipient(service.skipGeneratingSubjectConfirmationRecipient);
-        setSigningCredentialType(service.getSigningCredentialType());
-        setAssertionAudiences(service.getAssertionAudiences());
     }
 
     @JsonIgnore
