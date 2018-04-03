@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
-import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.JsonServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
@@ -41,18 +40,6 @@ public class OAuthRegisteredServiceTests {
     @BeforeClass
     public static void prepTests() throws Exception {
         FileUtils.cleanDirectory(RESOURCE.getFile());
-    }
-
-    @Test
-    public void checkCloning() {
-        final AbstractRegisteredService r = new OAuthRegisteredService();
-        r.setName("checkCloning");
-        r.setServiceId("testId");
-        r.setTheme("theme");
-        r.setDescription("description");
-
-        final OAuthRegisteredService r2 = (OAuthRegisteredService) r.clone();
-        assertEquals(r, r2);
     }
 
     @Test

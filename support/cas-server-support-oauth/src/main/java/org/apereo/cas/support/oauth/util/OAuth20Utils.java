@@ -20,7 +20,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.pac4j.core.context.J2EContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -79,16 +78,6 @@ public class OAuth20Utils {
             LOGGER.error("Failed to write to response", e);
         }
         return null;
-    }
-
-    /**
-     * Return a view which is a redirection to an url.
-     *
-     * @param url redirect url
-     * @return A view which is a redirection to an url
-     */
-    public static ModelAndView redirectTo(final String url) {
-        return new ModelAndView(new RedirectView(url));
     }
 
     /**
@@ -371,6 +360,10 @@ public class OAuth20Utils {
      */
     public static boolean checkClientSecret(final OAuthRegisteredService registeredService, final String clientSecret) {
         LOGGER.debug("Found: [{}] in secret check", registeredService);
+        if (StringUtils.isBlank(registeredService.getClientSecret())) {
+            LOGGER.debug("The client secret is not defined for the registered service [{}]", registeredService.getName());
+            return true;
+        }
         if (!StringUtils.equals(registeredService.getClientSecret(), clientSecret)) {
             LOGGER.error("Wrong client secret for service: [{}]", registeredService);
             return false;

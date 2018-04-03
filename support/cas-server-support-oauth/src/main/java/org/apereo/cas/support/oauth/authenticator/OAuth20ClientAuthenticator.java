@@ -38,7 +38,7 @@ public class OAuth20ClientAuthenticator implements Authenticator<UsernamePasswor
         
         final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
         if (registeredService == null) {
-            throw new CredentialsException("Unable to locate regstered service for " + id);
+            throw new CredentialsException("Unable to locate registered service for " + id);
         }
 
         final AuditableContext audit = AuditableContext.builder()
