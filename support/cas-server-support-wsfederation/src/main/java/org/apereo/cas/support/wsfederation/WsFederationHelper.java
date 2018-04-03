@@ -189,7 +189,7 @@ public class WsFederationHelper {
                 .orElse(null);
             if (cfg == null) {
                 throw new IllegalArgumentException("Could not locate wsfed configuration for security token provided. The assertion issuer "
-                    + assertion.getIssuer() + "does not match any of the identity provider identifiers defined in the configuration");
+                    + assertion.getIssuer() + " does not match any of the identity provider identifiers defined in the configuration");
             }
             return Pair.of(assertion, cfg);
         }
