@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
-import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
@@ -36,18 +35,15 @@ public abstract class BaseOAuth20Controller {
     protected final TicketRegistry ticketRegistry;
 
     /**
-     * The Validator.
-     */
-    protected final OAuth20Validator validator;
-
-    /**
      * The Access token factory.
      */
     protected final AccessTokenFactory accessTokenFactory;
+
     /**
      * The Principal factory.
      */
     protected final PrincipalFactory principalFactory;
+
     /**
      * The Web application service service factory.
      */
@@ -57,10 +53,12 @@ public abstract class BaseOAuth20Controller {
      * Convert profile scopes to attributes.
      */
     protected final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter;
+
     /**
      * Collection of CAS settings.
      */
     protected final CasConfigurationProperties casProperties;
+    
     /**
      * Cookie retriever.
      */

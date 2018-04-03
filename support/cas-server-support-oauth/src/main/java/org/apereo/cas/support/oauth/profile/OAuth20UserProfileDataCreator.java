@@ -13,7 +13,7 @@ import java.util.Map;
  * @since 5.3.0
  */
 @FunctionalInterface
-public interface OAuth2UserProfileDataCreator {
+public interface OAuth20UserProfileDataCreator {
 
     /**
      * Create internal user profile data.

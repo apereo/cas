@@ -2,12 +2,17 @@ package org.apereo.cas.support.oauth.validator.authorization;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.audit.AuditableExecutionResult;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.validator.OAuth20Validator;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.pac4j.core.context.J2EContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,37 +28,43 @@ import javax.servlet.http.HttpServletRequest;
 public class OAuth20RefreshTokenGrantTypeAuthorizationRequestValidator implements OAuth20AuthorizationRequestValidator {
 
     private final ServicesManager servicesManager;
-    private final OAuth20Validator validator;
+    private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
+    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     @Override
     public boolean validate(final J2EContext context) {
         final HttpServletRequest request = context.getRequest();
-        if (!validator.checkParameterExist(request, OAuth20Constants.GRANT_TYPE)) {
+        if (!HttpRequestUtils.doesParameterExist(request, OAuth20Constants.GRANT_TYPE)) {
             LOGGER.warn("Grant type must be specified");
             return false;
         }
 
         final String grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
 
-        if (!validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)) {
+        if (!HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CLIENT_ID)) {
             LOGGER.warn("Client id not specified for grant type [{}]", grantType);
             return false;
         }
 
-        if (!validator.checkParameterExist(request, OAuth20Constants.SECRET)) {
+        if (!HttpRequestUtils.doesParameterExist(request, OAuth20Constants.SECRET)) {
             LOGGER.warn("Client secret is not specified for grant type [{}]", grantType);
             return false;
         }
 
-        if (!validator.checkParameterExist(request, OAuth20Constants.REFRESH_TOKEN)) {
+        if (!HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REFRESH_TOKEN)) {
             LOGGER.warn("Refresh token is not specified for grant type [{}]", grantType);
             return false;
         }
 
         final String clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
         final OAuthRegisteredService registeredService = getRegisteredServiceByClientId(clientId);
-
-        if (!validator.checkServiceValid(registeredService)) {
+        final WebApplicationService service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+        final AuditableContext audit = AuditableContext.builder()
+            .service(service)
+            .registeredService(registeredService)
+            .build();
+        final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        if (accessResult.isExecutionFailure()) {
             LOGGER.warn("Registered service [{}] is not found or is not authorized for access.", registeredService);
             return false;
         }

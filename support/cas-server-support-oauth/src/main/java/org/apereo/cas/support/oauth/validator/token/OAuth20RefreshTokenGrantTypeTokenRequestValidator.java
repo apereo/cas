@@ -1,13 +1,13 @@
 package org.apereo.cas.support.oauth.validator.token;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -21,10 +21,14 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.3.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth20TokenRequestValidator {
     private final TicketRegistry ticketRegistry;
-    private final OAuth20Validator validator;
+
+    public OAuth20RefreshTokenGrantTypeTokenRequestValidator(final AuditableExecution registeredServiceAccessStrategyEnforcer,
+                                                             final TicketRegistry ticketRegistry) {
+        super(registeredServiceAccessStrategyEnforcer);
+        this.ticketRegistry = ticketRegistry;
+    }
 
     @Override
     protected OAuth20GrantTypes getGrantType() {
@@ -35,9 +39,9 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
     protected boolean validateInternal(final J2EContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) {
         final HttpServletRequest request = context.getRequest();
-        if (!this.validator.checkParameterExist(request, OAuth20Constants.REFRESH_TOKEN)
-            || !this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
-            || !this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_SECRET)) {
+        if (!HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REFRESH_TOKEN)
+            || !HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CLIENT_ID)
+            || !HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CLIENT_SECRET)) {
             return false;
         }
         final String token = request.getParameter(OAuth20Constants.REFRESH_TOKEN);

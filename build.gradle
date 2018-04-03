@@ -70,7 +70,7 @@ allprojects {
     apply plugin: 'com.github.ben-manes.versions'
     apply plugin: "jacoco"
 
-    if (!rootProject.publishSnapshots) {
+    if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
         apply plugin: "nebula.lint"
         gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
     }
