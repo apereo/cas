@@ -11,6 +11,7 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.config.JdbcMultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
+import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -37,10 +38,11 @@ import java.util.stream.Stream;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-        JdbcMultifactorAuthnTrustConfiguration.class,
-        MultifactorAuthnTrustConfiguration.class,
-        CasCoreAuditConfiguration.class,
-        RefreshAutoConfiguration.class})
+    JdbcMultifactorAuthnTrustConfiguration.class,
+    MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
+    MultifactorAuthnTrustConfiguration.class,
+    CasCoreAuditConfiguration.class,
+    RefreshAutoConfiguration.class})
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
@@ -80,7 +82,7 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
         Stream.of(PRINCIPAL, PRINCIPAL2).forEach(p -> {
             for (int offset = 0; offset < 3; offset++) {
                 final MultifactorAuthenticationTrustRecord record =
-                        MultifactorAuthenticationTrustRecord.newInstance(p, GEOGRAPHY, DEVICE_FINGERPRINT);
+                    MultifactorAuthenticationTrustRecord.newInstance(p, GEOGRAPHY, DEVICE_FINGERPRINT);
                 record.setRecordDate(LocalDate.now().minusDays(offset));
                 mfaTrustEngine.set(record);
             }
@@ -98,9 +100,9 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
 
     private void emptyTrustEngine() {
         Stream.of(PRINCIPAL, PRINCIPAL2)
-                .map(mfaTrustEngine::get)
-                .flatMap(Set::stream)
-                .forEach(r -> mfaTrustEngine.expire(r.getRecordKey()));
+            .map(mfaTrustEngine::get)
+            .flatMap(Set::stream)
+            .forEach(r -> mfaTrustEngine.expire(r.getRecordKey()));
 
         assertThat(mfaTrustEngine.get(PRINCIPAL), empty());
         assertThat(mfaTrustEngine.get(PRINCIPAL2), empty());
