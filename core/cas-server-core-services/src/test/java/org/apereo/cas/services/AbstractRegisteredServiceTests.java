@@ -97,13 +97,6 @@ public class AbstractRegisteredServiceTests {
         assertEquals(this.r, this.r);
     }
 
-    @Test
-    public void verifyEquals() {
-        assertTrue(r.equals(r.clone()));
-        assertNotNull(new RegexRegisteredService());
-        assertFalse(new RegexRegisteredService().equals(new Object()));
-    }
-
     private void prepareService() {
         this.r.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider(new ShibbolethCompatiblePersistentIdGenerator("casrox")));
         this.r.setDescription(DESCRIPTION);
@@ -175,13 +168,6 @@ public class AbstractRegisteredServiceTests {
     public void verifyServiceEquality() {
         final RegisteredService svc1 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID);
         final RegisteredService svc2 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID);
-        assertEquals(svc1, svc2);
-    }
-
-    @Test
-    public void verifyServiceCopy() throws Exception {
-        final RegisteredService svc1 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID);
-        final RegisteredService svc2 = svc1.clone();
         assertEquals(svc1, svc2);
     }
 
