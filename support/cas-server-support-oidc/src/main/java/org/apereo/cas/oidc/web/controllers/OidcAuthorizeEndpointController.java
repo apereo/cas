@@ -16,7 +16,6 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
-import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
@@ -45,7 +44,6 @@ import java.util.Set;
 public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointController {
     public OidcAuthorizeEndpointController(final ServicesManager servicesManager,
                                            final TicketRegistry ticketRegistry,
-                                           final OAuth20Validator validator,
                                            final AccessTokenFactory accessTokenFactory,
                                            final PrincipalFactory principalFactory,
                                            final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
@@ -58,7 +56,7 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
                                            final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders,
                                            final Set<OAuth20AuthorizationRequestValidator> oauthRequestValidators,
                                            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
-        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
+        super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, oAuthCodeFactory, consentApprovalViewResolver,
                 scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator,
                 authenticationBuilder, oauthAuthorizationResponseBuilders, oauthRequestValidators,

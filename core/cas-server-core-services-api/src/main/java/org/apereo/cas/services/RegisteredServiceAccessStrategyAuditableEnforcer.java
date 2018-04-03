@@ -57,6 +57,27 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             }
             return result;
         }
+
+        if (context.getService().isPresent() && context.getRegisteredService().isPresent()) {
+            final AuditableExecutionResult result = AuditableExecutionResult.of(context.getService().get(), context.getRegisteredService().get());
+            try {
+                RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(context.getService().get(), context.getRegisteredService().get());
+            } catch (final PrincipalException e) {
+                result.setException(e);
+            }
+            return result;
+        }
+
+        if (context.getRegisteredService().isPresent()) {
+            final AuditableExecutionResult result = AuditableExecutionResult.of(context.getRegisteredService().get());
+            try {
+                RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(context.getRegisteredService().get());
+            } catch (final PrincipalException e) {
+                result.setException(e);
+            }
+            return result;
+        }
+        
         throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized");
     }
 }
