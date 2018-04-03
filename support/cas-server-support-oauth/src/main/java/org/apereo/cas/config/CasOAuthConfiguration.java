@@ -242,7 +242,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         } else {
             final HandlerInterceptor throttledInterceptor = this.applicationContext.getBean(throttler, HandlerInterceptor.class);
             final String throttledUrl = BASE_OAUTH20_URL.concat("/").concat(ACCESS_TOKEN_URL);
-            HandlerInterceptorAdapter throttledInceptorAdapter = new HandlerInterceptorAdapter() {
+            return new HandlerInterceptorAdapter() {
                 @Override
                 public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
                     if (request.getServletPath().startsWith(throttledUrl) && !throttledInterceptor.preHandle(request, response, handler)) {
@@ -252,13 +252,13 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
                 }
 
                 @Override
-                public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler, final ModelAndView modelAndView) throws Exception {
+                public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler,
+                                       final ModelAndView modelAndView) throws Exception {
                     if (request.getServletPath().startsWith(throttledUrl)) {
                         throttledInterceptor.postHandle(request, response, handler, modelAndView);
                     }
                 }
             };
-            return throttledInceptorAdapter;
         }
     }
 
