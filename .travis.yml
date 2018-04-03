@@ -7,7 +7,7 @@
 # Encrypted settings include SONATYPE_USER, SONATYPE_PWD, GH_TOKEN, COVERITY_SCAN_TOKEN
 
 language: java
-sudo: required
+sudo: true
 dist: trusty
 services:
   - docker
