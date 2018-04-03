@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
@@ -23,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 /**
- * This is {@link SAML2ClientLogoutAction}.
+ * This is {@link DelegatedAuthenticationSAML2ClientLogoutAction}.
  * <p>
  * The action takes into account the currently used PAC4J client which is stored
  * in the user profile. If the client is not a SAML2 client, nothing happens. If
@@ -37,11 +38,10 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
-public class SAML2ClientLogoutAction extends AbstractAction {
+@RequiredArgsConstructor
+public class DelegatedAuthenticationSAML2ClientLogoutAction extends AbstractAction {
     private final Clients clients;
-    private final DelegatedSessionCookieManager delegatedSessionCookieManager;
-    
+
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         try {
