@@ -139,7 +139,7 @@ public class WsFederationAction extends AbstractAction {
             final String rpId = wsFederationHelper.getRelyingPartyIdentifier(service, configuration);
 
             if (credential == null) {
-                LOGGER.error("SAML no credential could be extracted from [{}] based on RP identifier [{}] and IdP identifier [{}]",
+                LOGGER.error("No credential could be extracted from [{}] based on relying party identifier [{}] and identity provider identifier [{}]",
                     assertion.getKey(), rpId, configuration.getIdentityProviderIdentifier());
                 return error();
             }
@@ -151,7 +151,8 @@ public class WsFederationAction extends AbstractAction {
                     configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
                 }
             } else {
-                LOGGER.error("SAML assertions are blank or no longer valid based on RP identifier [{}] and IdP identifier [{}]", rpId, configuration.getIdentityProviderIdentifier());
+                LOGGER.error("SAML assertions are blank or no longer valid based on RP identifier [{}] and identity provider identifier [{}]",
+                    rpId, configuration.getIdentityProviderIdentifier());
                 return error();
             }
             context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);

@@ -102,7 +102,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         config.setCookieGenerator(new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher),
             cookie.getName(), cookie.getPath(), cookie.getMaxAge(),
             cookie.isSecure(), cookie.getDomain(), cookie.isHttpOnly()));
-        
+
         config.initialize();
 
         return config;
@@ -119,8 +119,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         });
         return col;
     }
-
-
+    
     @ConditionalOnMissingBean(name = "adfsPrincipalFactory")
     @Bean
     @RefreshScope
@@ -141,10 +140,17 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                 if (!wsfed.isAttributeResolverEnabled()) {
                     plan.registerAuthenticationHandler(handler);
                 } else {
+                    final Collection<WsFederationConfiguration> configurations = wsFederationConfigurations();
+                    final WsFederationConfiguration cfg = configurations.stream()
+                        .filter(c -> c.getIdentityProviderUrl().equals(wsfed.getIdentityProviderUrl()))
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("Unable to find configuration for identity provider " + wsfed.getIdentityProviderUrl()));
+
                     final WsFederationCredentialsToPrincipalResolver r =
                         new WsFederationCredentialsToPrincipalResolver(attributeRepository, adfsPrincipalFactory(),
-                            wsfed.getPrincipal().isReturnNull(), wsfed.getPrincipal().getPrincipalAttribute(),
-                            getWsFederationConfiguration(wsfed));
+                            wsfed.getPrincipal().isReturnNull(),
+                            wsfed.getPrincipal().getPrincipalAttribute(),
+                            cfg);
                     plan.registerAuthenticationHandlerWithPrincipalResolver(handler, r);
                 }
             });
