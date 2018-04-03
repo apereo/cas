@@ -100,7 +100,7 @@ public class OAuth20Validator {
      */
     public boolean checkClientSecret(final OAuthRegisteredService registeredService, final String clientSecret) {
         LOGGER.debug("Found: [{}] in secret check", registeredService);
-        if (!StringUtils.equals(registeredService.getClientSecret(), clientSecret)) {
+        if (StringUtils.isNotBlank(registeredService.getClientSecret()) && !StringUtils.equals(registeredService.getClientSecret(), clientSecret)) {
             LOGGER.error("Wrong client secret for service: [{}]", registeredService);
             return false;
         }
