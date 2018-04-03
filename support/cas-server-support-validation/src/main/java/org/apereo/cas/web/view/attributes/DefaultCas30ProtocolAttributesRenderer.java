@@ -12,13 +12,13 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This is {@link Cas30ProtocolAttributesRenderer}.
+ * This is {@link DefaultCas30ProtocolAttributesRenderer}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @Slf4j
-public class Cas30ProtocolAttributesRenderer implements CasProtocolAttributesRenderer {
+public class DefaultCas30ProtocolAttributesRenderer implements CasProtocolAttributesRenderer {
 
     @Override
     public Collection<String> render(final Map<String, Object> attributes) {
@@ -27,15 +27,36 @@ public class Cas30ProtocolAttributesRenderer implements CasProtocolAttributesRen
         attributes.forEach((k, v) -> {
             final Set<Object> values = CollectionUtils.toCollection(v);
             values.forEach(value -> {
-                final String fmt = new StringBuilder()
-                    .append("<cas:".concat(k).concat(">"))
-                    .append(StringEscapeUtils.escapeXml10(value.toString().trim()))
-                    .append("</cas:".concat(k).concat(">"))
-                    .toString();
+                final String fmt = buildSingleAttributeDefinitionLine(k, value);
                 LOGGER.debug("Formatted attribute for the response: [{}]", fmt);
                 formattedAttributes.add(fmt);
             });
         });
         return formattedAttributes;
+    }
+
+    /**
+     * Build single attribute definition line.
+     *
+     * @param attributeName the attribute name
+     * @param value         the value
+     * @return the string
+     */
+    protected String buildSingleAttributeDefinitionLine(final String attributeName, final Object value) {
+        return new StringBuilder()
+            .append("<cas:".concat(attributeName).concat(">"))
+            .append(encodeAttributeValue(value))
+            .append("</cas:".concat(attributeName).concat(">"))
+            .toString();
+    }
+
+    /**
+     * Encode attribute value.
+     *
+     * @param value the value
+     * @return the string
+     */
+    protected String encodeAttributeValue(final Object value) {
+        return StringEscapeUtils.escapeXml10(value.toString().trim());
     }
 }
