@@ -12,13 +12,13 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * This is {@link Pac4jErrorViewResolver}.
+ * This is {@link DelegatedAuthenticationErrorViewResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
-public class Pac4jErrorViewResolver implements ErrorViewResolver {
+public class DelegatedAuthenticationErrorViewResolver implements ErrorViewResolver {
 
     @Autowired
     @Qualifier("conventionErrorViewResolver")
