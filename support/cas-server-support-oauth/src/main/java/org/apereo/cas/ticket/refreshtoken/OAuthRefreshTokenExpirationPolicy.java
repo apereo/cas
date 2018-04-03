@@ -19,7 +19,7 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
     private static final long serialVersionUID = -7144233906843566234L;
 
     /** The time to kill in milliseconds. */
-    private long timeToKillInMilliSeconds;
+    private long timeToKillInSeconds;
 
     /** No-arg constructor for serialization support. */
     public OAuthRefreshTokenExpirationPolicy() {}
@@ -27,21 +27,22 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
     /**
      * Instantiates a new OAuth refresh token expiration policy.
      *
-     * @param timeToKillInMilliSeconds the time to kill in milli seconds
+     * @param timeToKillInSeconds the time to kill in seconds
      */
-    public OAuthRefreshTokenExpirationPolicy(final long timeToKillInMilliSeconds) {
-        this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
+    public OAuthRefreshTokenExpirationPolicy(final long timeToKillInSeconds) {
+        this.timeToKillInSeconds = timeToKillInSeconds;
     }
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
         return ticketState == null || ticketState.getCreationTime()
-                .plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS).isBefore(ZonedDateTime.now(ZoneOffset.UTC));
+                .plus(this.timeToKillInSeconds, ChronoUnit.SECONDS)
+                .isBefore(ZonedDateTime.now(ZoneOffset.UTC));
     }
 
     @Override
     public Long getTimeToLive() {
-        return this.timeToKillInMilliSeconds;
+        return this.timeToKillInSeconds;
     }
 
     @Override

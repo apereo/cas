@@ -15,10 +15,10 @@ public class OAuthCodeExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPo
      * Instantiates a new O auth code expiration policy.
      *
      * @param numberOfUses             the number of uses
-     * @param timeToKillInMilliSeconds the time to kill in milli seconds
+     * @param timeToKillInSeconds the time to kill in seconds
      */
     public OAuthCodeExpirationPolicy(final int numberOfUses,
-                                     final long timeToKillInMilliSeconds) {
-        super(numberOfUses, timeToKillInMilliSeconds);
+                                     final long timeToKillInSeconds) {
+        super(numberOfUses, timeToKillInSeconds);
     }
 }
