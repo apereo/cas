@@ -59,18 +59,21 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
 
     @Bean
     @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactory")
+    @RefreshScope
     public DelegatedClientFactory pac4jDelegatedClientFactory() {
         return new DelegatedClientFactory(casProperties.getAuthn().getPac4j());
     }
 
+    @RefreshScope
     @Bean
     public Clients builtClients() {
         final Set<BaseClient> clients = pac4jDelegatedClientFactory().build();
         LOGGER.debug("The following clients are built: [{}]", clients);
         if (clients.isEmpty()) {
-            LOGGER.warn("No delegated authentication clients are defined/configured");
+            LOGGER.warn("No delegated authentication clients are defined and/or configured");
+        } else {
+            LOGGER.info("Located and prepared [{}] delegated authentication client(s)", clients.size());
         }
-        LOGGER.info("Located and prepared [{}] delegated authentication client(s)", clients.size());
         return new Clients(casProperties.getServer().getLoginUrl(), new ArrayList<>(clients));
     }
 
