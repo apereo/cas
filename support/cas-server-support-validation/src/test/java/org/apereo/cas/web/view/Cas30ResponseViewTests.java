@@ -23,7 +23,7 @@ import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecut
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.apereo.cas.web.ServiceValidateController;
-import org.apereo.cas.web.view.attributes.Cas30ProtocolAttributesRenderer;
+import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -129,7 +129,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             "attribute",
             viewDelegated, true, new DefaultAuthenticationAttributeReleasePolicy(),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
-            new Cas30ProtocolAttributesRenderer());
+            new DefaultCas30ProtocolAttributesRenderer());
     }
 
     @Test

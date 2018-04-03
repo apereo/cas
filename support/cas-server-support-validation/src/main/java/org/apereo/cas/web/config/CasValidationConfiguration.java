@@ -25,9 +25,10 @@ import org.apereo.cas.web.v3.V3ProxyValidateController;
 import org.apereo.cas.web.v3.V3ServiceValidateController;
 import org.apereo.cas.web.view.Cas10ResponseView;
 import org.apereo.cas.web.view.Cas20ResponseView;
-import org.apereo.cas.web.view.json.Cas30JsonResponseView;
 import org.apereo.cas.web.view.Cas30ResponseView;
-import org.apereo.cas.web.view.attributes.Cas30ProtocolAttributesRenderer;
+import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer;
+import org.apereo.cas.web.view.attributes.InlinedCas30ProtocolAttributesRenderer;
+import org.apereo.cas.web.view.json.Cas30JsonResponseView;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -177,7 +178,13 @@ public class CasValidationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "cas3ProtocolAttributesRenderer")
     public CasProtocolAttributesRenderer cas3ProtocolAttributesRenderer() {
-        return new Cas30ProtocolAttributesRenderer();
+        switch (casProperties.getView().getCas3().getAttributeRendererType()) {
+            case INLINE:
+                return new InlinedCas30ProtocolAttributesRenderer();
+            case DEFAULT:
+            default:
+                return new DefaultCas30ProtocolAttributesRenderer();
+        }
     }
 
     @Bean
