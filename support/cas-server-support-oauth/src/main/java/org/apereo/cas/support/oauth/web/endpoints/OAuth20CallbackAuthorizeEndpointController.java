@@ -10,7 +10,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
-import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -41,7 +40,6 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
 
     public OAuth20CallbackAuthorizeEndpointController(final ServicesManager servicesManager,
                                                       final TicketRegistry ticketRegistry,
-                                                      final OAuth20Validator validator,
                                                       final AccessTokenFactory accessTokenFactory,
                                                       final PrincipalFactory principalFactory,
                                                       final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
@@ -50,7 +48,7 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
                                                       final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                                       final CasConfigurationProperties casProperties,
                                                       final CookieRetrievingCookieGenerator cookieGenerator) {
-        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
+        super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
             webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, cookieGenerator);
         this.oAuth20CallbackAuthorizeViewResolver = oAuth20CallbackAuthorizeViewResolver;
         this.oauthConfig = config;
