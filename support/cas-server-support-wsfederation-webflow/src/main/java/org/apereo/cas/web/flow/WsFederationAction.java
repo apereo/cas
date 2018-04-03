@@ -100,8 +100,7 @@ public class WsFederationAction extends AbstractAction {
         });
         context.getFlowScope().put("wsfedUrls", clients);
     }
-
-
+    
     private Event handleWsFederationAuthenticationRequest(final RequestContext context) {
 
         final Service service = wsFederationCookieManager.retrieve(context);
