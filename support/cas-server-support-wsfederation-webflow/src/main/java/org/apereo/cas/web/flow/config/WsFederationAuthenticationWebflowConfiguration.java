@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.config;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
@@ -12,7 +13,11 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.WsFederationAction;
+import org.apereo.cas.web.flow.WsFederationRequestBuilder;
+import org.apereo.cas.web.flow.WsFederationResponseValidator;
 import org.apereo.cas.web.flow.WsFederationWebflowConfigurer;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -65,6 +70,10 @@ public class WsFederationAuthenticationWebflowConfiguration implements CasWebflo
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
+    @Qualifier("adaptiveAuthenticationPolicy")
+    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
+
+    @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
 
@@ -75,6 +84,14 @@ public class WsFederationAuthenticationWebflowConfiguration implements CasWebflo
     @Autowired
     @Qualifier("wsFederationHelper")
     private WsFederationHelper wsFederationHelper;
+
+    @Autowired
+    @Qualifier("serviceTicketRequestWebflowEventResolver")
+    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
+
+    @Autowired
+    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     @ConditionalOnMissingBean(name = "wsFederationWebflowConfigurer")
     @Bean
@@ -87,14 +104,26 @@ public class WsFederationAuthenticationWebflowConfiguration implements CasWebflo
     @Bean
     @RefreshScope
     public Action wsFederationAction() {
-        return new WsFederationAction(wsFederationHelper,
-            wsFederationConfigurations,
-            centralAuthenticationService,
-            authenticationSystemSupport,
-            servicesManager,
-            casProperties.getTheme().getParamName(),
-            casProperties.getLocale().getParamName(),
-            wsFederationCookieManager);
+        return new WsFederationAction(initialAuthenticationAttemptWebflowEventResolver,
+            serviceTicketRequestWebflowEventResolver,
+            adaptiveAuthenticationPolicy,
+            wsFederationRequestBuilder(),
+            wsFederationResponseValidator());
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "wsFederationRequestBuilder")
+    public WsFederationRequestBuilder wsFederationRequestBuilder() {
+        return new WsFederationRequestBuilder(wsFederationConfigurations, wsFederationHelper);
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "wsFederationResponseValidator")
+    public WsFederationResponseValidator wsFederationResponseValidator() {
+        return new WsFederationResponseValidator(wsFederationHelper, wsFederationConfigurations,
+            centralAuthenticationService, authenticationSystemSupport, wsFederationCookieManager);
     }
 
     @Override
