@@ -55,12 +55,12 @@ public class WsFederationCredential implements Credential {
      * @return true if the credentials are valid, otherwise false
      */
     public boolean isValid(final String expectedAudience, final String expectedIssuer, final long timeDrift) {
-        if (!this.getAudience().equalsIgnoreCase(expectedAudience)) {
-            LOGGER.warn("Audience is invalid: [{}]", this.getAudience());
+        if (!this.audience.equalsIgnoreCase(expectedAudience)) {
+            LOGGER.warn("Audience [{}] is invalid where the expected audience should be [{}]", this.audience, expectedAudience);
             return false;
         }
         if (!this.issuer.equalsIgnoreCase(expectedIssuer)) {
-            LOGGER.warn("Issuer is invalid: [{}]", this.issuer);
+            LOGGER.warn("Issuer [{}] is invalid since the expected issuer should be [{}]", this.issuer, expectedIssuer);
             return false;
         }
         final ZonedDateTime retrievedOnTimeDrift = this.getRetrievedOn().minus(timeDrift, ChronoUnit.MILLIS);

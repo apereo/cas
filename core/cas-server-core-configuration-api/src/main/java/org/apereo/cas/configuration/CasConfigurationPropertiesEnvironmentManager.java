@@ -26,8 +26,6 @@ import java.util.Map;
 
 @Slf4j
 public class CasConfigurationPropertiesEnvironmentManager {
-
-
     @Autowired
     private ConfigurationPropertiesBindingPostProcessor binder;
 
