@@ -7,22 +7,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.DelegatedClientNavigationController;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
+import org.apereo.cas.web.flow.actions.AbstractAuthenticationAction;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
@@ -36,7 +38,6 @@ import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -64,8 +65,7 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @Getter
-@AllArgsConstructor
-public class DelegatedClientAuthenticationAction extends AbstractAction {
+public class DelegatedClientAuthenticationAction extends AbstractAuthenticationAction {
     /**
      * All the urls and names of the pac4j clients.
      */
@@ -75,14 +75,29 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     private static final Pattern PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN = Pattern.compile("\\W");
 
     private final Clients clients;
-
-    private final AuthenticationSystemSupport authenticationSystemSupport;
-    private final CentralAuthenticationService centralAuthenticationService;
-
     private final ServicesManager servicesManager;
     private final AuditableExecution delegatedAuthenticationPolicyEnforcer;
     private final DelegatedClientWebflowManager delegatedClientWebflowManager;
     private final DelegatedSessionCookieManager delegatedSessionCookieManager;
+    private final AuthenticationSystemSupport authenticationSystemSupport;
+
+    public DelegatedClientAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+                                               final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
+                                               final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
+                                               final Clients clients,
+                                               final ServicesManager servicesManager,
+                                               final AuditableExecution delegatedAuthenticationPolicyEnforcer,
+                                               final DelegatedClientWebflowManager delegatedClientWebflowManager,
+                                               final DelegatedSessionCookieManager delegatedSessionCookieManager,
+                                               final AuthenticationSystemSupport authenticationSystemSupport) {
+        super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
+        this.clients = clients;
+        this.servicesManager = servicesManager;
+        this.delegatedAuthenticationPolicyEnforcer = delegatedAuthenticationPolicyEnforcer;
+        this.delegatedClientWebflowManager = delegatedClientWebflowManager;
+        this.delegatedSessionCookieManager = delegatedSessionCookieManager;
+        this.authenticationSystemSupport = authenticationSystemSupport;
+    }
 
     @Override
     protected Event doExecute(final RequestContext context) {
@@ -92,7 +107,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         final String clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
         LOGGER.debug("Delegated authentication is handled by client name [{}]", clientName);
         if (hasDelegationRequestFailed(request, response.getStatus()).isPresent()) {
-            return stopWebflow();
+            throw new IllegalArgumentException("Delegated authentication has failed with client " + clientName);
         }
 
         final J2EContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
@@ -109,11 +124,12 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                 }
             } catch (final Exception e) {
                 LOGGER.debug(e.getMessage(), e);
-                return stopWebflow();
+                throw new IllegalArgumentException("Delegated authentication has failed with client " + client.getName());
             }
 
             if (credentials != null) {
-                return establishDelegatedAuthenticationSession(context, service, credentials, client);
+                establishDelegatedAuthenticationSession(context, service, credentials, client);
+                return super.doExecute(context);
             }
         }
 
@@ -130,8 +146,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         final ClientCredential clientCredential = new ClientCredential(credentials, client.getName());
         final AuthenticationResult authenticationResult =
             this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
-        final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
-        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        WebUtils.putAuthentication(authenticationResult.getAuthentication(), context);
+        WebUtils.putAuthenticationResult(authenticationResult, context);
         return success();
     }
 
@@ -199,7 +215,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      */
     private String getCssClass(final String name) {
         String computedCssClass = "fa fa-lock";
-        if (name != null) {
+        if (StringUtils.isNotBlank(name)) {
             computedCssClass = computedCssClass.concat(" " + PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN.matcher(name).replaceAll("-"));
         }
         LOGGER.debug("cssClass for [{}] is [{}]", name, computedCssClass);
@@ -267,10 +283,15 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     }
 
     private Service restoreAuthenticationRequestInContext(final RequestContext requestContext, final J2EContext webContext, final String clientName) {
-        delegatedSessionCookieManager.restore(webContext);
-        final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
-        final Service service = delegatedClientWebflowManager.retrieve(requestContext, webContext, client);
-        return service;
+        try {
+            delegatedSessionCookieManager.restore(webContext);
+            final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
+            final Service service = delegatedClientWebflowManager.retrieve(requestContext, webContext, client);
+            return service;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized");
     }
 
     /**

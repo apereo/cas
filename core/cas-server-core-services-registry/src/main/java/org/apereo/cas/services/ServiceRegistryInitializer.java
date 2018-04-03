@@ -27,7 +27,7 @@ public class ServiceRegistryInitializer {
      */
     public void initServiceRegistryIfNecessary() {
         final long size = this.serviceRegistry.size();
-        LOGGER.debug("Service registry contains [{}] service definitions", size);
+        LOGGER.debug("Service registry contains [{}] service definition(s)", size);
 
         if (!this.initFromJson) {
             LOGGER.info("The service registry database backed by [{}] will not be initialized from JSON services. "
