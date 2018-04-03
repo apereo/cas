@@ -57,9 +57,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
-import org.apereo.cas.support.oauth.profile.OAuth2UserProfileDataCreator;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
-import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
@@ -220,10 +219,6 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     private TicketRegistry ticketRegistry;
 
     @Autowired
-    @Qualifier("oAuthValidator")
-    private OAuth20Validator oAuth20Validator;
-
-    @Autowired
     @Qualifier("defaultOAuthCodeFactory")
     private OAuthCodeFactory defaultOAuthCodeFactory;
 
@@ -328,27 +323,28 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @Bean
     public OidcIntrospectionEndpointController oidcIntrospectionEndpointController() {
         return new OidcIntrospectionEndpointController(
-            servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
+            servicesManager, ticketRegistry, defaultAccessTokenFactory,
             oidcPrincipalFactory(), webApplicationServiceFactory,
             profileScopeToAttributesFilter(), casProperties,
-            ticketGrantingTicketCookieGenerator, centralAuthenticationService);
+            ticketGrantingTicketCookieGenerator, centralAuthenticationService,
+            registeredServiceAccessStrategyEnforcer);
     }
 
     @RefreshScope
     @Bean
     public OidcRevocationEndpointController oidcRevocationEndpointController() {
         return new OidcRevocationEndpointController(
-            servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
+            servicesManager, ticketRegistry, defaultAccessTokenFactory,
             oidcPrincipalFactory(), webApplicationServiceFactory,
             profileScopeToAttributesFilter(), casProperties,
-            ticketGrantingTicketCookieGenerator);
+            ticketGrantingTicketCookieGenerator, registeredServiceAccessStrategyEnforcer);
     }
 
     @RefreshScope
     @Bean
     public OidcAccessTokenEndpointController oidcAccessTokenController() {
         return new OidcAccessTokenEndpointController(
-            servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
+            servicesManager, ticketRegistry, defaultAccessTokenFactory,
             oidcPrincipalFactory(), webApplicationServiceFactory, oauthTokenGenerator,
             oidcAccessTokenResponseGenerator(), profileScopeToAttributesFilter(), casProperties,
             ticketGrantingTicketCookieGenerator, accessTokenExpirationPolicy,
@@ -364,7 +360,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @Bean
     public OidcDynamicClientRegistrationEndpointController oidcDynamicClientRegistrationEndpointController() {
         return new OidcDynamicClientRegistrationEndpointController(
-            servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
+            servicesManager, ticketRegistry, defaultAccessTokenFactory,
             oidcPrincipalFactory(), webApplicationServiceFactory, clientRegistrationRequestSerializer(),
             new DefaultRandomStringGenerator(),
             new DefaultRandomStringGenerator(),
@@ -375,7 +371,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @RefreshScope
     @Bean
     public OidcJwksEndpointController oidcJwksController() {
-        return new OidcJwksEndpointController(servicesManager, ticketRegistry, oAuth20Validator,
+        return new OidcJwksEndpointController(servicesManager, ticketRegistry,
             defaultAccessTokenFactory,
             oidcPrincipalFactory(), webApplicationServiceFactory,
             profileScopeToAttributesFilter(), casProperties, ticketGrantingTicketCookieGenerator);
@@ -386,7 +382,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @Bean
     public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory") final OidcServerDiscoverySettings discoverySettings) {
         return new OidcWellKnownEndpointController(servicesManager, ticketRegistry,
-            oAuth20Validator, defaultAccessTokenFactory,
+            defaultAccessTokenFactory,
             oidcPrincipalFactory(), webApplicationServiceFactory,
             discoverySettings, profileScopeToAttributesFilter(),
             casProperties, ticketGrantingTicketCookieGenerator);
@@ -395,7 +391,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @RefreshScope
     @Bean
     public OidcUserProfileEndpointController oidcProfileController() {
-        return new OidcUserProfileEndpointController(servicesManager, ticketRegistry, oAuth20Validator,
+        return new OidcUserProfileEndpointController(servicesManager, ticketRegistry,
             defaultAccessTokenFactory,
             oidcPrincipalFactory(), webApplicationServiceFactory,
             profileScopeToAttributesFilter(),
@@ -404,7 +400,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     }
 
     @Bean
-    public OAuth2UserProfileDataCreator oidcUserProfileDataCreator() {
+    public OAuth20UserProfileDataCreator oidcUserProfileDataCreator() {
         return new OidcUserProfileDataCreator(servicesManager, profileScopeToAttributesFilter());
     }
 
@@ -413,7 +409,6 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     public OidcAuthorizeEndpointController oidcAuthorizeController() {
         return new OidcAuthorizeEndpointController(servicesManager,
             ticketRegistry,
-            oAuth20Validator,
             defaultAccessTokenFactory,
             oidcPrincipalFactory(),
             webApplicationServiceFactory,
@@ -432,7 +427,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @RefreshScope
     @Bean
     public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport")
-                                                                                     final AuthenticationSystemSupport authenticationSystemSupport) {
+                                                                                 final AuthenticationSystemSupport authenticationSystemSupport) {
         final CasWebflowEventResolver r = new OidcAuthenticationContextWebflowEventEventResolver(authenticationSystemSupport,
             centralAuthenticationService, servicesManager,
             ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies,

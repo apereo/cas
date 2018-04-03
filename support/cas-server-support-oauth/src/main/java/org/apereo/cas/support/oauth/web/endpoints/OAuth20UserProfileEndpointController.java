@@ -9,9 +9,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
-import org.apereo.cas.support.oauth.profile.OAuth2UserProfileDataCreator;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
@@ -50,11 +49,10 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
     /**
      * User profile data creator.
      */
-    private final OAuth2UserProfileDataCreator userProfileDataCreator;
+    private final OAuth20UserProfileDataCreator userProfileDataCreator;
             
     public OAuth20UserProfileEndpointController(final ServicesManager servicesManager,
                                                 final TicketRegistry ticketRegistry,
-                                                final OAuth20Validator validator,
                                                 final AccessTokenFactory accessTokenFactory,
                                                 final PrincipalFactory principalFactory,
                                                 final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
@@ -62,8 +60,8 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
                                                 final CasConfigurationProperties casProperties,
                                                 final CookieRetrievingCookieGenerator cookieGenerator,
                                                 final OAuth20UserProfileViewRenderer userProfileViewRenderer,
-                                                final OAuth2UserProfileDataCreator userProfileDataCreator) {
-        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
+                                                final OAuth20UserProfileDataCreator userProfileDataCreator) {
+        super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, cookieGenerator);
         this.userProfileViewRenderer = userProfileViewRenderer;
         this.userProfileDataCreator = userProfileDataCreator;

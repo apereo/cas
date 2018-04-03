@@ -18,14 +18,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Default implementation of {@link OAuth2UserProfileDataCreator}.
+ * Default implementation of {@link OAuth20UserProfileDataCreator}.
  *
  * @author Dmitriy Kopylenko
  * @since 5.3.0
  */
 @Slf4j
 @AllArgsConstructor
-public class DefaultOAuth2UserProfileDataCreator implements OAuth2UserProfileDataCreator {
+public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileDataCreator {
 
     /**
      * The services manager.

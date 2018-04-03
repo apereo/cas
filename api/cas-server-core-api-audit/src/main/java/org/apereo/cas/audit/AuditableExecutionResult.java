@@ -146,6 +146,32 @@ public class AuditableExecutionResult {
     /**
      * Of auditable execution result.
      *
+     * @param service           the service
+     * @param registeredService the registered service
+     * @return the auditable execution result
+     */
+    public static AuditableExecutionResult of(final Service service, final RegisteredService registeredService) {
+        final AuditableExecutionResult result = new AuditableExecutionResult();
+        result.setRegisteredService(registeredService);
+        result.setService(service);
+        return result;
+    }
+
+    /**
+     * Of auditable execution result.
+     *
+     * @param registeredService the registered service
+     * @return the auditable execution result
+     */
+    public static AuditableExecutionResult of(final RegisteredService registeredService) {
+        final AuditableExecutionResult result = new AuditableExecutionResult();
+        result.setRegisteredService(registeredService);
+        return result;
+    }
+
+    /**
+     * Of auditable execution result.
+     *
      * @param context the context
      * @return the auditable execution result
      */

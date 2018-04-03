@@ -13,12 +13,12 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.profile.OAuthUserProfile;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
+import org.pac4j.core.profile.CommonProfile;
 
 import java.util.Map;
 
@@ -49,7 +49,7 @@ public class OAuth20UserAuthenticator implements Authenticator<UsernamePasswordC
             final Authentication authentication = authenticationResult.getAuthentication();
             final Principal principal = authentication.getPrincipal();
 
-            final OAuthUserProfile profile = new OAuthUserProfile();
+            final CommonProfile profile = new CommonProfile();
             final String id = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
             LOGGER.debug("Created profile id [{}]", id);
 

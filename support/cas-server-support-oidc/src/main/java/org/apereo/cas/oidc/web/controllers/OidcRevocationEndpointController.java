@@ -2,6 +2,9 @@ package org.apereo.cas.oidc.web.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -12,10 +15,10 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -36,18 +39,21 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class OidcRevocationEndpointController extends BaseOAuth20Controller {
+    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+
     public OidcRevocationEndpointController(final ServicesManager servicesManager,
                                             final TicketRegistry ticketRegistry,
-                                            final OAuth20Validator validator,
                                             final AccessTokenFactory accessTokenFactory,
                                             final PrincipalFactory principalFactory,
                                             final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                             final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                             final CasConfigurationProperties casProperties,
-                                            final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
-        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
-                webApplicationServiceServiceFactory, scopeToAttributesFilter,
-                casProperties, ticketGrantingTicketCookieGenerator);
+                                            final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+        super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
+            webApplicationServiceServiceFactory, scopeToAttributesFilter,
+            casProperties, ticketGrantingTicketCookieGenerator);
+        this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
     }
 
     /**
@@ -67,10 +73,18 @@ public class OidcRevocationEndpointController extends BaseOAuth20Controller {
                 throw new IllegalArgumentException("No credentials are provided to verify introspection on the access token");
             }
 
-            final OAuthRegisteredService service = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, credentials.getUsername());
-            if (this.validator.checkServiceValid(service)
-                    && this.validator.checkParameterExist(request, OAuth20Constants.ACCESS_TOKEN)
-                    && this.validator.checkClientSecret(service, credentials.getPassword())) {
+            final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, credentials.getUsername());
+
+            final WebApplicationService service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+            final AuditableContext audit = AuditableContext.builder()
+                .service(service)
+                .registeredService(registeredService)
+                .build();
+            final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+
+            if (!accessResult.isExecutionFailure()
+                && HttpRequestUtils.doesParameterExist(request, OAuth20Constants.ACCESS_TOKEN)
+                && OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword())) {
                 final String token = request.getParameter(OidcConstants.TOKEN);
                 if (StringUtils.isNotBlank(token)) {
                     this.ticketRegistry.deleteTicket(token);
