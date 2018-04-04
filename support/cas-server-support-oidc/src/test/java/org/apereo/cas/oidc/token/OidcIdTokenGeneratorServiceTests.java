@@ -14,7 +14,9 @@ import org.apereo.cas.util.CollectionUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -81,8 +86,9 @@ public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
         assertNotNull(idToken);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void verifyTokenGenerationFailsWithoutProfile() {
+        thrown.expect(IllegalArgumentException.class);
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final AccessToken accessToken = mock(AccessToken.class);
