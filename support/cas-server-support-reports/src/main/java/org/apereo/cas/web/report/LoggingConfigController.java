@@ -134,7 +134,6 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the configuration
-     * @throws Exception the exception
      */
     @GetMapping(value = "/getConfiguration")
     @ResponseBody
