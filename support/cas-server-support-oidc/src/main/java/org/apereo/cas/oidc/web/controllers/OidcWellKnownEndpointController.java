@@ -58,7 +58,6 @@ public class OidcWellKnownEndpointController extends BaseOAuth20Controller {
      * Gets well known openid discovery configuration.
      *
      * @return the well known discovery configuration
-     * @throws Exception the exception
      */
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known/openid-configuration", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OidcServerDiscoverySettings> getWellKnownOpenIdDiscoveryConfiguration() {
