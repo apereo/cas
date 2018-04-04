@@ -44,22 +44,22 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     /**
      * Settings that deal with having SAML2 IdPs as an external delegated-to authentication provider.
      */
-    private List<Pac4jSamlProperties> saml = new ArrayList<>();
+    private List<Pac4jSamlClientProperties> saml = new ArrayList<>();
 
     /**
      * Settings that deal with having OpenID Connect Providers as an external delegated-to authentication provider.
      */
-    private List<Pac4jOidcProperties> oidc = new ArrayList<>();
+    private List<Pac4jOidcClientProperties> oidc = new ArrayList<>();
 
     /**
      * Settings that deal with having OAuth2-capable providers as an external delegated-to authentication provider.
      */
-    private List<Pac4jOAuth20Properties> oauth2 = new ArrayList<>();
+    private List<Pac4jOAuth20ClientProperties> oauth2 = new ArrayList<>();
 
     /**
      * Settings that deal with having CAS Servers as an external delegated-to authentication provider.
      */
-    private List<Pac4jCasProperties> cas = new ArrayList<>();
+    private List<Pac4jCasClientProperties> cas = new ArrayList<>();
 
     /**
      * Settings that deal with having LinkedIn as an external delegated-to authentication provider.

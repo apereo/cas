@@ -7,7 +7,7 @@ import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 /**
- * This is {@link Pac4jCasProperties}.
+ * This is {@link Pac4jCasClientProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -16,7 +16,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 @Slf4j
 @Getter
 @Setter
-public class Pac4jCasProperties extends Pac4jBaseClientProperties {
+public class Pac4jCasClientProperties extends Pac4jBaseClientProperties {
 
     private static final long serialVersionUID = -2738631545437677447L;
 
@@ -31,5 +31,5 @@ public class Pac4jCasProperties extends Pac4jBaseClientProperties {
      * Acceptable values are {@code CAS10, CAS20, CAS20_PROXY, CAS30, CAS30_PROXY, SAML}.
      */
     @RequiredProperty
-    private String protocol;
+    private String protocol = "CAS20";
 }

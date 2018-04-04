@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * This is {@link Pac4jOAuth20Properties}.
+ * This is {@link Pac4jOAuth20ClientProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -17,7 +17,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
-public class Pac4jOAuth20Properties extends Pac4jIdentifiableClientProperties {
+public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientProperties {
 
     private static final long serialVersionUID = -1240711580664148382L;
 

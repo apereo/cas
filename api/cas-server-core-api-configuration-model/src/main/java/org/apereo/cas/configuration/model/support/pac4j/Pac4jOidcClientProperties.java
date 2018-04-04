@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * This is {@link Pac4jOidcProperties}.
+ * This is {@link Pac4jOidcClientProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -18,7 +18,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
-public class Pac4jOidcProperties extends Pac4jIdentifiableClientProperties {
+public class Pac4jOidcClientProperties extends Pac4jIdentifiableClientProperties {
 
     private static final long serialVersionUID = 3359382317533639638L;
 
@@ -32,6 +32,11 @@ public class Pac4jOidcProperties extends Pac4jIdentifiableClientProperties {
      */
     @RequiredProperty
     private String discoveryUri;
+
+    /**
+     * Logout url used for this provider.
+     */
+    private String logoutUrl;
 
     /**
      * Whether an initial nonce should be to used

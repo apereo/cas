@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.pac4j.Pac4jOidcProperties;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jOidcClientProperties;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
@@ -304,7 +304,7 @@ public class DelegatedClientFactory {
             .stream()
             .filter(cas -> StringUtils.isNotBlank(cas.getLoginUrl()))
             .forEach(cas -> {
-                final CasConfiguration cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol()));
+                final CasConfiguration cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol().toUpperCase()));
                 final CasClient client = new CasClient(cfg);
 
                 final int count = index.intValue();
@@ -449,7 +449,7 @@ public class DelegatedClientFactory {
     }
 
     @SneakyThrows
-    private <T extends OidcConfiguration> T getOidcConfigurationForClient(final Pac4jOidcProperties oidc, final Class<T> clazz) {
+    private <T extends OidcConfiguration> T getOidcConfigurationForClient(final Pac4jOidcClientProperties oidc, final Class<T> clazz) {
         final T cfg = clazz.getDeclaredConstructor().newInstance();
         if (StringUtils.isNotBlank(oidc.getScope())) {
             cfg.setScope(oidc.getScope());
@@ -464,6 +464,7 @@ public class DelegatedClientFactory {
         cfg.setMaxClockSkew(oidc.getMaxClockSkew());
         cfg.setDiscoveryURI(oidc.getDiscoveryUri());
         cfg.setCustomParams(oidc.getCustomParams());
+        cfg.setLogoutUrl(oidc.getLogoutUrl());
         return cfg;
     }
 
