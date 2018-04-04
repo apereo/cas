@@ -40,7 +40,7 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
     private String algorithm;
 
     @Override
-    protected PrivateKey createInstance() throws Exception {
+    protected PrivateKey createInstance() {
         PrivateKey key = readPemPrivateKey();
         if (key == null) {
             LOGGER.debug("Key [{}] is not in PEM format. Trying next...", this.location);

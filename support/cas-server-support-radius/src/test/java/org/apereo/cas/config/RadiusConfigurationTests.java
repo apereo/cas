@@ -60,12 +60,12 @@ public class RadiusConfigurationTests {
     }
 
     @Test
-    public void radiusServer() throws Exception {
+    public void radiusServer() {
         assertNotNull(radiusConfiguration.radiusServer());
     }
 
     @Test
-    public void radiusServers() throws Exception {
+    public void radiusServers() {
         assertEquals("localhost,localguest", casProperties.getAuthn().getRadius().getClient().getInetAddress());
         final List<RadiusServer> servers = radiusConfiguration.radiusServers();
         assertNotNull(servers);
