@@ -7,7 +7,7 @@ import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 /**
- * This is {@link Pac4jSamlProperties}.
+ * This is {@link Pac4jSamlClientProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -16,7 +16,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 @Slf4j
 @Getter
 @Setter
-public class Pac4jSamlProperties extends Pac4jBaseClientProperties {
+public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
 
     private static final long serialVersionUID = -862819796533384951L;
 
