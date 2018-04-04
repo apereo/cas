@@ -13,7 +13,6 @@ import org.pac4j.cas.config.CasProtocol;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
-import java.io.File;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -29,7 +28,7 @@ import static org.junit.Assert.*;
 public class DelegatedClientFactoryTests {
 
     @Test
-    public void testFactoryForIdentifiableClients() {
+    public void verifyFactoryForIdentifiableClients() {
         final Pac4jDelegatedAuthenticationProperties props = new Pac4jDelegatedAuthenticationProperties();
         configureIdentifiableClient(props.getBitbucket());
         configureIdentifiableClient(props.getDropbox());
@@ -51,7 +50,7 @@ public class DelegatedClientFactoryTests {
     }
 
     @Test
-    public void testFactoryForCasClients() {
+    public void verifyFactoryForCasClients() {
         final Pac4jDelegatedAuthenticationProperties props = new Pac4jDelegatedAuthenticationProperties();
         final Pac4jCasClientProperties cas = new Pac4jCasClientProperties();
         cas.setLoginUrl("https://cas.example.org/login");
@@ -64,7 +63,7 @@ public class DelegatedClientFactoryTests {
     }
 
     @Test
-    public void testFactoryForSamlClients() {
+    public void verifyFactoryForSamlClients() {
         final Pac4jDelegatedAuthenticationProperties props = new Pac4jDelegatedAuthenticationProperties();
         final Pac4jSamlClientProperties saml = new Pac4jSamlClientProperties();
         saml.setKeystorePath(FileUtils.getTempDirectoryPath());
@@ -79,7 +78,7 @@ public class DelegatedClientFactoryTests {
     }
 
     @Test
-    public void testFactoryForOAuthClients() {
+    public void verifyFactoryForOAuthClients() {
         final Pac4jDelegatedAuthenticationProperties props = new Pac4jDelegatedAuthenticationProperties();
         final Pac4jOAuth20ClientProperties oauth = new Pac4jOAuth20ClientProperties();
         configureIdentifiableClient(oauth);
@@ -91,7 +90,7 @@ public class DelegatedClientFactoryTests {
     }
 
     @Test
-    public void testFactoryForOidcClients() {
+    public void verifyFactoryForOidcClients() {
         final Pac4jDelegatedAuthenticationProperties props = new Pac4jDelegatedAuthenticationProperties();
         final Pac4jOidcClientProperties oidc1 = new Pac4jOidcClientProperties();
         configureIdentifiableClient(oidc1);
@@ -117,9 +116,9 @@ public class DelegatedClientFactoryTests {
         final Set clients = factory.build();
         assertEquals(4, clients.size());
     }
-    
+
     private void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {
-       props.setId("TestId");
-       props.setSecret("TestSecret");
+        props.setId("TestId");
+        props.setSecret("TestSecret");
     }
 }
