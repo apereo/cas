@@ -2578,6 +2578,7 @@ Delegate authentication to an external OpenID Connect server. Common settings fo
 ```properties
 # cas.authn.pac4j.oidc[0].type=KEYCLOAK|GOOGLE|AZURE|GENERIC
 # cas.authn.pac4j.oidc[0].discoveryUri=
+# cas.authn.pac4j.oidc[0].logoutUrl=
 # cas.authn.pac4j.oidc[0].maxClockSkew=
 # cas.authn.pac4j.oidc[0].scope=
 # cas.authn.pac4j.oidc[0].useNonce=
