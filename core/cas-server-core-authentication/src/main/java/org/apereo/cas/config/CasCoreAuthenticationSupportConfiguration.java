@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
-import org.apereo.cas.authentication.DefaultAuthenticationContextValidator;
+import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.RegisteredServiceAuthenticationHandlerResolver;
@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -49,6 +50,9 @@ public class CasCoreAuthenticationSupportConfiguration {
     @Qualifier("authenticationTransactionManager")
     private ObjectProvider<AuthenticationTransactionManager> authenticationTransactionManager;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "authenticationContextValidator")
@@ -57,7 +61,7 @@ public class CasCoreAuthenticationSupportConfiguration {
         final String contextAttribute = mfa.getAuthenticationContextAttribute();
         final String failureMode = mfa.getGlobalFailureMode();
         final String authnAttributeName = mfa.getTrusted().getAuthenticationContextAttribute();
-        return new DefaultAuthenticationContextValidator(contextAttribute, failureMode, authnAttributeName);
+        return new DefaultMultifactorAuthenticationContextValidator(contextAttribute, failureMode, authnAttributeName, applicationContext);
     }
 
     @Bean

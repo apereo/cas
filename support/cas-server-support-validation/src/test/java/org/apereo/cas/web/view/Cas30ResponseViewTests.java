@@ -7,9 +7,9 @@ import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
-import org.apereo.cas.authentication.DefaultAuthenticationContextValidator;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -27,6 +27,7 @@ import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -58,6 +59,7 @@ import static org.junit.Assert.*;
 @TestPropertySource(properties = {"cas.clearpass.cacheCredential=true", "cas.clearpass.crypto.enabled=false"})
 @Slf4j
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
+    
     @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
@@ -74,6 +76,9 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     @Qualifier("cas3ServiceFailureView")
     private View cas3ServiceFailureView;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Override
     public AbstractServiceValidateController getServiceValidateControllerInstance() throws Exception {
         return new ServiceValidateController(
@@ -83,7 +88,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             getProxyHandler(),
             getArgumentExtractor(),
             new DefaultMultifactorTriggerSelectionStrategy(new MultifactorAuthenticationProperties()),
-            new DefaultAuthenticationContextValidator("", "OPEN", "test"),
+            new DefaultMultifactorAuthenticationContextValidator("", "OPEN", "test", applicationContext),
             cas3ServiceJsonView,
             cas3SuccessView,
             cas3ServiceFailureView,
