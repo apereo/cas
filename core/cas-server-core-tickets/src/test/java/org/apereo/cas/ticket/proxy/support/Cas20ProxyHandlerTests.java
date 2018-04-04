@@ -34,7 +34,7 @@ public class Cas20ProxyHandlerTests {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         final SimpleHttpClientFactoryBean factory = new SimpleHttpClientFactoryBean();
         factory.setConnectionTimeout(10000);
         factory.setReadTimeout(10000);
