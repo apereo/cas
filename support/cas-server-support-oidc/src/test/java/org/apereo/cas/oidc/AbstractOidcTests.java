@@ -32,6 +32,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -72,5 +73,6 @@ import org.springframework.test.context.junit4.SpringRunner;
     OidcConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class})
 @Slf4j
+@DirtiesContext
 public abstract class AbstractOidcTests {
 }

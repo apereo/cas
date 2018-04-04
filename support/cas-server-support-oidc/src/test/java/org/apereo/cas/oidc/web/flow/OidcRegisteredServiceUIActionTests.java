@@ -35,7 +35,7 @@ public class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
     @Test
     public void verifyOidcActionWithoutMDUI() throws Exception {
         final MockRequestContext ctx = new MockRequestContext();
-        WebUtils.putService(ctx, RegisteredServiceTestUtils.getService());
+        WebUtils.putService(ctx, null);
         final Event event = oidcRegisteredServiceUIAction.execute(ctx);
         assertEquals("success", event.getId());
         assertNull(WebUtils.getServiceUserInterfaceMetadata(ctx, Serializable.class));
