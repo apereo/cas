@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.token;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -22,7 +22,7 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OidcIdTokenSigningAndEncryptionService {
     private final LoadingCache<String, Optional<RsaJsonWebKey>> defaultJsonWebKeystoreCache;
     private final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache;
@@ -47,8 +47,7 @@ public class OidcIdTokenSigningAndEncryptionService {
         jws.setAlgorithmConstraints(AlgorithmConstraints.NO_CONSTRAINTS);
 
         String innerJwt = svc.isSignIdToken() ? signIdToken(svc, jws) : jws.getCompactSerialization();
-        if (svc.isEncryptIdToken() && StringUtils.isNotBlank(svc.getIdTokenEncryptionAlg())
-            && StringUtils.isNotBlank(svc.getIdTokenEncryptionEncoding())) {
+        if (svc.isEncryptIdToken() && StringUtils.isNotBlank(svc.getIdTokenEncryptionAlg()) && StringUtils.isNotBlank(svc.getIdTokenEncryptionEncoding())) {
             innerJwt = encryptIdToken(svc, jws, innerJwt);
         }
 

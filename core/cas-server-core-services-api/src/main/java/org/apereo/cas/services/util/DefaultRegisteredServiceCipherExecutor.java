@@ -76,7 +76,6 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
      *
      * @param registeredService the registered service
      * @return the public key
-     * @throws Exception the exception, if key cant be created
      */
     private static PublicKey createRegisteredServicePublicKey(final RegisteredService registeredService) {
         if (registeredService.getPublicKey() == null) {
