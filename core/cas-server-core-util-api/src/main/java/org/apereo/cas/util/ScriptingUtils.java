@@ -227,7 +227,7 @@ public class ScriptingUtils {
      * @param clazz      the clazz
      * @return the t
      */
-    public static <T> T executeGroovyScriptEngine(final String scriptFile, final Object[] args, final Class<T> clazz) {
+    public static <T> T executeScriptEngine(final String scriptFile, final Object[] args, final Class<T> clazz) {
         try {
             final String engineName = getScriptEngineName(scriptFile);
             final ScriptEngine engine = new ScriptEngineManager().getEngineByName(engineName);
