@@ -68,7 +68,7 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
     public PropertySource<?> locate(final Environment environment) {
         final AmazonDynamoDB amazonDynamoDBClient = getAmazonDynamoDbClient(environment);
 
-        final boolean preventTableCreationOnStartup = getSetting(environment, "preventTableCreationOnStartup");
+        final Boolean preventTableCreationOnStartup = new Boolean(getSetting(environment, "preventTableCreationOnStartup"));
         if(!preventTableCreationOnStartup) {
             createSettingsTable(amazonDynamoDBClient, false);
         }
