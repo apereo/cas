@@ -25,7 +25,7 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
     private HttpClient client;
 
     @Before
-    public void prepareHttpClient() throws Exception {
+    public void prepareHttpClient() {
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(new SSLConnectionSocketFactory(
                 new DefaultCasSslContext(TRUST_STORE, TRUST_STORE_PSW, KeyStore.getDefaultType()).getSslContext()));

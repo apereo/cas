@@ -27,7 +27,7 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
     protected final CasConfigurationProperties casProperties;
 
     @Override
-    protected void doHealthCheck(final Health.Builder builder) throws Exception {
+    protected void doHealthCheck(final Health.Builder builder) {
 
         try {
             final CacheStatistics[] statistics = getStatistics();

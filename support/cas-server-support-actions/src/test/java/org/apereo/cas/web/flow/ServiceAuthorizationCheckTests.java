@@ -64,14 +64,14 @@ public class ServiceAuthorizationCheckTests {
     }
 
     @Test
-    public void noServiceProvided() throws Exception {
+    public void noServiceProvided() {
         final MockRequestContext mockRequestContext = new MockRequestContext();
         final Event event = this.serviceAuthorizationCheck.doExecute(mockRequestContext);
         assertEquals("success", event.getId());
     }
 
     @Test
-    public void authorizedServiceProvided() throws Exception {
+    public void authorizedServiceProvided() {
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.getFlowScope().put("service", this.authorizedService);
         final Event event = this.serviceAuthorizationCheck.doExecute(mockRequestContext);
@@ -79,7 +79,7 @@ public class ServiceAuthorizationCheckTests {
     }
 
     @Test
-    public void unauthorizedServiceProvided() throws Exception {
+    public void unauthorizedServiceProvided() {
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.getFlowScope().put("service", this.unauthorizedService);
 
@@ -91,7 +91,7 @@ public class ServiceAuthorizationCheckTests {
     }
 
     @Test
-    public void serviceThatIsNotRegisteredProvided() throws Exception {
+    public void serviceThatIsNotRegisteredProvided() {
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.getFlowScope().put("service", this.undefinedService);
 

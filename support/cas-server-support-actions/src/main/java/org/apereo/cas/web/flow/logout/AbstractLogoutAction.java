@@ -22,7 +22,7 @@ public abstract class AbstractLogoutAction extends AbstractAction {
     private static final String CACHE_CONTROL = "Cache-Control";
 
     @Override
-    public Event doExecute(final RequestContext context) throws Exception {
+    public Event doExecute(final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         preventCaching(response);

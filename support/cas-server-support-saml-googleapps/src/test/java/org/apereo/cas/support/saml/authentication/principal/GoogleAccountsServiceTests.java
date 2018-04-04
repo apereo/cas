@@ -61,7 +61,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
     private GoogleAccountsService googleAccountsService;
 
-    public GoogleAccountsService getGoogleAccountsService() throws Exception {
+    public GoogleAccountsService getGoogleAccountsService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
         final String samlRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"

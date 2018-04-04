@@ -32,7 +32,7 @@ public class SamlResponsePostEncoder extends BaseSamlResponseEncoder {
     }
 
     @Override
-    protected BaseSAML2MessageEncoder getMessageEncoderInstance() throws Exception {
+    protected BaseSAML2MessageEncoder getMessageEncoderInstance() {
         final HTTPPostEncoder encoder = new HTTPPostEncoder();
         encoder.setVelocityEngine(this.velocityEngineFactory);
         return encoder;
