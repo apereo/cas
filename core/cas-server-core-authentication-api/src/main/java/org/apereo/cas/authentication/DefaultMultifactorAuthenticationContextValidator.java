@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -7,17 +9,16 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.util.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.OrderComparator;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
-import lombok.Getter;
 
 /**
- * The {@link DefaultAuthenticationContextValidator} is responsible for evaluating an authentication
+ * The {@link DefaultMultifactorAuthenticationContextValidator} is responsible for evaluating an authentication
  * object to see whether it satisfied a requested authentication context.
  *
  * @author Misagh Moayyed
@@ -25,22 +26,13 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
-public class DefaultAuthenticationContextValidator implements AuthenticationContextValidator {
+@RequiredArgsConstructor
+public class DefaultMultifactorAuthenticationContextValidator implements AuthenticationContextValidator {
 
     private final String authenticationContextAttribute;
-
     private final String globalFailureMode;
-
     private final String mfaTrustedAuthnAttributeName;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    public DefaultAuthenticationContextValidator(final String contextAttribute, final String failureMode, final String authnAttributeName) {
-        this.authenticationContextAttribute = contextAttribute;
-        this.globalFailureMode = failureMode;
-        this.mfaTrustedAuthnAttributeName = authnAttributeName;
-    }
+    private final ConfigurableApplicationContext applicationContext;
 
     /**
      * {@inheritDoc}
@@ -56,10 +48,11 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
     @Override
     public Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validate(final Authentication authentication,
                                                                                final String requestedContext, final RegisteredService service) {
-        final Map<String, Object> attrs = authentication.getAttributes();
-        final Object ctxAttr = attrs.get(this.authenticationContextAttribute);
+        final Map<String, Object> attributes = authentication.getAttributes();
+        final Object ctxAttr = attributes.get(this.authenticationContextAttribute);
         final Collection<Object> contexts = CollectionUtils.toCollection(ctxAttr);
         LOGGER.debug("Attempting to match requested authentication context [{}] against [{}]", requestedContext, contexts);
+
         final Map<String, MultifactorAuthenticationProvider> providerMap =
             MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null) {
@@ -75,14 +68,14 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
             LOGGER.debug("Requested authentication context [{}] is satisfied", requestedContext);
             return Pair.of(Boolean.TRUE, requestedProvider);
         }
-        if (StringUtils.isNotBlank(this.mfaTrustedAuthnAttributeName) && attrs.containsKey(this.mfaTrustedAuthnAttributeName)) {
+        if (StringUtils.isNotBlank(this.mfaTrustedAuthnAttributeName) && attributes.containsKey(this.mfaTrustedAuthnAttributeName)) {
             LOGGER.debug("Requested authentication context [{}] is satisfied since device is already trusted", requestedContext);
             return Pair.of(Boolean.TRUE, requestedProvider);
         }
-        if (attrs.containsKey(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA)
-            && attrs.containsKey(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER)) {
-            final boolean isBypass = Boolean.class.cast(attrs.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA));
-            final String bypassedId = attrs.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER).toString();
+        if (attributes.containsKey(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA)
+            && attributes.containsKey(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER)) {
+            final boolean isBypass = Boolean.class.cast(attributes.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA));
+            final String bypassedId = attributes.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER).toString();
             LOGGER.debug("Found multifactor authentication bypass attributes for provider [{}]", bypassedId);
             if (isBypass && StringUtils.equals(bypassedId, requestedContext)) {
                 LOGGER.debug("Requested authentication context [{}] is satisfied given mfa was bypassed for the authentication attempt", requestedContext);
@@ -97,7 +90,7 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
             return Pair.of(Boolean.FALSE, requestedProvider);
         }
         if (!satisfiedProviders.isEmpty()) {
-            final MultifactorAuthenticationProvider[] providers = satisfiedProviders.toArray(new MultifactorAuthenticationProvider[] {});
+            final MultifactorAuthenticationProvider[] providers = satisfiedProviders.toArray(new MultifactorAuthenticationProvider[]{});
             OrderComparator.sortIfNecessary(providers);
             final Optional<MultifactorAuthenticationProvider> result = Arrays.stream(providers).filter(provider -> {
                 final MultifactorAuthenticationProvider p = requestedProvider.get();
@@ -153,5 +146,11 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
             return RegisteredServiceMultifactorPolicy.FailureModes.valueOf(this.globalFailureMode);
         }
         return policy.getFailureMode();
+    }
+
+    private Collection collectAuthenticationContexts(final Authentication authentication) {
+        final Map<String, Object> attributes = authentication.getAttributes();
+        final Object ctxAttr = attributes.get(this.authenticationContextAttribute);
+        return CollectionUtils.toCollection(ctxAttr);
     }
 }
