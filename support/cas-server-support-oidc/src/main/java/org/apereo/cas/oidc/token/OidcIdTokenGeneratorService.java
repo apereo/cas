@@ -84,7 +84,7 @@ public class OidcIdTokenGeneratorService {
                            final AccessToken accessTokenId,
                            final long timeout,
                            final OAuth20ResponseTypes responseType,
-                           final OAuthRegisteredService registeredService) throws Exception {
+                           final OAuthRegisteredService registeredService) {
 
         if (!(registeredService instanceof OidcRegisteredService)) {
             throw new IllegalArgumentException("Registered service instance is not an OIDC service");

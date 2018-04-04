@@ -323,7 +323,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         return new Cas20WithoutProxyingValidationSpecification();
     }
 
-    protected ProxyHandler getProxyHandler() throws Exception {
+    protected ProxyHandler getProxyHandler() {
         return new Cas20ProxyHandler(new SimpleHttpClientFactoryBean().getObject(), new DefaultUniqueTicketIdGenerator());
     }
 }

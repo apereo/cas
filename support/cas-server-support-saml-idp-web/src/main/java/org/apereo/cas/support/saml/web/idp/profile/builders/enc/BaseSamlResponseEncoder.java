@@ -110,5 +110,5 @@ public abstract class BaseSamlResponseEncoder {
      * @return the message encoder instance
      * @throws Exception the exception
      */
-    protected abstract BaseSAML2MessageEncoder getMessageEncoderInstance() throws Exception;
+    protected abstract BaseSAML2MessageEncoder getMessageEncoderInstance();
 }

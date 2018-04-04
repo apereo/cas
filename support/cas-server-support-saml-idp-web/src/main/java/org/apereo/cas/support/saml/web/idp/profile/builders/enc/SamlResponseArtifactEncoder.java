@@ -56,7 +56,7 @@ public class SamlResponseArtifactEncoder extends BaseSamlResponseEncoder {
     }
 
     @Override
-    protected BaseSAML2MessageEncoder getMessageEncoderInstance() throws Exception {
+    protected BaseSAML2MessageEncoder getMessageEncoderInstance() {
         final HTTPArtifactEncoder encoder = new HTTPArtifactEncoder();
         encoder.setVelocityEngine(this.velocityEngineFactory);
         return encoder;
