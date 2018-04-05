@@ -43,6 +43,8 @@ public class JRadiusServerImpl implements RadiusServer {
      **/
     public static final int DEFAULT_RETRY_COUNT = 3;
     
+    private static final long serialVersionUID = -7122734096722096617L;
+
     /** RADIUS protocol. */
     private final RadiusProtocol protocol;
 

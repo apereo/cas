@@ -172,15 +172,16 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential));
 
         final AuthenticationHandlerExecutionResult result = handler.authenticate(credential);
-        builder.addSuccess(handler.getName(), result);
-        LOGGER.debug("Authentication handler [{}] successfully authenticated [{}]", handler.getName(), credential);
+        final String authenticationHandlerName = handler.getName();
+        builder.addSuccess(authenticationHandlerName, result);
+        LOGGER.debug("Authentication handler [{}] successfully authenticated [{}]", authenticationHandlerName, credential);
 
         publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
         Principal principal = result.getPrincipal();
 
         final String resolverName = resolver != null ? resolver.getClass().getSimpleName() : "N/A";
         if (resolver == null) {
-            LOGGER.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]", handler.getName(), principal);
+            LOGGER.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]", authenticationHandlerName, principal);
         } else {
             principal = resolvePrincipal(handler, resolver, credential, principal);
             if (principal == null) {
@@ -197,7 +198,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         }
 
         if (principal == null) {
-            LOGGER.warn("Principal resolution for authentication by [{}] produced a null principal.", handler.getName());
+            LOGGER.warn("Principal resolution for authentication by [{}] produced a null principal.", authenticationHandlerName);
         } else {
             builder.setPrincipal(principal);
         }

@@ -34,7 +34,7 @@ elif [ "$MATRIX_JOB_TYPE" == "CFGMETADATA" ]; then
      -DskipGradleLint=true -DskipSass=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 elif [ "$MATRIX_JOB_TYPE" == "STYLE" ]; then
-     gradleBuild="$gradleBuild checkstyleMain checkstyleTest -x test -x javadoc \
+     gradleBuild="$gradleBuild check -x test -x javadoc \
      -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 elif [ "$MATRIX_JOB_TYPE" == "JAVADOC" ]; then
