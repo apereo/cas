@@ -90,9 +90,10 @@ public class BasePasswordManagementService implements PasswordManagementService 
             claims.setIssuedAtToNow();
 
             final ClientInfo holder = ClientInfoHolder.getClientInfo();
-            claims.setStringClaim("origin", holder.getServerIpAddress());
-            claims.setStringClaim("client", holder.getClientIpAddress());
-
+            if (holder != null) {
+                claims.setStringClaim("origin", holder.getServerIpAddress());
+                claims.setStringClaim("client", holder.getClientIpAddress());
+            }
             claims.setSubject(to);
             final String json = claims.toJson();
             return this.cipherExecutor.encode(json);

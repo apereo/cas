@@ -59,13 +59,13 @@ public class LdapTestUtils {
         final String ldapString;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(ldif, StandardCharsets.UTF_8))) {
             ldapString = reader.lines()
-                    .map(line -> {
-                        if (line.contains(BASE_DN_PLACEHOLDER)) {
-                            return line.replace(BASE_DN_PLACEHOLDER, baseDn);
-                        }
-                        return line;
-                    })
-                    .collect(Collectors.joining(NEWLINE));
+                .map(line -> {
+                    if (line.contains(BASE_DN_PLACEHOLDER)) {
+                        return line.replace(BASE_DN_PLACEHOLDER, baseDn);
+                    }
+                    return line;
+                })
+                .collect(Collectors.joining(NEWLINE));
         }
         return new LdifReader(new StringReader(ldapString)).read().getEntries();
     }
@@ -81,13 +81,15 @@ public class LdapTestUtils {
             for (final LdapEntry entry : entries) {
                 final Collection<Attribute> attrs = new ArrayList<>(entry.getAttributeNames().length);
                 attrs.addAll(entry.getAttributes().stream()
-                        .map(a -> new Attribute(a.getName(), a.getStringValues())).collect(Collectors.toList()));
+                    .map(a -> new Attribute(a.getName(), a.getStringValues()))
+                    .collect(Collectors.toList()));
 
                 final AddRequest ad = new AddRequest(entry.getDn(), attrs);
+                LOGGER.debug("Creating entry [{}] with attributes [{}]", entry, attrs);
                 connection.add(ad);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getLocalizedMessage());
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

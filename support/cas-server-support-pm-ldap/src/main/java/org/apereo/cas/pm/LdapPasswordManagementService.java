@@ -1,4 +1,4 @@
-package org.apereo.cas.config.pm.org.apereo.cas.pm.ldap;
+package org.apereo.cas.pm;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -8,8 +8,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 
-import org.apereo.cas.pm.BasePasswordManagementService;
-import org.apereo.cas.pm.PasswordChangeBean;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.ConnectionFactory;
@@ -31,8 +29,6 @@ import java.util.Map;
  */
 @Slf4j
 public class LdapPasswordManagementService extends BasePasswordManagementService {
-
-
     public LdapPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                          final String issuer,
                                          final PasswordManagementProperties passwordManagementProperties) {
