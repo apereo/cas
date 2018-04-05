@@ -306,18 +306,6 @@ public class MongoDbConnectionFactory {
         return buildMongoDbClientOptionsFactoryBean(mongo).getObject();
     }
 
-    @SneakyThrows
-    private MongoClientOptions buildMongoDbClientOptions() {
-
-        final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();
-        bean.setSocketTimeout(TIMEOUT);
-        bean.setConnectTimeout(TIMEOUT);
-        bean.setMaxWaitTime(TIMEOUT);
-        bean.afterPropertiesSet();
-        return bean.getObject();
-
-    }
-
     private Mongo buildMongoDbClient(final BaseMongoDbProperties mongo) {
 
         if (StringUtils.isNotBlank(mongo.getClientUri())) {
