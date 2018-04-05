@@ -31,7 +31,7 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
     }
 
     @Override
-    protected void doHealthCheck(final Health.Builder builder) throws Exception {
+    protected void doHealthCheck(final Health.Builder builder) {
         try {
             final MemcachedClientIF client = getClientFromPool();
             if (client.getAvailableServers().isEmpty()) {

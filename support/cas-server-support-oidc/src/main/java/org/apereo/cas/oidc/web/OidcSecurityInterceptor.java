@@ -41,12 +41,11 @@ public class OidcSecurityInterceptor extends SecurityInterceptor {
 
 
         boolean clearCreds = false;
-        // check if CasAuthentication Available(if the TGT is Effective)
-        final Optional<Authentication> authentication=authorizationRequestSupport.isCasAuthenticationAvailable(ctx);
+        final Optional<Authentication> authentication = authorizationRequestSupport.isCasAuthenticationAvailable(ctx);
         if (!authentication.isPresent()) {
-            clearCreds=true;
+            clearCreds = true;
         }
-        
+
         final Optional<UserProfile> auth = authorizationRequestSupport.isAuthenticationProfileAvailable(ctx);
 
         if (auth.isPresent()) {
@@ -57,7 +56,7 @@ public class OidcSecurityInterceptor extends SecurityInterceptor {
         }
 
         final Set<String> prompts = authorizationRequestSupport.getOidcPromptFromAuthorizationRequest(ctx);
-       
+
         if (!clearCreds) {
             clearCreds = prompts.contains(OidcConstants.PROMPT_LOGIN);
         }

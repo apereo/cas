@@ -134,11 +134,10 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the configuration
-     * @throws Exception the exception
      */
     @GetMapping(value = "/getConfiguration")
     @ResponseBody
-    public Map<String, Object> getConfiguration(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public Map<String, Object> getConfiguration(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         final Collection<Map<String, Object>> configuredLoggers = new HashSet<>();

@@ -20,7 +20,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.pac4j.core.context.J2EContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
 
@@ -78,16 +78,6 @@ public class OAuth20Utils {
             LOGGER.error("Failed to write to response", e);
         }
         return null;
-    }
-
-    /**
-     * Return a view which is a redirection to an url.
-     *
-     * @param url redirect url
-     * @return A view which is a redirection to an url
-     */
-    public static ModelAndView redirectTo(final String url) {
-        return new ModelAndView(new RedirectView(url));
     }
 
     /**
@@ -339,5 +329,61 @@ public class OAuth20Utils {
             id = context.getHeader("X-".concat(CasProtocolConstants.PARAMETER_SERVICE));
         }
         return id;
+    }
+
+    /**
+     * Check if the callback url is valid.
+     *
+     * @param registeredService the registered service
+     * @param redirectUri       the callback url
+     * @return whether the callback url is valid
+     */
+    public static boolean checkCallbackValid(final RegisteredService registeredService, final String redirectUri) {
+        final String registeredServiceId = registeredService.getServiceId();
+        LOGGER.debug("Found: [{}] vs redirectUri: [{}]", registeredService, redirectUri);
+        if (!redirectUri.matches(registeredServiceId)) {
+            LOGGER.error("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
+                    + "Service is considered unauthorized. Verify the service definition in the registry is correct "
+                    + "and does in fact match the client [{}]",
+                OAuth20Constants.REDIRECT_URI, redirectUri, registeredServiceId, redirectUri);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Check the client secret.
+     *
+     * @param registeredService the registered service
+     * @param clientSecret      the client secret
+     * @return whether the secret is valid
+     */
+    public static boolean checkClientSecret(final OAuthRegisteredService registeredService, final String clientSecret) {
+        LOGGER.debug("Found: [{}] in secret check", registeredService);
+        if (StringUtils.isBlank(registeredService.getClientSecret())) {
+            LOGGER.debug("The client secret is not defined for the registered service [{}]", registeredService.getName());
+            return true;
+        }
+        if (!StringUtils.equals(registeredService.getClientSecret(), clientSecret)) {
+            LOGGER.error("Wrong client secret for service: [{}]", registeredService);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Check the response type against expected response types.
+     *
+     * @param type          the current response type
+     * @param expectedTypes the expected response types
+     * @return whether the response type is supported
+     */
+    public static boolean checkResponseTypes(final String type, final OAuth20ResponseTypes... expectedTypes) {
+        LOGGER.debug("Response type: [{}]", type);
+        final boolean checked = Stream.of(expectedTypes).anyMatch(t -> OAuth20Utils.isResponseType(type, t));
+        if (!checked) {
+            LOGGER.error("Unsupported response type: [{}]", type);
+        }
+        return checked;
     }
 }

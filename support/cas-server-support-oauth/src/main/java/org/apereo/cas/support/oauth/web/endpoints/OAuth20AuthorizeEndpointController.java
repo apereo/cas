@@ -21,8 +21,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilde
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.validator.OAuth20RequestValidator;
-import org.apereo.cas.support.oauth.validator.OAuth20Validator;
+import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
@@ -79,7 +78,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
     /**
      * Collection of request validators.
      */
-    protected final Set<OAuth20RequestValidator> oauthRequestValidators;
+    protected final Set<OAuth20AuthorizationRequestValidator> oauthRequestValidators;
 
     /**
      * Access strategy enforcer.
@@ -88,7 +87,6 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
 
     public OAuth20AuthorizeEndpointController(final ServicesManager servicesManager,
                                               final TicketRegistry ticketRegistry,
-                                              final OAuth20Validator validator,
                                               final AccessTokenFactory accessTokenFactory,
                                               final PrincipalFactory principalFactory,
                                               final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
@@ -99,11 +97,12 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                               final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                               final OAuth20CasAuthenticationBuilder authenticationBuilder,
                                               final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders,
-                                              final Set<OAuth20RequestValidator> oauthRequestValidators,
+                                              final Set<OAuth20AuthorizationRequestValidator> oauthRequestValidators,
                                               final AuditableExecution registeredServiceAccessStrategyEnforcer) {
-        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
+        super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
             webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties,
             ticketGrantingTicketCookieGenerator);
+        
         this.oAuthCodeFactory = oAuthCodeFactory;
         this.consentApprovalViewResolver = consentApprovalViewResolver;
         this.authenticationBuilder = authenticationBuilder;
@@ -263,7 +262,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @return whether the authorize request is valid
      */
     private boolean verifyAuthorizeRequest(final J2EContext context) {
-        final OAuth20RequestValidator validator = this.oauthRequestValidators
+        final OAuth20AuthorizationRequestValidator validator = this.oauthRequestValidators
             .stream()
             .filter(b -> b.supports(context))
             .findFirst()

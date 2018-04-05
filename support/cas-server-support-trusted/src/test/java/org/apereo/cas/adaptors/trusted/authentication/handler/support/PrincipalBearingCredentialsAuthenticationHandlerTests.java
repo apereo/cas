@@ -20,7 +20,7 @@ public class PrincipalBearingCredentialsAuthenticationHandlerTests {
      * When the credentials bear a Principal, succeed the authentication.
      */
     @Test
-    public void verifyNonNullPrincipal() throws Exception {
+    public void verifyNonNullPrincipal() {
         final PrincipalBearingCredential credentials = new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("scott"));
         assertNotNull(this.handler.authenticate(credentials));
     }

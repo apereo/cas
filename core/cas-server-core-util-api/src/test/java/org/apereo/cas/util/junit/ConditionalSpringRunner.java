@@ -1,6 +1,7 @@
 package org.apereo.cas.util.junit;
 
 import lombok.SneakyThrows;
+import org.apereo.cas.util.SocketUtils;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
@@ -29,12 +30,12 @@ public class ConditionalSpringRunner extends SpringJUnit4ClassRunner {
         ConditionalIgnore ignore = frameworkMethod.getDeclaringClass().getAnnotation(ConditionalIgnore.class);
         if (ignore != null) {
             final IgnoreCondition condition = ignore.condition().getDeclaredConstructor().newInstance();
-            return !condition.isSatisfied();
+            return !isIgnoreConditionSatisfied(ignore, condition);
         }
         ignore = frameworkMethod.getAnnotation(ConditionalIgnore.class);
         if (ignore != null) {
             final IgnoreCondition condition = ignore.condition().getDeclaredConstructor().newInstance();
-            return !condition.isSatisfied();
+            return !isIgnoreConditionSatisfied(ignore, condition);
         }
         return super.isTestMethodIgnored(frameworkMethod);
     }
@@ -45,7 +46,7 @@ public class ConditionalSpringRunner extends SpringJUnit4ClassRunner {
         final ConditionalIgnore ignore = getTestClass().getJavaClass().getAnnotation(ConditionalIgnore.class);
         if (ignore != null) {
             final IgnoreCondition condition = ignore.condition().getDeclaredConstructor().newInstance();
-            if (!condition.isSatisfied()) {
+            if (!isIgnoreConditionSatisfied(ignore, condition)) {
                 return new ConditionalIgnoreRule.IgnoreStatement(condition);
             }
         }
@@ -58,10 +59,18 @@ public class ConditionalSpringRunner extends SpringJUnit4ClassRunner {
         final ConditionalIgnore ignore = getTestClass().getJavaClass().getAnnotation(ConditionalIgnore.class);
         if (ignore != null) {
             final IgnoreCondition condition = ignore.condition().getDeclaredConstructor().newInstance();
-            if (!condition.isSatisfied()) {
+            if (!isIgnoreConditionSatisfied(ignore, condition)) {
                 return new ConditionalIgnoreRule.IgnoreStatement(condition);
             }
         }
         return super.withAfterClasses(statement);
+    }
+
+    private boolean isIgnoreConditionSatisfied(final ConditionalIgnore ignore, final IgnoreCondition ignoreCondition) {
+        boolean runTests = ignoreCondition.isSatisfied();
+        if (runTests && ignore.port() > 0) {
+            runTests = !SocketUtils.isTcpPortAvailable(ignore.port());
+        }
+        return runTests;
     }
 }

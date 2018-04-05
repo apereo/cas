@@ -33,7 +33,7 @@ public class CasConfigurationEventListener {
     private ApplicationContext applicationContext;
     
     private final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
-
+    
     public CasConfigurationEventListener(final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager) {
         this.configurationPropertiesEnvironmentManager = configurationPropertiesEnvironmentManager;
     }

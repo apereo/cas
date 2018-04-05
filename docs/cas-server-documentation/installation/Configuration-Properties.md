@@ -662,6 +662,9 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 # cas.view.cas3.success=protocol/3.0/casServiceValidationSuccess
 # cas.view.cas3.failure=protocol/3.0/casServiceValidationFailure
 
+# Indicates how attributes should be rendered in the validation response
+# cas.view.cas3.attributeRendererType=DEFAULT|INLINE
+
 # Defines a default URL to which CAS may redirect if there is no service
 # provided in the authentication request.
 # cas.view.defaultRedirectUrl=https://www.github.com
@@ -2022,32 +2025,50 @@ To learn more about this topic, [please review this guide](Multifactor-TrustedDe
 # cas.authn.mfa.trusted.timeUnit=SECONDS|MINUTES|HOURS|DAYS
 ```
 
-### Signing & Encryption
+#### Signing & Encryption
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.mfa.trusted`.
 
-### JSON Storage
+#### JSON Storage
 
 ```properties
 # cas.authn.mfa.trusted.json.location=file:/etc/cas/config/trusted-dev.json
 ```
 
-### JDBC Storage
+#### JDBC Storage
 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.trusted.jpa`.
 
-### MongoDb Storage
+#### MongoDb Storage
 
  Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.trusted`.
 
-### REST Storage
+#### REST Storage
 
 ```properties
 # cas.authn.mfa.trusted.rest.endpoint=https://api.example.org/trustedBrowser
 ```
 
-### Cleaner
+#### Trusted Device Fingerprint
+
+```properties
+# cas.authn.mfa.trusted.deviceFingerprint.componentSeparator=@
+# cas.authn.mfa.trusted.deviceFingerprint.cookie.enabled=true
+# cas.authn.mfa.trusted.deviceFingerprint.cookie.order=1
+# cas.authn.mfa.trusted.deviceFingerprint.clientIp.enabled=true
+# cas.authn.mfa.trusted.deviceFingerprint.clientIp.order=2
+# cas.authn.mfa.trusted.deviceFingerprint.userAgent.enabled=false
+# cas.authn.mfa.trusted.deviceFingerprint.userAgent.order=3
+```
+
+The device fingerprint cookie component can be configured with the common cookie properties found [here](Configuration-Properties-Common.html#cookie-properties) under the configuration key `cas.authn.mfa.trusted.deviceFingerprint.cookie`.
+The default cookie name is set to `MFATRUSTED` and the default maxAge is set to `2592000`.
+
+The device fingerprint cookie component supports signing & encryption. The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.mfa.trusted.deviceFingerprint.cookie`.
+
+#### Cleaner
 
 A cleaner process is scheduled to run in the background to clean up expired and stale tickets.
 This section controls how that process should behave.
@@ -2557,6 +2578,7 @@ Delegate authentication to an external OpenID Connect server. Common settings fo
 ```properties
 # cas.authn.pac4j.oidc[0].type=KEYCLOAK|GOOGLE|AZURE|GENERIC
 # cas.authn.pac4j.oidc[0].discoveryUri=
+# cas.authn.pac4j.oidc[0].logoutUrl=
 # cas.authn.pac4j.oidc[0].maxClockSkew=
 # cas.authn.pac4j.oidc[0].scope=
 # cas.authn.pac4j.oidc[0].useNonce=
@@ -3337,8 +3359,9 @@ To learn more about this topic, [please review this guide](DynamoDb-Ticket-Regis
 # cas.ticket.registry.dynamoDb.serviceTicketsTableName=serviceTicketsTable
 # cas.ticket.registry.dynamoDb.proxyTicketsTableName=proxyTicketsTable
 # cas.ticket.registry.dynamoDb.ticketGrantingTicketsTableName=ticketGrantingTicketsTable
-# cas.ticket.registry.dynamoDb.proxyGrantingTicketsTableName=proxyGrantingTicketsTable```
-# cas.ticket.registry.dynamoDb.transientSessionTicketsTableName=transientSessionTicketsTable```
+# cas.ticket.registry.dynamoDb.proxyGrantingTicketsTableName=proxyGrantingTicketsTable
+# cas.ticket.registry.dynamoDb.transientSessionTicketsTableName=transientSessionTicketsTable
+```
 
 ### MongoDb Ticket Registry
 

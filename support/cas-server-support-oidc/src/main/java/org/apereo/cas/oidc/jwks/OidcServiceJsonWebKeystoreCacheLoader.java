@@ -23,24 +23,23 @@ import java.util.Optional;
 @Slf4j
 public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OidcRegisteredService, Optional<RsaJsonWebKey>> {
 
-
     @Autowired
     private ResourceLoader resourceLoader;
 
     @Override
-    public Optional<RsaJsonWebKey> load(final OidcRegisteredService svc) throws Exception {
+    public Optional<RsaJsonWebKey> load(final OidcRegisteredService svc) {
         final Optional<JsonWebKeySet> jwks = buildJsonWebKeySet(svc);
         if (!jwks.isPresent() || jwks.get().getJsonWebKeys().isEmpty()) {
             return Optional.empty();
         }
-        final RsaJsonWebKey key = getJsonSigningWebKeyFromJwks(jwks.get());
+        final RsaJsonWebKey key = getJsonWebKeyFromJwks(jwks.get());
         if (key == null) {
             return Optional.empty();
         }
         return Optional.of(key);
     }
 
-    private static RsaJsonWebKey getJsonSigningWebKeyFromJwks(final JsonWebKeySet jwks) {
+    private static RsaJsonWebKey getJsonWebKeyFromJwks(final JsonWebKeySet jwks) {
         if (jwks.getJsonWebKeys().isEmpty()) {
             LOGGER.warn("No JSON web keys are available in the keystore");
             return null;
@@ -82,7 +81,7 @@ public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OidcRe
                 return Optional.empty();
             }
 
-            final RsaJsonWebKey webKey = getJsonSigningWebKeyFromJwks(jsonWebKeySet);
+            final RsaJsonWebKey webKey = getJsonWebKeyFromJwks(jsonWebKeySet);
             if (webKey.getPublicKey() == null) {
                 LOGGER.warn("JSON web key retrieved [{}] has no associated public key", webKey.getKeyId());
                 return Optional.empty();
@@ -105,7 +104,7 @@ public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OidcRe
 
     private static JsonWebKeySet buildJsonWebKeySet(final String json) throws Exception {
         final JsonWebKeySet jsonWebKeySet = new JsonWebKeySet(json);
-        final RsaJsonWebKey webKey = getJsonSigningWebKeyFromJwks(jsonWebKeySet);
+        final RsaJsonWebKey webKey = getJsonWebKeyFromJwks(jsonWebKeySet);
         if (webKey == null || webKey.getPublicKey() == null) {
             LOGGER.warn("JSON web key retrieved [{}] is not found or has no associated public key", webKey);
             return null;

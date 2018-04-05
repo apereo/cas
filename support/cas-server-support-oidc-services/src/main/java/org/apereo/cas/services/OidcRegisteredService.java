@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -128,6 +127,8 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @Override
     @PostLoad
     public void postLoad() {
+        super.postLoad();
+        
         if (this.scopes == null) {
             this.scopes = new HashSet<>();
         }
@@ -136,23 +137,6 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @Override
     protected AbstractRegisteredService newInstance() {
         return new OidcRegisteredService();
-    }
-
-    @Override
-    @SneakyThrows
-    public void copyFrom(final RegisteredService source) {
-        super.copyFrom(source);
-
-        final OidcRegisteredService oidcService = (OidcRegisteredService) source;
-        setJwks(oidcService.getJwks());
-        setImplicit(oidcService.isImplicit());
-        setSignIdToken(oidcService.isSignIdToken());
-        setIdTokenEncryptionAlg(oidcService.getIdTokenEncryptionAlg());
-        setIdTokenEncryptionEncoding(oidcService.idTokenEncryptionEncoding);
-        setEncryptIdToken(oidcService.isEncryptIdToken());
-        setDynamicallyRegistered(oidcService.isDynamicallyRegistered());
-        setScopes(oidcService.getScopes());
-        setSectorIdentifierUri(oidcService.getSectorIdentifierUri());
     }
 
     @JsonIgnore

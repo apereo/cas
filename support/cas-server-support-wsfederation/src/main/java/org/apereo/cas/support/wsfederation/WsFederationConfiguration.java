@@ -91,7 +91,7 @@ public class WsFederationConfiguration implements Serializable {
     }
 
     public void initialize() {
-        this.signingCertificateResources.stream().forEach(Unchecked.consumer(r -> {
+        this.signingCertificateResources.forEach(Unchecked.consumer(r -> {
             try {
                 final FileWatcherService watcher = new FileWatcherService(r.getFile(), file -> createSigningWallet(this.signingCertificateResources));
                 watcher.start(getClass().getSimpleName());

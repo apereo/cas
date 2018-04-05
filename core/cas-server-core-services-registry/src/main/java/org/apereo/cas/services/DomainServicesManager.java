@@ -73,7 +73,7 @@ public class DomainServicesManager extends AbstractServicesManager {
     @Override
     protected void loadInternal() {
         final Map<String, TreeSet<RegisteredService>> localDomains = new ConcurrentHashMap<>();
-        getAllServices().stream().forEach(r -> addToDomain(r, localDomains));
+        getAllServices().forEach(r -> addToDomain(r, localDomains));
         this.domains.clear();
         this.domains.putAll(localDomains);
     }

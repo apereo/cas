@@ -3,6 +3,9 @@ package org.apereo.cas.oidc.web.controllers;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -16,12 +19,12 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -46,23 +49,23 @@ import java.util.stream.Collectors;
 @Slf4j
 public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
 
-
     private final CentralAuthenticationService centralAuthenticationService;
+    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     public OidcIntrospectionEndpointController(final ServicesManager servicesManager,
                                                final TicketRegistry ticketRegistry,
-                                               final OAuth20Validator validator,
                                                final AccessTokenFactory accessTokenFactory,
                                                final PrincipalFactory principalFactory,
                                                final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                                final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                                final CasConfigurationProperties casProperties,
                                                final CookieRetrievingCookieGenerator cookieGenerator,
-                                               final CentralAuthenticationService centralAuthenticationService) {
-        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
-                webApplicationServiceServiceFactory,
-                scopeToAttributesFilter, casProperties, cookieGenerator);
+                                               final CentralAuthenticationService centralAuthenticationService,
+                                               final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+        super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
+            webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, cookieGenerator);
         this.centralAuthenticationService = centralAuthenticationService;
+        this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
     }
 
     /**
@@ -71,13 +74,12 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
      * @param request  the request
      * @param response the response
      * @return the response entity
-     * @throws Exception the exception
      */
     @GetMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE,
-            value = {'/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL})
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        value = {'/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL})
     public ResponseEntity<OidcIntrospectionAccessTokenResponse> handleRequest(final HttpServletRequest request,
-                                                                              final HttpServletResponse response) throws Exception {
+                                                                              final HttpServletResponse response) {
         return handlePostRequest(request, response);
     }
 
@@ -89,8 +91,8 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
      * @return the response entity
      */
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE,
-            value = {'/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL})
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        value = {'/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL})
     public ResponseEntity<OidcIntrospectionAccessTokenResponse> handlePostRequest(final HttpServletRequest request,
                                                                                   final HttpServletResponse response) {
         try {
@@ -103,7 +105,7 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
             final OAuthRegisteredService service = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, credentials.getUsername());
             if (validateIntrospectionRequest(service, credentials, request)) {
                 final String accessToken = StringUtils.defaultIfBlank(request.getParameter(OAuth20Constants.ACCESS_TOKEN),
-                        request.getParameter(OAuth20Constants.TOKEN));
+                    request.getParameter(OAuth20Constants.TOKEN));
 
                 LOGGER.debug("Located access token [{}] in the request", accessToken);
                 final AccessToken ticket = this.centralAuthenticationService.getTicket(accessToken, AccessToken.class);
@@ -118,14 +120,23 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private boolean validateIntrospectionRequest(final OAuthRegisteredService service,
+    private boolean validateIntrospectionRequest(final OAuthRegisteredService registeredService,
                                                  final UsernamePasswordCredentials credentials,
                                                  final HttpServletRequest request) {
-        final boolean tokenExists = validator.checkParameterExist(request, OAuth20Constants.ACCESS_TOKEN)
-                || validator.checkParameterExist(request, OAuth20Constants.TOKEN);
-        return validator.checkServiceValid(service)
-                && tokenExists
-                && validator.checkClientSecret(service, credentials.getPassword());
+        final boolean tokenExists = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.ACCESS_TOKEN)
+            || HttpRequestUtils.doesParameterExist(request, OAuth20Constants.TOKEN);
+
+
+        if (tokenExists && OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword())) {
+            final WebApplicationService service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+            final AuditableContext audit = AuditableContext.builder()
+                .service(service)
+                .registeredService(registeredService)
+                .build();
+            final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            return !accessResult.isExecutionFailure();
+        }
+        return false;
     }
 
     private ResponseEntity<OidcIntrospectionAccessTokenResponse> createIntrospectionResponse(final OAuthRegisteredService service, final AccessToken ticket) {
@@ -141,15 +152,15 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
 
         final Object methods = authentication.getAttributes().get(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);
         final String realmNames = CollectionUtils.toCollection(methods)
-                .stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(","));
+            .stream()
+            .map(Object::toString)
+            .collect(Collectors.joining(","));
 
         introspect.setRealmName(realmNames);
         introspect.setTokenType(OAuth20Constants.TOKEN_TYPE_BEARER);
 
         final String grant = authentication.getAttributes()
-                .getOrDefault(OAuth20Constants.GRANT_TYPE, StringUtils.EMPTY).toString().toLowerCase();
+            .getOrDefault(OAuth20Constants.GRANT_TYPE, StringUtils.EMPTY).toString().toLowerCase();
         introspect.setGrantType(grant);
         introspect.setScope(OidcConstants.StandardScopes.OPENID.getScope());
         introspect.setAud(service.getServiceId());

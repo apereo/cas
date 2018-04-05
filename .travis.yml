@@ -7,7 +7,8 @@
 # Encrypted settings include SONATYPE_USER, SONATYPE_PWD, GH_TOKEN, COVERITY_SCAN_TOKEN
 
 language: java
-sudo: required
+sudo: true
+dist: trusty
 services:
   - docker
 branches:
@@ -15,7 +16,6 @@ branches:
   - master
 jdk:
 - oraclejdk8
-# - oraclejdk9
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -33,7 +33,8 @@ matrix:
   fast_finish: true
 env:
   global:
-  - JAVA_OPTS="-Xms256M -Xmx1024M -Xss2M -XX:ReservedCodeCacheSize=512m"
+  - JAVA_OPTS="-Xms512M -Xmx2048M -Xss2M -XX:ReservedCodeCacheSize=512m"
+  - SPRING_MAIN_BANNER-MODE="off"
   - secure: "ScUSTo0if5m7ddnwUA7EaYucc6yzEUrKLk0DzCvkMfjn2h5taUFSKHx+S0hd2EzJofv+Em4eI5qncSK5LTxgD7HhHR1e3iZp+SqJenhhOnbuciZfg4QA+tUGw3XUdmREac5cz2l0qhi1q4vsnnZARj2d4vvf2HWuNtEOBu/ZAKI="
   - secure: "iWPPLKSS3zBs2adqLPkMiHfCj2hSLyD5BoV3oodhR7Ne83Kpn1khRcEWFoHF3Ed11eSU+glNdPSzUpc8TzwTZGx5B3RU2Qp36hZFyjuzNWJARmoVPYMiEg3FFBQrUR75w+Tbtn6zPkiAk6nl0K5ewmY0/xixVdnTLXL5HjpE2rc="
   - secure: "f3mDIZ8m6NYJXI8KvWD/sZRSeCCyIyfgPRy3Q6o9u9WyHZuYaJf95Ia0eJQ3gxUDS1TKL31Vk08dhFKrfIcKgifFPa2uQ2uyJkvGxlarMTQ+tpqsZYp4zAJgKc9r4xdZasvF2k4xqr+pl9AFjlpXB4jDD59XPXt3DcRABOYA9sM="
@@ -44,6 +45,7 @@ env:
   - MATRIX_JOB_TYPE=TEST
   - MATRIX_JOB_TYPE=SNAPSHOT
   - MATRIX_JOB_TYPE=DEPUPDATE
+  - MATRIX_JOB_TYPE=CFGMETADATA
 before_install:
 - chmod -R 777 ./ci/run-ldap-server.sh
 - ./ci/run-ldap-server.sh

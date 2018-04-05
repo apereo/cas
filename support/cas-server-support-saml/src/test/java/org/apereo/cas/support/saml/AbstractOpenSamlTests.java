@@ -22,7 +22,6 @@ import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
-import org.apereo.cas.config.SamlConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.SchedulingUtils;
@@ -61,7 +60,6 @@ import static org.junit.Assert.*;
     classes = {AbstractOpenSamlTests.SamlTestConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CoreSamlConfiguration.class,
-        SamlConfiguration.class,
         RefreshAutoConfiguration.class,
         CasCoreWebConfiguration.class,
         CasPersonDirectoryConfiguration.class,

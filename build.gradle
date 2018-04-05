@@ -70,7 +70,7 @@ allprojects {
     apply plugin: 'com.github.ben-manes.versions'
     apply plugin: "jacoco"
 
-    if (!rootProject.publishSnapshots) {
+    if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
         apply plugin: "nebula.lint"
         gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
     }
@@ -129,7 +129,9 @@ subprojects {
     }
     apply plugin: "checkstyle"
     apply plugin: "io.franzbecker.gradle-lombok"
-    apply plugin: "findbugs"
+    if (!Boolean.getBoolean("skipFindbugs")) {
+        apply plugin: "findbugs"
+    }
     apply plugin: "propdeps"
     apply plugin: "propdeps-maven"
     apply plugin: "propdeps-idea"
@@ -163,6 +165,7 @@ subprojects {
         include "**/*Tests.*"
         exclude "**/Abstract*.*","**/Base*.*"
         maxParallelForks = 1
+        jvmArgs "-Xmx1024m"
         classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
         testLogging {
             events = ["FAILED", "STANDARD_OUT"]
@@ -277,28 +280,24 @@ subprojects {
         enabled = !Boolean.getBoolean("skipCheckstyle")
     }
 
-    findbugs {
-        toolVersion = "${findbugsVersion}"
-        sourceSets = [sourceSets.main]
-        ignoreFailures = false
-        reportsDir = file("$project.buildDir/findbugsReports")
-        effort = "max"
-        reportLevel = "low"
-        includeFilter = file("$rootProject.projectDir/style/findbugs-rules.xml")
-    }
+    if (!Boolean.getBoolean("skipFindbugs")) {
+        findbugs {
+            toolVersion = "${findbugsVersion}"
+            sourceSets = [sourceSets.main]
+            ignoreFailures = false
+            reportsDir = file("$project.buildDir/findbugsReports")
+            effort = "max"
+            reportLevel = "low"
+            includeFilter = file("$rootProject.projectDir/style/findbugs-rules.xml")
+        }
 
-    findbugsMain {
-        enabled = !Boolean.getBoolean("skipFindbugs")
-        reports {
-            xml.enabled = false
-            html.enabled = true
+        findbugsMain {
+            reports {
+                xml.enabled = false
+                html.enabled = true
+            }
         }
     }
-
-    findbugsTest {
-        enabled = !Boolean.getBoolean("skipFindbugs")
-    }
-
     dependencies {
         //optional libraries.springcomponentindexer
 
@@ -327,6 +326,10 @@ subprojects {
             findbugs configurations.findbugsPlugins.dependencies
             findbugsPlugins libraries.findbugscontrib
             findbugsPlugins libraries.findbugssec
+        }
+
+        if (!Boolean.getBoolean("skipErrorProneCompiler")) {
+            errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
         }
         testImplementation libraries.tests
     }
