@@ -49,7 +49,7 @@ public class OidcProperties implements Serializable {
      * Path to the JWKS file resource used to handle signing/encryption of authentication tokens.
      */
     @RequiredProperty
-    private Resource jwksFile = new FileSystemResource("/etc/cas/keystore.jwks");
+    private transient Resource jwksFile = new FileSystemResource("/etc/cas/keystore.jwks");
 
     /**
      * Whether dynamic registration operates in {@code OPEN} or {@code PROTECTED} mode.

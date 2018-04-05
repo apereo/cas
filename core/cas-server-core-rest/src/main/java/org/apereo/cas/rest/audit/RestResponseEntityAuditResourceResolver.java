@@ -8,6 +8,8 @@ import org.aspectj.lang.JoinPoint;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
+import java.net.URI;
+
 /**
  * This is {@link RestResponseEntityAuditResourceResolver}.
  *
@@ -31,8 +33,9 @@ public class RestResponseEntityAuditResourceResolver extends ReturnValueAsString
         final ToStringBuilder result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE);
         result.append("status", entity.getStatusCodeValue() + "-" + entity.getStatusCode().name());
-        if (headers.getLocation() != null) {
-            result.append("location", headers.getLocation());
+        final URI location = headers.getLocation();
+        if (location != null) {
+            result.append("location", location);
         }
         if (this.includeEntityBody && entity.getBody() != null) {
             result.append("body", entity.getBody().toString());

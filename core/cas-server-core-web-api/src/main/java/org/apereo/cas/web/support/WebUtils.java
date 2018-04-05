@@ -649,7 +649,7 @@ public class WebUtils {
      * @param context the context
      * @return the boolean
      */
-    public static boolean isRememberMeAuthenticationEnabled(final RequestContext context) {
+    public static Boolean isRememberMeAuthenticationEnabled(final RequestContext context) {
         return context.getFlowScope().getBoolean("rememberMeAuthenticationEnabled", Boolean.FALSE);
     }
 

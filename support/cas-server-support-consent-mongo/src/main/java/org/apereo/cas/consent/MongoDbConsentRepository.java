@@ -22,7 +22,7 @@ import java.util.Collection;
 public class MongoDbConsentRepository implements ConsentRepository {
     private static final long serialVersionUID = 7734163279139907616L;
 
-    private final MongoTemplate mongoTemplate;
+    private final transient MongoTemplate mongoTemplate;
     private final String collectionName;
 
     @Override

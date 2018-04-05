@@ -41,7 +41,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     private final LockModeType lockType;
 
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
-    private EntityManager entityManager;
+    private transient EntityManager entityManager;
 
     public JpaTicketRegistry(final LockModeType lockType, final TicketCatalog ticketCatalog) {
         this.lockType = lockType;

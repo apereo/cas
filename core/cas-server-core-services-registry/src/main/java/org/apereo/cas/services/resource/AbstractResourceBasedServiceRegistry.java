@@ -29,9 +29,9 @@ import org.springframework.util.Assert;
 import javax.annotation.PreDestroy;
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -246,30 +246,31 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      */
     @Override
     public Collection<RegisteredService> load(final File file) {
+        final String fileName = file.getName();
         if (!file.canRead()) {
-            LOGGER.warn("[{}] is not readable. Check file permissions", file.getName());
+            LOGGER.warn("[{}] is not readable. Check file permissions", fileName);
             return new ArrayList<>(0);
         }
         if (!file.exists()) {
-            LOGGER.warn("[{}] is not found at the path specified", file.getName());
+            LOGGER.warn("[{}] is not found at the path specified", fileName);
             return new ArrayList<>(0);
         }
         if (file.length() == 0) {
-            LOGGER.debug("[{}] appears to be empty so no service definition will be loaded", file.getName());
+            LOGGER.debug("[{}] appears to be empty so no service definition will be loaded", fileName);
             return new ArrayList<>(0);
         }
-        if (!RegexUtils.matches(this.serviceFileNamePattern, file.getName())) {
+        if (!RegexUtils.matches(this.serviceFileNamePattern, fileName)) {
             LOGGER.warn("[{}] does not match the recommended pattern [{}]. "
                     + "While CAS tries to be forgiving as much as possible, it's recommended "
                     + "that you rename the file to match the requested pattern to avoid issues with duplicate service loading. "
                     + "Future CAS versions may try to strictly force the naming syntax, refusing to load the file.",
-                file.getName(), this.serviceFileNamePattern.pattern());
+                fileName, this.serviceFileNamePattern.pattern());
         }
-        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+        try (BufferedInputStream in = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
             return this.registeredServiceSerializers.stream().filter(s -> s.supports(file)).map(s -> s.load(in))
                 .filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toList());
         } catch (final Exception e) {
-            LOGGER.error("Error reading configuration file [{}]", file.getName(), e);
+            LOGGER.error("Error reading configuration file [{}]", fileName, e);
         }
         return new ArrayList<>(0);
     }
@@ -281,7 +282,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             service.setId(System.currentTimeMillis());
         }
         final File f = getRegisteredServiceFileName(service);
-        try (LockedOutputStream out = new LockedOutputStream(new FileOutputStream(f))) {
+        try (LockedOutputStream out = new LockedOutputStream((FileOutputStream) Files.newOutputStream(f.toPath()))) {
             final boolean result = this.registeredServiceSerializers.stream().anyMatch(s -> {
                 try {
                     s.to(out, service);

@@ -86,7 +86,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
             : StringUtils.EMPTY;
         LOGGER.debug("Provided value for [{}] request parameter is [{}]", CasProtocolConstants.PARAMETER_RENEW, renewParam);
 
-        if (StringUtils.isNotBlank(ticketGrantingTicketId) && service != null) {
+        if (service != null && StringUtils.isNotBlank(ticketGrantingTicketId)) {
             final Authentication authn = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);
             if (StringUtils.isNotBlank(renewParam)) {
                 LOGGER.debug("Request identifies itself as one asking for service tickets. Checking for authentication context validity...");

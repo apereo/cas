@@ -42,8 +42,9 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
         final String redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
         LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
         final Pair<AccessToken, RefreshToken> accessToken = accessTokenGenerator.generate(holder);
-        LOGGER.debug("Generated OAuth access token: [{}]", accessToken.getKey());
-        return buildCallbackUrlResponseType(holder, redirectUri, accessToken.getKey(), new ArrayList<>(), accessToken.getValue(), context);
+        final AccessToken key = accessToken.getKey();
+        LOGGER.debug("Generated OAuth access token: [{}]", key);
+        return buildCallbackUrlResponseType(holder, redirectUri, key, new ArrayList<>(), accessToken.getValue(), context);
 
     }
 
