@@ -374,7 +374,9 @@ task jacocoAggregateReport(type: JacocoReport, description: "Aggregate all test 
                 include: '**/*.class',
                 exclude: [
                         '**/**Configuration.class',
+                        '**/shell/cli/**',
                         '**/**Configuration$**',
+                        '**/**ConfigurationMetadataGenerator**',
                         '**/**Application.class',
                         '**/**Application$**',
                         '**/**WebflowConfigurer.class',
