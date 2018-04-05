@@ -1,12 +1,12 @@
 package org.apereo.cas.pm;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link PasswordChangeBean}.
