@@ -1,8 +1,8 @@
-package org.apereo.cas.config.pm;
+package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.config.pm.org.apereo.cas.pm.ldap.LdapPasswordManagementService;
+import org.apereo.cas.pm.LdapPasswordManagementService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.springframework.beans.factory.annotation.Autowired;

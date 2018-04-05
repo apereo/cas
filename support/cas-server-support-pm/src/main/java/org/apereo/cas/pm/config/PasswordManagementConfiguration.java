@@ -13,8 +13,8 @@ import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.impl.JsonResourcePasswordManagementService;
 import org.apereo.cas.pm.impl.NoOpPasswordManagementService;
 import org.apereo.cas.util.io.CommunicationsManager;
-import org.apereo.inspektr.audit.spi.AuditActionResolver;
-import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.apereo.inspektr.audit.spi.support.BooleanAuditActionResolver;
+import org.apereo.inspektr.audit.spi.support.FirstParameterAuditResourceResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
+
 import javax.annotation.PostConstruct;
 
 /**
@@ -36,14 +37,6 @@ import javax.annotation.PostConstruct;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class PasswordManagementConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
-    @Autowired
-    @Qualifier("returnValueResourceResolver")
-    private AuditResourceResolver returnValueResourceResolver;
-
-    @Autowired
-    @Qualifier("authenticationActionResolver")
-    private AuditActionResolver authenticationActionResolver;
-    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -59,9 +52,9 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
         final EncryptionJwtSigningJwtCryptographyProperties crypto = pm.getReset().getCrypto();
         if (pm.isEnabled() && crypto.isEnabled()) {
             return new PasswordResetTokenCipherExecutor(
-                    crypto.getEncryption().getKey(),
-                    crypto.getSigning().getKey(),
-                    crypto.getAlg());
+                crypto.getEncryption().getKey(),
+                crypto.getSigning().getKey(),
+                crypto.getAlg());
         }
         return CipherExecutor.noOp();
     }
@@ -75,7 +68,7 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
             && bean.getPassword().equals(bean.getConfirmedPassword())
             && bean.getPassword().matches(policyPattern);
     }
-    
+
     @ConditionalOnMissingBean(name = "passwordChangeService")
     @RefreshScope
     @Bean
@@ -86,19 +79,19 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
             if (location != null) {
                 LOGGER.debug("Configuring password management based on JSON resource [{}]", location);
                 return new JsonResourcePasswordManagementService(passwordManagementCipherExecutor(),
-                        casProperties.getServer().getPrefix(),
-                        casProperties.getAuthn().getPm(), location);
+                    casProperties.getServer().getPrefix(),
+                    casProperties.getAuthn().getPm(), location);
             }
             LOGGER.warn("No storage service (LDAP, Database, etc) is configured to handle the account update and password service operations. "
-                    + "Password management functionality will have no effect and will be disabled until a storage service is configured. "
-                    + "To explicitly disable the password management functionality, add 'cas.authn.pm.enabled=false' to the CAS configuration");
+                + "Password management functionality will have no effect and will be disabled until a storage service is configured. "
+                + "To explicitly disable the password management functionality, add 'cas.authn.pm.enabled=false' to the CAS configuration");
         } else {
             LOGGER.debug("Password management is disabled. To enable the password management functionality, "
-                    + "add 'cas.authn.pm.enabled=true' to the CAS configuration and then configure storage options for account updates");
+                + "add 'cas.authn.pm.enabled=true' to the CAS configuration and then configure storage options for account updates");
         }
         return new NoOpPasswordManagementService(passwordManagementCipherExecutor(),
-                casProperties.getServer().getPrefix(),
-                casProperties.getAuthn().getPm());
+            casProperties.getServer().getPrefix(),
+            casProperties.getAuthn().getPm());
     }
 
     @PostConstruct
@@ -116,8 +109,10 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
 
     @Override
     public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
-        plan.registerAuditActionResolver("CHANGE_PASSWORD_ACTION_RESOLVER", this.authenticationActionResolver);
-        plan.registerAuditResourceResolver("CHANGE_PASSWORD_RESOURCE_RESOLVER", returnValueResourceResolver);
+        plan.registerAuditActionResolver("CHANGE_PASSWORD_ACTION_RESOLVER",
+            new BooleanAuditActionResolver("_SUCCESS", "_FAILED"));
+        plan.registerAuditResourceResolver("CHANGE_PASSWORD_RESOURCE_RESOLVER",
+            new FirstParameterAuditResourceResolver());
     }
 }
 
