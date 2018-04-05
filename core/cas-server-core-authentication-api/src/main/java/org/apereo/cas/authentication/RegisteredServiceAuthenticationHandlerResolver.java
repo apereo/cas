@@ -57,8 +57,9 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
         final Iterator<AuthenticationHandler> it = handlerSet.iterator();
         while (it.hasNext()) {
             final AuthenticationHandler handler = it.next();
-            if (!(handler instanceof HttpBasedServiceCredentialsAuthenticationHandler) && !requiredHandlers.contains(handler.getName())) {
-                LOGGER.debug("Authentication handler [{}] is not required for this transaction and is removed", handler.getName());
+            final String handlerName = handler.getName();
+            if (!(handler instanceof HttpBasedServiceCredentialsAuthenticationHandler) && !requiredHandlers.contains(handlerName)) {
+                LOGGER.debug("Authentication handler [{}] is not required for this transaction and is removed", handlerName);
                 it.remove();
             }
         }
