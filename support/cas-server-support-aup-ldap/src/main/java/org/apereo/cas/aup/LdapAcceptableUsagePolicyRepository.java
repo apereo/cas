@@ -24,11 +24,9 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
-
-
     private static final long serialVersionUID = 1600024683199961892L;
 
-    private final ConnectionFactory connectionFactory;
+    private final transient ConnectionFactory connectionFactory;
     private final String searchFilter;
     private final String baseDn;
 

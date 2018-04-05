@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
 
     private final IGoogleAuthenticator googleAuthenticator;
-    private final RestTemplate restTemplate;
+    private final transient RestTemplate restTemplate;
     private final GAuthMultifactorProperties gauth;
 
     public RestGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator, final RestTemplate restTemplate,

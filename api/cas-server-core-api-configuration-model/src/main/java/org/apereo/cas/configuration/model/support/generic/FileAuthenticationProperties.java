@@ -27,7 +27,7 @@ public class FileAuthenticationProperties implements Serializable {
     /**
      * File resource where user accounts are kept.
      */
-    private Resource filename;
+    private transient Resource filename;
 
     /**
      * Separator character that distinguishes between usernames and passwords in the file.

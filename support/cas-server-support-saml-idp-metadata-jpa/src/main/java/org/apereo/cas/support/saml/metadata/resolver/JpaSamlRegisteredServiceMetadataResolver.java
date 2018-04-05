@@ -32,7 +32,7 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     private static final String SELECT_QUERY = "SELECT r from SamlMetadataDocument r ";
 
     @PersistenceContext(unitName = "samlMetadataEntityManagerFactory")
-    private EntityManager entityManager;
+    private transient EntityManager entityManager;
 
     public JpaSamlRegisteredServiceMetadataResolver(final SamlIdPProperties samlIdPProperties, final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);

@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class MongoDbThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
-    private final MongoTemplate mongoTemplate;
+    private final transient MongoTemplate mongoTemplate;
     private final String collectionName;
 
     public MongoDbThrottledSubmissionHandlerInterceptorAdapter(final int failureThreshold,
