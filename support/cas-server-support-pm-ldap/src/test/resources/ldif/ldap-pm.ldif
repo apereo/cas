@@ -8,3 +8,8 @@ userPassword: 123456
 sn: CasPasswordManagement
 uid: CasPasswordManagement
 mail: caspm@example.org
+registeredAddress: RegisteredAddressQuestion
+postalCode: PostalCodeQuestion
+roomNumber: 666
+teletexTerminalIdentifier: 1776
+

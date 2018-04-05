@@ -26,6 +26,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.Map;
+
 import static org.junit.Assert.*;
 
 /**
@@ -73,6 +75,14 @@ public class LdapPasswordManagementServiceTests {
     public void verifyFindEmail() {
         final String email = passwordChangeService.findEmail("caspm");
         assertEquals("caspm@example.org", email);
+    }
+
+    @Test
+    public void verifyFindSecurityQuestions() {
+        final Map questions = passwordChangeService.getSecurityQuestions("caspm");
+        assertEquals(2, questions.size());
+        assertTrue(questions.containsKey("RegisteredAddressQuestion"));
+        assertTrue(questions.containsKey("PostalCodeQuestion"));
     }
 
     @BeforeClass
