@@ -3,6 +3,7 @@ package org.apereo.cas.consent;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -11,7 +12,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public interface ConsentDecisionBuilder {
+public interface ConsentDecisionBuilder extends Serializable {
 
     /**
      * Update consent decision.

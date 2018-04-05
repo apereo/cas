@@ -79,7 +79,7 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
      * @return a map of attributes that are to be encoded and encrypted
      */
     protected Map<String, String> initialize(final Map<String, Object> attributes) {
-        final Map<String, String> cachedAttributesToEncode = new HashMap<>(attributes.size());
+        final Map<String, String> cachedAttributesToEncode = new HashMap<>();
         final String messageFormat = "Removed [{}] as an authentication attribute and cached it locally.";
         Collection<?> collection = (Collection<?>) attributes.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
         if (collection != null && collection.size() == 1) {

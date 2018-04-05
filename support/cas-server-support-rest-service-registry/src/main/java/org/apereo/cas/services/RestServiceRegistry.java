@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 @Slf4j
 @AllArgsConstructor
 public class RestServiceRegistry extends AbstractServiceRegistry {
-    private final RestTemplate restTemplate;
+    private final transient RestTemplate restTemplate;
     private final String url;
     private final MultiValueMap<String, String> headers;
 

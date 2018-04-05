@@ -49,7 +49,7 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
     /**
      * Keep device registration records inside a static JSON resource.
      */
-    private Resource jsonFile;
+    private transient Resource jsonFile;
 
     /**
      * Collection of allowed devices whitelisted per user.

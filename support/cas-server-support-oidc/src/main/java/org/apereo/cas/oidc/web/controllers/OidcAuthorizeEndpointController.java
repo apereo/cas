@@ -57,11 +57,10 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
                                            final Set<OAuth20AuthorizationRequestValidator> oauthRequestValidators,
                                            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
         super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
-                webApplicationServiceServiceFactory, oAuthCodeFactory, consentApprovalViewResolver,
-                scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator,
-                authenticationBuilder, oauthAuthorizationResponseBuilders, oauthRequestValidators,
-                registeredServiceAccessStrategyEnforcer
-            );
+            webApplicationServiceServiceFactory, oAuthCodeFactory, consentApprovalViewResolver,
+            scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator,
+            authenticationBuilder, oauthAuthorizationResponseBuilders, oauthRequestValidators,
+            registeredServiceAccessStrategyEnforcer);
     }
 
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
@@ -70,8 +69,8 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
         final Collection<String> scopes = OAuth20Utils.getRequestedScopes(request);
         if (scopes.isEmpty() || !scopes.contains(OidcConstants.StandardScopes.OPENID.getScope())) {
             LOGGER.warn("Provided scopes [{}] are undefined by OpenID Connect, which requires that scope [{}] MUST be specified, "
-                            + "or the behavior is unspecified. CAS MAY allow this request to be processed for now.",
-                    scopes, OidcConstants.StandardScopes.OPENID.getScope());
+                    + "or the behavior is unspecified. CAS MAY allow this request to be processed for now.",
+                scopes, OidcConstants.StandardScopes.OPENID.getScope());
         }
 
         return super.handleRequest(request, response);

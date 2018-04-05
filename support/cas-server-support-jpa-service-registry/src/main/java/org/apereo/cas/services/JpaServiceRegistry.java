@@ -23,7 +23,7 @@ import lombok.ToString;
 public class JpaServiceRegistry extends AbstractServiceRegistry {
 
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
-    private EntityManager entityManager;
+    private transient EntityManager entityManager;
 
     @Override
     public boolean delete(final RegisteredService registeredService) {

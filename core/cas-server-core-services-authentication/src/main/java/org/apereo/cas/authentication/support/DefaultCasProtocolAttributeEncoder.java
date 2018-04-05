@@ -84,8 +84,8 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
         }
 
         encryptAndEncodeAndPutIntoAttributesMap(attributes, cachedAttributesToEncode,
-                CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
-                cipher, registeredService);
+            CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
+            cipher, registeredService);
     }
 
     /**
@@ -101,7 +101,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
                                                        final RegisteredServiceCipherExecutor cipher,
                                                        final RegisteredService registeredService) {
         encryptAndEncodeAndPutIntoAttributesMap(attributes, cachedAttributesToEncode,
-                CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, cipher, registeredService);
+            CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, cipher, registeredService);
     }
 
     /**
@@ -148,15 +148,16 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
         LOGGER.debug("Sanitizing attribute names in preparation of the final validation response");
 
         final Set<Pair<String, Object>> attrs = attributes.keySet().stream()
-                .filter(getSanitizingAttributeNamePredicate())
-                .map(s -> Pair.of(EncodingUtils.hexEncode(s.getBytes(StandardCharsets.UTF_8)), attributes.get(s)))
-                .collect(Collectors.toSet());
+            .filter(getSanitizingAttributeNamePredicate())
+            .map(s -> Pair.of(EncodingUtils.hexEncode(s.getBytes(StandardCharsets.UTF_8)), attributes.get(s)))
+            .collect(Collectors.toSet());
         if (!attrs.isEmpty()) {
             LOGGER.warn("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
             attributes.keySet().removeIf(getSanitizingAttributeNamePredicate());
             attrs.forEach(p -> {
-                LOGGER.debug("Sanitized attribute name to be [{}]", p.getKey());
-                attributes.put(p.getKey(), p.getValue());
+                final String key = p.getKey();
+                LOGGER.debug("Sanitized attribute name to be [{}]", key);
+                attributes.put(key, p.getValue());
             });
         }
     }

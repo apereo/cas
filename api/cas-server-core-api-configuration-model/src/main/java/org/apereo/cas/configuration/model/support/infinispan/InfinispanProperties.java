@@ -29,7 +29,7 @@ public class InfinispanProperties implements Serializable {
      * Path to the infinispan XML configuration file.
      */
     @RequiredProperty
-    private Resource configLocation = new ClassPathResource("infinispan.xml");
+    private transient Resource configLocation = new ClassPathResource("infinispan.xml");
 
     /**
      * Cache name to create and hold tickets in.

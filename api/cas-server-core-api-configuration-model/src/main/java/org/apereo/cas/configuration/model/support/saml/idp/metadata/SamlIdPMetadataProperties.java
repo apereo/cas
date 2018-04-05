@@ -49,7 +49,7 @@ public class SamlIdPMetadataProperties implements Serializable {
      * This directory will be used to hold the configuration files.
      */
     @RequiredProperty
-    private Resource location = new FileSystemResource("/etc/cas/saml");
+    private transient Resource location = new FileSystemResource("/etc/cas/saml");
 
     /**
      * Properties pertaining to mongo db saml metadata resolvers.

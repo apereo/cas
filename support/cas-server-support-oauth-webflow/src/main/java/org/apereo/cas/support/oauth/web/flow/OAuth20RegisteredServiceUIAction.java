@@ -26,7 +26,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class OAuth20RegisteredServiceUIAction extends AbstractAction implements Serializable {
     private static final long serialVersionUID = 5588216693657081923L;
-    private final ServicesManager servicesManager;
+    private final transient ServicesManager servicesManager;
 
     private final AuthenticationServiceSelectionStrategy serviceSelectionStrategy;
 
