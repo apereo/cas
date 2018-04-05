@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.mdui;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredService;
@@ -8,14 +9,14 @@ import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInf
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.XSURI;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
+import org.opensaml.saml.saml2.metadata.LocalizedName;
+
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
-import org.opensaml.saml.saml2.metadata.LocalizedName;
 import java.util.regex.Pattern;
-import lombok.Setter;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link SamlMetadataUIInfo}.
@@ -32,23 +33,13 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
     private static final long serialVersionUID = -1434801982864628179L;
 
     private transient UIInfo uiInfo;
-
     private String locale;
 
     /**
      * Instantiates a new Simple metadata uI info.
      *
      * @param registeredService the registered service
-     */
-    public SamlMetadataUIInfo(final RegisteredService registeredService) {
-        this(null, registeredService);
-    }
-
-    /**
-     * Instantiates a new Simple metadata uI info.
-     *
-     * @param registeredService the registered service
-     * @param locale browser preferred language
+     * @param locale            browser preferred language
      */
     public SamlMetadataUIInfo(final RegisteredService registeredService, final String locale) {
         this(null, registeredService);
@@ -210,7 +201,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      * Gets localized values.
      *
      * @param locale browser preferred language
-     * @param items the items
+     * @param items  the items
      * @return the string value
      */
     private String getLocalizedValues(final String locale, final List<?> items) {
