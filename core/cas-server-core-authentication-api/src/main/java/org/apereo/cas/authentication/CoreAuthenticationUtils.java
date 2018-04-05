@@ -17,6 +17,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 import java.nio.charset.StandardCharsets;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -91,9 +93,12 @@ public class CoreAuthenticationUtils {
                 final Resource resource = loader.getResource(selectionCriteria);
                 if (resource != null) {
                     final String script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-                    final GroovyClassLoader classLoader = new GroovyClassLoader(Beans.class.getClassLoader(),
-                        new CompilerConfiguration(), true);
-                    final Class<Predicate> clz = classLoader.parseClass(script);
+
+                    final Class<Predicate> clz = AccessController.doPrivileged((PrivilegedAction<Class<Predicate>>) () -> {
+                        final GroovyClassLoader classLoader = new GroovyClassLoader(Beans.class.getClassLoader(),
+                            new CompilerConfiguration(), true);
+                        return classLoader.parseClass(script);
+                    });
                     return clz.getDeclaredConstructor().newInstance();
                 }
             }
