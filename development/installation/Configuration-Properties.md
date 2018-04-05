@@ -3856,8 +3856,9 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encrypt
 LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.pm.ldap`.
 
 ```properties
-# Attributes that should be fetched to indicate security questions and answers,
-# assuming security questions are enabled.
+# cas.authn.pm.ldap.type=AD|GENERIC|EDirectory|FreeIPA
+
+# Attributes that should be fetched to indicate security questions and answers
 # cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion1=attrAnswer1
 # cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion2=attrAnswer2
 # cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion3=attrAnswer3
