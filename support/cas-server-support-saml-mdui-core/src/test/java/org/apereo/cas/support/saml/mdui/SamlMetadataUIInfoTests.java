@@ -9,7 +9,6 @@ import org.junit.runner.RunWith;
 import org.opensaml.saml.ext.saml2mdui.Description;
 import org.opensaml.saml.ext.saml2mdui.DisplayName;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
-import org.opensaml.saml.saml2.metadata.LocalizedName;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
@@ -25,7 +24,7 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(ConditionalSpringRunner.class)
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
+    RefreshAutoConfiguration.class
 })
 @DirtiesContext
 public class SamlMetadataUIInfoTests {
