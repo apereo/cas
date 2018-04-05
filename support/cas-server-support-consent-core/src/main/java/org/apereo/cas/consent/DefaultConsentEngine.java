@@ -34,21 +34,21 @@ public class DefaultConsentEngine implements ConsentEngine {
 
         if (attributes == null || attributes.isEmpty()) {
             LOGGER.debug("Consent is conditionally ignored for service [{}] given no consentable attributes are found", registeredService.getName());
-            return Pair.of(false, null);
+            return Pair.of(Boolean.FALSE, null);
         }
 
         LOGGER.debug("Locating consent decision for service [{}]", service);
         final ConsentDecision decision = findConsentDecision(service, registeredService, authentication);
         if (decision == null) {
             LOGGER.debug("No consent decision found; thus attribute consent is required");
-            return Pair.of(true, null);
+            return Pair.of(Boolean.TRUE, null);
         }
 
         LOGGER.debug("Located consentable attributes for release [{}]", attributes.keySet());
         if (consentDecisionBuilder.doesAttributeReleaseRequireConsent(decision, attributes)) {
             LOGGER.debug("Consent is required based on past decision [{}] and attribute release policy for [{}]",
                 decision, registeredService.getName());
-            return Pair.of(true, decision);
+            return Pair.of(Boolean.TRUE, decision);
         }
 
         LOGGER.debug("Consent is not required yet for [{}]; checking for reminder options", service);
@@ -59,11 +59,11 @@ public class DefaultConsentEngine implements ConsentEngine {
         LOGGER.debug("Reminder threshold date/time is calculated as [{}]", dt);
         if (now.isAfter(dt)) {
             LOGGER.debug("Consent is required based on reminder options given now at [{}] is after [{}]", now, dt);
-            return Pair.of(true, decision);
+            return Pair.of(Boolean.TRUE, decision);
         }
 
         LOGGER.debug("Consent is not required for service [{}]", service);
-        return Pair.of(false, null);
+        return Pair.of(Boolean.FALSE, null);
     }
 
     @Audit(action = "SAVE_CONSENT",

@@ -5,6 +5,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
@@ -101,12 +102,13 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         final String secret = getSetting(environment, "credentialSecretKey");
         final AWSCredentials credentials = new BasicAWSCredentials(key, secret);
         String region = getSetting(environment, "region");
+        final Region currentRegion = Regions.getCurrentRegion();
         if (StringUtils.isBlank(region)) {
-            region = Regions.getCurrentRegion().getName();
+            region = currentRegion.getName();
         }
         String regionOverride = getSetting(environment, "regionOverride");
         if (StringUtils.isNotBlank(regionOverride)) {
-            regionOverride = Regions.getCurrentRegion().getName();
+            regionOverride = currentRegion.getName();
         }
         final String endpoint = getSetting(environment, "endpoint");
         final AmazonDynamoDB client = AmazonDynamoDBClient.builder().withCredentials(new AWSStaticCredentialsProvider(credentials))

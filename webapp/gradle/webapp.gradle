@@ -18,6 +18,8 @@ node {
 
 if (!Boolean.getBoolean("skipNpmCache")) {
     npm_install.dependsOn(npm_cache_clean)
+}  else {
+    npm_install.enabled = false
 }
 
 task npmLint(type: NpmTask) {

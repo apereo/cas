@@ -38,7 +38,6 @@ import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.saml.SamlCoreProperties;
 import org.apereo.cas.configuration.model.support.saml.googleapps.GoogleAppsProperties;
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
-import org.apereo.cas.configuration.model.support.saml.shibboleth.ShibbolethAttributeResolverProperties;
 import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderProperties;
 import org.apereo.cas.configuration.model.support.scim.ScimProperties;
 import org.apereo.cas.configuration.model.support.sms.ClickatellProperties;
@@ -305,12 +304,6 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SamlCoreProperties samlCore = new SamlCoreProperties();
-
-    /**
-     * Shibboleth attribute resolution settings.
-     */
-    @NestedConfigurationProperty
-    private ShibbolethAttributeResolverProperties shibAttributeResolver = new ShibbolethAttributeResolverProperties();
 
     /**
      * UI and theme settings.

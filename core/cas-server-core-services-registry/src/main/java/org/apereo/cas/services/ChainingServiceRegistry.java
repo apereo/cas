@@ -33,7 +33,7 @@ public class ChainingServiceRegistry extends AbstractServiceRegistry {
     public boolean delete(final RegisteredService registeredService) {
         return serviceRegistries.stream()
             .map(registry -> registry.delete(registeredService))
-            .filter(result -> result)
+            .filter(Boolean::booleanValue)
             .findAny()
             .orElse(false);
     }

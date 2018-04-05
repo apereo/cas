@@ -328,7 +328,7 @@ public class MongoDbConnectionFactory {
                 .collect(Collectors.toList());
         } else {
             final int port = mongo.getPort() > 0 ? mongo.getPort() : DEFAULT_PORT;
-            LOGGER.debug("Found single MongoDb server address [{}] using port [{}]" + mongo.getHost(), port);
+            LOGGER.debug("Found single MongoDb server address [{}] using port [{}]", mongo.getHost(), port);
             final ServerAddress addr = new ServerAddress(mongo.getHost(), port);
             servers.add(addr);
         }

@@ -68,7 +68,7 @@ public class AdminPagesSecurityProperties implements Serializable {
      * If you decide to protect other administrative endpoints via CAS itself, 
      * you will need to provide a reference to the list of authorized users in the CAS configuration. 
      */
-    private Resource users;
+    private transient Resource users;
 
     /**
      * Whether Spring Boot's actuator endpoints should show up on the dashboard.
@@ -102,7 +102,7 @@ public class AdminPagesSecurityProperties implements Serializable {
         /**
          * JAAS login resource file.
          */
-        private Resource loginConfig;
+        private transient Resource loginConfig;
 
         /**
          * If set, a call to {@code Configuration#refresh()} 

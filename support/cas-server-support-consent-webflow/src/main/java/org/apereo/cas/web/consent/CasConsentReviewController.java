@@ -141,6 +141,6 @@ public class CasConsentReviewController {
         final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
         final String defaultUrl = this.casProperties.getServer().getPrefix().concat("/consentReview");
         logic.perform(context, this.pac4jConfig, J2ENopHttpActionAdapter.INSTANCE,
-            defaultUrl, false, false, false, null);
+            defaultUrl, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, null);
     }
 }

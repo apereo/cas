@@ -29,7 +29,7 @@ public class CloudDirectoryProperties implements Serializable {
      * Authenticate and bind into the instance via a credentials properties file.
      */
     @RequiredProperty
-    private Resource credentialsPropertiesFile;
+    private transient Resource credentialsPropertiesFile;
 
     /**
      * Use access-key provided by AWS to authenticate.

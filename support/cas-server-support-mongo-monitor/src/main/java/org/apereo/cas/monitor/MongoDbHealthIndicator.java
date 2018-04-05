@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class MongoDbHealthIndicator extends AbstractCacheHealthIndicator {
-    private final MongoTemplate mongoTemplate;
+    private final transient MongoTemplate mongoTemplate;
 
     public MongoDbHealthIndicator(final MongoTemplate mongoTemplate,
                                   final CasConfigurationProperties casProperties) {

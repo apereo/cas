@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,30 +37,35 @@ public class ScriptingUtilsTests {
     }
 
     @Test
-    @SneakyThrows
     public void verifyGroovyResourceExecution() {
-        final File file = File.createTempFile("test", ".groovy");
-        FileUtils.write(file, "def process(String name) { return name }");
-        final Resource resource = new FileSystemResource(file);
+        try {
+            final File file = File.createTempFile("test", ".groovy");
+            FileUtils.write(file, "def process(String name) { return name }");
+            final Resource resource = new FileSystemResource(file);
 
-        final Object result = ScriptingUtils.executeGroovyScript(resource, "process", String.class, "casuser");
-        assertEquals("casuser", result.toString());
+            final Object result = ScriptingUtils.executeGroovyScript(resource, "process", String.class, "casuser");
+            assertEquals("casuser", result.toString());
+        } catch (final Exception e) {
+            throw new AssertionError(e.getMessage(), e);
+        }
     }
 
     @Test
-    @SneakyThrows
     public void verifyGroovyResourceEngineExecution() {
         final Object result = ScriptingUtils.executeGroovyScriptEngine("return name", CollectionUtils.wrap("name", "casuser"), String.class);
         assertEquals("casuser", result.toString());
     }
 
     @Test
-    @SneakyThrows
     public void verifyResourceScriptEngineExecution() {
-        final File file = File.createTempFile("test", ".groovy");
-        FileUtils.write(file, "def run(String name) { return name }");
+        try {
+            final File file = File.createTempFile("test", ".groovy");
+            FileUtils.write(file, "def run(String name) { return name }");
 
-        final Object result = ScriptingUtils.executeScriptEngine(file.getCanonicalPath(), new Object[]{"casuser"}, String.class);
-        assertEquals("casuser", result.toString());
+            final Object result = ScriptingUtils.executeScriptEngine(file.getCanonicalPath(), new Object[]{"casuser"}, String.class);
+            assertEquals("casuser", result.toString());
+        } catch (final Exception e) {
+            throw new AssertionError(e.getMessage(), e);
+        }
     }
 }

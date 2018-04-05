@@ -36,6 +36,7 @@ public class DetermineDuoUserAccountAction extends AbstractAction {
         final Authentication authentication = WebUtils.getAuthentication(requestContext);
         final Principal p = authentication.getPrincipal();
 
+        final Event enrollEvent = new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
         final Collection<MultifactorAuthenticationProvider> providers = WebUtils.getResolvedMultifactorAuthenticationProviders(requestContext);
         for (final MultifactorAuthenticationProvider pr : providers) {
             final DuoMultifactorAuthenticationProvider duoProvider = this.provider.findProvider(pr.getId(), DuoMultifactorAuthenticationProvider.class);
@@ -44,7 +45,7 @@ public class DetermineDuoUserAccountAction extends AbstractAction {
             final DuoUserAccount account = duoAuthenticationService.getDuoUserAccount(p.getId());
             if (account.getStatus() == DuoUserAccountAuthStatus.ENROLL && StringUtils.isNotBlank(duoProvider.getRegistrationUrl())) {
                 requestContext.getFlowScope().put("duoRegistrationUrl", duoProvider.getRegistrationUrl());
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
+                return enrollEvent;
             }
         }
         return success();

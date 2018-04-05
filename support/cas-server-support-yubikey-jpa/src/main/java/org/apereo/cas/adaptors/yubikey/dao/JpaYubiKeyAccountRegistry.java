@@ -30,7 +30,7 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     private static final String SELECT_QUERY = "SELECT r from YubiKeyAccount r ";
 
     @PersistenceContext(unitName = "yubiKeyEntityManagerFactory")
-    private EntityManager entityManager;
+    private transient EntityManager entityManager;
 
     public JpaYubiKeyAccountRegistry(final YubiKeyAccountValidator accountValidator) {
         super(accountValidator);

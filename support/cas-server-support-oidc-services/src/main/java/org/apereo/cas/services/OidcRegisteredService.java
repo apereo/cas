@@ -70,7 +70,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     private HashSet<String> scopes = new HashSet<>();
 
     public OidcRegisteredService() {
-        setJsonFormat(Boolean.TRUE);
+        setJsonFormat(true);
     }
 
     /**

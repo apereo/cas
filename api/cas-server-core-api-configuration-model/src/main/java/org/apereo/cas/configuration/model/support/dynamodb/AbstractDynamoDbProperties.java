@@ -23,7 +23,7 @@ public abstract class AbstractDynamoDbProperties implements Serializable {
     /**
      * File containing credentials properties.
      */
-    private Resource credentialsPropertiesFile;
+    private transient Resource credentialsPropertiesFile;
 
     /**
      * Credentials access key.

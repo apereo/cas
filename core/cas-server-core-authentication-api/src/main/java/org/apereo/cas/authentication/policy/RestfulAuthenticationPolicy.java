@@ -32,7 +32,7 @@ import java.security.GeneralSecurityException;
 @Slf4j
 @AllArgsConstructor
 public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
-    private final RestTemplate restTemplate;
+    private final transient RestTemplate restTemplate;
     private final String endpoint;
 
     @Override
@@ -48,8 +48,9 @@ public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
                 LOGGER.warn("[{}] returned no responses", this.endpoint);
                 throw new GeneralSecurityException("No response returned from REST endpoint to determine authentication policy");
             }
-            if (resp.getStatusCode() != HttpStatus.OK) {
-                final Exception ex = handleResponseStatusCode(resp.getStatusCode(), principal);
+            final HttpStatus statusCode = resp.getStatusCode();
+            if (statusCode != HttpStatus.OK) {
+                final Exception ex = handleResponseStatusCode(statusCode, principal);
                 throw new GeneralSecurityException(ex);
             }
             return true;

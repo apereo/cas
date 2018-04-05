@@ -59,7 +59,8 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
         final Optional<DistributedCacheObject<RegisteredService>> result = this.distributedCacheManager.find(predicate);
         if (result.isPresent()) {
             final DistributedCacheObject<RegisteredService> item = result.get();
-            final RegisteredService cachedService = item.getValue();
+            final RegisteredService value = item.getValue();
+            final RegisteredService cachedService = value;
             LOGGER.debug("Located cache entry [{}] in service registry cache [{}]", item, this.distributedCacheManager.getName());
             if (isRegisteredServiceMarkedAsDeletedInCache(item)) {
                 LOGGER.debug("Service found in the cache [{}] is marked as a deleted service. CAS will update the service registry "
@@ -70,27 +71,26 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
             }
 
             if (service == null) {
-
                 LOGGER.debug("Service is in not found in the local service registry for this CAS node. CAS will use the cache entry [{}] instead "
-                    + "and will update the service registry of this CAS node with the cache entry for future look-ups", item.getValue());
+                    + "and will update the service registry of this CAS node with the cache entry for future look-ups", value);
                 if (properties.getReplicationMode() == StreamingServiceRegistryProperties.ReplicationModes.ACTIVE_ACTIVE) {
-                    serviceRegistry.save(item.getValue());
+                    serviceRegistry.save(value);
                 }
-                return item.getValue();
+                return value;
             }
-            LOGGER.debug("Service definition cache entry [{}] carries the timestamp [{}]", item.getValue(), item.getTimestamp());
-            if (item.getValue().equals(service)) {
+            LOGGER.debug("Service definition cache entry [{}] carries the timestamp [{}]", value, item.getTimestamp());
+            if (value.equals(service)) {
                 LOGGER.debug("Service definition cache entry is the same as service definition found locally");
                 return service;
             }
             LOGGER.debug("Service definition found in the cache [{}] is more recent than its counterpart on this CAS node. CAS will "
-                + "use the cache entry and update the service registry of this CAS node with the cache entry for future look-ups", item.getValue());
+                + "use the cache entry and update the service registry of this CAS node with the cache entry for future look-ups", value);
 
             if (properties.getReplicationMode() == StreamingServiceRegistryProperties.ReplicationModes.ACTIVE_ACTIVE) {
-                serviceRegistry.save(item.getValue());
+                serviceRegistry.save(value);
             }
             
-            return item.getValue();
+            return value;
         }
         LOGGER.debug("Requested service definition is not found in the replication cache");
         if (service != null) {

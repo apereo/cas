@@ -26,7 +26,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     private static final String SELECT_QUERY = "SELECT r from CasEvent r ";
 
     @PersistenceContext(unitName = "eventsEntityManagerFactory")
-    private EntityManager entityManager;
+    private transient EntityManager entityManager;
 
     @Override
     public void save(final CasEvent event) {

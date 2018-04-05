@@ -26,11 +26,11 @@ public class MaxmindProperties implements Serializable {
      * Path to the location of the database file containing cities.
      */
     @RequiredProperty
-    private Resource cityDatabase;
+    private transient Resource cityDatabase;
 
     /**
      * Path to the location of the database file containing countries.
      */
     @RequiredProperty
-    private Resource countryDatabase;
+    private transient Resource countryDatabase;
 }

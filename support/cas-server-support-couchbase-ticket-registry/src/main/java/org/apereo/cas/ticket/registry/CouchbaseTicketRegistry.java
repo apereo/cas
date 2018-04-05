@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.JsonDocument;
 import com.couchbase.client.java.document.SerializableDocument;
 import com.couchbase.client.java.view.DefaultView;
@@ -80,8 +81,9 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         try {
             final Ticket ticket = encodeTicket(ticketToAdd);
             final SerializableDocument document = SerializableDocument.create(ticket.getId(), getTimeToLive(ticketToAdd), ticket);
-            LOGGER.debug("Created document for ticket [{}]. Upserting into bucket [{}]", ticketToAdd, this.couchbase.getBucket().name());
-            this.couchbase.getBucket().upsert(document);
+            final Bucket bucket = this.couchbase.getBucket();
+            LOGGER.debug("Created document for ticket [{}]. Upserting into bucket [{}]", ticketToAdd, bucket.name());
+            bucket.upsert(document);
         } catch (final Exception e) {
             LOGGER.error("Failed adding [{}]: [{}]", ticketToAdd, e);
         }

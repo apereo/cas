@@ -352,14 +352,15 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
                 centralAuthenticationService, casProperties.getAuthn().getOauth(),
                 webApplicationServiceFactory);
 
+        final OAuth20CasAuthenticationBuilder authenticationBuilder = oauthCasAuthenticationBuilder();
         final BaseAccessTokenGrantRequestExtractor pswExt =
             new AccessTokenPasswordGrantRequestExtractor(servicesManager, ticketRegistry,
-                oauthCasAuthenticationBuilder(), centralAuthenticationService,
+                authenticationBuilder, centralAuthenticationService,
                 casProperties.getAuthn().getOauth(), registeredServiceAccessStrategyEnforcer);
 
         final BaseAccessTokenGrantRequestExtractor credsExt =
             new AccessTokenClientCredentialsGrantRequestExtractor(servicesManager, ticketRegistry,
-                oauthCasAuthenticationBuilder(), centralAuthenticationService,
+                authenticationBuilder, centralAuthenticationService,
                 casProperties.getAuthn().getOauth(), registeredServiceAccessStrategyEnforcer);
 
         return CollectionUtils.wrapList(authzCodeExt, refreshTokenExt, pswExt, credsExt);

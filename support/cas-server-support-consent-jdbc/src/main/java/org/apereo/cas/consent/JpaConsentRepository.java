@@ -30,7 +30,7 @@ public class JpaConsentRepository implements ConsentRepository {
     private static final String SELECT_QUERY = "SELECT r from ConsentDecision r ";
 
     @PersistenceContext(unitName = "consentEntityManagerFactory")
-    private EntityManager entityManager;
+    private transient EntityManager entityManager;
 
     @Override
     public Collection<ConsentDecision> findConsentDecisions(final String principal) {

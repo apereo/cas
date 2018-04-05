@@ -35,7 +35,7 @@ public class ClickatellSmsSender implements SmsSender {
     private final String serverUrl;
 
     private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final transient RestTemplate restTemplate = new RestTemplate();
 
     public ClickatellSmsSender(final String token, final String serverUrl) {
         this.token = token;
