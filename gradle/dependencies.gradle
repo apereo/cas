@@ -1227,6 +1227,7 @@ ext.libraries = [
                 },
                 dependencies.create("com.github.kstyrc:embedded-redis:$embeddedRedisVersion") {
                     exclude(module: "commons-io")
+                    exclude(group: "com.google.guava", module: "guava")
                     force = true
                 },
                 dependencies.create("org.mockito:mockito-core:$mockitoVersion") {

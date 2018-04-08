@@ -3864,6 +3864,32 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 # cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion3=attrAnswer3
 ```
 
+### Cassandra ticket registry
+To learn more about this topic, [please review this guide](Cassandra-Ticket-Registry.html).
+
+```properties
+## Nodes IPs
+# cas.ticket.registry.cassandra.contactPoints=127.0.0.1
+#
+## Username
+# cas.ticket.registry.cassandra.username=
+#
+## Password
+# cas.ticket.registry.cassandra.password=
+#
+## TicketGrantingTicket fully qualified table
+# cas.ticket.registry.cassandra.tgtTable=cas.ticketgrantingticket
+#
+## ServiceTicket fully qualified table
+# cas.ticket.registry.cassandra.stTable=cas.servicetable
+#
+## Ticket cleaner fully qualified table
+# cas.ticket.registry.cassandra.expiryTable=cas.ticket_cleaner
+#
+## Ticket cleaner last run fully qualified table
+# cas.ticket.registry.cassandra.lastRunTable=cas.ticket_cleaner_lastrun
+```
+
 ### JDBC Password Management
 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.pm.jdbc`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.pm.jdbc`.
