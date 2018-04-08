@@ -6,6 +6,7 @@ import org.apereo.cas.audit.BaseAuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.inspektr.audit.annotation.Audit;
 
 import java.util.Optional;
@@ -37,13 +38,14 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         }
 
         final Optional<Service> service = context.getService();
-        if (service.isPresent() && registeredService.isPresent() && context.getTicketGrantingTicket().isPresent()) {
+        final Optional<TicketGrantingTicket> ticketGrantingTicket = context.getTicketGrantingTicket();
+        if (service.isPresent() && registeredService.isPresent() && ticketGrantingTicket.isPresent()) {
             final AuditableExecutionResult result = AuditableExecutionResult.of(service.get(),
-                registeredService.get(), context.getTicketGrantingTicket().get());
+                registeredService.get(), ticketGrantingTicket.get());
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service.get(),
                     registeredService.get(),
-                    context.getTicketGrantingTicket().get(),
+                    ticketGrantingTicket.get(),
                     context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
             } catch (final PrincipalException e) {
                 result.setException(e);

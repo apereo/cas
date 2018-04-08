@@ -14,8 +14,6 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.io.Serializable;
-
 /**
  * This is {@link WSFederationMetadataUIAction}.
  *
@@ -24,9 +22,7 @@ import java.io.Serializable;
  */
 @Slf4j
 @AllArgsConstructor
-public class WSFederationMetadataUIAction extends AbstractAction implements Serializable {
-    private static final long serialVersionUID = -8016284160122109307L;
-
+public class WSFederationMetadataUIAction extends AbstractAction {
     private final transient ServicesManager servicesManager;
     private final transient AuthenticationServiceSelectionStrategy serviceSelectionStrategy;
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
@@ -146,6 +147,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         return resolveAttributeTrigger(attributes, names, providerIds);
     }
 
+    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     private Optional<String> resolveAttributeTrigger(final Map<String, Object> attributes, final String names,
                                                      final Set<String> providerIds) {
         return commaDelimitedListToSet(names).stream()
@@ -154,7 +156,6 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
             .filter(Objects::nonNull)
             .map(CollectionUtils::toCollection)
             .flatMap(Set::stream)
-            // validProviderIds.contains((String) value)
             .filter(String.class::isInstance)
             .map(String.class::cast)
             .filter(providerIds::contains)
@@ -170,6 +171,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
      * @param value      the value
      * @return the boolean
      */
+    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     private boolean hasMatchingAttribute(final Map<String, Object> attributes, final String names, final String value) {
         if (!StringUtils.hasText(names) || !StringUtils.hasText(value)) {
             return false;
