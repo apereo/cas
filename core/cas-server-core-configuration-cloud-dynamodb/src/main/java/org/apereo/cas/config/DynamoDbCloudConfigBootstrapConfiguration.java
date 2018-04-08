@@ -67,7 +67,7 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
     @Override
     public PropertySource<?> locate(final Environment environment) {
         final AmazonDynamoDB amazonDynamoDBClient = getAmazonDynamoDbClient(environment);
-        final Boolean preventTableCreationOnStartup = new Boolean(getSetting(environment, "preventTableCreationOnStartup"));
+        final Boolean preventTableCreationOnStartup = Boolean.valueOf(getSetting(environment, "preventTableCreationOnStartup"));
         if (!preventTableCreationOnStartup) {
             createSettingsTable(amazonDynamoDBClient, false);
         }
