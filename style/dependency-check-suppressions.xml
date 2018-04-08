@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+    <suppress>
+        <gav regex="true">^org\.springmodules:spring-modules-cache:.*$</gav>
+        <cve>CVE-2016-9878</cve>
+    </suppress>
+    <suppress>
+        <gav regex="true">^org\.springframework\.shell:spring-shell:.*$</gav>
+        <cve>CVE-2016-9878</cve>
+    </suppress>
+    <suppress>
+        <gav regex="true">^org\.springframework\.webflow:spring-webflow:.*$</gav>
+        <cve>CVE-2016-9878</cve>
+    </suppress>
+    <suppress>
+        <gav regex="true">^javax\.el:javax\.el-api:.*$</gav>
+        <cve>CVE-2013-2566</cve>
+    </suppress>
+    <suppress>
+        <gav regex="true">^geronimo-spec:geronimo-spec-jta:.*$</gav>
+        <cve>CVE-2008-0732</cve>
+    </suppress>
+    <suppress>
+        <gav regex="true">^geronimo-spec:geronimo-spec-jta:.*$</gav>
+        <cve>CVE-2011-5034</cve>
+    </suppress>
+    <suppress>
+        <gav regex="true">^com\.apple:AppleJavaExtensions:.*$</gav>
+        <cve>CVE-2010-0538</cve>
+    </suppress>
+    <suppress>
+        <gav regex="true">^org\.springframework\.webflow:spring-binding:.*$</gav>
+        <cve>CVE-2016-9878</cve>
+    </suppress>
+    <suppress>
+        <gav regex="true">^javax\.el:javax\.el-api:.*$</gav>
+        <cve>CVE-2015-2808</cve>
+    </suppress>
+    <suppress>
+        <gav regex="true">^org\.pac4j:spring-webmvc-pac4j:.*$</gav>
+        <cve>CVE-2011-2731</cve>
+    </suppress>
+    <suppress>
+        <gav regex="true">^org\.pac4j:spring-webmvc-pac4j:.*$</gav>
+        <cve>CVE-2011-2894</cve>
+    </suppress>
+    <suppress>
+        <gav regex="true">^org\.pac4j:spring-webmvc-pac4j:.*$</gav>
+        <cve>CVE-2013-4152</cve>
+    </suppress>
+    <suppress>
+        <gav regex="true">^org\.codehaus\.groovy:groovy-jsr223:.*$</gav>
+        <cve>CVE-2016-6497</cve>
+    </suppress>
+    <suppress>
+        <gav regex="true">^org\.pac4j:spring-webmvc-pac4j:.*$</gav>
+        <cve>CVE-2013-6429</cve>
+    </suppress>
+    <suppress>
+        <gav regex="true">^org\.pac4j:spring-webmvc-pac4j:.*$</gav>
+        <cve>CVE-2013-7315</cve>
+    </suppress>
+    <suppress>
+        <gav regex="true">^org\.pac4j:spring-webmvc-pac4j:.*$</gav>
+        <cve>CVE-2011-2730</cve>
+    </suppress>
+    <suppress>
+        <gav regex="true">^org\.apache\.tomcat:tomcat-annotations-api:.*$</gav>
+        <cve>CVE-2016-5425</cve>
+    </suppress>
+    <suppress>
+        <gav regex="true">^org\.apache\.tomcat:tomcat-annotations-api:.*$</gav>
+        <cve>CVE-2016-6325</cve>
+    </suppress>
+</suppressions>
