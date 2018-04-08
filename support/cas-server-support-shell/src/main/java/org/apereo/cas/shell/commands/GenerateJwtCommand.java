@@ -101,11 +101,12 @@ public class GenerateJwtCommand implements CommandMarker {
         final CommonProfile profile = new CommonProfile();
         profile.setId(subject);
 
-        LOGGER.debug(StringUtils.repeat('=', SEP_LENGTH));
+        final String repeat = StringUtils.repeat('=', SEP_LENGTH);
+        LOGGER.debug(repeat);
         LOGGER.info("\nGenerating JWT for subject [{}] with signing key size [{}], signing algorithm [{}], "
                 + "encryption key size [{}], encryption method [{}] and encryption algorithm [{}]\n", 
                 subject, signingSecretSize, signingAlgorithm, encryptionSecretSize, encryptionMethod, encryptionAlgorithm);
-        LOGGER.debug(StringUtils.repeat('=', SEP_LENGTH));
+        LOGGER.debug(repeat);
         
         final String token = g.generate(profile);
         LOGGER.info("==== JWT ====\n[{}]", token);

@@ -1,7 +1,6 @@
 package org.apereo.cas.authorization;
 
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
@@ -11,6 +10,7 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.SearchExecutor;
+import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.context.WebContext;
@@ -26,14 +26,11 @@ import org.pac4j.core.profile.CommonProfile;
 @Slf4j
 @AllArgsConstructor
 public abstract class BaseUseAttributesAuthorizationGenerator implements AuthorizationGenerator<CommonProfile> {
-
-
     /**
      * Search connection factory.
      */
-    @NonNull
     protected final ConnectionFactory connectionFactory;
-    @NonNull
+
     private final SearchExecutor userSearchExecutor;
     private final boolean allowMultipleResults;
 
@@ -70,10 +67,9 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
         final SearchResult userResult;
         try {
             LOGGER.debug("Attempting to get details for user [{}].", username);
-            final Response<SearchResult> response = this.userSearchExecutor.search(
-                    this.connectionFactory,
-                    LdapUtils.newLdaptiveSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(),
-                            LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(username)));
+            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(),
+                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(username));
+            final Response<SearchResult> response = this.userSearchExecutor.search(this.connectionFactory, filter);
 
             LOGGER.debug("LDAP user search response: [{}]", response);
             userResult = response.getResult();
@@ -81,9 +77,8 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
             if (userResult.size() == 0) {
                 throw new IllegalArgumentException(new AccountNotFoundException(username + " not found."));
             }
-            if (userResult.size() > 1 && !this.allowMultipleResults) {
-                throw new IllegalStateException(
-                        "Found multiple results for user which is not allowed (allowMultipleResults=false).");
+            if (!this.allowMultipleResults && userResult.size() > 1) {
+                throw new IllegalStateException("Found multiple results for user which is not allowed.");
             }
 
             final LdapEntry userEntry = userResult.getEntry();
