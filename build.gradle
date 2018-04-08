@@ -165,7 +165,7 @@ subprojects {
         scanForTestClasses = false
         ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
         include "**/*Tests.*"
-        exclude "**/Abstract*.*","**/Base*.*"
+        exclude "**/Abstract*.*", "**/Base*.*"
         maxParallelForks = 1
         jvmArgs "-Xmx1024m"
         classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
@@ -282,6 +282,26 @@ subprojects {
         enabled = !Boolean.getBoolean("skipCheckstyle")
     }
 
+    dependencyCheck {
+        failBuildOnCVSS = 8
+        skipTestGroups = true
+        suppressionFile = file("$rootProject.projectDir/style/dependency-check-suppressions.xml")
+        analyzers {
+            assemblyEnabled = false
+            swiftEnabled = false
+            cocoapodsEnabled = false
+            nspEnabled = false
+            autoconfEnabled = false
+            cmakeEnabled = false
+            pathToMono = false
+            nuspecEnabled = false
+            rubygemsEnabled = false
+            pyPackageEnabled = false
+            pyDistributionEnabled = false
+            nexusEnabled = false
+        }
+    }
+
     if (!Boolean.getBoolean("skipFindbugs")) {
         findbugs {
             toolVersion = "${findbugsVersion}"
@@ -381,7 +401,9 @@ task jacocoAggregateReport(type: JacocoReport, description: "Aggregate all test 
                 exclude: [
                         '**/**Configuration.class',
                         '**/shell/cli/**',
+                        '**/shell/commands/**',
                         '**/**Configuration$**',
+                        '**/**Controller**',
                         '**/**ConfigurationMetadataGenerator**',
                         '**/**Application.class',
                         '**/**Application$**',
