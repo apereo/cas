@@ -302,8 +302,6 @@ subprojects {
         }
     }
 
-    // check.dependsOn dependencyCheckAnalyze
-    
     dependencies {
         //optional libraries.springcomponentindexer
 
