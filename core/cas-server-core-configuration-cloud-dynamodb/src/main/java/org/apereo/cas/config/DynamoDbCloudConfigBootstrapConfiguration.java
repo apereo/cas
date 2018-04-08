@@ -22,6 +22,7 @@ import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -35,8 +36,6 @@ import org.springframework.core.env.PropertySource;
 import java.net.InetAddress;
 import java.util.Map;
 import java.util.Properties;
-
-import lombok.Getter;
 
 /**
  * This is {@link DynamoDbCloudConfigBootstrapConfiguration}.
@@ -69,7 +68,7 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
     public PropertySource<?> locate(final Environment environment) {
         final AmazonDynamoDB amazonDynamoDBClient = getAmazonDynamoDbClient(environment);
         final Boolean preventTableCreationOnStartup = new Boolean(getSetting(environment, "preventTableCreationOnStartup"));
-        if(!preventTableCreationOnStartup) {
+        if (!preventTableCreationOnStartup) {
             createSettingsTable(amazonDynamoDBClient, false);
         }
         final ScanRequest scan = new ScanRequest(TABLE_NAME);
