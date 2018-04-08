@@ -19,7 +19,6 @@ import org.apereo.cas.support.events.service.CasRegisteredServicePreDeleteEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.io.LockedOutputStream;
 import org.apereo.cas.util.io.PathWatcherService;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.springframework.context.ApplicationEventPublisher;
@@ -29,8 +28,8 @@ import org.springframework.util.Assert;
 import javax.annotation.PreDestroy;
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -282,7 +281,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             service.setId(System.currentTimeMillis());
         }
         final File f = getRegisteredServiceFileName(service);
-        try (LockedOutputStream out = new LockedOutputStream((FileOutputStream) Files.newOutputStream(f.toPath()))) {
+        try (OutputStream out = Files.newOutputStream(f.toPath())) {
             final boolean result = this.registeredServiceSerializers.stream().anyMatch(s -> {
                 try {
                     s.to(out, service);
