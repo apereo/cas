@@ -68,7 +68,10 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
     @Override
     public PropertySource<?> locate(final Environment environment) {
         final AmazonDynamoDB amazonDynamoDBClient = getAmazonDynamoDbClient(environment);
-        createSettingsTable(amazonDynamoDBClient, false);
+        final Boolean preventTableCreationOnStartup = new Boolean(getSetting(environment, "preventTableCreationOnStartup"));
+        if(!preventTableCreationOnStartup) {
+            createSettingsTable(amazonDynamoDBClient, false);
+        }
         final ScanRequest scan = new ScanRequest(TABLE_NAME);
         LOGGER.debug("Scanning table with request [{}]", scan);
         final ScanResult result = amazonDynamoDBClient.scan(scan);
