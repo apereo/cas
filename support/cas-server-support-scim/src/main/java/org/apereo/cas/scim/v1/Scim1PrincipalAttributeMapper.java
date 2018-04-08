@@ -8,6 +8,8 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 
+import java.util.Map;
+
 /**
  * This is {@link Scim1PrincipalAttributeMapper}.
  *
@@ -25,8 +27,9 @@ public class Scim1PrincipalAttributeMapper {
      * @return the principal attribute value
      */
     public String getPrincipalAttributeValue(final Principal p, final String attributeName) {
-        if (p.getAttributes().containsKey(attributeName)) {
-            return CollectionUtils.toCollection(p.getAttributes().get(attributeName)).iterator().next().toString();
+        final Map<String, Object> attributes = p.getAttributes();
+        if (attributes.containsKey(attributeName)) {
+            return CollectionUtils.toCollection(attributes.get(attributeName)).iterator().next().toString();
         }
         return null;
     }

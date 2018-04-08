@@ -21,6 +21,7 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.oauth.client.OAuth20Client;
 import org.pac4j.oauth.config.OAuth20Configuration;
 import org.pac4j.oidc.client.OidcClient;
+import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.webflow.execution.RequestContext;
@@ -72,28 +73,31 @@ public class DelegatedClientWebflowManager {
 
         final TransientSessionTicketFactory transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
         final TransientSessionTicket ticket = transientFactory.create(service, properties);
+        final String ticketId = ticket.getId();
         LOGGER.debug("Storing delegated authentication request ticket [{}] for service [{}] with properties [{}]",
-            ticket.getId(), ticket.getService(), ticket.getProperties());
+            ticketId, ticket.getService(), ticket.getProperties());
         this.ticketRegistry.addTicket(ticket);
-        webContext.setRequestAttribute(PARAMETER_CLIENT_ID, ticket.getId());
+        webContext.setRequestAttribute(PARAMETER_CLIENT_ID, ticketId);
 
         if (client instanceof SAML2Client) {
-            webContext.getSessionStore().set(webContext, SAML2Client.SAML_RELAY_STATE_ATTRIBUTE, ticket.getId());
+            webContext.getSessionStore().set(webContext, SAML2Client.SAML_RELAY_STATE_ATTRIBUTE, ticketId);
         }
         if (client instanceof OAuth20Client) {
             final OAuth20Client oauthClient = (OAuth20Client) client;
-            oauthClient.getConfiguration().setWithState(true);
-            oauthClient.getConfiguration().setStateData(ticket.getId());
+            final OAuth20Configuration config = oauthClient.getConfiguration();
+            config.setWithState(true);
+            config.setStateData(ticketId);
         }
         if (client instanceof OidcClient) {
             final OidcClient oidcClient = (OidcClient) client;
-            oidcClient.getConfiguration().setCustomParams(CollectionUtils.wrap(PARAMETER_CLIENT_ID, ticket.getId()));
-            oidcClient.getConfiguration().setWithState(true);
-            oidcClient.getConfiguration().setStateData(ticket.getId());
+            final OidcConfiguration config = oidcClient.getConfiguration();
+            config.setCustomParams(CollectionUtils.wrap(PARAMETER_CLIENT_ID, ticketId));
+            config.setWithState(true);
+            config.setStateData(ticketId);
         }
         if (client instanceof CasClient) {
             final CasClient casClient = (CasClient) client;
-            casClient.getConfiguration().addCustomParam(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
+            casClient.getConfiguration().addCustomParam(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticketId);
         }
         return ticket;
     }

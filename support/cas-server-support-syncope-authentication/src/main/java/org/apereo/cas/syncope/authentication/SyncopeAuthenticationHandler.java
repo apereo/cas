@@ -24,6 +24,7 @@ import javax.security.auth.login.FailedLoginException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -92,11 +93,13 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         }
         attributes.put("syncopeUserCreator", user.getCreator());
         attributes.put("syncopeUserCreationDate", user.getCreationDate().toString());
-        if (user.getChangePwdDate() != null) {
-            attributes.put("syncopeUserChangePwdDate", user.getChangePwdDate().toString());
+        final Date changePwdDate = user.getChangePwdDate();
+        if (changePwdDate != null) {
+            attributes.put("syncopeUserChangePwdDate", changePwdDate.toString());
         }
-        if (user.getLastLoginDate() != null) {
-            attributes.put("syncopeUserLastLoginDate", user.getLastLoginDate());
+        final Date lastLoginDate = user.getLastLoginDate();
+        if (lastLoginDate != null) {
+            attributes.put("syncopeUserLastLoginDate", lastLoginDate);
         }
         if (user.getDynRoles() != null && !user.getDynRoles().isEmpty()) {
             attributes.put("syncopeUserDynRoles", user.getDynRoles());

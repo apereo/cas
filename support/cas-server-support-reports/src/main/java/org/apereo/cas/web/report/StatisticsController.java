@@ -4,6 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
@@ -159,7 +160,7 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
                 .collect(Collectors.toList());
 
             final Duration steps = Duration.parse(scale);
-            final Map<Integer, LocalDateTime> buckets = new LinkedHashMap<>();
+            final Map<Integer, LocalDateTime> buckets = Maps.newLinkedHashMapWithExpectedSize(authnEvents.size());
 
             LocalDateTime dt = startDate;
             Integer index = 0;

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.pac4j;
 
+import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -8,7 +9,6 @@ import org.pac4j.core.context.J2EContext;
 
 import javax.servlet.http.HttpSession;
 import java.util.Enumeration;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -29,7 +29,7 @@ public class DelegatedSessionCookieManager {
      * @param webContext the web context
      */
     public void store(final J2EContext webContext) {
-        final Map<String, Object> session = new LinkedHashMap<>();
+        final Map<String, Object> session = Maps.newLinkedHashMap();
         final HttpSession webSession = (HttpSession) webContext.getSessionStore().getTrackableSession(webContext);
         final Enumeration<String> names = webSession.getAttributeNames();
         while (names.hasMoreElements()) {

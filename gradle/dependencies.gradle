@@ -398,6 +398,7 @@ ext.libraries = [
             force = true
         },
         findbugssec             : dependencies.create("com.h3xstream.findsecbugs:findsecbugs-plugin:$findbugsSecVersion"),
+        findbugsannotations     : dependencies.create("com.google.code.findbugs:annotations:$findbugsVersion"),
         groovy                  : [
                 dependencies.create("org.codehaus.groovy:groovy-jsr223:$groovyVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
@@ -521,12 +522,12 @@ ext.libraries = [
                     force = true
                 }
         ],
-        hazelcastaws : [
+        hazelcastaws            : [
                 dependencies.create("com.hazelcast:hazelcast-aws:$hazelcastAwsVersion") {
                     force = true
                 }
         ],
-        hazelcastazure : [
+        hazelcastazure          : [
                 dependencies.create("com.hazelcast:hazelcast-azure:$hazelcastAzureVersion") {
                     force = true
                 }
@@ -628,7 +629,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        aws       : [
+        aws                     : [
                 dependencies.create("com.amazonaws:aws-java-sdk-core:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")

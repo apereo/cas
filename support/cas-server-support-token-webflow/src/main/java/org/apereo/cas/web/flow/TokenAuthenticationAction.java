@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 public class TokenAuthenticationAction extends AbstractNonInteractiveCredentialsAction {
 
 
-
     private final TokenRequestExtractor tokenRequestExtractor;
     private final ServicesManager servicesManager;
 
@@ -51,7 +50,7 @@ public class TokenAuthenticationAction extends AbstractNonInteractiveCredentials
         final String authTokenValue = this.tokenRequestExtractor.extract(request);
         final Service service = WebUtils.getService(requestContext);
 
-        if (StringUtils.isNotBlank(authTokenValue) && service != null) {
+        if (service != null && StringUtils.isNotBlank(authTokenValue)) {
             try {
                 final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);

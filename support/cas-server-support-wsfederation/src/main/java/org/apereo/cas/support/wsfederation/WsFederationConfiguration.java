@@ -55,9 +55,9 @@ public class WsFederationConfiguration implements Serializable {
         BOTH
     }
 
-    private Resource encryptionPrivateKey;
+    private transient Resource encryptionPrivateKey;
 
-    private Resource encryptionCertificate;
+    private transient Resource encryptionCertificate;
 
     private String encryptionPrivateKeyPassword;
 
@@ -67,7 +67,7 @@ public class WsFederationConfiguration implements Serializable {
 
     private String identityProviderUrl;
 
-    private List<Resource> signingCertificateResources = new ArrayList<>();
+    private transient List<Resource> signingCertificateResources = new ArrayList<>();
 
     private String relyingPartyIdentifier;
 
@@ -79,7 +79,7 @@ public class WsFederationConfiguration implements Serializable {
 
     private WsFederationAttributeMutator attributeMutator;
 
-    private List<Credential> signingWallet;
+    private transient List<Credential> signingWallet;
 
     private String name;
     private String id = UUID.randomUUID().toString();

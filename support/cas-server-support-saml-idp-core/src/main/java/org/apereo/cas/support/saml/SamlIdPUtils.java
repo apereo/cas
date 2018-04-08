@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -56,23 +57,24 @@ public class SamlIdPUtils {
     public static void preparePeerEntitySamlEndpointContext(final MessageContext outboundContext,
                                                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                             final String binding) throws SamlException {
+        final String entityId = adaptor.getEntityId();
         if (!adaptor.containsAssertionConsumerServices()) {
-            throw new SamlException("No assertion consumer service could be found for entity " + adaptor.getEntityId());
+            throw new SamlException("No assertion consumer service could be found for entity " + entityId);
         }
 
         final SAMLPeerEntityContext peerEntityContext = outboundContext.getSubcontext(SAMLPeerEntityContext.class, true);
         if (peerEntityContext == null) {
-            throw new SamlException("SAMLPeerEntityContext could not be defined for entity " + adaptor.getEntityId());
+            throw new SamlException("SAMLPeerEntityContext could not be defined for entity " + entityId);
         }
-        peerEntityContext.setEntityId(adaptor.getEntityId());
+        peerEntityContext.setEntityId(entityId);
 
         final SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
         if (endpointContext == null) {
-            throw new SamlException("SAMLEndpointContext could not be defined for entity " + adaptor.getEntityId());
+            throw new SamlException("SAMLEndpointContext could not be defined for entity " + entityId);
         }
         final Endpoint endpoint = adaptor.getAssertionConsumerService(binding);
         if (StringUtils.isBlank(endpoint.getBinding()) || StringUtils.isBlank(endpoint.getLocation())) {
-            throw new SamlException("Assertion consumer service does not define a binding or location for " + adaptor.getEntityId());
+            throw new SamlException("Assertion consumer service does not define a binding or location for " + entityId);
         }
         LOGGER.debug("Configured peer entity endpoint to be [{}] with binding [{}]", endpoint.getLocation(), endpoint.getBinding());
         endpointContext.setEndpoint(endpoint);
@@ -87,15 +89,15 @@ public class SamlIdPUtils {
      * @return the chaining metadata resolver for all saml services
      */
     @SneakyThrows
+    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     public static MetadataResolver getMetadataResolverForAllSamlServices(final ServicesManager servicesManager,
                                                                          final String entityID,
                                                                          final SamlRegisteredServiceCachingMetadataResolver resolver) {
 
         final Collection<RegisteredService> registeredServices = servicesManager.findServiceBy(SamlRegisteredService.class::isInstance);
-        final List<MetadataResolver> resolvers;
         final ChainingMetadataResolver chainingMetadataResolver = new ChainingMetadataResolver();
 
-        resolvers = registeredServices.stream()
+        final List<MetadataResolver> resolvers = registeredServices.stream()
             .filter(SamlRegisteredService.class::isInstance)
             .map(SamlRegisteredService.class::cast)
             .map(s -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, s, entityID))
@@ -105,11 +107,11 @@ public class SamlIdPUtils {
             .collect(Collectors.toList());
 
         LOGGER.debug("Located [{}] metadata resolvers to match against [{}]", resolvers, entityID);
+        
         chainingMetadataResolver.setResolvers(resolvers);
         chainingMetadataResolver.setId(entityID);
         chainingMetadataResolver.initialize();
         return chainingMetadataResolver;
-
     }
 
     /**

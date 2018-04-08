@@ -24,7 +24,7 @@ import java.util.Map;
  */
 @Slf4j
 public class PrincipalFromRequestHeaderNonInteractiveCredentialsAction extends BasePrincipalFromNonInteractiveCredentialsAction {
-
+    private static final int DEFAULT_SIZE = 20;
     private final String remotePrincipalHeader;
 
     public PrincipalFromRequestHeaderNonInteractiveCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
@@ -65,14 +65,13 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsAction extends B
     }
 
     private Map<String, List<String>> getAllRequestHeaderValues(final HttpServletRequest request) {
-        final Map<String, List<String>> headers = new LinkedHashMap<>();
-
+        final Map<String, List<String>> headers = new LinkedHashMap<>(DEFAULT_SIZE);
         final Enumeration names = request.getHeaderNames();
         while (names.hasMoreElements()) {
             final String name = (String) names.nextElement();
             final Enumeration values = request.getHeaders(name);
             if (values != null) {
-                final List<String> listValues = new ArrayList<>();
+                final List<String> listValues = new ArrayList<>(DEFAULT_SIZE);
                 while (values.hasMoreElements()) {
                     final String value = (String) values.nextElement();
                     listValues.add(value);

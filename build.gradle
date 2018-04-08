@@ -284,7 +284,7 @@ subprojects {
         findbugs {
             toolVersion = "${findbugsVersion}"
             sourceSets = [sourceSets.main]
-            ignoreFailures = true
+            ignoreFailures = false
             reportsDir = file("$project.buildDir/findbugsReports")
             effort = "max"
             reportLevel = "low"
@@ -333,6 +333,8 @@ subprojects {
             errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
         }
         testImplementation libraries.tests
+
+        compileOnly libraries.findbugsannotations
     }
 }
 

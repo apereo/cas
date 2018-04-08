@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -112,6 +113,7 @@ public class OAuth20Utils {
         return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.matches(redirectUri));
     }
 
+    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     private static OAuthRegisteredService getRegisteredOAuthServiceByPredicate(final ServicesManager servicesManager,
                                                                                final Predicate<OAuthRegisteredService> predicate) {
         final Collection<RegisteredService> services = servicesManager.getAllServices();

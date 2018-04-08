@@ -241,8 +241,9 @@ public class SamlUtils {
      * @throws SamlException the saml exception
      */
     public static void logSamlObject(final OpenSamlConfigBean configBean, final XMLObject samlObject) throws SamlException {
-        LOGGER.debug(StringUtils.repeat('*', SAML_OBJECT_LOG_ASTERIXLINE_LENGTH));
+        final String repeat = StringUtils.repeat('*', SAML_OBJECT_LOG_ASTERIXLINE_LENGTH);
+        LOGGER.debug(repeat);
         LOGGER.debug("Logging [{}]\n\n{}\n\n", samlObject.getClass().getName(), transformSamlObject(configBean, samlObject, true));
-        LOGGER.debug(StringUtils.repeat('*', SAML_OBJECT_LOG_ASTERIXLINE_LENGTH));
+        LOGGER.debug(repeat);
     }
 }
