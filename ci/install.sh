@@ -46,9 +46,9 @@ elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 elif [ "$MATRIX_JOB_TYPE" == "DEPANALYZE" ]; then
-    gradleBuild="$gradleBuild dependencyCheckAnalyze -x javadoc -x check \
+    gradleBuild="$gradleBuild dependencyCheckAnalyze dependencyCheckUpdate -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
-    -DskipNodeModulesCleanUp=true --parllel -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
+    -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 elif [ "$MATRIX_JOB_TYPE" == "DEPUPDATE" ] && [ isActiveBranchCommit ]; then
     gradleBuild="$gradleBuild dependencyUpdates -Drevision=release -x javadoc -x check  \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \

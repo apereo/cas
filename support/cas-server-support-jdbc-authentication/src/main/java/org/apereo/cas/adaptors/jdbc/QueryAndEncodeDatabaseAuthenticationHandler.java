@@ -136,15 +136,15 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
             if (!values.get(this.passwordFieldName).equals(digestedPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
-            if (StringUtils.isNotBlank(this.expiredFieldName)) {
-                final Object dbExpired = values.get(this.expiredFieldName);
-                if (dbExpired != null && (Boolean.TRUE.equals(BooleanUtils.toBoolean(dbExpired.toString())) || dbExpired.equals(Integer.valueOf(1)))) {
+            if (StringUtils.isNotBlank(this.expiredFieldName) && values.containsKey(this.expiredFieldName)) {
+                final String dbExpired = values.get(this.expiredFieldName).toString();
+                if (BooleanUtils.toBoolean(dbExpired) || "1".equals(dbExpired)) {
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }
             }
-            if (StringUtils.isNotBlank(this.disabledFieldName)) {
-                final Object dbDisabled = values.get(this.disabledFieldName);
-                if (dbDisabled != null && (Boolean.TRUE.equals(BooleanUtils.toBoolean(dbDisabled.toString())) || dbDisabled.equals(1))) {
+            if (StringUtils.isNotBlank(this.disabledFieldName) && values.containsKey(this.disabledFieldName)) {
+                final String dbDisabled = values.get(this.disabledFieldName).toString();
+                if (BooleanUtils.toBoolean(dbDisabled) || "1".equals(dbDisabled)) {
                     throw new AccountDisabledException("Account has been disabled");
                 }
             }
