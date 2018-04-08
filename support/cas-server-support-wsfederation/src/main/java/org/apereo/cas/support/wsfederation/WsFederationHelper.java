@@ -314,28 +314,29 @@ public class WsFederationHelper {
         final BufferedReader br = new BufferedReader(new InputStreamReader(config.getEncryptionPrivateKey().getInputStream(), StandardCharsets.UTF_8));
         Security.addProvider(new BouncyCastleProvider());
         LOGGER.debug("Parsing credential private key");
-        final PEMParser pemParser = new PEMParser(br);
-        final Object privateKeyPemObject = pemParser.readObject();
-        final JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(new BouncyCastleProvider());
-        final KeyPair kp;
-        if (privateKeyPemObject instanceof PEMEncryptedKeyPair) {
-            LOGGER.debug("Encryption private key is an encrypted keypair");
-            final PEMEncryptedKeyPair ckp = (PEMEncryptedKeyPair) privateKeyPemObject;
-            final PEMDecryptorProvider decProv = new JcePEMDecryptorProviderBuilder().build(config.getEncryptionPrivateKeyPassword().toCharArray());
-            LOGGER.debug("Attempting to decrypt the encrypted keypair based on the provided encryption private key password");
-            kp = converter.getKeyPair(ckp.decryptKeyPair(decProv));
-        } else {
-            LOGGER.debug("Extracting a keypair from the private key");
-            kp = converter.getKeyPair((PEMKeyPair) privateKeyPemObject);
+        try (PEMParser pemParser = new PEMParser(br)) {
+            final Object privateKeyPemObject = pemParser.readObject();
+            final JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(new BouncyCastleProvider());
+            final KeyPair kp;
+            if (privateKeyPemObject instanceof PEMEncryptedKeyPair) {
+                LOGGER.debug("Encryption private key is an encrypted keypair");
+                final PEMEncryptedKeyPair ckp = (PEMEncryptedKeyPair) privateKeyPemObject;
+                final PEMDecryptorProvider decProv = new JcePEMDecryptorProviderBuilder().build(config.getEncryptionPrivateKeyPassword().toCharArray());
+                LOGGER.debug("Attempting to decrypt the encrypted keypair based on the provided encryption private key password");
+                kp = converter.getKeyPair(ckp.decryptKeyPair(decProv));
+            } else {
+                LOGGER.debug("Extracting a keypair from the private key");
+                kp = converter.getKeyPair((PEMKeyPair) privateKeyPemObject);
+            }
+            final X509CertParser certParser = new X509CertParser();
+            // This is the certificate shared with ADFS in DER format, i.e certificate.crt
+            LOGGER.debug("Locating encryption certificate [{}]", config.getEncryptionCertificate());
+            certParser.engineInit(config.getEncryptionCertificate().getInputStream());
+            LOGGER.debug("Invoking certificate engine to parse the certificate [{}]", config.getEncryptionCertificate());
+            final X509CertificateObject cert = (X509CertificateObject) certParser.engineRead();
+            LOGGER.debug("Creating final credential based on the certificate [{}] and the private key", cert.getIssuerDN());
+            return new BasicX509Credential(cert, kp.getPrivate());
         }
-        final X509CertParser certParser = new X509CertParser();
-        // This is the certificate shared with ADFS in DER format, i.e certificate.crt
-        LOGGER.debug("Locating encryption certificate [{}]", config.getEncryptionCertificate());
-        certParser.engineInit(config.getEncryptionCertificate().getInputStream());
-        LOGGER.debug("Invoking certificate engine to parse the certificate [{}]", config.getEncryptionCertificate());
-        final X509CertificateObject cert = (X509CertificateObject) certParser.engineRead();
-        LOGGER.debug("Creating final credential based on the certificate [{}] and the private key", cert.getIssuerDN());
-        return new BasicX509Credential(cert, kp.getPrivate());
 
     }
 

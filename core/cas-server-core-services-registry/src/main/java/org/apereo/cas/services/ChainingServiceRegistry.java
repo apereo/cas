@@ -35,7 +35,7 @@ public class ChainingServiceRegistry extends AbstractServiceRegistry {
             .map(registry -> registry.delete(registeredService))
             .filter(Boolean::booleanValue)
             .findAny()
-            .orElse(false);
+            .orElse(Boolean.FALSE);
     }
 
     @Override

@@ -28,8 +28,8 @@ import java.util.Map;
 public class SmartOpenIdController extends AbstractDelegateController implements Serializable {
     private static final long serialVersionUID = -594058549445950430L;
 
-    private final ServerManager serverManager;
-    private final View successView;
+    private final transient ServerManager serverManager;
+    private final transient View successView;
 
     /**
      * Gets the association response. Determines the mode first.
