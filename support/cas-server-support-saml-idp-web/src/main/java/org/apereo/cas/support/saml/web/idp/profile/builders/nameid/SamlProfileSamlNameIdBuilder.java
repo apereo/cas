@@ -47,7 +47,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     }
 
     @Override
-    public NameID build(final RequestAbstractType authnRequest, final HttpServletRequest request, 
+    public NameID build(final RequestAbstractType authnRequest, final HttpServletRequest request,
                         final HttpServletResponse response,
                         final Object assertion, final SamlRegisteredService service,
                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
@@ -125,11 +125,11 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                                                      final String requiredNameFormat) {
         if (StringUtils.isNotBlank(requiredNameFormat) && !supportedNameFormats.contains(requiredNameFormat)) {
             LOGGER.warn("Required NameID format [{}] in the AuthN request issued by [{}] is not supported based on the metadata for [{}]. "
-                            + "The requested NameID format may not be honored. You should consult the metadata for this service "
-                            + "and ensure the requested NameID format is present in the collection of supported "
-                            + "metadata formats in the metadata, which are the following: [{}]",
-                    requiredNameFormat, SamlIdPUtils.getIssuerFromSamlRequest(authnRequest),
-                    adaptor.getEntityId(), adaptor.getSupportedNameIdFormats());
+                    + "The requested NameID format may not be honored. You should consult the metadata for this service "
+                    + "and ensure the requested NameID format is present in the collection of supported "
+                    + "metadata formats in the metadata, which are the following: [{}]",
+                requiredNameFormat, SamlIdPUtils.getIssuerFromSamlRequest(authnRequest),
+                adaptor.getEntityId(), adaptor.getSupportedNameIdFormats());
         }
     }
 
@@ -158,6 +158,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         }
         return null;
     }
+
     /**
      * Gets supported name id formats.
      *
@@ -223,14 +224,14 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                                                    final SamlRegisteredService service,
                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         try {
-            
+
             if (authnRequest instanceof AttributeQuery) {
                 final AttributeQuery query = AttributeQuery.class.cast(authnRequest);
                 final NameID nameID = query.getSubject().getNameID();
                 nameID.detach();
                 return nameID;
             }
-            
+
             final IdPAttribute attribute = prepareNameIdAttribute(assertion, nameFormat, adaptor);
             final SAML2StringNameIDEncoder encoder = prepareNameIdEncoder(authnRequest, nameFormat, attribute, service, adaptor);
             LOGGER.debug("Encoding NameID based on [{}]", nameFormat);
@@ -246,9 +247,9 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     /**
      * Prepare name id attribute id p attribute.
      *
-     * @param casAssertion  the assertion
-     * @param nameFormat the name format
-     * @param adaptor    the adaptor
+     * @param casAssertion the assertion
+     * @param nameFormat   the name format
+     * @param adaptor      the adaptor
      * @return the idp attribute
      */
     protected IdPAttribute prepareNameIdAttribute(final Object casAssertion, final String nameFormat,
@@ -258,12 +259,10 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         final IdPAttribute attribute = new IdPAttribute(AttributePrincipal.class.getName());
 
         final String nameIdValue;
-        switch (nameFormat.trim()) {
-            case NameIDType.TRANSIENT:
-                nameIdValue = persistentIdGenerator.generate(assertion.getPrincipal().getName(), adaptor.getEntityId());
-                break;
-            default:
-                nameIdValue = assertion.getPrincipal().getName();
+        if (nameFormat.trim().equalsIgnoreCase(NameIDType.TRANSIENT)) {
+            nameIdValue = persistentIdGenerator.generate(assertion.getPrincipal().getName(), adaptor.getEntityId());
+        } else {
+            nameIdValue = assertion.getPrincipal().getName();
         }
 
         final IdPAttributeValue<String> value = new StringAttributeValue(nameIdValue);
