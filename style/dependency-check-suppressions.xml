@@ -1,75 +1,154 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
     <suppress>
-        <gav regex="true">^org\.springmodules:spring-modules-cache:.*$</gav>
         <cve>CVE-2016-9878</cve>
     </suppress>
     <suppress>
-        <gav regex="true">^org\.springframework\.shell:spring-shell:.*$</gav>
         <cve>CVE-2016-9878</cve>
     </suppress>
     <suppress>
-        <gav regex="true">^org\.springframework\.webflow:spring-webflow:.*$</gav>
         <cve>CVE-2016-9878</cve>
     </suppress>
     <suppress>
-        <gav regex="true">^javax\.el:javax\.el-api:.*$</gav>
         <cve>CVE-2013-2566</cve>
     </suppress>
     <suppress>
-        <gav regex="true">^geronimo-spec:geronimo-spec-jta:.*$</gav>
         <cve>CVE-2008-0732</cve>
     </suppress>
     <suppress>
-        <gav regex="true">^geronimo-spec:geronimo-spec-jta:.*$</gav>
         <cve>CVE-2011-5034</cve>
     </suppress>
     <suppress>
-        <gav regex="true">^com\.apple:AppleJavaExtensions:.*$</gav>
         <cve>CVE-2010-0538</cve>
     </suppress>
     <suppress>
-        <gav regex="true">^org\.springframework\.webflow:spring-binding:.*$</gav>
         <cve>CVE-2016-9878</cve>
     </suppress>
     <suppress>
-        <gav regex="true">^javax\.el:javax\.el-api:.*$</gav>
         <cve>CVE-2015-2808</cve>
     </suppress>
     <suppress>
-        <gav regex="true">^org\.pac4j:spring-webmvc-pac4j:.*$</gav>
         <cve>CVE-2011-2731</cve>
     </suppress>
     <suppress>
-        <gav regex="true">^org\.pac4j:spring-webmvc-pac4j:.*$</gav>
         <cve>CVE-2011-2894</cve>
     </suppress>
     <suppress>
-        <gav regex="true">^org\.pac4j:spring-webmvc-pac4j:.*$</gav>
         <cve>CVE-2013-4152</cve>
     </suppress>
     <suppress>
-        <gav regex="true">^org\.codehaus\.groovy:groovy-jsr223:.*$</gav>
         <cve>CVE-2016-6497</cve>
     </suppress>
     <suppress>
-        <gav regex="true">^org\.pac4j:spring-webmvc-pac4j:.*$</gav>
         <cve>CVE-2013-6429</cve>
     </suppress>
     <suppress>
-        <gav regex="true">^org\.pac4j:spring-webmvc-pac4j:.*$</gav>
         <cve>CVE-2013-7315</cve>
     </suppress>
     <suppress>
-        <gav regex="true">^org\.pac4j:spring-webmvc-pac4j:.*$</gav>
         <cve>CVE-2011-2730</cve>
     </suppress>
     <suppress>
-        <gav regex="true">^org\.apache\.tomcat:tomcat-annotations-api:.*$</gav>
         <cve>CVE-2016-5425</cve>
     </suppress>
     <suppress>
-        <gav regex="true">^org\.apache\.tomcat:tomcat-annotations-api:.*$</gav>
         <cve>CVE-2016-6325</cve>
     </suppress>
+    <suppress>
+        <cve>CVE-2017-7297</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2012-4501</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2013-2136</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2013-6398</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-0031</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-9593</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-3252</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2012-1585</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2012-2101</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-7230</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2012-7231</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-5162</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2017-16239</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2012-1585</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2012-2101</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-7230</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-7231</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-5162</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2012-4456</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2012-4457</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2013-2014</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2013-2157</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2013-4222</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2013-6391</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-0204</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-3476</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-3520</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-3621</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-3646</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-7546</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-7308</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2016-5725</cve>
+    </suppress>
 </suppressions>
+

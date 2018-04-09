@@ -34,7 +34,7 @@ chmod -R 777 ./gradlew
 # sudo apt-get update  -qq > /dev/null
 # sudo apt-get install -y nodejs -qq > /dev/null
 
-if [ "$MATRIX_JOB_TYPE" == "BUILD" ] || [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
+if [ "$MATRIX_JOB_TYPE" == "BUILD" ] || [ "$MATRIX_JOB_TYPE" == "STYLE" ] || [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
     echo -e "Installing NPM...\n"
     sudo ./gradlew npmInstall --stacktrace -q
 fi
