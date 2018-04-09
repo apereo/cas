@@ -95,8 +95,8 @@ public class ThreadContextMDCServletFilter implements Filter {
     }
 
     private static void addContextAttribute(final String attributeName, final Object value) {
-        final String result = value.toString();
-        if (value != null && StringUtils.isNotBlank(result)) {
+        final String result = value != null ? value.toString() : null;
+        if (StringUtils.isNotBlank(result)) {
             MDC.put(attributeName, result);
         }
     }
