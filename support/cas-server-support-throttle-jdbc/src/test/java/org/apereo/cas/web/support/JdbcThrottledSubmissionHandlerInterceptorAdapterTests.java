@@ -6,8 +6,8 @@ import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
-import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -100,7 +100,7 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends
         throttle.preHandle(request, response, null);
 
         try {
-            authenticationManager.authenticate(AuthenticationTransaction.of(CoreAuthenticationTestUtils.getService(), badCredentials(username)));
+            authenticationManager.authenticate(DefaultAuthenticationTransaction.of(CoreAuthenticationTestUtils.getService(), badCredentials(username)));
         } catch (final AuthenticationException e) {
             throttle.postHandle(request, response, null, null);
             return response;
