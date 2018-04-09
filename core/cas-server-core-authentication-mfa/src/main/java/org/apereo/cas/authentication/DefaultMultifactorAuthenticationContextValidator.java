@@ -147,10 +147,4 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
         }
         return policy.getFailureMode();
     }
-
-    private Collection collectAuthenticationContexts(final Authentication authentication) {
-        final Map<String, Object> attributes = authentication.getAttributes();
-        final Object ctxAttr = attributes.get(this.authenticationContextAttribute);
-        return CollectionUtils.toCollection(ctxAttr);
-    }
 }

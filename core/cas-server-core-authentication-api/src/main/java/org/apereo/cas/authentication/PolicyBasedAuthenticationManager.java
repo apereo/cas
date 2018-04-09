@@ -8,6 +8,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalException;
 import org.apereo.cas.authentication.principal.NullPrincipal;
@@ -187,8 +188,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             if (principal == null) {
                 if (this.principalResolutionFailureFatal) {
                     LOGGER.warn("Principal resolution handled by [{}] produced a null principal for: [{}]"
-                            + "CAS is configured to treat principal resolution failures as fatal.",
-                        resolverName, credential);
+                        + "CAS is configured to treat principal resolution failures as fatal.", resolverName, credential);
                     throw new UnresolvedPrincipalException();
                 }
                 LOGGER.warn("Principal resolution handled by [{}] produced a null principal. "
@@ -218,7 +218,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         LOGGER.debug("Candidate/Registered authentication handlers for this transaction are [{}]", handlers);
         final Collection<AuthenticationHandlerResolver> handlerResolvers = authenticationEventExecutionPlan.getAuthenticationHandlerResolvers(transaction);
         LOGGER.debug("Authentication handler resolvers for this transaction are [{}]", handlerResolvers);
-        
+
         final Set<AuthenticationHandler> resolvedHandlers = handlerResolvers.stream()
             .filter(r -> r.supports(handlers, transaction))
             .map(r -> r.resolve(handlers, transaction))
@@ -412,9 +412,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         if (ex instanceof UndeclaredThrowableException) {
             e = ((UndeclaredThrowableException) ex).getUndeclaredThrowable();
         }
-        String msg = e.getMessage();
+        final StringBuilder msg = new StringBuilder(StringUtils.defaultString(e.getMessage()));
         if (e.getCause() != null) {
-            msg += " / " + e.getCause().getMessage();
+            msg.append(" / ").append(e.getCause().getMessage());
         }
         if (e instanceof GeneralSecurityException) {
             LOGGER.debug("[{}] exception details: [{}].", name, msg);

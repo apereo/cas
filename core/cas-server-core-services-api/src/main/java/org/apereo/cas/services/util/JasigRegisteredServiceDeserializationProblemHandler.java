@@ -54,28 +54,24 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
         boolean handled = false;
         if (beanOrClass instanceof CachingPrincipalAttributesRepository) {
             final CachingPrincipalAttributesRepository repo = CachingPrincipalAttributesRepository.class.cast(beanOrClass);
-            switch (propertyName) {
-                case "duration":
-                    for (int i = 1; i <= TOKEN_COUNT_DURATION; i++) {
-                        p.nextToken();
-                    }
-                    final String timeUnit = p.getText();
-                    for (int i = 1; i <= TOKEN_COUNT_EXPIRATION; i++) {
-                        p.nextToken();
-                    }
-                    final int expiration = p.getValueAsInt();
+            if ("duration".equals(propertyName)) {
+                for (int i = 1; i <= TOKEN_COUNT_DURATION; i++) {
+                    p.nextToken();
+                }
+                final String timeUnit = p.getText();
+                for (int i = 1; i <= TOKEN_COUNT_EXPIRATION; i++) {
+                    p.nextToken();
+                }
+                final int expiration = p.getValueAsInt();
 
-                    repo.setTimeUnit(timeUnit);
-                    repo.setExpiration(expiration);
+                repo.setTimeUnit(timeUnit);
+                repo.setExpiration(expiration);
 
-                    LOGGER.warn("CAS has converted legacy JSON property [{}] for type [{}]. It parsed 'expiration' value [{}] with time unit of [{}]."
-                            + "It is STRONGLY recommended that you review the configuration and upgrade from the legacy syntax.",
-                        propertyName, beanOrClass.getClass().getName(), expiration, timeUnit);
+                LOGGER.warn("CAS has converted legacy JSON property [{}] for type [{}]. It parsed 'expiration' value [{}] with time unit of [{}]."
+                        + "It is STRONGLY recommended that you review the configuration and upgrade from the legacy syntax.",
+                    propertyName, beanOrClass.getClass().getName(), expiration, timeUnit);
 
-                    handled = true;
-                    break;
-                default:
-                    break;
+                handled = true;
             }
         }
 
