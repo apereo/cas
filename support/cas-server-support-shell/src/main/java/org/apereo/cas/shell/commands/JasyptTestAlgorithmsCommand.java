@@ -33,8 +33,8 @@ public class JasyptTestAlgorithmsCommand implements CommandMarker {
      * List algorithms you can use Jasypt.
      * @param includeBC      whether to include the BouncyCastle provider
      */
-    @CliCommand(value = "jasypt-test-algorithms", help = "Test encryption alogrithms you can use with Jasypt to make sure encryption and decryption both work")
-    public void testAlgorithms(@CliOption(key = { "includeBC" },
+    @CliCommand(value = "jasypt-test-algorithms", help = "Test encryption algorithms you can use with Jasypt to make sure encryption and decryption both work")
+    public void validateAlgorithms(@CliOption(key = { "includeBC" },
                                 mandatory = false,
                                 help = "Include Bouncy Castle provider",
                                 specifiedDefaultValue = "true",

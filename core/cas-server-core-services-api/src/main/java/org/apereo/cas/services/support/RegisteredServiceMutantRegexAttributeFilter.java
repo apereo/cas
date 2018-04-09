@@ -81,7 +81,7 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
                 LOGGER.debug("Found a successful match for [{}] while filtering attribute values with [{}]", v.toString(), pattern.pattern());
                 final int count = matcher.groupCount();
                 if (StringUtils.isNotBlank(returnValue)) {
-                    String resultValue = new String(returnValue);
+                    String resultValue = returnValue;
                     for (int i = 1; i <= count; i++) {
                         resultValue = resultValue.replace("$" + i, matcher.group(i));
                     }

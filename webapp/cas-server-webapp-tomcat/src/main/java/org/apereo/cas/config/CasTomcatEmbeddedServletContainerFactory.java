@@ -29,11 +29,11 @@ import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletCon
 /**
  * A {@link TomcatEmbeddedServletContainerFactory} that will configure Tomcat with clustering support based on the
  * provided {@link CasEmbeddedApacheTomcatClusteringProperties}.
- *
+ * <p>
  * CAS Implementations may use this as a base for further {@link Tomcat} customisation (eg to enable JNDI).
  *
- * @since 5.3.0
  * @author sbearcsiro
+ * @since 5.3.0
  */
 @Slf4j
 public class CasTomcatEmbeddedServletContainerFactory extends TomcatEmbeddedServletContainerFactory {
@@ -125,18 +125,16 @@ public class CasTomcatEmbeddedServletContainerFactory extends TomcatEmbeddedServ
     }
 
     private ClusterManagerBase getClusteringManagerInstance() {
-        switch (clusteringProperties.getManagerType().toUpperCase()) {
-            case "DELTA":
-                final DeltaManager manager = new DeltaManager();
-                manager.setExpireSessionsOnShutdown(clusteringProperties.isExpireSessionsOnShutdown());
-                manager.setNotifyListenersOnReplication(true);
-                return manager;
-            default:
-                final BackupManager backupManager = new BackupManager();
-                backupManager.setNotifyListenersOnReplication(true);
-                return backupManager;
+        final String type = clusteringProperties.getManagerType().toUpperCase();
+        if ("DELTA".equalsIgnoreCase(type)) {
+            final DeltaManager manager = new DeltaManager();
+            manager.setExpireSessionsOnShutdown(clusteringProperties.isExpireSessionsOnShutdown());
+            manager.setNotifyListenersOnReplication(true);
+            return manager;
         }
-
+        final BackupManager backupManager = new BackupManager();
+        backupManager.setNotifyListenersOnReplication(true);
+        return backupManager;
     }
 
     @Getter

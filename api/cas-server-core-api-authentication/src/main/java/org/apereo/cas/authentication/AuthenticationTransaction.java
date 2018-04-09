@@ -72,8 +72,7 @@ public class AuthenticationTransaction implements Serializable {
      * @return true if this AuthenticationTransaction contains a credential of the specified type
      */
     public boolean hasCredentialOfType(final Class<? extends Credential> type) {
-        return credentials.stream()
-                .anyMatch(type::isInstance);
+        return credentials.stream().anyMatch(type::isInstance);
     }
 
     /**

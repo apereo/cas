@@ -54,10 +54,10 @@ public class CasSupportJdbcAuditConfiguration {
         t.setColumnLength(jdbc.getColumnLength());
         String tableName = AuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
         if (StringUtils.isNotBlank(jdbc.getDefaultSchema())) {
-            tableName = jdbc.getDefaultSchema() + '.' + tableName;
+            tableName = jdbc.getDefaultSchema().concat(".").concat(tableName);
         }
         if (StringUtils.isNotBlank(jdbc.getDefaultCatalog())) {
-            tableName = jdbc.getDefaultCatalog() + '.' + tableName;
+            tableName = jdbc.getDefaultCatalog().concat(".").concat(tableName);
         }
         t.setTableName(tableName);
         return t;
@@ -72,12 +72,12 @@ public class CasSupportJdbcAuditConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory() {
         return JpaBeans.newHibernateEntityManagerFactoryBean(
-                new JpaConfigDataHolder(
-                        JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
-                        "jpaInspektrAuditContext",
-                        CollectionUtils.wrap(AuditTrailEntity.class.getPackage().getName()),
-                        inspektrAuditTrailDataSource()),
-                casProperties.getAudit().getJdbc());
+            new JpaConfigDataHolder(
+                JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
+                "jpaInspektrAuditContext",
+                CollectionUtils.wrap(AuditTrailEntity.class.getPackage().getName()),
+                inspektrAuditTrailDataSource()),
+            casProperties.getAudit().getJdbc());
     }
 
     @Bean

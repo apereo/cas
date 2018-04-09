@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 import lombok.AllArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.cryptacular.x509.dn.Attribute;
@@ -142,7 +143,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
 
         private int currentIndex;
 
-        private final String[] values;
+        private final Object[] values;
 
         /**
          * Instantiates a new attribute context.
@@ -150,7 +151,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
          * @param values the values
          */
         AttributeContext(final String[] values) {
-            this.values = values;
+            this.values = ArrayUtils.clone(values);
         }
 
         /**
@@ -163,7 +164,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
             if (this.currentIndex == this.values.length) {
                 throw new IllegalStateException("No values remaining for attribute");
             }
-            return this.values[this.currentIndex++];
+            return this.values[this.currentIndex++].toString();
         }
     }
 }

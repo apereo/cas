@@ -122,7 +122,8 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
     @SneakyThrows
     private static void createSettingsTable(final AmazonDynamoDB amazonDynamoDBClient, final boolean deleteTables) {
         final String name = ColumnNames.ID.getColumnName();
-        final CreateTableRequest request = new CreateTableRequest().withAttributeDefinitions(new AttributeDefinition(name, ScalarAttributeType.S))
+        final CreateTableRequest request = new CreateTableRequest()
+            .withAttributeDefinitions(new AttributeDefinition(name, ScalarAttributeType.S))
             .withKeySchema(new KeySchemaElement(name, KeyType.HASH))
             .withProvisionedThroughput(new ProvisionedThroughput(PROVISIONED_THROUGHPUT, PROVISIONED_THROUGHPUT))
             .withTableName(TABLE_NAME);
