@@ -22,7 +22,7 @@ public class CasThymeleafOutputTemplateHandler extends AbstractTemplateHandler {
     @Override
     public void handleText(final IText text) {
         final String contentString = text.getText();
-        if (!contentString.isEmpty() && contentString.trim().isEmpty()) {
+        if (!contentString.isEmpty()) {
             if (!writeWhitespace) {
                 return;
             }

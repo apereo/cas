@@ -44,7 +44,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
         }
 
         final WebApplicationService selectedService = WebApplicationService.class.cast(
-                this.authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService));
+            this.authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService));
 
         LOGGER.debug("Processing logout request for service [{}]...", selectedService);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
@@ -67,22 +67,19 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
         LOGGER.debug("Logout request [{}] created for [{}] and ticket id [{}]", logoutRequest, selectedService, ticketId);
 
         final RegisteredService.LogoutType type = registeredService.getLogoutType() == null
-                ? RegisteredService.LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
+            ? RegisteredService.LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
         LOGGER.debug("Logout type registered for [{}] is [{}]", selectedService, type);
 
-        switch (type) {
-            case BACK_CHANNEL:
-                if (performBackChannelLogout(logoutRequest)) {
-                    logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
-                } else {
-                    logoutRequest.setStatus(LogoutRequestStatus.FAILURE);
-                    LOGGER.warn("Logout message is not sent to [{}]; Continuing processing...", singleLogoutService.getId());
-                }
-                break;
-            default:
-                LOGGER.debug("Logout operation is not yet attempted for [{}] given logout type is set to [{}]", selectedService, type);
-                logoutRequest.setStatus(LogoutRequestStatus.NOT_ATTEMPTED);
-                break;
+        if (type == RegisteredService.LogoutType.BACK_CHANNEL) {
+            if (performBackChannelLogout(logoutRequest)) {
+                logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
+            } else {
+                logoutRequest.setStatus(LogoutRequestStatus.FAILURE);
+                LOGGER.warn("Logout message is not sent to [{}]; Continuing processing...", singleLogoutService.getId());
+            }
+        } else {
+            LOGGER.debug("Logout operation is not yet attempted for [{}] given logout type is set to [{}]", selectedService, type);
+            logoutRequest.setStatus(LogoutRequestStatus.NOT_ATTEMPTED);
         }
         return logoutRequest;
 
@@ -120,7 +117,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
      */
     private static boolean serviceSupportsSingleLogout(final RegisteredService registeredService) {
         return registeredService != null
-                && registeredService.getAccessStrategy().isServiceAccessAllowed()
-                && registeredService.getLogoutType() != RegisteredService.LogoutType.NONE;
+            && registeredService.getAccessStrategy().isServiceAccessAllowed()
+            && registeredService.getLogoutType() != RegisteredService.LogoutType.NONE;
     }
 }

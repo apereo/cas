@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.util.io.CommunicationsManager;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.action.AbstractAction;
@@ -13,8 +14,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-
-import static org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer.*;
 
 /**
  * This is {@link SendPasswordResetInstructionsAction}.
@@ -27,8 +26,6 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
     /** Param name for the token. */
     public static final String PARAMETER_NAME_TOKEN = "pswdrst";
     
-
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -85,7 +82,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             final PasswordManagementService passwordManagementService, final CasConfigurationProperties casProperties) {
         final String token = passwordManagementService.createToken(username);
         return casProperties.getServer().getPrefix()
-                .concat('/' + FLOW_ID_LOGIN + '?' + PARAMETER_NAME_TOKEN + '=').concat(token);
+                .concat('/' + CasWebflowConfigurer.FLOW_ID_LOGIN + '?' + PARAMETER_NAME_TOKEN + '=').concat(token);
     }
 
     /**
