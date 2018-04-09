@@ -150,5 +150,16 @@
     <suppress>
         <cve>CVE-2016-5725</cve>
     </suppress>
+    <suppress>
+        <cve>CVE-2011-2732</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-0054</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-1904</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2017-6056</cve>
+    </suppress>
 </suppressions>
-
