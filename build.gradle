@@ -299,6 +299,7 @@ subprojects {
             pyPackageEnabled = false
             pyDistributionEnabled = false
             nexusEnabled = false
+            centralEnabled = false
         }
     }
 

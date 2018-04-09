@@ -38,6 +38,13 @@ public class ChainingTemplateViewResolver extends AbstractConfigurableTemplateRe
         this.resolvers.add(resolver);
     }
 
+    /**
+     * Initialize and sort resolvers here before computing templates.
+     */
+    public void initialize() {
+        AnnotationAwareOrderComparator.sortIfNecessary(this.resolvers);
+    }
+
     @Override
     protected ITemplateResource computeTemplateResource(final IEngineConfiguration configuration,
                                                         final String ownerTemplate,
@@ -45,7 +52,6 @@ public class ChainingTemplateViewResolver extends AbstractConfigurableTemplateRe
                                                         final String resourceName,
                                                         final String characterEncoding,
                                                         final Map<String, Object> templateResolutionAttributes) {
-        AnnotationAwareOrderComparator.sortIfNecessary(this.resolvers);
         for (final AbstractTemplateResolver r : this.resolvers) {
             final TemplateResolution resource = r.resolveTemplate(configuration, ownerTemplate, template, templateResolutionAttributes);
             if (resource != null && resource.isTemplateResourceExistenceVerified()) {
