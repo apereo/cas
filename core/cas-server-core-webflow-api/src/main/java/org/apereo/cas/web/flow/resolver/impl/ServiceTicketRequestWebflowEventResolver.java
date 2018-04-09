@@ -94,7 +94,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
                 if (validAuthn) {
                     LOGGER.debug("Existing authentication context linked to ticket-granting ticket [{}] is valid. "
                         + "CAS should begin to issue service tickets for [{}] once credentials are renewed", ticketGrantingTicketId, service);
-                    return false;
+                    return true;
                 }
                 LOGGER.debug("Existing authentication context linked to ticket-granting ticket [{}] is NOT valid. "
                         + "CAS will not issue service tickets for [{}] just yet without renewing the authentication context",
