@@ -77,6 +77,7 @@ public class CasCookieConfiguration {
         return CipherExecutor.noOp();
     }
 
+    @ConditionalOnMissingBean(name = "ticketGrantingTicketCookieGenerator")
     @Bean
     @RefreshScope
     public CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator() {
