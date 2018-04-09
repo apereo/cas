@@ -4,13 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -65,7 +65,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
                 .addSuccess("test", new DefaultAuthenticationHandlerExecutionResult(handler, meta));
 
         if (this.p.supports(credential)) {
-            this.p.populateAttributes(builder, AuthenticationTransaction.of(credential));
+            this.p.populateAttributes(builder, DefaultAuthenticationTransaction.of(credential));
         }
         return builder;
     }
