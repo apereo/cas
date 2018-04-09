@@ -260,7 +260,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 attributes.removeIf(authenticatorAttributes::contains);
             }
         }
-        this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
+        this.authenticatedEntryAttributes = attributes.toArray(new String[0]);
         LOGGER.debug("LDAP authentication entry attributes for the authentication request are [{}]", (Object[]) this.authenticatedEntryAttributes);
     }
 }
