@@ -201,7 +201,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
             });
         }
 
-        return urls.toArray(new URI[urls.size()]);
+        return urls.toArray(new URI[0]);
     }
 
     /**
