@@ -37,7 +37,7 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
             LOGGER.debug("Starting to collect hazelcast statistics for map [{}] identified by key [{}]...", map, key);
             statsList.add(new HazelcastStatistics(map, hz.getCluster().getMembers().size()));
         });
-        return statsList.toArray(new CacheStatistics[statsList.size()]);
+        return statsList.toArray(new CacheStatistics[0]);
     }
 
     /**
