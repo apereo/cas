@@ -142,7 +142,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService());
 
         final Event ev = this.action.execute(context);
-        assertEquals(CasWebflowConstants.STATE_ID_SUCCESS, ev.getId());
+        assertEquals(CasWebflowConstants.STATE_ID_WARN, ev.getId());
     }
 
     @Test

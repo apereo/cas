@@ -10,6 +10,12 @@
         <cve>CVE-2016-9878</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2015-3250</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2017-14798</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2013-2566</cve>
     </suppress>
     <suppress>
@@ -161,5 +167,8 @@
     </suppress>
     <suppress>
         <cve>CVE-2017-6056</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-1000129</cve>
     </suppress>
 </suppressions>
