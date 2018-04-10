@@ -26,8 +26,6 @@ import java.security.GeneralSecurityException;
 @Slf4j
 public class AzureAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-
-    
     private final PFAuth azureAuthenticatorInstance;
     private final AzureAuthenticatorAuthenticationRequestBuilder authenticationRequestBuilder;
 
