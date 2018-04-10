@@ -1190,23 +1190,14 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 
 ### REST Surrogate Accounts
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.surrogate.rest`.
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.surrogate.rest`.
 
 ### Notifications
 
-```properties
-# cas.authn.surrogate.sms.from=
-# cas.authn.surrogate.sms.text=
-# cas.authn.surrogate.sms.attributeName=phone
-
-# cas.authn.surrogate.mail.from=
-# cas.authn.surrogate.mail.text=
-# cas.authn.surrogate.mail.subject=
-# cas.authn.surrogate.mail.cc=
-# cas.authn.surrogate.mail.bcc=
-# cas.authn.surrogate.mail.attributeName=mail
-
-```
+Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
+under the configuration key `cas.authn.surrogate`. SMS notifications settings for this feature are 
+available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.surrogate`.
 
 ## Risk-based Authentication
 
@@ -1230,33 +1221,16 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 
 # cas.authn.adaptive.risk.response.mfaProvider=
 # cas.authn.adaptive.risk.response.riskyAuthenticationAttribute=triggeredRiskBasedAuthentication
-
-# cas.authn.adaptive.risk.response.mail.from=
-# cas.authn.adaptive.risk.response.mail.text=
-# cas.authn.adaptive.risk.response.mail.subject=
-# cas.authn.adaptive.risk.response.mail.cc=
-# cas.authn.adaptive.risk.response.mail.bcc=
-# cas.authn.adaptive.risk.response.mail.attributeName=mail
-
-# cas.authn.adaptive.risk.response.sms.from=
-# cas.authn.adaptive.risk.response.sms.text=
-# cas.authn.adaptive.risk.response.sms.attributeName=phone
 ```
+
+Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
+under the configuration key `cas.authn.adaptive.risk.response`. SMS notifications settings for this feature are 
+available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.adaptive.risk.response`.
+
 
 ## Email Submissions
 
-To learn more about this topic, [please review this guide](SMS-Email-Configuration.html).
-
-
-```properties
-# spring.mail.host=
-# spring.mail.port=
-# spring.mail.username=
-# spring.mail.password=
-# spring.mail.testConnection=true
-# spring.mail.properties.mail.smtp.auth=true
-# spring.mail.properties.mail.smtp.starttls.enable=true
-```
+Email notifications settings are available [here](Configuration-Properties-Common.html#email-notifications).
 
 ## SMS Messaging
 
@@ -3050,18 +3024,9 @@ See [this guide](Service-Management.html) to learn more.
 
 ### Service Registry Notifications
 
-```properties
-# cas.serviceRegistry.sms.from=
-# cas.serviceRegistry.sms.text=
-# cas.serviceRegistry.sms.attributeName=phone
-
-# cas.serviceRegistry.mail.from=
-# cas.serviceRegistry.mail.text=
-# cas.serviceRegistry.mail.subject=
-# cas.serviceRegistry.mail.cc=
-# cas.serviceRegistry.mail.bcc=
-# cas.serviceRegistry.mail.attributeName=mail
-```
+Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
+under the configuration key `cas.serviceRegistry`. SMS notifications settings for this feature are 
+available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.serviceRegistry`.
 
 ### JSON Service Registry
 
@@ -3831,16 +3796,15 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character
 # cas.authn.pm.policyPattern=^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}
 
-# cas.authn.pm.reset.text=Reset your password with this link: %s
-# cas.authn.pm.reset.subject=Password Reset Request
-# cas.authn.pm.reset.from=
 # cas.authn.pm.reset.expirationMinutes=1
-# cas.authn.pm.reset.emailAttribute=mail
 # cas.authn.pm.reset.securityQuestionsEnabled=true
 
 # Automatically log in after successful password change
 # cas.authn.pm.autoLogin=false
 ```
+
+Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
+under the configuration key `cas.authn.pm.reset`.
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.pm.reset`.
