@@ -846,8 +846,46 @@ The parameters passed are as follows:
 | `configuration`       | The LDAP password policy configuration carrying the account state handler defined.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
+## Email Notifications
 
+To learn more about this topic, [please review this guide](SMS-Email-Configuration.html).
 
+The following options are shared and apply when CAS is configured to send email notifications, given the provider's *configuration key*:
+
+```properties
+# ${configurationKey}.mail.from=
+# ${configurationKey}.mail.text=
+# ${configurationKey}.mail.subject=
+# ${configurationKey}.mail.cc=
+# ${configurationKey}.mail.bcc=
+# ${configurationKey}.mail.attributeName=mail
+```
+
+The following settings may also need to be defined to describe the mail server settings:
+
+```properties
+# spring.mail.host=
+# spring.mail.port=
+# spring.mail.username=
+# spring.mail.password=
+# spring.mail.testConnection=true
+# spring.mail.properties.mail.smtp.auth=true
+# spring.mail.properties.mail.smtp.starttls.enable=true
+```
+
+## SMS Notifications
+ 
+The following options are shared and apply when CAS is configured to send SMS notifications, given the provider's *configuration key*:
+ 
+```properties
+# ${configurationKey}.sms.from=
+# ${configurationKey}.sms.text=
+# ${configurationKey}.sms.attributeName=phone
+```
+
+You will also need to ensure a provider is defined that is able to send SMS messages. To learn more about this 
+topic, [please review this guide](SMS-Messaging-Configuration.html).
+ 
 ## Delegated Authentication Settings
 
 The following  options are shared and apply when CAS is configured to delegate authentication 

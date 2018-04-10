@@ -119,7 +119,6 @@ public class PasswordPolicyProperties implements Serializable {
     @Getter
     @Setter
     public static class Groovy extends SpringResourceProperties {
-
         private static final long serialVersionUID = 8079027843747126083L;
     }
 }

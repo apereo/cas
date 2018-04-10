@@ -98,12 +98,7 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
     public void init() {
         final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
         if (pm.isEnabled()) {
-            if (!communicationsManager.isMailSenderDefined()) {
-                LOGGER.warn("CAS is unable to send password-reset emails given no settings are defined to account for email servers, etc");
-            }
-            if (!communicationsManager.isSmsSenderDefined()) {
-                LOGGER.warn("CAS is unable to send password-reset sms messages given no settings are defined to account for sms providers, etc");
-            }
+            communicationsManager.validate();
         }
     }
 

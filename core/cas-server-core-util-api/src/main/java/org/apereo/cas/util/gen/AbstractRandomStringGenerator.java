@@ -61,12 +61,12 @@ public abstract class AbstractRandomStringGenerator implements RandomStringGener
     @Override
     public String getNewString(final int size) {
         final byte[] random = getNewStringAsBytes(size);
-        return this.convertBytesToString(random);
+        return convertBytesToString(random);
     }
 
     @Override
     public String getNewString() {
-        return getNewString(this.getDefaultLength());
+        return getNewString(getDefaultLength());
     }
 
     @Override

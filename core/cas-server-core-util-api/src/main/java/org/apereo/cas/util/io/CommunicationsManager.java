@@ -91,7 +91,7 @@ public class CommunicationsManager {
                          final String cc, final String bcc) {
         try {
             if (!isMailSenderDefined() || StringUtils.isBlank(text) || StringUtils.isBlank(from)
-                    || StringUtils.isBlank(subject) || StringUtils.isBlank(to)) {
+                || StringUtils.isBlank(subject) || StringUtils.isBlank(to)) {
                 LOGGER.warn("Could not send email to [{}] because either no address/subject/text is found or email settings are not configured.", to);
                 return false;
             }
@@ -159,4 +159,15 @@ public class CommunicationsManager {
         return CollectionUtils.firstElement(value).toString();
     }
 
+    /**
+     * Validate.
+     */
+    public void validate() {
+        if (!isMailSenderDefined()) {
+            LOGGER.warn("CAS is unable to send tokens via email given no settings are defined to account for email servers, etc");
+        }
+        if (!isSmsSenderDefined()) {
+            LOGGER.warn("CAS is unable to send tokens via sms messages given no settings are defined to account for sms providers, etc");
+        }
+    }
 }

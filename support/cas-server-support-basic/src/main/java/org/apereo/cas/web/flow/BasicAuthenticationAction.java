@@ -25,9 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class BasicAuthenticationAction extends AbstractNonInteractiveCredentialsAction {
-
-
-
+    
     public BasicAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                      final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
                                      final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
