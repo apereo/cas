@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support.config;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
@@ -13,6 +14,8 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  * @since 5.3.0
  */
 public class AuthenticationThrottlingCondition extends SpringBootCondition {
+
+    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     @Override
     public ConditionOutcome getMatchOutcome(final ConditionContext context,
                                             final AnnotatedTypeMetadata annotatedTypeMetadata) {
