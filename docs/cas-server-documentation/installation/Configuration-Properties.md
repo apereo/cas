@@ -35,6 +35,7 @@ A number of CAS configuration options equally apply to a number of modules and f
 
 CAS by default will attempt to locate settings and properties inside a given directory indicated 
 under the setting name `cas.standalone.config` and otherwise falls back to using `/etc/cas/config`.
+Note: This path is from the root directory, windows would be `C:\etc\cas\config` and Unix `/etc/cas/config`
 
 There also exists a `cas.standalone.config.file` which can be used to directly feed a collection of properties
 to CAS in form of a file or classpath resource. This is specially useful in cases where a bare CAS server is deployed in the cloud without the extra ceremony of a configuration server or an external directory for that matter and the deployer wishes to avoid overriding embedded configuration files.
