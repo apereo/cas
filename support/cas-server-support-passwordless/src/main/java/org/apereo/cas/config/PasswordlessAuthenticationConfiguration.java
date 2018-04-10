@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccount;
@@ -14,6 +15,8 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
+import org.apereo.cas.impl.account.GroovyPasswordlessUserAccountStore;
+import org.apereo.cas.impl.account.RestfulPasswordlessUserAccountStore;
 import org.apereo.cas.impl.account.SimplePasswordlessUserAccountStore;
 import org.apereo.cas.impl.token.InMemoryPasswordlessTokenRepository;
 import org.apereo.cas.services.ServicesManager;
@@ -107,8 +110,17 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
     @RefreshScope
     @ConditionalOnMissingBean(name = "passwordlessUserAccountStore")
     public PasswordlessUserAccountStore passwordlessUserAccountStore() {
-        final PasswordlessAuthenticationProperties.Accounts props = casProperties.getAuthn().getPasswordless().getAccounts();
-        final Map accounts = props.getSimple()
+        final PasswordlessAuthenticationProperties.Accounts accounts = casProperties.getAuthn().getPasswordless().getAccounts();
+
+        if (accounts.getGroovy().getLocation() != null) {
+            return new GroovyPasswordlessUserAccountStore(accounts.getGroovy().getLocation());
+        }
+
+        if (StringUtils.isNotBlank(accounts.getRest().getUrl())) {
+            return new RestfulPasswordlessUserAccountStore(accounts.getRest());
+        }
+
+        final Map simple = accounts.getSimple()
             .entrySet()
             .stream()
             .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
@@ -122,7 +134,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
                 }
                 return account;
             }));
-        return new SimplePasswordlessUserAccountStore(accounts);
+        return new SimplePasswordlessUserAccountStore(simple);
     }
 
     @Bean

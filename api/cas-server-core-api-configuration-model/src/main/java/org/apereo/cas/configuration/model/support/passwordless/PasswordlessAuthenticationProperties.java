@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.passwordless;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -38,9 +37,16 @@ public class PasswordlessAuthenticationProperties implements Serializable {
      */
     private Tokens tokens = new Tokens();
 
+    @RequiresModule(name = "cas-server-support-passwordless")
     @Getter
     @Setter
     public static class Accounts {
+
+        /**
+         * Passwordless authentication settings via REST.
+         */
+        private Rest rest = new Rest();
+
         /**
          * Passwordless authentication settings via Groovy.
          */
@@ -54,6 +60,7 @@ public class PasswordlessAuthenticationProperties implements Serializable {
         private Map<String, String> simple = new LinkedHashMap<>();
     }
 
+    @RequiresModule(name = "cas-server-support-passwordless")
     @Getter
     @Setter
     public static class Tokens {
