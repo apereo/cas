@@ -22,6 +22,7 @@ import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -121,12 +122,7 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
 
     @SneakyThrows
     private static void createSettingsTable(final AmazonDynamoDB amazonDynamoDBClient, final boolean deleteTables) {
-        final String name = ColumnNames.ID.getColumnName();
-        final CreateTableRequest request = new CreateTableRequest()
-            .withAttributeDefinitions(new AttributeDefinition(name, ScalarAttributeType.S))
-            .withKeySchema(new KeySchemaElement(name, KeyType.HASH))
-            .withProvisionedThroughput(new ProvisionedThroughput(PROVISIONED_THROUGHPUT, PROVISIONED_THROUGHPUT))
-            .withTableName(TABLE_NAME);
+        final CreateTableRequest request = createCreateTableRequest();
         if (deleteTables) {
             final DeleteTableRequest delete = new DeleteTableRequest(request.getTableName());
             LOGGER.debug("Sending delete request [{}] to remove table if necessary", delete);
@@ -140,5 +136,15 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         LOGGER.debug("Sending request [{}] to obtain table description...", describeTableRequest);
         final TableDescription tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
         LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
+    }
+
+    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
+    private static CreateTableRequest createCreateTableRequest() {
+        final String name = ColumnNames.ID.getColumnName();
+        return new CreateTableRequest()
+            .withAttributeDefinitions(new AttributeDefinition(name, ScalarAttributeType.S))
+            .withKeySchema(new KeySchemaElement(name, KeyType.HASH))
+            .withProvisionedThroughput(new ProvisionedThroughput(PROVISIONED_THROUGHPUT, PROVISIONED_THROUGHPUT))
+            .withTableName(TABLE_NAME);
     }
 }
