@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -9,8 +10,6 @@ import org.springframework.webflow.core.collection.AttributeMap;
 import javax.servlet.http.HttpServletRequest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import lombok.Setter;
 
 /**
  * Provides special handling for parameters in requests made to the CAS login
@@ -50,10 +49,12 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
     public String createFlowExecutionUrl(final String flowId, final String flowExecutionKey, final HttpServletRequest request) {
         final String encoding = getEncodingScheme(request);
 
-        return request.getParameterMap().entrySet().stream()
-                .flatMap(entry -> encodeMultiParameter(entry.getKey(), entry.getValue(), encoding))
-                .collect(Collectors.joining(DELIMITER, request.getRequestURI() + '?',
-                        DELIMITER + encodeSingleParameter(this.flowExecutionKeyParameter, flowExecutionKey, encoding)));
+
+        final String executionKey = encodeSingleParameter(this.flowExecutionKeyParameter, flowExecutionKey, encoding);
+        final String flowUrl = request.getParameterMap().entrySet().stream()
+            .flatMap(entry -> encodeMultiParameter(entry.getKey(), entry.getValue(), encoding))
+            .collect(Collectors.joining(DELIMITER, request.getRequestURI() + '?', DELIMITER + executionKey));
+        return flowUrl;
     }
 
     @Override
