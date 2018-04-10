@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.api.PasswordlessTokenRepository;
-import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
+import org.apereo.cas.util.gen.DefaultRandomNumberGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 
 /**
@@ -19,7 +19,7 @@ import org.apereo.cas.util.gen.RandomStringGenerator;
 public abstract class BasePasswordlessTokenRepository implements PasswordlessTokenRepository {
     private static final int TOKEN_LENGTH = 6;
 
-    private final RandomStringGenerator tokenGenerator = new DefaultRandomStringGenerator(TOKEN_LENGTH);
+    private final RandomStringGenerator tokenGenerator = new DefaultRandomNumberGenerator(TOKEN_LENGTH);
     private final int tokenExpirationInSeconds;
 
     @Override

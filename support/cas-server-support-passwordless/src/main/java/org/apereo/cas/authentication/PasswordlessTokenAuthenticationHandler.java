@@ -33,10 +33,6 @@ public class PasswordlessTokenAuthenticationHandler extends AbstractPreAndPostPr
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         final OneTimePasswordCredential c = (OneTimePasswordCredential) credential;
         final Optional<String> token = passwordlessTokenRepository.findToken(c.getId());
-        if ("1".equalsIgnoreCase("1"))    {
-            final Principal principal = principalFactory.createPrincipal(c.getId());
-            return createHandlerResult(credential, principal, new ArrayList<>());
-        }
 
         if (token.isPresent() && token.get().equalsIgnoreCase(c.getId())) {
             final Principal principal = principalFactory.createPrincipal(c.getId());
