@@ -63,7 +63,8 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
             final ActionState acceptState = createActionState(flow, STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION, acceptAction);
             createTransitionForState(acceptState, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, STATE_ID_PASSWORDLESS_DISPLAY);
 
-            final Transition transition = (Transition) state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+            final ActionState submission = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
+            final Transition transition = (Transition) submission.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
             final String targetStateId = transition.getTargetStateId();
             createTransitionForState(acceptState, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetStateId);
             
