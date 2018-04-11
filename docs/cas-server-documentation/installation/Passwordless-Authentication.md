@@ -5,13 +5,17 @@ title: CAS - Passwordless Authentication
 
 # Passwordless Authentication
 
-Passwordless authentication is a form of authentication in CAS where passwords take the form of one-time tokens that expire after a configurable period of time. 
-Using this strategy, users are simply asked for a username typically which is used to locate the user record to identify forms of contact such as email and phone
-number. One located, the generated token is sent to the user via the configured notification strategies (i.e. email, sms, etc) where the user is then expected to 
+Passwordless Authentication is a form of authentication in CAS where passwords take the form of tokens that expire after a configurable period of time. 
+Using this strategy, users are simply asked for an identifier (i.e. username) which is used to locate the user record that contains forms of contact such as email and phone
+number. Once located, the CAS-generated token is sent to the user via the configured notification strategies (i.e. email, sms, etc) where the user is then expected to 
 provide the token back to CAS in order to proceed. 
 
-In order to successfully implement this feature, configuration needs to be in place to contact account stores that hold user records who qualify for passwordless authentication.
-Similarly, CAS must be configured to manage issues tokens in order to execute find, validate, expire or save operations in appropriate data stores.
+<div class="alert alert-info"><strong>No Magic Link</strong><p>
+Presently, there is no support for magic links that would remove the task of providing the token back to CAS allowing the user to proceed automagically.
+This variant may be worked out in future releases.</p></div>
+
+In order to successfully implement this feature, configuration needs to be in place to contact account stores that hold user records who qualify for passwordless authentication. 
+Similarly, CAS must be configured to manage issued tokens in order to execute find, validate, expire or save operations in appropriate data stores.
 
 ## Overview
 
@@ -48,7 +52,14 @@ import org.apereo.cas.api.*
 def run(Object[] args) {
     def username = args[0]
     def logger = args[1]
+    
     logger.info("Locating user record for user $username")
+    
+    /*
+     ...
+     Locate the record for the given username, and return the result back to CAS.
+     ...
+    */
     
     def account = new PasswordlessUserAccount()
     account.setUsername(username)
@@ -76,4 +87,30 @@ would produce a response body similar to the following:
 
 ## Token Management
 
+The following strategies define how issued tokens may be managed by CAS. 
 
+### Memory
+
+This is the default option where tokens are kept in memory using a cache with a configurable expiration period. Needless to say, this option 
+is not appropriate in clustered CAS deployments inside there is not a way to synchronize and replicate tokens across CAS nodes.
+
+### REST
+
+This strategy allows one design REST endpoints in charge of managing tokens and their expiration policy entirely. 
+CAS continues to generate tokens and the endpoint is only acting as a facade to the real token store, receiving tokens from CAS
+in an encrypted fashion. 
+
+The following operations need to be supported by the endpoint:
+
+| HTTP Method | Description                               | Parameter(s)          | Response
+|-------------|-------------------------------------------|-----------------------|--------------------------------
+| `GET`       | Locate tokens for the user.               | `username`            | Token in the response body.
+| `DELETE`    | Delete all tokens for the user.           | `username`            | N/A
+| `DELETE`    | Delete a single token for the user.       | `username`, `token`   | N/A
+| `POST`      | Save a token for the user.                | `username`, `token`   | N/A
+
+### Messaging & Notifications
+
+Users may be notified of tokens via text messages, mail, etc.
+To learn more about available options, please [see this guide](SMS-Messaging-Configuration.html)
+or [this guide](Sending-Email-Configuration.html).
