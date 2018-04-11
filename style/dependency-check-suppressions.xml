@@ -262,6 +262,15 @@
         <cve>CVE-2013-6357</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2013-7458</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-4335</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-8080</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2014-0075</cve>
     </suppress>
     <suppress>
