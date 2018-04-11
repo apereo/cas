@@ -1201,8 +1201,7 @@ available [here](Configuration-Properties-Common.html#sms-notifications) under t
 
 ## Risk-based Authentication
 
-Evaluate suspicious authentication requests and take action.
-To learn more about this topic, [please review this guide](Configuring-RiskBased-Authentication.html).
+Evaluate suspicious authentication requests and take action. To learn more about this topic, [please review this guide](Configuring-RiskBased-Authentication.html).
 
 ```properties
 # cas.authn.adaptive.risk.threshold=0.6
@@ -1227,6 +1226,35 @@ Email notifications settings for this feature are available [here](Configuration
 under the configuration key `cas.authn.adaptive.risk.response`. SMS notifications settings for this feature are 
 available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.adaptive.risk.response`.
 
+## Passwordless Authentication
+
+To learn more about this topic, [please review this guide](Passwordless-Authentication.html).
+
+### Account Stores
+
+```properties
+# cas.authn.passwordless.accounts.simple.casuser=cas@example.org
+# cas.authn.passwordless.accounts.groovy.location=file:/etc/cas/config/pwdless.groovy
+```
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.passwordless.accounts.rest`.
+
+### Token Management
+
+```properties
+# cas.authn.passwordless.accounts.expireInSeconds=180
+```
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.passwordless.tokens.rest`. The signing key and the encryption 
+key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. 
+Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under 
+the configuration key `cas.authn.passwordless.tokens.rest`.
+
+Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
+under the configuration key `cas.authn.passwordless.tokens`. SMS notifications settings for this feature are 
+available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.passwordless.tokens`.
 
 ## Email Submissions
 
@@ -1653,10 +1681,10 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 
 ### JWT Tickets
 
-Allow CAS tickets through various protocol channels to be created as JWTs. See [this guide](Configure-ServiceTicket-JWT.html) or [this guide](../protocol/REST-Protocol.html) for more info.
+Allow CAS tickets through various protocol channels to be created as JWTs. See [this guide](Configure-ServiceTicket-JWT.html) 
+or [this guide](../protocol/REST-Protocol.html) for more info.
 
 ```properties
-# Turn encryption on/off  for tickets
 # cas.authn.token.crypto.encryptionEnabled=true
 ```
 
@@ -2999,7 +3027,7 @@ a local truststore is provided by CAS to improve portability of configuration ac
 
 ### Hostname Verification
 
-The default options are avaiable for hostname verification:
+The default options are available for hostname verification:
 
 | Type                    | Description
 |-------------------------|--------------------------------------
@@ -3138,7 +3166,7 @@ Replication modes may be configured per the following options:
 Control how CAS services definition files should be replicated across a CAS cluster backed by a distributed Hazelcast cache.
 To learn more about this topic, [please review this guide](Configuring-Service-Replication.html).
 
-Hazlcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.serviceRegistry.stream.hazelcast.config`.
+Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.serviceRegistry.stream.hazelcast.config`.
 
 ```properties
 # cas.serviceRegistry.stream.hazelcast.duration=PT1M
@@ -3184,7 +3212,7 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 To learn more about this topic, [please review this guide](Hazelcast-Ticket-Registry.html).
 
-Hazlcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.ticket.registry.hazelcast`.
+Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.ticket.registry.hazelcast`.
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.hazelcast`.
 
