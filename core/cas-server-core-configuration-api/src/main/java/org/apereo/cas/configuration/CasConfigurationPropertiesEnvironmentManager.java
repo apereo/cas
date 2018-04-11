@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration;
 
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration2.Configuration;
@@ -25,12 +27,14 @@ import java.util.Map;
  */
 
 @Slf4j
+@RequiredArgsConstructor
+@Getter
 public class CasConfigurationPropertiesEnvironmentManager {
-    @Autowired
-    private ConfigurationPropertiesBindingPostProcessor binder;
+    @NonNull
+    private final ConfigurationPropertiesBindingPostProcessor binder;
 
     @Autowired
-    private Environment environment;
+    private final Environment environment;
 
     /**
      * Gets standalone profile configuration directory.
@@ -88,7 +92,7 @@ public class CasConfigurationPropertiesEnvironmentManager {
      * @param binder             the binder
      * @param applicationContext the application context
      */
-    public static void rebindCasConfigurationProperties(@NonNull final ConfigurationPropertiesBindingPostProcessor binder,
+    public static void rebindCasConfigurationProperties(final ConfigurationPropertiesBindingPostProcessor binder,
                                                         final ApplicationContext applicationContext) {
 
         final Map<String, CasConfigurationProperties> map = applicationContext.getBeansOfType(CasConfigurationProperties.class);
