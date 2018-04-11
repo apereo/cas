@@ -31,8 +31,8 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
-import org.apereo.cas.services.resource.DefaultResourceNamingStrategy;
-import org.apereo.cas.services.resource.ResourceNamingStrategy;
+import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.DefaultRegisteredServiceCipherExecutor;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.springframework.beans.factory.ObjectProvider;
@@ -142,11 +142,11 @@ public class CasCoreServicesConfiguration {
         return new NoOpRegisteredServiceReplicationStrategy();
     }
 
-    @ConditionalOnMissingBean(name = "resourceNamingStrategy")
+    @ConditionalOnMissingBean(name = "registeredServiceresourceNamingStrategy")
     @Bean
     @RefreshScope
-    public ResourceNamingStrategy resourceNamingStrategy() {
-        return new DefaultResourceNamingStrategy();
+    public RegisteredServiceResourceNamingStrategy resourceNamingStrategy() {
+        return new DefaultRegisteredServiceResourceNamingStrategy();
     }
 
     @ConditionalOnMissingBean(name = "serviceRegistry")

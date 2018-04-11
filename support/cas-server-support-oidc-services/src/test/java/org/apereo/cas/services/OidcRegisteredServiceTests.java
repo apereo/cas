@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
-import org.apereo.cas.services.resource.DefaultResourceNamingStrategy;
+import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
@@ -34,7 +34,7 @@ public class OidcRegisteredServiceTests {
         this.dao = new JsonServiceRegistry(RESOURCE, false,
                 mock(ApplicationEventPublisher.class),
                      new NoOpRegisteredServiceReplicationStrategy(),
-                     new DefaultResourceNamingStrategy());
+                     new DefaultRegisteredServiceResourceNamingStrategy());
     }
 
     @BeforeClass

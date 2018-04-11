@@ -4,13 +4,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.RegisteredService;
 
 /**
- * This is {@link DefaultResourceNamingStrategy}. This class provides the default
+ * This is {@link DefaultRegisteredServiceResourceNamingStrategy}. This class provides the default
  * naming for resource based services.
  *
  * @author Travis Schmidt
  * @since 5.3.0
  */
-public class DefaultResourceNamingStrategy implements ResourceNamingStrategy {
+public class DefaultRegisteredServiceResourceNamingStrategy implements RegisteredServiceResourceNamingStrategy {
 
     /**
      * Method creates a filename to store the service.
@@ -21,6 +21,6 @@ public class DefaultResourceNamingStrategy implements ResourceNamingStrategy {
      */
     @Override
     public String build(final RegisteredService service, final String extension) {
-        return StringUtils.remove(service.getName(), " ") + "-" + service.getId() + '.' + extension;
+        return StringUtils.remove(service.getName(), ' ') + '-' + service.getId() + '.' + extension;
     }
 }

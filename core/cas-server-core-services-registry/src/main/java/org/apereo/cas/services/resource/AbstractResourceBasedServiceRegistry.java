@@ -84,14 +84,14 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     private RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy;
 
-    private ResourceNamingStrategy resourceNamingStrategy;
+    private RegisteredServiceResourceNamingStrategy resourceNamingStrategy;
 
     public AbstractResourceBasedServiceRegistry(final Resource configDirectory,
                                                 final Collection<StringSerializer<RegisteredService>> serializers,
                                                 final ApplicationEventPublisher eventPublisher) throws Exception {
         this(configDirectory, serializers, false, eventPublisher,
                 new NoOpRegisteredServiceReplicationStrategy(),
-                new DefaultResourceNamingStrategy());
+                new DefaultRegisteredServiceResourceNamingStrategy());
     }
 
     /**
@@ -106,7 +106,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     public AbstractResourceBasedServiceRegistry(final Path configDirectory, final StringSerializer<RegisteredService> serializer,
                                                 final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
-                                                final ResourceNamingStrategy resourceNamingStrategy) {
+                                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
         this(configDirectory, CollectionUtils.wrap(serializer), enableWatcher, eventPublisher,
                 registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
@@ -124,7 +124,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                                                 final Collection<StringSerializer<RegisteredService>> serializers, final boolean enableWatcher,
                                                 final ApplicationEventPublisher eventPublisher,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
-                                                final ResourceNamingStrategy resourceNamingStrategy) {
+                                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
         initializeRegistry(configDirectory, serializers, enableWatcher, eventPublisher, registeredServiceReplicationStrategy,
                 resourceNamingStrategy);
     }
@@ -143,7 +143,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                                                 final Collection<StringSerializer<RegisteredService>> serializers, final boolean enableWatcher,
                                                 final ApplicationEventPublisher eventPublisher,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
-                                                final ResourceNamingStrategy resourceNamingStrategy) throws Exception {
+                                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) throws Exception {
         final Resource servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, getExtension());
         if (servicesDirectory == null) {
             throw new IllegalArgumentException("Could not determine the services configuration directory from " + configDirectory);
@@ -156,12 +156,12 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     private void initializeRegistry(final Path configDirectory, final Collection<StringSerializer<RegisteredService>> serializers,
                                     final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
                                     final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
-                                    final ResourceNamingStrategy resourceNamingStrategy) {
+                                    final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
         setEventPublisher(eventPublisher);
         this.registeredServiceReplicationStrategy = ObjectUtils.defaultIfNull(registeredServiceReplicationStrategy,
             new NoOpRegisteredServiceReplicationStrategy());
         this.resourceNamingStrategy = ObjectUtils.defaultIfNull(resourceNamingStrategy,
-             new DefaultResourceNamingStrategy());
+             new DefaultRegisteredServiceResourceNamingStrategy());
         this.registeredServiceSerializers = serializers;
         this.serviceFileNamePattern = RegexUtils.createPattern(PATTERN_REGISTERED_SERVICE_FILE_NAME + getExtension());
         this.serviceRegistryDirectory = configDirectory;

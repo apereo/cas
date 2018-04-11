@@ -6,7 +6,7 @@ import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.JsonServiceRegistry;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
-import org.apereo.cas.services.resource.DefaultResourceNamingStrategy;
+import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
@@ -51,7 +51,7 @@ public class GrouperRegisteredServiceAccessStrategyRegistryTests {
         final JsonServiceRegistry dao = new JsonServiceRegistry(RESOURCE, false,
                 mock(ApplicationEventPublisher.class),
                      new NoOpRegisteredServiceReplicationStrategy(),
-                     new DefaultResourceNamingStrategy());
+                     new DefaultRegisteredServiceResourceNamingStrategy());
         dao.save(service);
         dao.load();
     }

@@ -3,7 +3,7 @@ package org.apereo.cas.services;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
-import org.apereo.cas.services.resource.ResourceNamingStrategy;
+import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
@@ -45,7 +45,7 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
      */
     public JsonServiceRegistry(final Path configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
-                               final ResourceNamingStrategy resourceNamingStrategy) {
+                               final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
         super(configDirectory, new DefaultRegisteredServiceJsonSerializer(), enableWatcher,
             eventPublisher, registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
@@ -63,7 +63,7 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
      */
     public JsonServiceRegistry(final Resource configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
-                               final ResourceNamingStrategy resourceNamingStrategy) throws Exception {
+                               final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) throws Exception {
         super(configDirectory, CollectionUtils.wrapList(new CasAddonsRegisteredServicesJsonSerializer(),
             new DefaultRegisteredServiceJsonSerializer()), enableWatcher, eventPublisher,
                 registeredServiceReplicationStrategy, resourceNamingStrategy);

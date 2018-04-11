@@ -3,7 +3,7 @@ package org.apereo.cas.services;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
-import org.apereo.cas.services.resource.ResourceNamingStrategy;
+import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.context.ApplicationEventPublisher;
@@ -54,7 +54,7 @@ public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
      */
     public YamlServiceRegistry(final Path configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
-                               final ResourceNamingStrategy resourceNamingStrategy) {
+                               final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
         super(configDirectory, new RegisteredServiceYamlSerializer(), enableWatcher, eventPublisher,
                 registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
@@ -72,7 +72,7 @@ public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
      */
     public YamlServiceRegistry(final Resource configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
-                               final ResourceNamingStrategy resourceNamingStrategy) throws Exception {
+                               final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) throws Exception {
         super(configDirectory, CollectionUtils.wrapList(new RegisteredServiceYamlSerializer()), enableWatcher,
             eventPublisher, registeredServiceReplicationStrategy, resourceNamingStrategy);
     }

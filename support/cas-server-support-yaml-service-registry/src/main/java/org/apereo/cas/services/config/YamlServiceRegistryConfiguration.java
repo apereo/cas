@@ -9,7 +9,7 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.YamlServiceRegistry;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
-import org.apereo.cas.services.resource.ResourceNamingStrategy;
+import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -40,7 +40,7 @@ public class YamlServiceRegistryConfiguration implements ServiceRegistryExecutio
 
     @Autowired
     @Qualifier("resourceNamingStrategy")
-    private ResourceNamingStrategy resourceNamingStrategy;
+    private RegisteredServiceResourceNamingStrategy resourceNamingStrategy;
 
     @Bean
     @RefreshScope
