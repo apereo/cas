@@ -3,6 +3,7 @@ package org.apereo.cas.impl.account;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apereo.cas.api.PasswordlessUserAccount;
@@ -47,5 +48,12 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
             LOGGER.error(e.getMessage(), e);
         }
         return Optional.empty();
+    }
+
+    @SneakyThrows
+    public static void main(String[] args) {
+        PasswordlessUserAccount a = new PasswordlessUserAccount("username", "email", "phone", "test");
+        String s = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(a);
+        System.out.println(s);
     }
 }
