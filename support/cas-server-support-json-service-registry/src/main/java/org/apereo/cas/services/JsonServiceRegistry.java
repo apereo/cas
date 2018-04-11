@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
+import org.apereo.cas.services.resource.ResourceNamingStrategy;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
@@ -43,9 +44,10 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
      * @param registeredServiceReplicationStrategy the registered service replication strategy
      */
     public JsonServiceRegistry(final Path configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
-                               final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) {
+                               final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
+                               final ResourceNamingStrategy resourceNamingStrategy) {
         super(configDirectory, new DefaultRegisteredServiceJsonSerializer(), enableWatcher,
-            eventPublisher, registeredServiceReplicationStrategy);
+            eventPublisher, registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
     /**
@@ -60,9 +62,11 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
      * @throws Exception the IO exception
      */
     public JsonServiceRegistry(final Resource configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
-                               final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) throws Exception {
+                               final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
+                               final ResourceNamingStrategy resourceNamingStrategy) throws Exception {
         super(configDirectory, CollectionUtils.wrapList(new CasAddonsRegisteredServicesJsonSerializer(),
-            new DefaultRegisteredServiceJsonSerializer()), enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
+            new DefaultRegisteredServiceJsonSerializer()), enableWatcher, eventPublisher,
+                registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
     @Override
