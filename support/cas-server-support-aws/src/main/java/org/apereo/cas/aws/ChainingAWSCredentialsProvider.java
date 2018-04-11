@@ -11,7 +11,8 @@ import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.auth.PropertiesFileCredentialsProvider;
 import com.amazonaws.auth.SystemPropertiesCredentialsProvider;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
@@ -19,6 +20,7 @@ import org.springframework.core.io.Resource;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * This is {@link ChainingAWSCredentialsProvider}.
@@ -27,7 +29,8 @@ import java.util.List;
  * @since 5.3.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Getter
 public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
     private final List<AWSCredentialsProvider> chain;
 
@@ -124,17 +127,43 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
             }
         }
         if (StringUtils.isNotBlank(profilePath) && StringUtils.isNotBlank(profileName)) {
-            chain.add(new ProfileCredentialsProvider(profilePath, profileName));
+            addProviderToChain(nothing -> {
+                chain.add(new ProfileCredentialsProvider(profilePath, profileName));
+                return null;
+            });
         }
-        chain.add(new SystemPropertiesCredentialsProvider());
-        chain.add(new EnvironmentVariableCredentialsProvider());
-        chain.add(new ClasspathPropertiesFileCredentialsProvider("awscredentials.properties"));
+        addProviderToChain(nothing -> {
+            chain.add(new SystemPropertiesCredentialsProvider());
+            return null;
+        });
+
+        addProviderToChain(nothing -> {
+            chain.add(new EnvironmentVariableCredentialsProvider());
+            return null;
+        });
+
+        addProviderToChain(nothing -> {
+            chain.add(new ClasspathPropertiesFileCredentialsProvider("awscredentials.properties"));
+            return null;
+        });
+
         if (StringUtils.isNotBlank(credentialAccessKey) && StringUtils.isNotBlank(credentialSecretKey)) {
-            final BasicAWSCredentials credentials = new BasicAWSCredentials(credentialAccessKey, credentialSecretKey);
-            chain.add(new AWSStaticCredentialsProvider(credentials));
+            addProviderToChain(nothing -> {
+                final BasicAWSCredentials credentials = new BasicAWSCredentials(credentialAccessKey, credentialSecretKey);
+                chain.add(new AWSStaticCredentialsProvider(credentials));
+                return null;
+            });
         }
 
         LOGGER.debug("AWS chained credential providers are configured as [{}]", chain);
         return new ChainingAWSCredentialsProvider(chain);
+    }
+
+    private static void addProviderToChain(final Function<Void, Void> func) {
+        try {
+            func.apply(null);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 }
