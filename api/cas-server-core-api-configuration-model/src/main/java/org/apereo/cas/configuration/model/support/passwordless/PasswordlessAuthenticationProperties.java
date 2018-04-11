@@ -69,7 +69,7 @@ public class PasswordlessAuthenticationProperties implements Serializable {
         /**
          * Indicate how long should the token be considered valid.
          */
-        private final int expireInSeconds = 180;
+        private int expireInSeconds = 180;
 
         /**
          * Passwordless authentication settings via REST.
@@ -114,6 +114,5 @@ public class PasswordlessAuthenticationProperties implements Serializable {
          */
         @NestedConfigurationProperty
         private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
-
     }
 }
