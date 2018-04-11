@@ -1201,8 +1201,7 @@ available [here](Configuration-Properties-Common.html#sms-notifications) under t
 
 ## Risk-based Authentication
 
-Evaluate suspicious authentication requests and take action.
-To learn more about this topic, [please review this guide](Configuring-RiskBased-Authentication.html).
+Evaluate suspicious authentication requests and take action. To learn more about this topic, [please review this guide](Configuring-RiskBased-Authentication.html).
 
 ```properties
 # cas.authn.adaptive.risk.threshold=0.6
@@ -1227,6 +1226,35 @@ Email notifications settings for this feature are available [here](Configuration
 under the configuration key `cas.authn.adaptive.risk.response`. SMS notifications settings for this feature are 
 available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.adaptive.risk.response`.
 
+## Passwordless Authentication
+
+To learn more about this topic, [please review this guide](Passwordless-Authentication.html).
+
+### Account Stores
+
+```properties
+# cas.authn.passwordless.accounts.simple.casuser=cas@example.org
+# cas.authn.passwordless.accounts.groovy.location=file:/etc/cas/config/pwdless.groovy
+```
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.passwordless.accounts.rest`.
+
+### Token Management
+
+```properties
+# cas.authn.passwordless.accounts.expireInSeconds=180
+```
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.passwordless.tokens.rest`. The signing key and the encryption 
+key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. 
+Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under 
+the configuration key `cas.authn.passwordless.tokens.rest`.
+
+Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
+under the configuration key `cas.authn.passwordless.tokens`. SMS notifications settings for this feature are 
+available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.passwordless.tokens`.
 
 ## Email Submissions
 
@@ -1653,10 +1681,10 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 
 ### JWT Tickets
 
-Allow CAS tickets through various protocol channels to be created as JWTs. See [this guide](Configure-ServiceTicket-JWT.html) or [this guide](../protocol/REST-Protocol.html) for more info.
+Allow CAS tickets through various protocol channels to be created as JWTs. See [this guide](Configure-ServiceTicket-JWT.html) 
+or [this guide](../protocol/REST-Protocol.html) for more info.
 
 ```properties
-# Turn encryption on/off  for tickets
 # cas.authn.token.crypto.encryptionEnabled=true
 ```
 
