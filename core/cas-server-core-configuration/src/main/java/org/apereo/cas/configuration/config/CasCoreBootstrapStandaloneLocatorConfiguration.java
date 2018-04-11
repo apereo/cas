@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -25,6 +26,9 @@ import org.springframework.core.env.Environment;
 @Configuration("casCoreBootstrapStandaloneLocatorConfiguration")
 @Slf4j
 public class CasCoreBootstrapStandaloneLocatorConfiguration {
+
+    @Autowired
+    private ConfigurationPropertiesBindingPostProcessor binder;
 
     @Autowired
     private Environment environment;
@@ -45,6 +49,6 @@ public class CasCoreBootstrapStandaloneLocatorConfiguration {
     @ConditionalOnMissingBean(name = "casConfigurationPropertiesEnvironmentManager")
     @Bean
     public CasConfigurationPropertiesEnvironmentManager casConfigurationPropertiesEnvironmentManager() {
-        return new CasConfigurationPropertiesEnvironmentManager();
+        return new CasConfigurationPropertiesEnvironmentManager(binder, environment);
     }
 }
