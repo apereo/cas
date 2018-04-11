@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.passwordless;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -71,6 +72,11 @@ public class PasswordlessAuthenticationProperties implements Serializable {
         private final int expireInSeconds = 180;
 
         /**
+         * Passwordless authentication settings via REST.
+         */
+        private RestTokens rest = new RestTokens();
+
+        /**
          * Email settings for notifications.
          */
         @NestedConfigurationProperty
@@ -97,4 +103,17 @@ public class PasswordlessAuthenticationProperties implements Serializable {
         private static final long serialVersionUID = -8102345678378393382L;
     }
 
+    @RequiresModule(name = "cas-server-support-passwordless")
+    @Getter
+    @Setter
+    public static class RestTokens extends RestEndpointProperties {
+        private static final long serialVersionUID = -8102345678378393382L;
+
+        /**
+         * Crypto settings on how to reset the password.
+         */
+        @NestedConfigurationProperty
+        private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
+
+    }
 }

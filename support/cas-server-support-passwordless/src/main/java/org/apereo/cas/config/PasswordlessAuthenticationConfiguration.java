@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
@@ -14,11 +15,14 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
 import org.apereo.cas.impl.account.GroovyPasswordlessUserAccountStore;
 import org.apereo.cas.impl.account.RestfulPasswordlessUserAccountStore;
 import org.apereo.cas.impl.account.SimplePasswordlessUserAccountStore;
 import org.apereo.cas.impl.token.InMemoryPasswordlessTokenRepository;
+import org.apereo.cas.impl.token.PasswordlessTokenCipherExecutor;
+import org.apereo.cas.impl.token.RestfulPasswordlessTokenRepository;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.AcceptPasswordlessAuthenticationAction;
@@ -141,7 +145,21 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
     @RefreshScope
     @ConditionalOnMissingBean(name = "passwordlessTokenRepository")
     public PasswordlessTokenRepository passwordlessTokenRepository() {
-        return new InMemoryPasswordlessTokenRepository(casProperties.getAuthn().getPasswordless().getTokens().getExpireInSeconds());
+        final PasswordlessAuthenticationProperties.Tokens tokens = casProperties.getAuthn().getPasswordless().getTokens();
+        if (StringUtils.isNotBlank(tokens.getRest().getUrl())) {
+            final EncryptionJwtSigningJwtCryptographyProperties crypto = tokens.getRest().getCrypto();
+            final CipherExecutor cipher;
+            if (crypto.isEnabled()) {
+                cipher = new PasswordlessTokenCipherExecutor(
+                    crypto.getEncryption().getKey(),
+                    crypto.getSigning().getKey(),
+                    crypto.getAlg());
+            } else {
+                cipher = CipherExecutor.noOpOfSerializableToString();
+            }
+            return new RestfulPasswordlessTokenRepository(tokens.getExpireInSeconds(), tokens.getRest(), cipher);
+        }
+        return new InMemoryPasswordlessTokenRepository(tokens.getExpireInSeconds());
     }
 
     @Bean
