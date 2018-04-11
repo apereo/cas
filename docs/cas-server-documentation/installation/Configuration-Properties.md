@@ -3027,7 +3027,7 @@ a local truststore is provided by CAS to improve portability of configuration ac
 
 ### Hostname Verification
 
-The default options are avaiable for hostname verification:
+The default options are available for hostname verification:
 
 | Type                    | Description
 |-------------------------|--------------------------------------
@@ -3166,7 +3166,7 @@ Replication modes may be configured per the following options:
 Control how CAS services definition files should be replicated across a CAS cluster backed by a distributed Hazelcast cache.
 To learn more about this topic, [please review this guide](Configuring-Service-Replication.html).
 
-Hazlcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.serviceRegistry.stream.hazelcast.config`.
+Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.serviceRegistry.stream.hazelcast.config`.
 
 ```properties
 # cas.serviceRegistry.stream.hazelcast.duration=PT1M
@@ -3212,7 +3212,7 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 To learn more about this topic, [please review this guide](Hazelcast-Ticket-Registry.html).
 
-Hazlcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.ticket.registry.hazelcast`.
+Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.ticket.registry.hazelcast`.
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.hazelcast`.
 

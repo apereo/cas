@@ -786,7 +786,7 @@ The following  options are shared and apply when CAS is configured to integrate 
 
 ## Password Policy Settings
 
-The following  options are shared and apply when CAS is configured to integrate with account sources and authentication strategies that support password policy enforement and detection, given the provider's *configuration key*. Note that certain setting may only be applicable if the underlying account source is LDAP and are only taken into account if the authentication strategy configured in CAS is able to honor and recognize them: 
+The following  options are shared and apply when CAS is configured to integrate with account sources and authentication strategies that support password policy enforcement and detection, given the provider's *configuration key*. Note that certain setting may only be applicable if the underlying account source is LDAP and are only taken into account if the authentication strategy configured in CAS is able to honor and recognize them: 
 
 ```properties
 # ${configurationKey}.type=GENERIC|AD|FreeIPA|EDirectory
@@ -813,7 +813,7 @@ Password policy strategy types are outlined below. The strategy evaluates the au
 
 | Option        | Description
 |---------------|-----------------------------------------------------------------------------
-| `DEFAULT`     | Accepts the auhentication response as is, and processes account state, if any.
+| `DEFAULT`     | Accepts the authentication response as is, and processes account state, if any.
 | `GROOVY`      | Examine the authentication response as part of a Groovy script dynamically. The responsibility of handling account state changes and warnings is entirely delegated to the script.
 | `REJECT_RESULT_CODE`  | An extension of the `DEFAULT` where account state is processed only if the result code of the authentication response is not blacklisted in the configuration. By default `INVALID_CREDENTIALS(49)` prevents CAS from handling account states.
 
