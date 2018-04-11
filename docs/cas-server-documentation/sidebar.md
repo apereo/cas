@@ -69,6 +69,7 @@ layout: null
     *   [Surrogacy & Impersonation](/$version/installation/Surrogate-Authentication.html)
     *   [ClearPass](/$version/integration/ClearPass.html)
     *   [GUA](/$version/installation/GUA-Authentication.html)
+    *   [Passwordless](/$version/installation/Passwordless-Authentication.html)
     
 * [Attributes](#casattributes)
     *   [Attribute Resolution](/$version/integration/Attribute-Resolution.html)
