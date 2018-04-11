@@ -104,7 +104,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     private Optional<RegisteredService> getRegisteredServiceFromRequest(final HttpServletRequest request) {
         final WebApplicationService service = this.argumentExtractor.extractService(request);
         if (service != null) {
-            return Optional.of(this.servicesManager.findServiceBy(service));
+            return Optional.ofNullable(this.servicesManager.findServiceBy(service));
         }
         return Optional.empty();
     }
