@@ -33,16 +33,14 @@ Always ensure you have enough diagnostics data in your report:
 - Have you described your deployment/development environment in enough detail? 
 - Have you included error logs, screenshots and other useful snippets of your configuration to demonstrate the issue? 
 - Have you included steps to explain how one might duplicate the problem? 
-- Have you prepapred unit tests to recreate the issue?
+- Have you prepared unit tests to recreate the issue?
 - Have you prepared an overlay project that might allow the project to duplicate the issue? 
 
 Put another way; readers of your case aren’t necessarily housed in your head! They don’t know what you know. Help them out. Would you want to respond to your own report?
 
 ### Be Patient
 
-Once you have posted to a mailing list, please be patient and allow members to read your post and respond. Messages submitted in quick succession or to multiple mailing lists at the same time will eventually
-be considered spam by the mail server and the sender will be blocked. Remember that all acitivity on the mailing list is **entirely voluntary**. There are no SLAs. If you find the mailing list responses
-are not quick enough, you may seek [other options for support](/cas/Support.html).
+Once you have posted to a mailing list, please be patient and allow members to read your post and respond. Messages submitted in quick succession or to multiple mailing lists at the same time will eventually be considered spam by the mail server and the sender will be blocked. Remember that all activity on the mailing list is **entirely voluntary**. There are no SLAs. If you find the mailing list responses are not quick enough, you may seek [other options for support](/cas/Support.html).
 
 If you find that your messages are not reaching the mailing list in due time, please contact the project members and/or Apereo to resolve the issue.
 
@@ -83,7 +81,7 @@ requests, software design, and offering contributions.
 
 ## CAS Announcements List (cas-announce@apereo.org)
 
-_Focus_: Release accouncements.
+_Focus_: Release announcements.
 
 This is a low-traffic list to receive notifications about CAS releases including security patches.
 
