@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import java.util.List;
+
 /**
  * This is {@link Pac4jSamlClientProperties}.
  *
@@ -106,6 +108,27 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
     private String nameIdPolicyFormat;
 
     /**
+     * Blacklist of Signature method algorithm URIs.
+     */
+    private List<String> blackListedSignatureSigningAlgorithms;
+
+    /**
+     * Whitelist of Signature method algorithm URIs.
+     */
+    private List<String> signatureAlgorithms;
+
+    /**
+     * Digest method algorithm URIs.
+     */
+    private List<String> signatureReferenceDigestMethods;
+
+    /**
+     * Signature canonicalization algorithm URI.
+     */
+    private String signatureCanonicalizationAlgorithm;
+
+
+    /**
      * Whether metadata should be marked to request sign assertions.
      */
     private boolean wantsAssertionsSigned;
@@ -124,4 +147,20 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * A negative value de-activates the selection process and is the default.
      */
     private int assertionConsumerServiceIndex = -1;
+
+
+    /**
+     * Set the ProviderName tag on the AuthnRequest. If not defined a default value will be selected for you.
+     */
+    private String providerName;
+
+    /**
+     * Set a list of extensions to be added in to the AuthnRequest.
+     */
+    private List<Pac4jSamlClientExtensionsProperties> authnRequestExtensions;
+
+    /**
+     * Use an attribute as the id instead of the nameId
+     */
+    private String attributeAsId;
 }
