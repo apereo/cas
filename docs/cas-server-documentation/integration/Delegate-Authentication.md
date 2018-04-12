@@ -94,6 +94,13 @@ On CAS server side, to push attributes to the CAS client, it should be configure
 }
 ```
 
+## Server Configuration
+
+Remember that this feature requires session affinity (and optionally session replication) in clustered deployments,
+as the requests and responses throughout the login flow are stored via server-backed session storage mechanisms. 
+
+You will need to configure your deployment environment and load-balancers accordingly.
+
 ## Troubleshooting
 
 To enable additional logging, configure the log4j configuration file to add the following
