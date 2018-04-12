@@ -38,7 +38,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    private final AuthnContextClassRefBuilder authnContextClassRefBuilder;
+    private final transient AuthnContextClassRefBuilder authnContextClassRefBuilder;
 
     public SamlProfileSamlAuthNStatementBuilder(final OpenSamlConfigBean configBean,
                                                 final AuthnContextClassRefBuilder authnContextClassRefBuilder) {

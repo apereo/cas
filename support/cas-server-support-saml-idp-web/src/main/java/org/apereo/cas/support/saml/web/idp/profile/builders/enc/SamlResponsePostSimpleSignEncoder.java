@@ -32,7 +32,7 @@ public class SamlResponsePostSimpleSignEncoder extends BaseSamlResponseEncoder {
     }
 
     @Override
-    protected BaseSAML2MessageEncoder getMessageEncoderInstance() throws Exception {
+    protected BaseSAML2MessageEncoder getMessageEncoderInstance() {
         final var encoder = new HTTPPostSimpleSignEncoder();
         encoder.setVelocityEngine(this.velocityEngineFactory);
         return encoder;

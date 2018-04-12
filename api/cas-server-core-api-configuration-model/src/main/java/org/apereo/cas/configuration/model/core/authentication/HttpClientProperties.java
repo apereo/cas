@@ -75,7 +75,7 @@ public class HttpClientProperties implements Serializable {
          * In the event that local certificates are to be imported into the CAS running environment,
          * a local truststore is provided by CAS to improve portability of configuration across environments.
          */
-        private Resource file;
+        private transient Resource file;
 
         /**
          * The truststore password.

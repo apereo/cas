@@ -52,6 +52,7 @@ public class CasCoreViewsConfiguration {
             chain.addResolver(file);
         }));
 
+        chain.initialize();
         return chain;
     }
 

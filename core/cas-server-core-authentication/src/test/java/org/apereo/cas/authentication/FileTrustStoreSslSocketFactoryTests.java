@@ -33,7 +33,7 @@ public class FileTrustStoreSslSocketFactoryTests {
     public ExpectedException thrown = ExpectedException.none();
 
     @Test
-    public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() throws Exception {
+    public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() {
         final var clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory());
         final HttpClient client = clientFactory.getObject();

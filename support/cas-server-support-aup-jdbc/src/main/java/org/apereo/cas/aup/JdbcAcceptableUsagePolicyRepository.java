@@ -20,11 +20,9 @@ import javax.sql.DataSource;
  */
 @Slf4j
 public class JdbcAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
-
-
     private static final long serialVersionUID = 1600024683199961892L;
-
-    private final JdbcTemplate jdbcTemplate;
+    
+    private final transient JdbcTemplate jdbcTemplate;
     private final String tableName;
 
     public JdbcAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,

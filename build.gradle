@@ -51,6 +51,7 @@ buildscript {
         classpath "net.ltgt.gradle:gradle-errorprone-javacplugin-plugin:0.1"
         classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2"
+        classpath "org.owasp:dependency-check-gradle:3.1.2"
     }
 }
 
@@ -134,6 +135,7 @@ subprojects {
     apply plugin: "propdeps-maven"
     apply plugin: "propdeps-idea"
     apply plugin: "propdeps-eclipse"
+    apply plugin: "org.owasp.dependencycheck"
 
     apply from: rootProject.file("gradle/tasks.gradle")
 
@@ -160,6 +162,7 @@ subprojects {
         include "**/*Tests.*"
         exclude "**/Abstract*.*", "**/Base*.*"
         maxParallelForks = 1
+        jvmArgs "-Xmx1024m"
         classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
         testLogging {
             events = ["FAILED", "STANDARD_OUT"]
@@ -277,6 +280,27 @@ subprojects {
         }
     }
     
+    dependencyCheck {
+        failBuildOnCVSS = 8
+        skipTestGroups = true
+        suppressionFile = file("$rootProject.projectDir/style/dependency-check-suppressions.xml")
+        analyzers {
+            assemblyEnabled = false
+            swiftEnabled = false
+            cocoapodsEnabled = false
+            nspEnabled = false
+            autoconfEnabled = false
+            cmakeEnabled = false
+            pathToMono = false
+            nuspecEnabled = false
+            rubygemsEnabled = false
+            pyPackageEnabled = false
+            pyDistributionEnabled = false
+            nexusEnabled = false
+            centralEnabled = false
+        }
+    }
+
     if (!Boolean.getBoolean("skipFindbugs")) {
         findbugs {
             toolVersion = "${findbugsVersion}"
@@ -286,6 +310,7 @@ subprojects {
             effort = "max"
             reportLevel = "low"
             includeFilter = file("$rootProject.projectDir/style/findbugs-rules.xml")
+            excludeFilter = file("$rootProject.projectDir/style/findbugs-excludes.xml")
         }
 
         findbugsMain {
@@ -295,6 +320,7 @@ subprojects {
             }
         }
     }
+
     dependencies {
         optional libraries.springcomponentindexer
 
@@ -328,6 +354,8 @@ subprojects {
             errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
         }
         testImplementation libraries.tests
+
+        compileOnly libraries.findbugsannotations
     }
 }
 
@@ -370,7 +398,11 @@ task jacocoAggregateReport(type: JacocoReport, description: "Aggregate all test 
                 include: '**/*.class',
                 exclude: [
                         '**/**Configuration.class',
+                        '**/shell/cli/**',
+                        '**/shell/commands/**',
                         '**/**Configuration$**',
+                        '**/**Controller**',
+                        '**/**ConfigurationMetadataGenerator**',
                         '**/**Application.class',
                         '**/**Application$**',
                         '**/**WebflowConfigurer.class',

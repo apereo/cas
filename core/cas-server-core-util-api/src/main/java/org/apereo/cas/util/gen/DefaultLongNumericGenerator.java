@@ -31,7 +31,6 @@ public class DefaultLongNumericGenerator implements LongNumericGenerator {
      */
     public DefaultLongNumericGenerator() {
         this(0);
-        // nothing to do
     }
 
     /**

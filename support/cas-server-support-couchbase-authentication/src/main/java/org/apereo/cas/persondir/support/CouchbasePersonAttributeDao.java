@@ -16,7 +16,6 @@ import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -89,11 +88,8 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
     }
 
     private static Map<String, List<Object>> stuffAttributesIntoList(final Map<String, ?> personAttributesMap) {
-        final Map<String, List<Object>> personAttributes = new HashMap<>();
-        for (final Map.Entry<String, ?> stringObjectEntry : personAttributesMap.entrySet()) {
-            final Object value = stringObjectEntry.getValue();
-            personAttributes.put(stringObjectEntry.getKey(), CollectionUtils.toCollection(value, ArrayList.class));
-        }
-        return personAttributes;
+        final Set<? extends Map.Entry<String, ?>> entries = personAttributesMap.entrySet();
+        return entries.stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, entry -> CollectionUtils.toCollection(entry.getValue(), ArrayList.class)));
     }
 }

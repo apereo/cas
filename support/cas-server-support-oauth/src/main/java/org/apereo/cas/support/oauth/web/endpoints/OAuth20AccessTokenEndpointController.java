@@ -13,7 +13,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
@@ -56,7 +55,6 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
 
     public OAuth20AccessTokenEndpointController(final ServicesManager servicesManager,
                                                 final TicketRegistry ticketRegistry,
-                                                final OAuth20Validator validator,
                                                 final AccessTokenFactory accessTokenFactory,
                                                 final PrincipalFactory principalFactory,
                                                 final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
@@ -70,7 +68,6 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
                                                 final Collection<OAuth20TokenRequestValidator> accessTokenGrantRequestValidators) {
         super(servicesManager,
             ticketRegistry,
-            validator,
             accessTokenFactory,
             principalFactory,
             webApplicationServiceServiceFactory,
