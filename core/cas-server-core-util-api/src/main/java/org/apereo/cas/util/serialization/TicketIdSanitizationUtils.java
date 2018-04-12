@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.util.InetAddressUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,16 +20,23 @@ import java.util.regex.Pattern;
 @Slf4j
 @UtilityClass
 public class TicketIdSanitizationUtils {
-    private static final Pattern TICKET_ID_PATTERN = Pattern.compile('(' + TicketGrantingTicket.PREFIX + '|'
-            + ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + '|' + ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
-            + ")(-)+(\\w)+(-)+(\\w)+");
+    private static final Pattern TICKET_ID_PATTERN = Pattern.compile("(?:(?:" +TicketGrantingTicket.PREFIX + "|"
+            + ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + "|" + ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
+            + ")-\\d+-)([\\w.-]+)");
 
     /**
      * Specifies the ending tail length of the ticket id that would still be visible in the output
      * for troubleshooting purposes.
      */
     private static final int VISIBLE_TAIL_LENGTH = 10;
-    
+
+    /**
+     * Gets the default suffix used when the default ticket id generator is used so the poroper
+     * visible length is shown.
+     */
+    private static final int HOST_NAME_LENGTH = InetAddressUtils.getCasServerHostName().length();
+
+
     /**
      * Remove ticket id from the message.
      *
@@ -41,9 +49,12 @@ public class TicketIdSanitizationUtils {
             final Matcher matcher = TICKET_ID_PATTERN.matcher(msg);
             while (matcher.find()) {
                 final String match = matcher.group();
-                final String newId = matcher.group(1) + '-'
-                        + StringUtils.repeat("*", match.length() - VISIBLE_TAIL_LENGTH)
-                        + StringUtils.right(match, VISIBLE_TAIL_LENGTH);
+                final int replaceLength = matcher.group(1).length()
+                        - VISIBLE_TAIL_LENGTH
+                        - (HOST_NAME_LENGTH + 1);
+                final String newId = match.replace(
+                        matcher.group(1).substring(0,replaceLength),
+                        StringUtils.repeat("*", replaceLength));
                 modifiedMessage = modifiedMessage.replaceAll(match, newId);
             }
         }
