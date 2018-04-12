@@ -42,7 +42,7 @@ import java.nio.charset.StandardCharsets;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class
 })
 @TestPropertySource(locations = "classpath:syncope.properties")
 @Slf4j
@@ -56,7 +56,7 @@ public class SyncopeAuthenticationHandlerTests {
     private MockWebServer webServer;
 
     @Test
-    public void testHandlerPasses() {
+    public void verifyHandlerPasses() {
         try {
             final UserTO user = new UserTO();
             user.setUsername("casuser");
@@ -70,7 +70,7 @@ public class SyncopeAuthenticationHandlerTests {
     }
 
     @Test
-    public void testHandlerMustChangePassword() {
+    public void verifyHandlerMustChangePassword() {
         try {
             final UserTO user = new UserTO();
             user.setUsername("casuser");
@@ -88,7 +88,7 @@ public class SyncopeAuthenticationHandlerTests {
     }
     
     @Test
-    public void testHandlerSuspended() {
+    public void verifyHandlerSuspended() {
         try {
             final UserTO user = new UserTO();
             user.setUsername("casuser");

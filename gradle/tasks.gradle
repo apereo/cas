@@ -63,6 +63,11 @@ task findbugs(type: FindBugs, description: "Set up classpath for Findbugs") {
     pluginClasspath = project.configurations.findbugsPlugins
 }
 
+task showConfiguration << {
+    def cfg = project.hasProperty("configuration") ? project.property("configuration") : "compile"
+    configurations.getByName(cfg).each { println it }
+}
+
 gradle.buildFinished { buildResult ->
     cleanLogs
 }
