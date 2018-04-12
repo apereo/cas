@@ -1306,7 +1306,7 @@ ext.libraries = [
                 }
         ],
         awselasticachememcached               : [
-                dependencies.create("com.amazonaws:aws-elasticache-cluster-client-memcached-for-java:$awsmemcachedVersion") {
+                dependencies.create("com.amazonaws:elasticache-java-cluster-client:$awsmemcachedVersion") {
                     force = true
                 }
         ],

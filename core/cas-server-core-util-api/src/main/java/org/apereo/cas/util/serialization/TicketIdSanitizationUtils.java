@@ -49,12 +49,12 @@ public class TicketIdSanitizationUtils {
             final Matcher matcher = TICKET_ID_PATTERN.matcher(msg);
             while (matcher.find()) {
                 final String match = matcher.group();
-                final int replaceLength = matcher.group(1).length()
-                    - VISIBLE_TAIL_LENGTH
-                    - (HOST_NAME_LENGTH + 1);
-                final String newId = match.replace(
-                    matcher.group(1).substring(0, replaceLength),
-                    StringUtils.repeat("*", replaceLength));
+                final String group = matcher.group(1);
+                int replaceLength = group.length() - VISIBLE_TAIL_LENGTH - (HOST_NAME_LENGTH + 1);
+                if (replaceLength <= 0) {
+                    replaceLength = group.length();
+                }
+                final String newId = match.replace(group.substring(0, replaceLength), StringUtils.repeat("*", replaceLength));
                 modifiedMessage = modifiedMessage.replaceAll(match, newId);
             }
         }
