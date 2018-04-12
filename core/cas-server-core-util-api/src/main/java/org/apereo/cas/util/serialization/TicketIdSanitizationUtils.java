@@ -20,9 +20,9 @@ import java.util.regex.Pattern;
 @Slf4j
 @UtilityClass
 public class TicketIdSanitizationUtils {
-    private static final Pattern TICKET_ID_PATTERN = Pattern.compile("(?:(?:" +TicketGrantingTicket.PREFIX + "|"
-            + ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + "|" + ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
-            + ")-\\d+-)([\\w.-]+)");
+    private static final Pattern TICKET_ID_PATTERN = Pattern.compile("(?:(?:" + TicketGrantingTicket.PREFIX + "|"
+        + ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + "|" + ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
+        + ")-\\d+-)([\\w.-]+)");
 
     /**
      * Specifies the ending tail length of the ticket id that would still be visible in the output
@@ -50,11 +50,11 @@ public class TicketIdSanitizationUtils {
             while (matcher.find()) {
                 final String match = matcher.group();
                 final int replaceLength = matcher.group(1).length()
-                        - VISIBLE_TAIL_LENGTH
-                        - (HOST_NAME_LENGTH + 1);
+                    - VISIBLE_TAIL_LENGTH
+                    - (HOST_NAME_LENGTH + 1);
                 final String newId = match.replace(
-                        matcher.group(1).substring(0,replaceLength),
-                        StringUtils.repeat("*", replaceLength));
+                    matcher.group(1).substring(0, replaceLength),
+                    StringUtils.repeat("*", replaceLength));
                 modifiedMessage = modifiedMessage.replaceAll(match, newId);
             }
         }

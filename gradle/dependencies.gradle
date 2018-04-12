@@ -1305,6 +1305,11 @@ ext.libraries = [
                     force = true
                 }
         ],
+        awselasticachememcached               : [
+                dependencies.create("com.github.awslabs:aws-elasticache-cluster-client-memcached-for-java:1.1.1") {
+                    force = true
+                }
+        ],
         ldaptive                : [
                 dependencies.create("org.ldaptive:ldaptive:$ldaptiveVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")

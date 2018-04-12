@@ -15,7 +15,9 @@ import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -37,16 +39,26 @@ public class MemcachedTicketRegistryConfiguration {
     @Qualifier("componentSerializationPlan")
     private ComponentSerializationPlan componentSerializationPlan;
 
+    @ConditionalOnMissingBean(name = "memcachedTicketRegistryTranscoder")
+    @RefreshScope
     @Bean
     public Transcoder memcachedTicketRegistryTranscoder() {
         final MemcachedTicketRegistryProperties memcached = casProperties.getTicket().getRegistry().getMemcached();
         return MemcachedUtils.newTranscoder(memcached, componentSerializationPlan.getRegisteredClasses());
     }
 
+    @ConditionalOnMissingBean(name = "memcachedPooledClientConnectionFactory")
+    @RefreshScope
+    @Bean
+    public MemcachedPooledClientConnectionFactory memcachedPooledClientConnectionFactory() {
+        final MemcachedTicketRegistryProperties memcached = casProperties.getTicket().getRegistry().getMemcached();
+        return new MemcachedPooledClientConnectionFactory(memcached, memcachedTicketRegistryTranscoder());
+    }
+
     @Bean
     public TicketRegistry ticketRegistry() {
         final MemcachedTicketRegistryProperties memcached = casProperties.getTicket().getRegistry().getMemcached();
-        final MemcachedPooledClientConnectionFactory factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedTicketRegistryTranscoder());
+        final MemcachedPooledClientConnectionFactory factory = memcachedPooledClientConnectionFactory();
         final MemcachedTicketRegistry registry = new MemcachedTicketRegistry(factory.getObjectPool());
         final CipherExecutor cipherExecutor = CoreTicketUtils.newTicketRegistryCipherExecutor(memcached.getCrypto(), "memcached");
         registry.setCipherExecutor(cipherExecutor);

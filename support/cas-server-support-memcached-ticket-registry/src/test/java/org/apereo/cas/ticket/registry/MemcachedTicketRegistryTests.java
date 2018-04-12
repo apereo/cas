@@ -45,8 +45,7 @@ public class MemcachedTicketRegistryTests extends AbstractTicketRegistryTests {
     public TicketRegistry getNewTicketRegistry() {
         return registry;
     }
-
-
+    
     @Override
     protected boolean isIterableRegistry() {
         return false;
