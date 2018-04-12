@@ -7,10 +7,12 @@ import org.apereo.cas.configuration.model.support.influxdb.InfluxDbProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
+import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -105,6 +107,7 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
         this.influxDb.write(influxDbProperties.getDatabase(), influxDbProperties.getRetentionPolicy(), point);
     }
 
+
     /**
      * Write measurement point.
      *
@@ -115,6 +118,21 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
         this.influxDb.write(dbName, "autogen", point);
     }
 
+    /**
+     * Write synchronized batch.
+     *
+     * @param point the points to write immediately in sync fashion
+     */
+    public void writeBatch(final Point... point) {
+        final BatchPoints batchPoints = BatchPoints
+            .database(influxDbProperties.getDatabase())
+            .retentionPolicy(influxDbProperties.getRetentionPolicy())
+            .consistency(InfluxDB.ConsistencyLevel.valueOf(influxDbProperties.getConsistencyLevel()))
+            .build();
+        Arrays.stream(point).forEach(batchPoints::point);
+        influxDb.write(batchPoints);
+    }
+    
     /**
      * Query all result.
      *
@@ -147,6 +165,7 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
     public QueryResult query(final String fields, final String measurement, final String dbName) {
         final String filter = String.format("SELECT %s FROM %s", fields, measurement);
         final Query query = new Query(filter, dbName);
+
         return this.influxDb.query(query);
     }
 
