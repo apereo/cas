@@ -72,7 +72,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
         principals.forEach(p -> {
             if (p != null) {
                 LOGGER.debug("Resolved principal [{}]", p);
-                final Map<String, Object> principalAttributes = p.getAttributes();
+                final var principalAttributes = p.getAttributes();
                 if (principalAttributes != null && !principalAttributes.isEmpty()) {
                     LOGGER.debug("Adding attributes [{}] for the final principal", principalAttributes);
                     attributes.putAll(principalAttributes);

@@ -31,11 +31,11 @@ public class PasswordlessTokenAuthenticationHandler extends AbstractPreAndPostPr
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
-        final OneTimePasswordCredential c = (OneTimePasswordCredential) credential;
-        final Optional<String> token = passwordlessTokenRepository.findToken(c.getId());
+        final var c = (OneTimePasswordCredential) credential;
+        final var token = passwordlessTokenRepository.findToken(c.getId());
 
         if (token.isPresent() && token.get().equalsIgnoreCase(c.getId())) {
-            final Principal principal = principalFactory.createPrincipal(c.getId());
+            final var principal = principalFactory.createPrincipal(c.getId());
             return createHandlerResult(credential, principal, new ArrayList<>());
         }
         throw new FailedLoginException("Passwordless authentication has failed");

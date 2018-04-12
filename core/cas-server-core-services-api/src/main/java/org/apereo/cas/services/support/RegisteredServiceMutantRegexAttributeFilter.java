@@ -81,7 +81,7 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
                 LOGGER.debug("Found a successful match for [{}] while filtering attribute values with [{}]", v.toString(), pattern.pattern());
                 final var count = matcher.groupCount();
                 if (StringUtils.isNotBlank(returnValue)) {
-                    String resultValue = returnValue;
+                    var resultValue = returnValue;
                     for (var i = 1; i <= count; i++) {
                         resultValue = resultValue.replace("$" + i, matcher.group(i));
                     }
@@ -96,16 +96,16 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
     }
 
     private Pair<Pattern, String> mapPattern(final Object p) {
-        final String patternValue = p.toString();
-        final int index = patternValue.indexOf("->");
+        final var patternValue = p.toString();
+        final var index = patternValue.indexOf("->");
         if (index != -1) {
-            final String patternStr = patternValue.substring(0, index).trim();
-            final Pattern pattern = RegexUtils.createPattern(patternStr, isCaseInsensitive() ? Pattern.CASE_INSENSITIVE : 0);
-            final String returnValue = patternValue.substring(index + 2).trim();
+            final var patternStr = patternValue.substring(0, index).trim();
+            final var pattern = RegexUtils.createPattern(patternStr, isCaseInsensitive() ? Pattern.CASE_INSENSITIVE : 0);
+            final var returnValue = patternValue.substring(index + 2).trim();
             LOGGER.debug("Created attribute filter pattern [{}] with the mapped return value template [{}]", patternStr, returnValue);
             return Pair.of(pattern, returnValue);
         }
-        final Pattern pattern = RegexUtils.createPattern(patternValue.trim(), isCaseInsensitive() ? Pattern.CASE_INSENSITIVE : 0);
+        final var pattern = RegexUtils.createPattern(patternValue.trim(), isCaseInsensitive() ? Pattern.CASE_INSENSITIVE : 0);
         LOGGER.debug("Created attribute filter pattern [{}] without a mapped return value template", pattern.pattern());
         return Pair.of(pattern, StringUtils.EMPTY);
     }

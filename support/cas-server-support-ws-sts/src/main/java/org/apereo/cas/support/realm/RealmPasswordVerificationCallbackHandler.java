@@ -28,7 +28,7 @@ public class RealmPasswordVerificationCallbackHandler implements CallbackHandler
             .filter(WSPasswordCallback.class::isInstance)
             .map(WSPasswordCallback.class::cast)
             .forEach(c -> {
-                final String identifier = c.getIdentifier();
+                final var identifier = c.getIdentifier();
                 LOGGER.debug("Evaluating [{}]", identifier);
                 c.setPassword(this.psw);
                 LOGGER.debug("Authenticated [{}] successfully.", identifier);

@@ -41,7 +41,7 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
 
         final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         LOGGER.debug("Checking for token at param [{}]", SendPasswordResetInstructionsAction.PARAMETER_NAME_TOKEN);
-        final String token = request.getParameter(SendPasswordResetInstructionsAction.PARAMETER_NAME_TOKEN);
+        final var token = request.getParameter(SendPasswordResetInstructionsAction.PARAMETER_NAME_TOKEN);
 
         if (StringUtils.isBlank(token)) {
             LOGGER.error("Password reset token is missing");

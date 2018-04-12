@@ -330,8 +330,8 @@ public class ScriptingUtils {
 
             final var script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
             
-            final Class<T> clazz = AccessController.doPrivileged((PrivilegedAction<Class<T>>) () -> {
-                final GroovyClassLoader classLoader = new GroovyClassLoader(ScriptingUtils.class.getClassLoader(),
+            final var clazz = AccessController.doPrivileged((PrivilegedAction<Class<T>>) () -> {
+                final var classLoader = new GroovyClassLoader(ScriptingUtils.class.getClassLoader(),
                     new CompilerConfiguration(), true);
                 return classLoader.parseClass(script);
             });

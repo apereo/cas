@@ -49,29 +49,29 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final String password = requestContext.getRequestParameters().get("password");
-        final String username = requestContext.getRequestParameters().get("username");
+        final var password = requestContext.getRequestParameters().get("password");
+        final var username = requestContext.getRequestParameters().get("username");
         try {
-            final Optional<String> currentToken = passwordlessTokenRepository.findToken(username);
+            final var currentToken = passwordlessTokenRepository.findToken(username);
 
             if (currentToken.isPresent()) {
                 final Credential credential = new OneTimePasswordCredential(username, password);
                 final Service service = WebUtils.getService(requestContext);
-                final AuthenticationResult authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+                final var authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
                 WebUtils.putAuthenticationResult(authenticationResult, requestContext);
                 WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);
                 WebUtils.putCredential(requestContext, credential);
 
-                final String token = currentToken.get();
+                final var token = currentToken.get();
                 passwordlessTokenRepository.deleteToken(username, token);
 
                 return super.doExecute(requestContext);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            final LocalAttributeMap attributes = new LocalAttributeMap();
+            final var attributes = new LocalAttributeMap();
             attributes.put("error", e);
-            final Optional<PasswordlessUserAccount> account = passwordlessUserAccountStore.findUser(username);
+            final var account = passwordlessUserAccountStore.findUser(username);
             if (account.isPresent()) {
                 attributes.put(PasswordlessAuthenticationWebflowConfigurer.PARAMETER_PASSWORDLESS_USER_ACCOUNT, account.get());
                 return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, attributes);

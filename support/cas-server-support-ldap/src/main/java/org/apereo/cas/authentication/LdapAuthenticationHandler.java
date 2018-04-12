@@ -220,7 +220,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                     this.principalIdAttribute);
                 throw new LoginException("Principal id attribute is not found for " + principalAttr);
             }
-            final String value = principalAttr.getStringValue();
+            final var value = principalAttr.getStringValue();
             if (principalAttr.size() > 1) {
                 if (!this.allowMultiplePrincipalAttributeValues) {
                     throw new LoginException("Multiple principal values are not allowed: " + principalAttr);

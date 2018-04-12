@@ -78,13 +78,13 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
             }
 
             if (StringUtils.isNotBlank(this.fieldDisabled) && dbFields.containsKey(this.fieldDisabled)) {
-                final String dbDisabled = dbFields.get(this.fieldDisabled).toString();
+                final var dbDisabled = dbFields.get(this.fieldDisabled).toString();
                 if (BooleanUtils.toBoolean(dbDisabled) || "1".equals(dbDisabled)) {
                     throw new AccountDisabledException("Account has been disabled");
                 }
             }
             if (StringUtils.isNotBlank(this.fieldExpired) && dbFields.containsKey(this.fieldExpired)) {
-                final String dbExpired = dbFields.get(this.fieldExpired).toString();
+                final var dbExpired = dbFields.get(this.fieldExpired).toString();
                 if (BooleanUtils.toBoolean(dbExpired) || "1".equals(dbExpired)) {
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }

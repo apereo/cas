@@ -73,7 +73,7 @@ public class DelegatedClientWebflowManager {
 
         final var transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
         final var ticket = transientFactory.create(service, properties);
-        final String ticketId = ticket.getId();
+        final var ticketId = ticket.getId();
         LOGGER.debug("Storing delegated authentication request ticket [{}] for service [{}] with properties [{}]",
             ticketId, ticket.getService(), ticket.getProperties());
         this.ticketRegistry.addTicket(ticket);
@@ -84,13 +84,13 @@ public class DelegatedClientWebflowManager {
         }
         if (client instanceof OAuth20Client) {
             final var oauthClient = (OAuth20Client) client;
-            final OAuth20Configuration config = oauthClient.getConfiguration();
+            final var config = oauthClient.getConfiguration();
             config.setWithState(true);
             config.setStateData(ticketId);
         }
         if (client instanceof OidcClient) {
             final var oidcClient = (OidcClient) client;
-            final OidcConfiguration config = oidcClient.getConfiguration();
+            final var config = oidcClient.getConfiguration();
             config.setCustomParams(CollectionUtils.wrap(PARAMETER_CLIENT_ID, ticketId));
             config.setWithState(true);
             config.setStateData(ticketId);

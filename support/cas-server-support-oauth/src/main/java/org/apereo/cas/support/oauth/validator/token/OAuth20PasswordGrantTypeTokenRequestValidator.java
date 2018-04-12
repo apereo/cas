@@ -51,12 +51,12 @@ public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20To
         final var registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
 
         if (HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CLIENT_ID)) {
-            final WebApplicationService service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
-            final AuditableContext audit = AuditableContext.builder()
+            final var service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+            final var audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)
                 .build();
-            final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
             return !accessResult.isExecutionFailure();
         }
         return false;

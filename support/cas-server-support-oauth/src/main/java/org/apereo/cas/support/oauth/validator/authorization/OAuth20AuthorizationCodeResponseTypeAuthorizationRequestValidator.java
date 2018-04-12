@@ -51,12 +51,12 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
         final var clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
         final var registeredService = getRegisteredServiceByClientId(clientId);
 
-        final WebApplicationService service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
-        final AuditableContext audit = AuditableContext.builder()
+        final var service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+        final var audit = AuditableContext.builder()
             .service(service)
             .registeredService(registeredService)
             .build();
-        final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
 
         if (accessResult.isExecutionFailure()) {
             LOGGER.warn("Registered service [{}] is not found or is not authorized for access.", registeredService);

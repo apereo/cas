@@ -139,7 +139,7 @@ public class CouchbaseClientFactory {
      * @throws GeneralSecurityException the general security exception
      */
     public N1qlQueryResult query(final String usernameAttribute, final String usernameValue) throws GeneralSecurityException {
-        final Bucket bucket = getBucket();
+        final var bucket = getBucket();
         final Statement statement = Select.select("*")
             .from(Expression.i(bucket.name()))
             .where(Expression.x(usernameAttribute).eq('\'' + usernameValue + '\''));

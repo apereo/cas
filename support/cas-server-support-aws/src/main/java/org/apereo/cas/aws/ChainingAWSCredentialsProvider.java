@@ -149,7 +149,7 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
 
         if (StringUtils.isNotBlank(credentialAccessKey) && StringUtils.isNotBlank(credentialSecretKey)) {
             addProviderToChain(nothing -> {
-                final BasicAWSCredentials credentials = new BasicAWSCredentials(credentialAccessKey, credentialSecretKey);
+                final var credentials = new BasicAWSCredentials(credentialAccessKey, credentialSecretKey);
                 chain.add(new AWSStaticCredentialsProvider(credentials));
                 return null;
             });

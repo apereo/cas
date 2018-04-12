@@ -159,7 +159,7 @@ public class SamlObjectSignatureValidator {
         final var peer = context.getSubcontext(SAMLPeerEntityContext.class, true);
         peer.setEntityId(SamlIdPUtils.getIssuerFromSamlRequest(profileRequest));
         
-        final String peerEntityId = peer.getEntityId();
+        final var peerEntityId = peer.getEntityId();
         LOGGER.debug("Validating request signature for [{}] via [{}]...", peerEntityId, handler.getClass().getSimpleName());
         
         final var roleDescriptor = roleDescriptorResolver.resolveSingle(
