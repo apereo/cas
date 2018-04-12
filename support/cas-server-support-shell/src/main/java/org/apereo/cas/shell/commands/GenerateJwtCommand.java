@@ -68,7 +68,7 @@ public class GenerateJwtCommand implements CommandMarker {
                     optionContext = "Size of the signing secret",
                     specifiedDefaultValue = "" + DEFAULT_SIGNING_SECRET_SIZE,
                     unspecifiedDefaultValue = "" + DEFAULT_SIGNING_SECRET_SIZE) final int signingSecretSize,
-            @CliOption(key = {"signingSecretSize"},
+            @CliOption(key = {"encryptionSecretSize"},
                     help = "Size of the encryption secret",
                     optionContext = "Size of the encryption secret",
                     specifiedDefaultValue = "" + DEFAULT_ENCRYPTION_SECRET_SIZE,
