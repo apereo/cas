@@ -62,6 +62,8 @@ code the individual cache node endpoints in the configuration
 All of the cache nodes in the cluster maintain a list of metadata about all of the other nodes. 
 This metadata is updated whenever nodes are added or removed from the cluster.
 
+Support is enabled by including the following dependency in the WAR overlay:
+
 ```xml
 <dependency>
     <groupId>org.apereo.cas</groupId>
