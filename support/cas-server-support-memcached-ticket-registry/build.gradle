@@ -4,7 +4,7 @@ dependencies {
 
     api project(":api:cas-server-core-api-logout")
 
-    compileOnly project(":support:cas-server-support-memcached-spy")
+    provided project(":support:cas-server-support-memcached-spy")
     
     implementation project(":core:cas-server-core-logging")
     implementation project(":support:cas-server-support-memcached-core")

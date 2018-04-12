@@ -18,6 +18,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-configuration")
 
-    compileOnly project(":support:cas-server-support-memcached-spy")
+    provided project(":support:cas-server-support-memcached-spy")
     compileOnly project(":support:cas-server-support-saml")
 }
