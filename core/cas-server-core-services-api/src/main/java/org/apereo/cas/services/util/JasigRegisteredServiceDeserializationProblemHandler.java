@@ -55,14 +55,14 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
         if (beanOrClass instanceof CachingPrincipalAttributesRepository) {
             final var repo = CachingPrincipalAttributesRepository.class.cast(beanOrClass);
             if ("duration".equals(propertyName)) {
-                for (int i = 1; i <= TOKEN_COUNT_DURATION; i++) {
+                for (var i = 1; i <= TOKEN_COUNT_DURATION; i++) {
                     p.nextToken();
                 }
-                final String timeUnit = p.getText();
-                for (int i = 1; i <= TOKEN_COUNT_EXPIRATION; i++) {
+                final var timeUnit = p.getText();
+                for (var i = 1; i <= TOKEN_COUNT_EXPIRATION; i++) {
                     p.nextToken();
                 }
-                final int expiration = p.getValueAsInt();
+                final var expiration = p.getValueAsInt();
 
                 repo.setTimeUnit(timeUnit);
                 repo.setExpiration(expiration);

@@ -121,7 +121,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
         ensureEndpointAccessIsAuthorized(request, response);
 
         final Map<String, Object> responseMap = new HashMap<>();
-        final Map<String, Logger> loggers = getActiveLoggersInFactory();
+        final var loggers = getActiveLoggersInFactory();
         responseMap.put("activeLoggers", loggers.values());
         return responseMap;
     }
@@ -152,7 +152,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
             loggerMap.put("level", config.getLevel().name());
             final Collection<String> appenders = new HashSet<>();
             config.getAppenders().keySet().stream().map(key -> config.getAppenders().get(key)).forEach(appender -> {
-                final ToStringBuilder builder = new ToStringBuilder(this, ToStringStyle.JSON_STYLE);
+                final var builder = new ToStringBuilder(this, ToStringStyle.JSON_STYLE);
                 builder.append("name", appender.getName());
                 builder.append("state", appender.getState());
                 builder.append("layoutFormat", appender.getLayout().getContentFormat());
@@ -188,7 +188,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
     }
 
     private Map<String, Logger> getActiveLoggersInFactory() {
-        final Log4jLoggerFactory factory = (Log4jLoggerFactory) getCasLoggerFactoryInstance();
+        final var factory = (Log4jLoggerFactory) getCasLoggerFactoryInstance();
         if (factory != null) {
             return factory.getLoggersInContext(this.loggerContext);
         }
@@ -205,7 +205,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      * @return the logger configurations
      */
     private Set<LoggerConfig> getLoggerConfigurations() {
-        final Configuration configuration = this.loggerContext.getConfiguration();
+        final var configuration = this.loggerContext.getConfiguration();
         return new HashSet<>(configuration.getLoggers().values());
     }
 
@@ -253,7 +253,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
     @ResponseBody
     public Set<AuditActionContext> getAuditLog(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
-        final LocalDate sinceDate = LocalDate.now().minusDays(casProperties.getAudit().getNumberOfDaysInHistory());
+        final var sinceDate = LocalDate.now().minusDays(casProperties.getAudit().getNumberOfDaysInHistory());
         return this.auditTrailManager.getAuditRecordsSince(sinceDate);
     }
 }

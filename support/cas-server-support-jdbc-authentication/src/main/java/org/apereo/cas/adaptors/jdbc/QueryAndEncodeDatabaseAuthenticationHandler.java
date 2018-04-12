@@ -137,13 +137,13 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
                 throw new FailedLoginException("Password does not match value on record.");
             }
             if (StringUtils.isNotBlank(this.expiredFieldName) && values.containsKey(this.expiredFieldName)) {
-                final String dbExpired = values.get(this.expiredFieldName).toString();
+                final var dbExpired = values.get(this.expiredFieldName).toString();
                 if (BooleanUtils.toBoolean(dbExpired) || "1".equals(dbExpired)) {
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }
             }
             if (StringUtils.isNotBlank(this.disabledFieldName) && values.containsKey(this.disabledFieldName)) {
-                final String dbDisabled = values.get(this.disabledFieldName).toString();
+                final var dbDisabled = values.get(this.disabledFieldName).toString();
                 if (BooleanUtils.toBoolean(dbDisabled) || "1".equals(dbDisabled)) {
                     throw new AccountDisabledException("Account has been disabled");
                 }

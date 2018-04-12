@@ -44,7 +44,8 @@ public class DefaultAuthenticationTransaction implements AuthenticationTransacti
      * @return the authentication transaction
      */
     public static DefaultAuthenticationTransaction of(final Service service, final Credential... credentials) {
-        return new DefaultAuthenticationTransaction(service, sanitizeCredentials(credentials));
+        final var creds = sanitizeCredentials(credentials);
+        return new DefaultAuthenticationTransaction(service, creds);
     }
 
     /**

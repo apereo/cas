@@ -57,7 +57,7 @@ public class SamlIdPUtils {
     public static void preparePeerEntitySamlEndpointContext(final MessageContext outboundContext,
                                                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                             final String binding) throws SamlException {
-        final String entityId = adaptor.getEntityId();
+        final var entityId = adaptor.getEntityId();
         if (!adaptor.containsAssertionConsumerServices()) {
             throw new SamlException("No assertion consumer service could be found for entity " + entityId);
         }
@@ -97,7 +97,7 @@ public class SamlIdPUtils {
         final var registeredServices = servicesManager.findServiceBy(SamlRegisteredService.class::isInstance);
         final var chainingMetadataResolver = new ChainingMetadataResolver();
 
-        final List<MetadataResolver> resolvers = registeredServices.stream()
+        final var resolvers = registeredServices.stream()
             .filter(SamlRegisteredService.class::isInstance)
             .map(SamlRegisteredService.class::cast)
             .map(s -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, s, entityID))

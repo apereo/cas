@@ -32,7 +32,7 @@ public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OidcRe
         if (!jwks.isPresent() || jwks.get().getJsonWebKeys().isEmpty()) {
             return Optional.empty();
         }
-        final RsaJsonWebKey key = getJsonWebKeyFromJwks(jwks.get());
+        final var key = getJsonWebKeyFromJwks(jwks.get());
         if (key == null) {
             return Optional.empty();
         }
@@ -81,7 +81,7 @@ public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OidcRe
                 return Optional.empty();
             }
 
-            final RsaJsonWebKey webKey = getJsonWebKeyFromJwks(jsonWebKeySet);
+            final var webKey = getJsonWebKeyFromJwks(jsonWebKeySet);
             if (webKey.getPublicKey() == null) {
                 LOGGER.warn("JSON web key retrieved [{}] has no associated public key", webKey.getKeyId());
                 return Optional.empty();
@@ -104,7 +104,7 @@ public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OidcRe
 
     private static JsonWebKeySet buildJsonWebKeySet(final String json) throws Exception {
         final var jsonWebKeySet = new JsonWebKeySet(json);
-        final RsaJsonWebKey webKey = getJsonWebKeyFromJwks(jsonWebKeySet);
+        final var webKey = getJsonWebKeyFromJwks(jsonWebKeySet);
         if (webKey == null || webKey.getPublicKey() == null) {
             LOGGER.warn("JSON web key retrieved [{}] is not found or has no associated public key", webKey);
             return null;

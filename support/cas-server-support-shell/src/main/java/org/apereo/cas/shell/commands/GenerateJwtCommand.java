@@ -101,7 +101,7 @@ public class GenerateJwtCommand implements CommandMarker {
         final var profile = new CommonProfile();
         profile.setId(subject);
 
-        final String repeat = StringUtils.repeat('=', SEP_LENGTH);
+        final var repeat = StringUtils.repeat('=', SEP_LENGTH);
         LOGGER.debug(repeat);
         LOGGER.info("\nGenerating JWT for subject [{}] with signing key size [{}], signing algorithm [{}], "
                 + "encryption key size [{}], encryption method [{}] and encryption algorithm [{}]\n", 
