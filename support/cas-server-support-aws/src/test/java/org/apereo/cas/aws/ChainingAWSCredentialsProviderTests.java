@@ -26,7 +26,7 @@ public class ChainingAWSCredentialsProviderTests {
     
     @Test
     @SneakyThrows
-    public void testInstance() {
+    public void verifyInstance() {
         final ChainingAWSCredentialsProvider p = (ChainingAWSCredentialsProvider) ChainingAWSCredentialsProvider.getInstance("accesskey", "secretKey",
             new FileSystemResource("credentials.properties"), "profilePath", "profileName");
         assertFalse(p.getChain().isEmpty());
