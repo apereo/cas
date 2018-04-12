@@ -228,6 +228,7 @@ subprojects {
         if (!rootProject.skipErrorProneCompiler) {
             it.options.errorprone.allErrorsAsWarnings = false
             it.options.errorprone.disableWarningsInGeneratedCode = true
+            it.options.errorprone.errorproneArgs += [ '-Xep:ParameterName:OFF' ]
         }
 
         if (JavaVersion.toVersion(sourceCompatibility).isJava9Compatible()) {
