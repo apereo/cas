@@ -49,7 +49,7 @@ public class OAuth20UserAuthenticator implements Authenticator<UsernamePasswordC
             final var authentication = authenticationResult.getAuthentication();
             final var principal = authentication.getPrincipal();
 
-            final CommonProfile profile = new CommonProfile();
+            final var profile = new CommonProfile();
             final var id = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
             LOGGER.debug("Created profile id [{}]", id);
 

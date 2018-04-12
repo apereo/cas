@@ -109,9 +109,9 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
             return resumeFlow();
         }
 
-        final Optional<MultifactorAuthenticationProvider> value = result.getValue();
+        final var value = result.getValue();
         if (value.isPresent()) {
-            final Map<String, Object> attributeMap = buildEventAttributeMap(authentication.getPrincipal(), service, value.get());
+            final var attributeMap = buildEventAttributeMap(authentication.getPrincipal(), service, value.get());
             return CollectionUtils.wrapSet(validateEventIdForMatchingTransitionInContext(id, context, attributeMap));
         }
         LOGGER.warn("The authentication context cannot be satisfied and the requested event [{}] is unrecognized", id);

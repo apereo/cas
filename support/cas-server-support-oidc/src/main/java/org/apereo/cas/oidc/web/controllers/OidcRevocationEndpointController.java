@@ -75,12 +75,12 @@ public class OidcRevocationEndpointController extends BaseOAuth20Controller {
 
             final var service = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, credentials.getUsername());
 
-            final WebApplicationService service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
-            final AuditableContext audit = AuditableContext.builder()
+            final var service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+            final var audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)
                 .build();
-            final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
 
             if (!accessResult.isExecutionFailure()
                 && HttpRequestUtils.doesParameterExist(request, OAuth20Constants.ACCESS_TOKEN)

@@ -94,8 +94,8 @@ public class CoreAuthenticationUtils {
                 if (resource != null) {
                     final var script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
 
-                    final Class<Predicate> clz = AccessController.doPrivileged((PrivilegedAction<Class<Predicate>>) () -> {
-                        final GroovyClassLoader classLoader = new GroovyClassLoader(Beans.class.getClassLoader(),
+                    final var clz = AccessController.doPrivileged((PrivilegedAction<Class<Predicate>>) () -> {
+                        final var classLoader = new GroovyClassLoader(Beans.class.getClassLoader(),
                             new CompilerConfiguration(), true);
                         return classLoader.parseClass(script);
                     });

@@ -38,13 +38,13 @@ public class WsFederationRequestBuilder {
      */
     public Event buildAuthenticationRequestEvent(final RequestContext context) {
         final List<WsFedClient> clients = new ArrayList<>();
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final Service service = (Service) context.getFlowScope().get(CasProtocolConstants.PARAMETER_SERVICE);
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        final var service = (Service) context.getFlowScope().get(CasProtocolConstants.PARAMETER_SERVICE);
         this.configurations.forEach(cfg -> {
-            final WsFedClient c = new WsFedClient();
+            final var c = new WsFedClient();
             c.setName(cfg.getName());
-            final String id = UUID.randomUUID().toString();
-            final String rpId = wsFederationHelper.getRelyingPartyIdentifier(service, cfg);
+            final var id = UUID.randomUUID().toString();
+            final var rpId = wsFederationHelper.getRelyingPartyIdentifier(service, cfg);
             c.setAuthorizationUrl(cfg.getAuthorizationUrl(rpId, id));
             c.setReplyingPartyId(rpId);
             c.setId(id);

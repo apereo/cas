@@ -45,11 +45,11 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
         try {
             final String username = authentication.getPrincipal().toString();
-            final Object credentials = authentication.getCredentials();
-            final String password = credentials == null ? null : credentials.toString();
+            final var credentials = authentication.getCredentials();
+            final var password = credentials == null ? null : credentials.toString();
 
             LOGGER.debug("Preparing LDAP authentication request for user [{}]", username);
-            final AuthenticationRequest request = new AuthenticationRequest(username, new org.ldaptive.Credential(password), ReturnAttributes.ALL.value());
+            final var request = new AuthenticationRequest(username, new org.ldaptive.Credential(password), ReturnAttributes.ALL.value());
             final Authenticator authenticator = LdapUtils.newLdaptiveAuthenticator(adminPagesSecurityProperties.getLdap());
             LOGGER.debug("Executing LDAP authentication request for user [{}]", username);
 
@@ -61,7 +61,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
                 
                 final LdapEntry entry = response.getLdapEntry();
 
-                final CommonProfile profile = new CommonProfile();
+                final var profile = new CommonProfile();
                 profile.setId(username);
                 entry.getAttributes().forEach(a -> profile.addAttribute(a.getName(), a.getStringValues()));
 
@@ -74,7 +74,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
                 authorities.addAll(profile.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
                 LOGGER.debug("List of authorities remapped from profile roles are [{}]", authorities);
 
-                final RequireAnyRoleAuthorizer authorizer = new RequireAnyRoleAuthorizer(adminPagesSecurityProperties.getAdminRoles());
+                final var authorizer = new RequireAnyRoleAuthorizer(adminPagesSecurityProperties.getAdminRoles());
                 LOGGER.debug("Executing authorization for expected admin roles [{}]", authorizer.getElements());
 
                 

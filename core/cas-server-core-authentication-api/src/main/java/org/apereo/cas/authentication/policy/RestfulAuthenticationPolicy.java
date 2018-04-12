@@ -37,7 +37,7 @@ public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
 
     @Override
     public boolean isSatisfiedBy(final Authentication authentication) throws Exception {
-        final Principal principal = authentication.getPrincipal();
+        final var principal = authentication.getPrincipal();
         try {
             final var acceptHeaders = new HttpHeaders();
             acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
@@ -48,9 +48,9 @@ public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
                 LOGGER.warn("[{}] returned no responses", this.endpoint);
                 throw new GeneralSecurityException("No response returned from REST endpoint to determine authentication policy");
             }
-            final HttpStatus statusCode = resp.getStatusCode();
+            final var statusCode = resp.getStatusCode();
             if (statusCode != HttpStatus.OK) {
-                final Exception ex = handleResponseStatusCode(statusCode, principal);
+                final var ex = handleResponseStatusCode(statusCode, principal);
                 throw new GeneralSecurityException(ex);
             }
             return true;

@@ -56,9 +56,9 @@ public class CasCoreWebConfiguration {
     public PropertiesFactoryBean casCommonMessages() {
         final var properties = new PropertiesFactoryBean();
         final var resourceLoader = new DefaultResourceLoader();
-        final List<String> commonNames = casProperties.getMessageBundle().getCommonNames();
+        final var commonNames = casProperties.getMessageBundle().getCommonNames();
 
-        final List<Resource> resourceList = commonNames
+        final var resourceList = commonNames
             .stream()
             .map(resourceLoader::getResource)
             .collect(Collectors.toList());

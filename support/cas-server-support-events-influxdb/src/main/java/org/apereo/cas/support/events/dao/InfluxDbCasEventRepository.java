@@ -59,13 +59,13 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository {
             .map(QueryResult.Result::getSeries)
             .forEach(r -> r.forEach(s -> {
                 try {
-                    final Iterator<List<Object>> it = s.getValues().iterator();
+                    final var it = s.getValues().iterator();
                     while (it.hasNext()) {
-                        final CasEvent event = new CasEvent();
-                        final List<Object> row = it.next();
-                        for (int i = 0; i < s.getColumns().size(); i++) {
-                            final String colName = s.getColumns().get(i);
-                            final String value = row.get(i) != null ? row.get(i).toString() : StringUtils.EMPTY;
+                        final var event = new CasEvent();
+                        final var row = it.next();
+                        for (var i = 0; i < s.getColumns().size(); i++) {
+                            final var colName = s.getColumns().get(i);
+                            final var value = row.get(i) != null ? row.get(i).toString() : StringUtils.EMPTY;
 
                             LOGGER.debug("Handling event column name [{}] with value [{}]", colName, value);
 

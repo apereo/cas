@@ -57,7 +57,7 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
         final var it = handlerSet.iterator();
         while (it.hasNext()) {
             final var handler = it.next();
-            final String handlerName = handler.getName();
+            final var handlerName = handler.getName();
             if (!(handler instanceof HttpBasedServiceCredentialsAuthenticationHandler) && !requiredHandlers.contains(handlerName)) {
                 LOGGER.debug("Authentication handler [{}] is not required for this transaction and is removed", handlerName);
                 it.remove();
