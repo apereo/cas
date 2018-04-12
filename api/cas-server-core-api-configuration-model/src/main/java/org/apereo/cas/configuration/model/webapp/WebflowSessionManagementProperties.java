@@ -55,5 +55,5 @@ public class WebflowSessionManagementProperties implements Serializable {
      * file that defines how state should be replicated.
      * Only relevant if session storage is done on the server.
      */
-    private Resource hzLocation = new ClassPathResource("hazelcast.xml");
+    private transient Resource hzLocation = new ClassPathResource("hazelcast.xml");
 }

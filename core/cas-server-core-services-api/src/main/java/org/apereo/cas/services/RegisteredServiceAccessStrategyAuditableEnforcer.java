@@ -3,8 +3,13 @@ package org.apereo.cas.services;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.audit.BaseAuditableExecution;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.inspektr.audit.annotation.Audit;
+
+import java.util.Optional;
 
 /**
  * This is {@link RegisteredServiceAccessStrategyAuditableEnforcer}.
@@ -20,24 +25,26 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         resourceResolverName = "SERVICE_ACCESS_ENFORCEMENT_RESOURCE_RESOLVER")
     public AuditableExecutionResult execute(final AuditableContext context) {
 
-        if (context.getServiceTicket().isPresent() && context.getAuthenticationResult().isPresent() && context.getRegisteredService().isPresent()) {
-            final var result = AuditableExecutionResult.of(context);
+        final Optional<RegisteredService> registeredService = context.getRegisteredService();
+        if (context.getServiceTicket().isPresent() && context.getAuthenticationResult().isPresent() && registeredService.isPresent()) {
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getServiceTicket().get(),
-                    context.getAuthenticationResult().get(), context.getRegisteredService().get());
+                    context.getAuthenticationResult().get(), registeredService.get());
             } catch (final PrincipalException e) {
                 result.setException(e);
             }
             return result;
         }
 
-        if (context.getService().isPresent() && context.getRegisteredService().isPresent() && context.getTicketGrantingTicket().isPresent()) {
-            final var result = AuditableExecutionResult.of(context.getService().get(),
-                context.getRegisteredService().get(), context.getTicketGrantingTicket().get());
+        final Optional<Service> service = context.getService();
+        final Optional<TicketGrantingTicket> ticketGrantingTicket = context.getTicketGrantingTicket();
+        if (service.isPresent() && registeredService.isPresent() && ticketGrantingTicket.isPresent()) {
+            final AuditableExecutionResult result = AuditableExecutionResult.of(service.get(),
+                registeredService.get(), ticketGrantingTicket.get());
             try {
-                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getService().get(),
-                    context.getRegisteredService().get(),
-                    context.getTicketGrantingTicket().get(),
+                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service.get(),
+                    registeredService.get(),
+                    ticketGrantingTicket.get(),
                     context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
             } catch (final PrincipalException e) {
                 result.setException(e);
@@ -45,18 +52,40 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             return result;
         }
 
-        if (context.getService().isPresent() && context.getRegisteredService().isPresent() && context.getAuthentication().isPresent()) {
-            final var result = AuditableExecutionResult.of(context.getAuthentication().get(), context.getService().get(), context.getRegisteredService().get());
+        final Optional<Authentication> authentication = context.getAuthentication();
+        if (service.isPresent() && registeredService.isPresent() && authentication.isPresent()) {
+            final AuditableExecutionResult result = AuditableExecutionResult.of(authentication.get(), service.get(), registeredService.get());
             try {
-                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getService().get(),
-                    context.getRegisteredService().get(),
-                    context.getAuthentication().get(),
+                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service.get(),
+                    registeredService.get(),
+                    authentication.get(),
                     context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
             } catch (final PrincipalException e) {
                 result.setException(e);
             }
             return result;
         }
+
+        if (service.isPresent() && registeredService.isPresent()) {
+            final AuditableExecutionResult result = AuditableExecutionResult.of(service.get(), registeredService.get());
+            try {
+                RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service.get(), registeredService.get());
+            } catch (final PrincipalException e) {
+                result.setException(e);
+            }
+            return result;
+        }
+
+        if (registeredService.isPresent()) {
+            final AuditableExecutionResult result = AuditableExecutionResult.of(registeredService.get());
+            try {
+                RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService.get());
+            } catch (final PrincipalException e) {
+                result.setException(e);
+            }
+            return result;
+        }
+        
         throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized");
     }
 }

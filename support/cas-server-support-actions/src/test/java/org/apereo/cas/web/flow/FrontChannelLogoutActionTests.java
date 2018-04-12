@@ -52,7 +52,7 @@ public class FrontChannelLogoutActionTests {
     }
 
     @Before
-    public void onSetUp() throws Exception {
+    public void onSetUp() {
         final var validator = new SimpleUrlValidatorFactoryBean(false).getObject();
 
         final var handler = new DefaultSingleLogoutServiceMessageHandler(new SimpleHttpClientFactoryBean().getObject(),

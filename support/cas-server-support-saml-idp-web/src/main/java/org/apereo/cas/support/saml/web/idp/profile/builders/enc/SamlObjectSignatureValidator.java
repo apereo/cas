@@ -158,18 +158,18 @@ public class SamlObjectSignatureValidator {
         final var handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
         final var peer = context.getSubcontext(SAMLPeerEntityContext.class, true);
         peer.setEntityId(SamlIdPUtils.getIssuerFromSamlRequest(profileRequest));
-        LOGGER.debug("Validating request signature for [{}] via [{}]...", peer.getEntityId(), handler.getClass().getSimpleName());
-
-        LOGGER.debug("Resolving role descriptor for [{}]", peer.getEntityId());
-
+        
+        final String peerEntityId = peer.getEntityId();
+        LOGGER.debug("Validating request signature for [{}] via [{}]...", peerEntityId, handler.getClass().getSimpleName());
+        
         final var roleDescriptor = roleDescriptorResolver.resolveSingle(
-            new CriteriaSet(new EntityIdCriterion(peer.getEntityId()),
+            new CriteriaSet(new EntityIdCriterion(peerEntityId),
                 new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME)));
         peer.setRole(roleDescriptor.getElementQName());
         final var protocol = context.getSubcontext(SAMLProtocolContext.class, true);
         protocol.setProtocol(SAMLConstants.SAML20P_NS);
 
-        LOGGER.debug("Building security parameters context for signature validation of [{}]", peer.getEntityId());
+        LOGGER.debug("Building security parameters context for signature validation of [{}]", peerEntityId);
         final var secCtx = context.getSubcontext(SecurityParametersContext.class, true);
         final var validationParams = new SignatureValidationParameters();
 
@@ -183,7 +183,7 @@ public class SamlObjectSignatureValidator {
             LOGGER.debug("Validation override whitelisted algorithms are [{}]", this.overrideWhiteListedAlgorithms);
         }
 
-        LOGGER.debug("Resolving signing credentials for [{}]", peer.getEntityId());
+        LOGGER.debug("Resolving signing credentials for [{}]", peerEntityId);
         final var credentials = getSigningCredential(roleDescriptorResolver, profileRequest);
         if (credentials == null || credentials.isEmpty()) {
             throw new SamlException("Signing credentials for validation could not be resolved");
@@ -202,9 +202,9 @@ public class SamlObjectSignatureValidator {
                 secCtx.setSignatureValidationParameters(validationParams);
 
                 handler.setHttpServletRequest(request);
-                LOGGER.debug("Initializing [{}] to execute signature validation for [{}]", handler.getClass().getSimpleName(), peer.getEntityId());
+                LOGGER.debug("Initializing [{}] to execute signature validation for [{}]", handler.getClass().getSimpleName(), peerEntityId);
                 handler.initialize();
-                LOGGER.debug("Invoking [{}] to handle signature validation for [{}]", handler.getClass().getSimpleName(), peer.getEntityId());
+                LOGGER.debug("Invoking [{}] to handle signature validation for [{}]", handler.getClass().getSimpleName(), peerEntityId);
                 handler.invoke(context);
                 LOGGER.debug("Successfully validated request signature for [{}].", profileRequest.getIssuer());
 

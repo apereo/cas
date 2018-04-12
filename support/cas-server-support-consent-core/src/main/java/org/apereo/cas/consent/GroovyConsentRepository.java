@@ -15,7 +15,7 @@ import java.util.Set;
 @Slf4j
 public class GroovyConsentRepository extends BaseConsentRepository {
     private static final long serialVersionUID = 3482998768083902246L;
-    private final Resource groovyResource;
+    private final transient Resource groovyResource;
 
     public GroovyConsentRepository(final Resource groovyResource) {
         this.groovyResource = groovyResource;

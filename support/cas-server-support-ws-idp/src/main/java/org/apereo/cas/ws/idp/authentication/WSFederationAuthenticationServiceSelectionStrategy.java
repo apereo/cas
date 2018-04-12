@@ -21,9 +21,8 @@ import java.util.Optional;
 public class WSFederationAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = 8035218407906419228L;
 
-
     private final int order = Ordered.HIGHEST_PRECEDENCE;
-    private final ServiceFactory webApplicationServiceFactory;
+    private final transient ServiceFactory webApplicationServiceFactory;
 
     public WSFederationAuthenticationServiceSelectionStrategy(final ServiceFactory webApplicationServiceFactory) {
         this.webApplicationServiceFactory = webApplicationServiceFactory;

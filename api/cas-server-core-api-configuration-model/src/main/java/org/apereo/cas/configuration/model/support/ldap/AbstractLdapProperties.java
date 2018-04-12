@@ -27,13 +27,16 @@ public abstract class AbstractLdapProperties implements Serializable {
         /**
          * Generic ldap type (OpenLDAP, 389ds, etc).
          */
-        GENERIC, /**
+        GENERIC,
+        /**
          * Active directory.
          */
-        AD, /**
+        AD,
+        /**
          * FreeIPA directory.
          */
-        FreeIPA, /**
+        FreeIPA,
+        /**
          * EDirectory.
          */
         EDirectory

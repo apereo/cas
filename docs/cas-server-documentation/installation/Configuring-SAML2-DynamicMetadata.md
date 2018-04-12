@@ -29,7 +29,7 @@ MDQ may be configured using the below snippet as an example:
 
 ## REST
 
-Similar to the Dynamic Metadata Query Protocol (MDQ), SAML sevice provider metadata may also be fetched using a more traditional REST interface. This is a simpler option that does not require one to deploy a compliant MDQ server and provides the flexibility of producing SP metadata using any programming language or framework.
+Similar to the Dynamic Metadata Query Protocol (MDQ), SAML service provider metadata may also be fetched using a more traditional REST interface. This is a simpler option that does not require one to deploy a compliant MDQ server and provides the flexibility of producing SP metadata using any programming language or framework.
 
 Support is enabled by including the following module in the overlay:
 

@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthenticationServiceTests {
 
     @Test
-    public void verifyNullTicket() throws Exception {
+    public void verifyNullTicket() {
         final var ctx = new MockRequestContext();
         final var action = new
             TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
@@ -38,7 +38,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
     }
 
     @Test
-    public void verifyInvalidTicket() throws Exception {
+    public void verifyInvalidTicket() {
 
         final var ctx = new MockRequestContext();
         final var tgt = new MockTicketGrantingTicket("user");
@@ -51,7 +51,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
     }
 
     @Test
-    public void verifyValidTicket() throws Exception {
+    public void verifyValidTicket() {
 
         final var ctx = new MockRequestContext();
         final var ctxAuthN = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());

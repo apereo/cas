@@ -30,7 +30,7 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
     private static final long serialVersionUID = -2059445756475980894L;
 
     private final int order = Ordered.HIGHEST_PRECEDENCE;
-    private final ServiceFactory webApplicationServiceFactory;
+    private final transient ServiceFactory webApplicationServiceFactory;
     private final String idpServerPrefix;
 
 

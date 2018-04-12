@@ -22,9 +22,9 @@ import java.io.Serializable;
 public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Serializable {
     private static final long serialVersionUID = -8581398063126547772L;
 
-    private final LockingStrategy lockingStrategy;
-    private final LogoutManager logoutManager;
-    private final TicketRegistry ticketRegistry;
+    private final transient LockingStrategy lockingStrategy;
+    private final transient LogoutManager logoutManager;
+    private final transient TicketRegistry ticketRegistry;
 
     @Override
     public void clean() {

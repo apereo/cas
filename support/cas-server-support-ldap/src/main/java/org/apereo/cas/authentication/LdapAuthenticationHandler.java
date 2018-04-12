@@ -220,14 +220,15 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                     this.principalIdAttribute);
                 throw new LoginException("Principal id attribute is not found for " + principalAttr);
             }
+            final String value = principalAttr.getStringValue();
             if (principalAttr.size() > 1) {
                 if (!this.allowMultiplePrincipalAttributeValues) {
                     throw new LoginException("Multiple principal values are not allowed: " + principalAttr);
                 }
-                LOGGER.warn("Found multiple values for principal id attribute: [{}]. Using first value=[{}].", principalAttr, principalAttr.getStringValue());
+                LOGGER.warn("Found multiple values for principal id attribute: [{}]. Using first value=[{}].", principalAttr, value);
             }
-            LOGGER.debug("Retrieved principal id attribute [{}]", principalAttr.getStringValue());
-            return principalAttr.getStringValue();
+            LOGGER.debug("Retrieved principal id attribute [{}]", value);
+            return value;
         }
         LOGGER.debug("Principal id attribute is not defined. Using the default provided user id [{}]", username);
         return username;
@@ -259,7 +260,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 attributes.removeIf(authenticatorAttributes::contains);
             }
         }
-        this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
+        this.authenticatedEntryAttributes = attributes.toArray(new String[0]);
         LOGGER.debug("LDAP authentication entry attributes for the authentication request are [{}]", (Object[]) this.authenticatedEntryAttributes);
     }
 }

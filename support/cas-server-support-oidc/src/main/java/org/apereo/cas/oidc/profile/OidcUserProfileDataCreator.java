@@ -3,7 +3,7 @@ package org.apereo.cas.oidc.profile;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.profile.DefaultOAuth2UserProfileDataCreator;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 
@@ -15,7 +15,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class OidcUserProfileDataCreator extends DefaultOAuth2UserProfileDataCreator {
+public class OidcUserProfileDataCreator extends DefaultOAuth20UserProfileDataCreator {
     public OidcUserProfileDataCreator(final ServicesManager servicesManager,
                                       final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter) {
         super(servicesManager, scopeToAttributesFilter);

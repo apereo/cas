@@ -13,7 +13,6 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
-import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -52,14 +51,13 @@ public class OidcJwksEndpointController extends BaseOAuth20Controller {
 
     public OidcJwksEndpointController(final ServicesManager servicesManager,
                                       final TicketRegistry ticketRegistry,
-                                      final OAuth20Validator validator,
                                       final AccessTokenFactory accessTokenFactory,
                                       final PrincipalFactory principalFactory,
                                       final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                       final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                       final CasConfigurationProperties casProperties,
                                       final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
-        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
+        super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, scopeToAttributesFilter, 
                 casProperties, ticketGrantingTicketCookieGenerator);
         this.jwksFile = casProperties.getAuthn().getOidc().getJwksFile();

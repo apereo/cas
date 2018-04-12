@@ -64,7 +64,8 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
      * @param request           the request
      * @return true if supported
      */
-    boolean supports(Event event, Authentication authentication,
+    boolean supports(Event event,
+                     Authentication authentication,
                      RegisteredService registeredService,
                      HttpServletRequest request);
 

@@ -25,4 +25,7 @@ dependencies {
     implementation libraries.caffein
     
     runtimeOnly libraries.groovy
+
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-web-api")
 }

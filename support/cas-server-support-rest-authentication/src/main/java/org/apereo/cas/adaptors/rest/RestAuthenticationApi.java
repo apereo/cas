@@ -23,7 +23,7 @@ import java.nio.charset.Charset;
 @Slf4j
 public class RestAuthenticationApi {
 
-    private final RestTemplate restTemplate;
+    private final transient RestTemplate restTemplate;
     private final String authenticationUri;
 
     public RestAuthenticationApi(final RestTemplate restTemplate, final String authenticationUri) {

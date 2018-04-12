@@ -102,17 +102,14 @@ public class EhCacheStatistics implements CacheStatistics {
         final var free = getPercentFree();
         try (var formatter = new Formatter(builder)) {
             if (this.useBytes) {
-                formatter.format("%.2f", this.heapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
-                builder.append("MB heap, ");
-                formatter.format("%.2f", this.diskSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
-                builder.append("MB disk, ");
+                formatter.format("%.2f MB heap, ", this.heapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
+                formatter.format("%.2f MB disk, ", this.diskSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
             } else {
                 builder.append(this.heapSize).append(" items in heap, ");
                 builder.append(this.diskSize).append(" items on disk, ");
             }
-            formatter.format("%.2f", this.offHeapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
-            builder.append("MB off-heap, ");
-            builder.append(free).append("% free, ");
+            formatter.format("%.2f MB off-heap, ", this.offHeapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
+            builder.append(getPercentFree()).append("% free, ");
             builder.append(getEvictions()).append(" evictions");
         }
     }

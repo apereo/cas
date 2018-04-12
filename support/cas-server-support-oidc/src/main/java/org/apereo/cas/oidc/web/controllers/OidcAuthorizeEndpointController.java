@@ -16,7 +16,6 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
-import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
@@ -45,7 +44,6 @@ import java.util.Set;
 public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointController {
     public OidcAuthorizeEndpointController(final ServicesManager servicesManager,
                                            final TicketRegistry ticketRegistry,
-                                           final OAuth20Validator validator,
                                            final AccessTokenFactory accessTokenFactory,
                                            final PrincipalFactory principalFactory,
                                            final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
@@ -58,12 +56,11 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
                                            final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders,
                                            final Set<OAuth20AuthorizationRequestValidator> oauthRequestValidators,
                                            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
-        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
-                webApplicationServiceServiceFactory, oAuthCodeFactory, consentApprovalViewResolver,
-                scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator,
-                authenticationBuilder, oauthAuthorizationResponseBuilders, oauthRequestValidators,
-                registeredServiceAccessStrategyEnforcer
-            );
+        super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
+            webApplicationServiceServiceFactory, oAuthCodeFactory, consentApprovalViewResolver,
+            scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator,
+            authenticationBuilder, oauthAuthorizationResponseBuilders, oauthRequestValidators,
+            registeredServiceAccessStrategyEnforcer);
     }
 
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
@@ -72,8 +69,8 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
         final var scopes = OAuth20Utils.getRequestedScopes(request);
         if (scopes.isEmpty() || !scopes.contains(OidcConstants.StandardScopes.OPENID.getScope())) {
             LOGGER.warn("Provided scopes [{}] are undefined by OpenID Connect, which requires that scope [{}] MUST be specified, "
-                            + "or the behavior is unspecified. CAS MAY allow this request to be processed for now.",
-                    scopes, OidcConstants.StandardScopes.OPENID.getScope());
+                    + "or the behavior is unspecified. CAS MAY allow this request to be processed for now.",
+                scopes, OidcConstants.StandardScopes.OPENID.getScope());
         }
 
         return super.handleRequest(request, response);

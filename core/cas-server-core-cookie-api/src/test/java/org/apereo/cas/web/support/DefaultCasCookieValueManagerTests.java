@@ -1,7 +1,6 @@
 package org.apereo.cas.web.support;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.*;
 
 import org.apereo.cas.CipherExecutor;

@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
-    private final MongoTemplate mongoTemplate;
+    private final transient MongoTemplate mongoTemplate;
     private final String collectionName;
 
     public MongoDbSamlRegisteredServiceMetadataResolver(final SamlIdPProperties samlIdPProperties,

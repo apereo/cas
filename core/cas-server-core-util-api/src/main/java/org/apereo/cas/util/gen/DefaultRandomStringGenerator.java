@@ -10,14 +10,15 @@ import java.util.stream.IntStream;
  * length of the random part.
  *
  * @author Scott Battaglia
-
  * @since 3.0.0
  */
 @Slf4j
 @NoArgsConstructor
 public class DefaultRandomStringGenerator extends AbstractRandomStringGenerator {
 
-    /** The array of printable characters to be used in our random string. */
+    /**
+     * The array of printable characters to be used in our random string.
+     */
     private static final char[] PRINTABLE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345679".toCharArray();
 
     public DefaultRandomStringGenerator(final int defaultLength) {
@@ -35,9 +36,17 @@ public class DefaultRandomStringGenerator extends AbstractRandomStringGenerator 
         final var output = new char[random.length];
         IntStream.range(0, random.length).forEach(i -> {
             final var index = Math.abs(random[i] % PRINTABLE_CHARACTERS.length);
-            output[i] = PRINTABLE_CHARACTERS[index];
+            output[i] = getPrintableCharacters()[index];
         });
-
         return new String(output);
+    }
+
+    /**
+     * Get printable characters char [].
+     *
+     * @return the char []
+     */
+    protected char[] getPrintableCharacters() {
+        return PRINTABLE_CHARACTERS;
     }
 }

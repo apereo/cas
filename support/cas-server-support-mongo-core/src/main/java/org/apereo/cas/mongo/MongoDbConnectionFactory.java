@@ -292,18 +292,6 @@ public class MongoDbConnectionFactory {
         return buildMongoDbClientOptionsFactoryBean(mongo).getObject();
     }
 
-    @SneakyThrows
-    private MongoClientOptions buildMongoDbClientOptions() {
-
-        final var bean = new MongoClientOptionsFactoryBean();
-        bean.setSocketTimeout(TIMEOUT);
-        bean.setConnectTimeout(TIMEOUT);
-        bean.setMaxWaitTime(TIMEOUT);
-        bean.afterPropertiesSet();
-        return bean.getObject();
-
-    }
-
     private MongoClient buildMongoDbClient(final BaseMongoDbProperties mongo) {
 
         if (StringUtils.isNotBlank(mongo.getClientUri())) {
@@ -326,7 +314,7 @@ public class MongoDbConnectionFactory {
                 .collect(Collectors.toList());
         } else {
             final var port = mongo.getPort() > 0 ? mongo.getPort() : DEFAULT_PORT;
-            LOGGER.debug("Found single MongoDb server address [{}] using port [{}]" + mongo.getHost(), port);
+            LOGGER.debug("Found single MongoDb server address [{}] using port [{}]", mongo.getHost(), port);
             final var addr = new ServerAddress(mongo.getHost(), port);
             servers.add(addr);
         }

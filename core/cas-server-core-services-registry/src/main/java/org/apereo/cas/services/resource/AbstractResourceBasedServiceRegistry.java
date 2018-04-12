@@ -19,7 +19,6 @@ import org.apereo.cas.support.events.service.CasRegisteredServicePreDeleteEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.io.LockedOutputStream;
 import org.apereo.cas.util.io.PathWatcherService;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.springframework.context.ApplicationEventPublisher;
@@ -29,9 +28,9 @@ import org.springframework.util.Assert;
 import javax.annotation.PreDestroy;
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -246,30 +245,31 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      */
     @Override
     public Collection<RegisteredService> load(final File file) {
+        final String fileName = file.getName();
         if (!file.canRead()) {
-            LOGGER.warn("[{}] is not readable. Check file permissions", file.getName());
+            LOGGER.warn("[{}] is not readable. Check file permissions", fileName);
             return new ArrayList<>(0);
         }
         if (!file.exists()) {
-            LOGGER.warn("[{}] is not found at the path specified", file.getName());
+            LOGGER.warn("[{}] is not found at the path specified", fileName);
             return new ArrayList<>(0);
         }
         if (file.length() == 0) {
-            LOGGER.debug("[{}] appears to be empty so no service definition will be loaded", file.getName());
+            LOGGER.debug("[{}] appears to be empty so no service definition will be loaded", fileName);
             return new ArrayList<>(0);
         }
-        if (!RegexUtils.matches(this.serviceFileNamePattern, file.getName())) {
+        if (!RegexUtils.matches(this.serviceFileNamePattern, fileName)) {
             LOGGER.warn("[{}] does not match the recommended pattern [{}]. "
                     + "While CAS tries to be forgiving as much as possible, it's recommended "
                     + "that you rename the file to match the requested pattern to avoid issues with duplicate service loading. "
                     + "Future CAS versions may try to strictly force the naming syntax, refusing to load the file.",
-                file.getName(), this.serviceFileNamePattern.pattern());
+                fileName, this.serviceFileNamePattern.pattern());
         }
         try (var in = new BufferedInputStream(new FileInputStream(file))) {
             return this.registeredServiceSerializers.stream().filter(s -> s.supports(file)).map(s -> s.load(in))
                 .filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toList());
         } catch (final Exception e) {
-            LOGGER.error("Error reading configuration file [{}]", file.getName(), e);
+            LOGGER.error("Error reading configuration file [{}]", fileName, e);
         }
         return new ArrayList<>(0);
     }

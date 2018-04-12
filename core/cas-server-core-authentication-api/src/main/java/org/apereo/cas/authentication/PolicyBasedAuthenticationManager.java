@@ -6,6 +6,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalException;
 import org.apereo.cas.authentication.principal.NullPrincipal;
@@ -168,22 +169,22 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential));
 
         final var result = handler.authenticate(credential);
-        builder.addSuccess(handler.getName(), result);
-        LOGGER.debug("Authentication handler [{}] successfully authenticated [{}]", handler.getName(), credential);
+        final String authenticationHandlerName = handler.getName();
+        builder.addSuccess(authenticationHandlerName, result);
+        LOGGER.debug("Authentication handler [{}] successfully authenticated [{}]", authenticationHandlerName, credential);
 
         publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
         var principal = result.getPrincipal();
 
         final var resolverName = resolver != null ? resolver.getClass().getSimpleName() : "N/A";
         if (resolver == null) {
-            LOGGER.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]", handler.getName(), principal);
+            LOGGER.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]", authenticationHandlerName, principal);
         } else {
             principal = resolvePrincipal(handler, resolver, credential, principal);
             if (principal == null) {
                 if (this.principalResolutionFailureFatal) {
                     LOGGER.warn("Principal resolution handled by [{}] produced a null principal for: [{}]"
-                            + "CAS is configured to treat principal resolution failures as fatal.",
-                        resolverName, credential);
+                        + "CAS is configured to treat principal resolution failures as fatal.", resolverName, credential);
                     throw new UnresolvedPrincipalException();
                 }
                 LOGGER.warn("Principal resolution handled by [{}] produced a null principal. "
@@ -193,7 +194,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         }
 
         if (principal == null) {
-            LOGGER.warn("Principal resolution for authentication by [{}] produced a null principal.", handler.getName());
+            LOGGER.warn("Principal resolution for authentication by [{}] produced a null principal.", authenticationHandlerName);
         } else {
             builder.setPrincipal(principal);
         }
@@ -213,7 +214,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         LOGGER.debug("Candidate/Registered authentication handlers for this transaction are [{}]", handlers);
         final var handlerResolvers = authenticationEventExecutionPlan.getAuthenticationHandlerResolvers(transaction);
         LOGGER.debug("Authentication handler resolvers for this transaction are [{}]", handlerResolvers);
-        
+
         final var resolvedHandlers = handlerResolvers.stream()
             .filter(r -> r.supports(handlers, transaction))
             .map(r -> r.resolve(handlers, transaction))
@@ -406,9 +407,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         if (ex instanceof UndeclaredThrowableException) {
             e = ((UndeclaredThrowableException) ex).getUndeclaredThrowable();
         }
-        var msg = e.getMessage();
+        final StringBuilder msg = new StringBuilder(StringUtils.defaultString(e.getMessage()));
         if (e.getCause() != null) {
-            msg += " / " + e.getCause().getMessage();
+            msg.append(" / ").append(e.getCause().getMessage());
         }
         if (e instanceof GeneralSecurityException) {
             LOGGER.debug("[{}] exception details: [{}].", name, msg);

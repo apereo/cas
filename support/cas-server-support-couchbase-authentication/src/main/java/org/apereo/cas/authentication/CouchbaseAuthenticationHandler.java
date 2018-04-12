@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.query.N1qlQueryResult;
 import com.couchbase.client.java.query.N1qlQueryRow;
@@ -51,8 +52,9 @@ public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuth
         }
 
         final var row = result.allRows().get(0);
-        if (!row.value().containsKey(couchbase.getBucket().name())) {
-            throw new AccountNotFoundException("Couchbase query row does not contain this bucket [{}]" + couchbase.getBucket().name());
+        final Bucket bucket = couchbase.getBucket();
+        if (!row.value().containsKey(bucket.name())) {
+            throw new AccountNotFoundException("Couchbase query row does not contain this bucket [{}]" + bucket.name());
         }
 
         final var value = (JsonObject) row.value().get(couchbase.getBucket().name());

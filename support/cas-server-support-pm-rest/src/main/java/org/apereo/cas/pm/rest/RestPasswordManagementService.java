@@ -29,7 +29,7 @@ import java.util.Map;
 @Slf4j
 public class RestPasswordManagementService extends BasePasswordManagementService {
 
-    private final RestTemplate restTemplate;
+    private final transient RestTemplate restTemplate;
 
     public RestPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                          final String issuer,

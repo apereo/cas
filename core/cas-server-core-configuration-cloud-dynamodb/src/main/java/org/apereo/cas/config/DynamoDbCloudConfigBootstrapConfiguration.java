@@ -5,6 +5,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
@@ -21,6 +22,8 @@ import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -34,8 +37,6 @@ import org.springframework.core.env.PropertySource;
 import java.net.InetAddress;
 import java.util.Map;
 import java.util.Properties;
-
-import lombok.Getter;
 
 /**
  * This is {@link DynamoDbCloudConfigBootstrapConfiguration}.
@@ -67,7 +68,9 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
     @Override
     public PropertySource<?> locate(final Environment environment) {
         final var amazonDynamoDBClient = getAmazonDynamoDbClient(environment);
-        createSettingsTable(amazonDynamoDBClient, false);
+        final Boolean preventTableCreationOnStartup = Boolean.valueOf(getSetting(environment, "preventTableCreationOnStartup"));
+        if (!preventTableCreationOnStartup) {
+            createSettingsTable(amazonDynamoDBClient, false);
         final var scan = new ScanRequest(TABLE_NAME);
         LOGGER.debug("Scanning table with request [{}]", scan);
         final var result = amazonDynamoDBClient.scan(scan);
@@ -101,12 +104,13 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         final var secret = getSetting(environment, "credentialSecretKey");
         final AWSCredentials credentials = new BasicAWSCredentials(key, secret);
         var region = getSetting(environment, "region");
+        final Region currentRegion = Regions.getCurrentRegion();
         if (StringUtils.isBlank(region)) {
-            region = Regions.getCurrentRegion().getName();
+            region = currentRegion.getName();
         }
         var regionOverride = getSetting(environment, "regionOverride");
         if (StringUtils.isNotBlank(regionOverride)) {
-            regionOverride = Regions.getCurrentRegion().getName();
+            regionOverride = currentRegion.getName();
         }
         final var endpoint = getSetting(environment, "endpoint");
         final var client = AmazonDynamoDBClient.builder().withCredentials(new AWSStaticCredentialsProvider(credentials))
@@ -119,9 +123,6 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
     private static void createSettingsTable(final AmazonDynamoDB amazonDynamoDBClient, final boolean deleteTables) {
         final var name = ColumnNames.ID.getColumnName();
         final var request = new CreateTableRequest().withAttributeDefinitions(new AttributeDefinition(name, ScalarAttributeType.S))
-            .withKeySchema(new KeySchemaElement(name, KeyType.HASH))
-            .withProvisionedThroughput(new ProvisionedThroughput(PROVISIONED_THROUGHPUT, PROVISIONED_THROUGHPUT))
-            .withTableName(TABLE_NAME);
         if (deleteTables) {
             final var delete = new DeleteTableRequest(request.getTableName());
             LOGGER.debug("Sending delete request [{}] to remove table if necessary", delete);
@@ -135,5 +136,15 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         LOGGER.debug("Sending request [{}] to obtain table description...", describeTableRequest);
         final var tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
         LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
+    }
+
+    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
+    private static CreateTableRequest createCreateTableRequest() {
+        final String name = ColumnNames.ID.getColumnName();
+        return new CreateTableRequest()
+            .withAttributeDefinitions(new AttributeDefinition(name, ScalarAttributeType.S))
+            .withKeySchema(new KeySchemaElement(name, KeyType.HASH))
+            .withProvisionedThroughput(new ProvisionedThroughput(PROVISIONED_THROUGHPUT, PROVISIONED_THROUGHPUT))
+            .withTableName(TABLE_NAME);
     }
 }

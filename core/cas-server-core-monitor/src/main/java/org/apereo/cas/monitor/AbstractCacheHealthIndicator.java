@@ -28,7 +28,7 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
     private final long threshold;
 
     @Override
-    protected void doHealthCheck(final Health.Builder builder) throws Exception {
+    protected void doHealthCheck(final Health.Builder builder) {
         try {
             final var statistics = getStatistics();
             if (statistics == null || statistics.length == 0) {

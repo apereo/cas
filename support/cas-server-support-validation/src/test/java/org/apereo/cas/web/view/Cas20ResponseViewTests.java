@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
-import org.apereo.cas.authentication.DefaultAuthenticationContextValidator;
+import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
@@ -15,6 +15,7 @@ import org.apereo.cas.web.ServiceValidateController;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -39,6 +40,9 @@ import static org.junit.Assert.*;
 public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
+    @Autowired
     @Qualifier("cas3ServiceJsonView")
     private View cas3ServiceJsonView;
 
@@ -59,7 +63,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
             getProxyHandler(),
             getArgumentExtractor(),
             new DefaultMultifactorTriggerSelectionStrategy(new MultifactorAuthenticationProperties()),
-            new DefaultAuthenticationContextValidator("", "OPEN", "test"),
+            new DefaultMultifactorAuthenticationContextValidator("", "OPEN", "test", applicationContext),
             cas3ServiceJsonView, cas2SuccessView,
             cas2ServiceFailureView, "authenticationContext",
             new DefaultServiceTicketValidationAuthorizersExecutionPlan(),

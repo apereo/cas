@@ -47,13 +47,12 @@ import java.time.ZonedDateTime;
 @Slf4j
 public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponseBuilder<Response> {
     private static final long serialVersionUID = 1488837627964481272L;
-
     
-    private final TicketRegistry ticketRegistry;
-    private final SamlArtifactTicketFactory samlArtifactTicketFactory;
-    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-    private final SAMLArtifactMap samlArtifactMap;
-    private final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory;
+    private final transient TicketRegistry ticketRegistry;
+    private final transient SamlArtifactTicketFactory samlArtifactTicketFactory;
+    private final transient CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private final transient SAMLArtifactMap samlArtifactMap;
+    private final transient SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory;
 
     public SamlProfileSaml2ResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
                                            final SamlIdPObjectSigner samlObjectSigner,

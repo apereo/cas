@@ -153,4 +153,15 @@ public class CommunicationsManager {
         return CollectionUtils.firstElement(value).toString();
     }
 
+    /**
+     * Validate.
+     */
+    public void validate() {
+        if (!isMailSenderDefined()) {
+            LOGGER.warn("CAS is unable to send tokens via email given no settings are defined to account for email servers, etc");
+        }
+        if (!isSmsSenderDefined()) {
+            LOGGER.warn("CAS is unable to send tokens via sms messages given no settings are defined to account for sms providers, etc");
+        }
+    }
 }

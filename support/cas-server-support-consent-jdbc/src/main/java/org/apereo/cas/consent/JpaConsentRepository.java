@@ -33,7 +33,7 @@ public class JpaConsentRepository implements ConsentRepository {
     private static final String DELETE_QUERY = "DELETE r from ConsentDecision r ";
 
     @PersistenceContext(unitName = "consentEntityManagerFactory")
-    private EntityManager entityManager;
+    private transient EntityManager entityManager;
 
     @Override
     public Collection<ConsentDecision> findConsentDecisions(final String principal) {

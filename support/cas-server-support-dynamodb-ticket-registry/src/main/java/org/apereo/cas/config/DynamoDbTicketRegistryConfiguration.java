@@ -48,7 +48,9 @@ public class DynamoDbTicketRegistryConfiguration {
     public DynamoDbTicketRegistryFacilitator dynamoDbTicketRegistryFacilitator(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         final var db = casProperties.getTicket().getRegistry().getDynamoDb();
         final var f = new DynamoDbTicketRegistryFacilitator(ticketCatalog, db, amazonDynamoDbClient());
-        f.createTicketTables(db.isDropTablesOnStartup());
+        if (!db.isPreventTableCreationOnStartup()) {
+            f.createTicketTables(db.isDropTablesOnStartup());
+        }
         return f;
     }
 

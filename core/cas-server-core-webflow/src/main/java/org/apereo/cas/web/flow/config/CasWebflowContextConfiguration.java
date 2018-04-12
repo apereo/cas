@@ -216,7 +216,6 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
         final var c = new DefaultLoginWebflowConfigurer(builder(), loginFlowRegistry(), applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry());
         c.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        c.initialize();
         return c;
     }
 

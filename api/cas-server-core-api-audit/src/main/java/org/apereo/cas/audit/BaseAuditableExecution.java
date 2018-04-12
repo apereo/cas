@@ -12,7 +12,6 @@ public abstract class BaseAuditableExecution implements AuditableExecution {
 
     @Override
     public AuditableExecutionResult execute(final AuditableContext context) {
-        //Just copy all data from context to result and return it
         return AuditableExecutionResult.of(context);
     }
 }

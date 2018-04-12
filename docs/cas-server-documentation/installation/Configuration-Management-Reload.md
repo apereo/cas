@@ -17,7 +17,7 @@ to **refresh** the configuration as needed. This means that an adopter would sim
 change a required CAS settings and then would submit
 a request to CAS to refresh its current state. All CAS internal components that are affected
 by the external change are quietly reloaded
-and the setting takes immediate effect, completely removing the need for container restarts or CAS redeployments.
+and the setting takes immediate effect, completely removing the need for container restarts or CAS re-deployments.
 
 <div class="alert alert-info"><strong>Do Not Discriminate!</strong><p>Most if not all CAS settings are eligible candidates
 for reloads. CAS should be smart enough to reload the appropriate configuration, regardless of setting/module that

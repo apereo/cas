@@ -64,8 +64,7 @@ public class JpaBeans {
                 }
                 return new DataSourceProxy(containerDataSource);
             } catch (final DataSourceLookupFailureException e) {
-                LOGGER.warn("Lookup of datasource [{}] failed due to {} "
-                    + "falling back to configuration via JPA properties.", dataSourceName, e.getMessage());
+                LOGGER.warn("Lookup of datasource [{}] failed due to {} falling back to configuration via JPA properties.", dataSourceName, e.getMessage());
             }
         }
 

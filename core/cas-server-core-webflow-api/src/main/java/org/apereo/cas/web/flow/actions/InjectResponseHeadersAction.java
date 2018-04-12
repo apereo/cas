@@ -19,8 +19,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class InjectResponseHeadersAction extends RedirectToServiceAction {
-
-
     public InjectResponseHeadersAction(final ResponseBuilderLocator responseBuilderLocator) {
         super(responseBuilderLocator);
     }

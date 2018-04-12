@@ -90,8 +90,8 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
         setSuffix(suffix);
     }
 
-    /**
-     * TODO: Due to a bug in mod-auth-cas and possibly other clients in the way tickets are parsed,
+    /**                                  
+     * Due to a bug in mod-auth-cas and possibly other clients in the way tickets are parsed,
      * the ticket id body is sanitized to remove the character "_", replacing it with "-" instead.
      * This might be revisited in the future and removed, once at least mod-auth-cas fixes
      * the issue.

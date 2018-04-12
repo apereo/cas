@@ -20,7 +20,7 @@ import java.util.Optional;
 public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = -2059445756475980894L;
     private final int order = Ordered.HIGHEST_PRECEDENCE;
-    private final ServiceFactory webApplicationServiceFactory;
+    private final transient ServiceFactory webApplicationServiceFactory;
     private final String casServiceUrlPattern;
 
     public SamlIdPEntityIdAuthenticationServiceSelectionStrategy(final ServiceFactory webApplicationServiceFactory,

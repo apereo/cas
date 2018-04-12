@@ -35,8 +35,7 @@ import java.util.List;
 @Slf4j
 public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Assertion> {
     private static final long serialVersionUID = -3945938960014421135L;
-
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -48,7 +47,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
 
     private final SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder;
 
-    private final SamlIdPObjectSigner samlObjectSigner;
+    private final transient SamlIdPObjectSigner samlObjectSigner;
 
     public SamlProfileSamlAssertionBuilder(final OpenSamlConfigBean configBean,
                                            final SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder,

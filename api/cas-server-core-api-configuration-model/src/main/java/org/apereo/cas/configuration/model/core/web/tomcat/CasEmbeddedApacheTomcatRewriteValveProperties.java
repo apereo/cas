@@ -26,5 +26,5 @@ public class CasEmbeddedApacheTomcatRewriteValveProperties implements Serializab
      * Location of a rewrite valve specifically by Apache Tomcat
      * to activate URL rewriting.
      */
-    private Resource location = new ClassPathResource("container/tomcat/rewrite.config");
+    private transient Resource location = new ClassPathResource("container/tomcat/rewrite.config");
 }

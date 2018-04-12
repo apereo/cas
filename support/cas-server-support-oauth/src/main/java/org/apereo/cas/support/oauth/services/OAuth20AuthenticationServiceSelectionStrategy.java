@@ -32,8 +32,8 @@ import java.util.Optional;
 public class OAuth20AuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = 8517547235465666978L;
     
-    private final ServicesManager servicesManager;
-    private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+    private final transient ServicesManager servicesManager;
+    private final transient ServiceFactory<WebApplicationService> webApplicationServiceFactory;
     private final String callbackUrl;
     
     private final int order = Ordered.HIGHEST_PRECEDENCE;

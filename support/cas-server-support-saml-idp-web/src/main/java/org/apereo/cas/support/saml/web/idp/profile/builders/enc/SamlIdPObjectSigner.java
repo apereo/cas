@@ -208,11 +208,10 @@ public class SamlIdPObjectSigner {
      * @param descriptor the descriptor
      * @param service    the service
      * @return the signature signing parameters
-     * @throws SAMLException the saml exception
      */
     @SneakyThrows
     protected SignatureSigningParameters buildSignatureSigningParameters(final RoleDescriptor descriptor,
-                                                                         final SamlRegisteredService service) throws SAMLException {
+                                                                         final SamlRegisteredService service) {
         final var criteria = new CriteriaSet();
         final var signatureSigningConfiguration = getSignatureSigningConfiguration(descriptor, service);
         criteria.add(new SignatureSigningConfigurationCriterion(signatureSigningConfiguration));

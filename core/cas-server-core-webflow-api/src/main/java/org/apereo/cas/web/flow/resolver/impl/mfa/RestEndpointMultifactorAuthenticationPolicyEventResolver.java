@@ -1,6 +1,9 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -130,15 +133,12 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
     /**
      * The Rest endpoint entity passed along to the API.
      */
+    @Getter
+    @RequiredArgsConstructor
+    @ToString
+    @EqualsAndHashCode
     public static class RestEndpointEntity {
-
-        private String principalId;
-
-        private String serviceId;
-
-        public RestEndpointEntity(final String principalId, final String serviceId) {
-            this.principalId = principalId;
-            this.serviceId = serviceId;
-        }
+        private final String principalId;
+        private final String serviceId;
     }
 }

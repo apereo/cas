@@ -116,7 +116,7 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService findServiceById(final long id) {
         final var doc = this.documentDbTemplate.findById(this.collectionName, String.valueOf(id),
-                CosmosDbDocument.class, PARTITION_KEY_FIELD_VALUE);
+            CosmosDbDocument.class, PARTITION_KEY_FIELD_VALUE);
         if (doc != null) {
             return this.serializer.from(doc.getBody());
         }
@@ -138,7 +138,7 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
     private FeedResponse<Document> queryDocuments(final String query) {
         final var sql = new SqlQuerySpec(query);
         final var feed = new FeedOptions();
-        feed.setEnableCrossPartitionQuery(true);
+        feed.setEnableCrossPartitionQuery(Boolean.TRUE);
         final var documentClient = this.documentDbFactory.getDocumentClient();
         final var collectionLink = CosmosDbObjectFactory.getCollectionLink(this.databaseName, this.collectionName);
         return documentClient.queryDocuments(collectionLink, sql, feed, PARTITION_KEY_FIELD_VALUE);

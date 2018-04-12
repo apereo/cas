@@ -94,7 +94,7 @@ public class CasCoreHttpConfiguration {
         return new DefaultHostnameVerifier();
     }
 
-    private HttpClient getHttpClient(final boolean redirectEnabled) throws Exception {
+    private HttpClient getHttpClient(final boolean redirectEnabled) {
         final var c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
         final var httpClient = casProperties.getHttpClient();
         c.setConnectionTimeout(Beans.newDuration(httpClient.getConnectionTimeout()).toMillis());

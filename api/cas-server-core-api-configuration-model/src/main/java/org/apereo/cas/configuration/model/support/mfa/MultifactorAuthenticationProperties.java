@@ -72,7 +72,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
      * MFA can be triggered based on the results of a groovy script of your own design.
      * The outcome of the script should determine the MFA provider id that CAS should attempt to activate.
      */
-    private Resource groovyScript;
+    private transient Resource groovyScript;
 
     /**
      * This is a more generic variant of the @{link #globalPrincipalAttributeNameTriggers}.
@@ -81,7 +81,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
      * you need to design a strategy to dynamically decide on the provider that should be activated for the request.
      * The decision is handed off to a Predicate implementation that define in a Groovy script whose location is taught to CAS.
      */
-    private Resource globalPrincipalAttributePredicate;
+    private transient Resource globalPrincipalAttributePredicate;
 
     /**
      * MFA can be triggered for all users/subjects carrying a specific attribute that matches one of the conditions below.
@@ -159,7 +159,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
      * Provider selection may also be carried out using Groovy scripting strategies more dynamically.
      * The following example should serve as an outline of how to select multifactor providers based on a Groovy script.
      */
-    private Resource providerSelectorGroovyScript;
+    private transient Resource providerSelectorGroovyScript;
 
     /**
      * Activate and configure a multifactor authentication provider via U2F FIDO.

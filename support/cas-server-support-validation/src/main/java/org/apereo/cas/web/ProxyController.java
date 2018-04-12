@@ -65,7 +65,7 @@ public class ProxyController extends AbstractDelegateController {
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         final var proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET);
         final var targetService = getTargetService(request);
-        return StringUtils.hasText(proxyGrantingTicket) && targetService != null;
+        return targetService != null && StringUtils.hasText(proxyGrantingTicket);
     }
 
     /**

@@ -220,7 +220,7 @@ public class DefaultCasSslContext {
         public X509Certificate[] getAcceptedIssuers() {
             final List<X509Certificate> certificates = new ArrayList<>();
             this.trustManagers.forEach(trustManager -> certificates.addAll(CollectionUtils.wrapList(trustManager.getAcceptedIssuers())));
-            return certificates.toArray(new X509Certificate[certificates.size()]);
+            return certificates.toArray(new X509Certificate[0]);
         }
     }
 }

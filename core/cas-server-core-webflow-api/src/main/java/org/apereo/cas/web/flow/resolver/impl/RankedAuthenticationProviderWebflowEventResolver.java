@@ -25,6 +25,7 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -108,9 +109,10 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
             return resumeFlow();
         }
 
-        if (result.getValue().isPresent()) {
-            return CollectionUtils.wrapSet(validateEventIdForMatchingTransitionInContext(id, context,
-                buildEventAttributeMap(authentication.getPrincipal(), service, result.getValue().get())));
+        final Optional<MultifactorAuthenticationProvider> value = result.getValue();
+        if (value.isPresent()) {
+            final Map<String, Object> attributeMap = buildEventAttributeMap(authentication.getPrincipal(), service, value.get());
+            return CollectionUtils.wrapSet(validateEventIdForMatchingTransitionInContext(id, context, attributeMap));
         }
         LOGGER.warn("The authentication context cannot be satisfied and the requested event [{}] is unrecognized", id);
         return CollectionUtils.wrapSet(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));

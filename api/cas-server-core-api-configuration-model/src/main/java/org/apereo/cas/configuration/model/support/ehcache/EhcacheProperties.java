@@ -90,7 +90,7 @@ public class EhcacheProperties implements Serializable {
      * or if not found, "ehcache-failsafe.xml" in the EhCache jar (default EhCache initialization).
      */
     @RequiredProperty
-    private Resource configLocation = new ClassPathResource("ehcache-replicated.xml");
+    private transient Resource configLocation = new ClassPathResource("ehcache-replicated.xml");
 
     /**
      * Set whether the EhCache CacheManager should be shared (as a singleton at the ClassLoader level)

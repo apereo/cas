@@ -33,7 +33,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    private final ProtocolAttributeEncoder samlAttributeEncoder;
+    private final transient ProtocolAttributeEncoder samlAttributeEncoder;
 
     public SamlProfileSamlAttributeStatementBuilder(final OpenSamlConfigBean configBean, final ProtocolAttributeEncoder samlAttributeEncoder) {
         super(configBean);
