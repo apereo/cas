@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.radius;
 
+import java.io.Serializable;
+
 /**
  * Interface representing a Radius Server.
  *
@@ -8,7 +10,7 @@ package org.apereo.cas.adaptors.radius;
  * @since 3.1
  */
 @FunctionalInterface
-public interface RadiusServer {
+public interface RadiusServer extends Serializable {
     
     /** The default port for accounting.
      * @since 4.1.0

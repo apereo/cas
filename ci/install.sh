@@ -34,7 +34,7 @@ elif [ "$MATRIX_JOB_TYPE" == "CFGMETADATA" ]; then
      -DskipGradleLint=true -DskipSass=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 elif [ "$MATRIX_JOB_TYPE" == "STYLE" ]; then
-     gradleBuild="$gradleBuild checkstyleMain checkstyleTest -x test -x javadoc \
+     gradleBuild="$gradleBuild check -x test -x javadoc \
      -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 elif [ "$MATRIX_JOB_TYPE" == "JAVADOC" ]; then
@@ -42,7 +42,11 @@ elif [ "$MATRIX_JOB_TYPE" == "JAVADOC" ]; then
      -DskipGradleLint=true -DskipSass=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
-    gradleBuild="$gradleBuild test coveralls -x javadoc -x check  \
+    gradleBuild="$gradleBuild test coveralls -x javadoc -x check \
+    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
+    -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
+elif [ "$MATRIX_JOB_TYPE" == "DEPANALYZE" ]; then
+    gradleBuild="$gradleBuild dependencyCheckAnalyze dependencyCheckUpdate -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 elif [ "$MATRIX_JOB_TYPE" == "DEPUPDATE" ] && [ isActiveBranchCommit ]; then

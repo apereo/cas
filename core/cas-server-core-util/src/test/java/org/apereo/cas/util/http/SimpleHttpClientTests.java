@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 @Slf4j
 public class SimpleHttpClientTests {
 
-    private static SimpleHttpClient getHttpClient() throws Exception {
+    private static SimpleHttpClient getHttpClient() {
         final var httpClient = new SimpleHttpClientFactoryBean().getObject();
         return httpClient;
     }

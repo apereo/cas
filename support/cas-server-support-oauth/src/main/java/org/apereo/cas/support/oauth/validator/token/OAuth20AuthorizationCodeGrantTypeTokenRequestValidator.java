@@ -1,16 +1,18 @@
 package org.apereo.cas.support.oauth.validator.token;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -24,11 +26,16 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.3.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends BaseOAuth20TokenRequestValidator {
     private final ServicesManager servicesManager;
     private final TicketRegistry ticketRegistry;
-    private final OAuth20Validator validator;
+
+    public OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
+                                                                  final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+        super(registeredServiceAccessStrategyEnforcer);
+        this.servicesManager = servicesManager;
+        this.ticketRegistry = ticketRegistry;
+    }
 
     @Override
     protected OAuth20GrantTypes getGrantType() {
@@ -45,8 +52,8 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
 
         LOGGER.debug("Received grant type [{}] with client id [{}] and redirect URI [{}]", grantType, clientId, redirectUri);
         final var valid = this.validator.checkParameterExist(request, OAuth20Constants.REDIRECT_URI)
-            && this.validator.checkParameterExist(request, OAuth20Constants.CODE)
-            && this.validator.checkCallbackValid(registeredService, redirectUri);
+            && HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CODE)
+            && OAuth20Utils.checkCallbackValid(clientRegisteredService, redirectUri);
 
         if (valid) {
             final var code = context.getRequestParameter(OAuth20Constants.CODE);
@@ -55,9 +62,21 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
                 LOGGER.warn("Request OAuth code [{}] is not found or has expired", code);
                 return false;
             }
-            if (!registeredService.matches(token.getService())) {
+            final String serviceId = token.getService().getId();
+            final OAuthRegisteredService codeRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, serviceId);
+
+            final AuditableContext audit = AuditableContext.builder()
+                .service(token.getService())
+                .authentication(token.getAuthentication())
+                .registeredService(codeRegisteredService)
+                .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
+                .build();
+            final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            accessResult.throwExceptionIfNeeded();
+
+            if (!clientRegisteredService.equals(codeRegisteredService)) {
                 LOGGER.warn("The OAuth code [{}] issued to service [{}] does not match the registered service [{}] provided in the request given the redirect URI [{}]",
-                    code, token.getService().getId(), registeredService.getName(), redirectUri);
+                    code, serviceId, clientRegisteredService.getName(), redirectUri);
                 return false;
             }
             return true;

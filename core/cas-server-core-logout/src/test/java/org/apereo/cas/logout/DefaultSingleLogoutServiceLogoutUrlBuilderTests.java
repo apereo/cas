@@ -93,7 +93,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     }
 
     @Test
-    public void verifyLocalLogoutUrlWithInvalidRegExValidationAndLocalUrlNotAllowed() throws Exception {
+    public void verifyLocalLogoutUrlWithInvalidRegExValidationAndLocalUrlNotAllowed() {
         final var svc = getRegisteredService(".+");
         svc.setLogoutUrl(null);
         final var builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false, "\\d*", true);
@@ -101,7 +101,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         assertNull(url);
     }
 
-    private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls) throws Exception {
+    private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls) {
         return createDefaultSingleLogoutServiceLogoutUrlBuilder(allowLocalLogoutUrls, null, true);
     }
 

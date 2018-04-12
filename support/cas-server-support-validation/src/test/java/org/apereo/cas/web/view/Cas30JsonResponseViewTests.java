@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.web.view.AbstractCasView;
-import org.apereo.cas.web.view.attributes.Cas30ProtocolAttributesRenderer;
+import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer;
 import org.apereo.cas.web.view.json.Cas30JsonResponseView;
 import org.apereo.cas.web.view.json.CasJsonServiceResponse;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -34,7 +34,7 @@ public class Cas30JsonResponseViewTests extends Cas30ResponseViewTests {
             true,
             new DefaultAuthenticationAttributeReleasePolicy(),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
-            new Cas30ProtocolAttributesRenderer());
+            new DefaultCas30ProtocolAttributesRenderer());
     }
 
     @Override

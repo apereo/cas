@@ -19,7 +19,7 @@ public class AuthenticationCredentialTypeMetaDataPopulatorTests {
     public void verifyPopulator() {
         final var credentials = new UsernamePasswordCredential();
         final var builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, AuthenticationTransaction.of(credentials));
+        this.populator.populateAttributes(builder, DefaultAuthenticationTransaction.of(credentials));
         final var auth = builder.build();
         assertEquals(
             credentials.getClass().getSimpleName(),

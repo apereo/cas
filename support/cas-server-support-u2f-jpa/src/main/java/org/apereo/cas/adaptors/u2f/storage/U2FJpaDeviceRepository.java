@@ -33,7 +33,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     private static final String SELECT_QUERY = "SELECT r from U2FDeviceRegistration r ";
 
     @PersistenceContext(unitName = "u2fEntityManagerFactory")
-    private EntityManager entityManager;
+    private transient EntityManager entityManager;
 
     private final long expirationTime;
     private final TimeUnit expirationTimeUnit;
