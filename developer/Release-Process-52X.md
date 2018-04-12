@@ -63,7 +63,7 @@ In the project's `gradle.properties`, change the project version to the release 
 Release the project using the following commands:
 
 ```bash
-./gradlew uploadArchives -DpublishReleases=true -DsonatypeUsername=<UID> -DsonatypePassword=<PASSWORD>
+./gradlew uploadArchives -DpublishReleases=true -DsonatypeUsername=<UID> -DsonatypePassword=<PASSWORD> -DskipNodeModulesCleanUp=true -DskipNpmCache=true
 ```
 
 ## Performing the Release
