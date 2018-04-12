@@ -46,7 +46,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## AWS ElastiCache
 
-You may also use []AWS ElastiCache](https://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/AutoDiscovery.html) 
+You may also use [AWS ElastiCache](https://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/AutoDiscovery.html) 
 which is a web service that makes it easy to set up, manage, and scale a distributed in-memory 
 data store or cache environment in the cloud. It provides a high-performance, scalable, and cost-effective caching 
 solution, while removing the complexity associated with deploying and managing a distributed cache environment.
@@ -61,6 +61,8 @@ code the individual cache node endpoints in the configuration
 
 All of the cache nodes in the cluster maintain a list of metadata about all of the other nodes. 
 This metadata is updated whenever nodes are added or removed from the cluster.
+
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
