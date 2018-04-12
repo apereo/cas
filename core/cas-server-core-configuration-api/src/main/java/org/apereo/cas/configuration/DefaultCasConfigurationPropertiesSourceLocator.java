@@ -90,7 +90,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         final String regex = buildPatternForConfigurationFileDiscovery(config, profiles);
         final Collection<File> configFiles = scanForConfigurationFilesByPattern(config, regex);
 
-        LOGGER.info("Configuration files found at [{}] are [{}]", config, configFiles);
+        LOGGER.info("Configuration files found at [{}] are [{}] under profile(s) [{}]", config, configFiles, environment.getActiveProfiles());
         configFiles.forEach(Unchecked.consumer(f -> {
             LOGGER.debug("Loading configuration file [{}]", f);
             if (f.getName().toLowerCase().endsWith("yml")) {
