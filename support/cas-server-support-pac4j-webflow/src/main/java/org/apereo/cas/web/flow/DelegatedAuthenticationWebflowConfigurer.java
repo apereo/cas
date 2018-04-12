@@ -60,7 +60,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
     }
 
     private void createClientActionActionState(final Flow flow) {
-        final ActionState actionState = createActionState(flow, CasWebflowConstants.STATE_ID_CLIENT_ACTION, createEvaluateAction(CasWebflowConstants.STATE_ID_CLIENT_ACTION));
+        final var actionState = createActionState(flow, CasWebflowConstants.STATE_ID_CLIENT_ACTION, createEvaluateAction(CasWebflowConstants.STATE_ID_CLIENT_ACTION));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_STOP, CasWebflowConstants.STATE_ID_STOP_WEBFLOW));
@@ -69,13 +69,13 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
     }
 
     private void createStopWebflowViewState(final Flow flow) {
-        final ViewState state = createViewState(flow, CasWebflowConstants.STATE_ID_STOP_WEBFLOW, CasWebflowConstants.VIEW_ID_PAC4J_STOP_WEBFLOW);
+        final var state = createViewState(flow, CasWebflowConstants.STATE_ID_STOP_WEBFLOW, CasWebflowConstants.VIEW_ID_PAC4J_STOP_WEBFLOW);
         state.getEntryActionList().add(new AbstractAction() {
             @Override
             protected Event doExecute(final RequestContext requestContext) {
                 final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
                 final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-                final Optional<ModelAndView> mv = DelegatedClientAuthenticationAction.hasDelegationRequestFailed(request, response.getStatus());
+                final var mv = DelegatedClientAuthenticationAction.hasDelegationRequestFailed(request, response.getStatus());
                 mv.ifPresent(modelAndView -> modelAndView.getModel().forEach((k, v) -> requestContext.getFlowScope().put(k, v)));
                 return null;
             }

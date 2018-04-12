@@ -141,8 +141,8 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                 if (!wsfed.isAttributeResolverEnabled()) {
                     plan.registerAuthenticationHandler(handler);
                 } else {
-                    final Collection<WsFederationConfiguration> configurations = wsFederationConfigurations();
-                    final WsFederationConfiguration cfg = configurations.stream()
+                    final var configurations = wsFederationConfigurations();
+                    final var cfg = configurations.stream()
                         .filter(c -> c.getIdentityProviderUrl().equals(wsfed.getIdentityProviderUrl()))
                         .findFirst()
                         .orElseThrow(() -> new RuntimeException("Unable to find configuration for identity provider " + wsfed.getIdentityProviderUrl()));

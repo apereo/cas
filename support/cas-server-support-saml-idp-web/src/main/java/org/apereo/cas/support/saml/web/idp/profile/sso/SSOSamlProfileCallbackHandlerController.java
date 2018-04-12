@@ -156,7 +156,7 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
         final var binding = StringUtils.defaultIfBlank(authnRequest.getProtocolBinding(), SAMLConstants.SAML2_POST_BINDING_URI);
         LOGGER.debug("Determined authentication request binding is [{}], issued by [{}]", binding, authnRequest.getIssuer().getValue());
 
-        final String entityId = facade.getEntityId();
+        final var entityId = facade.getEntityId();
         LOGGER.debug("Checking metadata for [{}] to see if binding [{}] is supported", entityId, binding);
         @NonNull
         final var svc = facade.getAssertionConsumerService(binding);

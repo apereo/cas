@@ -83,7 +83,7 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
         ensureEndpointAccessIsAuthorized(request, response);
 
         final Map<String, Object> model = new HashMap<>();
-        final Duration diff = Duration.between(this.upTimeStartDate, ZonedDateTime.now(ZoneOffset.UTC));
+        final var diff = Duration.between(this.upTimeStartDate, ZonedDateTime.now(ZoneOffset.UTC));
         model.put("upTime", diff.getSeconds());
         return model;
     }
@@ -101,7 +101,7 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
         ensureEndpointAccessIsAuthorized(request, response);
 
         final Map<String, Object> model = new HashMap<>();
-        final Runtime runtime = Runtime.getRuntime();
+        final var runtime = Runtime.getRuntime();
         model.put("totalMemory", convertToMegaBytes(runtime.totalMemory()));
         model.put("maxMemory", convertToMegaBytes(runtime.maxMemory()));
         model.put("freeMemory", convertToMegaBytes(runtime.freeMemory()));
@@ -120,7 +120,7 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
     @ResponseBody
     public Set<AuditActionContext> getAuthnAudit(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
-        final LocalDate sinceDate = LocalDate.now().minusDays(casProperties.getAudit().getNumberOfDaysInHistory());
+        final var sinceDate = LocalDate.now().minusDays(casProperties.getAudit().getNumberOfDaysInHistory());
         return this.auditTrailManager.getAuditRecordsSince(sinceDate);
     }
 
@@ -145,13 +145,13 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         final Callable<Collection<AuthenticationAuditSummary>> asyncTask = () -> {
-            final Set<AuditActionContext> audits = getAuthnAudit(request, response);
-            final LocalDateTime startDate = DateTimeUtils.localDateTimeOf(start);
-            final LocalDateTime endDate = startDate.plus(Duration.parse(range));
+            final var audits = getAuthnAudit(request, response);
+            final var startDate = DateTimeUtils.localDateTimeOf(start);
+            final var endDate = startDate.plus(Duration.parse(range));
 
-            final List<AuditActionContext> authnEvents = audits.stream()
+            final var authnEvents = audits.stream()
                 .filter(a -> {
-                    final LocalDateTime actionTime = DateTimeUtils.localDateTimeOf(a.getWhenActionWasPerformed());
+                    final var actionTime = DateTimeUtils.localDateTimeOf(a.getWhenActionWasPerformed());
                     return (actionTime.isEqual(startDate) || actionTime.isAfter(startDate))
                         && (actionTime.isEqual(endDate) || actionTime.isBefore(endDate))
                         && a.getActionPerformed().matches("AUTHENTICATION_(SUCCESS|FAILED)");
@@ -159,10 +159,10 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
                 .sorted(Comparator.comparing(AuditActionContext::getWhenActionWasPerformed))
                 .collect(Collectors.toList());
 
-            final Duration steps = Duration.parse(scale);
+            final var steps = Duration.parse(scale);
             final Map<Integer, LocalDateTime> buckets = Maps.newLinkedHashMapWithExpectedSize(authnEvents.size());
 
-            LocalDateTime dt = startDate;
+            var dt = startDate;
             Integer index = 0;
             while (dt != null) {
                 buckets.put(index++, dt);
@@ -173,22 +173,22 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
             }
 
             final Map<LocalDateTime, AuthenticationAuditSummary> summary = new LinkedHashMap<>();
-            boolean foundBucket = false;
-            for (final AuditActionContext event : authnEvents) {
+            var foundBucket = false;
+            for (final var event : authnEvents) {
                 foundBucket = false;
-                for (int i = 0; i < buckets.keySet().size(); i++) {
-                    final LocalDateTime actionTime = DateTimeUtils.localDateTimeOf(event.getWhenActionWasPerformed());
-                    final LocalDateTime bucketDateTime = buckets.get(i);
+                for (var i = 0; i < buckets.keySet().size(); i++) {
+                    final var actionTime = DateTimeUtils.localDateTimeOf(event.getWhenActionWasPerformed());
+                    final var bucketDateTime = buckets.get(i);
                     if (actionTime.isEqual(bucketDateTime) || actionTime.isAfter(bucketDateTime)) {
-                        for (int j = 0; j < buckets.keySet().size(); j++) {
-                            final LocalDateTime nextBucketDateTime = buckets.get(j);
+                        for (var j = 0; j < buckets.keySet().size(); j++) {
+                            final var nextBucketDateTime = buckets.get(j);
                             if (actionTime.isBefore(nextBucketDateTime)) {
-                                final LocalDateTime bucketToUse = buckets.get(j - 1);
+                                final var bucketToUse = buckets.get(j - 1);
                                 final AuthenticationAuditSummary values;
                                 if (summary.containsKey(bucketToUse)) {
                                     values = summary.get(bucketToUse);
                                 } else {
-                                    final long l = bucketToUse.toInstant(ZoneOffset.UTC).toEpochMilli();
+                                    final var l = bucketToUse.toInstant(ZoneOffset.UTC).toEpochMilli();
                                     values = new AuthenticationAuditSummary(l);
                                 }
                                 if (event.getActionPerformed().contains("SUCCESS")) {
@@ -208,10 +208,10 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
                     }
                 }
             }
-            final Collection<AuthenticationAuditSummary> values = summary.values();
+            final var values = summary.values();
             return values;
         };
-        final long timeout = Beans.newDuration(casProperties.getHttpClient().getAsyncTimeout()).toMillis();
+        final var timeout = Beans.newDuration(casProperties.getHttpClient().getAsyncTimeout()).toMillis();
         return new WebAsyncTask<>(timeout, asyncTask);
     }
 
@@ -263,14 +263,14 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
         ensureEndpointAccessIsAuthorized(request, response);
         final Map<String, Object> model = new HashMap<>();
 
-        int unexpiredTgts = 0;
-        int unexpiredSts = 0;
-        int expiredTgts = 0;
-        int expiredSts = 0;
+        var unexpiredTgts = 0;
+        var unexpiredSts = 0;
+        var expiredTgts = 0;
+        var expiredSts = 0;
 
-        final Collection<Ticket> tickets = this.centralAuthenticationService.getTickets(ticket -> true);
+        final var tickets = this.centralAuthenticationService.getTickets(ticket -> true);
 
-        for (final Ticket ticket : tickets) {
+        for (final var ticket : tickets) {
             if (ticket instanceof ServiceTicket) {
                 if (ticket.isExpired()) {
                     this.centralAuthenticationService.deleteTicket(ticket.getId());
@@ -308,7 +308,7 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
                                                  final HttpServletResponse httpServletResponse) {
         ensureEndpointAccessIsAuthorized(httpServletRequest, httpServletResponse);
 
-        final ModelAndView modelAndView = new ModelAndView(MONITORING_VIEW_STATISTICS);
+        final var modelAndView = new ModelAndView(MONITORING_VIEW_STATISTICS);
         modelAndView.addObject("pageTitle", modelAndView.getViewName());
         modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());
         modelAndView.addObject("casTicketSuffix", casProperties.getHost().getName());

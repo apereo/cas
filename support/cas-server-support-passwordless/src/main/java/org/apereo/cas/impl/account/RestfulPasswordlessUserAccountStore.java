@@ -36,11 +36,11 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
             final Map<String, String> parameters = new HashMap<>();
             parameters.put("username", username);
 
-            final HttpResponse response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
+            final var response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>());
             if (response != null && response.getEntity() != null) {
-                final PasswordlessUserAccount account = MAPPER.readValue(response.getEntity().getContent(), PasswordlessUserAccount.class);
+                final var account = MAPPER.readValue(response.getEntity().getContent(), PasswordlessUserAccount.class);
                 return Optional.ofNullable(account);
             }
         } catch (final Exception e) {

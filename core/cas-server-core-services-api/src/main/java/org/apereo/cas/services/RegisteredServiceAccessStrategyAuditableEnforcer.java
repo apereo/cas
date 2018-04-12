@@ -25,7 +25,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         resourceResolverName = "SERVICE_ACCESS_ENFORCEMENT_RESOURCE_RESOLVER")
     public AuditableExecutionResult execute(final AuditableContext context) {
 
-        final Optional<RegisteredService> registeredService = context.getRegisteredService();
+        final var registeredService = context.getRegisteredService();
         if (context.getServiceTicket().isPresent() && context.getAuthenticationResult().isPresent() && registeredService.isPresent()) {
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getServiceTicket().get(),
@@ -36,10 +36,10 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             return result;
         }
 
-        final Optional<Service> service = context.getService();
-        final Optional<TicketGrantingTicket> ticketGrantingTicket = context.getTicketGrantingTicket();
+        final var service = context.getService();
+        final var ticketGrantingTicket = context.getTicketGrantingTicket();
         if (service.isPresent() && registeredService.isPresent() && ticketGrantingTicket.isPresent()) {
-            final AuditableExecutionResult result = AuditableExecutionResult.of(service.get(),
+            final var result = AuditableExecutionResult.of(service.get(),
                 registeredService.get(), ticketGrantingTicket.get());
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service.get(),
@@ -52,9 +52,9 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             return result;
         }
 
-        final Optional<Authentication> authentication = context.getAuthentication();
+        final var authentication = context.getAuthentication();
         if (service.isPresent() && registeredService.isPresent() && authentication.isPresent()) {
-            final AuditableExecutionResult result = AuditableExecutionResult.of(authentication.get(), service.get(), registeredService.get());
+            final var result = AuditableExecutionResult.of(authentication.get(), service.get(), registeredService.get());
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service.get(),
                     registeredService.get(),
@@ -67,7 +67,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         }
 
         if (service.isPresent() && registeredService.isPresent()) {
-            final AuditableExecutionResult result = AuditableExecutionResult.of(service.get(), registeredService.get());
+            final var result = AuditableExecutionResult.of(service.get(), registeredService.get());
             try {
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service.get(), registeredService.get());
             } catch (final PrincipalException e) {
@@ -77,7 +77,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         }
 
         if (registeredService.isPresent()) {
-            final AuditableExecutionResult result = AuditableExecutionResult.of(registeredService.get());
+            final var result = AuditableExecutionResult.of(registeredService.get());
             try {
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService.get());
             } catch (final PrincipalException e) {

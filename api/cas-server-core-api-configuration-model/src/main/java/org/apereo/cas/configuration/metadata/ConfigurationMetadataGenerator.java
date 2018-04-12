@@ -166,7 +166,7 @@ public class ConfigurationMetadataGenerator {
                                       final String typeName,
                                       final boolean indexNameWithBrackets) {
 
-        try (InputStream is = Files.newInputStream(Paths.get(typePath))) {
+        try (var is = Files.newInputStream(Paths.get(typePath))) {
             final var cu = JavaParser.parse(is);
             new FieldVisitor(collectedProps, collectedGroups, indexNameWithBrackets, typeName).visit(cu, p);
             if (cu.getTypes().size() > 0) {
@@ -246,9 +246,9 @@ public class ConfigurationMetadataGenerator {
                 prop.setType(elementType);
             }
 
-            final Optional<Expression> initializer = variable.getInitializer();
+            final var initializer = variable.getInitializer();
             if (initializer.isPresent()) {
-                final Expression exp = initializer.get();
+                final var exp = initializer.get();
                 if (exp instanceof LiteralStringValueExpr) {
                     prop.setDefaultValue(((LiteralStringValueExpr) exp).getValue());
                 } else if (exp instanceof BooleanLiteralExpr) {

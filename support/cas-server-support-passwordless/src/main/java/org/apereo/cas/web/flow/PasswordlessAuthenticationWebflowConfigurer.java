@@ -47,25 +47,25 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
 
     @Override
     protected void doInitialize() {
-        final Flow flow = getLoginFlow();
+        final var flow = getLoginFlow();
         if (flow != null) {
-            final ActionState state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
+            final var state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
             createTransitionForState(state, TRANSITION_ID_PASSWORDLESS_GET_USERID, STATE_ID_PASSWORDLESS_GET_USERID);
 
-            final ViewState viewState = createViewState(flow, STATE_ID_PASSWORDLESS_GET_USERID, "casPasswordlessGetUserIdView");
+            final var viewState = createViewState(flow, STATE_ID_PASSWORDLESS_GET_USERID, "casPasswordlessGetUserIdView");
             createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, STATE_ID_PASSWORDLESS_DISPLAY);
 
-            final ViewState viewStateDisplay = createViewState(flow, STATE_ID_PASSWORDLESS_DISPLAY, "casPasswordlessDisplayView");
+            final var viewStateDisplay = createViewState(flow, STATE_ID_PASSWORDLESS_DISPLAY, "casPasswordlessDisplayView");
             viewStateDisplay.getRenderActionList().add(createEvaluateAction("displayBeforePasswordlessAuthenticationAction"));
             createTransitionForState(viewStateDisplay, CasWebflowConstants.TRANSITION_ID_SUBMIT, STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION);
 
-            final EvaluateAction acceptAction = createEvaluateAction("acceptPasswordlessAuthenticationAction");
-            final ActionState acceptState = createActionState(flow, STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION, acceptAction);
+            final var acceptAction = createEvaluateAction("acceptPasswordlessAuthenticationAction");
+            final var acceptState = createActionState(flow, STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION, acceptAction);
             createTransitionForState(acceptState, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, STATE_ID_PASSWORDLESS_DISPLAY);
 
-            final ActionState submission = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
-            final Transition transition = (Transition) submission.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-            final String targetStateId = transition.getTargetStateId();
+            final var submission = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
+            final var transition = (Transition) submission.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+            final var targetStateId = transition.getTargetStateId();
             createTransitionForState(acceptState, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetStateId);
             
             registerMultifactorProvidersStateTransitionsIntoWebflow(acceptState);

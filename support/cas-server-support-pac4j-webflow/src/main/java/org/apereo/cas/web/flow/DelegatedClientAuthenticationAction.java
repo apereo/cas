@@ -285,8 +285,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     private Service restoreAuthenticationRequestInContext(final RequestContext requestContext, final J2EContext webContext, final String clientName) {
         try {
             delegatedSessionCookieManager.restore(webContext);
-            final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
-            final Service service = delegatedClientWebflowManager.retrieve(requestContext, webContext, client);
+            final var client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
+            final var service = delegatedClientWebflowManager.retrieve(requestContext, webContext, client);
             return service;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

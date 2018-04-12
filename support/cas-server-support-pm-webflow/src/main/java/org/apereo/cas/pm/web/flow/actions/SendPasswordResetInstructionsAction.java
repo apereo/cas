@@ -96,7 +96,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      * @return true/false
      */
     protected boolean sendPasswordResetEmailToAccount(final String to, final String url) {
-        final EmailProperties reset = casProperties.getAuthn().getPm().getReset().getMail();
+        final var reset = casProperties.getAuthn().getPm().getReset().getMail();
         final var text = String.format(reset.getText(), url);
         return this.communicationsManager.email(text, reset.getFrom(),
             reset.getSubject(),

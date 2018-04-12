@@ -81,7 +81,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         try {
             final var ticket = encodeTicket(ticketToAdd);
             final var document = SerializableDocument.create(ticket.getId(), getTimeToLive(ticketToAdd), ticket);
-            final Bucket bucket = this.couchbase.getBucket();
+            final var bucket = this.couchbase.getBucket();
             LOGGER.debug("Created document for ticket [{}]. Upserting into bucket [{}]", ticketToAdd, bucket.name());
             bucket.upsert(document);
         } catch (final Exception e) {

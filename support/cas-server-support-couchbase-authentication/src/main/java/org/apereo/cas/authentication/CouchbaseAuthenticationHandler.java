@@ -52,7 +52,7 @@ public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuth
         }
 
         final var row = result.allRows().get(0);
-        final Bucket bucket = couchbase.getBucket();
+        final var bucket = couchbase.getBucket();
         if (!row.value().containsKey(bucket.name())) {
             throw new AccountNotFoundException("Couchbase query row does not contain this bucket [{}]" + bucket.name());
         }

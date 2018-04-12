@@ -151,7 +151,7 @@ public class AuditableExecutionResult {
      * @return the auditable execution result
      */
     public static AuditableExecutionResult of(final Service service, final RegisteredService registeredService) {
-        final AuditableExecutionResult result = new AuditableExecutionResult();
+        final var result = new AuditableExecutionResult();
         result.setRegisteredService(registeredService);
         result.setService(service);
         return result;
@@ -164,7 +164,7 @@ public class AuditableExecutionResult {
      * @return the auditable execution result
      */
     public static AuditableExecutionResult of(final RegisteredService registeredService) {
-        final AuditableExecutionResult result = new AuditableExecutionResult();
+        final var result = new AuditableExecutionResult();
         result.setRegisteredService(registeredService);
         return result;
     }

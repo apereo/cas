@@ -13,7 +13,7 @@ public class InlinedCas30ProtocolAttributesRenderer extends DefaultCas30Protocol
 
     @Override
     protected String buildSingleAttributeDefinitionLine(final String attributeName, final Object value) {
-        final String encodedValue = encodeAttributeValue(value);
+        final var encodedValue = encodeAttributeValue(value);
         return new StringBuilder()
             .append("<cas:attribute name=\"".concat(attributeName).concat("\" value=\"".concat(encodedValue)).concat("\"></cas:attribute>"))
             .toString();

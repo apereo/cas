@@ -52,7 +52,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 final var entry = response.getResult().getEntry();
                 LOGGER.debug("Found LDAP entry [{}] to use for the account email", entry);
 
-                final String attributeName = properties.getReset().getMail().getAttributeName();
+                final var attributeName = properties.getReset().getMail().getAttributeName();
                 final var attr = entry.getAttribute(attributeName);
                 if (attr != null) {
                     final var email = attr.getStringValue();
@@ -131,7 +131,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 qs.forEach((k, v) -> {
                     final var q = entry.getAttribute(k);
                     final var a = entry.getAttribute(v);
-                    final String value = q.getStringValue();
+                    final var value = q.getStringValue();
                     if (q != null && a != null && StringUtils.isNotBlank(value) && StringUtils.isNotBlank(a.getStringValue())) {
                         LOGGER.debug("Added security question [{}]", value);
                         set.put(value, value);

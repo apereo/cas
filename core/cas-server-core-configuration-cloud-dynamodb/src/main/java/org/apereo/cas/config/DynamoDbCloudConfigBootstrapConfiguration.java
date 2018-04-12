@@ -68,7 +68,7 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
     @Override
     public PropertySource<?> locate(final Environment environment) {
         final var amazonDynamoDBClient = getAmazonDynamoDbClient(environment);
-        final Boolean preventTableCreationOnStartup = Boolean.valueOf(getSetting(environment, "preventTableCreationOnStartup"));
+        final var preventTableCreationOnStartup = Boolean.valueOf(getSetting(environment, "preventTableCreationOnStartup"));
         if (!preventTableCreationOnStartup) {
             createSettingsTable(amazonDynamoDBClient, false);
         final var scan = new ScanRequest(TABLE_NAME);
@@ -104,7 +104,7 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         final var secret = getSetting(environment, "credentialSecretKey");
         final AWSCredentials credentials = new BasicAWSCredentials(key, secret);
         var region = getSetting(environment, "region");
-        final Region currentRegion = Regions.getCurrentRegion();
+        final var currentRegion = Regions.getCurrentRegion();
         if (StringUtils.isBlank(region)) {
             region = currentRegion.getName();
         }
@@ -140,7 +140,7 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
 
     @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     private static CreateTableRequest createCreateTableRequest() {
-        final String name = ColumnNames.ID.getColumnName();
+        final var name = ColumnNames.ID.getColumnName();
         return new CreateTableRequest()
             .withAttributeDefinitions(new AttributeDefinition(name, ScalarAttributeType.S))
             .withKeySchema(new KeySchemaElement(name, KeyType.HASH))

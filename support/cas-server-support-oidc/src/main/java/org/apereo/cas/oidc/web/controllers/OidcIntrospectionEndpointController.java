@@ -123,17 +123,17 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
     private boolean validateIntrospectionRequest(final OAuthRegisteredService registeredService,
                                                  final UsernamePasswordCredentials credentials,
                                                  final HttpServletRequest request) {
-        final boolean tokenExists = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.ACCESS_TOKEN)
+        final var tokenExists = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.ACCESS_TOKEN)
             || HttpRequestUtils.doesParameterExist(request, OAuth20Constants.TOKEN);
 
 
         if (tokenExists && OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword())) {
-            final WebApplicationService service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
-            final AuditableContext audit = AuditableContext.builder()
+            final var service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+            final var audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)
                 .build();
-            final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
             return !accessResult.isExecutionFailure();
         }
         return false;

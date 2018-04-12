@@ -245,7 +245,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      */
     @Override
     public Collection<RegisteredService> load(final File file) {
-        final String fileName = file.getName();
+        final var fileName = file.getName();
         if (!file.canRead()) {
             LOGGER.warn("[{}] is not readable. Check file permissions", fileName);
             return new ArrayList<>(0);

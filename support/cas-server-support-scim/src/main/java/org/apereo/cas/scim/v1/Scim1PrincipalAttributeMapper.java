@@ -27,7 +27,7 @@ public class Scim1PrincipalAttributeMapper {
      * @return the principal attribute value
      */
     public String getPrincipalAttributeValue(final Principal p, final String attributeName) {
-        final Map<String, Object> attributes = p.getAttributes();
+        final var attributes = p.getAttributes();
         if (attributes.containsKey(attributeName)) {
             return CollectionUtils.toCollection(attributes.get(attributeName)).iterator().next().toString();
         }

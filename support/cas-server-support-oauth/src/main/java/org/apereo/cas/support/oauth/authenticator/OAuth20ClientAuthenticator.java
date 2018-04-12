@@ -37,16 +37,16 @@ public class OAuth20ClientAuthenticator implements Authenticator<UsernamePasswor
         final var secret = credentials.getPassword();
         final var registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
         
-        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
+        final var registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
         if (registeredService == null) {
             throw new CredentialsException("Unable to locate registered service for " + id);
         }
 
-        final AuditableContext audit = AuditableContext.builder()
+        final var audit = AuditableContext.builder()
             .service(this.webApplicationServiceServiceFactory.createService(registeredService.getServiceId()))
             .registeredService(registeredService)
             .build();
-        final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();
 
         if (!OAuth20Utils.checkClientSecret(registeredService, secret)) {

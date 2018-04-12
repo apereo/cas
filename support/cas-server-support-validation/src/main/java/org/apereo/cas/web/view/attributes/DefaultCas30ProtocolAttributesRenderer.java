@@ -27,7 +27,7 @@ public class DefaultCas30ProtocolAttributesRenderer implements CasProtocolAttrib
         attributes.forEach((k, v) -> {
             final var values = CollectionUtils.toCollection(v);
             values.forEach(value -> {
-                final String fmt = buildSingleAttributeDefinitionLine(k, value);
+                final var fmt = buildSingleAttributeDefinitionLine(k, value);
                 LOGGER.debug("Formatted attribute for the response: [{}]", fmt);
                 formattedAttributes.add(fmt);
             });

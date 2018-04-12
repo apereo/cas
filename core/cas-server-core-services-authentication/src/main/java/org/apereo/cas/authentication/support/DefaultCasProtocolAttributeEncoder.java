@@ -155,7 +155,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
             LOGGER.warn("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
             attributes.keySet().removeIf(getSanitizingAttributeNamePredicate());
             attrs.forEach(p -> {
-                final String key = p.getKey();
+                final var key = p.getKey();
                 LOGGER.debug("Sanitized attribute name to be [{}]", key);
                 attributes.put(key, p.getValue());
             });

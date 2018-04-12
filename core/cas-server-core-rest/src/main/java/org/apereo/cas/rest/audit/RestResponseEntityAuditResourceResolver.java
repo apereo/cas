@@ -33,7 +33,7 @@ public class RestResponseEntityAuditResourceResolver extends ReturnValueAsString
         final var result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE);
         result.append("status", entity.getStatusCodeValue() + "-" + entity.getStatusCode().name());
-        final URI location = headers.getLocation();
+        final var location = headers.getLocation();
         if (location != null) {
             result.append("location", location);
         }

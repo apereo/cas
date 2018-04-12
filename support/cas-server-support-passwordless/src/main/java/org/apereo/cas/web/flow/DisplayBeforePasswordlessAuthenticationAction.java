@@ -30,23 +30,23 @@ public class DisplayBeforePasswordlessAuthenticationAction extends AbstractActio
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final AttributeMap<Object> attributes = requestContext.getCurrentEvent().getAttributes();
+        final var attributes = requestContext.getCurrentEvent().getAttributes();
         if (attributes.contains("error")) {
-            final Exception e = attributes.get("error", Exception.class);
-            final PasswordlessUserAccount user = attributes.get(PasswordlessAuthenticationWebflowConfigurer.PARAMETER_PASSWORDLESS_USER_ACCOUNT, PasswordlessUserAccount.class);
+            final var e = attributes.get("error", Exception.class);
+            final var user = attributes.get(PasswordlessAuthenticationWebflowConfigurer.PARAMETER_PASSWORDLESS_USER_ACCOUNT, PasswordlessUserAccount.class);
             requestContext.getFlowScope().put("error", e);
             requestContext.getFlowScope().put(PasswordlessAuthenticationWebflowConfigurer.PARAMETER_PASSWORDLESS_USER_ACCOUNT, user);
             return success();
         }
-        final String username = requestContext.getRequestParameters().get("username");
+        final var username = requestContext.getRequestParameters().get("username");
         if (StringUtils.isBlank(username)) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
-        final Optional<PasswordlessUserAccount> account = passwordlessUserAccountStore.findUser(username);
+        final var account = passwordlessUserAccountStore.findUser(username);
         if (account.isPresent()) {
-            final PasswordlessUserAccount user = account.get();
+            final var user = account.get();
             requestContext.getFlowScope().put(PasswordlessAuthenticationWebflowConfigurer.PARAMETER_PASSWORDLESS_USER_ACCOUNT, user);
-            final String token = passwordlessTokenRepository.createToken(user.getUsername());
+            final var token = passwordlessTokenRepository.createToken(user.getUsername());
 
             communicationsManager.validate();
             if (communicationsManager.isMailSenderDefined() && StringUtils.isNotBlank(user.getEmail())) {

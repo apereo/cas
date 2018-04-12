@@ -39,12 +39,12 @@ public class AzureAuthenticatorAuthenticationHandler extends AbstractPreAndPostP
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         try {
-            final AzureAuthenticatorTokenCredential c = (AzureAuthenticatorTokenCredential) credential;
-            final Authentication authentication = WebUtils.getInProgressAuthentication();
+            final var c = (AzureAuthenticatorTokenCredential) credential;
+            final var authentication = WebUtils.getInProgressAuthentication();
             if (authentication == null) {
                 throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
             }
-            final Principal principal = authentication.getPrincipal();
+            final var principal = authentication.getPrincipal();
 
             LOGGER.debug("Received principal id [{}]", principal.getId());
             final PFAuthParams params = authenticationRequestBuilder.build(principal, c);

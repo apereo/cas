@@ -22,7 +22,7 @@ public class GroovyPasswordlessUserAccountStore implements PasswordlessUserAccou
 
     @Override
     public Optional<PasswordlessUserAccount> findUser(final String username) {
-        final PasswordlessUserAccount account = ScriptingUtils.executeGroovyScript(groovyResource,
+        final var account = ScriptingUtils.executeGroovyScript(groovyResource,
             new Object[]{username, LOGGER}, PasswordlessUserAccount.class);
         return Optional.ofNullable(account);
     }

@@ -114,7 +114,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
     @RefreshScope
     @ConditionalOnMissingBean(name = "passwordlessUserAccountStore")
     public PasswordlessUserAccountStore passwordlessUserAccountStore() {
-        final PasswordlessAuthenticationProperties.Accounts accounts = casProperties.getAuthn().getPasswordless().getAccounts();
+        final var accounts = casProperties.getAuthn().getPasswordless().getAccounts();
 
         if (accounts.getGroovy().getLocation() != null) {
             return new GroovyPasswordlessUserAccountStore(accounts.getGroovy().getLocation());
@@ -128,7 +128,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
             .entrySet()
             .stream()
             .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-                final PasswordlessUserAccount account = new PasswordlessUserAccount();
+                final var account = new PasswordlessUserAccount();
                 account.setUsername(entry.getKey());
                 account.setName(entry.getKey());
                 if (EmailValidator.getInstance().isValid(entry.getValue())) {
@@ -145,9 +145,9 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
     @RefreshScope
     @ConditionalOnMissingBean(name = "passwordlessTokenRepository")
     public PasswordlessTokenRepository passwordlessTokenRepository() {
-        final PasswordlessAuthenticationProperties.Tokens tokens = casProperties.getAuthn().getPasswordless().getTokens();
+        final var tokens = casProperties.getAuthn().getPasswordless().getTokens();
         if (StringUtils.isNotBlank(tokens.getRest().getUrl())) {
-            final EncryptionJwtSigningJwtCryptographyProperties crypto = tokens.getRest().getCrypto();
+            final var crypto = tokens.getRest().getCrypto();
             final CipherExecutor cipher;
             if (crypto.isEnabled()) {
                 cipher = new PasswordlessTokenCipherExecutor(

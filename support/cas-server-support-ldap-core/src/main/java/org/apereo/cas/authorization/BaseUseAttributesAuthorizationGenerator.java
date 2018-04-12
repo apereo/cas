@@ -67,9 +67,9 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
         final SearchResult userResult;
         try {
             LOGGER.debug("Attempting to get details for user [{}].", username);
-            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(),
+            final var filter = LdapUtils.newLdaptiveSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(),
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(username));
-            final Response<SearchResult> response = this.userSearchExecutor.search(this.connectionFactory, filter);
+            final var response = this.userSearchExecutor.search(this.connectionFactory, filter);
 
             LOGGER.debug("LDAP user search response: [{}]", response);
             userResult = response.getResult();

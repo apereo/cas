@@ -44,26 +44,26 @@ public class WsFederationResponseValidator {
      * @param context the context
      */
     public void validateWsFederationAuthenticationRequest(final RequestContext context) {
-        final Service service = wsFederationCookieManager.retrieve(context);
+        final var service = wsFederationCookieManager.retrieve(context);
         LOGGER.debug("Retrieved service [{}] from the session cookie", service);
 
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final String wResult = request.getParameter(WRESULT);
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        final var wResult = request.getParameter(WRESULT);
         LOGGER.debug("Parameter [{}] received: [{}]", WRESULT, wResult);
         if (StringUtils.isBlank(wResult)) {
             LOGGER.error("No [{}] parameter is found", WRESULT);
             throw new IllegalArgumentException("Missing parameter " + WRESULT);
         }
         LOGGER.debug("Attempting to create an assertion from the token parameter");
-        final RequestedSecurityToken rsToken = wsFederationHelper.getRequestSecurityTokenFromResult(wResult);
-        final Pair<Assertion, WsFederationConfiguration> assertion = wsFederationHelper.buildAndVerifyAssertion(rsToken, configurations);
+        final var rsToken = wsFederationHelper.getRequestSecurityTokenFromResult(wResult);
+        final var assertion = wsFederationHelper.buildAndVerifyAssertion(rsToken, configurations);
         if (assertion == null) {
             LOGGER.error("Could not validate assertion via parsing the token from [{}]", WRESULT);
             throw new IllegalArgumentException("Could not validate assertion via the provided token");
         }
         LOGGER.debug("Attempting to validate the signature on the assertion");
         if (!wsFederationHelper.validateSignature(assertion)) {
-            final String msg = "WS Requested Security Token is blank or the signature is not valid.";
+            final var msg = "WS Requested Security Token is blank or the signature is not valid.";
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }
@@ -75,9 +75,9 @@ public class WsFederationResponseValidator {
                                                final Service service) {
         try {
             LOGGER.debug("Creating credential based on the provided assertion");
-            final WsFederationCredential credential = wsFederationHelper.createCredentialFromToken(assertion.getKey());
-            final WsFederationConfiguration configuration = assertion.getValue();
-            final String rpId = wsFederationHelper.getRelyingPartyIdentifier(service, configuration);
+            final var credential = wsFederationHelper.createCredentialFromToken(assertion.getKey());
+            final var configuration = assertion.getValue();
+            final var rpId = wsFederationHelper.getRelyingPartyIdentifier(service, configuration);
 
             if (credential == null) {
                 LOGGER.error("No credential could be extracted from [{}] based on relying party identifier [{}] and identity provider identifier [{}]",
@@ -98,7 +98,7 @@ public class WsFederationResponseValidator {
             }
             context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
             LOGGER.debug("Creating final authentication result based on the given credential");
-            final AuthenticationResult authenticationResult = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+            final var authenticationResult = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
             WebUtils.putAuthenticationResult(authenticationResult, context);
             WebUtils.putAuthentication(authenticationResult.getAuthentication(), context);
             LOGGER.info("Token validated and new [{}] created: [{}]", credential.getClass().getName(), credential);

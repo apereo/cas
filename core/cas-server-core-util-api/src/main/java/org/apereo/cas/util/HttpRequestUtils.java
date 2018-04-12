@@ -131,7 +131,7 @@ public class HttpRequestUtils {
      * @return whether the parameter exists
      */
     public static boolean doesParameterExist(final HttpServletRequest request, final String name) {
-        final String parameter = request.getParameter(name);
+        final var parameter = request.getParameter(name);
         if (StringUtils.isBlank(parameter)) {
             LOGGER.error("Missing request parameter: [{}]", name);
             return false;

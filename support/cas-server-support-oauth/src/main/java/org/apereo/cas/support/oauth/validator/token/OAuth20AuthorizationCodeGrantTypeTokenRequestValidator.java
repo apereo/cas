@@ -62,16 +62,16 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
                 LOGGER.warn("Request OAuth code [{}] is not found or has expired", code);
                 return false;
             }
-            final String serviceId = token.getService().getId();
-            final OAuthRegisteredService codeRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, serviceId);
+            final var serviceId = token.getService().getId();
+            final var codeRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, serviceId);
 
-            final AuditableContext audit = AuditableContext.builder()
+            final var audit = AuditableContext.builder()
                 .service(token.getService())
                 .authentication(token.getAuthentication())
                 .registeredService(codeRegisteredService)
                 .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                 .build();
-            final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
 
             if (!clientRegisteredService.equals(codeRegisteredService)) {

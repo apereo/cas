@@ -124,7 +124,7 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
      * @param point the points to write immediately in sync fashion
      */
     public void writeBatch(final Point... point) {
-        final BatchPoints batchPoints = BatchPoints
+        final var batchPoints = BatchPoints
             .database(influxDbProperties.getDatabase())
             .retentionPolicy(influxDbProperties.getRetentionPolicy())
             .consistency(InfluxDB.ConsistencyLevel.valueOf(influxDbProperties.getConsistencyLevel()))

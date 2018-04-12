@@ -56,16 +56,16 @@ public class ClickatellSmsSender implements SmsSender {
             final HttpEntity<String> request = new HttpEntity<>(stringify.toString(), headers);
             final var response = restTemplate.postForEntity(new URI(this.serverUrl), request, Map.class);
             if (response.hasBody()) {
-                final Map body = response.getBody();
+                final var body = response.getBody();
                 LOGGER.debug("Received response [{}]", body);
 
                 if (!body.containsKey("messages")) {
                     LOGGER.error("Response body does not contain any messages");
                     return false;
                 }
-                final List<Map> messages = (List<Map>) body.get("messages");
+                final var messages = (List<Map>) body.get("messages");
 
-                final String error = (String) body.get("error");
+                final var error = (String) body.get("error");
                 if (StringUtils.isNotBlank(error)) {
                     LOGGER.error(error);
                     return false;

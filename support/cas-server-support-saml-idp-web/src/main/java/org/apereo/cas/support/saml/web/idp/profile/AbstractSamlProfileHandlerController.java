@@ -480,8 +480,8 @@ public abstract class AbstractSamlProfileHandlerController {
                                      final Assertion casAssertion,
                                      final String binding) {
 
-        final AuthnRequest authnRequest = authenticationContext.getKey();
-        final Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> pair = getRegisteredServiceAndFacade(authnRequest);
+        final var authnRequest = authenticationContext.getKey();
+        final var pair = getRegisteredServiceAndFacade(authnRequest);
 
         final var entityId = pair.getValue().getEntityId();
         LOGGER.debug("Preparing SAML response for [{}]", entityId);

@@ -124,14 +124,14 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
     }
 
     private ClusterManagerBase getClusteringManagerInstance() {
-        final String type = clusteringProperties.getManagerType().toUpperCase();
+        final var type = clusteringProperties.getManagerType().toUpperCase();
         if ("DELTA".equalsIgnoreCase(type)) {
-            final DeltaManager manager = new DeltaManager();
+            final var manager = new DeltaManager();
             manager.setExpireSessionsOnShutdown(clusteringProperties.isExpireSessionsOnShutdown());
             manager.setNotifyListenersOnReplication(true);
             return manager;
         }
-        final BackupManager backupManager = new BackupManager();
+        final var backupManager = new BackupManager();
         backupManager.setNotifyListenersOnReplication(true);
         return backupManager;
     }

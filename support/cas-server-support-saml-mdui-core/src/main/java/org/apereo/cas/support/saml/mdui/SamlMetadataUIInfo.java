@@ -206,7 +206,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      * @return the string value
      */
     private String getLocalizedValues(final String locale, final List<?> items) {
-        final Optional<String> foundLocale = findLocale(StringUtils.defaultString(locale, "en"), items);
+        final var foundLocale = findLocale(StringUtils.defaultString(locale, "en"), items);
         if (foundLocale.isPresent()) {
             return foundLocale.get();
         }
@@ -221,8 +221,8 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
     private Optional<String> findLocale(final String locale, final List<?> items) {
         LOGGER.trace("Looking for locale [{}]", locale);
             if (items.get(i) instanceof LocalizedName) {
-                final Pattern p = Pattern.compile(locale, Pattern.CASE_INSENSITIVE);
-                final LocalizedName value = (LocalizedName) items.get(i);
+                final var p = Pattern.compile(locale, Pattern.CASE_INSENSITIVE);
+                final var value = (LocalizedName) items.get(i);
                 if (p.matcher(value.getXMLLang()).matches()) {
                     LOGGER.trace("Found locale [{}]", value);
                     return Optional.of(value.getValue());

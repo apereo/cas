@@ -36,7 +36,7 @@ public class DetermineDuoUserAccountAction extends AbstractAction {
         final var authentication = WebUtils.getAuthentication(requestContext);
         final var p = authentication.getPrincipal();
 
-        final Event enrollEvent = new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
+        final var enrollEvent = new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
         for (final var pr : providers) {
             final var duoProvider = this.provider.findProvider(pr.getId(), DuoMultifactorAuthenticationProvider.class);
             final var duoAuthenticationService = duoProvider.getDuoAuthenticationService();
