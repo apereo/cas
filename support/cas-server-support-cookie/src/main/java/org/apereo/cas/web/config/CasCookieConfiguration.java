@@ -83,6 +83,7 @@ public class CasCookieConfiguration {
     @Autowired
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "ticketGrantingTicketCookieGenerator")
     public CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator(@Qualifier("cookieCipherExecutor") final CipherExecutor cipherExecutor) {
         final TicketGrantingCookieProperties tgc = casProperties.getTgc();
         final int rememberMeMaxAge = (int) tgc.getRememberMeMaxAge();
