@@ -2,6 +2,7 @@ package org.apereo.cas.support.sms;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.CollectionUtils;
@@ -28,22 +29,13 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class ClickatellSmsSender implements SmsSender {
-
-
     private final String token;
     private final String serverUrl;
 
     private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
-    private final transient RestTemplate restTemplate = new RestTemplate();
-
-    public ClickatellSmsSender(final String token, final String serverUrl) {
-        this.token = token;
-        this.serverUrl = serverUrl;
-
-        mapper.findAndRegisterModules();
-        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-    }
+    private final transient RestTemplate restTemplate = new RestTemplate(CollectionUtils.wrapList(new MappingJackson2HttpMessageConverter()));
 
     @Override
     public boolean send(final String from, final String to, final String message) {
@@ -64,18 +56,25 @@ public class ClickatellSmsSender implements SmsSender {
             final HttpEntity<String> request = new HttpEntity<>(stringify.toString(), headers);
             final ResponseEntity<Map> response = restTemplate.postForEntity(new URI(this.serverUrl), request, Map.class);
             if (response.hasBody()) {
-                final List<Map> messages = (List<Map>) response.getBody().get("messages");
+                final Map body = response.getBody();
+                LOGGER.debug("Received response [{}]", body);
 
-                final String error = (String) response.getBody().get("error");
+                if (!body.containsKey("messages")) {
+                    LOGGER.error("Response body does not contain any messages");
+                    return false;
+                }
+                final List<Map> messages = (List<Map>) body.get("messages");
+
+                final String error = (String) body.get("error");
                 if (StringUtils.isNotBlank(error)) {
                     LOGGER.error(error);
                     return false;
                 }
 
                 final List<String> errors = messages.stream()
-                        .filter(m -> m.containsKey("accepted") && !Boolean.parseBoolean(m.get("accepted").toString()) && m.containsKey("error"))
-                        .map(m -> (String) m.get("error"))
-                        .collect(Collectors.toList());
+                    .filter(m -> m.containsKey("accepted") && !Boolean.parseBoolean(m.get("accepted").toString()) && m.containsKey("error"))
+                    .map(m -> (String) m.get("error"))
+                    .collect(Collectors.toList());
                 if (errors.isEmpty()) {
                     return true;
                 }
