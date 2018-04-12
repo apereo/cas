@@ -41,23 +41,23 @@ public class ClickatellSmsSenderTests {
 
     @Before
     public void setup() {
-        final String data = "{\n" +
-            "\"messages\": [\n" +
-            "{\n" +
-            "\"apiMessageId\": \"77fb29998253415fa5d66971d519d362\",\n" +
-            "\"accepted\": true,\n" +
-            "\"to\": \"380976543211\",\n" +
-            "\"error\": null\n" +
-            "},\n" +
-            "{\n" +
-            "\"apiMessageId\": \"d2a7b3f2a72a4c798f3f385ee92ee5ce\",\n" +
-            "\"accepted\": true,\n" +
-            "\"to\": \"380976543212\",\n" +
-            "\"error\": null\n" +
-            "}\n" +
-            "],\n" +
-            "\"error\": null\n" +
-            "}";
+        final String data = "{\n"
+            + "\"messages\": [\n"
+            + "{\n"
+            + "\"apiMessageId\": \"77fb29998253415fa5d66971d519d362\",\n"
+            + "\"accepted\": true,\n"
+            + "\"to\": \"380976543211\",\n"
+            + "\"error\": null\n"
+            + "},\n"
+            + "{\n"
+            + "\"apiMessageId\": \"d2a7b3f2a72a4c798f3f385ee92ee5ce\",\n"
+            + "\"accepted\": true,\n"
+            + "\"to\": \"380976543212\",\n"
+            + "\"error\": null\n"
+            + "}\n"
+            + "],\n"
+            + "\"error\": null\n"
+            + "}";
         this.webServer = new MockWebServer(8099,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);

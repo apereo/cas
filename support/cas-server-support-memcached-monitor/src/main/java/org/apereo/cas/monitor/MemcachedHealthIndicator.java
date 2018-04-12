@@ -21,7 +21,6 @@ import java.util.List;
 @Slf4j
 public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
 
-
     private final ObjectPool<MemcachedClientIF> connectionPool;
 
     public MemcachedHealthIndicator(final ObjectPool<MemcachedClientIF> client,
