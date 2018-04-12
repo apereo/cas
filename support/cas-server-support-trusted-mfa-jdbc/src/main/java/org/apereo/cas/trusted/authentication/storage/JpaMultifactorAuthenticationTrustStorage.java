@@ -28,7 +28,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     private static final String TABLE_NAME = "MultifactorAuthenticationTrustRecord";
 
     @PersistenceContext(unitName = "mfaTrustedAuthnEntityManagerFactory")
-    private EntityManager entityManager;
+    private transient EntityManager entityManager;
 
     @Override
     public void expire(final String key) {

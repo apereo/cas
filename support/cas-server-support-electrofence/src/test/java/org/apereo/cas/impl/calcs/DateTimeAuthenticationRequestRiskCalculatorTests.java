@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.RunningStandaloneCondition;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
@@ -18,6 +20,7 @@ import static org.junit.Assert.*;
  * @since 5.1.0
  */
 @TestPropertySource(properties = "cas.authn.adaptive.risk.dateTime.enabled=true")
+@ConditionalIgnore(condition = RunningStandaloneCondition.class)
 public class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
 
     @Test

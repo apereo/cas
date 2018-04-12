@@ -6,7 +6,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link RejectResultCodeLdapPasswordPolicyHandlingStrategy}.
@@ -18,10 +18,10 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 public class RejectResultCodeLdapPasswordPolicyHandlingStrategy extends DefaultLdapPasswordPolicyHandlingStrategy {
-    private final List<AuthenticationResultCode> resultCodes;
+    private final Set<AuthenticationResultCode> resultCodes;
 
     public RejectResultCodeLdapPasswordPolicyHandlingStrategy() {
-        this(CollectionUtils.wrapList(AuthenticationResultCode.INVALID_CREDENTIAL));
+        this(CollectionUtils.wrapSet(AuthenticationResultCode.INVALID_CREDENTIAL));
     }
 
     @Override
@@ -30,16 +30,16 @@ public class RejectResultCodeLdapPasswordPolicyHandlingStrategy extends DefaultL
             LOGGER.debug("Unable to support authentication response given none is provided");
             return false;
         }
-        
+
         if (!response.getResult()) {
             LOGGER.debug("Unable to support authentication response [{}] with a negative/false result", response);
             return false;
         }
-        
+
         if (this.resultCodes.contains(response.getAuthenticationResultCode())) {
             LOGGER.debug("Unable to support authentication response [{}] with a blacklisted authentication result code [{}]",
-                    response,
-                    response.getAuthenticationResultCode());
+                response,
+                response.getAuthenticationResultCode());
             return false;
         }
         LOGGER.debug("Authentication response [{}] is supported by password policy handling strategy [{}]", response, getClass().getSimpleName());

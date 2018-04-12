@@ -1,6 +1,8 @@
 package org.apereo.cas.support.oauth.validator.token;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -20,7 +22,13 @@ import java.util.Optional;
  * @since 5.3.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRequestValidator {
+    /**
+     * Access strategy enforcer.
+     */
+    protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
+
     @Override
     public boolean validate(final J2EContext context) {
         final var request = context.getRequest();

@@ -52,7 +52,7 @@ public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void verifyAuthnRequest() throws Exception {
+    public void verifyAuthnRequest() {
         final var request = new MockHttpServletRequest();
         final var samlRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                 + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "

@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
 
 
-    private final MongoTemplate mongoTemplate;
+    private final transient MongoTemplate mongoTemplate;
     private final long expirationTime;
     private final TimeUnit expirationTimeUnit;
     private final String collectionName;

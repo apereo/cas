@@ -3,9 +3,9 @@ package org.apereo.cas.support.saml.authentication;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationBuilder;
-import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +33,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     public void verifyAuthenticationTypeFound() {
         final var credentials = new UsernamePasswordCredential();
         final var builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, AuthenticationTransaction.of(credentials));
+        this.populator.populateAttributes(builder, DefaultAuthenticationTransaction.of(credentials));
         final var auth = builder.build();
 
         assertEquals(SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_PASSWORD,
@@ -44,7 +44,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     public void verifyAuthenticationTypeNotFound() {
         final var credentials = new CustomCredential();
         final var builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, AuthenticationTransaction.of(credentials));
+        this.populator.populateAttributes(builder, DefaultAuthenticationTransaction.of(credentials));
         final var auth = builder.build();
 
         assertNull(auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
@@ -60,7 +60,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
         this.populator.setUserDefinedMappings(added);
 
         final var builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, AuthenticationTransaction.of(credentials));
+        this.populator.populateAttributes(builder, DefaultAuthenticationTransaction.of(credentials));
         final var auth = builder.build();
 
         assertEquals(

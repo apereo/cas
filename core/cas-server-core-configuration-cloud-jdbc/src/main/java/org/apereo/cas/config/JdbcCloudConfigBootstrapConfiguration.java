@@ -49,7 +49,7 @@ public class JdbcCloudConfigBootstrapConfiguration implements PropertySourceLoca
         private static final String SQL = "SELECT id, name, value FROM CAS_SETTINGS_TABLE";
         private static final long serialVersionUID = 3141915452108685020L;
 
-        private final Environment environment;
+        private final transient Environment environment;
 
         JdbcCloudConnection(final Environment environment) {
             this.environment = environment;

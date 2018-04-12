@@ -9,9 +9,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
-import org.apereo.cas.support.oauth.profile.OAuth2UserProfileDataCreator;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
@@ -41,7 +40,7 @@ import java.util.Map;
  */
 @Slf4j
 public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller {
-    
+
     /**
      * View renderer for the final profile.
      */
@@ -50,11 +49,11 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
     /**
      * User profile data creator.
      */
-    private final OAuth2UserProfileDataCreator userProfileDataCreator;
-            
+    private final OAuth20UserProfileDataCreator userProfileDataCreator;
+    private final ResponseEntity expiredAccessTokenResponseEntity;
+
     public OAuth20UserProfileEndpointController(final ServicesManager servicesManager,
                                                 final TicketRegistry ticketRegistry,
-                                                final OAuth20Validator validator,
                                                 final AccessTokenFactory accessTokenFactory,
                                                 final PrincipalFactory principalFactory,
                                                 final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
@@ -62,11 +61,12 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
                                                 final CasConfigurationProperties casProperties,
                                                 final CookieRetrievingCookieGenerator cookieGenerator,
                                                 final OAuth20UserProfileViewRenderer userProfileViewRenderer,
-                                                final OAuth2UserProfileDataCreator userProfileDataCreator) {
-        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
-                webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, cookieGenerator);
+                                                final OAuth20UserProfileDataCreator userProfileDataCreator) {
+        super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
+            webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, cookieGenerator);
         this.userProfileViewRenderer = userProfileViewRenderer;
         this.userProfileDataCreator = userProfileDataCreator;
+        this.expiredAccessTokenResponseEntity = buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
     }
 
     /**
@@ -82,7 +82,7 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         final var context = Pac4jUtils.getPac4jJ2EContext(request, response);
-        
+
         final var accessToken = getAccessTokenFromRequest(request);
         if (StringUtils.isBlank(accessToken)) {
             LOGGER.error("Missing [{}] from the request", OAuth20Constants.ACCESS_TOKEN);
@@ -90,14 +90,15 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         }
 
         final var accessTokenTicket = this.ticketRegistry.getTicket(accessToken, AccessToken.class);
+
         if (accessTokenTicket == null) {
             LOGGER.error("Access token [{}] cannot be found in the ticket registry.", accessToken);
-            return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
+            return expiredAccessTokenResponseEntity;
         }
         if (accessTokenTicket.isExpired()) {
             LOGGER.error("Access token [{}] has expired and will be removed from the ticket registry", accessToken);
             this.ticketRegistry.deleteTicket(accessToken);
-            return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
+            return expiredAccessTokenResponseEntity;
         }
 
         if (casProperties.getLogout().isRemoveDescendantTickets()) {
@@ -105,7 +106,7 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
             if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
                 LOGGER.error("Ticket granting ticket [{}] parenting access token [{}] has expired or is not found", ticketGrantingTicket, accessTokenTicket);
                 this.ticketRegistry.deleteTicket(accessToken);
-                return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
+                return expiredAccessTokenResponseEntity;
             }
         }
         updateAccessTokenUsage(accessTokenTicket);

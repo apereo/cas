@@ -25,7 +25,7 @@ public class JsonConsentRepository extends BaseConsentRepository {
     private static final long serialVersionUID = -402728417464783825L;
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-    private final Resource jsonResource;
+    private final transient Resource jsonResource;
 
     public JsonConsentRepository(final Resource jsonResource) {
         this.jsonResource = jsonResource;

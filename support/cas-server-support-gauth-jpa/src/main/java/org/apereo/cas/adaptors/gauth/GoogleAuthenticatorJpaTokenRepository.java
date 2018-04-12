@@ -25,7 +25,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
 
 
     @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
-    private EntityManager entityManager;
+    private transient EntityManager entityManager;
 
     private final long expireTokensInSeconds;
     

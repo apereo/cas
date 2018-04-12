@@ -25,7 +25,7 @@ public class MongoDbAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
 
     private static final long serialVersionUID = 1600024683199961892L;
 
-    private final MongoTemplate mongoTemplate;
+    private final transient MongoTemplate mongoTemplate;
     private final String collection;
 
     public MongoDbAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,

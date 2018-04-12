@@ -45,6 +45,7 @@ import java.util.Map;
  */
 @Slf4j
 public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandler {
+    private static final int DEFAULT_ERROR_COUNT = 30;
 
     /**
      * Map of account state error to CAS authentication exception.
@@ -52,14 +53,14 @@ public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandl
     protected Map<AccountState.Error, LoginException> errorMap;
 
     @Setter
-    private Map<String, Class<LoginException>> attributesToErrorMap = new LinkedCaseInsensitiveMap<>();
+    private Map<String, Class<LoginException>> attributesToErrorMap = new LinkedCaseInsensitiveMap<>(DEFAULT_ERROR_COUNT);
 
     /**
      * Instantiates a new account state handler, that populates
      * the error map with LDAP error codes and corresponding exceptions.
      */
     public DefaultLdapLdapAccountStateHandler() {
-        this.errorMap = new HashMap<>();
+        this.errorMap = new HashMap<>(DEFAULT_ERROR_COUNT);
         this.errorMap.put(ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED, new AccountDisabledException());
         this.errorMap.put(ActiveDirectoryAccountState.Error.ACCOUNT_LOCKED_OUT, new AccountLockedException());
         this.errorMap.put(ActiveDirectoryAccountState.Error.INVALID_LOGON_HOURS, new InvalidLoginTimeException());

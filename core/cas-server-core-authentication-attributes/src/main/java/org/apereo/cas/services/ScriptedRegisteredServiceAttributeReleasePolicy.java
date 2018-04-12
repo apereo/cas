@@ -59,7 +59,7 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
 
     private Map<String, Object> getScriptedAttributesFromFile(final Map<String, Object> attributes) {
         final Object[] args = {attributes, LOGGER};
-        final Map<String, Object> map = ScriptingUtils.executeGroovyScriptEngine(this.scriptFile, args, Map.class);
+        final Map<String, Object> map = ScriptingUtils.executeScriptEngine(this.scriptFile, args, Map.class);
         return ObjectUtils.defaultIfNull(map, new HashMap<>());
     }
 }
