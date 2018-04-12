@@ -118,6 +118,13 @@ registry to match the following:
 }
 ```
 
+## Server Configuration
+
+Remember that this feature requires session affinity (and optionally session replication) in clustered deployments,
+as the requests and responses throughout the login flow are stored via server-backed session storage mechanisms. 
+
+You will need to configure your deployment environment and load-balancers accordingly.
+
 ## Troubleshooting
 
 Be aware of clock drift issues between CAS and the ADFS server. Validation failures of the response do show up in the logs, and the request is routed back to
