@@ -87,6 +87,24 @@ Support is enabled by including the following module in the WAR overlay:
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#securing-endpoints-with-spring-security).
 
+### Troubleshooting
+
+To enable additional logging, configure the log4j configuration file to add the following
+levels:
+
+```xml
+...
+<AsyncLogger name="org.pac4j" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
+<AsyncLogger name="org.springframework.security" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
+...
+```
+
 ## Monitors
 
 Monitors allow you to watch the internal state of a given CAS component.
