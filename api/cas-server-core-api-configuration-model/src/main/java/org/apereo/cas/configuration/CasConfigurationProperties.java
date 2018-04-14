@@ -220,7 +220,7 @@ public class CasConfigurationProperties implements Serializable {
     private GoogleRecaptchaProperties googleRecaptcha = new GoogleRecaptchaProperties();
 
     /**
-     * SMS & Text messaging settings.
+     * SMS and Text messaging settings.
      */
     @NestedConfigurationProperty
     private SmsProvidersProperties smsProvider = new SmsProvidersProperties();
