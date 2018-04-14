@@ -2,13 +2,16 @@ package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.AllArgsConstructor;
+import com.google.common.base.Predicates;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import lombok.Getter;
+import java.util.function.Predicate;
 
 /**
  * The {@link RegisteredServiceProperty} defines a single custom
@@ -25,7 +28,7 @@ public interface RegisteredServiceProperty extends Serializable {
      */
     @JsonFormat(shape = JsonFormat.Shape.OBJECT)
     @Getter
-    @AllArgsConstructor
+    @RequiredArgsConstructor
     enum RegisteredServiceProperties {
 
         /**
@@ -92,7 +95,7 @@ public interface RegisteredServiceProperty extends Serializable {
          * Whether CAS should inject xss protection headers into the response when this service is in process.
          */
         HTTP_HEADER_ENABLE_XSS_PROTECTION("httpHeaderEnableXSSProtection", "true");
-        
+
 
         private final String propertyName;
         private final String defaultValue;
@@ -141,8 +144,22 @@ public interface RegisteredServiceProperty extends Serializable {
          * @return true/false
          */
         public boolean isAssignedTo(final RegisteredService service) {
-            return service.getProperties().entrySet().stream()
-                .anyMatch(entry -> entry.getKey().equalsIgnoreCase(getPropertyName()) && StringUtils.isNotBlank(entry.getValue().getValue()));
+            return isAssignedTo(service, Predicates.alwaysTrue());
+        }
+
+        /**
+         * Is assigned to value.
+         *
+         * @param service     the service
+         * @param valueFilter the filter
+         * @return true/false
+         */
+        public boolean isAssignedTo(final RegisteredService service, final Predicate<String> valueFilter) {
+            return service.getProperties().entrySet()
+                .stream()
+                .anyMatch(entry -> entry.getKey().equalsIgnoreCase(getPropertyName())
+                    && StringUtils.isNotBlank(entry.getValue().getValue())
+                    && valueFilter.test(entry.getValue().getValue()));
         }
     }
 

@@ -241,7 +241,6 @@ The following options related to JPA/JDBC support in CAS apply equally to a numb
 # ${configurationKey}.defaultCatalog=
 # ${configurationKey}.defaultSchema=
 # ${configurationKey}.ddlAuto=create-drop
-# ${configurationKey}.maxAgeDays=180
 
 # ${configurationKey}.autocommit=false
 # ${configurationKey}.idleTimeout=5000
@@ -667,7 +666,7 @@ Note that the default value for Hibernate's DDL setting is `create-drop` which m
 | `update`             | Update the schema.
 | `create`             | Create the schema, destroying previous data.
 | `create-drop`        | Drop the schema at the end of the session.
-| `none`        | Do nothing.
+| `none`               | Do nothing.
 
 Note that during a version migration where any schema has changed `create-drop` will result
 in the loss of all data as soon as CAS is started. For transient data like tickets this is probably
@@ -680,7 +679,10 @@ please review [this guide](http://docs.spring.io/spring-framework/docs/current/j
 
 ## SAML2 Service Provider Integrations
 
-The settings defined for each service provider simply attempt to automate the creation of a [SAML service definition](Configuring-SAML2-Authentication.html#saml-services) and nothing more. If you find the applicable settings lack in certain areas, it is best to fall back onto the native configuration strategy for registering SAML service providers with CAS which would depend on your service registry of choice.
+The settings defined for each service provider simply attempt to automate the creation of 
+a [SAML service definition](Configuring-SAML2-Authentication.html#saml-services) and nothing more. If you find the 
+applicable settings lack in certain areas, it is best to fall back onto the native configuration strategy for registering 
+SAML service providers with CAS which would depend on your service registry of choice.
 
 Each SAML service provider supports the following settings:
 
@@ -696,7 +698,6 @@ Each SAML service provider supports the following settings:
 | `entityIds`           | List of entity ids allowed for this service provider.
 | `signResponses`       | Indicate whether responses should be signed. Default is `true`.
 | `signAssertions`      | Indicate whether assertions should be signed. Default is `false`.
-
 
 The only required setting that would activate the automatic configuration for a service provider is the presence and definition of metadata. All other settings are optional. 
 

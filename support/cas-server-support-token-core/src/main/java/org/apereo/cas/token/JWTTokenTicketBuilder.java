@@ -38,7 +38,6 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
     private final String casSeverPrefix;
     private final CipherExecutor<String, String> tokenCipherExecutor;
     private final ExpirationPolicy expirationPolicy;
-    
 
     @Override
     @SneakyThrows
