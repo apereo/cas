@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
     <suppress>
+        <cve>CVE-2011-4644</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2013-6771</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2013-7394</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2016-9878</cve>
     </suppress>
     <suppress>
@@ -170,5 +179,110 @@
     </suppress>
     <suppress>
         <cve>CVE-2018-1000129</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2000-0672</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2000-0760</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2000-1210</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2001-0590</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2002-0493</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2002-1148</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2002-2006</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2003-0042</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2003-0043</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2003-0044</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2003-0045</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2005-0808</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2005-4838</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2006-7196</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2007-0450</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2007-1358</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2007-2449</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2008-0128</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2009-2696</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2009-3548</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2012-5568</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2013-2185</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2013-4286</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2013-4322</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2013-4444</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2013-4590</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2013-6357</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2013-7458</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-4335</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-8080</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-0075</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-0096</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-0099</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-0119</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2016-5388</cve>
     </suppress>
 </suppressions>

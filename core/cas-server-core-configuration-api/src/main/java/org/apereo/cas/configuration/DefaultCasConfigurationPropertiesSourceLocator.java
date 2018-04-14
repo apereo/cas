@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  * @since 5.3.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfigurationPropertiesSourceLocator {
     private final CipherExecutor<String, String> configurationCipherExecutor;
     private final CasConfigurationPropertiesEnvironmentManager casConfigurationPropertiesEnvironmentManager;
@@ -90,7 +90,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         final String regex = buildPatternForConfigurationFileDiscovery(config, profiles);
         final Collection<File> configFiles = scanForConfigurationFilesByPattern(config, regex);
 
-        LOGGER.info("Configuration files found at [{}] are [{}]", config, configFiles);
+        LOGGER.info("Configuration files found at [{}] are [{}] under profile(s) [{}]", config, configFiles, environment.getActiveProfiles());
         configFiles.forEach(Unchecked.consumer(f -> {
             LOGGER.debug("Loading configuration file [{}]", f);
             if (f.getName().toLowerCase().endsWith("yml")) {
