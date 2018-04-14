@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.sms.TextMagicProperties;
 import org.apereo.cas.support.sms.TextMagicSmsSender;
 import org.apereo.cas.util.io.SmsSender;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,10 @@ import org.springframework.context.annotation.Configuration;
 public class TextMagicSmsConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Bean
     public SmsSender smsSender() {
-        return new TextMagicSmsSender(
-                casProperties.getTextMagic().getUsername(),
-                casProperties.getTextMagic().getToken());
+        final TextMagicProperties textMagic = casProperties.getSmsProvider().getTextMagic();
+        return new TextMagicSmsSender(textMagic.getUsername(), textMagic.getToken());
     }
 }

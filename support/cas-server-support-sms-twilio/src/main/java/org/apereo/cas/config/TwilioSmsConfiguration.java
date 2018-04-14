@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.sms.TwilioProperties;
 import org.apereo.cas.support.sms.TwilioSmsSender;
 import org.apereo.cas.util.io.SmsSender;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,9 @@ public class TwilioSmsConfiguration {
     
     @Bean
     public SmsSender smsSender() {
-        Assert.notNull(casProperties.getTwilio().getAccountId(), "Twilio account id cannot be blank");
-        Assert.notNull(casProperties.getTwilio().getToken(), "Twilio token cannot be blank");
-        return new TwilioSmsSender(casProperties.getTwilio().getAccountId(), casProperties.getTwilio().getToken());
+        final TwilioProperties twilio = casProperties.getSmsProvider().getTwilio();
+        Assert.notNull(twilio.getAccountId(), "Twilio account id cannot be blank");
+        Assert.notNull(twilio.getToken(), "Twilio token cannot be blank");
+        return new TwilioSmsSender(twilio.getAccountId(), twilio.getToken());
     }
 }

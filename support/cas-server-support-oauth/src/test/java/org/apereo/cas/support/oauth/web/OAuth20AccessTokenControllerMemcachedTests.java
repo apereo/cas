@@ -50,39 +50,39 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-        classes = {
-                CasCoreAuthenticationConfiguration.class,
-                CasCoreServicesAuthenticationConfiguration.class,
-                CasCoreAuthenticationPrincipalConfiguration.class,
-                CasCoreAuthenticationPolicyConfiguration.class,
-                CasCoreAuthenticationMetadataConfiguration.class,
-                CasCoreAuthenticationSupportConfiguration.class,
-                CasCoreAuthenticationHandlersConfiguration.class,
-                CasOAuth20TestAuthenticationEventExecutionPlanConfiguration.class,
-                CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-                CasCoreTicketIdGeneratorsConfiguration.class,
-                CasWebApplicationServiceFactoryConfiguration.class,
-                CasCoreHttpConfiguration.class,
-                CasCoreServicesConfiguration.class,
-                CasOAuthConfiguration.class,
-                CasCoreTicketsConfiguration.class,
-                MemcachedTicketRegistryConfiguration.class,
-                CasCoreConfiguration.class,
-                CasCookieConfiguration.class,
-                CasOAuthComponentSerializationConfiguration.class,
-                CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-                CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-                CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
-                CasCoreTicketCatalogConfiguration.class,
-                CasCoreComponentSerializationConfiguration.class,
-                CasOAuth20TestAuthenticationEventExecutionPlanConfiguration.class,
-                CasCoreUtilSerializationConfiguration.class,
-                CasPersonDirectoryConfiguration.class,
-                AbstractOAuth20Tests.OAuthTestConfiguration.class,
-                RefreshAutoConfiguration.class,
-                CasCoreLogoutConfiguration.class,
-                CasCoreUtilConfiguration.class,
-                CasCoreWebConfiguration.class})
+    classes = {
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasOAuth20TestAuthenticationEventExecutionPlanConfiguration.class,
+        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasOAuthConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        MemcachedTicketRegistryConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCookieConfiguration.class,
+        CasOAuthComponentSerializationConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreComponentSerializationConfiguration.class,
+        CasOAuth20TestAuthenticationEventExecutionPlanConfiguration.class,
+        CasCoreUtilSerializationConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        AbstractOAuth20Tests.OAuthTestConfiguration.class,
+        RefreshAutoConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreWebConfiguration.class})
 @TestPropertySource(locations = {"classpath:/memcached-oauth.properties"})
 @Slf4j
 public class OAuth20AccessTokenControllerMemcachedTests extends AbstractOAuth20Tests {
@@ -95,7 +95,7 @@ public class OAuth20AccessTokenControllerMemcachedTests extends AbstractOAuth20T
     public void verifyTicketRegistry() {
         assertTrue(this.ticketRegistry instanceof MemcachedTicketRegistry);
     }
-    
+
     @Test
     public void verifyOAuthCodeIsAddedToMemcached() {
         final Principal p = createPrincipal();

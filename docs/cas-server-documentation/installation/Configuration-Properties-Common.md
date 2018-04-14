@@ -5,13 +5,17 @@ title: CAS Common Properties Overview
 
 # CAS Common Properties
 
-This document describes a number of suggestions and configuration options that apply to and are common amongst a selection of CAS modules and features. To see the full list of CAS properties, please [review this guide](Configuration-Properties.html).
+This document describes a number of suggestions and configuration options that apply to and are common amongst a selection of CAS modules and features. 
+To see the full list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Naming Convention
 
-- Settings and properties that are controlled by the CAS platform directly always begin with the prefix `cas`. All other settings are controlled and provided to CAS via other underlying frameworks and may have their own schemas and syntax. **BE CAREFUL** with the distinction.
+- Settings and properties that are controlled by the CAS platform directly always begin with the prefix `cas`. All other settings are controlled 
+and provided to CAS via other underlying frameworks and may have their own schemas and syntax. **BE CAREFUL** with the distinction.
 
-- Unrecognized properties are generally ignored by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition or fail to adhere to the dot-notation syntax and such, your setting is entirely ignored by CAS and likely the feature it controls will never be activated in the way you intend.
+- Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. 
+This means if you somehow misspell a property definition or fail to adhere to the dot-notation syntax and such, your setting 
+is entirely refused by CAS and likely the feature it controls will never be activated in the way you intend.
 
 ## Indexed Settings
 
@@ -580,18 +584,6 @@ The following options related to MongoDb support in CAS apply equally to a numbe
 The following options related to DynamoDb support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
 
 ```properties
-# Path to an external properties file that contains 'accessKey' and 'secretKey' fields.
-# ${configurationKey}.dynamoDb.credentialsPropertiesFile=file:/path/to/file.properties
-
-# Alternatively, you may directly provide credentials to CAS
-# ${configurationKey}.dynamoDb.credentialAccessKey=
-# ${configurationKey}.dynamoDb.credentialSecretKey=
-
-# ${configurationKey}.dynamoDb.endpoint=http://localhost:8000
-# ${configurationKey}.dynamoDb.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
-# ${configurationKey}.dynamoDb.regionOverride=
-# ${configurationKey}.dynamoDb.serviceNameIntern=
-
 # ${configurationKey}.dynamoDb.dropTablesOnStartup=false
 # ${configurationKey}.dynamoDb.preventTableCreationOnStartup=false
 # ${configurationKey}.dynamoDb.timeOffset=0
@@ -613,6 +605,8 @@ The following options related to DynamoDb support in CAS apply equally to a numb
 # ${configurationKey}.dynamoDb.localAddress=
 # ${configurationKey}.dynamoDb.maxConnections=10
 ```
+
+AWS settings for this feature are available [here](#amazon-integration-settings).
 
 ## RESTful Integrations
 
@@ -747,7 +741,7 @@ In multifactor authentication bypass is determined via REST, RESTful settings ar
 
 ## Couchbase Integration Settings
 
-The following  options are shared and apply when CAS is configured to integrate with Couchbase (i.e ticket registry, etc), given the provider's *configuration key*:
+The following options are shared and apply when CAS is configured to integrate with Couchbase (i.e ticket registry, etc), given the provider's *configuration key*:
 
 ```properties
 # ${configurationKey}.nodeSet=localhost:8091
@@ -755,6 +749,24 @@ The following  options are shared and apply when CAS is configured to integrate 
 # ${configurationKey}.queryEnabled=true
 # ${configurationKey}.bucket=default
 # ${configurationKey}.timeout=PT30S
+```
+
+## Amazon Integration Settings
+
+The following options are shared and apply when CAS is configured to integrate with various Amazon Web Service features, given the provider's *configuration key*:
+
+```properties
+# Path to an external properties file that contains 'accessKey' and 'secretKey' fields.
+# ${configurationKey}.dynamoDb.credentialsPropertiesFile=file:/path/to/file.properties
+
+# Alternatively, you may directly provide credentials to CAS
+# ${configurationKey}.dynamoDb.credentialAccessKey=
+# ${configurationKey}.dynamoDb.credentialSecretKey=
+
+# ${configurationKey}.dynamoDb.endpoint=http://localhost:8000
+# ${configurationKey}.dynamoDb.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
+# ${configurationKey}.dynamoDb.regionOverride=
+# ${configurationKey}.dynamoDb.serviceNameIntern=
 ```
 
 ## Memcached Integration Settings

@@ -1266,24 +1266,43 @@ To learn more about this topic, [please review this guide](SMS-Messaging-Configu
 
 ### Twilio
 
+Send text messaging using Twilio.
+
 ```properties
-# cas.twilio.accountId=
-# cas.twilio.token=
+# cas.smsProviders.twilio.accountId=
+# cas.smsProviders.twilio.token=
 ```
 
 ### TextMagic
 
+Send text messaging using TextMagic.
+
 ```properties
-# cas.textMagic.username=
-# cas.textMagic.token=
+# cas.smsProviders.textMagic.username=
+# cas.smsProviders.textMagic.token=
 ```
 
 ### Clickatell
 
+Send text messaging using Clickatell.
+
 ```properties
-# cas.clickatell.serverUrl=https://platform.clickatell.com/messages
-# cas.clickatell.token=
+# cas.smsProviders.clickatell.serverUrl=https://platform.clickatell.com/messages
+# cas.smsProviders.clickatell.token=
 ```
+
+### Amazon SNS
+
+Send text messaging using Amazon SNS.
+
+```properties
+# cas.smsProviders.sns.senderId=
+# cas.smsProviders.sns.maxPrice=
+# cas.smsProviders.sns.smsType=Transactional
+```
+
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
+under the configuration key `cas.smsProviders.sns`.
 
 ## GeoTracking
 
@@ -1713,18 +1732,12 @@ Database settings for this feature are available [here](Configuration-Properties
 To learn more about this topic, [please review this guide](AWS-CloudDirectory-Authentication.html).
 
 Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.cloudDirectory`.
-
 Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.cloudDirectory`.
 
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
+under the configuration key `cas.authn.cloudDirectory`.
+
 ```properties
-# cas.authn.cloudDirectory.credentialAccessKey=
-# cas.authn.cloudDirectory.credentialSecretKey=
-
-# cas.authn.cloudDirectory.region=
-
-# cas.authn.cloudDirectory.profileName=
-# cas.authn.cloudDirectory.profilePath=
-
 # cas.authn.cloudDirectory.directoryArn=
 # cas.authn.cloudDirectory.schemaArn=
 # cas.authn.cloudDirectory.facetName=
@@ -3111,6 +3124,8 @@ To learn more about this topic, [please review this guide](CosmosDb-Service-Mana
 To learn more about this topic, [please review this guide](DynamoDb-Service-Management.html).
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
 under the configuration key `cas.serviceRegistry`.
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
+under the configuration key `cas.serviceRegistry.dynamoDb`.
 
 ```properties
 # cas.serviceRegistry.dynamoDb.tableName=DynamoDbCasServices
@@ -3346,7 +3361,16 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### DynamoDb Ticket Registry
 
-To learn more about this topic, [please review this guide](DynamoDb-Ticket-Registry.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration) under the configuration key `cas.ticket.registry.dynamoDb`. Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.dynamoDb`.
+To learn more about this topic, [please review this guide](DynamoDb-Ticket-Registry.html). 
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration) 
+under the configuration key `cas.ticket.registry`. 
+
+Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) 
+under the configuration key `cas.ticket.registry.dynamoDb`.
+
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
+under the configuration key `cas.ticket.registry.dynamoDb`.
 
 ```properties
 # cas.ticket.registry.dynamoDb.serviceTicketsTableName=serviceTicketsTable
