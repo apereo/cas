@@ -1,13 +1,14 @@
 package org.apereo.cas.tokens;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.rest.factory.CasProtocolServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
-import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.token.TokenTicketBuilder;
@@ -46,11 +47,18 @@ public class JWTServiceTicketResourceEntityResponseFactory extends CasProtocolSe
 
         LOGGER.debug("Located registered service [{}] for [{}]", registeredService, service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-        final boolean tokenAsResponse = RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_RESPONSE.isAssignedTo(registeredService)
-            || RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService);
+
+        boolean tokenAsResponse = RegisteredServiceProperties.TOKEN_AS_RESPONSE.isAssignedTo(registeredService, BooleanUtils::toBoolean);
+        if (tokenAsResponse) {
+            LOGGER.warn("Service [{}] is configured to generate JWTs as tickets using a deprecated property [{}]. Consider switching to [{}] instead.",
+                service, RegisteredServiceProperties.TOKEN_AS_RESPONSE.getPropertyName(),
+                RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET);
+        } else {
+            tokenAsResponse = RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService, BooleanUtils::toBoolean);
+        }
 
         if (!tokenAsResponse) {
-            LOGGER.debug("Service [{}] does not require JWTs as tickets", service);
+            LOGGER.debug("Service [{}] does not require JWTs as tickets, given the properties assigned are [{}]", service, registeredService.getProperties());
             return super.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
         }
 
