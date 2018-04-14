@@ -584,7 +584,7 @@ ext.libraries = [
                     exclude(group: "org.hibernate", module: "hibernate-validator")
                     force = true
                 },
-                dependencies.create("org.hibernate:hibernate-validator:$") {
+                dependencies.create("org.hibernate:hibernate-validator:$hibernateValidatorVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "com.fasterxml", module: "classmate")
@@ -642,6 +642,17 @@ ext.libraries = [
         ],
         awssns                     : [
                 dependencies.create("com.amazonaws:aws-java-sdk-sns:$amazonSdkVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
+        awssecretsmanager                     : [
+                dependencies.create("com.amazonaws:aws-java-sdk-secretsmanager:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
