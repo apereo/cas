@@ -115,7 +115,8 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         }
         final String endpoint = getSetting(environment, "endpoint");
         final AmazonDynamoDB client = AmazonDynamoDBClient.builder().withCredentials(new AWSStaticCredentialsProvider(credentials))
-            .withClientConfiguration(cfg).withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, regionOverride))
+            .withClientConfiguration(cfg)
+            .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, regionOverride))
             .withRegion(region).build();
         return client;
     }
