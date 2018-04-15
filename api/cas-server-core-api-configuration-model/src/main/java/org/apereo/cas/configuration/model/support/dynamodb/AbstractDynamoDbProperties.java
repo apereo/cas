@@ -1,11 +1,9 @@
 package org.apereo.cas.configuration.model.support.dynamodb;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.support.RequiredProperty;
-import org.springframework.core.io.Resource;
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.configuration.model.support.aws.BaseAmazonWebServicesProperties;
 
 /**
  * This is {@link AbstractDynamoDbProperties}.
@@ -16,48 +14,8 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
-public abstract class AbstractDynamoDbProperties implements Serializable {
-
+public abstract class AbstractDynamoDbProperties extends BaseAmazonWebServicesProperties {
     private static final long serialVersionUID = -8349917272283787550L;
-
-    /**
-     * File containing credentials properties.
-     */
-    private Resource credentialsPropertiesFile;
-
-    /**
-     * Credentials access key.
-     */
-    @RequiredProperty
-    private String credentialAccessKey;
-
-    /**
-     * Credentials secret key.
-     */
-    @RequiredProperty
-    private String credentialSecretKey;
-
-    /**
-     * Dynamo DB endpoint.
-     */
-    @RequiredProperty
-    private String endpoint;
-
-    /**
-     * EC2 region.
-     */
-    @RequiredProperty
-    private String region;
-
-    /**
-     * EC2 region override.
-     */
-    private String regionOverride;
-
-    /**
-     * Service name pattern.
-     */
-    private String serviceNameIntern;
 
     /**
      * Flag that indicates whether to drop tables on start up.
@@ -65,8 +23,8 @@ public abstract class AbstractDynamoDbProperties implements Serializable {
     private boolean dropTablesOnStartup;
 
     /**
-      * Flag that indicates whether to prevent CAS from creating tables.
-      */
+     * Flag that indicates whether to prevent CAS from creating tables.
+     */
     private boolean preventTableCreationOnStartup;
 
     /**

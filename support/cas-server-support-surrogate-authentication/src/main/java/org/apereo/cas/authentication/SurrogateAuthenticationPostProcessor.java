@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
-import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditableContext;
@@ -29,7 +30,7 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SurrogateAuthenticationPostProcessor implements AuthenticationPostProcessor {
     private final PrincipalFactory principalFactory;
     private final SurrogateAuthenticationService surrogateAuthenticationService;
@@ -42,6 +43,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
     public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws AuthenticationException {
         final Authentication authentication = builder.build();
         final Principal principal = authentication.getPrincipal();
+        @NonNull
         final SurrogateUsernamePasswordCredential surrogateCredentials = (SurrogateUsernamePasswordCredential) transaction.getPrimaryCredential().get();
         final String targetUserId = surrogateCredentials.getSurrogateUsername();
 
@@ -74,10 +76,9 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                 final AuditableContext surrogateEligibleAudit = AuditableContext.builder()
                     .service(transaction.getService())
                     .authentication(authentication)
-                    .properties(CollectionUtils.wrap("targetUserId", targetUserId, "eligible", true))
+                    .properties(CollectionUtils.wrap("targetUserId", targetUserId, "eligible", Boolean.TRUE))
                     .build();
 
-                // We don't care about capturing audit execution result here
                 this.surrogateEligibilityAuditableExecution.execute(surrogateEligibleAudit);
                 return;
             }
@@ -93,7 +94,6 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                 .authentication(authentication)
                 .build();
 
-            //We don't care about capturing audit execution result here
             this.surrogateEligibilityAuditableExecution.execute(surrogateIneligibleAudit);
             throw new AuthenticationException(map);
         }

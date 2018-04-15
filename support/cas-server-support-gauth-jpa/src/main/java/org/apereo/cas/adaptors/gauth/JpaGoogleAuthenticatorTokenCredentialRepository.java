@@ -31,7 +31,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
     private final IGoogleAuthenticator googleAuthenticator;
 
     @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
-    private EntityManager entityManager;
+    private transient EntityManager entityManager;
 
     public JpaGoogleAuthenticatorTokenCredentialRepository(final CipherExecutor<String, String> tokenCredentialCipher,
                                                            final IGoogleAuthenticator googleAuthenticator) {

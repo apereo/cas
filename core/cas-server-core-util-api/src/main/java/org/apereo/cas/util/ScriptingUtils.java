@@ -227,7 +227,7 @@ public class ScriptingUtils {
      * @param clazz      the clazz
      * @return the t
      */
-    public static <T> T executeGroovyScriptEngine(final String scriptFile, final Object[] args, final Class<T> clazz) {
+    public static <T> T executeScriptEngine(final String scriptFile, final Object[] args, final Class<T> clazz) {
         try {
             final String engineName = getScriptEngineName(scriptFile);
             final ScriptEngine engine = new ScriptEngineManager().getEngineByName(engineName);
@@ -329,9 +329,12 @@ public class ScriptingUtils {
             }
 
             final String script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-            final GroovyClassLoader classLoader = new GroovyClassLoader(ScriptingUtils.class.getClassLoader(),
-                new CompilerConfiguration(), true);
-            final Class<T> clazz = classLoader.parseClass(script);
+            
+            final Class<T> clazz = AccessController.doPrivileged((PrivilegedAction<Class<T>>) () -> {
+                final GroovyClassLoader classLoader = new GroovyClassLoader(ScriptingUtils.class.getClassLoader(),
+                    new CompilerConfiguration(), true);
+                return classLoader.parseClass(script);
+            });
 
             LOGGER.debug("Preparing constructor arguments [{}] for resource [{}]", args, resource);
             final Constructor<T> ctor = clazz.getDeclaredConstructor(constructorArgs);

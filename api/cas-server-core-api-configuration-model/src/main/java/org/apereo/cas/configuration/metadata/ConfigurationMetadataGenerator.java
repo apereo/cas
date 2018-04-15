@@ -43,9 +43,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,6 +54,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -164,7 +166,7 @@ public class ConfigurationMetadataGenerator {
                                       final String typeName,
                                       final boolean indexNameWithBrackets) {
 
-        try (InputStream is = new FileInputStream(typePath)) {
+        try (InputStream is = Files.newInputStream(Paths.get(typePath))) {
             final CompilationUnit cu = JavaParser.parse(is);
             new FieldVisitor(collectedProps, collectedGroups, indexNameWithBrackets, typeName).visit(cu, p);
             if (cu.getTypes().size() > 0) {
@@ -211,7 +213,7 @@ public class ConfigurationMetadataGenerator {
                 final ConfigurationMetadataProperty prop = createConfigurationProperty(field, property);
                 processNestedClassOrInterfaceTypeIfNeeded(field, prop);
             } else {
-                LOGGER.error("Field " + field + " has no Javadoc defined");
+                LOGGER.error("Field [{}] has no Javadoc defined", field);
             }
         }
 
@@ -244,8 +246,9 @@ public class ConfigurationMetadataGenerator {
                 prop.setType(elementType);
             }
 
-            if (variable.getInitializer().isPresent()) {
-                final Expression exp = variable.getInitializer().get();
+            final Optional<Expression> initializer = variable.getInitializer();
+            if (initializer.isPresent()) {
+                final Expression exp = initializer.get();
                 if (exp instanceof LiteralStringValueExpr) {
                     prop.setDefaultValue(((LiteralStringValueExpr) exp).getValue());
                 } else if (exp instanceof BooleanLiteralExpr) {

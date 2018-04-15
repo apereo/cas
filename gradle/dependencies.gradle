@@ -21,12 +21,6 @@ ext.libraries = [
                     force = true
                 }
         ],
-        azuread                 : [
-                dependencies.create("com.microsoft.azure:adal4j:$azureActiveDirectoryVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                }
-        ],
         apachesyncope           : [
                 dependencies.create("org.apache.syncope.common:syncope-common-lib:$apacheSyncopeVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -404,6 +398,7 @@ ext.libraries = [
             force = true
         },
         findbugssec             : dependencies.create("com.h3xstream.findsecbugs:findsecbugs-plugin:$findbugsSecVersion"),
+        findbugsannotations     : dependencies.create("com.google.code.findbugs:annotations:$findbugsVersion"),
         groovy                  : [
                 dependencies.create("org.codehaus.groovy:groovy-jsr223:$groovyVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
@@ -527,12 +522,12 @@ ext.libraries = [
                     force = true
                 }
         ],
-        hazelcastaws : [
+        hazelcastaws            : [
                 dependencies.create("com.hazelcast:hazelcast-aws:$hazelcastAwsVersion") {
                     force = true
                 }
         ],
-        hazelcastazure : [
+        hazelcastazure          : [
                 dependencies.create("com.hazelcast:hazelcast-azure:$hazelcastAzureVersion") {
                     force = true
                 }
@@ -634,8 +629,30 @@ ext.libraries = [
                     force = true
                 }
         ],
-        aws       : [
+        aws                     : [
                 dependencies.create("com.amazonaws:aws-java-sdk-core:$amazonSdkVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
+        awssns                     : [
+                dependencies.create("com.amazonaws:aws-java-sdk-sns:$amazonSdkVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
+        awssecretsmanager                     : [
+                dependencies.create("com.amazonaws:aws-java-sdk-secretsmanager:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
@@ -1307,6 +1324,11 @@ ext.libraries = [
         ],
         memcached               : [
                 dependencies.create("net.spy:spymemcached:$spymemcachedVersion") {
+                    force = true
+                }
+        ],
+        awselasticachememcached               : [
+                dependencies.create("com.amazonaws:elasticache-java-cluster-client:$awsmemcachedVersion") {
                     force = true
                 }
         ],

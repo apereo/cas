@@ -28,8 +28,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final long serialVersionUID = 8220243983483982326L;
 
-    private final CipherExecutor<Serializable, String> consentCipherExecutor;
+    private final transient CipherExecutor<Serializable, String> consentCipherExecutor;
 
     @Override
     public ConsentDecision update(final ConsentDecision consent, final Map<String, Object> attributes) {
@@ -60,16 +61,16 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
             final String currentAttributesHash = sha512ConsentAttributeNames(attributes);
             return !StringUtils.equals(consentAttributesHash, currentAttributesHash);
         }
-        
+
         if (decision.getOptions() == ConsentOptions.ATTRIBUTE_VALUE) {
             final String consentAttributesHash = sha512ConsentAttributeNames(consentAttributes);
             final String currentAttributesHash = sha512ConsentAttributeNames(attributes);
 
             final String consentAttributeValuesHash = sha512ConsentAttributeValues(consentAttributes);
             final String currentAttributeValuesHash = sha512ConsentAttributeValues(attributes);
-            
-            return !StringUtils.equals(consentAttributesHash, currentAttributesHash) 
-                    || !StringUtils.equals(consentAttributeValuesHash, currentAttributeValuesHash);
+
+            return !StringUtils.equals(consentAttributesHash, currentAttributesHash)
+                || !StringUtils.equals(consentAttributeValuesHash, currentAttributeValuesHash);
         }
         return true;
     }
@@ -97,9 +98,9 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
 
     private String sha512ConsentAttributeValues(final Map<String, Object> attributes) {
         final String allValues = attributes.values().stream()
-                .map(CollectionUtils::toCollection)
-                .map(c -> c.stream().map(Object::toString).collect(Collectors.joining()))
-                .collect(Collectors.joining("|"));
+            .map(CollectionUtils::toCollection)
+            .map(c -> c.stream().map(Object::toString).collect(Collectors.joining()))
+            .collect(Collectors.joining("|"));
         final String attributeValues = DigestUtils.sha512(allValues);
         return attributeValues;
     }

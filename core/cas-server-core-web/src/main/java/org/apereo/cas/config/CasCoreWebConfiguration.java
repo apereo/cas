@@ -27,6 +27,7 @@ import org.springframework.core.io.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasCoreWebConfiguration}.
@@ -54,14 +55,15 @@ public class CasCoreWebConfiguration {
     @Bean
     public PropertiesFactoryBean casCommonMessages() {
         final PropertiesFactoryBean properties = new PropertiesFactoryBean();
-        final List<Resource> resourceList = new ArrayList<>();
         final DefaultResourceLoader resourceLoader = new DefaultResourceLoader();
+        final List<String> commonNames = casProperties.getMessageBundle().getCommonNames();
+
+        final List<Resource> resourceList = commonNames
+            .stream()
+            .map(resourceLoader::getResource)
+            .collect(Collectors.toList());
         resourceList.add(resourceLoader.getResource("classpath:/cas_common_messages.properties"));
-        for (final String resourceName : casProperties.getMessageBundle().getCommonNames()) {
-            final Resource resource = resourceLoader.getResource(resourceName);
-            // resource existence unknown at this point, let PropertiesFactoryBean determine and log
-            resourceList.add(resource);
-        }
+
         properties.setLocations(resourceList.toArray(new Resource[]{}));
         properties.setSingleton(true);
         properties.setIgnoreResourceNotFound(true);

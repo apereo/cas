@@ -69,6 +69,7 @@ layout: null
     *   [Surrogacy & Impersonation](/$version/installation/Surrogate-Authentication.html)
     *   [ClearPass](/$version/integration/ClearPass.html)
     *   [GUA](/$version/installation/GUA-Authentication.html)
+    *   [Passwordless](/$version/installation/Passwordless-Authentication.html)
     
 * [Attributes](#casattributes)
     *   [Attribute Resolution](/$version/integration/Attribute-Resolution.html)
@@ -207,6 +208,10 @@ layout: null
         *   [SAML2](/$version/installation/Configuring-SAML2-Authentication.html)
     *   [REST](/$version/protocol/REST-Protocol.html)
 
+* [Notifications](#casnotifications)
+    *   [Sending Email](/$version/installation/Sending-Email-Configuration.html)
+    *   [Sending Text Messages](/$version/installation/SMS-Messaging-Configuration.html)
+    
 * [Integration](#appintegration)
     *   [SAML2 Service Providers](/$version/integration/Configuring-SAML-SP-Integrations.html)
         *   [Google Apps](/$version/integration/Google-Apps-Integration.html)

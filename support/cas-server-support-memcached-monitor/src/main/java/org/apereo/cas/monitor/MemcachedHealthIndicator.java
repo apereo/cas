@@ -21,7 +21,6 @@ import java.util.List;
 @Slf4j
 public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
 
-
     private final ObjectPool<MemcachedClientIF> connectionPool;
 
     public MemcachedHealthIndicator(final ObjectPool<MemcachedClientIF> client,
@@ -31,7 +30,7 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
     }
 
     @Override
-    protected void doHealthCheck(final Health.Builder builder) throws Exception {
+    protected void doHealthCheck(final Health.Builder builder) {
         try {
             final MemcachedClientIF client = getClientFromPool();
             if (client.getAvailableServers().isEmpty()) {
@@ -85,7 +84,7 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
             LOGGER.error(e.getMessage(), e);
         }
 
-        return statsList.toArray(new CacheStatistics[statsList.size()]);
+        return statsList.toArray(new CacheStatistics[0]);
     }
 
     private MemcachedClientIF getClientFromPool() throws Exception {

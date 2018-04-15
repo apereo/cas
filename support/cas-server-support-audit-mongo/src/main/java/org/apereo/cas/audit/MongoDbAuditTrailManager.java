@@ -31,7 +31,7 @@ public class MongoDbAuditTrailManager implements AuditTrailManager {
 
     private final String collectionName;
 
-    private final MongoTemplate mongoTemplate;
+    private final transient MongoTemplate mongoTemplate;
 
     public MongoDbAuditTrailManager(final MongoTemplate mongoTemplate, final String collectionName) {
         this.mongoTemplate = mongoTemplate;

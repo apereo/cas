@@ -105,7 +105,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
         super.addCookie(response, theCookieValue);
     }
 
-    private boolean isRememberMeAuthentication(final RequestContext requestContext) {
+    private Boolean isRememberMeAuthentication(final RequestContext requestContext) {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         final String value = request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME);
         LOGGER.debug("Locating request parameter [{}] with value [{}]", RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, value);
@@ -117,9 +117,9 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
                 final Map<String, Object> attributes = auth.getAttributes();
                 LOGGER.debug("Located authentication attributes [{}]", attributes);
                 if (attributes.containsKey(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME)) {
-                    final Object rememberMeValue = attributes.getOrDefault(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, false);
+                    final boolean rememberMeValue = (boolean) attributes.getOrDefault(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.FALSE);
                     LOGGER.debug("Located remember-me authentication attribute [{}]", rememberMeValue);
-                    isRememberMe = CollectionUtils.wrapSet(rememberMeValue).contains(true);
+                    isRememberMe = CollectionUtils.wrapSet(rememberMeValue).contains(Boolean.TRUE);
                 }
             }
         }

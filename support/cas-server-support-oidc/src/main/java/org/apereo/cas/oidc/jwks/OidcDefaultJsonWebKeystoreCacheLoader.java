@@ -25,7 +25,7 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
     private final Resource jwksFile;
 
     @Override
-    public Optional<RsaJsonWebKey> load(final String issuer) throws Exception {
+    public Optional<RsaJsonWebKey> load(final String issuer) {
         final Optional<JsonWebKeySet> jwks = buildJsonWebKeySet();
         if (!jwks.isPresent() || jwks.get().getJsonWebKeys().isEmpty()) {
             return Optional.empty();

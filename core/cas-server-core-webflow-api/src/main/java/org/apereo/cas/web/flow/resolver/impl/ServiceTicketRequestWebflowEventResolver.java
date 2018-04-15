@@ -86,7 +86,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
             : StringUtils.EMPTY;
         LOGGER.debug("Provided value for [{}] request parameter is [{}]", CasProtocolConstants.PARAMETER_RENEW, renewParam);
 
-        if (StringUtils.isNotBlank(ticketGrantingTicketId) && service != null) {
+        if (service != null && StringUtils.isNotBlank(ticketGrantingTicketId)) {
             final Authentication authn = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);
             if (StringUtils.isNotBlank(renewParam)) {
                 LOGGER.debug("Request identifies itself as one asking for service tickets. Checking for authentication context validity...");
@@ -94,7 +94,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
                 if (validAuthn) {
                     LOGGER.debug("Existing authentication context linked to ticket-granting ticket [{}] is valid. "
                         + "CAS should begin to issue service tickets for [{}] once credentials are renewed", ticketGrantingTicketId, service);
-                    return false;
+                    return true;
                 }
                 LOGGER.debug("Existing authentication context linked to ticket-granting ticket [{}] is NOT valid. "
                         + "CAS will not issue service tickets for [{}] just yet without renewing the authentication context",

@@ -39,8 +39,7 @@ public class LdapConsentRepository implements ConsentRepository {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-
-    private final ConnectionFactory connectionFactory;
+    private final transient ConnectionFactory connectionFactory;
     private final Ldap ldap;
     private final String searchFilter;
 

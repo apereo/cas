@@ -32,28 +32,30 @@ import java.security.GeneralSecurityException;
 @Slf4j
 @AllArgsConstructor
 public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
-    private final RestTemplate restTemplate;
+    private final transient RestTemplate restTemplate;
     private final String endpoint;
 
     @Override
     public boolean isSatisfiedBy(final Authentication authentication) throws Exception {
+        final Principal principal = authentication.getPrincipal();
         try {
             final HttpHeaders acceptHeaders = new HttpHeaders();
             acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            final HttpEntity<Principal> entity = new HttpEntity<>(authentication.getPrincipal(), acceptHeaders);
-            LOGGER.warn("Checking authentication policy for [{}] via POST at [{}]", authentication.getPrincipal(), this.endpoint);
+            final HttpEntity<Principal> entity = new HttpEntity<>(principal, acceptHeaders);
+            LOGGER.warn("Checking authentication policy for [{}] via POST at [{}]", principal, this.endpoint);
             final ResponseEntity<String> resp = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, String.class);
             if (resp == null) {
                 LOGGER.warn("[{}] returned no responses", this.endpoint);
                 throw new GeneralSecurityException("No response returned from REST endpoint to determine authentication policy");
             }
-            if (resp.getStatusCode() != HttpStatus.OK) {
-                final Exception ex = handleResponseStatusCode(resp.getStatusCode(), authentication.getPrincipal());
+            final HttpStatus statusCode = resp.getStatusCode();
+            if (statusCode != HttpStatus.OK) {
+                final Exception ex = handleResponseStatusCode(statusCode, principal);
                 throw new GeneralSecurityException(ex);
             }
             return true;
         } catch (final HttpClientErrorException e) {
-            final Exception ex = handleResponseStatusCode(e.getStatusCode(), authentication.getPrincipal());
+            final Exception ex = handleResponseStatusCode(e.getStatusCode(), principal);
             throw new GeneralSecurityException(ex);
         }
     }

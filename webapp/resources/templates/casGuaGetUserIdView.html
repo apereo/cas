@@ -12,7 +12,7 @@
 <body>
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content" id="login">
-        <form method="post" id="fm1" class="fm-v clearfix">
+        <form method="post" id="fm1" class="fm-v clearfix" th:action="@{/login}">
             <div class="form-group">
                 <label for="username" th:utext="#{screen.welcome.label.netid}"><span class="accesskey">U</span>sername:</label>
                 <input class="form-control"

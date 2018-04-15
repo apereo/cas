@@ -1,10 +1,12 @@
 package org.apereo.cas.services.support;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,7 +16,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link RegisteredServiceMutantRegexAttributeFilter}.
@@ -60,19 +61,10 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
     private Collection<Pair<Pattern, String>> createPatternsAndReturnValue(final String attributeName) {
         final Object patternDef = getPatterns().get(attributeName);
         final List<Object> patternAndReturnVal = new ArrayList<>(CollectionUtils.toCollection(patternDef));
-        return patternAndReturnVal.stream().map(p -> {
-            final int index = p.toString().indexOf("->");
-            if (index != -1) {
-                final String patternStr = p.toString().substring(0, index).trim();
-                final Pattern pattern = RegexUtils.createPattern(patternStr, isCaseInsensitive() ? Pattern.CASE_INSENSITIVE : 0);
-                final String returnValue = p.toString().substring(index + 2).trim();
-                LOGGER.debug("Created attribute filter pattern [{}] with the mapped return value template [{}]", patternStr, returnValue);
-                return Pair.of(pattern, returnValue);
-            }
-            final Pattern pattern = RegexUtils.createPattern(p.toString().trim(), isCaseInsensitive() ? Pattern.CASE_INSENSITIVE : 0);
-            LOGGER.debug("Created attribute filter pattern [{}] without a mapped return value template", pattern.pattern());
-            return Pair.of(pattern, StringUtils.EMPTY);
-        }).collect(Collectors.toList());
+        return patternAndReturnVal
+            .stream()
+            .map(this::mapPattern)
+            .collect(Collectors.toList());
     }
 
     private List<Object> filterAndMapAttributeValuesByPattern(final Set<Object> attributeValues, final Pattern pattern, final String returnValue) {
@@ -89,7 +81,7 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
                 LOGGER.debug("Found a successful match for [{}] while filtering attribute values with [{}]", v.toString(), pattern.pattern());
                 final int count = matcher.groupCount();
                 if (StringUtils.isNotBlank(returnValue)) {
-                    String resultValue = new String(returnValue);
+                    String resultValue = returnValue;
                     for (int i = 1; i <= count; i++) {
                         resultValue = resultValue.replace("$" + i, matcher.group(i));
                     }
@@ -101,5 +93,20 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
             }
         });
         return values;
+    }
+
+    private Pair<Pattern, String> mapPattern(final Object p) {
+        final String patternValue = p.toString();
+        final int index = patternValue.indexOf("->");
+        if (index != -1) {
+            final String patternStr = patternValue.substring(0, index).trim();
+            final Pattern pattern = RegexUtils.createPattern(patternStr, isCaseInsensitive() ? Pattern.CASE_INSENSITIVE : 0);
+            final String returnValue = patternValue.substring(index + 2).trim();
+            LOGGER.debug("Created attribute filter pattern [{}] with the mapped return value template [{}]", patternStr, returnValue);
+            return Pair.of(pattern, returnValue);
+        }
+        final Pattern pattern = RegexUtils.createPattern(patternValue.trim(), isCaseInsensitive() ? Pattern.CASE_INSENSITIVE : 0);
+        LOGGER.debug("Created attribute filter pattern [{}] without a mapped return value template", pattern.pattern());
+        return Pair.of(pattern, StringUtils.EMPTY);
     }
 }

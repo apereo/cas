@@ -16,8 +16,6 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-import static org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsAction.*;
-
 /**
  * This is {@link VerifyPasswordResetRequestAction}.
  *
@@ -42,8 +40,8 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
         final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
 
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        LOGGER.debug("Checking for token at param [{}]", PARAMETER_NAME_TOKEN);
-        final String token = request.getParameter(PARAMETER_NAME_TOKEN);
+        LOGGER.debug("Checking for token at param [{}]", SendPasswordResetInstructionsAction.PARAMETER_NAME_TOKEN);
+        final String token = request.getParameter(SendPasswordResetInstructionsAction.PARAMETER_NAME_TOKEN);
 
         if (StringUtils.isBlank(token)) {
             LOGGER.error("Password reset token is missing");

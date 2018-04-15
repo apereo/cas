@@ -6,6 +6,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import net.jradius.client.RadiusClient;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 
 /**
@@ -17,9 +18,10 @@ import java.net.InetAddress;
 @Slf4j
 @ToString
 @AllArgsConstructor
-public class RadiusClientFactory {
+public class RadiusClientFactory implements Serializable {
 
     private static final int DEFAULT_SOCKET_TIMEOUT = 60;
+    private static final long serialVersionUID = 8226097527127614276L;
 
     /**
      * The port to do accounting on.
@@ -46,7 +48,8 @@ public class RadiusClientFactory {
      */
     private final String sharedSecret;
 
-    public RadiusClientFactory(final int accountingPort, final int authenticationPort, final String inetAddress, final String sharedSecret) {
+    public RadiusClientFactory(final int accountingPort, final int authenticationPort,
+                               final String inetAddress, final String sharedSecret) {
         this(accountingPort, authenticationPort, DEFAULT_SOCKET_TIMEOUT, inetAddress, sharedSecret);
     }
 
@@ -63,6 +66,7 @@ public class RadiusClientFactory {
      */
     @SneakyThrows
     public RadiusClient newInstance() {
-        return new RadiusClient(InetAddress.getByName(this.inetAddress), this.sharedSecret, this.authenticationPort, this.accountingPort, this.socketTimeout);
+        return new RadiusClient(InetAddress.getByName(this.inetAddress), this.sharedSecret,
+            this.authenticationPort, this.accountingPort, this.socketTimeout);
     }
 }

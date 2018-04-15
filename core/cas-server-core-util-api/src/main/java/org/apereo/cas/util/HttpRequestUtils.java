@@ -123,5 +123,21 @@ public class HttpRequestUtils {
             .filter(Objects::nonNull).findFirst().orElse(null);
     }
 
+    /**
+     * Check if a parameter exists.
+     *
+     * @param request the HTTP request
+     * @param name    the parameter name
+     * @return whether the parameter exists
+     */
+    public static boolean doesParameterExist(final HttpServletRequest request, final String name) {
+        final String parameter = request.getParameter(name);
+        if (StringUtils.isBlank(parameter)) {
+            LOGGER.error("Missing request parameter: [{}]", name);
+            return false;
+        }
+        LOGGER.debug("Found provided request parameter [{}]", name);
+        return true;
+    }
 
 }

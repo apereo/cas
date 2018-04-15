@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 import org.apereo.cas.authentication.RegisteredServiceAuthenticationHandlerResolver;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Before;
@@ -62,7 +63,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
     public void checkAuthenticationHandlerResolutionDefault() {
         final RegisteredServiceAuthenticationHandlerResolver resolver =
             new RegisteredServiceAuthenticationHandlerResolver(this.defaultServicesManager);
-        final AuthenticationTransaction transaction = AuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid1"),
+        final AuthenticationTransaction transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid1"),
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
         final Set<AuthenticationHandler> handlers = resolver.resolve(this.handlers, transaction);
@@ -73,7 +74,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
     public void checkAuthenticationHandlerResolution() {
         final DefaultAuthenticationHandlerResolver resolver =
             new DefaultAuthenticationHandlerResolver();
-        final AuthenticationTransaction transaction = AuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid2"),
+        final AuthenticationTransaction transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid2"),
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         final Set<AuthenticationHandler> handlers = resolver.resolve(this.handlers, transaction);
         assertEquals(handlers.size(), this.handlers.size());

@@ -7,7 +7,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.RegisteredService;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -59,19 +59,6 @@ public class OAuthRegisteredService extends RegexRegisteredService {
     private HashSet<String> supportedResponseTypes = new HashSet<>();
 
     @Override
-    public void copyFrom(final RegisteredService source) {
-        super.copyFrom(source);
-        final OAuthRegisteredService oAuthRegisteredService = (OAuthRegisteredService) source;
-        setClientId(oAuthRegisteredService.getClientId());
-        setClientSecret(oAuthRegisteredService.getClientSecret());
-        setBypassApprovalPrompt(oAuthRegisteredService.isBypassApprovalPrompt());
-        setGenerateRefreshToken(oAuthRegisteredService.isGenerateRefreshToken());
-        setJsonFormat(oAuthRegisteredService.isJsonFormat());
-        setSupportedGrantTypes(oAuthRegisteredService.getSupportedGrantTypes());
-        setSupportedResponseTypes(oAuthRegisteredService.getSupportedResponseTypes());
-    }
-
-    @Override
     protected AbstractRegisteredService newInstance() {
         return new OAuthRegisteredService();
     }
@@ -82,6 +69,8 @@ public class OAuthRegisteredService extends RegexRegisteredService {
     @Override
     @PostLoad
     public void postLoad() {
+        super.postLoad();
+        
         if (this.supportedGrantTypes == null) {
             this.supportedGrantTypes = new HashSet<>();
         }

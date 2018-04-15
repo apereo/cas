@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.token;
 
+import com.google.common.base.Preconditions;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apereo.cas.authentication.Authentication;
@@ -28,8 +30,6 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 
-import com.google.common.base.Preconditions;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
@@ -48,6 +48,7 @@ import java.util.stream.Stream;
  * @since 5.0.0
  */
 @Slf4j
+@Getter
 public class OidcIdTokenGeneratorService {
 
     private final CasConfigurationProperties casProperties;
@@ -63,8 +64,8 @@ public class OidcIdTokenGeneratorService {
         this.signingService = signingService;
         this.servicesManager = servicesManager;
         this.oAuthCallbackUrl = casProperties.getServer().getPrefix()
-                + OAuth20Constants.BASE_OAUTH20_URL + '/'
-                + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+            + OAuth20Constants.BASE_OAUTH20_URL + '/'
+            + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
     }
 
     /**
@@ -73,18 +74,17 @@ public class OidcIdTokenGeneratorService {
      * @param request           the request
      * @param response          the response
      * @param accessTokenId     the access token id
-     * @param timeout           the timeout
+     * @param timeoutInSeconds  the timeoutInSeconds
      * @param responseType      the response type
      * @param registeredService the registered service
      * @return the string
-     * @throws Exception the exception
      */
     public String generate(final HttpServletRequest request,
                            final HttpServletResponse response,
                            final AccessToken accessTokenId,
-                           final long timeout,
+                           final long timeoutInSeconds,
                            final OAuth20ResponseTypes responseType,
-                           final OAuthRegisteredService registeredService) throws Exception {
+                           final OAuthRegisteredService registeredService) {
 
         if (!(registeredService instanceof OidcRegisteredService)) {
             throw new IllegalArgumentException("Registered service instance is not an OIDC service");
@@ -95,9 +95,13 @@ public class OidcIdTokenGeneratorService {
         final ProfileManager manager = Pac4jUtils.getPac4jProfileManager(request, response);
         final Optional<UserProfile> profile = manager.get(true);
 
+        if (!profile.isPresent()) {
+            throw new IllegalArgumentException("Unable to determine the user profile from the context");
+        }
+
         LOGGER.debug("Attempting to produce claims for the id token [{}]", accessTokenId);
-        final JwtClaims claims = produceIdTokenClaims(request, accessTokenId, timeout,
-                oidcRegisteredService, profile.get(), context, responseType);
+        final JwtClaims claims = produceIdTokenClaims(request, accessTokenId, timeoutInSeconds,
+            oidcRegisteredService, profile.get(), context, responseType);
         LOGGER.debug("Produce claims for the id token [{}] as [{}]", accessTokenId, claims);
 
         return this.signingService.encode(oidcRegisteredService, claims);
@@ -106,18 +110,18 @@ public class OidcIdTokenGeneratorService {
     /**
      * Produce id token claims jwt claims.
      *
-     * @param request       the request
-     * @param accessTokenId the access token id
-     * @param timeout       the timeout
-     * @param service       the service
-     * @param profile       the user profile
-     * @param context       the context
-     * @param responseType  the response type
+     * @param request          the request
+     * @param accessTokenId    the access token id
+     * @param timeoutInSeconds the timeoutInSeconds
+     * @param service          the service
+     * @param profile          the user profile
+     * @param context          the context
+     * @param responseType     the response type
      * @return the jwt claims
      */
     protected JwtClaims produceIdTokenClaims(final HttpServletRequest request,
                                              final AccessToken accessTokenId,
-                                             final long timeout,
+                                             final long timeoutInSeconds,
                                              final OidcRegisteredService service,
                                              final UserProfile profile,
                                              final J2EContext context,
@@ -132,7 +136,7 @@ public class OidcIdTokenGeneratorService {
         claims.setAudience(service.getClientId());
 
         final NumericDate expirationDate = NumericDate.now();
-        expirationDate.addSeconds(timeout);
+        expirationDate.addSeconds(timeoutInSeconds);
         claims.setExpirationTime(expirationDate);
         claims.setIssuedAtToNow();
         claims.setNotBeforeMinutesInThePast(oidc.getSkew());
@@ -155,8 +159,8 @@ public class OidcIdTokenGeneratorService {
         claims.setClaim(OidcConstants.CLAIM_AT_HASH, generateAccessTokenHash(accessTokenId, service));
 
         principal.getAttributes().entrySet().stream()
-                .filter(entry -> oidc.getClaims().contains(entry.getKey()))
-                .forEach(entry -> claims.setClaim(entry.getKey(), entry.getValue()));
+            .filter(entry -> oidc.getClaims().contains(entry.getKey()))
+            .forEach(entry -> claims.setClaim(entry.getKey(), entry.getValue()));
 
         if (!claims.hasClaim(OidcConstants.CLAIM_PREFERRED_USERNAME)) {
             claims.setClaim(OidcConstants.CLAIM_PREFERRED_USERNAME, profile.getId());
@@ -169,9 +173,9 @@ public class OidcIdTokenGeneratorService {
         final Optional<Entry<String, Service>> oAuthServiceTicket = Stream.concat(
             tgt.getServices().entrySet().stream(),
             tgt.getProxyGrantingTickets().entrySet().stream())
-                .filter(e -> servicesManager.findServiceBy(e.getValue()).getServiceId().equals(oAuthCallbackUrl))
-                .findFirst();
-        Preconditions.checkState(oAuthServiceTicket.isPresent(), "Cannot find OAuth 2.0 service ticket!");
+            .filter(e -> servicesManager.findServiceBy(e.getValue()).getServiceId().equals(oAuthCallbackUrl))
+            .findFirst();
+        Preconditions.checkState(oAuthServiceTicket.isPresent(), "Cannot find service ticket issues to " + oAuthCallbackUrl + " as part of the authentication context");
         return oAuthServiceTicket.get();
     }
 

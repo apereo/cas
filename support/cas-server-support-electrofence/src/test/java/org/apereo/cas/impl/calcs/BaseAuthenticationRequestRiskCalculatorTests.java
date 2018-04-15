@@ -29,9 +29,7 @@ import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.config.CasCoreEventsConfiguration;
 import org.apereo.cas.support.events.config.CasEventsInMemoryRepositoryConfiguration;
 import org.apereo.cas.support.geo.config.GoogleMapsGeoCodingConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalSpringRunner;
-import org.apereo.cas.util.junit.RunningStandaloneCondition;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.junit.Before;
@@ -80,7 +78,6 @@ import org.springframework.test.annotation.DirtiesContext;
 @DirtiesContext
 @EnableScheduling
 @Slf4j
-@ConditionalIgnore(condition = RunningStandaloneCondition.class)
 public abstract class BaseAuthenticationRequestRiskCalculatorTests {
     @Autowired
     @Qualifier("casEventRepository")

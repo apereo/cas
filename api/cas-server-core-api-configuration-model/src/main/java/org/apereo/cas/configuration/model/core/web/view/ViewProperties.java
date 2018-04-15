@@ -2,11 +2,14 @@ package org.apereo.cas.configuration.model.core.web.view;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link ViewProperties}.
@@ -36,72 +39,12 @@ public class ViewProperties implements Serializable {
     /**
      * CAS2 views and locations.
      */
-    private Cas2 cas2 = new Cas2();
+    @NestedConfigurationProperty
+    private Cas20ViewProperties cas2 = new Cas20ViewProperties();
 
     /**
      * CAS3 views and locations.
      */
-    private Cas3 cas3 = new Cas3();
-
-    @Getter
-    @Setter
-    public static class Cas2 implements Serializable {
-
-        private static final long serialVersionUID = -7954879759474698003L;
-
-        /**
-         * The relative location of the CAS2 success view bean.
-         */
-        private String success = "protocol/2.0/casServiceValidationSuccess";
-
-        /**
-         * The relative location of the CAS3 failure view bean.
-         */
-        private String failure = "protocol/2.0/casServiceValidationFailure";
-
-        /**
-         * Whether v2 protocol support should be forward compatible
-         * to act like v3 and match its response, mainly for attribute release.
-         */
-        private boolean v3ForwardCompatible;
-
-        /**
-         * Proxy views and settings.
-         */
-        private Proxy proxy = new Proxy();
-
-        @Getter
-        @Setter
-        public static class Proxy implements Serializable {
-
-            private static final long serialVersionUID = 6765987342872282599L;
-
-            /**
-             * The relative location of the CAS2 proxy success view bean.
-             */
-            private String success = "protocol/2.0/casProxySuccessView";
-
-            /**
-             * The relative location of the CAS2 proxy failure view bean.
-             */
-            private String failure = "protocol/2.0/casProxyFailureView";
-        }
-    }
-
-    @Getter
-    @Setter
-    public static class Cas3 implements Serializable {
-
-        private static final long serialVersionUID = -2345062034300650858L;
-
-        /**
-         * The relative location of the CAS3 success validation bean.
-         */
-        private String success = "protocol/3.0/casServiceValidationSuccess";
-
-        /**
-         * The relative location of the CAS3 success validation bean.
-         */
-        private String failure = "protocol/3.0/casServiceValidationFailure";
-    }
+    @NestedConfigurationProperty
+    private Cas30ViewProperties cas3 = new Cas30ViewProperties();
 }

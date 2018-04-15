@@ -662,6 +662,9 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 # cas.view.cas3.success=protocol/3.0/casServiceValidationSuccess
 # cas.view.cas3.failure=protocol/3.0/casServiceValidationFailure
 
+# Indicates how attributes should be rendered in the validation response
+# cas.view.cas3.attributeRendererType=DEFAULT|INLINE
+
 # Defines a default URL to which CAS may redirect if there is no service
 # provided in the authentication request.
 # cas.view.defaultRedirectUrl=https://www.github.com
@@ -1187,28 +1190,18 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 
 ### REST Surrogate Accounts
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.surrogate.rest`.
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.surrogate.rest`.
 
 ### Notifications
 
-```properties
-# cas.authn.surrogate.sms.from=
-# cas.authn.surrogate.sms.text=
-# cas.authn.surrogate.sms.attributeName=phone
-
-# cas.authn.surrogate.mail.from=
-# cas.authn.surrogate.mail.text=
-# cas.authn.surrogate.mail.subject=
-# cas.authn.surrogate.mail.cc=
-# cas.authn.surrogate.mail.bcc=
-# cas.authn.surrogate.mail.attributeName=mail
-
-```
+Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
+under the configuration key `cas.authn.surrogate`. SMS notifications settings for this feature are 
+available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.surrogate`.
 
 ## Risk-based Authentication
 
-Evaluate suspicious authentication requests and take action.
-To learn more about this topic, [please review this guide](Configuring-RiskBased-Authentication.html).
+Evaluate suspicious authentication requests and take action. To learn more about this topic, [please review this guide](Configuring-RiskBased-Authentication.html).
 
 ```properties
 # cas.authn.adaptive.risk.threshold=0.6
@@ -1227,33 +1220,45 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 
 # cas.authn.adaptive.risk.response.mfaProvider=
 # cas.authn.adaptive.risk.response.riskyAuthenticationAttribute=triggeredRiskBasedAuthentication
-
-# cas.authn.adaptive.risk.response.mail.from=
-# cas.authn.adaptive.risk.response.mail.text=
-# cas.authn.adaptive.risk.response.mail.subject=
-# cas.authn.adaptive.risk.response.mail.cc=
-# cas.authn.adaptive.risk.response.mail.bcc=
-# cas.authn.adaptive.risk.response.mail.attributeName=mail
-
-# cas.authn.adaptive.risk.response.sms.from=
-# cas.authn.adaptive.risk.response.sms.text=
-# cas.authn.adaptive.risk.response.sms.attributeName=phone
 ```
+
+Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
+under the configuration key `cas.authn.adaptive.risk.response`. SMS notifications settings for this feature are 
+available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.adaptive.risk.response`.
+
+## Passwordless Authentication
+
+To learn more about this topic, [please review this guide](Passwordless-Authentication.html).
+
+### Account Stores
+
+```properties
+# cas.authn.passwordless.accounts.simple.casuser=cas@example.org
+# cas.authn.passwordless.accounts.groovy.location=file:/etc/cas/config/pwdless.groovy
+```
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.passwordless.accounts.rest`.
+
+### Token Management
+
+```properties
+# cas.authn.passwordless.accounts.expireInSeconds=180
+```
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.passwordless.tokens.rest`. The signing key and the encryption 
+key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. 
+Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under 
+the configuration key `cas.authn.passwordless.tokens.rest`.
+
+Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
+under the configuration key `cas.authn.passwordless.tokens`. SMS notifications settings for this feature are 
+available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.passwordless.tokens`.
 
 ## Email Submissions
 
-To learn more about this topic, [please review this guide](SMS-Email-Configuration.html).
-
-
-```properties
-# spring.mail.host=
-# spring.mail.port=
-# spring.mail.username=
-# spring.mail.password=
-# spring.mail.testConnection=true
-# spring.mail.properties.mail.smtp.auth=true
-# spring.mail.properties.mail.smtp.starttls.enable=true
-```
+Email notifications settings are available [here](Configuration-Properties-Common.html#email-notifications).
 
 ## SMS Messaging
 
@@ -1261,24 +1266,43 @@ To learn more about this topic, [please review this guide](SMS-Messaging-Configu
 
 ### Twilio
 
+Send text messaging using Twilio.
+
 ```properties
-# cas.twilio.accountId=
-# cas.twilio.token=
+# cas.smsProviders.twilio.accountId=
+# cas.smsProviders.twilio.token=
 ```
 
 ### TextMagic
 
+Send text messaging using TextMagic.
+
 ```properties
-# cas.textMagic.username=
-# cas.textMagic.token=
+# cas.smsProviders.textMagic.username=
+# cas.smsProviders.textMagic.token=
 ```
 
 ### Clickatell
 
+Send text messaging using Clickatell.
+
 ```properties
-# cas.clickatell.serverUrl=https://platform.clickatell.com/messages
-# cas.clickatell.token=
+# cas.smsProviders.clickatell.serverUrl=https://platform.clickatell.com/messages
+# cas.smsProviders.clickatell.token=
 ```
+
+### Amazon SNS
+
+Send text messaging using Amazon SNS.
+
+```properties
+# cas.smsProviders.sns.senderId=
+# cas.smsProviders.sns.maxPrice=
+# cas.smsProviders.sns.smsType=Transactional
+```
+
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
+under the configuration key `cas.smsProviders.sns`.
 
 ## GeoTracking
 
@@ -1676,10 +1700,10 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 
 ### JWT Tickets
 
-Allow CAS tickets through various protocol channels to be created as JWTs. See [this guide](Configure-ServiceTicket-JWT.html) or [this guide](../protocol/REST-Protocol.html) for more info.
+Allow CAS tickets through various protocol channels to be created as JWTs. See [this guide](Configure-ServiceTicket-JWT.html) 
+or [this guide](../protocol/REST-Protocol.html) for more info.
 
 ```properties
-# Turn encryption on/off  for tickets
 # cas.authn.token.crypto.encryptionEnabled=true
 ```
 
@@ -1708,18 +1732,12 @@ Database settings for this feature are available [here](Configuration-Properties
 To learn more about this topic, [please review this guide](AWS-CloudDirectory-Authentication.html).
 
 Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.cloudDirectory`.
-
 Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.cloudDirectory`.
 
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
+under the configuration key `cas.authn.cloudDirectory`.
+
 ```properties
-# cas.authn.cloudDirectory.credentialAccessKey=
-# cas.authn.cloudDirectory.credentialSecretKey=
-
-# cas.authn.cloudDirectory.region=
-
-# cas.authn.cloudDirectory.profileName=
-# cas.authn.cloudDirectory.profilePath=
-
 # cas.authn.cloudDirectory.directoryArn=
 # cas.authn.cloudDirectory.schemaArn=
 # cas.authn.cloudDirectory.facetName=
@@ -2575,6 +2593,7 @@ Delegate authentication to an external OpenID Connect server. Common settings fo
 ```properties
 # cas.authn.pac4j.oidc[0].type=KEYCLOAK|GOOGLE|AZURE|GENERIC
 # cas.authn.pac4j.oidc[0].discoveryUri=
+# cas.authn.pac4j.oidc[0].logoutUrl=
 # cas.authn.pac4j.oidc[0].maxClockSkew=
 # cas.authn.pac4j.oidc[0].scope=
 # cas.authn.pac4j.oidc[0].useNonce=
@@ -2835,7 +2854,7 @@ under the configuration key `cas.audit.jdbc`.
 
 ```properties
 # cas.audit.jdbc.asynchronous=true
-# cas.audit.jdbc.maxAge=180
+# cas.audit.jdbc.maxAgeDays=180
 # cas.audit.jdbc.columnLength=100
 # cas.audit.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.audit.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
@@ -3021,7 +3040,7 @@ a local truststore is provided by CAS to improve portability of configuration ac
 
 ### Hostname Verification
 
-The default options are avaiable for hostname verification:
+The default options are available for hostname verification:
 
 | Type                    | Description
 |-------------------------|--------------------------------------
@@ -3046,18 +3065,9 @@ See [this guide](Service-Management.html) to learn more.
 
 ### Service Registry Notifications
 
-```properties
-# cas.serviceRegistry.sms.from=
-# cas.serviceRegistry.sms.text=
-# cas.serviceRegistry.sms.attributeName=phone
-
-# cas.serviceRegistry.mail.from=
-# cas.serviceRegistry.mail.text=
-# cas.serviceRegistry.mail.subject=
-# cas.serviceRegistry.mail.cc=
-# cas.serviceRegistry.mail.bcc=
-# cas.serviceRegistry.mail.attributeName=mail
-```
+Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
+under the configuration key `cas.serviceRegistry`. SMS notifications settings for this feature are 
+available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.serviceRegistry`.
 
 ### JSON Service Registry
 
@@ -3114,6 +3124,8 @@ To learn more about this topic, [please review this guide](CosmosDb-Service-Mana
 To learn more about this topic, [please review this guide](DynamoDb-Service-Management.html).
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
 under the configuration key `cas.serviceRegistry`.
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
+under the configuration key `cas.serviceRegistry.dynamoDb`.
 
 ```properties
 # cas.serviceRegistry.dynamoDb.tableName=DynamoDbCasServices
@@ -3169,7 +3181,7 @@ Replication modes may be configured per the following options:
 Control how CAS services definition files should be replicated across a CAS cluster backed by a distributed Hazelcast cache.
 To learn more about this topic, [please review this guide](Configuring-Service-Replication.html).
 
-Hazlcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.serviceRegistry.stream.hazelcast.config`.
+Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.serviceRegistry.stream.hazelcast.config`.
 
 ```properties
 # cas.serviceRegistry.stream.hazelcast.duration=PT1M
@@ -3215,7 +3227,7 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 To learn more about this topic, [please review this guide](Hazelcast-Ticket-Registry.html).
 
-Hazlcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.ticket.registry.hazelcast`.
+Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.ticket.registry.hazelcast`.
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.hazelcast`.
 
@@ -3349,7 +3361,16 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### DynamoDb Ticket Registry
 
-To learn more about this topic, [please review this guide](DynamoDb-Ticket-Registry.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration) under the configuration key `cas.ticket.registry.dynamoDb`. Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.dynamoDb`.
+To learn more about this topic, [please review this guide](DynamoDb-Ticket-Registry.html). 
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration) 
+under the configuration key `cas.ticket.registry`. 
+
+Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) 
+under the configuration key `cas.ticket.registry.dynamoDb`.
+
+AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
+under the configuration key `cas.ticket.registry.dynamoDb`.
 
 ```properties
 # cas.ticket.registry.dynamoDb.serviceTicketsTableName=serviceTicketsTable
@@ -3827,16 +3848,15 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character
 # cas.authn.pm.policyPattern=^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}
 
-# cas.authn.pm.reset.text=Reset your password with this link: %s
-# cas.authn.pm.reset.subject=Password Reset Request
-# cas.authn.pm.reset.from=
 # cas.authn.pm.reset.expirationMinutes=1
-# cas.authn.pm.reset.emailAttribute=mail
 # cas.authn.pm.reset.securityQuestionsEnabled=true
 
 # Automatically log in after successful password change
 # cas.authn.pm.autoLogin=false
 ```
+
+Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
+under the configuration key `cas.authn.pm.reset`.
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.pm.reset`.
@@ -3852,8 +3872,9 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encrypt
 LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.pm.ldap`.
 
 ```properties
-# Attributes that should be fetched to indicate security questions and answers,
-# assuming security questions are enabled.
+# cas.authn.pm.ldap.type=AD|GENERIC|EDirectory|FreeIPA
+
+# Attributes that should be fetched to indicate security questions and answers
 # cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion1=attrAnswer1
 # cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion2=attrAnswer2
 # cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion3=attrAnswer3

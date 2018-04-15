@@ -32,7 +32,7 @@ public class RestConsentRepository implements ConsentRepository {
 
     private static final long serialVersionUID = 6583408864586270206L;
 
-    private final RestTemplate restTemplate;
+    private final transient RestTemplate restTemplate;
 
     private final String endpoint;
 

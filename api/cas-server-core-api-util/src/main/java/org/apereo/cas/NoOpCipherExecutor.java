@@ -25,7 +25,6 @@ class NoOpCipherExecutor<I, O> implements CipherExecutor<I, O> {
      *
      * @return the instance
      */
-    @SuppressWarnings("unchecked")
     static <I, O> CipherExecutor<I, O> getInstance() {
         //Double-check pattern here to ensure correctness of only single instance creation in multi-threaded environments
         if (INSTANCE == null) {
@@ -39,13 +38,11 @@ class NoOpCipherExecutor<I, O> implements CipherExecutor<I, O> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public O encode(final I value) {
         return (O) value;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public O decode(final I value) {
         return (O) value;
     }

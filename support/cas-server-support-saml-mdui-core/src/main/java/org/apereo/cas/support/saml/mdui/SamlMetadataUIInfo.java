@@ -1,21 +1,24 @@
 package org.apereo.cas.support.saml.mdui;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.XSURI;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
+import org.opensaml.saml.saml2.metadata.LocalizedName;
+
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
-import org.opensaml.saml.saml2.metadata.LocalizedName;
+import java.util.Optional;
 import java.util.regex.Pattern;
-import lombok.Setter;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link SamlMetadataUIInfo}.
@@ -32,23 +35,13 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
     private static final long serialVersionUID = -1434801982864628179L;
 
     private transient UIInfo uiInfo;
-
     private String locale;
 
     /**
      * Instantiates a new Simple metadata uI info.
      *
      * @param registeredService the registered service
-     */
-    public SamlMetadataUIInfo(final RegisteredService registeredService) {
-        this(null, registeredService);
-    }
-
-    /**
-     * Instantiates a new Simple metadata uI info.
-     *
-     * @param registeredService the registered service
-     * @param locale browser preferred language
+     * @param locale            browser preferred language
      */
     public SamlMetadataUIInfo(final RegisteredService registeredService, final String locale) {
         this(null, registeredService);
@@ -210,36 +203,34 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      * Gets localized values.
      *
      * @param locale browser preferred language
-     * @param items the items
+     * @param items  the items
      * @return the string value
      */
     private String getLocalizedValues(final String locale, final List<?> items) {
-        if (locale != null) {
-            LOGGER.trace("Looking for locale [{}]", locale);
-            for (int i = 0; i < items.size(); i++) {
-                if (items.get(i) instanceof LocalizedName) {
-                    final Pattern p = Pattern.compile(locale, Pattern.CASE_INSENSITIVE);
-                    if (p.matcher(((LocalizedName) items.get(i)).getXMLLang()).matches()) {
-                        return ((LocalizedName) items.get(i)).getValue();
-                    }
-                }
-            }
-            LOGGER.trace("Locale [{}] not found.", locale);
+        final Optional<String> foundLocale = findLocale(StringUtils.defaultString(locale, "en"), items);
+        if (foundLocale.isPresent()) {
+            return foundLocale.get();
         }
-        LOGGER.trace("Looking for locale [en]");
-        for (int i = 0; i < items.size(); i++) {
-            if (items.get(i) instanceof LocalizedName) {
-                final Pattern p = Pattern.compile("en", Pattern.CASE_INSENSITIVE);
-                if (p.matcher(((LocalizedName) items.get(i)).getXMLLang()).matches()) {
-                    return ((LocalizedName) items.get(i)).getValue();
-                }
-            }
-        }
-        LOGGER.trace("Locale [en] not found.");
+
         if (!items.isEmpty()) {
             LOGGER.trace("Loading first available locale [{}]", ((LocalizedName) items.get(0)).getValue());
             return ((XSString) items.get(0)).getValue();
         }
         return null;
+    }
+
+    private Optional<String> findLocale(final String locale, final List<?> items) {
+        LOGGER.trace("Looking for locale [{}]", locale);
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i) instanceof LocalizedName) {
+                final Pattern p = Pattern.compile(locale, Pattern.CASE_INSENSITIVE);
+                final LocalizedName value = (LocalizedName) items.get(i);
+                if (p.matcher(value.getXMLLang()).matches()) {
+                    LOGGER.trace("Found locale [{}]", value);
+                    return Optional.of(value.getValue());
+                }
+            }
+        }
+        return Optional.empty();
     }
 }
