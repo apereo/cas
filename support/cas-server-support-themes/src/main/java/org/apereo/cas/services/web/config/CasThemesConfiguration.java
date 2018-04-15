@@ -130,6 +130,12 @@ public class CasThemesConfiguration {
         final RequestHeaderThemeResolver header = new RequestHeaderThemeResolver();
         header.setDefaultThemeName(defaultThemeName);
 
+        
+        final CasOAuthThemeResolver casOAuthThemeResolver = new CasOAuthThemeResolver(servicesManager,
+                serviceThemeResolverSupportedBrowsers, authenticationRequestServiceSelectionStrategies,
+                this.resourceLoader, casProperties);        
+        casOAuthThemeResolver.setDefaultThemeName(defaultThemeName);
+
         final ChainingThemeResolver chainingThemeResolver = new ChainingThemeResolver();
         chainingThemeResolver.addResolver(cookieThemeResolver)
                 .addResolver(sessionThemeResolver)
