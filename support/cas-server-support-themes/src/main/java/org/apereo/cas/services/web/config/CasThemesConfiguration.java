@@ -141,6 +141,7 @@ public class CasThemesConfiguration {
                 .addResolver(sessionThemeResolver)
                 .addResolver(header)
                 .addResolver(serviceThemeResolver)
+                .addResolver(casOAuthThemeResolver)
                 .addResolver(fixedResolver);
         chainingThemeResolver.setDefaultThemeName(defaultThemeName);
         return chainingThemeResolver;
