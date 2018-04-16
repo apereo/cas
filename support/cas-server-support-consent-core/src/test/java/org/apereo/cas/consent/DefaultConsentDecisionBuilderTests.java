@@ -59,7 +59,7 @@ public class DefaultConsentDecisionBuilderTests {
     @Test
     public void verifyAttributeValuesRequireConsent() {
         final ConsentDecision consentDecision = getConsentDecision();
-        consentDecision.setOptions(ConsentOptions.ATTRIBUTE_VALUE);
+        consentDecision.setOptions(ConsentReminderOptions.ATTRIBUTE_VALUE);
         assertTrue(consentDecisionBuilder.doesAttributeReleaseRequireConsent(consentDecision, CollectionUtils.wrap("attr1", "value2")));
     }
 

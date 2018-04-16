@@ -56,13 +56,13 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
                                                       final Map<String, Object> attributes) {
         final Map<String, Object> consentAttributes = getConsentableAttributesFrom(decision);
 
-        if (decision.getOptions() == ConsentOptions.ATTRIBUTE_NAME) {
+        if (decision.getOptions() == ConsentReminderOptions.ATTRIBUTE_NAME) {
             final String consentAttributesHash = sha512ConsentAttributeNames(consentAttributes);
             final String currentAttributesHash = sha512ConsentAttributeNames(attributes);
             return !StringUtils.equals(consentAttributesHash, currentAttributesHash);
         }
 
-        if (decision.getOptions() == ConsentOptions.ATTRIBUTE_VALUE) {
+        if (decision.getOptions() == ConsentReminderOptions.ATTRIBUTE_VALUE) {
             final String consentAttributesHash = sha512ConsentAttributeNames(consentAttributes);
             final String currentAttributesHash = sha512ConsentAttributeNames(attributes);
 
