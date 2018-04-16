@@ -33,7 +33,7 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
     private final InterruptProperties.Rest restProperties;
 
     @Override
-    public InterruptResponse inquire(final Authentication authentication, final RegisteredService registeredService, final Service service) {
+    public InterruptResponse inquireInternal(final Authentication authentication, final RegisteredService registeredService, final Service service) {
         try {
             final Map<String, String> parameters = new HashMap<>();
             parameters.put("username", authentication.getPrincipal().getId());
