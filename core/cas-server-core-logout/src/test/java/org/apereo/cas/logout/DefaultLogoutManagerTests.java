@@ -60,6 +60,7 @@ public class DefaultLogoutManagerTests {
 
     @Mock
     private HttpClient client;
+
     private DefaultSingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler;
 
     public DefaultLogoutManagerTests() {
