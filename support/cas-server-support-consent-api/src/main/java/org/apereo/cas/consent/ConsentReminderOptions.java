@@ -3,12 +3,12 @@ package org.apereo.cas.consent;
 import java.util.Arrays;
 
 /**
- * This is {@link ConsentOptions}.
+ * This is {@link ConsentReminderOptions}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public enum ConsentOptions {
+public enum ConsentReminderOptions {
     /** Always ask for consent. */
     ALWAYS(0),
     /** Always ask for consent. */
@@ -18,7 +18,7 @@ public enum ConsentOptions {
 
     private final int value;
 
-    ConsentOptions(final int value) {
+    ConsentReminderOptions(final int value) {
         this.value = value;
     }
 
@@ -32,8 +32,8 @@ public enum ConsentOptions {
      * @param value the value
      * @return the consent options
      */
-    public static ConsentOptions valueOf(final int value) {
-        final ConsentOptions option = Arrays.stream(values())
+    public static ConsentReminderOptions valueOf(final int value) {
+        final ConsentReminderOptions option = Arrays.stream(values())
                 .filter(v -> v.getValue() == value)
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
