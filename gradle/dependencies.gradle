@@ -529,25 +529,35 @@ ext.libraries = [
         ],
         hazelcastazure          : [
                 dependencies.create("com.hazelcast:hazelcast-azure:$hazelcastAzureVersion") {
+                    exclude(group: "commons-codec", module: "commons-codec")
                     force = true
                 }
         ],
         jclouds                 : [
                 dependencies.create("com.hazelcast:hazelcast-jclouds:$hazelcastJCloudsVersion") {
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("org.apache.jclouds:jclouds-compute:$jcloudsVersion") {
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("org.apache.jclouds:jclouds-allcompute:$jcloudsVersion") {
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("org.apache.jclouds.labs:google-compute-engine:$jcloudsGoogleEngineVersion") {
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
         ],
         jasypt                  : dependencies.create("org.jasypt:jasypt:$jasyptVersion") {
             exclude(group: "commons-cli", module: "commons-cli")
+            exclude(group: "org.slf4j", module: "slf4j-api")
             force = true
         },
         hibernate               : [
@@ -640,7 +650,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        awssns                     : [
+        awssns                  : [
                 dependencies.create("com.amazonaws:aws-java-sdk-sns:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
@@ -651,7 +661,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        awssecretsmanager                     : [
+        awssecretsmanager       : [
                 dependencies.create("com.amazonaws:aws-java-sdk-secretsmanager:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
@@ -1327,7 +1337,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        awselasticachememcached               : [
+        awselasticachememcached : [
                 dependencies.create("com.amazonaws:elasticache-java-cluster-client:$awsmemcachedVersion") {
                     force = true
                 }

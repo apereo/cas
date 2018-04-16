@@ -29,6 +29,7 @@ def isArtifactSigningRequired = {
 apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
 apply plugin: "com.github.kt3k.coveralls"
+apply plugin: "com.github.ben-manes.versions"
 
 buildscript {
     repositories {
@@ -68,7 +69,6 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "maven"
     apply plugin: "signing"
-    apply plugin: 'com.github.ben-manes.versions'
     apply plugin: "jacoco"
 
     if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
