@@ -131,8 +131,10 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver adaptiveAuthenticationPolicyWebflowEventResolver() {
         return new AdaptiveMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport,
-            centralAuthenticationService, servicesManager,
-            ticketRegistrySupport, warnCookieGenerator,
+            centralAuthenticationService,
+            servicesManager,
+            ticketRegistrySupport,
+            warnCookieGenerator,
             authenticationRequestServiceSelectionStrategies,
             multifactorAuthenticationProviderSelector,
             casProperties,
