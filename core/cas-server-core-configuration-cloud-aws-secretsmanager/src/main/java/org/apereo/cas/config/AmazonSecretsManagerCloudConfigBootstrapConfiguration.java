@@ -67,7 +67,7 @@ public class AmazonSecretsManagerCloudConfigBootstrapConfiguration implements Pr
     }
 
     private static String getSetting(final Environment environment, final String key) {
-        return environment.getProperty("cas.spring.cloud.aws.secretManager." + key);
+        return environment.getProperty("cas.spring.cloud.aws.secretsManager." + key);
     }
 
     private static AWSSecretsManager getAmazonSecretsManagerClient(final Environment environment) {
@@ -76,18 +76,21 @@ public class AmazonSecretsManagerCloudConfigBootstrapConfiguration implements Pr
         final AWSCredentials credentials = new BasicAWSCredentials(key, secret);
         String region = getSetting(environment, "region");
         final Region currentRegion = Regions.getCurrentRegion();
-        if (StringUtils.isBlank(region)) {
+        if (currentRegion != null && StringUtils.isBlank(region)) {
             region = currentRegion.getName();
         }
         String regionOverride = getSetting(environment, "regionOverride");
-        if (StringUtils.isNotBlank(regionOverride)) {
+        if (currentRegion != null && StringUtils.isNotBlank(regionOverride)) {
             regionOverride = currentRegion.getName();
         }
         final String endpoint = getSetting(environment, "endpoint");
-        return AWSSecretsManagerClientBuilder.standard()
+        final AWSSecretsManagerClientBuilder builder = AWSSecretsManagerClientBuilder.standard()
             .withCredentials(new AWSStaticCredentialsProvider(credentials))
-            .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, regionOverride))
-            .withRegion(region)
-            .build();
+            .withRegion(region);
+
+        if (StringUtils.isNotBlank(endpoint) && StringUtils.isNotBlank(regionOverride)) {
+            builder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, regionOverride));
+        }
+        return builder.build();
     }
 }
