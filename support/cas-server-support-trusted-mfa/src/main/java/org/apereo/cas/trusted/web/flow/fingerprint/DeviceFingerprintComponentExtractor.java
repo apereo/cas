@@ -1,4 +1,4 @@
-package org.apereo.cas.trusted.web.flow;
+package org.apereo.cas.trusted.web.flow.fingerprint;
 
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.RequestContext;

@@ -2,7 +2,7 @@ package org.apereo.cas.trusted;
 
 import lombok.experimental.UtilityClass;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.trusted.web.flow.DeviceFingerprintStrategy;
+import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 

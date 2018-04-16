@@ -1,4 +1,4 @@
-package org.apereo.cas.trusted.web.flow;
+package org.apereo.cas.trusted.web.flow.fingerprint;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +40,6 @@ public class CookieDeviceFingerprintComponentExtractor implements DeviceFingerpr
             cookieGenerator.addCookie(request, response, cookieValue);
         }
 
-        // return the cookie component value
         return Optional.of(cookieValue);
     }
 }

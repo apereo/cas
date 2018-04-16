@@ -1,7 +1,5 @@
 package org.apereo.cas.trusted.config;
 
-import static org.apereo.cas.trusted.BeanNames.BEAN_DEVICE_FINGERPRINT_STRATEGY;
-
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +18,6 @@ import org.apereo.cas.trusted.authentication.storage.BaseMultifactorAuthenticati
 import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
-import org.apereo.cas.trusted.web.flow.DeviceFingerprintStrategy;
-import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
-import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustAction;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +30,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.webflow.execution.Action;
 
 /**
  * This is {@link MultifactorAuthnTrustConfiguration}.
@@ -54,31 +48,13 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     @Autowired
     @Qualifier("ticketCreationActionResolver")
     private AuditActionResolver ticketCreationActionResolver;
-    
+
     @Autowired
     @Qualifier("returnValueResourceResolver")
     private AuditResourceResolver returnValueResourceResolver;
 
     @Autowired
-    @Qualifier(BEAN_DEVICE_FINGERPRINT_STRATEGY)
-    private DeviceFingerprintStrategy deviceFingerprintStrategy;
-
-    @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Bean
-    @RefreshScope
-    public Action mfaSetTrustAction() {
-        return new MultifactorAuthenticationSetTrustAction(mfaTrustEngine(), deviceFingerprintStrategy,
-                casProperties.getAuthn().getMfa().getTrusted());
-    }
-
-    @Bean
-    @RefreshScope
-    public Action mfaVerifyTrustAction() {
-        return new MultifactorAuthenticationVerifyTrustAction(mfaTrustEngine(), deviceFingerprintStrategy,
-                casProperties.getAuthn().getMfa().getTrusted());
-    }
 
     @ConditionalOnMissingBean(name = "mfaTrustEngine")
     @Bean
@@ -86,13 +62,13 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
         final TrustedDevicesMultifactorProperties trusted = casProperties.getAuthn().getMfa().getTrusted();
         final LoadingCache<String, MultifactorAuthenticationTrustRecord> storage = Caffeine.newBuilder()
-                .initialCapacity(INITIAL_CACHE_SIZE)
-                .maximumSize(MAX_CACHE_SIZE)
-                .expireAfterWrite(trusted.getExpiration(), trusted.getTimeUnit())
-                .build(s -> {
-                    LOGGER.error("Load operation of the cache is not supported.");
-                    return null;
-                });
+            .initialCapacity(INITIAL_CACHE_SIZE)
+            .maximumSize(MAX_CACHE_SIZE)
+            .expireAfterWrite(trusted.getExpiration(), trusted.getTimeUnit())
+            .build(s -> {
+                LOGGER.error("Load operation of the cache is not supported.");
+                return null;
+            });
 
         storage.asMap();
         final BaseMultifactorAuthenticationTrustStorage m;
@@ -119,14 +95,14 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
         final EncryptionJwtSigningJwtCryptographyProperties crypto = casProperties.getAuthn().getMfa().getTrusted().getCrypto();
         if (crypto.isEnabled()) {
             return new MultifactorAuthenticationTrustCipherExecutor(
-                    crypto.getEncryption().getKey(),
-                    crypto.getSigning().getKey(),
-                    crypto.getAlg());
+                crypto.getEncryption().getKey(),
+                crypto.getSigning().getKey(),
+                crypto.getAlg());
         }
         LOGGER.info("Multifactor trusted authentication record encryption/signing is turned off and "
-                + "MAY NOT be safe in a production environment. "
-                + "Consider using other choices to handle encryption, signing and verification of "
-                + "trusted authentication records for MFA");
+            + "MAY NOT be safe in a production environment. "
+            + "Consider using other choices to handle encryption, signing and verification of "
+            + "trusted authentication records for MFA");
         return CipherExecutor.noOp();
     }
 
@@ -135,8 +111,8 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     @Lazy
     public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner() {
         return new MultifactorAuthenticationTrustStorageCleaner(
-                casProperties.getAuthn().getMfa().getTrusted(),
-                mfaTrustEngine());
+            casProperties.getAuthn().getMfa().getTrusted(),
+            mfaTrustEngine());
     }
 
     @Override
