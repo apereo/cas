@@ -1,4 +1,4 @@
-package org.apereo.cas.trusted.web.flow;
+package org.apereo.cas.trusted.web.flow.fingerprint;
 
 import lombok.Getter;
 import lombok.Setter;

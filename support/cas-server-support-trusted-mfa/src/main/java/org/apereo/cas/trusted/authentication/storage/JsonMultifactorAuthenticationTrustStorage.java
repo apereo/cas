@@ -9,6 +9,7 @@ import org.apereo.cas.util.ResourceUtils;
 import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
 
+import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
@@ -108,7 +109,12 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     @SneakyThrows
     private void writeTrustedRecordsToResource() {
-        MAPPER.writerWithDefaultPrettyPrinter().writeValue(this.location.getFile(), this.storage);
+        final File file = this.location.getFile();
+        final boolean res = file.createNewFile();
+        if (res) {
+            LOGGER.debug("Created JSON resource @ [{}]", this.location);
+        }
+        MAPPER.writerWithDefaultPrettyPrinter().writeValue(file, this.storage);
         readTrustedRecordsFromResource();
     }
 }
