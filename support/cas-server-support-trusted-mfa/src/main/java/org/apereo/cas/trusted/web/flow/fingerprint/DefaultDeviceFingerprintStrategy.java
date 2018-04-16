@@ -1,7 +1,7 @@
-package org.apereo.cas.trusted.web.flow;
+package org.apereo.cas.trusted.web.flow.fingerprint;
 
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.OrderComparator;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * @author Daniel Frett
  * @since 5.3.0
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultDeviceFingerprintStrategy implements DeviceFingerprintStrategy {
     @NonNull
     private final List<DeviceFingerprintComponentExtractor> componentExtractors;
