@@ -1,4 +1,4 @@
-package org.apereo.cas.trusted.web.flow;
+package org.apereo.cas.trusted.web.flow.fingerprint;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +23,6 @@ public class UserAgentDeviceFingerprintComponentExtractor implements DeviceFinge
     public Optional<String> extractComponent(final String principal, final RequestContext context,
                                              final boolean isNew) {
         return Optional.ofNullable(WebUtils.getHttpServletRequestFromExternalWebflowContext(context))
-                .map(HttpRequestUtils::getHttpServletRequestUserAgent);
+            .map(HttpRequestUtils::getHttpServletRequestUserAgent);
     }
 }
