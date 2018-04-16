@@ -26,7 +26,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalSpringRunner;
-import org.apereo.cas.util.junit.RunningStandaloneCondition;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -50,7 +50,7 @@ import static org.junit.Assert.*;
  * @since 5.3.0
  */
 @RunWith(ConditionalSpringRunner.class)
-@ConditionalIgnore(condition = RunningStandaloneCondition.class, port = 8000)
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 8000)
 @TestPropertySource(locations = "classpath:/dynamodb-ticketregistry.properties")
 @SpringBootTest(classes = {
     DynamoDbTicketRegistryConfiguration.class,
