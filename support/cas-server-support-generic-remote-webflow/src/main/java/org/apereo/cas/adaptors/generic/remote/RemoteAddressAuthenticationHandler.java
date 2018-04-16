@@ -104,13 +104,9 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
      * @param ipAddressRange the IP address range that should be allowed trusted logins
      */
     public void configureIpNetworkRange(final String ipAddressRange) {
-
         if (StringUtils.isNotBlank(ipAddressRange)) {
-
             final List<String> splitAddress = Splitter.on("/").splitToList(ipAddressRange);
-
             if (splitAddress.size() == 2) {
-                // A valid ip address/netmask was supplied parse values
                 final String network = splitAddress.get(0).trim();
                 final String netmask = splitAddress.get(1).trim();
 
