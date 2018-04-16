@@ -308,9 +308,8 @@ public class EncodingUtils {
      */
     @SneakyThrows
     public static byte[] signJws(final Key key, final byte[] value, final String algHeaderValue) {
-        final String base64 = EncodingUtils.encodeBase64(value);
         final JsonWebSignature jws = new JsonWebSignature();
-        jws.setPayload(base64);
+        jws.setPayload(value.toString());
         jws.setAlgorithmHeaderValue(algHeaderValue);
         jws.setKey(key);
         return jws.getCompactSerialization().getBytes(StandardCharsets.UTF_8);
