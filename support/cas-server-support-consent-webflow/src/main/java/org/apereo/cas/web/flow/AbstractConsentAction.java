@@ -9,7 +9,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.consent.ConsentProperties;
 import org.apereo.cas.consent.ConsentDecision;
 import org.apereo.cas.consent.ConsentEngine;
-import org.apereo.cas.consent.ConsentOptions;
+import org.apereo.cas.consent.ConsentReminderOptions;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -79,7 +79,7 @@ public abstract class AbstractConsentAction extends AbstractAction {
         requestContext.getFlashScope().put("service", service);
 
         final ConsentDecision decision = consentEngine.findConsentDecision(service, registeredService, authentication);
-        requestContext.getFlowScope().put("option", decision == null? ConsentOptions.ATTRIBUTE_NAME.getValue() : decision.getOptions().getValue());
+        requestContext.getFlowScope().put("option", decision == null? ConsentReminderOptions.ATTRIBUTE_NAME.getValue() : decision.getOptions().getValue());
         
         final long reminder = decision == null ? consentProperties.getReminder() : decision.getReminder();
         requestContext.getFlowScope().put("reminder", Long.valueOf(reminder));
