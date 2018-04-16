@@ -1,7 +1,4 @@
-package org.apereo.cas.ticket.registry;
-
-import java.util.Arrays;
-import java.util.Collection;
+package org.apereo.cas.monitor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -24,21 +21,28 @@ import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.monitor.config.HazelcastMonitorConfiguration;
+import org.apereo.cas.util.junit.ConditionalSpringRunner;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
+import static org.junit.Assert.*;
+
 /**
- * Unit tests for {@link HazelcastTicketRegistry}.
+ * This is {@link HazelcastHealthIndicatorTests}.
  *
- * @author Dmitriy Kopylenko
- * @since 4.1.0
+ * @author Misagh Moayyed
+ * @since 5.3.0
  */
-@RunWith(Parameterized.class)
+@RunWith(ConditionalSpringRunner.class)
 @SpringBootTest(classes = {
     HazelcastTicketRegistryConfiguration.class,
     CasCoreTicketsConfiguration.class,
@@ -61,27 +65,24 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreServicesConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class
+    CasWebApplicationServiceFactoryConfiguration.class,
+    HazelcastMonitorConfiguration.class
 })
-@TestPropertySource(properties = {"cas.ticket.registry.hazelcast.cluster.instanceName=testlocalhostinstance"})
+@TestPropertySource(properties = {"cas.ticket.registry.hazelcast.cluster.instanceName=testlocalmonitor"})
 @Slf4j
-public class HazelcastTicketRegistryTests extends AbstractTicketRegistryTests {
-
+public class HazelcastHealthIndicatorTests {
     @Autowired
-    @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
+    @Qualifier("hazelcastHealthIndicator")
+    private HealthIndicator hazelcastHealthIndicator;
 
-    public HazelcastTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(false, true);
-    }
-
-    @Override
-    public TicketRegistry getNewTicketRegistry() {
-        return ticketRegistry;
+    @Test
+    public void verifyMonitor() {
+        final Health health = hazelcastHealthIndicator.health();
+        assertEquals(Status.UP, health.getStatus());
+        assertTrue(health.getDetails().containsKey("size"));
+        assertTrue(health.getDetails().containsKey("capacity"));
+        assertTrue(health.getDetails().containsKey("evictions"));
+        assertTrue(health.getDetails().containsKey("percentFree"));
+        assertTrue(health.getDetails().containsKey("name"));
     }
 }
