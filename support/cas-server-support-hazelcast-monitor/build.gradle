@@ -7,6 +7,7 @@ dependencies {
     implementation project(":support:cas-server-support-hazelcast-ticket-registry")
     implementation project(":support:cas-server-support-hazelcast-core")
 
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
