@@ -91,7 +91,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         }
 
         final String id = event.getId();
-        LOGGER.debug("Resolved from the initial authentication leg is [{}]", id);
+        LOGGER.debug("Resolved event from the initial authentication leg is [{}]", id);
 
         if (id.equals(CasWebflowConstants.TRANSITION_ID_ERROR)
             || id.equals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)

@@ -62,7 +62,7 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
-public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class CasWebflowContextConfiguration {
 
     private static final int LOGOUT_FLOW_HANDLER_ORDER = 3;
 
@@ -248,11 +248,17 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
         return plan;
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(defaultWebflowConfigurer());
-        plan.registerWebflowConfigurer(defaultLogoutWebflowConfigurer());
-        plan.registerWebflowConfigurer(groovyWebflowConfigurer());
+    @ConditionalOnMissingBean(name = "casDefaultWebflowExecutionPlanConfigurer")
+    @Bean
+    public CasWebflowExecutionPlanConfigurer casDefaultWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(defaultWebflowConfigurer());
+                plan.registerWebflowConfigurer(defaultLogoutWebflowConfigurer());
+                plan.registerWebflowConfigurer(groovyWebflowConfigurer());
+            }
+        };
     }
 }
 
