@@ -54,7 +54,6 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
         return DefaultResponse.getHeaderResponse(service.getOriginalUrl(), parameters);
     }
 
-
     /**
      * Build post.
      *
