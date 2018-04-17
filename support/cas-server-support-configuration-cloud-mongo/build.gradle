@@ -1,4 +1,4 @@
-description = "Apereo CAS Core Configuration - MongoDb"
+description = "Apereo CAS Configuration - MongoDb"
 dependencies {
     implementation libraries.mongo
     implementation project(":support:cas-server-support-mongo-core")

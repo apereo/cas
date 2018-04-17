@@ -1,4 +1,4 @@
-description = "Apereo CAS Core Configuration - Cloud Bus Kafka"
+description = "Apereo CAS Configuration - Cloud Bus Kafka"
 dependencies {
     implementation libraries.zookeeper
     implementation libraries.springcloudbuskafka
