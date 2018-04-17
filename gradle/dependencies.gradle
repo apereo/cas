@@ -1209,6 +1209,7 @@ ext.libraries = [
                 }
         ],
         couchbase               : dependencies.create("com.couchbase.client:java-client:$couchbaseVersion"),
+        ektorp                 : dependencies.create("org.ektorp:org.ektorp:$ektorpVersion"),
         jcifs                   : [
                 dependencies.create("jcifs:jcifs:$jcifsVersion") {
                     exclude(group: "javax.servlet", module: "servlet-api")
