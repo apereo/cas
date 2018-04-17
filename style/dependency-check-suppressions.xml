@@ -10,6 +10,9 @@
         <cve>CVE-2013-7394</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2018-1199</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2016-9878</cve>
     </suppress>
     <suppress>
@@ -284,5 +287,18 @@
     </suppress>
     <suppress>
         <cve>CVE-2016-5388</cve>
+    </suppress>
+
+    <suppress>
+        <cve>CVE-2015-7683</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2016-3956</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2016-3956</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2016-3956</cve>
     </suppress>
 </suppressions>
