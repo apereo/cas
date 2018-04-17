@@ -88,7 +88,7 @@ Once vault is accessible and configured inside CAS, support is provided via the 
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-cloud-vault</artifactId>
+     <artifactId>cas-server-support-configuration-cloud-vault</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```

@@ -217,7 +217,7 @@ Support is provided via the following dependency in the WAR overlay:
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-cloud-mongo</artifactId>
+     <artifactId>cas-server-support-configuration-cloud-mongo</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
@@ -257,7 +257,7 @@ Support is provided via the following dependency in the WAR overlay:
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-cloud-zookeeper</artifactId>
+     <artifactId>cas-server-support-configuration-cloud-zookeeper</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
@@ -297,7 +297,7 @@ Support is provided via the following dependency in the WAR overlay:
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-cloud-aws-secretsmanager</artifactId>
+     <artifactId>cas-server-support-configuration-cloud-aws-secretsmanager</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
@@ -322,7 +322,7 @@ Support is provided via the following dependency in the WAR overlay:
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-cloud-dynamodb</artifactId>
+     <artifactId>cas-server-support-configuration-cloud-dynamodb</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
@@ -356,7 +356,7 @@ CAS is also able to use Microsoft Azure's KeyVault Secrets to locate properties 
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-cloud-azure-keyvault</artifactId>
+     <artifactId>cas-server-support-configuration-cloud-azure-keyvault</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
@@ -376,7 +376,7 @@ Support is provided via the following dependency in the WAR overlay:
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-cloud-jdbc</artifactId>
+     <artifactId>cas-server-support-configuration-cloud-jdbc</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
