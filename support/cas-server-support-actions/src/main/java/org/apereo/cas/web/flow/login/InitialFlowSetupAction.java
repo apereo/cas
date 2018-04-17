@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow.login;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -34,7 +34,7 @@ import java.util.List;
  * @since 3.1
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class InitialFlowSetupAction extends AbstractAction {
 
     private final List<ArgumentExtractor> argumentExtractors;

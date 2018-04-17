@@ -5,9 +5,11 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.principal.Response.ResponseType;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,19 +41,18 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
         }
 
         final WebApplicationService finalService = buildInternal(service, parameters);
-
-        final Response.ResponseType responseType = getWebApplicationServiceResponseType(finalService);
-        if (responseType == Response.ResponseType.POST) {
+        final ResponseType responseType = getWebApplicationServiceResponseType(finalService);
+        if (responseType == ResponseType.POST) {
             return buildPost(finalService, parameters);
         }
-        if (responseType == Response.ResponseType.REDIRECT) {
+        if (responseType == ResponseType.REDIRECT) {
             return buildRedirect(finalService, parameters);
         }
-        if (responseType == Response.ResponseType.HEADER) {
+        if (responseType == ResponseType.HEADER) {
             return buildHeader(finalService, parameters);
         }
 
-        throw new IllegalArgumentException("Response type is valid. Only POST/REDIRECT are supported");
+        throw new IllegalArgumentException("Response type is valid. Only " + Arrays.toString(ResponseType.values()) + " are supported");
     }
 
     /**

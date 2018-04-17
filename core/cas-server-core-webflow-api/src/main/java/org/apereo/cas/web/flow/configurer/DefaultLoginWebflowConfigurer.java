@@ -242,9 +242,19 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
         createServiceErrorEndState(flow);
         createRedirectEndState(flow);
         createPostEndState(flow);
-        createHeaderEndState(flow);
+        createInjectHeadersActionState(flow);
         createGenericLoginSuccessEndState(flow);
         createServiceWarningViewState(flow);
+        createEndWebflowEndState(flow);
+    }
+
+    /**
+     * Create end webflow end state.
+     *
+     * @param flow the flow
+     */
+    protected void createEndWebflowEndState(final Flow flow) {
+        createEndState(flow, CasWebflowConstants.STATE_ID_END_WEBFLOW);
     }
 
     /**
@@ -270,9 +280,10 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      *
      * @param flow the flow
      */
-    protected void createHeaderEndState(final Flow flow) {
-        final EndState endState = createEndState(flow, CasWebflowConstants.STATE_ID_HEADER_VIEW);
-        endState.setFinalResponseAction(createEvaluateAction("injectResponseHeadersAction"));
+    protected void createInjectHeadersActionState(final Flow flow) {
+        final ActionState headerState = createActionState(flow, CasWebflowConstants.STATE_ID_HEADER_VIEW, "injectResponseHeadersAction");
+        createTransitionForState(headerState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_END_WEBFLOW);
+        createTransitionForState(headerState, CasWebflowConstants.TRANSITION_ID_REDIRECT, CasWebflowConstants.STATE_ID_REDIR_VIEW);
     }
 
     /**
