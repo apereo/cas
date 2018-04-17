@@ -189,6 +189,18 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param action the action
      * @return the action state
      */
+    public ActionState createActionState(final Flow flow, final String name, final String action) {
+        return createActionState(flow, name, createEvaluateAction(action));
+    }
+
+    /**
+     * Create action state action state.
+     *
+     * @param flow   the flow
+     * @param name   the name
+     * @param action the action
+     * @return the action state
+     */
     public ActionState createActionState(final Flow flow, final String name, final Action action) {
         return createActionState(flow, name, new Action[]{action});
     }
