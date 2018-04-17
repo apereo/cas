@@ -38,10 +38,11 @@ public class PatternMatchingEntityIdAttributeReleasePolicy extends BaseSamlRegis
                                                                         final SamlRegisteredServiceServiceProviderMetadataFacade facade,
                                                                         final EntityDescriptor entityDescriptor) {
         final Pattern pattern = RegexUtils.createPattern(this.entityIds);
-        final Matcher matcher = pattern.matcher(entityDescriptor.getEntityID());
-        LOGGER.debug("Creating pattern [{}] to match against entity id [{}]", pattern.pattern(), entityDescriptor.getEntityID());
+        final String entityID = entityDescriptor.getEntityID();
+        final Matcher matcher = pattern.matcher(entityID);
+        LOGGER.debug("Creating pattern [{}] to match against entity id [{}]", pattern.pattern(), entityID);
         final boolean matched = fullMatch ? matcher.matches() : matcher.find();
-        LOGGER.debug("Pattern [{}] matched against [{}]? [{}]", pattern.pattern(), entityDescriptor.getEntityID(), BooleanUtils.toStringYesNo(matched));
+        LOGGER.debug("Pattern [{}] matched against [{}]? [{}]", pattern.pattern(), entityID, BooleanUtils.toStringYesNo(matched));
         if (matched) {
             return authorizeReleaseOfAllowedAttributes(attributes);
         }
