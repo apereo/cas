@@ -1,8 +1,6 @@
 package org.apereo.cas.config;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
@@ -16,6 +14,7 @@ import com.amazonaws.services.secretsmanager.model.SecretListEntry;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -73,7 +72,7 @@ public class AmazonSecretsManagerCloudConfigBootstrapConfiguration implements Pr
     private static AWSSecretsManager getAmazonSecretsManagerClient(final Environment environment) {
         final String key = getSetting(environment, "credentialAccessKey");
         final String secret = getSetting(environment, "credentialSecretKey");
-        final AWSCredentials credentials = new BasicAWSCredentials(key, secret);
+        final AWSCredentialsProvider credentials = ChainingAWSCredentialsProvider.getInstance(key, secret);
         String region = getSetting(environment, "region");
         final Region currentRegion = Regions.getCurrentRegion();
         if (currentRegion != null && StringUtils.isBlank(region)) {
@@ -85,9 +84,10 @@ public class AmazonSecretsManagerCloudConfigBootstrapConfiguration implements Pr
         }
         final String endpoint = getSetting(environment, "endpoint");
         final AWSSecretsManagerClientBuilder builder = AWSSecretsManagerClientBuilder.standard()
-            .withCredentials(new AWSStaticCredentialsProvider(credentials))
+            .withCredentials(credentials)
             .withRegion(region);
 
+        
         if (StringUtils.isNotBlank(endpoint) && StringUtils.isNotBlank(regionOverride)) {
             builder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, regionOverride));
         }
