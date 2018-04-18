@@ -13,7 +13,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     SurrogateInitialAuthenticationActionTests.class,
-    SurrogateSelectionActionTests.class
+    SurrogateSelectionActionTests.class,
+    SurrogateAuthorizationActionTests.class
 })
 @Slf4j
 public class SurrogateTestSuite {

@@ -68,11 +68,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 })
 @TestPropertySource(locations = "classpath:ws-idp.properties")
 public class SecurityTokenServiceAuthenticationMetaDataPopulatorTests {
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Rule
-    private ExpectedException thrown = ExpectedException.none();
 
     @Autowired
     @Qualifier("servicesManager")
