@@ -1,11 +1,12 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.io.Serializable;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link WsFederationProperties}.
@@ -84,6 +85,22 @@ public class WsFederationProperties implements Serializable {
          * Keystore password used to encrypt tokens.
          */
         private String encryptionKeystorePassword;
+
+        /**
+         * Default WSDL location to load for the security token service
+         * that publishes the endpoints for various ops.
+         */
+        private String wsdlLocation = "classpath:/wsdl/ws-trust-1.4-service.wsdl";
+
+        /**
+         * Name of the service cross-referenced in the WSDL.
+         */
+        private String serviceName = "ns1:SecurityTokenService";
+
+        /**
+         * Name of the endpoint op cross-referenced in the WSDL.
+         */
+        private String endpointName = "ns1:TransportUT_Port";
 
         /**
          * Crypto settings used to secure calls between the idp and the sts.
