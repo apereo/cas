@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
@@ -20,8 +20,8 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 4.1
  */
 @Slf4j
-@AllArgsConstructor
-public class AcceptableUsagePolicyFormAction extends AbstractAction {
+@RequiredArgsConstructor
+public class AcceptableUsagePolicyVerifyAction extends AbstractAction {
 
     /**
      * Event id to signal the policy needs to be accepted.
@@ -38,29 +38,13 @@ public class AcceptableUsagePolicyFormAction extends AbstractAction {
      * @param messageContext the message context
      * @return success if policy is accepted. {@link #EVENT_ID_MUST_ACCEPT} otherwise.
      */
-    public Event verify(final RequestContext context, final Credential credential, final MessageContext messageContext) {
+    private Event verify(final RequestContext context, final Credential credential, final MessageContext messageContext) {
         final Pair<Boolean, Principal> res = repository.verify(context, credential);
         context.getFlowScope().put("principal", res.getValue());
         if (res.getKey()) {
             return success();
         }
         return accept();
-    }
-
-    /**
-     * Record the fact that the policy is accepted.
-     *
-     * @param context        the context
-     * @param credential     the credential
-     * @param messageContext the message context
-     * @return success if policy acceptance is recorded successfully.
-     */
-    public Event submit(final RequestContext context, final Credential credential, final MessageContext messageContext) {
-        if (repository.submit(context, credential)) {
-            return success();
-        }
-
-        return error();
     }
 
     @Override
