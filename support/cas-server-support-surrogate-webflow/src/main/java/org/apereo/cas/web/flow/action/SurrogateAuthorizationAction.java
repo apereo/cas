@@ -37,7 +37,8 @@ public class SurrogateAuthorizationAction extends AbstractAction {
             if (svc != null) {
                 AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
 
-                final AuditableContext audit = AuditableContext.builder().service(service)
+                final AuditableContext audit = AuditableContext.builder()
+                    .service(service)
                     .authentication(authentication)
                     .registeredService(svc)
                     .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)

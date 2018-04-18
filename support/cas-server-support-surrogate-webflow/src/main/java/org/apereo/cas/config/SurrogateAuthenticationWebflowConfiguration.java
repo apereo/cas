@@ -75,7 +75,7 @@ public class SurrogateAuthenticationWebflowConfiguration implements CasWebflowEx
 
     @Autowired
     @Qualifier("handledAuthenticationExceptions")
-    private Set<Class<? extends Exception>> handledAuthenticationExceptions;
+    private Set<Class<? extends Throwable>> handledAuthenticationExceptions;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -84,7 +84,8 @@ public class SurrogateAuthenticationWebflowConfiguration implements CasWebflowEx
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer surrogateWebflowConfigurer() {
-        return new SurrogateWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, selectSurrogateAction(), applicationContext, casProperties);
+        return new SurrogateWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+            selectSurrogateAction(), applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "selectSurrogateAction")
