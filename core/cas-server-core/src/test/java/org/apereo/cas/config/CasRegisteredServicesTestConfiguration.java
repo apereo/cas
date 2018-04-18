@@ -75,8 +75,7 @@ public class CasRegisteredServicesTestConfiguration {
         svc.setRequiredHandlers(handlers);
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         l.add(svc);
-
-
+        
         svc = RegisteredServiceTestUtils.getRegisteredService("(https://)*google.com$");
         svc.setEvaluationOrder(1);
         svc.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(".+"));
