@@ -82,7 +82,8 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      * @return URL a user can use to start the password reset process
      */
     public static String buildPasswordResetUrl(final String username,
-                                               final PasswordManagementService passwordManagementService, final CasConfigurationProperties casProperties) {
+                                               final PasswordManagementService passwordManagementService,
+                                               final CasConfigurationProperties casProperties) {
         final String token = passwordManagementService.createToken(username);
         return casProperties.getServer().getPrefix()
             .concat('/' + CasWebflowConfigurer.FLOW_ID_LOGIN + '?' + PARAMETER_NAME_TOKEN + '=').concat(token);
