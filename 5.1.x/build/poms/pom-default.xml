@@ -2901,7 +2901,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-websocket</artifactId>
-      <version>1.5.12.RELEASE</version>
+      <version>1.5.3.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -3013,7 +3013,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-mail</artifactId>
-      <version>1.5.12.RELEASE</version>
+      <version>1.5.3.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -3081,7 +3081,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-      <version>1.5.12.RELEASE</version>
+      <version>1.5.3.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -3201,7 +3201,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-autoconfigure</artifactId>
-      <version>1.5.12.RELEASE</version>
+      <version>1.5.3.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -3277,7 +3277,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot</artifactId>
-      <version>1.5.12.RELEASE</version>
+      <version>1.5.3.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -3349,7 +3349,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
-      <version>1.5.12.RELEASE</version>
+      <version>1.5.3.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -3421,7 +3421,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
-      <version>1.5.12.RELEASE</version>
+      <version>1.5.3.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -3509,7 +3509,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-actuator</artifactId>
-      <version>1.5.12.RELEASE</version>
+      <version>1.5.3.RELEASE</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -3901,7 +3901,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
-      <version>1.5.12.RELEASE</version>
+      <version>1.5.3.RELEASE</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
