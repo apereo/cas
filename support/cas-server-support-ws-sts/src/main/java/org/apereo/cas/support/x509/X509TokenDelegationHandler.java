@@ -44,7 +44,6 @@ public class X509TokenDelegationHandler implements TokenDelegationHandler {
         } else {
             LOGGER.debug("Delegation is not allowed, as the token is invalid or the principal is null");
         }
-
         return response;
     }
 
