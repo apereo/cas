@@ -2669,10 +2669,6 @@ To learn more about this topic, [please review this guide](WS-Federation-Protoco
 # cas.authn.wsfedIdp.sts.encryptionKeystoreFile=/etc/cas/config/stsencrypt.jks
 # cas.authn.wsfedIdp.sts.encryptionKeystorePassword=storepass
 
-# cas.authn.wsfedIdp.sts.wsdlLocation=classpath:/wsdl/ws-trust-1.4-service.wsdl
-# cas.authn.wsfedIdp.sts.serviceName=ns1:SecurityTokenService
-# cas.authn.wsfedIdp.sts.endpointName=ns1:TransportUT_Port
-
 # cas.authn.wsfedIdp.sts.subjectNameIdFormat=unspecified
 # cas.authn.wsfedIdp.sts.encryptTokens=true
 
