@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.CompareToBuilder;
@@ -40,7 +41,7 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeTokenAccount> {
+public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeTokenAccount>, Cloneable {
 
     private static final long serialVersionUID = -8289105320642735252L;
 
@@ -95,4 +96,9 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
             .append(this.secretKey, o.getSecretKey()).append(this.username, o.getUsername()).build();
     }
 
+    @Override
+    @SneakyThrows
+    public OneTimeTokenAccount clone() {
+        return (OneTimeTokenAccount) super.clone();
+    }
 }
