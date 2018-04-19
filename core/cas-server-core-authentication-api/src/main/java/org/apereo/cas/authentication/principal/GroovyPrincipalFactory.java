@@ -1,7 +1,10 @@
 package org.apereo.cas.authentication.principal;
 
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.util.ScriptingUtils;
+import org.springframework.core.io.Resource;
 
 import java.util.Map;
 
@@ -12,12 +15,14 @@ import java.util.Map;
  * @since 4.1.0
  */
 @Slf4j
-@EqualsAndHashCode
-public class DefaultPrincipalFactory implements PrincipalFactory {
+@EqualsAndHashCode(callSuper = true)
+@RequiredArgsConstructor
+public class GroovyPrincipalFactory extends DefaultPrincipalFactory {
     private static final long serialVersionUID = -3999695695604948495L;
+    private final transient Resource groovyResource;
 
     @Override
     public Principal createPrincipal(final String id, final Map<String, Object> attributes) {
-        return new SimplePrincipal(id, attributes);
+        return ScriptingUtils.executeGroovyScript(this.groovyResource, new Object[]{id, attributes, LOGGER}, Principal.class);
     }
 }
