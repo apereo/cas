@@ -6,8 +6,8 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CassandraAuthenticationHandler;
 import org.apereo.cas.authentication.CassandraRepository;
 import org.apereo.cas.authentication.DefaultCassandraRepository;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
@@ -52,7 +52,7 @@ public class CassandraAuthenticationConfiguration {
 
     @Bean
     public PrincipalFactory cassandraPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @Bean

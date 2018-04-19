@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.generic.ShiroAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
@@ -50,7 +50,7 @@ public class ShiroAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "shiroPrincipalFactory")
     @Bean
     public PrincipalFactory shiroPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @RefreshScope
