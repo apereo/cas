@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -8,7 +9,6 @@ import org.apereo.cas.ticket.Ticket;
 
 import java.util.Collection;
 import java.util.Map;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link AbstractMapBasedTicketRegistry}.
@@ -23,7 +23,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     /**
      * Creates a new, empty registry with the cipher.
      *
-     * @param cipherExecutor   the cipher executor
+     * @param cipherExecutor the cipher executor
      */
     public AbstractMapBasedTicketRegistry(final CipherExecutor cipherExecutor) {
         setCipherExecutor(cipherExecutor);
@@ -43,6 +43,11 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
             return null;
         }
         final Ticket found = getMapInstance().get(encTicketId);
+        if (found == null) {
+            LOGGER.debug("Ticket  [{}] could not be found", encTicketId);
+            return null;
+        }
+
         final Ticket result = decodeTicket(found);
         if (result != null && result.isExpired()) {
             LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
