@@ -1,8 +1,8 @@
 package org.apereo.cas;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
@@ -24,9 +24,9 @@ public class CoreAttributesTestUtils {
     private static final String CONST_TEST_URL = "https://google.com";
 
     public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {
-        return new DefaultPrincipalFactory().createPrincipal(name, attributes);
+        return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(name, attributes);
     }
-    
+
     public static Service getService() {
         final Service svc = mock(Service.class);
         when(svc.getId()).thenReturn(CONST_TEST_URL);
