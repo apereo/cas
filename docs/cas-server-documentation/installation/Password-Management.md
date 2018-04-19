@@ -21,7 +21,12 @@ To learn more about available notification options, please [see this guide](SMS-
 
 ## JSON
 
-Accounts and password may be stored inside a static modest JSON resource. This option is most useful during development and for demo purposes. To learn more, please [see this guide](Password-Management-JSON.html).
+Accounts and password may be stored inside a static modest JSON resource. This option is most useful during development and 
+for demo purposes. To learn more, please [see this guide](Password-Management-JSON.html).
+
+## Groovy
+
+Accounts and password may be handled and calculated via a Groovy script. To learn more, please [see this guide](Password-Management-Groovy.html).
 
 ## LDAP
 

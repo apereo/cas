@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -9,7 +10,6 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -23,24 +23,16 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.0.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class SendPasswordResetInstructionsAction extends AbstractAction {
     /**
      * Param name for the token.
      */
     public static final String PARAMETER_NAME_TOKEN = "pswdrst";
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
+    private final CasConfigurationProperties casProperties;
     private final CommunicationsManager communicationsManager;
-
     private final PasswordManagementService passwordManagementService;
-
-    public SendPasswordResetInstructionsAction(final CommunicationsManager communicationsManager,
-                                               final PasswordManagementService passwordManagementService) {
-        this.communicationsManager = communicationsManager;
-        this.passwordManagementService = passwordManagementService;
-    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

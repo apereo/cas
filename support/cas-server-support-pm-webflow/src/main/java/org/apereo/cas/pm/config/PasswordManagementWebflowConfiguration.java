@@ -47,7 +47,7 @@ public class PasswordManagementWebflowConfiguration implements CasWebflowExecuti
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("communicationsManager")
     private CommunicationsManager communicationsManager;
@@ -68,9 +68,9 @@ public class PasswordManagementWebflowConfiguration implements CasWebflowExecuti
     private PasswordValidationService passwordValidationService;
 
     @Autowired
-    @Qualifier("passwordChangeService") 
+    @Qualifier("passwordChangeService")
     private PasswordManagementService passwordManagementService;
-    
+
     @RefreshScope
     @Bean
     public HandlerAdapter passwordResetHandlerAdapter() {
@@ -78,7 +78,7 @@ public class PasswordManagementWebflowConfiguration implements CasWebflowExecuti
             @Override
             public boolean supports(final Object handler) {
                 return super.supports(handler) && ((FlowHandler) handler)
-                        .getFlowId().equals(PasswordManagementWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
+                    .getFlowId().equals(PasswordManagementWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
             }
         };
         handler.setFlowExecutor(loginFlowExecutor);
@@ -110,21 +110,21 @@ public class PasswordManagementWebflowConfiguration implements CasWebflowExecuti
     @Bean
     @RefreshScope
     public Action sendPasswordResetInstructionsAction() {
-        return new SendPasswordResetInstructionsAction(communicationsManager, passwordManagementService);
+        return new SendPasswordResetInstructionsAction(casProperties, communicationsManager, passwordManagementService);
     }
 
     @ConditionalOnMissingBean(name = "verifyPasswordResetRequestAction")
     @Bean
     @RefreshScope
     public Action verifyPasswordResetRequestAction() {
-        return new VerifyPasswordResetRequestAction(passwordManagementService);
+        return new VerifyPasswordResetRequestAction(casProperties, passwordManagementService);
     }
 
     @ConditionalOnMissingBean(name = "verifySecurityQuestionsAction")
     @Bean
     @RefreshScope
     public Action verifySecurityQuestionsAction() {
-        return new VerifySecurityQuestionsAction(passwordManagementService);
+        return new VerifySecurityQuestionsAction(passwordManagementService, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "passwordManagementWebflowConfigurer")
@@ -133,7 +133,7 @@ public class PasswordManagementWebflowConfiguration implements CasWebflowExecuti
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer passwordManagementWebflowConfigurer() {
         return new PasswordManagementWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                applicationContext, casProperties, initPasswordChangeAction());
+            applicationContext, casProperties, initPasswordChangeAction());
     }
 
     @Override

@@ -1,18 +1,17 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -24,17 +23,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 5.0.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class VerifySecurityQuestionsAction extends AbstractAction {
-
-    
     private final PasswordManagementService passwordManagementService;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-    
-    public VerifySecurityQuestionsAction(final PasswordManagementService passwordManagementService) {
-        this.passwordManagementService = passwordManagementService;
-    }
+    private final CasConfigurationProperties casProperties;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
