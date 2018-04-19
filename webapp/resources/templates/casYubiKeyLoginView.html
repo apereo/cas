@@ -12,7 +12,7 @@
 <body>
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content" id="login">
-        <form method="post" id="yubiKeyForm" th:object="${credential}">
+        <form method="post" id="yubiKeyForm" th:object="${credential}" th:action="@{/login}">
             <div class="alert alert-info" th:text="#{cas.mfa.yubikey.authenticate}">
                 Use your registered YubiKey device to authenticate.
             </div>

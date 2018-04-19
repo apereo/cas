@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Common utilities for the web tier.
@@ -661,7 +662,8 @@ public class WebUtils {
      */
     public static void putResolvedMultifactorAuthenticationProviders(final RequestContext context,
                                                                      final Collection<MultifactorAuthenticationProvider> value) {
-        context.getConversationScope().put("resolvedMultifactorAuthenticationProviders", value);
+        final Collection<String> providerIds = value.stream().map(MultifactorAuthenticationProvider::getId).collect(Collectors.toSet());
+        context.getConversationScope().put("resolvedMultifactorAuthenticationProviders", providerIds);
     }
 
     /**
@@ -670,7 +672,7 @@ public class WebUtils {
      * @param context the context
      * @return the resolved multifactor authentication providers
      */
-    public static Collection<MultifactorAuthenticationProvider> getResolvedMultifactorAuthenticationProviders(final RequestContext context) {
+    public static Collection<String> getResolvedMultifactorAuthenticationProviders(final RequestContext context) {
         return context.getConversationScope().get("resolvedMultifactorAuthenticationProviders", Collection.class);
     }
 
