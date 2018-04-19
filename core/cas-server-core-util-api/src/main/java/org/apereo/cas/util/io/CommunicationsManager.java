@@ -19,8 +19,6 @@ import javax.mail.internet.MimeMessage;
  */
 @Slf4j
 public class CommunicationsManager {
-
-
     @Autowired(required = false)
     @Qualifier("smsSender")
     private SmsSender smsSender;
