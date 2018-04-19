@@ -3867,6 +3867,12 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encrypt
 # cas.authn.pm.json.location=classpath:jsonResourcePassword.json
 ```
 
+### Groovy Password Management
+
+```properties
+# cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy
+```
+
 ### LDAP Password Management
 
 LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.pm.ldap`.
@@ -3882,7 +3888,9 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 
 ### JDBC Password Management
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.pm.jdbc`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.pm.jdbc`.
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
+under the configuration key `cas.authn.pm.jdbc`. Password encoding  settings for this 
+feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.pm.jdbc`.
 
 ```properties
 # The two fields indicated below are expected to be returned
