@@ -73,6 +73,7 @@ public class WebflowExecutorFactory {
 
     @SneakyThrows
     private Transcoder getWebflowStateTranscoder() {
-        return new EncryptedTranscoder(new WebflowCipherBean(this.webflowCipherExecutor));
+        final WebflowCipherBean cipherBean = new WebflowCipherBean(this.webflowCipherExecutor);
+        return new EncryptedTranscoder(cipherBean);
     }
 }

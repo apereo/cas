@@ -49,7 +49,7 @@
                     permission, the device will start to blink.</p>
             </div>
 
-            <form method="POST" id="form" th:object="${credential}">
+            <form method="POST" id="form" th:object="${credential}" th:action="@{/login}">
                 <input type="hidden" name="tokenResponse" id="tokenResponse" th:field="*{token}"/>
                 <input type="hidden" name="_eventId" value="submit"/>
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
