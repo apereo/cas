@@ -22,7 +22,7 @@ public class DelegatedSessionCookieCipherExecutor extends BaseStringCipherExecut
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.authn.pac4j.cookie.encryption.key";
+        return "cas.authn.pac4j.cookie.crypto.encryption.key";
     }
 
     @Override
