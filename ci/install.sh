@@ -42,7 +42,7 @@ elif [ "$MATRIX_JOB_TYPE" == "JAVADOC" ]; then
      -DskipGradleLint=true -DskipSass=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
-    gradleBuild="$gradleBuild test coveralls -x javadoc -x check --fail-fast \
+    gradleBuild="$gradleBuild test coveralls -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 elif [ "$MATRIX_JOB_TYPE" == "DEPANALYZE" ]; then
