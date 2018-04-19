@@ -38,6 +38,7 @@ buildscript {
         maven { url "https://maven.eveoh.nl/content/repositories/releases" }
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://repo.spring.io/plugins-release" }
+        maven { url "https://snapshots.jboss.org/maven2"}
     }
 
     dependencies {

@@ -19,6 +19,8 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.JpaCoreConfiguration;
+import org.apereo.cas.config.JpaJdbcConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
@@ -83,6 +85,8 @@ import static org.junit.Assert.*;
     CasCoreTicketCatalogConfiguration.class,
     JpaTicketRegistryConfiguration.class,
     CasCoreWebConfiguration.class,
+    JpaJdbcConfiguration.class,
+    JpaCoreConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Slf4j
