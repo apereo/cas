@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
@@ -114,7 +115,7 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {
-        return new DefaultPrincipalFactory().createPrincipal(name, attributes);
+        return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(name, attributes);
     }
 
     public static Authentication getAuthentication() {
