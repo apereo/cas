@@ -15,15 +15,14 @@
 
     <jaxws:endpoint id="transportSTSRealmAUT"
                     implementor="#transportSTSProviderBean"
-                    address="/${cas.authn.wsfedIdp.idp.realmName:CAS}/STSServiceTransportUT"
-                    wsdlLocation="${cas.authn.wsfedIdp.sts.wsdlLocation}"
+                    address="/CAS/STSServiceTransportUT"
+                    wsdlLocation="classpath:/wsdl/ws-trust-1.4-service.wsdl"
                     xmlns:ns1="http://docs.oasis-open.org/ws-sx/ws-trust/200512/"
-                    serviceName="${cas.authn.wsfedIdp.sts.serviceName}"
-                    endpointName="${cas.authn.wsfedIdp.sts.endpointName}">
+                    serviceName="ns1:SecurityTokenService"
+                    endpointName="ns1:TransportUT_Port">
         <jaxws:properties>
             <entry key="ws-security.ut.validator" value-ref="transportUsernameTokenValidator"/>
         </jaxws:properties>
     </jaxws:endpoint>
-
 </beans>
 

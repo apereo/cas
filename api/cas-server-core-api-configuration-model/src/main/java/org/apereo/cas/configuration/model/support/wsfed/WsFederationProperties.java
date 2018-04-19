@@ -87,22 +87,6 @@ public class WsFederationProperties implements Serializable {
         private String encryptionKeystorePassword;
 
         /**
-         * Default WSDL location to load for the security token service
-         * that publishes the endpoints for various ops.
-         */
-        private String wsdlLocation = "classpath:/wsdl/ws-trust-1.4-service.wsdl";
-
-        /**
-         * Name of the service cross-referenced in the WSDL.
-         */
-        private String serviceName = "ns1:SecurityTokenService";
-
-        /**
-         * Name of the endpoint op cross-referenced in the WSDL.
-         */
-        private String endpointName = "ns1:TransportUT_Port";
-
-        /**
          * Crypto settings used to secure calls between the idp and the sts.
          */
         @NestedConfigurationProperty
