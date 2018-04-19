@@ -112,12 +112,12 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
 
     @Bean
     public Action prepareDuoWebLoginFormAction() {
-        return new PrepareDuoWebLoginFormAction(duoMultifactorAuthenticationProvider());
+        return new PrepareDuoWebLoginFormAction(duoMultifactorAuthenticationProvider(), applicationContext);
     }
 
     @Bean
     public Action determineDuoUserAccountAction() {
-        return new DetermineDuoUserAccountAction(duoMultifactorAuthenticationProvider());
+        return new DetermineDuoUserAccountAction(duoMultifactorAuthenticationProvider(), applicationContext);
     }
 
     @Bean
