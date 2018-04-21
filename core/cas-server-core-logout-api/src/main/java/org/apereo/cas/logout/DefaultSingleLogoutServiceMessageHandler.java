@@ -10,6 +10,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -43,7 +44,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
     public Collection<LogoutRequest> handle(final WebApplicationService singleLogoutService, final String ticketId) {
         if (singleLogoutService.isLoggedOutAlready()) {
             LOGGER.debug("Service [{}] is already logged out.", singleLogoutService);
-            return null;
+            return new ArrayList<>(0);
         }
 
         final WebApplicationService selectedService = WebApplicationService.class.cast(
@@ -54,7 +55,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
 
         if (!serviceSupportsSingleLogout(registeredService)) {
             LOGGER.debug("Service [{}] does not support single logout.", selectedService);
-            return null;
+            return new ArrayList<>(0);
         }
         LOGGER.debug("Service [{}] supports single logout and is found in the registry as [{}]. Proceeding...", selectedService, registeredService);
 
@@ -62,12 +63,11 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
         LOGGER.debug("Prepared logout url [{}] for service [{}]", logoutUrls, selectedService);
         if (logoutUrls == null || logoutUrls.isEmpty()) {
             LOGGER.debug("Service [{}] does not support logout operations given no logout url could be determined.", selectedService);
-            return null;
+            return new ArrayList<>(0);
         }
 
         LOGGER.debug("Creating logout request for [{}] and ticket id [{}]", selectedService, ticketId);
         return createLogoutRequests(ticketId, selectedService, registeredService, logoutUrls);
-
     }
 
     private Collection<LogoutRequest> createLogoutRequests(final String ticketId,

@@ -15,6 +15,7 @@ import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -124,7 +125,11 @@ public class PasswordManagementWebflowConfiguration implements CasWebflowExecuti
     @Bean
     @RefreshScope
     public Action verifySecurityQuestionsAction() {
-        return new VerifySecurityQuestionsAction(passwordManagementService, casProperties);
+        if (!casProperties.getAuthn().getPm().getReset().isSecurityQuestionsEnabled()) {
+            LOGGER.debug("Functionality to handle security questions for password management is not enabled");
+            return new StaticEventExecutionAction("success");
+        }
+        return new VerifySecurityQuestionsAction(passwordManagementService);
     }
 
     @ConditionalOnMissingBean(name = "passwordManagementWebflowConfigurer")
