@@ -82,7 +82,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.googleAccountsService = getGoogleAccountsService();
     }
 
