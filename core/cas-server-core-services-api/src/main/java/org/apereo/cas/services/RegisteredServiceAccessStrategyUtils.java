@@ -83,8 +83,9 @@ public class RegisteredServiceAccessStrategyUtils {
         if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principalId, attributes)) {
             LOGGER.warn("Cannot grant access to service [{}] because it is not authorized for use by [{}].", service.getId(), principalId);
             final Map<String, Throwable> handlerErrors = new HashMap<>();
-            handlerErrors.put(UnauthorizedServiceForPrincipalException.class.getSimpleName(),
-                new UnauthorizedServiceForPrincipalException(String.format("Cannot grant service access to %s", principalId)));
+            final String message = String.format("Cannot grant service access to %s", principalId);
+            final UnauthorizedServiceForPrincipalException exception = new UnauthorizedServiceForPrincipalException(message, registeredService, principalId, attributes);
+            handlerErrors.put(UnauthorizedServiceForPrincipalException.class.getSimpleName(), exception);
 
             throw new PrincipalException(UnauthorizedServiceForPrincipalException.CODE_UNAUTHZ_SERVICE, handlerErrors, new HashMap<>());
         }
