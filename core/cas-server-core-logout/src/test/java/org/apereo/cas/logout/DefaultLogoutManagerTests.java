@@ -42,7 +42,6 @@ import static org.mockito.Mockito.*;
 @RunWith(JUnit4.class)
 @Slf4j
 public class DefaultLogoutManagerTests {
-
     private static final String ID = "id";
     private static final String URL = "http://www.github.com";
 
