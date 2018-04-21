@@ -12,22 +12,23 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
-import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
-import org.apereo.cas.web.flow.logout.FrontChannelLogoutAction;
 import org.apereo.cas.web.flow.GatewayServicesManagementCheck;
 import org.apereo.cas.web.flow.GenerateServiceTicketAction;
-import org.apereo.cas.web.flow.login.GenericSuccessViewAction;
+import org.apereo.cas.web.flow.ServiceAuthorizationCheck;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.actions.InitialAuthenticationAction;
+import org.apereo.cas.web.flow.login.GenericSuccessViewAction;
 import org.apereo.cas.web.flow.login.InitialAuthenticationRequestValidationAction;
 import org.apereo.cas.web.flow.login.InitialFlowSetupAction;
 import org.apereo.cas.web.flow.login.InitializeLoginAction;
-import org.apereo.cas.web.flow.logout.LogoutAction;
+import org.apereo.cas.web.flow.login.RedirectUnauthorizedServiceUrlAction;
 import org.apereo.cas.web.flow.login.SendTicketGrantingTicketAction;
-import org.apereo.cas.web.flow.ServiceAuthorizationCheck;
 import org.apereo.cas.web.flow.login.ServiceWarningAction;
+import org.apereo.cas.web.flow.login.TicketGrantingTicketCheckAction;
+import org.apereo.cas.web.flow.logout.FrontChannelLogoutAction;
+import org.apereo.cas.web.flow.logout.LogoutAction;
 import org.apereo.cas.web.flow.logout.LogoutViewSetupAction;
 import org.apereo.cas.web.flow.logout.TerminateSessionAction;
-import org.apereo.cas.web.flow.login.TicketGrantingTicketCheckAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -181,8 +182,16 @@ public class CasSupportActionsConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "genericSuccessViewAction")
     public Action genericSuccessViewAction() {
-        return new GenericSuccessViewAction(centralAuthenticationService, servicesManager, webApplicationServiceFactory,
+        return new GenericSuccessViewAction(centralAuthenticationService, servicesManager,
+            webApplicationServiceFactory,
             casProperties.getView().getDefaultRedirectUrl());
+    }
+
+    @RefreshScope
+    @Bean
+    @ConditionalOnMissingBean(name = "redirectUnauthorizedServiceUrlAction")
+    public Action redirectUnauthorizedServiceUrlAction() {
+        return new RedirectUnauthorizedServiceUrlAction(servicesManager);
     }
 
     @Bean

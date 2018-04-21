@@ -155,8 +155,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
 
             final String event = handle(error, requestContext);
             LOGGER.debug("Final event id resolved from the error is [{}]", event);
-
-            return new EventFactorySupport().event(this, event);
+            return new EventFactorySupport().event(this, event, currentEvent.getAttributes());
         }
         return new EventFactorySupport().event(this, "error");
     }
