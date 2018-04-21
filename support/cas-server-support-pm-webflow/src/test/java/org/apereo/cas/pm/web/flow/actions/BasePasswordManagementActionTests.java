@@ -14,6 +14,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 import org.apereo.cas.pm.config.PasswordManagementWebflowConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
@@ -65,6 +66,18 @@ import org.springframework.webflow.execution.Action;
 })
 @TestPropertySource(locations = "classpath:cas-pm-webflow.properties")
 public abstract class BasePasswordManagementActionTests {
+    @Autowired
+    @Qualifier("passwordChangeService")
+    protected PasswordManagementService passwordManagementService;
+
+    @Autowired
+    @Qualifier("verifySecurityQuestionsAction")
+    protected Action verifySecurityQuestionsAction;
+
+    @Autowired
+    @Qualifier("initPasswordResetAction")
+    protected Action initPasswordResetAction;
+
     @Autowired
     @Qualifier("verifyPasswordResetRequestAction")
     protected Action verifyPasswordResetRequestAction;
