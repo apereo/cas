@@ -65,6 +65,12 @@ public class PasswordPolicyProperties implements Serializable {
     private boolean enabled = true;
 
     /**
+     * Indicates whether account state handling should be enabled to process
+     * warnings or errors reported back from the authentication response, produced by the source.
+     */
+    private boolean accountStateHandlingEnabled = true;
+
+    /**
      * An implementation of a policy class that knows how to handle LDAP responses.
      * The class must be an implementation of {@code org.ldaptive.auth.AuthenticationResponseHandler}.
      */
