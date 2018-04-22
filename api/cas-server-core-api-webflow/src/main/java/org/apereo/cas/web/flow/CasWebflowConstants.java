@@ -312,6 +312,11 @@ public interface CasWebflowConstants {
     String VAR_ID_CREDENTIAL = "credential";
 
     /**
+     * Event attribute id 'authenticationWarnings'.
+     */
+    String ATTRIBUTE_ID_AUTHENTICATION_WARNINGS = "authenticationWarnings";
+    
+    /**
      * View id 'casResetPasswordSendInstructions'.
      */
     String VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSendInstructionsView";

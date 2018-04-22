@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -58,6 +59,7 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public abstract class AbstractCasWebflowEventResolver implements CasWebflowEventResolver {
 
     private static final String RESOLVED_AUTHENTICATION_EVENTS = "resolvedAuthenticationEvents";
@@ -81,9 +83,9 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     protected final AuthenticationSystemSupport authenticationSystemSupport;
 
     /**
-     * Ticket registry support.
+     * The Central authentication service.
      */
-    protected final TicketRegistrySupport ticketRegistrySupport;
+    protected final CentralAuthenticationService centralAuthenticationService;
 
     /**
      * The Services manager.
@@ -91,9 +93,9 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     protected final ServicesManager servicesManager;
 
     /**
-     * The Central authentication service.
+     * Ticket registry support.
      */
-    protected final CentralAuthenticationService centralAuthenticationService;
+    protected final TicketRegistrySupport ticketRegistrySupport;
 
     /**
      * Warn cookie generator.
@@ -101,28 +103,15 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     protected final CookieGenerator warnCookieGenerator;
 
     /**
-     * The mfa selector.
-     */
-    protected final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
-
-    /**
      * Extract the service specially in the event that it's proxied by a callback.
      */
     protected final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
-    public AbstractCasWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
-                                           final CentralAuthenticationService centralAuthenticationService, final ServicesManager servicesManager,
-                                           final TicketRegistrySupport ticketRegistrySupport, final CookieGenerator warnCookieGenerator,
-                                           final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                           final MultifactorAuthenticationProviderSelector selector) {
-        this.authenticationSystemSupport = authenticationSystemSupport;
-        this.centralAuthenticationService = centralAuthenticationService;
-        this.servicesManager = servicesManager;
-        this.ticketRegistrySupport = ticketRegistrySupport;
-        this.warnCookieGenerator = warnCookieGenerator;
-        authenticationRequestServiceSelectionStrategies = authenticationSelectionStrategies;
-        multifactorAuthenticationProviderSelector = selector;
-    }
+    /**
+     * The mfa selector.
+     */
+    protected final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
+
 
     /**
      * Adds a warning message to the message context.
@@ -137,7 +126,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             .defaultText(warning.getDefaultMessage())
             .args((Object[]) warning.getParams());
         context.addMessage(builder.build());
-
     }
 
     /**
@@ -148,17 +136,28 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the event
      */
     protected Event newEvent(final String id, final Exception error) {
-        return new Event(this, id, new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
+        return newEvent(id, new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
     }
 
     /**
-     * New event based on the given id.
+     * New event event.
      *
      * @param id the id
      * @return the event
      */
     protected Event newEvent(final String id) {
-        return new Event(this, id);
+        return newEvent(id, new LocalAttributeMap<>());
+    }
+
+    /**
+     * New event based on the given id.
+     *
+     * @param id         the id
+     * @param attributes the attributes
+     * @return the event
+     */
+    protected Event newEvent(final String id, final AttributeMap attributes) {
+        return new Event(this, id, attributes);
     }
 
     /**
@@ -166,19 +165,20 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      *
      * @param tgtId          the tgt id
      * @param messageContext the message context
-     * @return true if warnings were found and added, false otherwise.
+     * @return authn warnings from all handlers and results
      * @since 4.1.0
      */
-    private static boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId, final MessageContext messageContext) {
-        boolean foundAndAddedWarnings = false;
-        for (final Map.Entry<String, AuthenticationHandlerExecutionResult> entry : tgtId.getAuthentication().getSuccesses().entrySet()) {
-            for (final MessageDescriptor message : entry.getValue().getWarnings()) {
+    private static Collection<MessageDescriptor> calculateAuthenticationWarningMessages(final TicketGrantingTicket tgtId, final MessageContext messageContext) {
+        final Set<Map.Entry<String, AuthenticationHandlerExecutionResult>> entries = tgtId.getAuthentication().getSuccesses().entrySet();
+        return entries
+            .stream()
+            .map(entry -> entry.getValue().getWarnings())
+            .flatMap(Collection::stream)
+            .map(message -> {
                 addMessageDescriptorToMessageContext(messageContext, message);
-                foundAndAddedWarnings = true;
-            }
-        }
-        return foundAndAddedWarnings;
-
+                return message;
+            })
+            .collect(Collectors.toSet());
     }
 
 
@@ -215,8 +215,10 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         WebUtils.putAuthenticationResult(authenticationResult, context);
         WebUtils.putAuthentication(tgt.getAuthentication(), context);
 
-        if (addWarningMessagesToMessageContextIfNeeded(tgt, context.getMessageContext())) {
-            return newEvent(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS);
+        final Collection<MessageDescriptor> warnings = calculateAuthenticationWarningMessages(tgt, context.getMessageContext());
+        if (!warnings.isEmpty()) {
+            final LocalAttributeMap attributes = new LocalAttributeMap(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, warnings);
+            return newEvent(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, attributes);
         }
 
         return newEvent(CasWebflowConstants.TRANSITION_ID_SUCCESS);
@@ -341,10 +343,9 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             values.forEach(value -> {
                 try {
                     if (predicate.test(value)) {
-                        LOGGER.debug("Attribute value predicate [{}] has successfully matched the [{}]", predicate, value);
+                        LOGGER.debug("Attribute value predicate [{}] has successfully matched the [{}]. "
+                            + "Attempting to verify multifactor authentication for [{}]", predicate, value, service);
 
-                        LOGGER.debug("Attempting to verify multifactor authentication provider [{}] for [{}]",
-                            provider, service);
                         if (provider.isAvailable(service)) {
                             LOGGER.debug("Provider [{}] is successfully verified", provider);
 
@@ -362,8 +363,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             });
             return events;
         }
-        LOGGER.debug("Attribute value [{}] of type [{}] is not a multi-valued attribute",
-            attributeValue, attributeValue.getClass());
+        LOGGER.debug("Attribute value [{}] of type [{}] is not a multi-valued attribute", attributeValue, attributeValue.getClass());
         return null;
     }
 
@@ -374,7 +374,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                       final RequestContext context,
                                                       final MultifactorAuthenticationProvider provider,
                                                       final Predicate<String> predicate) {
-
         if (attributeValue instanceof String) {
             LOGGER.debug("Attribute value [{}] is a single-valued attribute", attributeValue);
             if (predicate.test((String) attributeValue)) {
