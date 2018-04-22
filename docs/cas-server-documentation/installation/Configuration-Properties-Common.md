@@ -812,6 +812,7 @@ The following  options are shared and apply when CAS is configured to integrate 
 # ${configurationKey}.displayWarningOnMatch=true
 # ${configurationKey}.warnAll=true
 # ${configurationKey}.warningDays=30
+# ${configurationKey}.accountStateHandlingEnabled=true
 
 # An implementation of `org.ldaptive.auth.AuthenticationResponseHandler`
 # ${configurationKey}.customPolicyClass=com.example.MyAuthenticationResponseHandler
