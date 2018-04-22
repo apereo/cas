@@ -149,7 +149,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
         final Event currentEvent = requestContext.getCurrentEvent();
         LOGGER.debug("Located current event [{}]", currentEvent);
 
-        final Exception error = currentEvent.getAttributes().get("error", Exception.class);
+        final Exception error = currentEvent.getAttributes().get(CasWebflowConstants.TRANSITION_ID_ERROR, Exception.class);
         if (error != null) {
             LOGGER.debug("Located error attribute [{}] with message [{}] from the current event", error.getClass(), error.getMessage());
 
