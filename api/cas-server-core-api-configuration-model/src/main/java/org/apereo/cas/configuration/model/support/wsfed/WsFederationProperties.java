@@ -1,11 +1,12 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.io.Serializable;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link WsFederationProperties}.

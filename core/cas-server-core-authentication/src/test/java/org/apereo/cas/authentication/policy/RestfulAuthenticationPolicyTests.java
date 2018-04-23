@@ -45,15 +45,16 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * @since 5.2.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class
 })
 @DirtiesContext
 @Slf4j
@@ -79,9 +80,9 @@ public class RestfulAuthenticationPolicyTests {
     @Test
     public void verifyPolicyGood() throws Exception {
         mockServer.expect(requestTo(URI))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess());
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(method(HttpMethod.POST))
+            .andRespond(withSuccess());
         assertTrue(policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser")));
         mockServer.verify();
     }
@@ -108,9 +109,9 @@ public class RestfulAuthenticationPolicyTests {
         });
 
         mockServer.expect(requestTo(URI))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(method(HttpMethod.POST))
-                .andRespond(withStatus(status));
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(method(HttpMethod.POST))
+            .andRespond(withStatus(status));
         assertTrue(policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser")));
         mockServer.verify();
     }

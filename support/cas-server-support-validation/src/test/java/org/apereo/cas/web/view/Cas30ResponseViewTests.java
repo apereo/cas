@@ -80,7 +80,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     private ConfigurableApplicationContext applicationContext;
     
     @Override
-    public AbstractServiceValidateController getServiceValidateControllerInstance() throws Exception {
+    public AbstractServiceValidateController getServiceValidateControllerInstance() {
         return new ServiceValidateController(
             getValidationSpecification(),
             getAuthenticationSystemSupport(), getServicesManager(),

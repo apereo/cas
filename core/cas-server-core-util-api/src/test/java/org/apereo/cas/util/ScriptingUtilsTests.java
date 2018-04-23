@@ -39,7 +39,7 @@ public class ScriptingUtilsTests {
     @Test
     public void verifyGroovyResourceExecution() {
         try {
-            final File file = File.createTempFile("test", ".groovy");
+            final var file = File.createTempFile("test", ".groovy");
             FileUtils.write(file, "def process(String name) { return name }");
             final Resource resource = new FileSystemResource(file);
 
@@ -59,7 +59,7 @@ public class ScriptingUtilsTests {
     @Test
     public void verifyResourceScriptEngineExecution() {
         try {
-            final File file = File.createTempFile("test", ".groovy");
+            final var file = File.createTempFile("test", ".groovy");
             FileUtils.write(file, "def run(String name) { return name }");
 
             final Object result = ScriptingUtils.executeScriptEngine(file.getCanonicalPath(), new Object[]{"casuser"}, String.class);

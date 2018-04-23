@@ -118,7 +118,7 @@ public class DelegatedClientAuthenticationActionTests {
 
         mockRequest.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
 
-        final Event event = getDelegatedClientAction(facebookClient, service, clients, mockRequest).execute(mockRequestContext);
+        final var event = getDelegatedClientAction(facebookClient, service, clients, mockRequest).execute(mockRequestContext);
         assertEquals("error", event.getId());
 
         manager.retrieve(mockRequestContext, Pac4jUtils.getPac4jJ2EContext(mockRequest, new MockHttpServletResponse()), facebookClient);
@@ -162,7 +162,7 @@ public class DelegatedClientAuthenticationActionTests {
         facebookClient.setName(FacebookClient.class.getSimpleName());
         final var clients = new Clients(MY_LOGIN_URL, facebookClient);
 
-        final Event event = getDelegatedClientAction(facebookClient, service, clients, mockRequest).execute(mockRequestContext);
+        final var event = getDelegatedClientAction(facebookClient, service, clients, mockRequest).execute(mockRequestContext);
         assertEquals("success", event.getId());
         assertEquals(MY_THEME, mockRequest.getAttribute(ThemeChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(Locale.getDefault().getCountry(), mockRequest.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
@@ -173,10 +173,10 @@ public class DelegatedClientAuthenticationActionTests {
     }
 
     private ServicesManager getServicesManagerWith(final Service service, final BaseClient client) {
-        final ServicesManager mgr = mock(ServicesManager.class);
-        final AbstractRegisteredService regSvc = RegisteredServiceTestUtils.getRegisteredService(service.getId());
+        final var mgr = mock(ServicesManager.class);
+        final var regSvc = RegisteredServiceTestUtils.getRegisteredService(service.getId());
 
-        final DefaultRegisteredServiceAccessStrategy strategy = new DefaultRegisteredServiceAccessStrategy();
+        final var strategy = new DefaultRegisteredServiceAccessStrategy();
         strategy.setDelegatedAuthenticationPolicy(new DefaultRegisteredServiceDelegatedAuthenticationPolicy(CollectionUtils.wrapList(client.getName())));
         regSvc.setAccessStrategy(strategy);
         when(mgr.findServiceBy(any(Service.class))).thenReturn(regSvc);
@@ -197,7 +197,7 @@ public class DelegatedClientAuthenticationActionTests {
         when(transManager.getAuthenticationManager()).thenReturn(authNManager);
         when(transManager.handle(any(AuthenticationTransaction.class), any(AuthenticationResultBuilder.class))).thenReturn(transManager);
 
-        final AuthenticationResult authnResult = mock(AuthenticationResult.class);
+        final var authnResult = mock(AuthenticationResult.class);
         when(authnResult.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         when(authnResult.getService()).thenReturn(service);
 
@@ -213,10 +213,10 @@ public class DelegatedClientAuthenticationActionTests {
             new WebApplicationServiceFactory(),
             "https://cas.example.org",
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
-        final Ticket ticket = manager.store(Pac4jUtils.getPac4jJ2EContext(mockRequest, new MockHttpServletResponse()), client);
+        final var ticket = manager.store(Pac4jUtils.getPac4jJ2EContext(mockRequest, new MockHttpServletResponse()), client);
 
         mockRequest.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
-        final CasDelegatingWebflowEventResolver initialResolver = mock(CasDelegatingWebflowEventResolver.class);
+        final var initialResolver = mock(CasDelegatingWebflowEventResolver.class);
         when(initialResolver.resolveSingle(any())).thenReturn(new Event(this, "success"));
 
         return new DelegatedClientAuthenticationAction(

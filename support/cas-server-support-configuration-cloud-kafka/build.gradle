@@ -1,0 +1,6 @@
+description = "Apereo CAS Configuration - Cloud Bus Kafka"
+dependencies {
+    implementation libraries.zookeeper
+    implementation libraries.springcloudbuskafka
+    runtimeOnly project(":core:cas-server-core-events-configuration-cloud-bus")
+}

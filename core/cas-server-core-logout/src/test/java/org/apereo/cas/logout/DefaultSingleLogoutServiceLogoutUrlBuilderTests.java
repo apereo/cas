@@ -16,6 +16,7 @@ import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.net.URL;
+import java.util.Collection;
 
 import static org.junit.Assert.*;
 
@@ -48,21 +49,21 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     }
 
     @Test
-    public void verifyLogoutUrlUnknownUrlProtocol() throws Exception {
+    public void verifyLogoutUrlUnknownUrlProtocol() {
         final var svc = getRegisteredService(".+");
         svc.setLogoutUrl(null);
         final var builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false);
         final var url = builder.determineLogoutUrl(svc, getService("imaps://etc.example.org"));
-        assertNull(url);
+        assertTrue(url.isEmpty());
     }
 
     @Test
-    public void verifyLocalLogoutUrlWithLocalUrlNotAllowed() throws Exception {
+    public void verifyLocalLogoutUrlWithLocalUrlNotAllowed() {
         final var svc = getRegisteredService(".+");
         svc.setLogoutUrl(null);
         final var builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false);
         final var url = builder.determineLogoutUrl(svc, getService("https://localhost/logout?p=v"));
-        assertNull(url);
+        assertTrue(url.isEmpty());
     }
 
     @Test
@@ -98,7 +99,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         svc.setLogoutUrl(null);
         final var builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false, "\\d*", true);
         final var url = builder.determineLogoutUrl(svc, getService("https://localhost/logout?p=v"));
-        assertNull(url);
+        assertTrue(url.isEmpty());
     }
 
     private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls) {

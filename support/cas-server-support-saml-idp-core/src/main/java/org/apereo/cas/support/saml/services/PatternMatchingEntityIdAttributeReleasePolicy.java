@@ -39,9 +39,9 @@ public class PatternMatchingEntityIdAttributeReleasePolicy extends BaseSamlRegis
                                                                         final EntityDescriptor entityDescriptor) {
         final var pattern = RegexUtils.createPattern(this.entityIds);
         final var matcher = pattern.matcher(entityDescriptor.getEntityID());
-        LOGGER.debug("Creating pattern [{}] to match against entity id [{}]", pattern.pattern(), entityDescriptor.getEntityID());
+        final var matcher = pattern.matcher(entityID);
         final var matched = fullMatch ? matcher.matches() : matcher.find();
-        LOGGER.debug("Pattern [{}] matched against [{}]? [{}]", pattern.pattern(), entityDescriptor.getEntityID(), BooleanUtils.toStringYesNo(matched));
+        LOGGER.debug("Pattern [{}] matched against [{}]? [{}]", pattern.pattern(), entityID, BooleanUtils.toStringYesNo(matched));
         if (matched) {
             return authorizeReleaseOfAllowedAttributes(attributes);
         }

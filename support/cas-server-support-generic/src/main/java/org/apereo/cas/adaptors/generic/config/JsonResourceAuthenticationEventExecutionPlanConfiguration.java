@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.generic.JsonResourceAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
@@ -49,7 +49,7 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "jsonPrincipalFactory")
     @Bean
     public PrincipalFactory jsonPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @RefreshScope
