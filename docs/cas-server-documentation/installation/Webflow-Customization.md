@@ -39,8 +39,6 @@ may serverely complicate your deployment and future upgrades. If reasonable, con
 suggesting the change to the project and have it be maintained directly.</p></div>
 
 CAS by default is configured to hot reload changes to the Spring webflow configuration.
-The following setting switches on flow development mode. Development mode switches 
-on hot-reloading of flow definition changes, including changes to dependent flow resources such as message bundles.
 
 ### Extending Webflow
 

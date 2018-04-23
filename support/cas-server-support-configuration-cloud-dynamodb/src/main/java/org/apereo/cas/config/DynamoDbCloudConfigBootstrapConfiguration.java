@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.cas.aws.AWSClientBuilder;
+import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -62,7 +62,7 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         final Properties props = new Properties();
 
         try {
-            final AWSClientBuilder builder = new AWSClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
+            final AmazonEnvironmentAwareClientBuilder builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
             final AmazonDynamoDB amazonDynamoDBClient = builder.build(AmazonDynamoDBClient.builder(), AmazonDynamoDB.class);
             final Boolean preventTableCreationOnStartup = builder.getSetting("preventTableCreationOnStartup", Boolean.class);
             if (!preventTableCreationOnStartup) {

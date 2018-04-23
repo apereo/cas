@@ -70,6 +70,12 @@ public class SamlIdPMetadataProperties implements Serializable {
     private RestSamlMetadataProperties rest = new RestSamlMetadataProperties();
 
     /**
+     * Properties pertaining to AWS S3 metadata resolution.
+     */
+    @NestedConfigurationProperty
+    private AmazonS3SamlMetadataProperties amazonS3 = new AmazonS3SamlMetadataProperties();
+
+    /**
      * Algorithm name to use when generating private key.
      */
     private String privateKeyAlgName = "RSA";

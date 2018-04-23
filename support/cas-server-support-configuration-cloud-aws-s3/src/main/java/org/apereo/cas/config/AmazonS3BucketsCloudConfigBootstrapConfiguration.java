@@ -8,7 +8,7 @@ import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.aws.AWSClientBuilder;
+import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.apereo.cas.configuration.CasCoreConfigurationUtils;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +38,7 @@ public class AmazonS3BucketsCloudConfigBootstrapConfiguration implements Propert
     public PropertySource<?> locate(final Environment environment) {
         final Map properties = new LinkedHashMap<>();
         try {
-            final AWSClientBuilder builder = new AWSClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
+            final AmazonEnvironmentAwareClientBuilder builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
             final AmazonS3 s3Client = builder.build(AmazonS3ClientBuilder.standard(), AmazonS3.class);
 
             final String bucketName = builder.getSetting("bucketName", "cas-properties");

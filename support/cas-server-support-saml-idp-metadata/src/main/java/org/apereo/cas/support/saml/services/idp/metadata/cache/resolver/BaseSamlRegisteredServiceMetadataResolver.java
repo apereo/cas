@@ -70,7 +70,6 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
                 final InputStreamResource signatureResource = ResourceUtils.buildInputStreamResourceFrom(metadataDocument.getSignature(), desc);
                 buildSignatureValidationFilterIfNeeded(service, metadataFilterList, signatureResource);
             }
-
             configureAndInitializeSingleMetadataResolver(metadataResolver, service, metadataFilterList);
             return metadataResolver;
         } catch (final Exception e) {
