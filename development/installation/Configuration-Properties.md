@@ -2411,9 +2411,9 @@ under the configuration key `cas.authn.samlIdp.metadata.jpa`.
 RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
 under the configuration key `cas.authn.samlIdp.metadata.rest`.
 
- #### SAML Metadata Amazon S3
+#### SAML Metadata Amazon S3
  
- Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
+Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
 under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
 
 ```properties
