@@ -9,11 +9,11 @@ import org.apache.ignite.IgniteState;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.query.ScanQuery;
 import org.apache.ignite.configuration.IgniteConfiguration;
-import org.apache.ignite.ssl.SslContextFactory;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+
 import javax.annotation.PreDestroy;
 import javax.cache.Cache;
 import javax.cache.expiry.Duration;
@@ -62,7 +62,6 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
         this.igniteConfiguration = igniteConfiguration;
         this.properties = properties;
         this.ticketCatalog = ticketCatalog;
-        initializeIgnite();
     }
 
     @Override
@@ -131,58 +130,26 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
         return ticket;
     }
 
-    private void configureSecureTransport() {
-        final String nullKey = "NULL";
-        if (StringUtils.isNotBlank(properties.getKeyStoreFilePath()) && StringUtils.isNotBlank(properties.getKeyStorePassword())
-            && StringUtils.isNotBlank(properties.getTrustStoreFilePath()) && StringUtils.isNotBlank(properties.getTrustStorePassword())) {
-            final SslContextFactory sslContextFactory = new SslContextFactory();
-            sslContextFactory.setKeyStoreFilePath(properties.getKeyStoreFilePath());
-            sslContextFactory.setKeyStorePassword(properties.getKeyStorePassword().toCharArray());
-            if (nullKey.equals(properties.getTrustStoreFilePath()) && nullKey.equals(properties.getTrustStorePassword())) {
-                sslContextFactory.setTrustManagers(SslContextFactory.getDisabledTrustManager());
-            } else {
-                sslContextFactory.setTrustStoreFilePath(properties.getTrustStoreFilePath());
-                sslContextFactory.setTrustStorePassword(properties.getKeyStorePassword().toCharArray());
-            }
-            if (StringUtils.isNotBlank(properties.getKeyAlgorithm())) {
-                sslContextFactory.setKeyAlgorithm(properties.getKeyAlgorithm());
-            }
-            if (StringUtils.isNotBlank(properties.getProtocol())) {
-                sslContextFactory.setProtocol(properties.getProtocol());
-            }
-            if (StringUtils.isNotBlank(properties.getTrustStoreType())) {
-                sslContextFactory.setTrustStoreType(properties.getTrustStoreType());
-            }
-            if (StringUtils.isNotBlank(properties.getKeyStoreType())) {
-                sslContextFactory.setKeyStoreType(properties.getKeyStoreType());
-            }
-            this.igniteConfiguration.setSslContextFactory(sslContextFactory);
-        }
-    }
-
-    private void initializeIgnite() {
-        LOGGER.info("Setting up Ignite Ticket Registry...");
-        configureSecureTransport();
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("igniteConfiguration.cacheConfiguration=[{}]", (Object[]) this.igniteConfiguration.getCacheConfiguration());
-            LOGGER.debug("igniteConfiguration.getDiscoverySpi=[{}]", this.igniteConfiguration.getDiscoverySpi());
-            LOGGER.debug("igniteConfiguration.getSslContextFactory=[{}]", this.igniteConfiguration.getSslContextFactory());
-        }
-        if (Ignition.state() == IgniteState.STOPPED) {
-            this.ignite = Ignition.start(this.igniteConfiguration);
-            LOGGER.debug("Starting ignite cache engine");
-        } else if (Ignition.state() == IgniteState.STARTED) {
-            this.ignite = Ignition.ignite();
-            LOGGER.debug("Ignite cache engine has started");
-        }
-    }
-
     /**
      * Make sure we shutdown Ignite when the context is destroyed.
      */
     @PreDestroy
     public void shutdown() {
+        this.ignite.close();
         Ignition.stopAll(true);
+    }
+
+    /**
+     * Initialize.
+     */
+    public void initialize() {
+        if (Ignition.state() == IgniteState.STOPPED) {
+            this.ignite = Ignition.start(igniteConfiguration);
+            LOGGER.debug("Starting ignite cache engine");
+        } else if (Ignition.state() == IgniteState.STARTED) {
+            this.ignite = Ignition.ignite();
+            LOGGER.debug("Ignite cache engine has started");
+        }
     }
 
     private IgniteCache<String, Ticket> getIgniteCacheFromMetadata(final TicketDefinition metadata) {
