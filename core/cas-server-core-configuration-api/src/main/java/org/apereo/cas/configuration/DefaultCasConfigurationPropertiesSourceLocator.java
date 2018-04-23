@@ -9,8 +9,6 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.jooq.lambda.Unchecked;
-import org.springframework.beans.factory.config.YamlProcessor;
-import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -94,7 +92,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         configFiles.forEach(Unchecked.consumer(f -> {
             LOGGER.debug("Loading configuration file [{}]", f);
             if (f.getName().toLowerCase().endsWith("yml")) {
-                final Map<String, Object> pp = loadYamlProperties(new FileSystemResource(f));
+                final Map<String, Object> pp = CasCoreConfigurationUtils.loadYamlProperties(new FileSystemResource(f));
                 LOGGER.debug("Found settings [{}] in YAML file [{}]", pp.keySet(), f);
                 props.putAll(decryptProperties(pp));
             } else {
@@ -112,7 +110,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         final Properties props = new Properties();
         final Resource resource = resourceLoader.getResource("classpath:/application.yml");
         if (resource != null && resource.exists()) {
-            final Map pp = loadYamlProperties(resource);
+            final Map pp = CasCoreConfigurationUtils.loadYamlProperties(resource);
             if (pp.isEmpty()) {
                 LOGGER.debug("No properties were located inside [{}]", resource);
             } else {
@@ -152,12 +150,5 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         return profiles;
     }
 
-    private static Map loadYamlProperties(final Resource... resource) {
-        final YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
-        factory.setResolutionMethod(YamlProcessor.ResolutionMethod.OVERRIDE);
-        factory.setResources(resource);
-        factory.setSingleton(true);
-        factory.afterPropertiesSet();
-        return factory.getObject();
-    }
+
 }
