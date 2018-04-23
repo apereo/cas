@@ -85,7 +85,7 @@ public class AmazonEnvironmentAwareClientBuilder {
 
         String region = getSetting("region");
         final Region currentRegion = Regions.getCurrentRegion();
-        if (StringUtils.isBlank(region) && currentRegion != null) {
+        if (currentRegion != null && StringUtils.isBlank(region)) {
             region = currentRegion.getName();
         }
         String regionOverride = getSetting("regionOverride");
