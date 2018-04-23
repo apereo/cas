@@ -264,7 +264,9 @@ Support is provided via the following dependency in the WAR overlay:
 
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#zookeeper).
 
-You will need to map CAS settings to ZooKeeper's nodes that contain values. The parent node for all settings should match the configuration root value provided to CAS. Under the root, you could have folders such as `cas`, `cas,dev`, `cas,local`, etc where `dev` and `local` are Spring profiles.
+You will need to map CAS settings to ZooKeeper's nodes that contain values. The parent node for all settings should 
+match the configuration root value provided to CAS. Under the root, you could have folders such 
+as `cas`, `cas,dev`, `cas,local`, etc where `dev` and `local` are Spring profiles.
 
 To create nodes and values in Apache ZooKeeper, try the following commands
 as a sample:
@@ -301,6 +303,8 @@ Support is provided via the following dependency in the WAR overlay:
       <version>${cas.version}</version>
  </dependency>
  ```
+ 
+ See [this guide](Configuration-Properties.html#amazon-s3) for relevant settings.
 
 ##### Amazon Secrets Manager
 
@@ -315,6 +319,8 @@ Support is provided via the following dependency in the WAR overlay:
      <version>${cas.version}</version>
 </dependency>
 ```
+
+See [this guide](Configuration-Properties.html#amazon-secrets-manager) for relevant settings.
 
 ##### DynamoDb
 
@@ -340,6 +346,8 @@ The `DynamoDbCasProperties` table is automatically created by CAS with the follo
 }
 ```
 
+See [this guide](Configuration-Properties.html#dynamodb) for relevant settings.
+
 ##### Azure KeyVault Secrets
 
 CAS is also able to use Microsoft Azure's KeyVault Secrets to locate properties and settings. Support is provided via the following dependency in the WAR overlay:
@@ -357,6 +365,8 @@ To see the relevant list of CAS properties for this feature, please [review this
 **IMPORTANT**: The allowed  name pattern in Azure Key Vault is `^[0-9a-zA-Z-]+$`. For properties that contain 
 that contain `.` in the name (i.e. `cas.some.property`),  replace `.` with `-` when you store the setting in Azure Key Vault (i.e. `cas-some-property`). 
 The module will handle the transformation for you. 
+
+See [this guide](Configuration-Properties.html#azure-keyvault-secrets) for relevant settings.
 
 ##### JDBC
 
