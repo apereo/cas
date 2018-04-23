@@ -30,6 +30,7 @@ import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.util.CollectionUtils;
 import org.jooq.lambda.Unchecked;
 
+import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -184,7 +185,12 @@ public class DynamoDbTicketRegistryFacilitator {
     private static Ticket deserializeTicket(final Map<String, AttributeValue> returnItem) {
         final ByteBuffer bb = returnItem.get(ColumnNames.ENCODED.getColumnName()).getB();
         LOGGER.debug("Located binary encoding of ticket item [{}]. Transforming item into ticket object", returnItem);
-        return SerializationUtils.deserialize(bb.array());
+        try (ByteArrayInputStream is = new ByteArrayInputStream(bb.array(), bb.arrayOffset() + bb.position(), bb.remaining())) {
+            return SerializationUtils.deserialize(is);
+        } catch (final Exception e){
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
     }
 
     /**

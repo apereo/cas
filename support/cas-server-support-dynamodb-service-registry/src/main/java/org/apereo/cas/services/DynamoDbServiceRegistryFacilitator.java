@@ -145,8 +145,13 @@ public class DynamoDbServiceRegistryFacilitator {
     private RegisteredService deserializeServiceFromBinaryBlob(final Map<String, AttributeValue> returnItem) {
         final ByteBuffer bb = returnItem.get(ColumnNames.ENCODED.getColumnName()).getB();
         LOGGER.debug("Located binary encoding of service item [{}]. Transforming item into service object", returnItem);
-        final ByteArrayInputStream is = new ByteArrayInputStream(bb.array());
-        return this.jsonSerializer.from(is);
+
+        try (ByteArrayInputStream is = new ByteArrayInputStream(bb.array(), bb.arrayOffset() + bb.position(), bb.remaining())) {
+            return this.jsonSerializer.from(is);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
     }
 
     private RegisteredService getRegisteredServiceByKeys(final Map<String, AttributeValue> keys) {
