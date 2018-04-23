@@ -74,6 +74,11 @@ public class PasswordManagementProperties implements Serializable {
      */
     private Reset reset = new Reset();
 
+    /**
+     * Handle password policy via Groovy script.
+     */
+    private Groovy groovy = new Groovy();
+
     @RequiresModule(name = "cas-server-support-pm-jdbc")
     @Getter
     @Setter
@@ -182,6 +187,13 @@ public class PasswordManagementProperties implements Serializable {
             this.mail.setText("Reset your password via this link: %s");
             this.mail.setSubject("Password Reset");
         }
+    }
+
+    @RequiresModule(name = "cas-server-support-pm")
+    @Getter
+    @Setter
+    public static class Groovy extends SpringResourceProperties {
+        private static final long serialVersionUID = 8079027843747126083L;
     }
 
     @RequiresModule(name = "cas-server-support-pm")

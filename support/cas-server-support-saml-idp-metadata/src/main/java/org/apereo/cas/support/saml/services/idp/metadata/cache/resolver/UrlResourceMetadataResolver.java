@@ -10,6 +10,7 @@ import org.apache.commons.io.filefilter.CanWriteFileFilter;
 import org.apache.commons.io.filefilter.PrefixFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.metadata.SamlIdPMetadataProperties;
 import org.apereo.cas.services.RegisteredService;
@@ -21,7 +22,6 @@ import org.apereo.cas.util.http.HttpClient;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.FileBackedHTTPMetadataResolver;
 import org.springframework.core.io.AbstractResource;
-import org.springframework.core.io.UrlResource;
 
 import java.io.File;
 import java.io.IOException;
@@ -135,7 +135,6 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         try {
             final var metadataLocation = service.getMetadataLocation();
             final var metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
-            return metadataResource instanceof UrlResource;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

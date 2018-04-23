@@ -102,7 +102,7 @@ public class DynamoDbTicketRegistryFacilitatorTests {
         dynamoDbTicketRegistryFacilitator.put(ticket, ticket);
         final Collection col = dynamoDbTicketRegistryFacilitator.getAll();
         assertFalse(col.isEmpty());
-        final Ticket ticketFetched = dynamoDbTicketRegistryFacilitator.get(ticket.getId(), ticket.getId());
+        final var ticketFetched = dynamoDbTicketRegistryFacilitator.get(ticket.getId(), ticket.getId());
         assertEquals(ticket, ticketFetched);
         assertFalse(dynamoDbTicketRegistryFacilitator.delete("badticket", "badticket"));
         assertTrue(dynamoDbTicketRegistryFacilitator.deleteAll() > 0);

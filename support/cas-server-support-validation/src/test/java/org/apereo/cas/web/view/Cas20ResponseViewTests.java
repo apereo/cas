@@ -55,7 +55,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
     private View cas2ServiceFailureView;
 
     @Override
-    public AbstractServiceValidateController getServiceValidateControllerInstance() throws Exception {
+    public AbstractServiceValidateController getServiceValidateControllerInstance() {
         return new ServiceValidateController(
             getValidationSpecification(),
             getAuthenticationSystemSupport(), getServicesManager(),

@@ -317,7 +317,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         return this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
     }
 
-    public abstract AbstractServiceValidateController getServiceValidateControllerInstance() throws Exception;
+    public abstract AbstractServiceValidateController getServiceValidateControllerInstance();
 
     protected CasProtocolValidationSpecification getValidationSpecification() {
         return new Cas20WithoutProxyingValidationSpecification();

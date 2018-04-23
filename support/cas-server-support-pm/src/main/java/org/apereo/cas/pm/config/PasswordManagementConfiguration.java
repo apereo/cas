@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.model.support.pm.PasswordManagementPropertie
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
 import org.apereo.cas.pm.PasswordValidationService;
+import org.apereo.cas.pm.impl.GroovyResourcePasswordManagementService;
 import org.apereo.cas.pm.impl.JsonResourcePasswordManagementService;
 import org.apereo.cas.pm.impl.NoOpPasswordManagementService;
 import org.apereo.cas.util.io.CommunicationsManager;
@@ -82,6 +83,15 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
                     casProperties.getServer().getPrefix(),
                     casProperties.getAuthn().getPm(), location);
             }
+
+            final var groovyScript = pm.getGroovy().getLocation();
+            if (groovyScript != null) {
+                LOGGER.debug("Configuring password management based on Groovy resource [{}]", groovyScript);
+                return new GroovyResourcePasswordManagementService(passwordManagementCipherExecutor(),
+                    casProperties.getServer().getPrefix(),
+                    casProperties.getAuthn().getPm(), groovyScript);
+            }
+
             LOGGER.warn("No storage service (LDAP, Database, etc) is configured to handle the account update and password service operations. "
                 + "Password management functionality will have no effect and will be disabled until a storage service is configured. "
                 + "To explicitly disable the password management functionality, add 'cas.authn.pm.enabled=false' to the CAS configuration");

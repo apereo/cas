@@ -14,8 +14,8 @@ import org.apache.http.protocol.HttpContext;
 import org.apereo.cas.adaptors.rest.RestAuthenticationApi;
 import org.apereo.cas.adaptors.rest.RestAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
@@ -75,7 +75,7 @@ public class CasRestAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public PrincipalFactory restAuthenticationPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "restAuthenticationApi")

@@ -145,17 +145,17 @@ ext.libraries = [
         ],
         apachefortress          : [
                 dependencies.create("org.apache.directory.fortress:fortress-core:$apacheFortressVersion") {
-                    exclude group: "org.apache.httpcomponents", module: "httpclient"
-                    exclude group: "org.slf4j", module: "slf4j-api"
-                    exclude group: "com.sun.mail", module: "javax.mail"
-                    exclude group: "org.apache.httpcomponents", module: "httpcore"
-                    exclude group: "org.apache.directory.api", module: "api-all"
-                    exclude group: "commons-io", module: "commons-io"
-                    exclude group: "commons-logging", module: "commons-logging"
-                    exclude group: "org.openldap", module: "accelerator"
-                    exclude group: "org.openldap", module: "accelerator-impl"
-                    exclude group: "org.openldap", module: "accelerator-api"
-                    exclude group: "commons-lang", module: "commons-lang"
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.sun.mail", module: "javax.mail")
+                    exclude(group: "org.apache.httpcomponents", module: "httpcore")
+                    exclude(group: "org.apache.directory.api", module: "api-all")
+                    exclude(group: "commons-io", module: "commons-io")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.openldap", module: "accelerator")
+                    exclude(group: "org.openldap", module: "accelerator-impl")
+                    exclude(group: "org.openldap", module: "accelerator-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
                 }
         ],
         cassandra               : [
@@ -521,25 +521,35 @@ ext.libraries = [
         ],
         hazelcastazure          : [
                 dependencies.create("com.hazelcast:hazelcast-azure:$hazelcastAzureVersion") {
+                    exclude(group: "commons-codec", module: "commons-codec")
                     force = true
                 }
         ],
         jclouds                 : [
                 dependencies.create("com.hazelcast:hazelcast-jclouds:$hazelcastJCloudsVersion") {
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("org.apache.jclouds:jclouds-compute:$jcloudsVersion") {
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("org.apache.jclouds:jclouds-allcompute:$jcloudsVersion") {
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("org.apache.jclouds.labs:google-compute-engine:$jcloudsGoogleEngineVersion") {
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
         ],
         jasypt                  : dependencies.create("org.jasypt:jasypt:$jasyptVersion") {
             exclude(group: "commons-cli", module: "commons-cli")
+            exclude(group: "org.slf4j", module: "slf4j-api")
             force = true
         },
         hibernate               : [
@@ -623,6 +633,28 @@ ext.libraries = [
         ],
         aws                     : [
                 dependencies.create("com.amazonaws:aws-java-sdk-core:$amazonSdkVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
+        awssns                  : [
+                dependencies.create("com.amazonaws:aws-java-sdk-sns:$amazonSdkVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
+        awssecretsmanager       : [
+                dependencies.create("com.amazonaws:aws-java-sdk-secretsmanager:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
@@ -1162,6 +1194,7 @@ ext.libraries = [
         azurekeyvault           : [
                 dependencies.create("com.microsoft.azure:azure-keyvault-secrets-spring-boot-starter:$azureKeyVaultSecretsVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
                 }
         ],
         cosmosdb                : [
@@ -1307,6 +1340,11 @@ ext.libraries = [
         ],
         memcached               : [
                 dependencies.create("net.spy:spymemcached:$spymemcachedVersion") {
+                    force = true
+                }
+        ],
+        awselasticachememcached : [
+                dependencies.create("com.amazonaws:elasticache-java-cluster-client:$awsmemcachedVersion") {
                     force = true
                 }
         ],

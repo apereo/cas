@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 
@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultAuthenticationSystemSupport implements AuthenticationSystemSupport {
 
     private final AuthenticationTransactionManager authenticationTransactionManager;

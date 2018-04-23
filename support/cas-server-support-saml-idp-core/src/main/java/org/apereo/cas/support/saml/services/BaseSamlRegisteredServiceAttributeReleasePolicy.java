@@ -34,7 +34,8 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
 
     @Override
     public Map<String, Object> getAttributesInternal(final Principal principal,
-                                                        final Map<String, Object> attributes, final RegisteredService service) {
+                                                     final Map<String, Object> attributes,
+                                                     final RegisteredService service) {
         if (service instanceof SamlRegisteredService) {
             final var saml = (SamlRegisteredService) service;
             final var request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
@@ -51,10 +52,10 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
                     try {
                         final var builder = new URIBuilder(svcParam);
                         entityId = builder.getQueryParams().stream()
-                                .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
-                                .map(NameValuePair::getValue)
-                                .findFirst()
-                                .orElse(StringUtils.EMPTY);
+                            .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
+                            .map(NameValuePair::getValue)
+                            .findFirst()
+                            .orElse(StringUtils.EMPTY);
                     } catch (final Exception e) {
                         LOGGER.error(e.getMessage());
                     }
@@ -62,16 +63,19 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
             }
 
             final var ctx = ApplicationContextProvider.getApplicationContext();
+                LOGGER.warn("Could not locate the entity id for SAML attribute release policy processing");
+                return super.getAttributesInternal(principal, attributes, service);
+            }
+
             if (ctx == null) {
                 LOGGER.warn("Could not locate the application context to process attributes");
                 return super.getAttributesInternal(principal, attributes, service);
             }
             final var resolver =
-                    ctx.getBean("defaultSamlRegisteredServiceCachingMetadataResolver",
-                            SamlRegisteredServiceCachingMetadataResolver.class);
+                ctx.getBean("defaultSamlRegisteredServiceCachingMetadataResolver", SamlRegisteredServiceCachingMetadataResolver.class);
 
             final var facade =
-                    SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, saml, entityId);
+                SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, saml, entityId);
 
             if (facade == null || !facade.isPresent()) {
                 LOGGER.warn("Could not locate metadata for [{}] to process attributes", entityId);

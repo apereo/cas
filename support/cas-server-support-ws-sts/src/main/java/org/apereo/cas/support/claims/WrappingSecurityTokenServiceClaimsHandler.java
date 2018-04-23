@@ -1,6 +1,7 @@
 package org.apereo.cas.support.claims;
 
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.rt.security.claims.ClaimCollection;
 import org.apache.cxf.sts.claims.ClaimsHandler;
@@ -10,11 +11,11 @@ import org.apache.cxf.sts.claims.ProcessedClaimCollection;
 import org.apache.cxf.sts.token.realm.RealmSupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.ws.idp.WSFederationClaims;
+
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.Getter;
 
 /**
  * This is {@link WrappingSecurityTokenServiceClaimsHandler}.
@@ -24,7 +25,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler, RealmSupport {
 
     private final String handlerRealm;
@@ -33,7 +34,9 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
 
     @Override
     public List<URI> getSupportedClaimTypes() {
-        return WSFederationClaims.ALL_CLAIMS.stream().map(c -> UriBuilder.fromUri(c.getUri()).build()).collect(Collectors.toList());
+        return WSFederationClaims.ALL_CLAIMS.stream()
+            .map(c -> UriBuilder.fromUri(c.getUri()).build())
+            .collect(Collectors.toList());
     }
 
     @Override
