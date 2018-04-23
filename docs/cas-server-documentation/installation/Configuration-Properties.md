@@ -2398,15 +2398,27 @@ A given attribute that is to be encoded in the final SAML response may contain a
 
 #### SAML Metadata JPA
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.samlIdp.metadata.jpa`.
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
+under the configuration key `cas.authn.samlIdp.metadata.jpa`.
 
 #### SAML Metadata MongoDb
 
- Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.samlIdp.metadata`.
-
+ Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) 
+ under the configuration key `cas.authn.samlIdp.metadata`.
+ 
  #### SAML Metadata REST
+ 
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.samlIdp.metadata.rest`.
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.samlIdp.metadata.rest`.
+ #### SAML Metadata Amazon S3
+ 
+ Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
+under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
+
+```properties
+# cas.authn.samlIdp.metadata.amazonS3.bucketName=
+```
 
 ### SAML Logout
 
