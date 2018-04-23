@@ -9,7 +9,7 @@ import com.amazonaws.services.secretsmanager.model.ListSecretsResult;
 import com.amazonaws.services.secretsmanager.model.SecretListEntry;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.aws.AWSClientBuilder;
+import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -35,7 +35,7 @@ public class AmazonSecretsManagerCloudConfigBootstrapConfiguration implements Pr
     public PropertySource<?> locate(final Environment environment) {
         final Properties props = new Properties();
         try {
-            final AWSClientBuilder builder = new AWSClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
+            final AmazonEnvironmentAwareClientBuilder builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
             final AWSSecretsManager secretsManager = builder.build(AWSSecretsManagerClientBuilder.standard(), AWSSecretsManager.class);
 
             final ListSecretsRequest listRequest = new ListSecretsRequest();

@@ -13,14 +13,14 @@ import org.springframework.core.env.Environment;
 import java.net.InetAddress;
 
 /**
- * This is {@link AWSClientBuilder}.
+ * This is {@link AmazonEnvironmentAwareClientBuilder}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @RequiredArgsConstructor
 @Slf4j
-public class AWSClientBuilder {
+public class AmazonEnvironmentAwareClientBuilder {
     private final String propertyPrefix;
     private final Environment environment;
 
