@@ -15,7 +15,7 @@
         <div class="alert alert-warning">
             <h2 th:text="#{screen.authentication.warning}">Authentication Succeeded with Warnings</h2>
             <div th:each="message : ${messages}">
-                <p class="message" th:utext="${message.text}">message.text</p>
+                <p class="message" th:utext="${message.text}">Message Text</p>
             </div>
             <section class="row">
                 <div class="col-sm-3">
