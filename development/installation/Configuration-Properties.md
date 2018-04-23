@@ -27,7 +27,8 @@ create attribute release policies, etc. CAS at runtime will auto-configure all r
 
 ## General
 
-A number of CAS configuration options equally apply to a number of modules and features. To understand and take note of those options, please [review this guide](Configuration-Properties-Common.html).
+A number of CAS configuration options equally apply to a number of modules and features. To understand and 
+take note of those options, please [review this guide](Configuration-Properties-Common.html).
 
 ## Configuration Storage
 
@@ -143,19 +144,27 @@ Load settings from an Apache ZooKeeper instance.
 # spring.cloud.zookeeper.config.root=cas/config
 ```
 
-### DynamoDb
+### Amazon Secrets Manager
 
-Load settings from a DynamoDb instance.
+Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
+under the configuration key `cas.spring.cloud.aws.secretsManager`.
+
+### Amazon S3
+
+The following settings may be passed using strategies outlined [here](Configuration-Management.html#overview) in order for CAS to establish a connection,
+using the configuration key `cas.spring.cloud.aws.s3`.
 
 ```properties
-# cas.spring.cloud.dynamodb.credentialAccessKey=
-# cas.spring.cloud.dynamodb.credentialSecretKey=
-# cas.spring.cloud.dynamodb.endpoint=http://localhost:8000
-# cas.spring.cloud.dynamodb.localAddress=
-# cas.spring.cloud.dynamodb.endpoint=
-# cas.spring.cloud.dynamodb.region=
-# cas.spring.cloud.dynamodb.regionOverride=
+# ${configurationKey}.bucketName=cas-properties
 ```
+
+Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
+under the configuration key `cas.spring.cloud.aws.s3`.
+
+### DynamoDb
+
+Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
+under the configuration key `cas.spring.cloud.dynamodb`. 
 
 ### JDBC
 
@@ -2389,15 +2398,27 @@ A given attribute that is to be encoded in the final SAML response may contain a
 
 #### SAML Metadata JPA
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.samlIdp.metadata.jpa`.
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
+under the configuration key `cas.authn.samlIdp.metadata.jpa`.
 
 #### SAML Metadata MongoDb
 
- Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.samlIdp.metadata`.
-
+ Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) 
+ under the configuration key `cas.authn.samlIdp.metadata`.
+ 
  #### SAML Metadata REST
+ 
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.samlIdp.metadata.rest`.
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.samlIdp.metadata.rest`.
+ #### SAML Metadata Amazon S3
+ 
+ Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
+under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
+
+```properties
+# cas.authn.samlIdp.metadata.amazonS3.bucketName=
+```
 
 ### SAML Logout
 

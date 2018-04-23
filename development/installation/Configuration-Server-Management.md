@@ -277,16 +277,30 @@ create /cas/config/cas cas
 create /cas/config/cas/settingName casuser::Test
 ```
 
-Creating nodes and directories in Apache ZooKeeper may require providing a value. The above sample commands show that the value `cas` is provided when creating directories. Always check with the official Apache ZooKeeper guides. You may not need to do that step.
+Creating nodes and directories in Apache ZooKeeper may require providing a value. The above sample commands show that 
+the value `cas` is provided when creating directories. Always check with the official Apache ZooKeeper guides. You may not need to do that step.
 
 Finally in your CAS properties, the new `settingName` setting can be used as a reference.
 
 ```properties
-cas.something.something=${settingName}
+# cas.something.something=${settingName}
 ```
 
 ...where `${settingName}` gets the value of the contents of the Apache ZooKeeper node `cas/config/cas/settingName`.
 
+##### Amazon S3
+
+CAS is also able to use [Amazon S3](https://docs.aws.amazon.com/AmazonS3/latest/dev) to locate properties and settings.
+
+Support is provided via the following dependency in the WAR overlay:
+ 
+ ```xml
+ <dependency>
+      <groupId>org.apereo.cas</groupId>
+      <artifactId>cas-server-support-configuration-cloud-aws-s3</artifactId>
+      <version>${cas.version}</version>
+ </dependency>
+ ```
 
 ##### Amazon Secrets Manager
 
@@ -300,17 +314,6 @@ Support is provided via the following dependency in the WAR overlay:
      <artifactId>cas-server-support-configuration-cloud-aws-secretsmanager</artifactId>
      <version>${cas.version}</version>
 </dependency>
-```
-
-The following setting may be passed using strategies outlined [here](Configuration-Management.html#overview) in order for CAS to establish a connection,
-using the configuration key `cas.spring.cloud.aws.secretsManager`:
-
-```properties
-${configurationKey}.credentialAccessKey=
-${configurationKey}.credentialSecretKey=
-${configurationKey}.region=
-${configurationKey}.regionOverride=
-${configurationKey}.endpoint=
 ```
 
 ##### DynamoDb
@@ -335,18 +338,6 @@ The `DynamoDbCasProperties` table is automatically created by CAS with the follo
     "name": "the-setting-name",
     "value": "the-setting-value"
 }
-```
-
-The following setting may be passed using strategies outlined [here](Configuration-Management.html#overview) in order for CAS to establish a connection,
-using the configuration key `cas.spring.cloud.dynamodb`:
-
-```properties
-${configurationKey}.localAddress=
-${configurationKey}.credentialAccessKey=
-${configurationKey}.credentialSecretKey=
-${configurationKey}.region=
-${configurationKey}.regionOverride=
-${configurationKey}.endpoint=
 ```
 
 ##### Azure KeyVault Secrets
