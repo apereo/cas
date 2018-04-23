@@ -115,9 +115,11 @@ public class ConfigurationMetadataGenerator {
      */
     public void execute() throws Exception {
         final File jsonFile = new File(buildDir, "classes/java/main/META-INF/spring-configuration-metadata.json");
+        if (!jsonFile.exists()) {
+            throw new RuntimeException("Could not locate file " + jsonFile.getCanonicalPath());
+        }
         final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         final TypeReference<Map<String, Set<ConfigurationMetadataProperty>>> values = new TypeReference<Map<String, Set<ConfigurationMetadataProperty>>>() {
         };
         final Map<String, Set> jsonMap = mapper.readValue(jsonFile, values);
