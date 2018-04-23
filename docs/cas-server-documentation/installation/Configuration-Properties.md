@@ -684,6 +684,11 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 # cas.view.templatePrefixes[0]=file:///etc/cas/templates
 ```
 
+### Restful Views
+
+Control the resolution of CAS views via REST. RESTful settings for this feature are 
+available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.view.rest`.
+
 ## Logging
 
 Control the location and other settings of the CAS logging configuration.

@@ -81,7 +81,6 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     @Getter
     @Setter
     public static class Rest extends RestEndpointProperties {
-
         private static final long serialVersionUID = -8102345678378393382L;
     }
 

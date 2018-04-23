@@ -3,7 +3,9 @@ package org.apereo.cas.config;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
 import org.apereo.cas.web.view.ChainingTemplateViewResolver;
+import org.apereo.cas.web.view.RestfulUrlTemplateResolver;
 import org.apereo.cas.web.view.ThemeFileTemplateResolver;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,8 @@ import org.springframework.util.ResourceUtils;
 import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
 import org.thymeleaf.templateresolver.AbstractTemplateResolver;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
+
+import java.util.List;
 
 /**
  * This is {@link CasCoreViewsConfiguration}.
@@ -37,14 +41,23 @@ public class CasCoreViewsConfiguration {
     public AbstractTemplateResolver chainingTemplateViewResolver() {
         final ChainingTemplateViewResolver chain = new ChainingTemplateViewResolver();
 
-        casProperties.getView().getTemplatePrefixes().forEach(Unchecked.consumer(prefix -> {
+        final List<String> templatePrefixes = casProperties.getView().getTemplatePrefixes();
+        templatePrefixes.forEach(Unchecked.consumer(prefix -> {
             final String prefixPath = ResourceUtils.getFile(prefix).getCanonicalPath();
             final String viewPath = StringUtils.appendIfMissing(prefixPath, "/");
-            
+
+            final ViewProperties.Rest rest = casProperties.getView().getRest();
+            if (StringUtils.isNotBlank(rest.getUrl())) {
+                final RestfulUrlTemplateResolver url = new RestfulUrlTemplateResolver(casProperties);
+                configureTemplateViewResolver(url);
+                chain.addResolver(url);
+            }
+
             final ThemeFileTemplateResolver theme = new ThemeFileTemplateResolver(casProperties);
             configureTemplateViewResolver(theme);
             theme.setPrefix(viewPath + "themes/%s/");
             chain.addResolver(theme);
+
 
             final FileTemplateResolver file = new FileTemplateResolver();
             configureTemplateViewResolver(file);
