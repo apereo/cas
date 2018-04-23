@@ -21,6 +21,9 @@ import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
 import org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.ConditionalParameterizedRunner;
+import org.apereo.cas.util.junit.RunningStandaloneCondition;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +42,8 @@ import java.util.Collection;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 3.0.0
  */
-@RunWith(Parameterized.class)
+@RunWith(ConditionalParameterizedRunner.class)
+@ConditionalIgnore(condition = RunningStandaloneCondition.class)
 @SpringBootTest(classes = {
     IgniteTicketRegistryConfiguration.class,
     CasCoreTicketsConfiguration.class,
