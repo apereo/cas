@@ -38,7 +38,6 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
     private final String casSeverPrefix;
     private final CipherExecutor<String, String> tokenCipherExecutor;
     private final ExpirationPolicy expirationPolicy;
-    
 
     @Override
     @SneakyThrows
@@ -61,7 +60,6 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
     @Override
     @SneakyThrows
     public String build(final TicketGrantingTicket ticketGrantingTicket) {
-
         final var authentication = ticketGrantingTicket.getAuthentication();
         final Map<String, Object> attributes = new LinkedHashMap<>(authentication.getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());

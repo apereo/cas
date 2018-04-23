@@ -16,6 +16,7 @@ import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +45,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
      */
     @Id
     @JsonProperty
+    @Column
     private String id;
 
     /**
@@ -57,6 +59,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     private String artifactId;
 
     @JsonProperty
+    @Column
     private String principal;
 
     @Column
@@ -64,6 +67,10 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
 
     @Column
     private ValidationResponseType format = ValidationResponseType.XML;
+
+    @Column
+    @Lob
+    private HashMap<String, Object> attributes = new HashMap<>(0);
 
     /**
      * Instantiates a new abstract web application service.
@@ -81,7 +88,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     @JsonIgnore
     @Override
     public Map<String, Object> getAttributes() {
-        return new HashMap<>(0);
+        return this.attributes;
     }
 
 }

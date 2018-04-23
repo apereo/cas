@@ -79,7 +79,7 @@ public class FrontChannelLogoutActionTests {
     }
 
     @Test
-    public void verifyLogoutNoIndex() throws Exception {
+    public void verifyLogoutNoIndex() {
         WebUtils.putLogoutRequests(this.requestContext, new ArrayList<>(0));
         final var event = this.frontChannelLogoutAction.doExecute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());

@@ -36,7 +36,7 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
     @Override
     protected Event doPreExecute(final RequestContext context) {
         final var up = WebUtils.getCredential(context, UsernamePasswordCredential.class);
-        if (up instanceof SurrogateUsernamePasswordCredential) {
+        if (up == null || up instanceof SurrogateUsernamePasswordCredential) {
             return null;
         }
         if (up.getUsername().contains(this.separator)) {

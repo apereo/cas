@@ -44,22 +44,22 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
         try {
-            final String username = authentication.getPrincipal().toString();
+            final var username = authentication.getPrincipal().toString();
             final var credentials = authentication.getCredentials();
             final var password = credentials == null ? null : credentials.toString();
 
             LOGGER.debug("Preparing LDAP authentication request for user [{}]", username);
             final var request = new AuthenticationRequest(username, new org.ldaptive.Credential(password), ReturnAttributes.ALL.value());
-            final Authenticator authenticator = LdapUtils.newLdaptiveAuthenticator(adminPagesSecurityProperties.getLdap());
+            final var authenticator = LdapUtils.newLdaptiveAuthenticator(adminPagesSecurityProperties.getLdap());
             LOGGER.debug("Executing LDAP authentication request for user [{}]", username);
 
-            final AuthenticationResponse response = authenticator.authenticate(request);
+            final var response = authenticator.authenticate(request);
             LOGGER.debug("LDAP response: [{}]", response);
 
             if (response.getResult()) {
-                final J2EContext context = Pac4jUtils.getPac4jJ2EContext();
+                final var context = Pac4jUtils.getPac4jJ2EContext();
                 
-                final LdapEntry entry = response.getLdapEntry();
+                final var entry = response.getLdapEntry();
 
                 final var profile = new CommonProfile();
                 profile.setId(username);

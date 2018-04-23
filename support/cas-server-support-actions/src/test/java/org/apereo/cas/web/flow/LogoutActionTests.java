@@ -63,7 +63,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     }
 
     @Test
-    public void verifyLogoutNoCookie() throws Exception {
+    public void verifyLogoutNoCookie() {
         final var properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
         final var event = this.logoutAction.doExecute(this.requestContext);
@@ -71,7 +71,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     }
 
     @Test
-    public void verifyLogoutForServiceWithFollowRedirectsAndMatchingService() throws Exception {
+    public void verifyLogoutForServiceWithFollowRedirectsAndMatchingService() {
         this.request.addParameter("service", TEST_SERVICE_ID);
         final var impl = new RegexRegisteredService();
         impl.setServiceId(TEST_SERVICE_ID);
@@ -86,7 +86,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     }
 
     @Test
-    public void logoutForServiceWithNoFollowRedirects() throws Exception {
+    public void logoutForServiceWithNoFollowRedirects() {
         this.request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST_SERVICE_ID);
         final var properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
@@ -96,7 +96,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     }
 
     @Test
-    public void logoutForServiceWithFollowRedirectsNoAllowedService() throws Exception {
+    public void logoutForServiceWithFollowRedirectsNoAllowedService() {
         this.request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST_SERVICE_ID);
         final var impl = new RegexRegisteredService();
         impl.setServiceId("http://FooBar");
@@ -110,7 +110,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     }
 
     @Test
-    public void verifyLogoutCookie() throws Exception {
+    public void verifyLogoutCookie() {
         final var cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
         final var properties = new LogoutProperties();
@@ -120,7 +120,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     }
 
     @Test
-    public void verifyLogoutRequestBack() throws Exception {
+    public void verifyLogoutRequestBack() {
         final var cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
         final LogoutRequest logoutRequest = new DefaultLogoutRequest(StringUtils.EMPTY, null, null);
@@ -134,7 +134,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
 
     @SuppressWarnings("unchecked")
     @Test
-    public void verifyLogoutRequestFront() throws Exception {
+    public void verifyLogoutRequestFront() {
         final var cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
         final LogoutRequest logoutRequest = new DefaultLogoutRequest(StringUtils.EMPTY, null, null);

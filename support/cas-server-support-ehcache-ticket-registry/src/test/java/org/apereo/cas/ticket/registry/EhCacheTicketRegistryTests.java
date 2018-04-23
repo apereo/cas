@@ -95,7 +95,7 @@ public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
         @Bean
         @SneakyThrows
         public CacheReplicator ticketRMISynchronousCacheReplicator() {
-            final CacheReplicator replicator = mock(CacheReplicator.class);
+            final var replicator = mock(CacheReplicator.class);
             when(replicator.isReplicateUpdatesViaCopy()).thenReturn(false);
             when(replicator.notAlive()).thenReturn(false);
             when(replicator.alive()).thenReturn(false);

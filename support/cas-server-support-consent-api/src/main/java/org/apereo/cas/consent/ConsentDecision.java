@@ -44,7 +44,7 @@ public class ConsentDecision {
     private LocalDateTime createdDate = LocalDateTime.now();
 
     @Column(nullable = false)
-    private ConsentOptions options = ConsentOptions.ATTRIBUTE_NAME;
+    private ConsentReminderOptions options = ConsentReminderOptions.ATTRIBUTE_NAME;
 
     @Column(nullable = false)
     private Long reminder = 14L;

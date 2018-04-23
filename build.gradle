@@ -30,6 +30,7 @@ def isArtifactSigningRequired = {
 apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
 apply plugin: "com.github.kt3k.coveralls"
+apply plugin: "com.github.ben-manes.versions"
 
 buildscript {
     repositories {
@@ -43,11 +44,11 @@ buildscript {
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:8.3.2"
-        classpath "io.franzbecker:gradle-lombok:1.12"
+        classpath "com.netflix.nebula:gradle-lint-plugin:9.3.1"
+        classpath "io.franzbecker:gradle-lombok:1.13"
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
         classpath "io.spring.gradle:propdeps-plugin:0.0.10.RELEASE"
-        classpath "org.ajoberstar:grgit:2.1.1"
+        classpath "org.ajoberstar:grgit:2.2.0"
         classpath "net.ltgt.gradle:gradle-errorprone-javacplugin-plugin:0.1"
         classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2"
@@ -67,7 +68,6 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "maven"
     apply plugin: "signing"
-    apply plugin: 'com.github.ben-manes.versions'
     apply plugin: "jacoco"
 
     if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
@@ -154,6 +154,10 @@ subprojects {
         jcenter()
     }
     
+        if (!Boolean.getBoolean("skipErrorProneCompiler")) {
+            // The last argument to disable parameter names is a workaround for: https://github.com/google/error-prone/issues/780
+            options.compilerArgs += ['-Xep:MissingOverride:OFF', '-Xep:ParameterName:OFF']
+        }
     test {
         enabled = !Boolean.getBoolean("skipTests")
         useJUnit()

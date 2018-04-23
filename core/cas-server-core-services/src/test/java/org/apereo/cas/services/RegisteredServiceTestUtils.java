@@ -13,8 +13,8 @@ import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
@@ -160,7 +160,7 @@ public class RegisteredServiceTestUtils {
     }
 
     public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {
-        return new DefaultPrincipalFactory().createPrincipal(name, attributes);
+        return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(name, attributes);
     }
 
     public static Authentication getAuthentication() {

@@ -8,8 +8,8 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandler;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.ProxyingPrincipalResolver;
@@ -61,7 +61,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @ConditionalOnMissingBean(name = "jaasPrincipalFactory")
     @Bean
     public PrincipalFactory jaasPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
@@ -75,7 +75,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @ConditionalOnMissingBean(name = "proxyPrincipalFactory")
     @Bean
     public PrincipalFactory proxyPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "proxyPrincipalResolver")
@@ -100,7 +100,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @ConditionalOnMissingBean(name = "acceptUsersPrincipalFactory")
     @Bean
     public PrincipalFactory acceptUsersPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     private Map<String, String> getParsedUsers() {

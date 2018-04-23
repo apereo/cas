@@ -40,7 +40,8 @@ import java.util.Collection;
  * @since 3.0.0
  */
 @RunWith(Parameterized.class)
-@SpringBootTest(classes = {IgniteTicketRegistryConfiguration.class,
+@SpringBootTest(classes = {
+    IgniteTicketRegistryConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     IgniteTicketRegistryTicketCatalogConfiguration.class,

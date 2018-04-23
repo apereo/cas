@@ -31,8 +31,8 @@ public class TestMultifactorAuthenticationProvider extends AbstractMultifactorAu
      * @return the multifactor authentication provider
      */
     public static MultifactorAuthenticationProvider registerProviderIntoApplicationContext(final ConfigurableApplicationContext applicationContext) {
-        final ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
-        final TestMultifactorAuthenticationProvider provider = beanFactory.createBean(TestMultifactorAuthenticationProvider.class);
+        final var beanFactory = applicationContext.getBeanFactory();
+        final var provider = beanFactory.createBean(TestMultifactorAuthenticationProvider.class);
         beanFactory.initializeBean(provider, "provider" + System.currentTimeMillis());
         beanFactory.autowireBean(provider);
         beanFactory.registerSingleton("provider" + System.currentTimeMillis(), provider);

@@ -62,7 +62,7 @@ public class QueryJdbcAuthenticationProperties extends AbstractJpaProperties {
     /**
      * List of column names to fetch as user attributes.
      */
-    private List principalAttributeList = new ArrayList();
+    private List<String> principalAttributeList = new ArrayList<>();
 
     /**
      * Principal transformation settings for this authentication.

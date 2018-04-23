@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.Bus;
@@ -21,7 +21,7 @@ import java.util.HashMap;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SecurityTokenServiceClientBuilder {
     private final WsFederationProperties wsFederationProperties;
     private final String prefix;

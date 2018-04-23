@@ -27,10 +27,10 @@ public class ChainingAWSCredentialsProviderTests {
     @Test
     @SneakyThrows
     public void verifyInstance() {
-        final ChainingAWSCredentialsProvider p = (ChainingAWSCredentialsProvider) ChainingAWSCredentialsProvider.getInstance("accesskey", "secretKey",
+        final var p = (ChainingAWSCredentialsProvider) ChainingAWSCredentialsProvider.getInstance("accesskey", "secretKey",
             new FileSystemResource("credentials.properties"), "profilePath", "profileName");
         assertFalse(p.getChain().isEmpty());
-        final AWSCredentials credentials = p.getCredentials();
+        final var credentials = p.getCredentials();
         assertNotNull(credentials);
         assertTrue(credentials instanceof BasicAWSCredentials);
     }

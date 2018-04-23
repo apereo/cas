@@ -2,8 +2,8 @@ package org.apereo.cas.digest.config.support.authentication;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -43,7 +43,7 @@ public class DigestAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "digestAuthenticationPrincipalFactory")
     @Bean
     public PrincipalFactory digestAuthenticationPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
     
     @Bean

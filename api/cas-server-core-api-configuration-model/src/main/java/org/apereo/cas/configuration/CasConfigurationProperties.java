@@ -38,9 +38,7 @@ import org.apereo.cas.configuration.model.support.saml.googleapps.GoogleAppsProp
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
 import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderProperties;
 import org.apereo.cas.configuration.model.support.scim.ScimProperties;
-import org.apereo.cas.configuration.model.support.sms.ClickatellProperties;
-import org.apereo.cas.configuration.model.support.sms.TextMagicProperties;
-import org.apereo.cas.configuration.model.support.sms.TwilioProperties;
+import org.apereo.cas.configuration.model.support.sms.SmsProvidersProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
 import org.apereo.cas.configuration.model.webapp.LocaleProperties;
 import org.apereo.cas.configuration.model.webapp.WebflowProperties;
@@ -208,22 +206,10 @@ public class CasConfigurationProperties implements Serializable {
     private GoogleRecaptchaProperties googleRecaptcha = new GoogleRecaptchaProperties();
 
     /**
-     * Twilio settings.
+     * SMS and Text messaging settings.
      */
     @NestedConfigurationProperty
-    private TwilioProperties twilio = new TwilioProperties();
-
-    /**
-     * TextMagic settings.
-     */
-    @NestedConfigurationProperty
-    private TextMagicProperties textMagic = new TextMagicProperties();
-
-    /**
-     * Clickatell settings.
-     */
-    @NestedConfigurationProperty
-    private ClickatellProperties clickatell = new ClickatellProperties();
+    private SmsProvidersProperties smsProvider = new SmsProvidersProperties();
 
     /**
      * AUP settings.

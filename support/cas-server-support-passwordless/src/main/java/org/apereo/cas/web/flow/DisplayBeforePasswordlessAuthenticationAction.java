@@ -34,7 +34,7 @@ public class DisplayBeforePasswordlessAuthenticationAction extends AbstractActio
         if (attributes.contains("error")) {
             final var e = attributes.get("error", Exception.class);
             final var user = attributes.get(PasswordlessAuthenticationWebflowConfigurer.PARAMETER_PASSWORDLESS_USER_ACCOUNT, PasswordlessUserAccount.class);
-            requestContext.getFlowScope().put("error", e);
+            requestContext.getFlowScope().put(CasWebflowConstants.TRANSITION_ID_ERROR, e);
             requestContext.getFlowScope().put(PasswordlessAuthenticationWebflowConfigurer.PARAMETER_PASSWORDLESS_USER_ACCOUNT, user);
             return success();
         }

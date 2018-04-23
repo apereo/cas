@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.springframework.context.ApplicationContext;
-import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -53,13 +52,8 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
         return getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
     }
 
-    private EvaluateAction createAcceptableUsagePolicyAction(final String actionId) {
-        return createEvaluateAction("acceptableUsagePolicyFormAction."
-                + actionId + "(flowRequestContext, flowScope.credential, messageContext)");
-    }
-
     private void createSubmitActionState(final Flow flow) {
-        final var aupAcceptedAction = createActionState(flow, AUP_ACCEPTED_ACTION, createAcceptableUsagePolicyAction("submit"));
+        final var aupAcceptedAction = createActionState(flow, AUP_ACCEPTED_ACTION, "acceptableUsagePolicySubmitAction");
 
         final var target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         aupAcceptedAction.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, target));
@@ -72,10 +66,9 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
     }
 
     private void createVerifyActionState(final Flow flow) {
-        final var actionState = createActionState(flow, STATE_ID_AUP_CHECK, createAcceptableUsagePolicyAction("verify"));
-
+        final var actionState = createActionState(flow, STATE_ID_AUP_CHECK, "acceptableUsagePolicyVerifyAction");
         final var target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, target));
-        actionState.getTransitionSet().add(createTransition(AcceptableUsagePolicyFormAction.EVENT_ID_MUST_ACCEPT, ACCEPTABLE_USAGE_POLICY_VIEW));
+        actionState.getTransitionSet().add(createTransition(AcceptableUsagePolicySubmitAction.EVENT_ID_MUST_ACCEPT, ACCEPTABLE_USAGE_POLICY_VIEW));
     }
 }

@@ -28,17 +28,17 @@ public class SimpleHttpClientTests {
     }
 
     @Test
-    public void verifyOkayUrl() throws Exception {
+    public void verifyOkayUrl() {
         assertTrue(this.getHttpClient().isValidEndPoint("http://www.google.com"));
     }
 
     @Test
-    public void verifyBadUrl() throws Exception {
+    public void verifyBadUrl() {
         assertFalse(this.getHttpClient().isValidEndPoint("https://www.abc1234.org"));
     }
 
     @Test
-    public void verifyInvalidHttpsUrl() throws Exception {
+    public void verifyInvalidHttpsUrl() {
         final HttpClient client = this.getHttpClient();
         assertFalse(client.isValidEndPoint("https://wrong.host.badssl.com/"));
     }

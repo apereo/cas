@@ -37,7 +37,7 @@ public class CasCoreBootstrapStandaloneLocatorConfiguration {
     @Bean
     public CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator() {
         return new DefaultCasConfigurationPropertiesSourceLocator(casConfigurationCipherExecutor(),
-            casConfigurationPropertiesEnvironmentManager());
+            configurationPropertiesEnvironmentManager());
     }
 
     @ConditionalOnMissingBean(name = "casConfigurationCipherExecutor")
@@ -46,9 +46,9 @@ public class CasCoreBootstrapStandaloneLocatorConfiguration {
         return new CasConfigurationJasyptCipherExecutor(environment);
     }
 
-    @ConditionalOnMissingBean(name = "casConfigurationPropertiesEnvironmentManager")
+    @ConditionalOnMissingBean(name = "configurationPropertiesEnvironmentManager")
     @Bean
-    public CasConfigurationPropertiesEnvironmentManager casConfigurationPropertiesEnvironmentManager() {
+    public CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager() {
         return new CasConfigurationPropertiesEnvironmentManager(binder, environment);
     }
 }

@@ -27,8 +27,6 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 @AllArgsConstructor
 public class GenericSuccessViewAction extends AbstractAction {
-
-
     private final CentralAuthenticationService centralAuthenticationService;
     private final ServicesManager servicesManager;
     private final ServiceFactory serviceFactory;

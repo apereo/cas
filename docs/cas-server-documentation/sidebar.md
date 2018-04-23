@@ -134,6 +134,7 @@ layout: null
     *   [Access Strategy](/$version/installation/Configuring-Service-Access-Strategy.html)
     *   [Proxy Policy](/$version/installation/Configuring-Service-Proxy-Policy.html)
     *   [Custom Properties](/$version/installation/Configuring-Service-Custom-Properties.html)
+    *   [Response Type](/$version/installation/Configuring-Service-Response-Type.html)
     *   [HTTP Security Headers](/$version/installation/Configuring-Service-Http-Security-Headers.html)
     *   [Contacts & Owners](/$version/installation/Configuring-Service-Contacts.html)
     *   [Expiration Policy](/$version/installation/Configuring-Service-Expiration-Policy.html)
@@ -207,6 +208,10 @@ layout: null
         *   [SAML2](/$version/installation/Configuring-SAML2-Authentication.html)
     *   [REST](/$version/protocol/REST-Protocol.html)
 
+* [Notifications](#casnotifications)
+    *   [Sending Email](/$version/installation/Sending-Email-Configuration.html)
+    *   [Sending Text Messages](/$version/installation/SMS-Messaging-Configuration.html)
+    
 * [Integration](#appintegration)
     *   [SAML2 Service Providers](/$version/integration/Configuring-SAML-SP-Integrations.html)
         *   [Google Apps](/$version/integration/Google-Apps-Integration.html)

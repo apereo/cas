@@ -53,7 +53,7 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
         final PropertySource source = casConfigurationPropertiesSourceLocator.locate(environment, resourceLoader);
         assertTrue(source instanceof CompositePropertySource);
 
-        final CompositePropertySource composite = (CompositePropertySource) source;
+        final var composite = (CompositePropertySource) source;
         assertEquals("https://cas.example.org:9999", composite.getProperty("cas.server.name"));
         assertEquals("https://cas.example.org/something", composite.getProperty("cas.server.prefix"));
     }

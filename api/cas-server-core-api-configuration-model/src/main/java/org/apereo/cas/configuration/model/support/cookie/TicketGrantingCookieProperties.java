@@ -13,7 +13,7 @@ import lombok.Setter;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiresModule(name = "cas-server-support-cookie", automated = true)
+@RequiresModule(name = "cas-server-core-cookie", automated = true)
 @Slf4j
 @Getter
 @Setter

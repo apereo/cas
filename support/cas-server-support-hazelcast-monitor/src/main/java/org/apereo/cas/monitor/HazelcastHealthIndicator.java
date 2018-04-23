@@ -4,6 +4,7 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.monitor.LocalMapStats;
+import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +35,7 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
         final List<CacheStatistics> statsList = new ArrayList<>();
         LOGGER.debug("Locating hazelcast instance [{}]...", instanceName);
         final var instance = Hazelcast.getHazelcastInstanceByName(instanceName);
+        @NonNull
         instance.getConfig().getMapConfigs().keySet().forEach(key -> {
             final IMap map = instance.getMap(key);
             LOGGER.debug("Starting to collect hazelcast statistics for map [{}] identified by key [{}]...", map, key);

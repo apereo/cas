@@ -43,7 +43,7 @@ public class InfluxDbCasEventRepositoryTests {
 
     @Test
     public void verifyEventsStored() {
-        final CasEvent dto = getCasEvent();
+        final var dto = getCasEvent();
         casEventRepository.save(dto);
         Collection events = casEventRepository.load();
         assertFalse(events.isEmpty());
@@ -54,9 +54,9 @@ public class InfluxDbCasEventRepositoryTests {
     }
 
     private CasEvent getCasEvent() {
-        final CasEvent dto = new CasEvent();
+        final var dto = new CasEvent();
         dto.setType(CasAuthenticationTransactionSuccessfulEvent.class.getCanonicalName());
-        final long timestamp = new Date().getTime();
+        final var timestamp = new Date().getTime();
         dto.putTimestamp(timestamp);
         dto.setCreationTime(DateTimeUtils.zonedDateTimeOf(timestamp).toString());
         dto.putClientIpAddress("1.2.3.4");
@@ -64,7 +64,7 @@ public class InfluxDbCasEventRepositoryTests {
         dto.putId("1000");
         dto.putAgent(WebUtils.getHttpServletRequestUserAgentFromRequestContext());
 
-        final GeoLocationRequest location = new GeoLocationRequest(1234, 1234);
+        final var location = new GeoLocationRequest(1234, 1234);
         dto.putGeoLocation(location);
         dto.setPrincipalId("casuser");
         return dto;

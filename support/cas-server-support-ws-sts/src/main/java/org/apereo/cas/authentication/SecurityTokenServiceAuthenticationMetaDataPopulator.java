@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
@@ -16,6 +16,8 @@ import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import org.springframework.core.Ordered;
 
+import java.util.Map;
+
 /**
  * This is {@link SecurityTokenServiceAuthenticationMetaDataPopulator}.
  *
@@ -23,34 +25,33 @@ import org.springframework.core.Ordered;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @ToString(callSuper = true)
 public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
     private final ServicesManager servicesManager;
-
     private final AuthenticationServiceSelectionStrategy selectionStrategy;
-
     private final CipherExecutor<String, String> credentialCipherExecutor;
-
     private final SecurityTokenServiceClientBuilder clientBuilder;
-
 
     private void invokeSecurityTokenServiceForToken(final AuthenticationTransaction transaction,
                                                     final AuthenticationBuilder builder, final WSFederationRegisteredService rp,
                                                     final SecurityTokenServiceClient sts) {
         final var up = transaction.getCredentials()
             .stream().filter(UsernamePasswordCredential.class::isInstance)
-            .map(UsernamePasswordCredential.class::cast).findFirst().orElse(null);
+            .map(UsernamePasswordCredential.class::cast)
+            .findFirst()
+            .orElse(null);
         if (up != null) {
             try {
-                sts.getProperties().put(SecurityConstants.USERNAME, up.getUsername());
-                final var uid = credentialCipherExecutor.encode(up.getUsername());
-                sts.getProperties().put(SecurityConstants.PASSWORD, uid);
+                final var properties = sts.getProperties();
+                properties.put(SecurityConstants.USERNAME, up.getUsername());
+                properties.put(SecurityConstants.PASSWORD, uid);
                 final var token = sts.requestSecurityToken(rp.getAppliesTo());
                 final var tokenStr = EncodingUtils.encodeBase64(SerializationUtils.serialize(token));
                 builder.addAttribute(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE, tokenStr);
             } catch (final Exception e) {
+                LOGGER.error(e.getMessage(), e);
                 throw new AuthenticationException(e.getMessage());
             }
         }

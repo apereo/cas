@@ -29,7 +29,7 @@ public class MultifactorAuthenticationTestUtils {
     }
 
     public static Principal getPrincipal(final String id, final Map<String, Object> attributes) {
-        final Principal principal = mock(Principal.class);
+        final var principal = mock(Principal.class);
         when(principal.getAttributes()).thenReturn(attributes);
         when(principal.getId()).thenReturn(id);
         return principal;
@@ -44,11 +44,11 @@ public class MultifactorAuthenticationTestUtils {
     }
 
     public static Authentication getAuthentication(final Principal principal, final Map<String, Object> attributes) {
-        final Authentication authentication = mock(Authentication.class);
+        final var authentication = mock(Authentication.class);
         when(authentication.getAttributes()).thenReturn(attributes);
         when(authentication.getPrincipal()).thenReturn(principal);
 
-        final CredentialMetaData cmd = mock(CredentialMetaData.class);
+        final var cmd = mock(CredentialMetaData.class);
         final Class clz = Credential.class;
         when(cmd.getCredentialClass()).thenReturn(clz);
         when(authentication.getCredentials()).thenReturn(CollectionUtils.wrapList(cmd));
@@ -60,12 +60,12 @@ public class MultifactorAuthenticationTestUtils {
     }
 
     public static RegisteredService getRegisteredService(final String url) {
-        final RegisteredService service = mock(RegisteredService.class);
+        final var service = mock(RegisteredService.class);
         when(service.getServiceId()).thenReturn(url);
         when(service.getName()).thenReturn("CAS");
         when(service.getId()).thenReturn(Long.MAX_VALUE);
         when(service.getDescription()).thenReturn("Apereo CAS");
-        final RegisteredServiceAccessStrategy access = mock(RegisteredServiceAccessStrategy.class);
+        final var access = mock(RegisteredServiceAccessStrategy.class);
         when(access.isServiceAccessAllowed()).thenReturn(true);
         when(service.getAccessStrategy()).thenReturn(access);
         return service;
