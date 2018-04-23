@@ -80,11 +80,17 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             configurePasswordResetFlow(flow, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD);
             configurePasswordResetFlow(flow, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
             configurePasswordMustChangeForAuthnWarnings(flow);
+            configurePasswordExpirationWarning(flow);
             createPasswordResetFlow();
         } else {
             createViewState(flow, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD, CasWebflowConstants.VIEW_ID_EXPIRED_PASSWORD);
             createViewState(flow, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD, CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
         }
+    }
+    
+    private void configurePasswordExpirationWarning(final Flow flow) {
+        final TransitionableState warningState = getTransitionableState(flow, CasWebflowConstants.VIEW_ID_SHOW_AUTHN_WARNING_MSGS);
+        warningState.getEntryActionList().add(createEvaluateAction("handlePasswordExpirationWarningMessagesAction"));
     }
 
     private void configurePasswordMustChangeForAuthnWarnings(final Flow flow) {

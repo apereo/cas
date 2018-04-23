@@ -27,7 +27,7 @@
                     </form>
                 </div>
                 <div class="col-sm-3" th:if="${passwordManagementEnabled}">
-                    <form method="post" id="changePasswordForm" class="fm-v clearfix" th:action="@{/login}">
+                    <form th:if="${passwordExpirationWarningFound}" method="post" id="changePasswordForm" class="fm-v clearfix" th:action="@{/login}">
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                         <input type="hidden" name="_eventId" value="changePassword"/>
                         <input class="btn btn-info" name="changePassword" accesskey="l"

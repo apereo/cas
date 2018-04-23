@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
+import org.apereo.cas.pm.web.flow.actions.HandlePasswordExpirationWarningMessagesAction;
 import org.apereo.cas.pm.web.flow.actions.InitPasswordChangeAction;
 import org.apereo.cas.pm.web.flow.actions.InitPasswordResetAction;
 import org.apereo.cas.pm.web.flow.actions.PasswordChangeAction;
@@ -121,6 +122,12 @@ public class PasswordManagementWebflowConfiguration implements CasWebflowExecuti
         return new VerifyPasswordResetRequestAction(casProperties, passwordManagementService);
     }
 
+    @ConditionalOnMissingBean(name = "handlePasswordExpirationWarningMessagesAction")
+    @Bean
+    @RefreshScope
+    public Action handlePasswordExpirationWarningMessagesAction() {
+        return new HandlePasswordExpirationWarningMessagesAction();
+    }
 
     @ConditionalOnMissingBean(name = "verifySecurityQuestionsAction")
     @Bean
