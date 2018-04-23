@@ -33,7 +33,7 @@ public interface ConsentEngine extends Serializable {
                                  Authentication authentication,
                                  long reminder,
                                  ChronoUnit reminderTimeUnit,
-                                 ConsentOptions options);
+                                 ConsentReminderOptions options);
 
     /**
      * Find consent decision consent decision.

@@ -38,7 +38,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
     public void verifyContextFailsValidationWithNoProviders() {
         final AuthenticationContextValidator v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "OPEN", "trusted_authn", applicationContext);
-        final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result = v.validate(
+        final var result = v.validate(
             MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
             "invalid-context", MultifactorAuthenticationTestUtils.getRegisteredService());
         assertFalse(result.getKey());
@@ -49,7 +49,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         final AuthenticationContextValidator v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "OPEN", "trusted_authn", applicationContext);
-        final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result = v.validate(
+        final var result = v.validate(
             MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
             "invalid-context",
             MultifactorAuthenticationTestUtils.getRegisteredService());
@@ -61,10 +61,10 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         final AuthenticationContextValidator v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "OPEN", "trusted_authn", applicationContext);
-        final Authentication authentication = MultifactorAuthenticationTestUtils.getAuthentication(
+        final var authentication = MultifactorAuthenticationTestUtils.getAuthentication(
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
             CollectionUtils.wrap("authn_method", "mfa-dummy"));
-        final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result = v.validate(authentication,
+        final var result = v.validate(authentication,
             "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
         assertTrue(result.getKey());
     }

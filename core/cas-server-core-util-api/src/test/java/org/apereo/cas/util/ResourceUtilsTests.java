@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import lombok.SneakyThrows;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.core.io.ClassPathResource;
@@ -20,7 +19,6 @@ import static org.junit.Assert.*;
 public class ResourceUtilsTests {
 
     @Test
-    @SneakyThrows
     public void verifyResourceExists() {
         assertFalse(ResourceUtils.doesResourceExist(new FileSystemResource("invalid.json")));
         assertFalse(ResourceUtils.doesResourceExist("invalid.json"));
@@ -28,9 +26,8 @@ public class ResourceUtilsTests {
     }
 
     @Test
-    @SneakyThrows
     public void verifyResourceOnClasspath() {
-        final ClassPathResource res = new ClassPathResource("valid.json");
+        final var res = new ClassPathResource("valid.json");
         assertNotNull(ResourceUtils.prepareClasspathResourceIfNeeded(res, false, "valid"));
         assertNull(ResourceUtils.prepareClasspathResourceIfNeeded(null, false, "valid"));
     }

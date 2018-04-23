@@ -42,7 +42,7 @@ import java.nio.charset.StandardCharsets;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class
 })
 @TestPropertySource(locations = "classpath:syncope.properties")
 @Slf4j
@@ -56,9 +56,9 @@ public class SyncopeAuthenticationHandlerTests {
     private MockWebServer webServer;
 
     @Test
-    public void testHandlerPasses() {
+    public void verifyHandlerPasses() {
         try {
-            final UserTO user = new UserTO();
+            final var user = new UserTO();
             user.setUsername("casuser");
             startMockSever(user);
             syncopeAuthenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
@@ -70,9 +70,9 @@ public class SyncopeAuthenticationHandlerTests {
     }
 
     @Test
-    public void testHandlerMustChangePassword() {
+    public void verifyHandlerMustChangePassword() {
         try {
-            final UserTO user = new UserTO();
+            final var user = new UserTO();
             user.setUsername("casuser");
             user.setMustChangePassword(true);
             startMockSever(user);
@@ -88,9 +88,9 @@ public class SyncopeAuthenticationHandlerTests {
     }
     
     @Test
-    public void testHandlerSuspended() {
+    public void verifyHandlerSuspended() {
         try {
-            final UserTO user = new UserTO();
+            final var user = new UserTO();
             user.setUsername("casuser");
             user.setSuspended(true);
             startMockSever(user);
@@ -106,7 +106,7 @@ public class SyncopeAuthenticationHandlerTests {
     }
 
     private void startMockSever(final UserTO user) throws JsonProcessingException {
-        final String data = MAPPER.writeValueAsString(user);
+        final var data = MAPPER.writeValueAsString(user);
         this.webServer = new MockWebServer(8095,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);

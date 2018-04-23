@@ -31,10 +31,10 @@ public class SamlMetadataUIInfoTests {
 
     @Test
     public void verifyInfoNotAvailable() {
-        final AbstractRegisteredService service = RegisteredServiceTestUtils.getRegisteredService();
+        final var service = RegisteredServiceTestUtils.getRegisteredService();
         service.setPrivacyUrl("http://cas.example.org");
         service.setInformationUrl("http://cas.example.org");
-        final SamlMetadataUIInfo info = new SamlMetadataUIInfo(service, "en");
+        final var info = new SamlMetadataUIInfo(service, "en");
         assertEquals(service.getName(), info.getDisplayName());
         assertEquals(service.getDescription(), info.getDescription());
         assertEquals(service.getInformationUrl(), info.getInformationURL());
@@ -44,20 +44,20 @@ public class SamlMetadataUIInfoTests {
 
     @Test
     public void verifyInfo() {
-        final UIInfo mdui = mock(UIInfo.class);
-        final Description description = mock(Description.class);
+        final var mdui = mock(UIInfo.class);
+        final var description = mock(Description.class);
         when(description.getValue()).thenReturn("Description");
         when(description.getXMLLang()).thenReturn("en");
 
-        final DisplayName names = mock(DisplayName.class);
+        final var names = mock(DisplayName.class);
         when(names.getValue()).thenReturn("Name");
         when(names.getXMLLang()).thenReturn("en");
 
         when(mdui.getDescriptions()).thenReturn(CollectionUtils.wrapList(description));
         when(mdui.getDisplayNames()).thenReturn(CollectionUtils.wrapList(names));
 
-        final AbstractRegisteredService service = RegisteredServiceTestUtils.getRegisteredService();
-        final SamlMetadataUIInfo info = new SamlMetadataUIInfo(mdui, service);
+        final var service = RegisteredServiceTestUtils.getRegisteredService();
+        final var info = new SamlMetadataUIInfo(mdui, service);
         assertEquals(names.getValue(), info.getDisplayName());
         assertEquals(description.getValue(), info.getDescription());
     }

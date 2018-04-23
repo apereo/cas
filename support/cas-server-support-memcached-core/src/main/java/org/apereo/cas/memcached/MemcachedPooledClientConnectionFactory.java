@@ -1,6 +1,6 @@
 package org.apereo.cas.memcached;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.ConnectionFactoryBuilder;
@@ -24,7 +24,7 @@ import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedPropert
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MemcachedPooledClientConnectionFactory extends BasePooledObjectFactory<MemcachedClientIF> {
 
     private final BaseMemcachedProperties memcachedProperties;

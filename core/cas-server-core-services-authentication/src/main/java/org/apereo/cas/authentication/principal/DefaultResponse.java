@@ -1,15 +1,16 @@
 package org.apereo.cas.authentication.principal;
 
 import com.google.common.base.Splitter;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.EncodingUtils;
+
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import lombok.Getter;
 
 /**
  * Encapsulates a Response to send back for a particular service.
@@ -20,7 +21,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultResponse implements Response {
 
     /**
@@ -39,7 +40,7 @@ public class DefaultResponse implements Response {
     private final String url;
 
     private final Map<String, String> attributes;
-    
+
     /**
      * Gets the post response.
      *

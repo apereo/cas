@@ -23,8 +23,8 @@ import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationP
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
@@ -267,7 +267,7 @@ public class X509AuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "x509PrincipalFactory")
     @Bean
     public PrincipalFactory x509PrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @Bean

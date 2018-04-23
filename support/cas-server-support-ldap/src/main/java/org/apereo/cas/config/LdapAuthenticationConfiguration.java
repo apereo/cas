@@ -7,8 +7,8 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.DefaultLdapLdapAccountStateHandler;
@@ -41,6 +41,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -77,7 +78,7 @@ public class LdapAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "ldapPrincipalFactory")
     @Bean
     public PrincipalFactory ldapPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @Bean
@@ -181,23 +182,22 @@ public class LdapAuthenticationConfiguration {
     private LdapPasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(final LdapAuthenticationProperties l,
                                                                                   final Authenticator authenticator,
                                                                                   final Multimap<String, Object> attributes) {
-        final var cfg =
-            new LdapPasswordPolicyConfiguration(l.getPasswordPolicy());
+        final var passwordPolicy = l.getPasswordPolicy();
+        final var cfg = new LdapPasswordPolicyConfiguration(passwordPolicy);
         final Set<AuthenticationResponseHandler> handlers = new HashSet<>();
 
-        final var customPolicyClass = l.getPasswordPolicy().getCustomPolicyClass();
+        final var customPolicyClass = passwordPolicy.getCustomPolicyClass();
         if (StringUtils.isNotBlank(customPolicyClass)) {
             try {
                 LOGGER.debug("Configuration indicates use of a custom password policy handler [{}]", customPolicyClass);
-                final var clazz = (Class<AuthenticationResponseHandler>)
-                    Class.forName(customPolicyClass);
+                final var clazz = (Class<AuthenticationResponseHandler>) Class.forName(customPolicyClass);
                 handlers.add(clazz.getDeclaredConstructor().newInstance());
             } catch (final Exception e) {
                 LOGGER.warn("Unable to construct an instance of the password policy handler", e);
             }
         }
-        LOGGER.debug("Password policy authentication response handler is set to accommodate directory type: [{}]", l.getPasswordPolicy().getType());
-        switch (l.getPasswordPolicy().getType()) {
+        LOGGER.debug("Password policy authentication response handler is set to accommodate directory type: [{}]", passwordPolicy.getType());
+        switch (passwordPolicy.getType()) {
             case AD:
                 handlers.add(new ActiveDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
                 Arrays.stream(ActiveDirectoryAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
@@ -229,20 +229,20 @@ public class LdapAuthenticationConfiguration {
 
         LOGGER.debug("LDAP authentication response handlers configured are: [{}]", handlers);
 
-        if (StringUtils.isNotBlank(l.getPasswordPolicy().getWarningAttributeName())
-            && StringUtils.isNotBlank(l.getPasswordPolicy().getWarningAttributeValue())) {
-
-            final var accountHandler = new OptionalWarningLdapLdapAccountStateHandler();
-            accountHandler.setDisplayWarningOnMatch(l.getPasswordPolicy().isDisplayWarningOnMatch());
-            accountHandler.setWarnAttributeName(l.getPasswordPolicy().getWarningAttributeName());
-            accountHandler.setWarningAttributeValue(l.getPasswordPolicy().getWarningAttributeValue());
-            accountHandler.setAttributesToErrorMap(l.getPasswordPolicy().getPolicyAttributes());
+        if (!passwordPolicy.isAccountStateHandlingEnabled()) {
+            cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));
+            LOGGER.debug("Handling LDAP account states is disabled via CAS configuration");
+        } else if (StringUtils.isNotBlank(passwordPolicy.getWarningAttributeName()) && StringUtils.isNotBlank(passwordPolicy.getWarningAttributeValue())) {
+            accountHandler.setDisplayWarningOnMatch(passwordPolicy.isDisplayWarningOnMatch());
+            accountHandler.setWarnAttributeName(passwordPolicy.getWarningAttributeName());
+            accountHandler.setWarningAttributeValue(passwordPolicy.getWarningAttributeValue());
+            accountHandler.setAttributesToErrorMap(passwordPolicy.getPolicyAttributes());
             cfg.setAccountStateHandler(accountHandler);
             LOGGER.debug("Configuring an warning account state handler for LDAP authentication for warning attribute [{}] and value [{}]",
-                l.getPasswordPolicy().getWarningAttributeName(), l.getPasswordPolicy().getWarningAttributeValue());
+                passwordPolicy.getWarningAttributeName(), passwordPolicy.getWarningAttributeValue());
         } else {
             final var accountHandler = new DefaultLdapLdapAccountStateHandler();
-            accountHandler.setAttributesToErrorMap(l.getPasswordPolicy().getPolicyAttributes());
+            accountHandler.setAttributesToErrorMap(passwordPolicy.getPolicyAttributes());
             cfg.setAccountStateHandler(accountHandler);
             LOGGER.debug("Configuring the default account state handler for LDAP authentication");
         }

@@ -5,13 +5,17 @@ title: CAS Common Properties Overview
 
 # CAS Common Properties
 
-This document describes a number of suggestions and configuration options that apply to and are common amongst a selection of CAS modules and features. To see the full list of CAS properties, please [review this guide](Configuration-Properties.html).
+This document describes a number of suggestions and configuration options that apply to and are common amongst a selection of CAS modules and features. 
+To see the full list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Naming Convention
 
-- Settings and properties that are controlled by the CAS platform directly always begin with the prefix `cas`. All other settings are controlled and provided to CAS via other underlying frameworks and may have their own schemas and syntax. **BE CAREFUL** with the distinction.
+- Settings and properties that are controlled by the CAS platform directly always begin with the prefix `cas`. All other settings are controlled 
+and provided to CAS via other underlying frameworks and may have their own schemas and syntax. **BE CAREFUL** with the distinction.
 
-- Unrecognized properties are generally ignored by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition or fail to adhere to the dot-notation syntax and such, your setting is entirely ignored by CAS and likely the feature it controls will never be activated in the way you intend.
+- Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. 
+This means if you somehow misspell a property definition or fail to adhere to the dot-notation syntax and such, your setting 
+is entirely refused by CAS and likely the feature it controls will never be activated in the way you intend.
 
 ## Indexed Settings
 
@@ -237,7 +241,6 @@ The following options related to JPA/JDBC support in CAS apply equally to a numb
 # ${configurationKey}.defaultCatalog=
 # ${configurationKey}.defaultSchema=
 # ${configurationKey}.ddlAuto=create-drop
-# ${configurationKey}.maxAgeDays=180
 
 # ${configurationKey}.autocommit=false
 # ${configurationKey}.idleTimeout=5000
@@ -580,18 +583,6 @@ The following options related to MongoDb support in CAS apply equally to a numbe
 The following options related to DynamoDb support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
 
 ```properties
-# Path to an external properties file that contains 'accessKey' and 'secretKey' fields.
-# ${configurationKey}.dynamoDb.credentialsPropertiesFile=file:/path/to/file.properties
-
-# Alternatively, you may directly provide credentials to CAS
-# ${configurationKey}.dynamoDb.credentialAccessKey=
-# ${configurationKey}.dynamoDb.credentialSecretKey=
-
-# ${configurationKey}.dynamoDb.endpoint=http://localhost:8000
-# ${configurationKey}.dynamoDb.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
-# ${configurationKey}.dynamoDb.regionOverride=
-# ${configurationKey}.dynamoDb.serviceNameIntern=
-
 # ${configurationKey}.dynamoDb.dropTablesOnStartup=false
 # ${configurationKey}.dynamoDb.preventTableCreationOnStartup=false
 # ${configurationKey}.dynamoDb.timeOffset=0
@@ -613,6 +604,8 @@ The following options related to DynamoDb support in CAS apply equally to a numb
 # ${configurationKey}.dynamoDb.localAddress=
 # ${configurationKey}.dynamoDb.maxConnections=10
 ```
+
+AWS settings for this feature are available [here](#amazon-integration-settings).
 
 ## RESTful Integrations
 
@@ -672,7 +665,7 @@ Note that the default value for Hibernate's DDL setting is `create-drop` which m
 | `update`             | Update the schema.
 | `create`             | Create the schema, destroying previous data.
 | `create-drop`        | Drop the schema at the end of the session.
-| `none`        | Do nothing.
+| `none`               | Do nothing.
 
 Note that during a version migration where any schema has changed `create-drop` will result
 in the loss of all data as soon as CAS is started. For transient data like tickets this is probably
@@ -685,7 +678,10 @@ please review [this guide](http://docs.spring.io/spring-framework/docs/current/j
 
 ## SAML2 Service Provider Integrations
 
-The settings defined for each service provider simply attempt to automate the creation of a [SAML service definition](Configuring-SAML2-Authentication.html#saml-services) and nothing more. If you find the applicable settings lack in certain areas, it is best to fall back onto the native configuration strategy for registering SAML service providers with CAS which would depend on your service registry of choice.
+The settings defined for each service provider simply attempt to automate the creation of 
+a [SAML service definition](Configuring-SAML2-Authentication.html#saml-services) and nothing more. If you find the 
+applicable settings lack in certain areas, it is best to fall back onto the native configuration strategy for registering 
+SAML service providers with CAS which would depend on your service registry of choice.
 
 Each SAML service provider supports the following settings:
 
@@ -701,7 +697,6 @@ Each SAML service provider supports the following settings:
 | `entityIds`           | List of entity ids allowed for this service provider.
 | `signResponses`       | Indicate whether responses should be signed. Default is `true`.
 | `signAssertions`      | Indicate whether assertions should be signed. Default is `false`.
-
 
 The only required setting that would activate the automatic configuration for a service provider is the presence and definition of metadata. All other settings are optional. 
 
@@ -746,7 +741,7 @@ In multifactor authentication bypass is determined via REST, RESTful settings ar
 
 ## Couchbase Integration Settings
 
-The following  options are shared and apply when CAS is configured to integrate with Couchbase (i.e ticket registry, etc), given the provider's *configuration key*:
+The following options are shared and apply when CAS is configured to integrate with Couchbase (i.e ticket registry, etc), given the provider's *configuration key*:
 
 ```properties
 # ${configurationKey}.nodeSet=localhost:8091
@@ -754,6 +749,24 @@ The following  options are shared and apply when CAS is configured to integrate 
 # ${configurationKey}.queryEnabled=true
 # ${configurationKey}.bucket=default
 # ${configurationKey}.timeout=PT30S
+```
+
+## Amazon Integration Settings
+
+The following options are shared and apply when CAS is configured to integrate with various Amazon Web Service features, given the provider's *configuration key*:
+
+```properties
+# Path to an external properties file that contains 'accessKey' and 'secretKey' fields.
+# ${configurationKey}.dynamoDb.credentialsPropertiesFile=file:/path/to/file.properties
+
+# Alternatively, you may directly provide credentials to CAS
+# ${configurationKey}.dynamoDb.credentialAccessKey=
+# ${configurationKey}.dynamoDb.credentialSecretKey=
+
+# ${configurationKey}.dynamoDb.endpoint=http://localhost:8000
+# ${configurationKey}.dynamoDb.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
+# ${configurationKey}.dynamoDb.regionOverride=
+# ${configurationKey}.dynamoDb.serviceNameIntern=
 ```
 
 ## Memcached Integration Settings
@@ -798,6 +811,7 @@ The following  options are shared and apply when CAS is configured to integrate 
 # ${configurationKey}.displayWarningOnMatch=true
 # ${configurationKey}.warnAll=true
 # ${configurationKey}.warningDays=30
+# ${configurationKey}.accountStateHandlingEnabled=true
 
 # An implementation of `org.ldaptive.auth.AuthenticationResponseHandler`
 # ${configurationKey}.customPolicyClass=com.example.MyAuthenticationResponseHandler

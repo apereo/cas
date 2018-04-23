@@ -1,5 +1,0 @@
-description = "Apereo CAS Core Configuration - HashiCorp Vault"
-dependencies {
-    implementation libraries.springcloudvault
-    compileOnly project(":core:cas-server-core-configuration")
-}

@@ -236,6 +236,11 @@ public interface CasWebflowConstants {
     String STATE_ID_REDIR_VIEW = "redirectView";
 
     /**
+     * The state id 'endWebflowExecution'.
+     */
+    String STATE_ID_END_WEBFLOW = "endWebflowExecution";
+
+    /**
      * The state 'viewRedirectToUnauthorizedUrlView'.
      */
     String STATE_ID_VIEW_REDIR_UNAUTHZ_URL = "viewRedirectToUnauthorizedUrlView";
@@ -306,6 +311,11 @@ public interface CasWebflowConstants {
      */
     String VAR_ID_CREDENTIAL = "credential";
 
+    /**
+     * Event attribute id 'authenticationWarnings'.
+     */
+    String ATTRIBUTE_ID_AUTHENTICATION_WARNINGS = "authenticationWarnings";
+    
     /**
      * View id 'casResetPasswordSendInstructions'.
      */

@@ -13,8 +13,8 @@ import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestUserPrincipa
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
@@ -91,7 +91,7 @@ public class TrustedAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "trustedPrincipalFactory")
     @Bean
     public PrincipalFactory trustedPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "remoteRequestPrincipalAttributesExtractor")
