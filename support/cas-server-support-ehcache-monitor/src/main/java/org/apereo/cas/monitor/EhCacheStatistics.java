@@ -108,7 +108,7 @@ public class EhCacheStatistics implements CacheStatistics {
                 builder.append(this.diskSize).append(" items on disk, ");
             }
             formatter.format("%.2f MB off-heap, ", this.offHeapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
-            builder.append(getPercentFree()).append("% free, ");
+            builder.append(getPercentFree()).append(" perfect free, ");
             builder.append(getEvictions()).append(" evictions");
         }
     }

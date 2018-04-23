@@ -31,7 +31,7 @@ public class SimpleCacheStatistics implements CacheStatistics {
     public SimpleCacheStatistics(final long size, final long capacity, final long evictions) {
         this(size, capacity, evictions, "N/A");
     }
-    
+
 
     @Override
     public int getPercentFree() {
@@ -48,9 +48,9 @@ public class SimpleCacheStatistics implements CacheStatistics {
         }
         try (Formatter formatter = new Formatter(builder)) {
             formatter.format("%.2f", this.size / BYTES_PER_MB);
-            builder.append("MB used, ");
-            builder.append(getPercentFree()).append("% free, ");
-            builder.append(this.evictions).append(" evictions");
         }
+        builder.append("MB used, ");
+        builder.append(getPercentFree()).append(" percent free, ");
+        builder.append(this.evictions).append(" evictions");
     }
 }
