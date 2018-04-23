@@ -121,6 +121,7 @@ public class PasswordManagementWebflowConfiguration implements CasWebflowExecuti
         return new VerifyPasswordResetRequestAction(casProperties, passwordManagementService);
     }
 
+
     @ConditionalOnMissingBean(name = "verifySecurityQuestionsAction")
     @Bean
     @RefreshScope
