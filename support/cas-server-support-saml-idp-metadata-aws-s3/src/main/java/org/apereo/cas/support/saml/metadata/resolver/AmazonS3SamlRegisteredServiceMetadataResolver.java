@@ -9,6 +9,7 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.util.IOUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -50,7 +51,7 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
             final List<S3ObjectSummary> objects = result.getObjectSummaries();
             LOGGER.debug("Located [{}] S3 object(s) from bucket [{}]", objects.size(), bucketName);
 
-            objects.stream()
+            return objects.stream()
                 .map(obj -> {
                     final String objectKey = obj.getKey();
                     LOGGER.debug("Fetching object [{}] from bucket [{}]", objectKey, bucketName);
@@ -62,6 +63,9 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
                         final ObjectMetadata objectMetadata = object.getObjectMetadata();
                         if (objectMetadata != null) {
                             document.setSignature(objectMetadata.getUserMetaDataOf("signature"));
+                            if (StringUtils.isNotBlank(document.getSignature())) {
+                                LOGGER.debug("Found metadata signature as part of object metadata for [{}] from bucket [{}]", objectKey, bucketName);
+                            }
                         }
                         document.setValue(IOUtils.toString(is));
                         return buildMetadataResolverFrom(service, document);
