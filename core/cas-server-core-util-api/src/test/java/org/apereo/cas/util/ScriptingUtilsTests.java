@@ -8,6 +8,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.*;
 
@@ -40,7 +41,7 @@ public class ScriptingUtilsTests {
     public void verifyGroovyResourceExecution() {
         try {
             final File file = File.createTempFile("test", ".groovy");
-            FileUtils.write(file, "def process(String name) { return name }");
+            FileUtils.write(file, "def process(String name) { return name }", StandardCharsets.UTF_8);
             final Resource resource = new FileSystemResource(file);
 
             final Object result = ScriptingUtils.executeGroovyScript(resource, "process", String.class, "casuser");
@@ -60,7 +61,7 @@ public class ScriptingUtilsTests {
     public void verifyResourceScriptEngineExecution() {
         try {
             final File file = File.createTempFile("test", ".groovy");
-            FileUtils.write(file, "def run(String name) { return name }");
+            FileUtils.write(file, "def run(String name) { return name }", StandardCharsets.UTF_8);
 
             final Object result = ScriptingUtils.executeScriptEngine(file.getCanonicalPath(), new Object[]{"casuser"}, String.class);
             assertEquals("casuser", result.toString());

@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
-
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
@@ -52,8 +51,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
             final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSurrogateSearchFilter(), CollectionUtils.wrap(surrogate));
             LOGGER.debug("Using search filter: [{}]", filter);
 
-            final Response<SearchResult> response = LdapUtils.executeSearchOperation(this.connectionFactory,
-                    ldapProperties.getBaseDn(), filter);
+            final Response<SearchResult> response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter);
             LOGGER.debug("LDAP response: [{}]", response);
             return LdapUtils.containsResultEntry(response);
         } catch (final Exception e) {
@@ -70,7 +68,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
             LOGGER.debug("Using search filter: [{}]", filter);
 
             final Response<SearchResult> response = LdapUtils.executeSearchOperation(this.connectionFactory,
-                    ldapProperties.getBaseDn(), filter);
+                ldapProperties.getBaseDn(), filter);
             LOGGER.debug("LDAP response: [{}]", response);
 
             if (!LdapUtils.containsResultEntry(response)) {
@@ -85,12 +83,17 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
 
             final Pattern pattern = RegexUtils.createPattern(ldapProperties.getMemberAttributeValueRegex());
             eligible.addAll(
-                    attribute.getStringValues()
-                            .stream()
-                            .map(pattern::matcher)
-                            .filter(Matcher::matches)
-                            .map(p -> p.group(1))
-                            .collect(Collectors.toList()));
+                attribute.getStringValues()
+                    .stream()
+                    .map(pattern::matcher)
+                    .filter(Matcher::matches)
+                    .map(p -> {
+                        if (p.groupCount() > 0) {
+                            return p.group(1);
+                        }
+                        return p.group();
+                    })
+                    .collect(Collectors.toList()));
 
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
