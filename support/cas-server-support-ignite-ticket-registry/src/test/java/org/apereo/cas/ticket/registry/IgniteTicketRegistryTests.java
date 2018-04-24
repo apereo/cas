@@ -21,7 +21,9 @@ import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
 import org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalParameterizedRunner;
+import org.apereo.cas.util.junit.RunningStandaloneCondition;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +67,7 @@ import java.util.Collection;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
 })
+@ConditionalIgnore(condition = RunningStandaloneCondition.class)
 @TestPropertySource(locations = {"classpath:/igniteregistry.properties"})
 @Slf4j
 public class IgniteTicketRegistryTests extends AbstractTicketRegistryTests {
