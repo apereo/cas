@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 public class BasicCredentialMetaDataTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "basicCredentialMetaData.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Test
     public void verifySerializeABasicCredentialMetaDataToJson() throws IOException {
