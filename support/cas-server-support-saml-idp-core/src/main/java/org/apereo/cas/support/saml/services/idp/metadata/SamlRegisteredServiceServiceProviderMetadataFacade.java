@@ -98,7 +98,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
 
             final EntityDescriptor entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
             if (entityDescriptor == null) {
-                LOGGER.warn("Cannot find entity [{}] in metadata provider Ensure the metadata is valid and has not expired.", entityID);
+                LOGGER.warn("Cannot find entity [{}] in metadata provider. Ensure the metadata is valid and has not expired.", entityID);
                 return Optional.empty();
             }
             LOGGER.debug("Located entity descriptor in metadata for [{}]", entityID);
