@@ -73,6 +73,7 @@
                         <argument>-Rf</argument>
                         <argument>./target/war</argument>
                         <argument>./target/cas</argument>
+                        <argument>./target/cas.war.original</argument>    
                     </arguments>
                 </configuration>
             </plugin>
