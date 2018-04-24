@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.token;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -88,15 +89,38 @@ public class RestfulPasswordlessTokenRepositoryTests {
 
     @Test
     public void verifyFindToken() {
-        final String data = passwordlessCipherExecutor.encode("THE_TOKEN").toString();
+        final String token = passwordlessTokenRepository.createToken("casuser");
+        final String data = passwordlessCipherExecutor.encode(token).toString();
         try (MockWebServer webServer = new MockWebServer(9293,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            final Optional<String> token = passwordlessTokenRepository.findToken("casuser");
-            assertNotNull(token);
-            assertTrue(token.isPresent());
-            assertEquals("THE_TOKEN", token.get());
+            final Optional<String> foundToken = passwordlessTokenRepository.findToken("casuser");
+            assertNotNull(foundToken);
+            assertTrue(foundToken.isPresent());
+        } catch (final Exception e) {
+            throw new AssertionError(e.getMessage(), e);
+        }
+    }
 
+    @Test
+    public void verifySaveToken() {
+        final String data = "THE_TOKEN";
+        try (MockWebServer webServer = new MockWebServer(9293,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+            passwordlessTokenRepository.saveToken("casuser", data);
+        } catch (final Exception e) {
+            throw new AssertionError(e.getMessage(), e);
+        }
+    }
+
+    @Test
+    public void verifyDeleteToken() {
+        try (MockWebServer webServer = new MockWebServer(9293,
+            new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+            passwordlessTokenRepository.deleteToken("casuser", "123456");
+            passwordlessTokenRepository.deleteTokens("casuser");
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
         }
