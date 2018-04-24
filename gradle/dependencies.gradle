@@ -1,12 +1,4 @@
 ext.libraries = [
-        kotlin                  : [
-                dependencies.create("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion") {
-                    force = true
-                },
-                dependencies.create("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion") {
-                    force = true
-                }
-        ],
         aspectj                 : [
                 dependencies.create("org.aspectj:aspectjrt:$aspectjVersion") {
                     force = true
@@ -39,6 +31,7 @@ ext.libraries = [
         oshi                    : [
                 dependencies.create("com.github.oshi:oshi-core:$oshiVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "net.java.dev.jna", module: "jna-platform")
                     force = true
                 }
         ],
@@ -1183,13 +1176,6 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     force = true
                 },
-                dependencies.create("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonDatabindVersion") {
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "org.jetbrains.kotlin", module: "kotlin-reflect")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    force = true
-                },
                 dependencies.create("com.fasterxml.jackson.core:jackson-annotations:$jacksonDatabindVersion") {
                     force = true
                 },
@@ -1263,12 +1249,6 @@ ext.libraries = [
                 }
         ],
         tests                   : [
-                dependencies.create("org.jetbrains.kotlin:kotlin-test:$kotlinVersion") {
-                    force = true
-                },
-                dependencies.create("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion") {
-                    force = true
-                },
                 dependencies.create("com.github.kstyrc:embedded-redis:$embeddedRedisVersion") {
                     exclude(module: "commons-io")
                     force = true
@@ -1878,6 +1858,7 @@ ext.libraries = [
                 },
                 dependencies.create("org.springframework.boot:spring-boot-configuration-metadata:$springBootVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
+                    exclude(group: "com.vaadin.external.google", module: "android-json")
                     force = true
                 },
                 dependencies.create("com.github.javaparser:javaparser-core:$javaParserVersion") {
