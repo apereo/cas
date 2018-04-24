@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
  * @since 3.4.6
  */
 @Slf4j
-public class MockWebServer {
+public class MockWebServer implements AutoCloseable {
     /**
      * Request handler.
      */
@@ -68,6 +68,11 @@ public class MockWebServer {
         } catch (final InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public void close() throws Exception {
+        stop();
     }
 
     /**
