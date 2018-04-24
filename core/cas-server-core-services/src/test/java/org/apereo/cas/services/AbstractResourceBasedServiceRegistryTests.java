@@ -41,8 +41,6 @@ import static org.junit.Assert.*;
  */
 @Slf4j
 public abstract class AbstractResourceBasedServiceRegistryTests {
-
-
     public static final ClassPathResource RESOURCE = new ClassPathResource("services");
     private static final String SERVICE_ID = "testId";
     private static final String THEME = "theme";
@@ -79,6 +77,23 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
         final RegisteredService r3 = this.dao.findServiceById(r2.getId());
         assertEquals(r, r2);
         assertEquals(r2, r3);
+    }
+
+    @Test
+    public void verifySizeAndSearch() throws Exception {
+        prepTests();
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setName("checkSize");
+        r.setServiceId(SERVICE_ID);
+        r.setTheme(THEME);
+        r.setDescription(DESCRIPTION);
+
+        final RegisteredService r2 = this.dao.save(r);
+        assertTrue(dao.size() > 0);
+        assertEquals(r2, this.dao.findServiceById(SERVICE_ID));
+        r2.setEvaluationOrder(2000);
+        this.dao.save(r2);
+        assertEquals(r2, this.dao.findServiceById(SERVICE_ID));
     }
 
     @Test
