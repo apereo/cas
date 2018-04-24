@@ -101,6 +101,7 @@ public final class OAuth20Utils {
         return new ModelAndView(view);
     }
 
+
     /**
      * Locate the requested instance of {@link OAuthRegisteredService} by the given clientId.
      *
@@ -111,11 +112,28 @@ public final class OAuth20Utils {
     public static OAuthRegisteredService getRegisteredOAuthService(final ServicesManager servicesManager, final String clientId) {
         final Collection<RegisteredService> services = servicesManager.getAllServices();
         return services.stream()
-                .filter(OAuthRegisteredService.class::isInstance)
-                .map(OAuthRegisteredService.class::cast)
-                .filter(s -> s.getClientId().equals(clientId))
-                .findFirst()
-                .orElse(null);
+            .filter(OAuthRegisteredService.class::isInstance)
+            .map(OAuthRegisteredService.class::cast)
+            .filter(s -> s.getClientId().equals(clientId))
+            .findFirst()
+            .orElse(null);
+    }
+
+    /**
+     * Gets registered o auth service by redirect uri.
+     *
+     * @param servicesManager the services manager
+     * @param redirectUri     the redirect uri
+     * @return the registered o auth service by redirect uri
+     */
+    public static OAuthRegisteredService getRegisteredOAuthServiceByRedirectUri(final ServicesManager servicesManager, final String redirectUri) {
+        final Collection<RegisteredService> services = servicesManager.getAllServices();
+        return services.stream()
+            .filter(OAuthRegisteredService.class::isInstance)
+            .map(OAuthRegisteredService.class::cast)
+            .filter(s -> s.matches(redirectUri))
+            .findFirst()
+            .orElse(null);
     }
 
     /**
@@ -127,16 +145,16 @@ public final class OAuth20Utils {
      */
     public static Map<String, Object> getRequestParameters(final Collection<String> attributes, final HttpServletRequest context) {
         return attributes.stream()
-                .filter(a -> StringUtils.isNotBlank(context.getParameter(a)))
-                .map(m -> {
-                    final String[] values = context.getParameterValues(m);
-                    final Collection<String> valuesSet = new LinkedHashSet<>();
-                    if (values != null && values.length > 0) {
-                        Arrays.stream(values).forEach(v -> valuesSet.addAll(Arrays.stream(v.split(" ")).collect(Collectors.toSet())));
-                    }
-                    return Pair.of(m, valuesSet);
-                })
-                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+            .filter(a -> StringUtils.isNotBlank(context.getParameter(a)))
+            .map(m -> {
+                final String[] values = context.getParameterValues(m);
+                final Collection<String> valuesSet = new LinkedHashSet<>();
+                if (values != null && values.length > 0) {
+                    Arrays.stream(values).forEach(v -> valuesSet.addAll(Arrays.stream(v.split(" ")).collect(Collectors.toSet())));
+                }
+                return Pair.of(m, valuesSet);
+            })
+            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     /**
@@ -217,9 +235,9 @@ public final class OAuth20Utils {
     public static OAuth20ResponseTypes getResponseType(final J2EContext context) {
         final String responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
         final OAuth20ResponseTypes type = Arrays.stream(OAuth20ResponseTypes.values())
-                .filter(t -> t.getType().equalsIgnoreCase(responseType))
-                .findFirst()
-                .orElse(OAuth20ResponseTypes.CODE);
+            .filter(t -> t.getType().equalsIgnoreCase(responseType))
+            .findFirst()
+            .orElse(OAuth20ResponseTypes.CODE);
         LOGGER.debug("OAuth response type is [{}]", type);
         return type;
     }
@@ -262,8 +280,8 @@ public final class OAuth20Utils {
         }
 
         LOGGER.warn("Registered service [{}] does not define any authorized/supported response types. "
-                + "It is STRONGLY recommended that you authorize and assign response types to the service definition. "
-                + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
+            + "It is STRONGLY recommended that you authorize and assign response types to the service definition. "
+            + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
         return true;
     }
 
@@ -282,8 +300,8 @@ public final class OAuth20Utils {
         }
 
         LOGGER.warn("Registered service [{}] does not define any authorized/supported grant types. "
-                + "It is STRONGLY recommended that you authorize and assign grant types to the service definition. "
-                + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
+            + "It is STRONGLY recommended that you authorize and assign grant types to the service definition. "
+            + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
         return true;
     }
 

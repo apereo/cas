@@ -13,15 +13,11 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.Pac4jUtils;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -46,12 +42,10 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
         LOGGER.debug("OAuth grant type is [{}]", grantType);
 
-        final ProfileManager manager = Pac4jUtils.getPac4jProfileManager(request, response);
-        final Optional<UserProfile> profile = manager.get(true);
-        final String clientId = profile.get().getId();
-        final OAuthRegisteredService clientRegisteredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
+        final String redirectUri = getRegisteredServiceIdentifierFromRequest(request);
+        final OAuthRegisteredService clientRegisteredService = getOAuthRegisteredService(request);
         if (clientRegisteredService == null) {
-            throw new UnauthorizedServiceException("Unable to locate OAuth service in registry for client " + clientId);
+            throw new UnauthorizedServiceException("Unable to locate service in registry for redirect URI " + redirectUri);
         }
         LOGGER.debug("Located OAuth client registered service [{}]", clientRegisteredService);
 
@@ -59,13 +53,45 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         if (token == null) {
             throw new InvalidTicketException(getOAuthParameter(request));
         }
-        final Service codeService = token.getService();
-        final RegisteredService codeRegisteredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, codeService.getId());
+        final RegisteredService codeRegisteredService = getOAuthRegisteredServiceForToken(token);
         LOGGER.debug("Located OAuth code registered service [{}]", codeRegisteredService);
         if (!clientRegisteredService.equals(codeRegisteredService)) {
             throw new UnauthorizedServiceException("Code and client registered services do not match");
         }
         return new AccessTokenRequestDataHolder(token, clientRegisteredService, getGrantType(), isAllowedToGenerateRefreshToken(), scopes);
+    }
+
+    /**
+     * Gets o auth registered service for token.
+     *
+     * @param token the token
+     * @return the o auth registered service for token
+     */
+    protected RegisteredService getOAuthRegisteredServiceForToken(final OAuthToken token) {
+        final Service codeService = token.getService();
+        return OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, codeService.getId());
+    }
+
+    /**
+     * Gets registered service identifier from request.
+     *
+     * @param request the request
+     * @return the registered service identifier from request
+     */
+    protected String getRegisteredServiceIdentifierFromRequest(final HttpServletRequest request) {
+        return request.getParameter(OAuth20Constants.REDIRECT_URI);
+    }
+
+
+    /**
+     * Gets oauth registered service.
+     *
+     * @param request the request
+     * @return the o auth registered service
+     */
+    protected OAuthRegisteredService getOAuthRegisteredService(final HttpServletRequest request) {
+        final String redirectUri = getRegisteredServiceIdentifierFromRequest(request);
+        return OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, redirectUri);
     }
 
     /**

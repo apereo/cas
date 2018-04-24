@@ -327,15 +327,15 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         String response = mockResponse.getContentAsString();
 
         final String refreshToken = Arrays.stream(response.split("&"))
-                .filter(f -> f.startsWith(OAuth20Constants.REFRESH_TOKEN))
-                .map(f -> StringUtils.remove(f, OAuth20Constants.REFRESH_TOKEN + "="))
-                .findFirst()
-                .get();
+            .filter(f -> f.startsWith(OAuth20Constants.REFRESH_TOKEN))
+            .map(f -> StringUtils.remove(f, OAuth20Constants.REFRESH_TOKEN + "="))
+            .findFirst()
+            .get();
         final String accessToken = Arrays.stream(response.split("&"))
-                .filter(f -> f.startsWith(OAuth20Constants.ACCESS_TOKEN))
-                .map(f -> StringUtils.remove(f, OAuth20Constants.ACCESS_TOKEN + "="))
-                .findFirst()
-                .get();
+            .filter(f -> f.startsWith(OAuth20Constants.ACCESS_TOKEN))
+            .map(f -> StringUtils.remove(f, OAuth20Constants.ACCESS_TOKEN + "="))
+            .findFirst()
+            .get();
 
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
         mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);

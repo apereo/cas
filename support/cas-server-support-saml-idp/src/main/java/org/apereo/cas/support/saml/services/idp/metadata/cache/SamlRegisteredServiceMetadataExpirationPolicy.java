@@ -24,19 +24,17 @@ import java.util.concurrent.TimeUnit;
  */
 public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<SamlRegisteredService, MetadataResolver> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlRegisteredServiceMetadataExpirationPolicy.class);
-    
+
     private final long defaultExpiration;
-    
+
     public SamlRegisteredServiceMetadataExpirationPolicy(final long metadataCacheExpirationMinutes) {
         this.defaultExpiration = TimeUnit.MINUTES.toNanos(metadataCacheExpirationMinutes);
     }
 
     @Override
-    public long expireAfterCreate(@Nonnull final SamlRegisteredService service, 
-                                  @Nonnull final MetadataResolver chainingMetadataResolver, 
+    public long expireAfterCreate(@Nonnull final SamlRegisteredService service,
+                                  @Nonnull final MetadataResolver chainingMetadataResolver,
                                   final long currentTime) {
-        
-        
         final long duration = getCacheDurationForServiceProvider(service, chainingMetadataResolver);
         if (duration >= 0) {
             return duration;
@@ -60,7 +58,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
                 LOGGER.debug("Located cache duration [{}] specified in SP metadata for [{}]", entitySp.getCacheDuration(), entitySp.getEntityID());
                 return TimeUnit.MILLISECONDS.toNanos(entitySp.getCacheDuration());
             }
-            
+
             set.clear();
             set.add(new EntityIdCriterion(service.getServiceId()));
             final EntityDescriptor entity = chainingMetadataResolver.resolveSingle(set);
@@ -68,7 +66,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
                 LOGGER.debug("Located cache duration [{}] specified in entity metadata for [{}]", entity.getCacheDuration(), entity.getEntityID());
                 return TimeUnit.MILLISECONDS.toNanos(entity.getCacheDuration());
             }
-        } catch(final Exception e) {
+        } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
         }
         return -1;
@@ -82,8 +80,8 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
     }
 
     @Override
-    public long expireAfterRead(@Nonnull final SamlRegisteredService service, 
-                                @Nonnull final MetadataResolver chainingMetadataResolver, 
+    public long expireAfterRead(@Nonnull final SamlRegisteredService service,
+                                @Nonnull final MetadataResolver chainingMetadataResolver,
                                 final long currentTime, final long currentDuration) {
         return currentDuration;
     }
