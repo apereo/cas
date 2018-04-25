@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.core.web.view;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -18,7 +17,7 @@ import java.util.List;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-web", automated = true)
-@Slf4j
+
 @Getter
 @Setter
 public class ViewProperties implements Serializable {
