@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {
     DefaultCasEventListenerTests.TestEventConfiguration.class,
     CasCoreEventsConfiguration.class,
-    RefreshAutoConfiguration.class,
+    RefreshAutoConfiguration.class
 })
 public class DefaultCasEventListenerTests {
 
