@@ -1,7 +1,7 @@
 package org.apereo.cas.support.events.listener;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
@@ -30,7 +30,7 @@ import org.springframework.context.event.EventListener;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 public class DefaultCasEventListener {
 
