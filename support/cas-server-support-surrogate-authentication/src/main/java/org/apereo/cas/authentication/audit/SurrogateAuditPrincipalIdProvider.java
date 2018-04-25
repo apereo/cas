@@ -6,6 +6,8 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 
+import java.util.Map;
+
 /**
  * This is {@link SurrogateAuditPrincipalIdProvider}.
  *
@@ -26,10 +28,9 @@ public class SurrogateAuditPrincipalIdProvider extends DefaultAuditPrincipalIdPr
             return Credential.UNKNOWN_ID;
         }
         if (supports(authentication, returnValue, exception)) {
-            final String surrogateUser = authentication.getAttributes()
-                .get(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER).toString();
-            final String principalId = authentication.getAttributes()
-                .get(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL).toString();
+            final Map<String, Object> attributes = authentication.getAttributes();
+            final String surrogateUser = attributes.get(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER).toString();
+            final String principalId = attributes.get(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL).toString();
             return String.format("(Primary User: [%s], Surrogate User: [%s])", principalId, surrogateUser);
         }
         return super.getPrincipalIdFrom(authentication, returnValue, exception);
