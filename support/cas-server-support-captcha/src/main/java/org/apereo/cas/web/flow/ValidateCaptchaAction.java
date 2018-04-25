@@ -37,9 +37,12 @@ public class ValidateCaptchaAction extends AbstractAction {
      * Recaptcha response as a request parameter.
      */
     public static final String REQUEST_PARAM_RECAPTCHA_RESPONSE = "g-recaptcha-response";
-
+    /**
+     * Captcha error event.
+     */
+    public static final String EVENT_ID_ERROR = "captchaError";
+    
     private static final ObjectReader READER = new ObjectMapper().findAndRegisterModules().reader();
-    private static final String CODE = "captchaError";
 
     private final GoogleRecaptchaProperties recaptchaProperties;
 
@@ -89,7 +92,7 @@ public class ValidateCaptchaAction extends AbstractAction {
 
     private Event getError(final RequestContext requestContext) {
         final MessageContext messageContext = requestContext.getMessageContext();
-        messageContext.addMessage(new MessageBuilder().error().code(CODE).build());
-        return getEventFactorySupport().event(this, CODE);
+        messageContext.addMessage(new MessageBuilder().error().code(EVENT_ID_ERROR).defaultText(EVENT_ID_ERROR).build());
+        return getEventFactorySupport().event(this, EVENT_ID_ERROR);
     }
 }

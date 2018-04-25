@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -102,6 +103,23 @@ public class ValidateCaptchaActionTests {
             webServer.start();
             final Event result = validateCaptchaAction.execute(context);
             assertNull(result);
+        } catch (final Exception e) {
+            throw new AssertionError(e.getMessage(), e);
+        }
+    }
+
+    @Test
+    public void verifyCaptchaFails() {
+        final MockRequestContext context = new MockRequestContext();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+
+        try (MockWebServer webServer = new MockWebServer(9294,
+            new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+            final Event result = validateCaptchaAction.execute(context);
+            assertNotNull(result);
+            assertEquals(ValidateCaptchaAction.EVENT_ID_ERROR, result.getId());
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
         }
