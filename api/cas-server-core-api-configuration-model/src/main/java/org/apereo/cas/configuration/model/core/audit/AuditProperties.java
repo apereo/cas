@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.core.audit;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serializable;
 
@@ -12,7 +11,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
+
 @Getter
 @Setter
 public class AuditProperties implements Serializable {
