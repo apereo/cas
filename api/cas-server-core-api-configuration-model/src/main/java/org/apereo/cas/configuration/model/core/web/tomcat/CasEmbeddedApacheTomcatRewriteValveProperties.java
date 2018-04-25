@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -15,7 +14,7 @@ import lombok.Setter;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-webapp-tomcat")
-@Slf4j
+
 @Getter
 @Setter
 public class CasEmbeddedApacheTomcatRewriteValveProperties implements Serializable {

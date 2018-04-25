@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.generic;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -19,7 +18,7 @@ import lombok.NoArgsConstructor;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-shiro")
-@Slf4j
+
 @Getter
 @Setter
 @NoArgsConstructor
