@@ -63,7 +63,7 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
                 tempCommonName = token;
             }
         }
-        return tempCommonName;
+        return StringUtils.remove(tempCommonName, COMMON_NAME_VAR + "=");
     }
 
     private String retrieveTheEDIPI(final String commonName) {
