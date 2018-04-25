@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.services.persondir.support.QueryType;
@@ -19,7 +18,7 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-person-directory", automated = true)
-@Slf4j
+
 @Getter
 @Setter
 public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {

@@ -80,7 +80,6 @@ import java.util.stream.StreamSupport;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-
 @Slf4j
 public class ConfigurationMetadataGenerator {
 

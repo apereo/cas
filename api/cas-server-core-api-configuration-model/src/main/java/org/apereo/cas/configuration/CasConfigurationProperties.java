@@ -2,7 +2,6 @@ package org.apereo.cas.configuration;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.CasJavaClientProperties;
 import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.apereo.cas.configuration.model.core.HostProperties;
@@ -58,7 +57,6 @@ import java.io.Serializable;
  */
 @ConditionalOnMissingBean
 @ConfigurationProperties(value = "cas", ignoreUnknownFields = false)
-@Slf4j
 @Getter
 @Setter
 public class CasConfigurationProperties implements Serializable {

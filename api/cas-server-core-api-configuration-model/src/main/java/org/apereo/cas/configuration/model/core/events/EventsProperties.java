@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.events;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.influxdb.InfluxDbProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
@@ -16,7 +15,7 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-events", automated = true)
-@Slf4j
+
 @Getter
 @Setter
 public class EventsProperties implements Serializable {

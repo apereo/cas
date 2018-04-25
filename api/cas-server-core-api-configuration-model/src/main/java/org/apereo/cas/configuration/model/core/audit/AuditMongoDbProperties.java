@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.core.audit;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -13,7 +12,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-audit-mongo")
-@Slf4j
+
 @Getter
 @Setter
 public class AuditMongoDbProperties extends SingleCollectionMongoDbProperties {

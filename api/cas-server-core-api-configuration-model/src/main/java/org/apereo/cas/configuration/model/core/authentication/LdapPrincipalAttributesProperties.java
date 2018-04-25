@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import java.util.HashMap;
@@ -15,7 +14,7 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-person-directory", automated = true)
-@Slf4j
+
 @Getter
 @Setter
 public class LdapPrincipalAttributesProperties extends AbstractLdapSearchProperties {
