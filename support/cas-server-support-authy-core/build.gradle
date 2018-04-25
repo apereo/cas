@@ -5,4 +5,9 @@ dependencies {
     implementation libraries.authyjava
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-mfa")
+
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }
