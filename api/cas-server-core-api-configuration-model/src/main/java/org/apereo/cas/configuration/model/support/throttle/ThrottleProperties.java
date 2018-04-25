@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.throttle;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -16,7 +15,7 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-throttle", automated = true)
-@Slf4j
+
 @Getter
 @Setter
 public class ThrottleProperties implements Serializable {

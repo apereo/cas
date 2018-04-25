@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.mfa;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
@@ -21,7 +20,7 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-gauth")
-@Slf4j
+
 @Getter
 @Setter
 public class GAuthMultifactorProperties extends BaseMultifactorProviderProperties {
