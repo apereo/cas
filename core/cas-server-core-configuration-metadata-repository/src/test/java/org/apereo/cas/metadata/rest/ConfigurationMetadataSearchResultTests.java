@@ -20,17 +20,17 @@ public class ConfigurationMetadataSearchResultTests {
     public void verifyAction() {
         final CasConfigurationMetadataRepository repository = new CasConfigurationMetadataRepository();
         final Map<String, ConfigurationMetadataProperty> properties = repository.getRepository().getAllProperties();
-        if (properties.containsKey("cas.tgc.secure")) {
-            final ConfigurationMetadataProperty prop = properties.get("cas.tgc.secure");
-            final ConfigurationMetadataSearchResult r = new ConfigurationMetadataSearchResult(prop, repository);
-            assertEquals(prop.getDefaultValue(), r.getDefaultValue());
-            assertEquals(prop.getId(), r.getId());
-            assertEquals(prop.getName(), r.getName());
-            assertEquals(prop.getType(), r.getType());
-            assertEquals(prop.getShortDescription(), r.getShortDescription());
-            assertEquals(prop.getDescription(), r.getDescription());
-            assertEquals(prop.getDefaultValue(), r.getDefaultValue());
-            assertNotNull(r.getGroup());
-        }
+        final ConfigurationMetadataProperty prop = properties.get("server.port");
+        assertNotNull(prop);
+        final ConfigurationMetadataSearchResult r = new ConfigurationMetadataSearchResult(prop, repository);
+        assertEquals(prop.getDefaultValue(), r.getDefaultValue());
+        assertEquals(prop.getId(), r.getId());
+        assertEquals(prop.getName(), r.getName());
+        assertEquals(prop.getType(), r.getType());
+        assertEquals(prop.getShortDescription(), r.getShortDescription());
+        assertEquals(prop.getDescription(), r.getDescription());
+        assertEquals(prop.getDefaultValue(), r.getDefaultValue());
+        assertNotNull(r.getGroup());
+
     }
 }

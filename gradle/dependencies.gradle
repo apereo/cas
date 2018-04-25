@@ -2310,6 +2310,7 @@ ext.libraries = [
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "com.google.code.gson", module: "gson")
+                    exclude(group: "com.thoughtworks.xstream", module: "xstream")
                     force = true
                 }
         ],
@@ -2327,7 +2328,6 @@ ext.libraries = [
                     exclude(group: "com.netflix.ribbon", module: "ribbon-eureka")
                     exclude(group: "javax.servlet", module: "servlet-api")
                     exclude(group: "com.netflix.netflix-commons", module: "netflix-eventbus")
-                    exclude(group: "com.thoughtworks.xstream", module: "xstream")
                     exclude(group: "com.google.code.gson", module: "gson")
                     force = true
                 },
