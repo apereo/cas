@@ -7,7 +7,6 @@ import org.springframework.boot.configurationmetadata.ConfigurationMetadataPrope
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link ConfigurationMetadataSearchResultTests}.

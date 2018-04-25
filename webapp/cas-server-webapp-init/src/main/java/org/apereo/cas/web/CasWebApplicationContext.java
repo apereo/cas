@@ -1,12 +1,11 @@
 package org.apereo.cas.web;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.ToString;
 import org.apereo.cas.CasEmbeddedValueResolver;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext;
 import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
 import org.springframework.scheduling.config.TaskManagementConfigUtils;
-import lombok.ToString;
 
 /**
  * This is {@link CasWebApplicationContext}.
@@ -14,7 +13,6 @@ import lombok.ToString;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @ToString
 public class CasWebApplicationContext extends AnnotationConfigEmbeddedWebApplicationContext {
 

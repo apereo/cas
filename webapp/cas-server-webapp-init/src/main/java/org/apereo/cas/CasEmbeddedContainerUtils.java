@@ -49,20 +49,19 @@ public class CasEmbeddedContainerUtils {
     public static Banner getCasBannerInstance() {
         final String packageName = CasEmbeddedContainerUtils.class.getPackage().getName();
         final Reflections reflections =
-                new Reflections(new ConfigurationBuilder()
-                        .filterInputsBy(new FilterBuilder().includePackage(packageName))
-                        .setUrls(ClasspathHelper.forPackage(packageName))
-                        .setScanners(new SubTypesScanner(true)));
+            new Reflections(new ConfigurationBuilder()
+                .filterInputsBy(new FilterBuilder().includePackage(packageName))
+                .setUrls(ClasspathHelper.forPackage(packageName))
+                .setScanners(new SubTypesScanner(true)));
 
         final Set<Class<? extends AbstractCasBanner>> subTypes = reflections.getSubTypesOf(AbstractCasBanner.class);
         subTypes.remove(DefaultCasBanner.class);
-        
+
         if (subTypes.isEmpty()) {
             return new DefaultCasBanner();
         }
         try {
             final Class<? extends AbstractCasBanner> clz = subTypes.iterator().next();
-            LOGGER.debug("Created banner [{}]", clz);
             return clz.getDeclaredConstructor().newInstance();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
