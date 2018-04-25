@@ -1,7 +1,6 @@
 package org.apereo.cas.web;
 
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.boot.Banner;
@@ -52,7 +51,6 @@ import java.util.Map;
 @EnableAsync
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableScheduling
-@Slf4j
 @NoArgsConstructor
 public class CasWebApplication {
 
