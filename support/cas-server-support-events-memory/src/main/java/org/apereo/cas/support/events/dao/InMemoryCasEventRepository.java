@@ -1,7 +1,7 @@
 package org.apereo.cas.support.events.dao;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class InMemoryCasEventRepository extends AbstractCasEventRepository {
     private final LoadingCache<String, CasEvent> cache;
 
@@ -32,10 +32,10 @@ public class InMemoryCasEventRepository extends AbstractCasEventRepository {
     @Override
     public Collection<CasEvent> getEventsForPrincipal(final String id) {
         return cache
-                .asMap()
-                .values()
-                .stream()
-                .filter(e -> e.getPrincipalId().equalsIgnoreCase(id))
-                .collect(Collectors.toSet());
+            .asMap()
+            .values()
+            .stream()
+            .filter(e -> e.getPrincipalId().equalsIgnoreCase(id))
+            .collect(Collectors.toSet());
     }
 }
