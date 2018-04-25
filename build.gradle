@@ -399,6 +399,7 @@ task jacocoAggregateReport(type: JacocoReport, description: "Aggregate all test 
                         '**/**WebflowConfigurer.class',
                         '**/**WebflowConfigurer$**',
                         '**/**Exception.class',
+                        '**/**Banner.class',
                         '**/**Exception$**',
                         '**/**Properties.class',
                         '**/**Properties$**'
