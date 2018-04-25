@@ -15,11 +15,11 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
@@ -33,6 +33,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @AllArgsConstructor
 public class ValidateCaptchaAction extends AbstractAction {
+    /**
+     * Recaptcha response as a request parameter.
+     */
+    public static final String REQUEST_PARAM_RECAPTCHA_RESPONSE = "g-recaptcha-response";
 
     private static final ObjectReader READER = new ObjectMapper().findAndRegisterModules().reader();
     private static final String CODE = "captchaError";
@@ -42,7 +46,7 @@ public class ValidateCaptchaAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        final String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+        final String gRecaptchaResponse = request.getParameter(REQUEST_PARAM_RECAPTCHA_RESPONSE);
 
         if (StringUtils.isBlank(gRecaptchaResponse)) {
             LOGGER.warn("Recaptcha response is missing from the request");
@@ -50,7 +54,7 @@ public class ValidateCaptchaAction extends AbstractAction {
         }
         try {
             final URL obj = new URL(recaptchaProperties.getVerifyUrl());
-            final HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+            final HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
             con.setRequestMethod("POST");
             con.setRequestProperty("User-Agent", WebUtils.getHttpServletRequestUserAgentFromRequestContext());
