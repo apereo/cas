@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.passwordless;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
@@ -22,7 +21,7 @@ import java.util.Map;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-passwordless")
-@Slf4j
+
 @Getter
 @Setter
 public class PasswordlessAuthenticationProperties implements Serializable {
