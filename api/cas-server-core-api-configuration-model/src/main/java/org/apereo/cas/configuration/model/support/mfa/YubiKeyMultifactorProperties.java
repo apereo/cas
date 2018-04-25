@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.mfa;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
@@ -22,7 +21,7 @@ import java.util.Map;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-yubikey")
-@Slf4j
+
 @Getter
 @Setter
 public class YubiKeyMultifactorProperties extends BaseMultifactorProviderProperties {

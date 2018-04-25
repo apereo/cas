@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.ignite;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -19,7 +18,7 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-ignite-ticket-registry")
-@Slf4j
+
 @Getter
 @Setter
 public class IgniteProperties implements Serializable {

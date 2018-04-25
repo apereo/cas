@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.saml.sps;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
+
 @Getter
 @Setter
 public abstract class AbstractSamlSPProperties implements Serializable {

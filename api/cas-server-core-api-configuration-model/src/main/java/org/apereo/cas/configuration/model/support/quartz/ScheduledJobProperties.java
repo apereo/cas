@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.quartz;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serializable;
@@ -15,7 +14,7 @@ import lombok.NoArgsConstructor;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-core-util", automated = true)
-@Slf4j
+
 @Getter
 @Setter
 @NoArgsConstructor

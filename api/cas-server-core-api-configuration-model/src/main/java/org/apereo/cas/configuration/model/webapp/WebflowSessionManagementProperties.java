@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.webapp;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import java.io.Serializable;
@@ -13,7 +12,7 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
+
 @Getter
 @Setter
 public class WebflowSessionManagementProperties implements Serializable {

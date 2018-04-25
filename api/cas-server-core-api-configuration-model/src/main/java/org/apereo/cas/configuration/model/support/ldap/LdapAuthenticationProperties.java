@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
@@ -18,7 +17,7 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-ldap")
-@Slf4j
+
 @Getter
 @Setter
 public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProperties {

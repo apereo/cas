@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
@@ -20,7 +19,7 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-u2f")
-@Slf4j
+
 @Getter
 @Setter
 public class U2FMultifactorProperties extends BaseMultifactorProviderProperties {

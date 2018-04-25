@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.mfa;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.DeviceFingerprintProperties;
@@ -22,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-trusted-mfa")
-@Slf4j
+
 @Getter
 @Setter
 public class TrustedDevicesMultifactorProperties implements Serializable {

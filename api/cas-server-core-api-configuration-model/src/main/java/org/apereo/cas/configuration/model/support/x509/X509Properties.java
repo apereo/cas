@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.x509;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -20,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-x509-webflow")
-@Slf4j
+
 @Getter
 @Setter
 public class X509Properties implements Serializable {
