@@ -7,12 +7,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import static org.junit.Assert.*;
 
 /**
  * This is {@link MemcachedHealthIndicatorTests}.
@@ -21,9 +25,11 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since 4.2.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class,
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
     MemcachedMonitorConfiguration.class,
-    CasCoreUtilSerializationConfiguration.class})
+    CasCoreUtilSerializationConfiguration.class
+})
 @TestPropertySource(locations = {"classpath:/monitor.properties"})
 @DirtiesContext
 @Slf4j
@@ -34,7 +40,8 @@ public class MemcachedHealthIndicatorTests {
     private HealthIndicator monitor;
 
     @Test
-    public void verifyMonitorRunning() {
-        this.monitor.health();
+    public void verifyMonitorNotRunning() {
+        final Health health = monitor.health();
+        assertEquals(Status.OUT_OF_SERVICE, health.getStatus());
     }
 }
