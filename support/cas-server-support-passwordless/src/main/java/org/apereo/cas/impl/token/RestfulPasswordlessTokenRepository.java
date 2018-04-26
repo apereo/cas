@@ -36,7 +36,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
     @Override
     public Optional<String> findToken(final String username) {
         try {
-            final Map<String, String> parameters = new HashMap<>();
+            final Map<String, Object> parameters = new HashMap<>();
             parameters.put("username", username);
             final HttpResponse response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.GET.name(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
@@ -55,7 +55,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
     @Override
     public void deleteTokens(final String username) {
         try {
-            final Map<String, String> parameters = new HashMap<>();
+            final Map<String, Object> parameters = new HashMap<>();
             parameters.put("username", username);
             HttpUtils.execute(restProperties.getUrl(), HttpMethod.DELETE.name(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
@@ -68,7 +68,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
     @Override
     public void deleteToken(final String username, final String token) {
         try {
-            final Map<String, String> parameters = new HashMap<>();
+            final Map<String, Object> parameters = new HashMap<>();
             parameters.put("username", username);
             parameters.put("token", cipherExecutor.encode(token).toString());
             HttpUtils.execute(restProperties.getUrl(), HttpMethod.DELETE.name(),
@@ -82,7 +82,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
     @Override
     public void saveToken(final String username, final String token) {
         try {
-            final Map<String, String> parameters = new HashMap<>();
+            final Map<String, Object> parameters = new HashMap<>();
             parameters.put("username", username);
             parameters.put("token", cipherExecutor.encode(token).toString());
             HttpUtils.execute(restProperties.getUrl(), HttpMethod.POST.name(),
