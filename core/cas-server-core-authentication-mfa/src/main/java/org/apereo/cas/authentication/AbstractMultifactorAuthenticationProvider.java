@@ -83,7 +83,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
         if (service != null) {
             LOGGER.debug("Evaluating multifactor authentication policy for service [{}}", service);
             final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
-            if (policy.getFailureMode() != NOT_SET) {
+            if (policy != null && policy.getFailureMode() != NOT_SET) {
                 failureMode = policy.getFailureMode();
                 LOGGER.debug("Multi-factor failure mode for [{}] is defined as [{}]", service.getServiceId(), failureMode);
             }
