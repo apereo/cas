@@ -148,6 +148,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
         WebUtils.putAuthentication(authenticationResult.getAuthentication(), context);
         WebUtils.putAuthenticationResult(authenticationResult, context);
+        WebUtils.putCredential(context, clientCredential);
+        WebUtils.putService(context, service);
         return success();
     }
 
