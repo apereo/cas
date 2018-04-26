@@ -13,7 +13,7 @@ Our premier support channel is community discussion mediated primarily via
 
 A number of [consulting firms offer paid support](https://www.apereo.org/content/commercial-affiliates) for CAS.
 
-## Free Support
+## Free/Community Support
 
 Please take the following steps to obtain support from the CAS user community.
 
