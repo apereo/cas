@@ -263,7 +263,7 @@ public class CasValidationConfiguration {
         if (casProperties.getView().getCas2().isV3ForwardCompatible()) {
             return new ServiceValidateController(
                     cas20WithoutProxyProtocolValidationSpecification, authenticationSystemSupport,
-                    servicesManager, centralAuthenticationService, proxy10Handler, argumentExtractor,
+                    servicesManager, centralAuthenticationService, proxy20Handler, argumentExtractor,
                     multifactorTriggerSelectionStrategy, authenticationContextValidator,
                     cas3ServiceJsonView(), cas3ServiceSuccessView(), cas3ServiceFailureView,
                     casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), serviceValidationAuthorizers()
@@ -272,7 +272,7 @@ public class CasValidationConfiguration {
 
         return new ServiceValidateController(
                 cas20WithoutProxyProtocolValidationSpecification, authenticationSystemSupport,
-                servicesManager, centralAuthenticationService, proxy10Handler, argumentExtractor,
+                servicesManager, centralAuthenticationService, proxy20Handler, argumentExtractor,
                 multifactorTriggerSelectionStrategy, authenticationContextValidator,
                 cas3ServiceJsonView(), cas2ServiceSuccessView(), cas2ServiceFailureView,
                 casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), serviceValidationAuthorizers()
