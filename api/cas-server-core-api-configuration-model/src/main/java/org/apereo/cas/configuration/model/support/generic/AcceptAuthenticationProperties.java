@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.generic;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
@@ -17,7 +16,7 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-authentication")
-@Slf4j
+
 @Getter
 @Setter
 public class AcceptAuthenticationProperties implements Serializable {

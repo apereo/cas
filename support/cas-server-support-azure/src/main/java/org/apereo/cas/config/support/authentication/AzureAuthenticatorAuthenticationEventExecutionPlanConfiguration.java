@@ -16,8 +16,8 @@ import org.apereo.cas.authentication.ByCredentialTypeAuthenticationHandlerResolv
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.AzureMultifactorProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -123,7 +123,7 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "azurePrincipalFactory")
     @Bean
     public PrincipalFactory azurePrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "azureAuthenticatorAuthenticationEventExecutionPlanConfigurer")

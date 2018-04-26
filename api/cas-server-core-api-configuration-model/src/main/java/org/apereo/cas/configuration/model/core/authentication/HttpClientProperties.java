@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.core.io.Resource;
 import java.io.Serializable;
@@ -14,7 +13,7 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
-@Slf4j
+
 @Getter
 @Setter
 public class HttpClientProperties implements Serializable {

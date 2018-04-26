@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.core.ticket;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
@@ -15,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
-@Slf4j
+
 @Getter
 @Setter
 public class TransientSessionTicketProperties implements Serializable {

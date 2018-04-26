@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
@@ -18,7 +17,7 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
-@Slf4j
+
 @Getter
 @Setter
 public class PasswordPolicyProperties implements Serializable {
@@ -63,6 +62,12 @@ public class PasswordPolicyProperties implements Serializable {
      * Whether password policy should be enabled.
      */
     private boolean enabled = true;
+
+    /**
+     * Indicates whether account state handling should be enabled to process
+     * warnings or errors reported back from the authentication response, produced by the source.
+     */
+    private boolean accountStateHandlingEnabled = true;
 
     /**
      * An implementation of a policy class that knows how to handle LDAP responses.

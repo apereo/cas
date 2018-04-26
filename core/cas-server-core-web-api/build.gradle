@@ -4,6 +4,7 @@ dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-logout")
+    api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-webflow")
 
     implementation project(":core:cas-server-core-authentication-api")
@@ -14,4 +15,7 @@ dependencies {
     implementation libraries.thymeleaf
     implementation libraries.oshi
     implementation libraries.cassecurityfilter
+    
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
 }

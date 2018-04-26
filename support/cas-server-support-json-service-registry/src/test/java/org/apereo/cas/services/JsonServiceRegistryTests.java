@@ -27,7 +27,7 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
     @Before
     public void setUp() {
         try {
-            this.dao = new JsonServiceRegistry(RESOURCE, false,
+            this.dao = new JsonServiceRegistry(RESOURCE, true,
                     mock(ApplicationEventPublisher.class),
                     new NoOpRegisteredServiceReplicationStrategy(),
                     new DefaultRegisteredServiceResourceNamingStrategy());

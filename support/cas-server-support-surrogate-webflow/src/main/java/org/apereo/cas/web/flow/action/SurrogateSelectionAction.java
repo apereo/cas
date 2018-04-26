@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow.action;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
@@ -17,8 +17,13 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SurrogateSelectionAction extends AbstractAction {
+    /**
+     * Surrogate Target parameter name.
+     */
+    public static final String PARAMETER_NAME_SURROGATE_TARGET = "surrogateTarget";
+
     private final String separator;
 
     @Override
@@ -26,7 +31,7 @@ public class SurrogateSelectionAction extends AbstractAction {
         final Credential credential = WebUtils.getCredential(requestContext);
         if (credential instanceof UsernamePasswordCredential) {
             final UsernamePasswordCredential upc = UsernamePasswordCredential.class.cast(credential);
-            final String target = requestContext.getExternalContext().getRequestParameterMap().get("surrogateTarget");
+            final String target = requestContext.getExternalContext().getRequestParameterMap().get(PARAMETER_NAME_SURROGATE_TARGET);
 
             if (StringUtils.isNotBlank(target)) {
                 upc.setUsername(target + this.separator + upc.getUsername());

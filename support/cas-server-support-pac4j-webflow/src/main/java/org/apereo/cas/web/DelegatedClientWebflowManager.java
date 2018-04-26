@@ -18,6 +18,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.oauth.client.OAuth10Client;
 import org.pac4j.oauth.client.OAuth20Client;
 import org.pac4j.oauth.config.OAuth20Configuration;
 import org.pac4j.oidc.client.OidcClient;
@@ -44,6 +45,7 @@ public class DelegatedClientWebflowManager {
      * Client identifier associated with this session/request.
      */
     public static final String PARAMETER_CLIENT_ID = "delegatedclientid";
+    private static final String OAUTH10_CLIENT_ID_SESSION_KEY = "OAUTH10_CLIENT_ID";
 
     private final TicketRegistry ticketRegistry;
     private final TicketFactory ticketFactory;
@@ -98,6 +100,9 @@ public class DelegatedClientWebflowManager {
         if (client instanceof CasClient) {
             final CasClient casClient = (CasClient) client;
             casClient.getConfiguration().addCustomParam(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticketId);
+        }
+        if (client instanceof OAuth10Client) {
+            webContext.getSessionStore().set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, ticket.getId());
         }
         return ticket;
     }
@@ -157,6 +162,11 @@ public class DelegatedClientWebflowManager {
             if (client instanceof OAuth20Client || client instanceof OidcClient) {
                 LOGGER.debug("Client identifier could not found as part of the request parameters. Looking at state for the OAuth2/Oidc client");
                 clientId = webContext.getRequestParameter(OAuth20Configuration.STATE_REQUEST_PARAMETER);
+            }
+            if (client instanceof OAuth10Client) {
+                LOGGER.debug("Client identifier could not be found as part of request parameters.  Looking at state for the OAuth1 client");
+                clientId = (String) webContext.getSessionStore().get(webContext, OAUTH10_CLIENT_ID_SESSION_KEY);
+                webContext.getSessionStore().set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, null);
             }
         }
         LOGGER.debug("Located delegated client identifier for this request as [{}]", clientId);

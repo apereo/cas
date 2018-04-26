@@ -12,8 +12,8 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.PasswordlessTokenAuthenticationHandler;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
@@ -99,7 +99,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
 
     @Bean
     public PrincipalFactory passwordlessPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @RefreshScope
@@ -143,21 +143,29 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "passwordlessCipherExecutor")
+    public CipherExecutor passwordlessCipherExecutor() {
+        final PasswordlessAuthenticationProperties.Tokens tokens = casProperties.getAuthn().getPasswordless().getTokens();
+        final EncryptionJwtSigningJwtCryptographyProperties crypto = tokens.getRest().getCrypto();
+        final CipherExecutor cipher;
+        if (crypto.isEnabled()) {
+            cipher = new PasswordlessTokenCipherExecutor(
+                crypto.getEncryption().getKey(),
+                crypto.getSigning().getKey(),
+                crypto.getAlg());
+        } else {
+            cipher = CipherExecutor.noOpOfSerializableToString();
+        }
+        return cipher;
+    }
+
+    @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "passwordlessTokenRepository")
     public PasswordlessTokenRepository passwordlessTokenRepository() {
         final PasswordlessAuthenticationProperties.Tokens tokens = casProperties.getAuthn().getPasswordless().getTokens();
         if (StringUtils.isNotBlank(tokens.getRest().getUrl())) {
-            final EncryptionJwtSigningJwtCryptographyProperties crypto = tokens.getRest().getCrypto();
-            final CipherExecutor cipher;
-            if (crypto.isEnabled()) {
-                cipher = new PasswordlessTokenCipherExecutor(
-                    crypto.getEncryption().getKey(),
-                    crypto.getSigning().getKey(),
-                    crypto.getAlg());
-            } else {
-                cipher = CipherExecutor.noOpOfSerializableToString();
-            }
-            return new RestfulPasswordlessTokenRepository(tokens.getExpireInSeconds(), tokens.getRest(), cipher);
+            return new RestfulPasswordlessTokenRepository(tokens.getExpireInSeconds(), tokens.getRest(), passwordlessCipherExecutor());
         }
         return new InMemoryPasswordlessTokenRepository(tokens.getExpireInSeconds());
     }

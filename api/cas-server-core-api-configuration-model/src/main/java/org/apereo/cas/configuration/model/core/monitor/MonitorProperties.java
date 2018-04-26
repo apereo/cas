@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.monitor;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
@@ -21,7 +20,7 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-monitor", automated = true)
-@Slf4j
+
 @Getter
 @Setter
 public class MonitorProperties implements Serializable {

@@ -10,6 +10,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 import javax.mail.internet.MimeMessage;
+import java.util.Optional;
 
 /**
  * This is {@link CommunicationsManager}.
@@ -19,8 +20,6 @@ import javax.mail.internet.MimeMessage;
  */
 @Slf4j
 public class CommunicationsManager {
-
-
     @Autowired(required = false)
     @Qualifier("smsSender")
     private SmsSender smsSender;
@@ -55,8 +54,10 @@ public class CommunicationsManager {
                          final String subject,
                          final String cc, final String bcc) {
         if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isMailSenderDefined()) {
-            final String to = getFirstAttributeByName(principal, attribute);
-            return email(text, from, subject, to, cc, bcc);
+            final Optional<Object> attributeValue = getFirstAttributeByName(principal, attribute);
+            if (attributeValue.isPresent()) {
+                return email(text, from, subject, attributeValue.get().toString(), cc, bcc);
+            }
         }
         return false;
     }
@@ -132,8 +133,10 @@ public class CommunicationsManager {
                        final String attribute,
                        final String text, final String from) {
         if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isSmsSenderDefined()) {
-            final String to = getFirstAttributeByName(principal, attribute);
-            return sms(from, to, text);
+            final Optional<Object> attributeValue = getFirstAttributeByName(principal, attribute);
+            if (attributeValue.isPresent()) {
+                return sms(from, attributeValue.get().toString(), text);
+            }
         }
         return false;
     }
@@ -154,9 +157,9 @@ public class CommunicationsManager {
         return this.smsSender.send(from, to, text);
     }
 
-    private String getFirstAttributeByName(final Principal principal, final String attribute) {
+    private Optional<Object> getFirstAttributeByName(final Principal principal, final String attribute) {
         final Object value = principal.getAttributes().get(attribute);
-        return CollectionUtils.firstElement(value).toString();
+        return CollectionUtils.firstElement(value);
     }
 
     /**

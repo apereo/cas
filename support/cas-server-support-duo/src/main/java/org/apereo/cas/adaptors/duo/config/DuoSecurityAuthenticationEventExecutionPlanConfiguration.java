@@ -17,8 +17,8 @@ import org.apereo.cas.authentication.ByCredentialTypeAuthenticationHandlerResolv
 import org.apereo.cas.authentication.DefaultVariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -78,7 +78,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @ConditionalOnMissingBean(name = "duoPrincipalFactory")
     @Bean
     public PrincipalFactory duoPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "duoMultifactorAuthenticationProvider")
@@ -112,12 +112,12 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
 
     @Bean
     public Action prepareDuoWebLoginFormAction() {
-        return new PrepareDuoWebLoginFormAction(duoMultifactorAuthenticationProvider());
+        return new PrepareDuoWebLoginFormAction(duoMultifactorAuthenticationProvider(), applicationContext);
     }
 
     @Bean
     public Action determineDuoUserAccountAction() {
-        return new DetermineDuoUserAccountAction(duoMultifactorAuthenticationProvider());
+        return new DetermineDuoUserAccountAction(duoMultifactorAuthenticationProvider(), applicationContext);
     }
 
     @Bean

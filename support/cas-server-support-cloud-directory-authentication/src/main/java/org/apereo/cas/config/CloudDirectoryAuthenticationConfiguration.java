@@ -1,13 +1,14 @@
 package org.apereo.cas.config;
 
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectory;
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectoryClientBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CloudDirectoryAuthenticationHandler;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
@@ -51,7 +52,7 @@ public class CloudDirectoryAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "cloudDirectoryPrincipalFactory")
     @Bean
     public PrincipalFactory cloudDirectoryPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "amazonCloudDirectory")
@@ -81,11 +82,16 @@ public class CloudDirectoryAuthenticationConfiguration {
     @RefreshScope
     public AmazonCloudDirectory amazonCloudDirectory() {
         final CloudDirectoryProperties cloud = casProperties.getAuthn().getCloudDirectory();
-        return AmazonCloudDirectoryClientBuilder.standard()
+
+        final AwsClientBuilder.EndpointConfiguration endpoint = new AwsClientBuilder.EndpointConfiguration(
+            cloud.getEndpoint(), cloud.getRegion());
+        return AmazonCloudDirectoryClientBuilder
+            .standard()
             .withCredentials(ChainingAWSCredentialsProvider.getInstance(cloud.getCredentialAccessKey(),
                 cloud.getCredentialSecretKey(), cloud.getCredentialsPropertiesFile(),
                 cloud.getProfilePath(), cloud.getProfileName()))
             .withRegion(cloud.getRegion())
+            .withEndpointConfiguration(endpoint)
             .build();
 
     }
