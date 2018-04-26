@@ -23,7 +23,7 @@ Apereo commercial service providers if that is unacceptable. Also unless explici
 
 ### Chat Rooms 
 
-The CAS community chat room is provided by [Gitter][casgitter]. Apereo also has an official [Slack chat workspace](https://apereo.slack.com) where you may find a `#cas` channel. The sign-up page is [available here](https://apereo.slack.com/signup).
+The CAS community chat room is provided by [Gitter][casgitter]. Apereo also has an official [Slack chat workspace](https://apereo.slack.com) where you may find a `#cas` channel. The sign-up page is [available here](https://apereo.slack.com/signup). A specific `cas` tag is also available for [StackOverflow](https://stackoverflow.com/questions/tagged/cas).
 
 ### Mailing Lists
 
