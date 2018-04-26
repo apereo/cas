@@ -68,4 +68,18 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
             "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
         assertTrue(result.getKey());
     }
+
+    @Test
+    public void verifyTrustedAuthnFoundInContext() {
+        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        final AuthenticationContextValidator v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
+            "OPEN", "trusted_authn", applicationContext);
+        final Authentication authentication = MultifactorAuthenticationTestUtils.getAuthentication(
+            MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
+            CollectionUtils.wrap("authn_method", "mfa-other", "trusted_authn", "mfa-dummy"));
+        final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result = v.validate(authentication,
+            "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
+        assertTrue(result.getKey());
+    }
+
 }
