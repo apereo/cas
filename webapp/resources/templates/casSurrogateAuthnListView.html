@@ -16,7 +16,7 @@
             <form method="post" id="loginForm" class="fm-v clearfix">
                 <div class="form-group">
                     <h2 th:text="#{screen.surrogates.choose.account}">Choose Account</h2>
-                    <div th:utext="${screen.surrogates.message}">
+                    <div th:utext="#{screen.surrogates.message}">
                         <p>You are provided with a list of accounts on behalf of which you are allowed to
                             authenticate. </p>
                         <p>Select one and continue.</p>
@@ -25,13 +25,15 @@
                     <select name="surrogateTarget" id="surrogateTarget" class="form-control">
                         <option th:each="surrogate: ${surrogates}" th:value="${surrogate}" th:text="${surrogate}"/>
                     </select>
+
+
                 </div>
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 <input type="hidden" name="_eventId" value="submit"/>
                 <input class="btn btn-submit" name="submit" accesskey="l"
                        th:value="#{screen.welcome.button.login}" type="submit" value="Login"/>
                 &nbsp;<a class="btn btn-default" id="cancel" name="cancel"
-                         th:href="@{/login}" th:text="${screen.surrogates.button.cancel}">Cancel</a>
+                         th:href="@{/login}" th:text="#{screen.surrogates.button.cancel}">Cancel</a>
             </form>
         </div>
     </div>
