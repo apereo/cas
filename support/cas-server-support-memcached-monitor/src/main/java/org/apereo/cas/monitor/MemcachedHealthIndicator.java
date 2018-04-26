@@ -1,6 +1,7 @@
 package org.apereo.cas.monitor;
 
 import lombok.extern.slf4j.Slf4j;
+import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -32,8 +33,9 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
         try {
-            final MemcachedClientIF client = getClientFromPool();
+            final MemcachedClient client = (MemcachedClient) getClientFromPool();
             if (client.getAvailableServers().isEmpty()) {
+                LOGGER.warn("No available memcached servers can be found");
                 builder.outOfService().withDetail("message", "No memcached servers available.");
                 return;
             }
