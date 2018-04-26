@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.Module;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -18,14 +19,12 @@ public class SessionStoreCookieSerializer extends AbstractJacksonBackedStringSer
 
     public SessionStoreCookieSerializer(final Module... additionalModules) {
         super(new MinimalPrettyPrinter());
-        for (Module module: additionalModules) {
-            getObjectMapper().registerModule(module);
-        }
+        Arrays.stream(additionalModules).forEach(getObjectMapper()::registerModule);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     protected Class<Map<String, Object>> getTypeToSerialize() {
-        return (Class<Map<String,Object>>)(Class<?>) Map.class;
+        return (Class<Map<String, Object>>) (Class<?>) Map.class;
     }
 }
