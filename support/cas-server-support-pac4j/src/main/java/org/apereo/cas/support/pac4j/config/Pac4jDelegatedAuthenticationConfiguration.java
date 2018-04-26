@@ -69,7 +69,9 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     @Bean
     @ConditionalOnMissingBean(name = "pac4jDelegatedSessionStoreCookieSerializer")
     public StringSerializer<Map<String, Object>> pac4jDelegatedSessionStoreCookieSerializer() {
-        return new SessionStoreCookieSerializer(pac4jJacksonModule());
+        final SessionStoreCookieSerializer serializer = new SessionStoreCookieSerializer();
+        serializer.getObjectMapper().registerModule(pac4jJacksonModule());
+        return serializer;
     }
 
     @Bean
