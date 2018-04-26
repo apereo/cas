@@ -37,6 +37,7 @@ import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
+import org.apereo.cas.web.pac4j.SessionStoreCookieSerializer;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.junit.Test;
 import org.pac4j.core.client.BaseClient;
@@ -228,7 +229,7 @@ public class DelegatedClientAuthenticationActionTests {
             getServicesManagerWith(service, client),
             enforcer,
             manager,
-            new DelegatedSessionCookieManager(mock(CookieRetrievingCookieGenerator.class)),
+            new DelegatedSessionCookieManager(mock(CookieRetrievingCookieGenerator.class), mock(SessionStoreCookieSerializer.class)),
             support);
 
     }
