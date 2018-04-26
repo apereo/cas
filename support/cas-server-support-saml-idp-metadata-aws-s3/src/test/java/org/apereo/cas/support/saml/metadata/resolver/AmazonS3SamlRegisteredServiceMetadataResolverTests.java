@@ -29,9 +29,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class
-})
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 public class AmazonS3SamlRegisteredServiceMetadataResolverTests {
 
     @Test
