@@ -1,7 +1,9 @@
 package org.apereo.cas.web.flow.logout;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.logout.LogoutRequest;
@@ -28,7 +30,13 @@ import java.util.List;
  * @since 4.0.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class TerminateSessionAction extends AbstractAction {
+
+    /**
+     * Parameter to indicate logout request is confirmed.
+     */
+    public static final String REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED = "LogoutRequestConfirmed";
 
     private final EventFactorySupport eventFactorySupport = new EventFactorySupport();
     private final CentralAuthenticationService centralAuthenticationService;
@@ -36,15 +44,6 @@ public class TerminateSessionAction extends AbstractAction {
     private final CookieRetrievingCookieGenerator warnCookieGenerator;
     private final LogoutProperties logoutProperties;
 
-    public TerminateSessionAction(final CentralAuthenticationService centralAuthenticationService,
-                                  final CookieRetrievingCookieGenerator tgtCookieGenerator,
-                                  final CookieRetrievingCookieGenerator warnCookieGenerator,
-                                  final LogoutProperties logoutProperties) {
-        this.centralAuthenticationService = centralAuthenticationService;
-        this.ticketGrantingTicketCookieGenerator = tgtCookieGenerator;
-        this.warnCookieGenerator = warnCookieGenerator;
-        this.logoutProperties = logoutProperties;
-    }
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
@@ -70,11 +69,10 @@ public class TerminateSessionAction extends AbstractAction {
         final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
         String tgtId = WebUtils.getTicketGrantingTicketId(context);
-        // for logout, we need to get the cookie's value
-        if (tgtId == null) {
+        if (StringUtils.isBlank(tgtId)) {
             tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         }
-        if (tgtId != null) {
+        if (StringUtils.isNotBlank(tgtId)) {
             LOGGER.debug("Destroying SSO session linked to ticket-granting ticket [{}]", tgtId);
             final List<LogoutRequest> logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
             WebUtils.putLogoutRequests(context, logoutRequests);
@@ -110,6 +108,6 @@ public class TerminateSessionAction extends AbstractAction {
 
     private static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        return request.getParameterMap().containsKey("LogoutRequestConfirmed");
+        return request.getParameterMap().containsKey(REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED);
     }
 }
