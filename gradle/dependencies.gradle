@@ -2450,7 +2450,7 @@ ext.libraries = [
                 }
         ],
         duojavaauth             : [
-                dependencies.create("com.github.duosecurity:duo_client_java:-SNAPSHOT") {
+                dependencies.create("net.unicon.iam:duo-client:0.2.2") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-cli", module: "commons-cli")
                     exclude(group: "com.squareup.okhttp", module: "okhttp-urlconnection")
