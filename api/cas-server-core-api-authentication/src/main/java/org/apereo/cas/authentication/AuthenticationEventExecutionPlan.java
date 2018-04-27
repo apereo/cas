@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -81,6 +82,14 @@ public interface AuthenticationEventExecutionPlan {
      * @param principalResolver the principal resolver
      */
     void registerAuthenticationHandlerWithPrincipalResolvers(Collection<AuthenticationHandler> handlers, PrincipalResolver principalResolver);
+
+    /**
+     * Register authentication handler with principal resolvers.
+     *
+     * @param handlers          the handlers
+     * @param principalResolver the principal resolver
+     */
+    void registerAuthenticationHandlerWithPrincipalResolvers(List<AuthenticationHandler> handlers, List<PrincipalResolver> principalResolver);
 
     /**
      * Gets authentication handlers for transaction.

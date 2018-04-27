@@ -5,8 +5,8 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -32,9 +32,9 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
      * Internal flag to indicate whether surrogate account selection is requested.
      */
     public static final String CONTEXT_ATTRIBUTE_REQUEST_SURROGATE = "requestSurrogateAccount";
-    
+
     private final SurrogateAuthenticationService surrogateService;
-    
+
     public SurrogateWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                          final CentralAuthenticationService centralAuthenticationService,
                                          final ServicesManager servicesManager,
@@ -44,7 +44,7 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
                                          final MultifactorAuthenticationProviderSelector selector,
                                          final SurrogateAuthenticationService surrogateService) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
-                warnCookieGenerator, authenticationSelectionStrategies, selector);
+            warnCookieGenerator, authenticationSelectionStrategies, selector);
         this.surrogateService = surrogateService;
     }
 
@@ -52,6 +52,7 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
     public Set<Event> resolveInternal(final RequestContext requestContext) {
         if (requestContext.getFlowScope().getBoolean(CONTEXT_ATTRIBUTE_REQUEST_SURROGATE, Boolean.FALSE)) {
             requestContext.getFlowScope().remove(CONTEXT_ATTRIBUTE_REQUEST_SURROGATE);
+            LOGGER.debug("Attempting to load surrogates...");
             if (loadSurrogates(requestContext)) {
                 return CollectionUtils.wrapSet(new Event(this, SurrogateWebflowConfigurer.VIEW_ID_SURROGATE_VIEW));
             }
@@ -63,12 +64,17 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
         final Credential c = WebUtils.getCredential(requestContext);
         if (c instanceof UsernamePasswordCredential) {
             final String username = c.getId();
+            LOGGER.debug("Loading eligible accounts for [{}] to proxy", username);
             final Collection<String> surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
+            LOGGER.debug("Surrogate accounts found are [{}]", surrogates);
             if (!surrogates.isEmpty()) {
                 surrogates.add(username);
                 requestContext.getFlowScope().put("surrogates", surrogates);
                 return true;
             }
+            LOGGER.debug("No surrogate accounts could be located for [{}]", username);
+        } else {
+            LOGGER.debug("Current credential in the webflow is not one of [{}]", UsernamePasswordCredential.class.getName());
         }
         return false;
     }

@@ -33,9 +33,13 @@ public class SurrogateSelectionAction extends AbstractAction {
             final UsernamePasswordCredential upc = UsernamePasswordCredential.class.cast(credential);
             final String target = requestContext.getExternalContext().getRequestParameterMap().get(PARAMETER_NAME_SURROGATE_TARGET);
 
+            LOGGER.debug("Located surrogate target as [{}]", target);
             if (StringUtils.isNotBlank(target)) {
                 upc.setUsername(target + this.separator + upc.getUsername());
+                LOGGER.debug("Determined webflow credential id to be [{}]", upc.getUsername());
             }
+        } else {
+            LOGGER.debug("Current credential in the webflow is not one of [{}]", UsernamePasswordCredential.class.getName());
         }
         return success();
     }

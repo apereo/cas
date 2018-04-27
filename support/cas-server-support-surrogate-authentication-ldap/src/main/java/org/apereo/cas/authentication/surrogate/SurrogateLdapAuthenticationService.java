@@ -66,23 +66,28 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
         final Collection<String> eligible = new LinkedHashSet<>();
         try {
             final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(), CollectionUtils.wrap(username));
-            LOGGER.debug("Using search filter: [{}]", filter);
+            LOGGER.debug("Using search filter to find eligible accounts: [{}]", filter);
 
             final Response<SearchResult> response = LdapUtils.executeSearchOperation(this.connectionFactory,
                 ldapProperties.getBaseDn(), filter);
             LOGGER.debug("LDAP response: [{}]", response);
 
             if (!LdapUtils.containsResultEntry(response)) {
+                LOGGER.warn("LDAP response is not found");
                 return eligible;
             }
 
             final LdapEntry ldapEntry = response.getResult().getEntry();
             final LdapAttribute attribute = ldapEntry.getAttribute(ldapProperties.getMemberAttributeName());
+            LOGGER.debug("Locating LDAP entry [{}] with attribute [{}]", ldapEntry, attribute);
+
             if (attribute == null || attribute.getStringValues().isEmpty()) {
+                LOGGER.warn("Attribute not found or has no values");
                 return eligible;
             }
 
             final Pattern pattern = RegexUtils.createPattern(ldapProperties.getMemberAttributeValueRegex());
+            LOGGER.debug("Constructed attribute value regex pattern [{}]", pattern.pattern());
             eligible.addAll(
                 attribute.getStringValues()
                     .stream()
@@ -95,10 +100,11 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
                         return p.group();
                     })
                     .collect(Collectors.toList()));
-
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+
+        LOGGER.debug("The following accounts may be eligible for surrogate authentication [{}]", eligible);
         return eligible;
     }
 }

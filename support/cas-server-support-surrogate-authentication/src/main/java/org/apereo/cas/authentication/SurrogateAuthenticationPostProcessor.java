@@ -43,6 +43,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
     public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws AuthenticationException {
         final Authentication authentication = builder.build();
         final Principal principal = authentication.getPrincipal();
+        
         @NonNull
         final SurrogateUsernamePasswordCredential surrogateCredentials = (SurrogateUsernamePasswordCredential) transaction.getPrimaryCredential().get();
         final String targetUserId = surrogateCredentials.getSurrogateUsername();
@@ -53,8 +54,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                 LOGGER.error("No surrogate username was specified as part of the credential");
                 throw new CredentialNotFoundException("Missing surrogate username in credential");
             }
-
-            LOGGER.debug("Authenticated [{}] will be checked for surrogate eligibility next...", principal);
+            LOGGER.debug("Authenticated [{}] will be checked for surrogate eligibility next for [{}]...", principal, targetUserId);
             if (transaction.getService() != null) {
                 final RegisteredService svc = this.servicesManager.findServiceBy(transaction.getService());
 
