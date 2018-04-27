@@ -1,22 +1,18 @@
 package org.apereo.cas.support.geo.google;
 
-import com.google.maps.GaeRequestHandler;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 import io.userinfo.client.UserInfo;
 import io.userinfo.client.model.Info;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
-import org.apereo.cas.configuration.model.support.geo.googlemaps.GoogleMapsProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.geo.AbstractGeoLocationService;
 
 import java.net.InetAddress;
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link GoogleMapsGeoLocationService}.
@@ -25,26 +21,11 @@ import java.util.concurrent.TimeUnit;
  * @since 5.0.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
-    
+
     private final GeoApiContext context;
 
-    public GoogleMapsGeoLocationService(final GoogleMapsProperties properties) {
-        final GeoApiContext.Builder builder = new GeoApiContext.Builder();
-        
-        if (properties.isGoogleAppsEngine()) {
-            builder.requestHandlerBuilder(new GaeRequestHandler.Builder());
-        } 
-        
-        if (StringUtils.isNotBlank(properties.getClientId()) && StringUtils.isNotBlank(properties.getClientSecret())) {
-            builder.enterpriseCredentials(properties.getClientId(), properties.getClientSecret());
-        }
-        builder.apiKey(properties.getApiKey())
-                .connectTimeout(Beans.newDuration(properties.getConnectTimeout()).toMillis(), TimeUnit.MILLISECONDS);
-        
-        this.context = builder.build();
-    }
-    
     @Override
     public GeoLocationResponse locate(final InetAddress address) {
         return locate(address.getHostAddress());
@@ -75,8 +56,8 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
             final GeocodingResult[] results = GeocodingApi.reverseGeocode(this.context, latlng).await();
             if (results != null && results.length > 0) {
                 Arrays.stream(results)
-                        .map(result -> result.formattedAddress)
-                        .forEach(r::addAddress);
+                    .map(result -> result.formattedAddress)
+                    .forEach(r::addAddress);
 
                 return r;
             }
