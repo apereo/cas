@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.jaas;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -84,6 +85,12 @@ public class JaasAuthenticationProperties implements Serializable {
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
+    /**
+     * Principal construction settings.
+     */
+    @NestedConfigurationProperty
+    private PersonDirectoryPrincipalResolverProperties principal = new PersonDirectoryPrincipalResolverProperties();
+    
     /**
      * Name of the authentication handler.
      */
