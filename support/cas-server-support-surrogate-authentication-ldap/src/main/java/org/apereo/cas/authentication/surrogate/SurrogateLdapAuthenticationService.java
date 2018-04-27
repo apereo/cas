@@ -48,8 +48,9 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
             if (surrogate.equalsIgnoreCase(id)) {
                 return true;
             }
-
-            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSurrogateSearchFilter(), CollectionUtils.wrap(id));
+            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSurrogateSearchFilter(),
+                CollectionUtils.wrapList(LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, "surrogate"),
+                CollectionUtils.wrapList(id, surrogate));
             LOGGER.debug("Using search filter to locate surrogate accounts for [{}]: [{}]", id, filter);
 
             final Response<SearchResult> response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter);
