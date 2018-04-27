@@ -153,8 +153,9 @@ public class CasCoreAuthenticationHandlersConfiguration {
                 .stream()
                 .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
                 .map(jaas -> new PersonDirectoryPrincipalResolver(attributeRepository.getIfAvailable(),
-                    jaasPrincipalFactory(), jaas.getPrincipal().isReturnNull(),
-                    jaas.getPrincipal().getPrincipalAttribute()))
+                    jaasPrincipalFactory(),
+                    jaas.getPrincipal().isReturnNull(),
+                    StringUtils.defaultIfBlank(jaas.getPrincipal().getPrincipalAttribute(), casProperties.getPersonDirectory().getPrincipalAttribute())))
                 .collect(Collectors.toList());
         }
 

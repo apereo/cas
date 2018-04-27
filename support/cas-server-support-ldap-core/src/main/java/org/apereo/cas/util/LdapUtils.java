@@ -318,16 +318,16 @@ public class LdapUtils {
                                                          final AbstractLdapProperties.LdapType type) {
         try (Connection modifyConnection = createConnection(connectionFactory)) {
             if (!modifyConnection.getConnectionConfig().getUseSSL()
-                    && !modifyConnection.getConnectionConfig().getUseStartTLS()) {
+                && !modifyConnection.getConnectionConfig().getUseStartTLS()) {
                 LOGGER.warn("Executing password modification op under a non-secure LDAP connection; "
-                        + "To modify password attributes, the connection to the LDAP server SHOULD be secured and/or encrypted.");
+                    + "To modify password attributes, the connection to the LDAP server SHOULD be secured and/or encrypted.");
             }
             if (type == AbstractLdapProperties.LdapType.AD) {
                 LOGGER.debug("Executing password modification op for active directory based on "
-                        + "[https://support.microsoft.com/en-us/kb/269190]");
+                    + "[https://support.microsoft.com/en-us/kb/269190]");
                 final ModifyOperation operation = new ModifyOperation(modifyConnection);
                 final Response response = operation.execute(new ModifyRequest(currentDn,
-                        new AttributeModification(AttributeModificationType.REPLACE, new UnicodePwdAttribute(newPassword))));
+                    new AttributeModification(AttributeModificationType.REPLACE, new UnicodePwdAttribute(newPassword))));
                 LOGGER.debug("Result code [{}], message: [{}]", response.getResult(), response.getMessage());
                 return response.getResultCode() == ResultCode.SUCCESS;
             }
@@ -335,8 +335,8 @@ public class LdapUtils {
             LOGGER.debug("Executing password modification op for generic LDAP");
             final PasswordModifyOperation operation = new PasswordModifyOperation(modifyConnection);
             final Response response = operation.execute(new PasswordModifyRequest(currentDn,
-                    StringUtils.isNotBlank(oldPassword) ? new Credential(oldPassword) : null,
-                    new Credential(newPassword)));
+                StringUtils.isNotBlank(oldPassword) ? new Credential(oldPassword) : null,
+                new Credential(newPassword)));
             LOGGER.debug("Result code [{}], message: [{}]", response.getResult(), response.getMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
@@ -358,10 +358,10 @@ public class LdapUtils {
         try (Connection modifyConnection = createConnection(connectionFactory)) {
             final ModifyOperation operation = new ModifyOperation(modifyConnection);
             final List<AttributeModification> mods = attributes.entrySet()
-                    .stream()
-                    .map(entry -> new AttributeModification(AttributeModificationType.REPLACE,
-                            new LdapAttribute(entry.getKey(), entry.getValue().toArray(new String[]{}))))
-                    .collect(Collectors.toList());
+                .stream()
+                .map(entry -> new AttributeModification(AttributeModificationType.REPLACE,
+                    new LdapAttribute(entry.getKey(), entry.getValue().toArray(new String[]{}))))
+                .collect(Collectors.toList());
             final ModifyRequest request = new ModifyRequest(currentDn, mods.toArray(new AttributeModification[]{}));
             request.setReferralHandler(new ModifyReferralHandler());
             operation.execute(request);
@@ -382,7 +382,7 @@ public class LdapUtils {
      */
     public static boolean executeModifyOperation(final String currentDn, final ConnectionFactory connectionFactory, final LdapEntry entry) {
         final Map<String, Set<String>> attributes = entry.getAttributes().stream()
-                .collect(Collectors.toMap(LdapAttribute::getName, ldapAttribute -> new HashSet<>(ldapAttribute.getStringValues())));
+            .collect(Collectors.toMap(LdapAttribute::getName, ldapAttribute -> new HashSet<>(ldapAttribute.getStringValues())));
 
         return executeModifyOperation(currentDn, connectionFactory, attributes);
     }
@@ -537,6 +537,33 @@ public class LdapUtils {
     }
 
     /**
+     * New ldaptive search filter search filter.
+     *
+     * @param filterQuery the filter query
+     * @param paramName   the param name
+     * @param params      the params
+     * @return the search filter
+     */
+    public static SearchFilter newLdaptiveSearchFilter(final String filterQuery, final List<String> paramName, final List<String> params) {
+        final SearchFilter filter = new SearchFilter();
+        filter.setFilter(filterQuery);
+        if (params != null) {
+            IntStream.range(0, params.size()).forEach(i -> {
+                final String value = params.get(i);
+                if (filter.getFilter().contains("{" + i + '}')) {
+                    filter.setParameter(i, value);
+                }
+                final String name = paramName.get(i);
+                if (filter.getFilter().contains("{" + name + '}')) {
+                    filter.setParameter(name, value);
+                }
+            });
+        }
+        LOGGER.debug("Constructed LDAP search filter [{}]", filter.format());
+        return filter;
+    }
+
+    /**
      * New search executor.
      *
      * @param baseDn      the base dn
@@ -636,7 +663,7 @@ public class LdapUtils {
         if (StringUtils.isNotBlank(l.getDerefAliases())) {
             resolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
         }
-        
+
         final Authenticator auth;
         if (StringUtils.isBlank(l.getPrincipalAttributePassword())) {
             auth = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
@@ -716,8 +743,8 @@ public class LdapUtils {
         final ConnectionConfig cc = new ConnectionConfig();
 
         final String urls = l.getLdapUrl().contains(" ")
-                ? l.getLdapUrl()
-                : Arrays.stream(l.getLdapUrl().split(",")).collect(Collectors.joining(" "));
+            ? l.getLdapUrl()
+            : Arrays.stream(l.getLdapUrl().split(",")).collect(Collectors.joining(" "));
         LOGGER.debug("Transformed LDAP urls from [{}] to [{}]", l.getLdapUrl(), urls);
         cc.setLdapUrl(urls);
 
@@ -728,7 +755,7 @@ public class LdapUtils {
 
         if (StringUtils.isNotBlank(l.getConnectionStrategy())) {
             final AbstractLdapProperties.LdapConnectionStrategy strategy =
-                    AbstractLdapProperties.LdapConnectionStrategy.valueOf(l.getConnectionStrategy());
+                AbstractLdapProperties.LdapConnectionStrategy.valueOf(l.getConnectionStrategy());
             switch (strategy) {
                 case RANDOM:
                     cc.setConnectionStrategy(new RandomConnectionStrategy());
@@ -874,7 +901,7 @@ public class LdapUtils {
                 final CompareRequest compareRequest = new CompareRequest();
                 compareRequest.setDn(l.getValidator().getDn());
                 compareRequest.setAttribute(new LdapAttribute(l.getValidator().getAttributeName(),
-                        l.getValidator().getAttributeValues().toArray(new String[]{})));
+                    l.getValidator().getAttributeValues().toArray(new String[]{})));
                 compareRequest.setReferralHandler(new SearchReferralHandler());
                 cp.setValidator(new CompareValidator(compareRequest));
                 break;
@@ -898,7 +925,7 @@ public class LdapUtils {
 
         if (StringUtils.isNotBlank(l.getPoolPassivator())) {
             final AbstractLdapProperties.LdapConnectionPoolPassivator pass =
-                    AbstractLdapProperties.LdapConnectionPoolPassivator.valueOf(l.getPoolPassivator().toUpperCase());
+                AbstractLdapProperties.LdapConnectionPoolPassivator.valueOf(l.getPoolPassivator().toUpperCase());
             switch (pass) {
                 case CLOSE:
                     cp.setPassivator(new ClosePassivator());
@@ -913,12 +940,12 @@ public class LdapUtils {
                         LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
                     } else {
                         final List values = Arrays.stream(AbstractLdapProperties.LdapConnectionPoolPassivator.values())
-                                .filter(v -> v != AbstractLdapProperties.LdapConnectionPoolPassivator.BIND)
-                                .collect(Collectors.toList());
+                            .filter(v -> v != AbstractLdapProperties.LdapConnectionPoolPassivator.BIND)
+                            .collect(Collectors.toList());
                         LOGGER.warn("[{}] pool passivator could not be created for [{}] given bind credentials are not specified. "
                                 + "If you are dealing with LDAP in such a way that does not require bind credentials, you may need to "
                                 + "set the pool passivator setting to one of [{}]",
-                                l.getPoolPassivator(), l.getLdapUrl(), values);
+                            l.getPoolPassivator(), l.getLdapUrl(), values);
                     }
                     break;
                 default:
@@ -997,7 +1024,7 @@ public class LdapUtils {
                     break;
                 case RECURSIVE_ENTRY:
                     handlers.add(new RecursiveEntryHandler(h.getRecursive().getSearchAttribute(),
-                            h.getRecursive().getMergeAttributes().toArray(new String[]{})));
+                        h.getRecursive().getMergeAttributes().toArray(new String[]{})));
                     break;
                 default:
                     break;
