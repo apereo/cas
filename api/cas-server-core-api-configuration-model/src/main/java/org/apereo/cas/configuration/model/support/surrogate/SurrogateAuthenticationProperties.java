@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.surrogate;
 
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
@@ -64,6 +65,12 @@ public class SurrogateAuthenticationProperties implements Serializable {
      */
     private Tgt tgt = new Tgt();
 
+    /**
+     * Principal construction settings.
+     */
+    @NestedConfigurationProperty
+    private PersonDirectoryPrincipalResolverProperties principal = new PersonDirectoryPrincipalResolverProperties();
+    
     /**
      * Email settings for notifications.
      */

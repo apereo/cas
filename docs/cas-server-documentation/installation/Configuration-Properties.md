@@ -1170,6 +1170,10 @@ To learn more about this topic, [please review this guide](Surrogate-Authenticat
 # cas.authn.surrogate.separator=+
 ```
 
+Principal resolution and Person Directory settings for this feature 
+are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) 
+under the configuration key `cas.authn.surrogate.principal`.
+
 ### Static Surrogate Accounts
 
 ```properties
@@ -1615,7 +1619,8 @@ To learn more about this topic, [please review this guide](../integration/Google
 
 Allow CAS to become an OpenID authentication provider. To learn more about this topic, [please review this guide](../protocol/OpenID-Protocol.html).
 
-Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.openid.principal`.
+Principal resolution and Person Directory settings for this feature 
+are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.openid.principal`.
 
 ```properties
 # cas.authn.openid.enforceRpId=false
@@ -1685,6 +1690,10 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas[0].name=
 # cas.authn.jaas[0].credentialCriteria=
 ```
+
+Principal resolution and Person Directory settings for this feature 
+are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) 
+under the configuration key `cas.authn.jaas[0].principal`.
 
 ## GUA Authentication
 
