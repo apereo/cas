@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * @author sbearcsiro
  * @since 5.3.0
  */
-@Configuration
+@Configuration("delegatedAuthenticationWebConfiguration")
 public class DelegatedAuthenticationWebConfiguration {
 
     @Bean
