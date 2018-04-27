@@ -44,12 +44,13 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
     @Override
     public boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Service service) {
         try {
-            if (surrogate.equalsIgnoreCase(principal.getId())) {
+            final String id = principal.getId();
+            if (surrogate.equalsIgnoreCase(id)) {
                 return true;
             }
 
-            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSurrogateSearchFilter(), CollectionUtils.wrap(surrogate));
-            LOGGER.debug("Using search filter: [{}]", filter);
+            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSurrogateSearchFilter(), CollectionUtils.wrap(id));
+            LOGGER.debug("Using search filter to locate surrogate accounts for [{}]: [{}]", id, filter);
 
             final Response<SearchResult> response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter);
             LOGGER.debug("LDAP response: [{}]", response);

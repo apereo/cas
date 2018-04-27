@@ -4,6 +4,7 @@ import org.apereo.cas.audit.spi.DefaultAuditPrincipalIdProvider;
 import org.apereo.cas.authentication.Authentication;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.Subject;
 
 /**
  * This is {@link SamlResponseAuditPrincipalIdProvider}.
@@ -22,8 +23,9 @@ public class SamlResponseAuditPrincipalIdProvider extends DefaultAuditPrincipalI
         final Response response = (Response) returnValue;
         if (response.getAssertions().size() > 0) {
             final Assertion assertion = response.getAssertions().get(0);
-            if (assertion.getSubject() != null && assertion.getSubject().getNameID() != null) {
-                return assertion.getSubject().getNameID().getValue();
+            final Subject subject = assertion.getSubject();
+            if (subject != null && subject.getNameID() != null) {
+                return subject.getNameID().getValue();
             }
         }
         return super.getPrincipalIdFrom(authentication, returnValue, exception);

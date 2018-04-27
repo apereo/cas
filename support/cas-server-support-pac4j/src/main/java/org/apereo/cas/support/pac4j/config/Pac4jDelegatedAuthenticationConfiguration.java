@@ -68,15 +68,17 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
 
     @Bean
     @ConditionalOnMissingBean(name = "pac4jDelegatedSessionStoreCookieSerializer")
-    public StringSerializer<Map<String,Object>> pac4jDelegatedSessionStoreCookieSerializer() {
-        return new SessionStoreCookieSerializer(pac4jJacksonModule());
+    public StringSerializer<Map<String, Object>> pac4jDelegatedSessionStoreCookieSerializer() {
+        final SessionStoreCookieSerializer serializer = new SessionStoreCookieSerializer();
+        serializer.getObjectMapper().registerModule(pac4jJacksonModule());
+        return serializer;
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "pac4jJacksonModule")
     public Module pac4jJacksonModule() {
-        SimpleModule module = new SimpleModule();
-        module.setMixInAnnotation(OAuth1RequestToken.class, OAuth1RequestTokenMixin.class);
+        final SimpleModule module = new SimpleModule();
+        module.setMixInAnnotation(OAuth1RequestToken.class, AbstractOAuth1RequestTokenMixin.class);
         return module;
     }
 
@@ -115,12 +117,17 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
         plan.registerAuthorizer(pac4jServiceTicketValidationAuthorizer());
     }
 
-    public abstract static class OAuth1RequestTokenMixin extends OAuth1RequestToken {
+    /**
+     * The type Oauth1 request token mixin.
+     */
+    private abstract static class AbstractOAuth1RequestTokenMixin extends OAuth1RequestToken {
+        private static final long serialVersionUID = -7839084408338396531L;
+
         @JsonCreator
-        public OAuth1RequestTokenMixin(@JsonProperty("token") final String token,
-                                       @JsonProperty("tokenSecret") final String tokenSecret,
-                                       @JsonProperty("oauthCallbackConfirmed") final boolean oauthCallbackConfirmed,
-                                       @JsonProperty("rawResponse") final String rawResponse) {
+        AbstractOAuth1RequestTokenMixin(@JsonProperty("token") final String token,
+                                        @JsonProperty("tokenSecret") final String tokenSecret,
+                                        @JsonProperty("oauthCallbackConfirmed") final boolean oauthCallbackConfirmed,
+                                        @JsonProperty("rawResponse") final String rawResponse) {
             super(token, tokenSecret, oauthCallbackConfirmed, rawResponse);
         }
 

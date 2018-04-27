@@ -51,6 +51,7 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+
     @Autowired
     @Qualifier("defaultTicketFactory")
     private TicketFactory ticketFactory;
@@ -128,6 +129,18 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     @Qualifier("logoutFlowRegistry")
     private FlowDefinitionRegistry logoutFlowDefinitionRegistry;
 
+    /**
+     * This @Bean is static so that it can be instantiated without the @Autowired dependencies
+     * also being instantiated.
+     *
+     * @return the error view resolver
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "pac4jErrorViewResolver")
+    public static ErrorViewResolver pac4jErrorViewResolver() {
+        return new DelegatedAuthenticationErrorViewResolver();
+    }
+
     @ConditionalOnMissingBean(name = "saml2ClientLogoutAction")
     @Bean
     @Lazy
@@ -156,12 +169,6 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     public CasWebflowConfigurer delegatedAuthenticationWebflowConfigurer() {
         return new DelegatedAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
             logoutFlowDefinitionRegistry, saml2ClientLogoutAction, applicationContext, casProperties);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "pac4jErrorViewResolver")
-    public ErrorViewResolver pac4jErrorViewResolver() {
-        return new DelegatedAuthenticationErrorViewResolver();
     }
 
     @Bean
