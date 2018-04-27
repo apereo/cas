@@ -102,6 +102,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      * @param enableWatcher                        enable watcher thread
      * @param eventPublisher                       the event publisher
      * @param registeredServiceReplicationStrategy the registered service replication strategy
+     * @param resourceNamingStrategy               the registered service naming strategy
      */
     public AbstractResourceBasedServiceRegistry(final Path configDirectory, final StringSerializer<RegisteredService> serializer,
                                                 final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
@@ -119,6 +120,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      * @param enableWatcher                        the enable watcher
      * @param eventPublisher                       the event publisher
      * @param registeredServiceReplicationStrategy the registered service replication strategy
+     * @param resourceNamingStrategy               the registered service naming strategy
      */
     public AbstractResourceBasedServiceRegistry(final Path configDirectory,
                                                 final Collection<StringSerializer<RegisteredService>> serializers, final boolean enableWatcher,
