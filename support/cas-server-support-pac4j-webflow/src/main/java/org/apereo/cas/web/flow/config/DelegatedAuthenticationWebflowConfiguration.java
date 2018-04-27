@@ -159,12 +159,6 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "pac4jErrorViewResolver")
-    public ErrorViewResolver pac4jErrorViewResolver() {
-        return new DelegatedAuthenticationErrorViewResolver();
-    }
-
-    @Bean
     public DelegatedClientWebflowManager delegatedClientWebflowManager() {
         return new DelegatedClientWebflowManager(ticketRegistry,
             ticketFactory,
