@@ -132,6 +132,8 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     /**
      * This @Bean is static so that it can be instantiated without the @Autowired dependencies
      * also being instantiated.
+     *
+     * @return the error view resolver
      */
     @Bean
     @ConditionalOnMissingBean(name = "pac4jErrorViewResolver")
