@@ -1,6 +1,6 @@
 package org.apereo.cas.trusted.web.flow;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
@@ -24,7 +24,7 @@ import java.util.Set;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
 
     private final MultifactorAuthenticationTrustStorage storage;
@@ -40,7 +40,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
         }
         final String principal = c.getPrincipal().getId();
         final LocalDate onOrAfter = LocalDate.now().minus(trustedProperties.getExpiration(),
-                DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit()));
+            DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit()));
         LOGGER.warn("Retrieving trusted authentication records for [{}] that are on/after [{}]", principal, onOrAfter);
         final Set<MultifactorAuthenticationTrustRecord> results = storage.get(principal, onOrAfter);
         if (results.isEmpty()) {
@@ -50,7 +50,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
         final String fingerprint = deviceFingerprintStrategy.determineFingerprint(principal, requestContext, false);
         LOGGER.debug("Retrieving authentication records for [{}] that matches [{}]", principal, fingerprint);
         if (results.stream()
-                .noneMatch(entry -> entry.getDeviceFingerprint().equals(fingerprint))) {
+            .noneMatch(entry -> entry.getDeviceFingerprint().equals(fingerprint))) {
             LOGGER.debug("No trusted authentication records could be found for [{}] to match the current device fingerprint", principal);
             return no();
         }
@@ -59,8 +59,8 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
 
         MultifactorAuthenticationTrustUtils.setMultifactorAuthenticationTrustedInScope(requestContext);
         MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
-                c,
-                trustedProperties.getAuthenticationContextAttribute());
+            c,
+            trustedProperties.getAuthenticationContextAttribute());
         return yes();
     }
 }
