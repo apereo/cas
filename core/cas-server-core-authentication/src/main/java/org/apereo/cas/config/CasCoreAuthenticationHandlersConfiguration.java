@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandler;
@@ -15,11 +14,8 @@ import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.ProxyingPrincipalResolver;
-import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategy;
-import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
-import org.apereo.cas.authentication.support.password.RejectResultCodePasswordPolicyHandlingStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
@@ -35,7 +31,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,12 +66,6 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @ConditionalOnMissingBean(name = "jaasPrincipalFactory")
-    @Bean
-    public PrincipalFactory jaasPrincipalFactory() {
-        return PrincipalFactoryUtils.newPrincipalFactory();
-    }
 
     @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
     @Bean
@@ -149,6 +138,12 @@ public class CasCoreAuthenticationHandlersConfiguration {
         @Qualifier("attributeRepository")
         private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
+        @ConditionalOnMissingBean(name = "jaasPrincipalFactory")
+        @Bean
+        public PrincipalFactory jaasPrincipalFactory() {
+            return PrincipalFactoryUtils.newPrincipalFactory();
+        }
+
         @Bean
         @ConditionalOnMissingBean(name = "jaasPersonDirectoryPrincipalResolvers")
         public List<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers() {
@@ -178,15 +173,16 @@ public class CasCoreAuthenticationHandlersConfiguration {
                     h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jaas.getPasswordEncoder()));
 
                     final PasswordPolicyProperties passwordPolicy = jaas.getPasswordPolicy();
+                    h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(jaas.getPasswordPolicy()));
                     if (passwordPolicy.isEnabled()) {
                         LOGGER.debug("Password policy is enabled for JAAS. Constructing password policy configuration for [{}]", jaas.getRealm());
-                        h.setPasswordPolicyHandlingStrategy(createPasswordPolicyHandlingStrategy(jaas.getPasswordPolicy()));
-                        if (!passwordPolicy.isAccountStateHandlingEnabled()) {
-                            final PasswordPolicyConfiguration cfg = new PasswordPolicyConfiguration(passwordPolicy);
+                        final PasswordPolicyConfiguration cfg = new PasswordPolicyConfiguration(passwordPolicy);
+                        if (passwordPolicy.isAccountStateHandlingEnabled()) {
                             cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));
+                        } else {
                             LOGGER.debug("Handling account states is disabled via CAS configuration");
-                            h.setPasswordPolicyConfiguration(cfg);
                         }
+                        h.setPasswordPolicyConfiguration(cfg);
                     }
                     h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(jaas.getPrincipalTransformation()));
                     h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(jaas.getCredentialCriteria()));
@@ -200,22 +196,5 @@ public class CasCoreAuthenticationHandlersConfiguration {
         public AuthenticationEventExecutionPlanConfigurer jaasAuthenticationEventExecutionPlanConfigurer() {
             return plan -> plan.registerAuthenticationHandlerWithPrincipalResolvers(jaasAuthenticationHandlers(), jaasPersonDirectoryPrincipalResolvers());
         }
-
-    }
-
-    private AuthenticationPasswordPolicyHandlingStrategy createPasswordPolicyHandlingStrategy(final PasswordPolicyProperties l) {
-        if (l.getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
-            LOGGER.debug("Created password policy handling strategy based on blacklisted authentication result codes");
-            return new RejectResultCodePasswordPolicyHandlingStrategy();
-        }
-
-        final Resource location = l.getGroovy().getLocation();
-        if (l.getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.GROOVY && location != null) {
-            LOGGER.debug("Created password policy handling strategy based on Groovy script [{}]", location);
-            return new GroovyPasswordPolicyHandlingStrategy(location);
-        }
-
-        LOGGER.debug("Created default password policy handling strategy");
-        return new DefaultPasswordPolicyHandlingStrategy();
     }
 }
