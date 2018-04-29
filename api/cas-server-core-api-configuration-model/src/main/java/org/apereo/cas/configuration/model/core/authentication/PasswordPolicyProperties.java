@@ -1,14 +1,14 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import lombok.Getter;
+import lombok.Setter;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.util.LinkedCaseInsensitiveMap;
+
 import javax.security.auth.login.LoginException;
 import java.io.Serializable;
 import java.util.Map;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Configuration properties class for password.policy.
@@ -17,22 +17,21 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
-
 @Getter
 @Setter
 public class PasswordPolicyProperties implements Serializable {
-
     private static final long serialVersionUID = -3878237508646993100L;
 
     public enum PasswordPolicyHandlingOptions {
-
         /**
          * Default option to handle policy changes.
          */
-        DEFAULT, /**
+        DEFAULT,
+        /**
          * Handle account password policies via Groovy.
          */
-        GROOVY, /**
+        GROOVY,
+        /**
          * Strategy to only activate password policy
          * if the authentication response code is not blacklisted.
          */
@@ -40,12 +39,12 @@ public class PasswordPolicyProperties implements Serializable {
     }
 
     /**
-     * Decide how LDAP authentication should handle password policy changes.
+     * Decide how authentication should handle password policy changes.
      * Acceptable values are:
      * <ul>
-     *     <li>{@code DEFAULT}: Default password policy rules handling account states.</li>
-     *     <li>{@code GROOVY}: Handle account changes and warnings via Groovy scripts</li>
-     *     <li>{@code REJECT_RESULT_CODE}: Handle account state only if the ldap authentication result code isn't blocked</li>
+     * <li>{@code DEFAULT}: Default password policy rules handling account states.</li>
+     * <li>{@code GROOVY}: Handle account changes and warnings via Groovy scripts</li>
+     * <li>{@code REJECT_RESULT_CODE}: Handle account state only if the authentication result code isn't blocked</li>
      * </ul>
      */
     private PasswordPolicyHandlingOptions strategy = PasswordPolicyHandlingOptions.DEFAULT;
@@ -70,26 +69,20 @@ public class PasswordPolicyProperties implements Serializable {
     private boolean accountStateHandlingEnabled = true;
 
     /**
-     * An implementation of a policy class that knows how to handle LDAP responses.
-     * The class must be an implementation of {@code org.ldaptive.auth.AuthenticationResponseHandler}.
-     */
-    private String customPolicyClass;
-
-    /**
      * When dealing with FreeIPA, indicates the number of allows login failures.
      */
     private int loginFailures = 5;
 
     /**
      * Used by an account state handling policy that only calculates account warnings
-     * in case the LDAP entry carries an attribute {@link #warningAttributeName}
+     * in case the entry carries an attribute {@link #warningAttributeName}
      * whose value matches this field.
      */
     private String warningAttributeValue;
 
     /**
      * Used by an account state handling policy that only calculates account warnings
-     * in case the LDAP entry carries this attribute.
+     * in case the entry carries this attribute.
      */
     private String warningAttributeName;
 
@@ -105,22 +98,17 @@ public class PasswordPolicyProperties implements Serializable {
     private boolean warnAll;
 
     /**
-     * In the event that AD is chosen as the type, this is used to calculate
+     * This is used to calculate
      * a warning period to see if account expiry is within the calculated window.
      */
     private int warningDays = 30;
-
-    /**
-     * LDAP type. Accepted values are {@code GENERIC,AD,FreeIPA,EDirectory}
-     */
-    private AbstractLdapProperties.LdapType type = AbstractLdapProperties.LdapType.GENERIC;
 
     /**
      * Handle password policy via Groovy script.
      */
     private Groovy groovy = new Groovy();
 
-    @RequiresModule(name = "cas-server-support-ldap")
+    @RequiresModule(name = "cas-server-core-authentication", automated = true)
     @Getter
     @Setter
     public static class Groovy extends SpringResourceProperties {
