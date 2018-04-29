@@ -2,7 +2,6 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.shibboleth.ext.spring.resource.ResourceHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.metadata.SamlIdPMetadataProperties;
@@ -63,7 +62,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
             final String desc = StringUtils.defaultString(service.getDescription(), service.getName());
 
             final InputStreamResource metadataResource = ResourceUtils.buildInputStreamResourceFrom(metadataDocument.getValue(), desc);
-            final AbstractMetadataResolver metadataResolver = new InMemoryResourceMetadataResolver(ResourceHelper.of(metadataResource));
+            final AbstractMetadataResolver metadataResolver = new InMemoryResourceMetadataResolver(metadataResource, configBean);
 
             final List<MetadataFilter> metadataFilterList = new ArrayList<>();
             if (StringUtils.isNotBlank(metadataDocument.getSignature())) {

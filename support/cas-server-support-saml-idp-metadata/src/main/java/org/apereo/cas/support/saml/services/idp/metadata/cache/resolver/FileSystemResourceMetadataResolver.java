@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
 import lombok.extern.slf4j.Slf4j;
-import net.shibboleth.ext.spring.resource.ResourceHelper;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
@@ -11,7 +11,6 @@ import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.LocalDynamicMetadataResolver;
-import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.FileSystemResource;
 
@@ -29,7 +28,7 @@ import java.util.Collection;
 public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
 
 
-    public FileSystemResourceMetadataResolver(final SamlIdPProperties samlIdPProperties, 
+    public FileSystemResourceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                               final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);
     }
@@ -46,7 +45,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
             if (metadataFile.isDirectory()) {
                 metadataResolver = new LocalDynamicMetadataResolver(new FilesystemLoadSaveManager<>(metadataFile, configBean.getParserPool()));
             } else {
-                metadataResolver = new ResourceBackedMetadataResolver(ResourceHelper.of(metadataResource));
+                metadataResolver = new InMemoryResourceMetadataResolver(metadataResource, configBean);
             }
             configureAndInitializeSingleMetadataResolver(metadataResolver, service);
             return CollectionUtils.wrap(metadataResolver);

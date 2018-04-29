@@ -1,23 +1,24 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
-import com.google.common.base.Function;
+import com.google.common.io.ByteStreams;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.HttpResponse;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.metadata.SamlIdPMetadataProperties;
+import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.http.HttpClient;
-import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.opensaml.saml.metadata.resolver.impl.FunctionDrivenDynamicHTTPMetadataResolver;
+import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
+import org.springframework.http.HttpStatus;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * This is {@link DynamicMetadataResolver}.
@@ -26,57 +27,28 @@ import java.util.concurrent.TimeUnit;
  * @since 5.2.0
  */
 @Slf4j
-public class DynamicMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
-
-
-    /**
-     * The Http client.
-     */
-    protected final HttpClient httpClient;
+public class DynamicMetadataResolver extends UrlResourceMetadataResolver {
 
     public DynamicMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                    final OpenSamlConfigBean configBean,
                                    final HttpClient httpClient) {
-        super(samlIdPProperties, configBean);
-        this.httpClient = httpClient;
+        super(samlIdPProperties, configBean, httpClient);
     }
 
     @Override
-    public List<MetadataResolver> resolve(final SamlRegisteredService service) {
-        LOGGER.info("Loading metadata dynamically for [{}]", service.getName());
+    protected String getMetadataLocationForService(final SamlRegisteredService service) {
+        LOGGER.info("Getting metadata dynamically for [{}]", service.getName());
+        return service.getMetadataLocation().replace("{0}", EncodingUtils.urlEncode(service.getServiceId()));
+    }
 
-        final SamlIdPMetadataProperties md = samlIdPProperties.getMetadata();
-        final FunctionDrivenDynamicHTTPMetadataResolver resolver =
-            new FunctionDrivenDynamicHTTPMetadataResolver(this.httpClient.getWrappedHttpClient());
-        resolver.setMinCacheDuration(TimeUnit.MILLISECONDS.convert(md.getCacheExpirationMinutes(), TimeUnit.MINUTES));
-        resolver.setRequireValidMetadata(md.isRequireValidMetadata());
-
-        if (StringUtils.isNotBlank(md.getBasicAuthnPassword()) && StringUtils.isNotBlank(md.getBasicAuthnUsername())) {
-            resolver.setBasicCredentials(new UsernamePasswordCredentials(md.getBasicAuthnUsername(), md.getBasicAuthnPassword()));
-        }
-        if (!md.getSupportedContentTypes().isEmpty()) {
-            resolver.setSupportedContentTypes(md.getSupportedContentTypes());
-        }
-
-        resolver.setRequestURLBuilder(new Function<String, String>() {
-            @Nullable
-            @Override
-            public String apply(@Nullable final String input) {
-                if (StringUtils.isNotBlank(input)) {
-                    final String metadataLocation = service.getMetadataLocation().replace("{0}", EncodingUtils.urlEncode(input));
-                    LOGGER.info("Constructed dynamic metadata query [{}] for [{}]", metadataLocation, service.getName());
-                    return metadataLocation;
-                }
-                return null;
-            }
-        });
-        try {
-            configureAndInitializeSingleMetadataResolver(resolver, service);
-            return CollectionUtils.wrap(resolver);
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return new ArrayList<>(0);
+    @Override
+    protected HttpResponse fetchMetadata(final String metadataLocation) {
+        final SamlIdPMetadataProperties metadata = samlIdPProperties.getMetadata();
+        final Map headers = new LinkedHashMap();
+        headers.put("Content-Type", metadata.getSupportedContentTypes());
+        headers.put("Accept", "*/*");
+        return HttpUtils.executeGet(metadataLocation, metadata.getBasicAuthnUsername(),
+            samlIdPProperties.getMetadata().getBasicAuthnPassword(), new LinkedHashMap<>(), headers);
     }
 
     /**
@@ -92,5 +64,22 @@ public class DynamicMetadataResolver extends BaseSamlRegisteredServiceMetadataRe
     @Override
     public boolean supports(final SamlRegisteredService service) {
         return isDynamicMetadataQueryConfigured(service);
+    }
+
+    @Override
+    protected boolean shouldHttpResponseStatusBeProcessed(final HttpStatus status) {
+        return super.shouldHttpResponseStatusBeProcessed(status) || status == HttpStatus.NOT_MODIFIED;
+    }
+
+    @Override
+    protected AbstractMetadataResolver getMetadataResolverFromResponse(final HttpResponse response, final File backupFile) throws Exception {
+        if (response.getStatusLine().getStatusCode() == HttpStatus.NOT_MODIFIED.value()) {
+            return new InMemoryResourceMetadataResolver(backupFile, this.configBean);
+        }
+
+        final InputStream ins = response.getEntity().getContent();
+        final byte[] source = ByteStreams.toByteArray(ins);
+        final ByteArrayInputStream bais = new ByteArrayInputStream(source);
+        return new InMemoryResourceMetadataResolver(bais, this.configBean);
     }
 }

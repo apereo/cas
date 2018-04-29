@@ -45,7 +45,7 @@ public class ScriptingUtils {
     /**
      * Pattern indicating groovy script is a file/resource.
      */
-    private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern("file:(.+\\.groovy)");
+    private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern("(file|classpath):(.+\\.groovy)");
 
     /**
      * Is inline groovy script ?.
