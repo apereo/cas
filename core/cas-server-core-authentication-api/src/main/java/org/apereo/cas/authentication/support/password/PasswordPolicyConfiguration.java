@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.support.password;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.AuthenticationAccountStateHandler;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PasswordPolicyConfiguration {
 
+    /**
+     * Directory-specific account state handler component.
+     */
+    private AuthenticationAccountStateHandler accountStateHandler;
+    
     private boolean alwaysDisplayPasswordExpirationWarning;
 
     private int passwordWarningNumberOfDays;
@@ -32,6 +38,6 @@ public class PasswordPolicyConfiguration {
     }
 
     public PasswordPolicyConfiguration(final PasswordPolicyProperties props) {
-        this(props.isWarnAll(), props.getWarningDays(), props.getLoginFailures());
+        this(null, props.isWarnAll(), props.getWarningDays(), props.getLoginFailures());
     }
 }

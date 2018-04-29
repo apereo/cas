@@ -1688,12 +1688,17 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas[0].kerberosKdcSystemProperty=
 # cas.authn.jaas[0].kerberosRealmSystemProperty=
 # cas.authn.jaas[0].name=
+# cas.authn.jaas[0].order=
 # cas.authn.jaas[0].credentialCriteria=
 ```
 
 Principal resolution and Person Directory settings for this feature 
 are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) 
 under the configuration key `cas.authn.jaas[0].principal`.
+
+Password policy settings for this feature are available [here](Configuration-Properties-Common.html#password-policy-settings) 
+under the configuration key `cas.authn.jaas[0].passwordPolicy`.
+
 
 ## GUA Authentication
 

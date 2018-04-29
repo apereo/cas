@@ -1,14 +1,14 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
-import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link LdapAuthenticationProperties}.
@@ -28,7 +28,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
      * Password policy settings.
      */
     @NestedConfigurationProperty
-    private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
+    private LdapPasswordPolicyProperties passwordPolicy = new LdapPasswordPolicyProperties();
 
     /**
      * Principal transformation settings.

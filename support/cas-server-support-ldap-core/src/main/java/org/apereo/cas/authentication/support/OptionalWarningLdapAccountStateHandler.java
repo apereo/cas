@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.support;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.MessageDescriptor;
+import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
@@ -19,7 +20,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
-public class OptionalWarningLdapLdapAccountStateHandler extends DefaultLdapLdapAccountStateHandler {
+public class OptionalWarningLdapAccountStateHandler extends DefaultLdapAccountStateHandler {
 
     private String warnAttributeName;
 
@@ -29,7 +30,7 @@ public class OptionalWarningLdapLdapAccountStateHandler extends DefaultLdapLdapA
     
     @Override
     protected void handleWarning(final AccountState.Warning warning, final AuthenticationResponse response,
-                                 final LdapPasswordPolicyConfiguration configuration, final List<MessageDescriptor> messages) {
+                                 final PasswordPolicyConfiguration configuration, final List<MessageDescriptor> messages) {
         if (StringUtils.isBlank(this.warnAttributeName)) {
             LOGGER.debug("No warning attribute name is defined");
             return;

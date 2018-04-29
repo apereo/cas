@@ -4,12 +4,14 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.DefaultMessageDescriptor;
+import org.apereo.cas.authentication.AuthenticationAccountStateHandler;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
+import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.util.DateTimeUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.auth.AccountState;
@@ -44,7 +46,7 @@ import java.util.Map;
  * @since 4.0.0
  */
 @Slf4j
-public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandler {
+public class DefaultLdapAccountStateHandler implements AuthenticationAccountStateHandler<AuthenticationResponse, PasswordPolicyConfiguration> {
     private static final int DEFAULT_ERROR_COUNT = 30;
 
     /**
@@ -59,7 +61,7 @@ public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandl
      * Instantiates a new account state handler, that populates
      * the error map with LDAP error codes and corresponding exceptions.
      */
-    public DefaultLdapLdapAccountStateHandler() {
+    public DefaultLdapAccountStateHandler() {
         this.errorMap = new HashMap<>(DEFAULT_ERROR_COUNT);
         this.errorMap.put(ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED, new AccountDisabledException());
         this.errorMap.put(ActiveDirectoryAccountState.Error.ACCOUNT_LOCKED_OUT, new AccountLockedException());
@@ -89,7 +91,7 @@ public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandl
 
     @Override
     public List<MessageDescriptor> handle(final AuthenticationResponse response,
-                                          final LdapPasswordPolicyConfiguration configuration) throws LoginException {
+                                          final PasswordPolicyConfiguration configuration) throws LoginException {
 
         LOGGER.debug("Attempting to handle LDAP account state for [{}]", response);
         if (!this.attributesToErrorMap.isEmpty() && response.getResult()) {
@@ -123,9 +125,8 @@ public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandl
     protected void handleError(
         final AccountState.Error error,
         final AuthenticationResponse response,
-        final LdapPasswordPolicyConfiguration configuration,
-        final List<MessageDescriptor> messages)
-        throws LoginException {
+        final PasswordPolicyConfiguration configuration,
+        final List<MessageDescriptor> messages) throws LoginException {
 
         LOGGER.debug("Handling LDAP account state error [{}]", error);
         final LoginException ex = this.errorMap.get(error);
@@ -149,7 +150,7 @@ public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandl
     protected void handleWarning(
         final AccountState.Warning warning,
         final AuthenticationResponse response,
-        final LdapPasswordPolicyConfiguration configuration,
+        final PasswordPolicyConfiguration configuration,
         final List<MessageDescriptor> messages) {
 
 
