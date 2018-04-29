@@ -90,9 +90,7 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
     }
 
     @Override
-    public List<MessageDescriptor> handle(final AuthenticationResponse response,
-                                          final PasswordPolicyConfiguration configuration) throws LoginException {
-
+    public List<MessageDescriptor> handle(final AuthenticationResponse response, final PasswordPolicyConfiguration configuration) throws LoginException {
         LOGGER.debug("Attempting to handle LDAP account state for [{}]", response);
         if (!this.attributesToErrorMap.isEmpty() && response.getResult()) {
             LOGGER.debug("Handling policy based on pre-defined attributes");
@@ -122,11 +120,8 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
      * @param messages      Container for messages produced by account state error handling.
      * @throws LoginException On errors that should be communicated as login exceptions.
      */
-    protected void handleError(
-        final AccountState.Error error,
-        final AuthenticationResponse response,
-        final PasswordPolicyConfiguration configuration,
-        final List<MessageDescriptor> messages) throws LoginException {
+    protected void handleError(final AccountState.Error error, final AuthenticationResponse response,
+                               final PasswordPolicyConfiguration configuration, final List<MessageDescriptor> messages) throws LoginException {
 
         LOGGER.debug("Handling LDAP account state error [{}]", error);
         final LoginException ex = this.errorMap.get(error);
@@ -147,11 +142,8 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
      * @param configuration Password policy configuration.
      * @param messages      Container for messages produced by account state warning handling.
      */
-    protected void handleWarning(
-        final AccountState.Warning warning,
-        final AuthenticationResponse response,
-        final PasswordPolicyConfiguration configuration,
-        final List<MessageDescriptor> messages) {
+    protected void handleWarning(final AccountState.Warning warning, final AuthenticationResponse response,
+                                 final PasswordPolicyConfiguration configuration, final List<MessageDescriptor> messages) {
 
 
         LOGGER.debug("Handling account state warning [{}]", warning);
