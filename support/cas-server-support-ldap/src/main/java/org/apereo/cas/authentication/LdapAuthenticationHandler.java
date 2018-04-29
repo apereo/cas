@@ -1,12 +1,11 @@
 package org.apereo.cas.authentication;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
-import org.apereo.cas.authentication.support.LdapPasswordPolicyHandlingStrategy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.ldaptive.LdapAttribute;
@@ -17,6 +16,7 @@ import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
+
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -29,7 +29,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import lombok.Setter;
 
 /**
  * LDAP authentication handler that uses the ldaptive {@code Authenticator} component underneath.
@@ -47,12 +46,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * Mapping of LDAP attribute name to principal attribute name.
      */
     protected Map<String, Object> principalAttributeMap = new HashMap<>();
-
-    /**
-     * Decide how to execute password policy handling, if at all.
-     */
-    protected LdapPasswordPolicyHandlingStrategy passwordPolicyHandlingStrategy;
-
+    
     /**
      * Performs LDAP authentication given username/password.
      **/
@@ -98,7 +92,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     public LdapAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                      final PrincipalFactory principalFactory, final Integer order, final Authenticator authenticator,
-                                     final LdapPasswordPolicyHandlingStrategy strategy) {
+                                     final AuthenticationPasswordPolicyHandlingStrategy strategy) {
         super(name, servicesManager, principalFactory, order);
         this.authenticator = authenticator;
         this.passwordPolicyHandlingStrategy = strategy;
@@ -110,7 +104,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         final AuthenticationResponse response;
         try {
             LOGGER.debug("Attempting LDAP authentication for [{}]. Authenticator pre-configured attributes are [{}], "
-                + "additional requested attributes for this authentication request are [{}]", upc, authenticator.getReturnAttributes(),
+                    + "additional requested attributes for this authentication request are [{}]", upc, authenticator.getReturnAttributes(),
                 authenticatedEntryAttributes);
             final AuthenticationRequest request = new AuthenticationRequest(upc.getUsername(),
                 new org.ldaptive.Credential(upc.getPassword()), authenticatedEntryAttributes);
@@ -127,8 +121,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
         LOGGER.debug("Attempting to examine and handle LDAP password policy via [{}]",
             passwordPolicyHandlingStrategy.getClass().getSimpleName());
-        final List<MessageDescriptor> messageList = passwordPolicyHandlingStrategy.handle(response,
-            (LdapPasswordPolicyConfiguration) getPasswordPolicyConfiguration());
+        final List<MessageDescriptor> messageList = passwordPolicyHandlingStrategy.handle(response, getPasswordPolicyConfiguration());
         if (response.getResult()) {
             LOGGER.debug("LDAP response returned a result. Creating the final LDAP principal");
             final Principal principal = createPrincipal(upc.getUsername(), response.getLdapEntry());
@@ -210,9 +203,9 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             if (principalAttr == null || principalAttr.size() == 0) {
                 if (this.allowMissingPrincipalAttributeValue) {
                     LOGGER.warn("The principal id attribute [{}] is not found. CAS cannot construct the final authenticated principal "
-                        + "if it's unable to locate the attribute that is designated as the principal id. "
-                        + "Attributes available on the LDAP entry are [{}]. Since principal id attribute is not available, CAS will "
-                        + "fall back to construct the principal based on the provided user id: [{}]",
+                            + "if it's unable to locate the attribute that is designated as the principal id. "
+                            + "Attributes available on the LDAP entry are [{}]. Since principal id attribute is not available, CAS will "
+                            + "fall back to construct the principal based on the provided user id: [{}]",
                         this.principalIdAttribute, ldapEntry.getAttributes(), username);
                     return username;
                 }

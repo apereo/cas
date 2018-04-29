@@ -2,6 +2,8 @@ package org.apereo.cas.authentication.support;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.MessageDescriptor;
+import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
+import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ldaptive.auth.AuthenticationResponse;
@@ -15,19 +17,19 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link GroovyLdapPasswordPolicyHandlingStrategyTests}.
+ * This is {@link GroovyPasswordPolicyHandlingStrategyTests}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @RunWith(SpringRunner.class)
 @Slf4j
-public class GroovyLdapPasswordPolicyHandlingStrategyTests {
+public class GroovyPasswordPolicyHandlingStrategyTests {
 
     @Test
     public void verifyStrategySupportsDefault() {
         final ClassPathResource resource = new ClassPathResource("lppe-strategy.groovy");
-        final GroovyLdapPasswordPolicyHandlingStrategy s = new GroovyLdapPasswordPolicyHandlingStrategy(resource);
+        final GroovyPasswordPolicyHandlingStrategy s = new GroovyPasswordPolicyHandlingStrategy(resource);
         final AuthenticationResponse res = mock(AuthenticationResponse.class);
 
         when(res.getAuthenticationResultCode()).thenReturn(AuthenticationResultCode.INVALID_CREDENTIAL);
@@ -36,7 +38,7 @@ public class GroovyLdapPasswordPolicyHandlingStrategyTests {
         when(res.getResult()).thenReturn(false);
         assertTrue(s.supports(res));
 
-        final List<MessageDescriptor> results = s.handle(res, mock(LdapPasswordPolicyConfiguration.class));
+        final List<MessageDescriptor> results = s.handle(res, mock(PasswordPolicyConfiguration.class));
         assertFalse(results.isEmpty());
     }
 }
