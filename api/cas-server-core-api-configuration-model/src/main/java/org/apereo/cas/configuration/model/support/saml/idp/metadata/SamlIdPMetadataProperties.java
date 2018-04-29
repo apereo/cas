@@ -94,4 +94,8 @@ public class SamlIdPMetadataProperties implements Serializable {
      */
     private List<String> supportedContentTypes = new ArrayList<>();
 
+    public SamlIdPMetadataProperties() {
+        supportedContentTypes.add("application/xml");
+        supportedContentTypes.add("text/xml");
+    }
 }
