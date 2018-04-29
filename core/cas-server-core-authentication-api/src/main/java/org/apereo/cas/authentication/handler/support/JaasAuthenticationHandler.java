@@ -1,12 +1,15 @@
 package org.apereo.cas.authentication.handler.support;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.util.Assert;
+
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
@@ -15,9 +18,10 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
-import lombok.Setter;
 
 /**
  * JAAS Authentication Handler for CAAS. This is a simple bridge from CAS'
@@ -127,7 +131,11 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         } finally {
             lc.logout();
         }
-        return createHandlerResult(credential, principal);
+
+        final List<MessageDescriptor> warnings = new ArrayList<>(0);
+        LOGGER.debug("Attempting to examine and handle password policy via [{}]", getPasswordPolicyHandlingStrategy().getClass().getSimpleName());
+        final List<MessageDescriptor> messageList = getPasswordPolicyHandlingStrategy().handle(principal, getPasswordPolicyConfiguration());
+        return createHandlerResult(credential, principal, messageList);
     }
 
     /**
