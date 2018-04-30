@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.SurrogateAuthenticationException;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
@@ -43,6 +44,10 @@ import java.util.Set;
 @Slf4j
 public class SurrogateAuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
 
+    @Autowired
+    @Qualifier("multifactorAuthenticationProviderSelector")
+    private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
+    
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
     private AuditableExecution registeredServiceAccessStrategyEnforcer;

@@ -12,6 +12,8 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
+import java.util.Optional;
+
 /**
  * Provides the most basic means of principal resolution by mapping
  * {@link Credential#getId()} onto
@@ -29,7 +31,7 @@ public class ProxyingPrincipalResolver implements PrincipalResolver {
     private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     @Override
-    public Principal resolve(final Credential credential, final Principal currentPrincipal, final AuthenticationHandler handler) {
+    public Principal resolve(final Credential credential, final Optional<Principal> currentPrincipal, final Optional<AuthenticationHandler> handler) {
         return this.principalFactory.createPrincipal(credential.getId());
     }
 

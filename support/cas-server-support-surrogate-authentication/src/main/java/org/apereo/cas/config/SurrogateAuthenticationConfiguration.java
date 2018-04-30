@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.SurrogateAuthenticationPostProcessor;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
 import org.apereo.cas.authentication.audit.SurrogateAuditPrincipalIdProvider;
 import org.apereo.cas.authentication.event.SurrogateAuthenticationEventListener;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -36,7 +35,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
-
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -116,20 +114,30 @@ public class SurrogateAuthenticationConfiguration {
     @Bean
     public PrincipalResolver personDirectoryPrincipalResolver() {
         final PersonDirectoryPrincipalResolverProperties principal = casProperties.getAuthn().getSurrogate().getPrincipal();
-        return new SurrogatePrincipalResolver(attributeRepository.getIfAvailable(), surrogatePrincipalFactory(),
+        return new SurrogatePrincipalResolver(attributeRepository.getIfAvailable(),
+            surrogatePrincipalFactory(),
             principal.isReturnNull(),
-            org.apache.commons.lang3.StringUtils.defaultIfBlank(principal.getPrincipalAttribute(), casProperties.getPersonDirectory().getPrincipalAttribute()));
+            org.apache.commons.lang3.StringUtils.defaultIfBlank(principal.getPrincipalAttribute(),
+                casProperties.getPersonDirectory().getPrincipalAttribute()));
     }
 
+    @ConditionalOnMissingBean(name = "surrogateAuthenticationPostProcessor")
     @Bean
     public AuthenticationPostProcessor surrogateAuthenticationPostProcessor() {
         return new SurrogateAuthenticationPostProcessor(
-            new DefaultPrincipalFactory(),
+            surrogatePrincipalFactory(),
+            personDirectoryPrincipalResolver(),
             surrogateAuthenticationService(),
             servicesManager,
             eventPublisher,
             registeredServiceAccessStrategyEnforcer,
             surrogateEligibilityAuditableExecution);
+    }
+
+    @ConditionalOnMissingBean(name = "surrogateAuthenticationPrincipalFactory")
+    @Bean
+    public PrincipalFactory surrogateAuthenticationPrincipalFactory() {
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @Bean

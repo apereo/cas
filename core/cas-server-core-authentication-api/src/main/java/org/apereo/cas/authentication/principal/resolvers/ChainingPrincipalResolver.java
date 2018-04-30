@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.ToString;
 import lombok.Setter;
@@ -55,7 +56,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      * @return The principal from the last configured resolver in the chain.
      */
     @Override
-    public Principal resolve(final Credential credential, final Principal principal, final AuthenticationHandler handler) {
+    public Principal resolve(final Credential credential, final Optional<Principal> principal, final Optional<AuthenticationHandler> handler) {
         final List<Principal> principals = new ArrayList<>();
         chain.stream().filter(resolver -> resolver.supports(credential)).forEach(resolver -> {
             LOGGER.debug("Invoking principal resolver [{}]", resolver);
@@ -85,7 +86,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
                 + "with different identifiers which typically is the result of a configuration issue.",
                 new HashMap<>(0), new HashMap<>(0));
         }
-        final String principalId = principal != null ? principal.getId() : principals.get(0).getId();
+        final String principalId = principal.isPresent() ? principal.get().getId() : principals.get(0).getId();
         final Principal finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
         LOGGER.debug("Final principal constructed by the chain of resolvers is [{}]", finalPrincipal);
         return finalPrincipal;
