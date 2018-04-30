@@ -24,8 +24,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 /**
@@ -75,7 +74,6 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
 
     @Test
     public void verifyRetrieveAndExpireByDate() {
-        // create records
         Stream.of(PRINCIPAL, PRINCIPAL2).forEach(p -> {
             for (int offset = 0; offset < 3; offset++) {
                 final MultifactorAuthenticationTrustRecord record =
@@ -85,12 +83,12 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
             }
         });
         assertThat(mfaTrustEngine.get(LocalDateTime.now().minusDays(30)), hasSize(6));
-        assertThat(mfaTrustEngine.get(LocalDateTime.now()), hasSize(2));
+        assertThat(mfaTrustEngine.get(LocalDateTime.now().minusSeconds(1)), hasSize(2));
 
         // expire records older than today
         mfaTrustEngine.expire(LocalDateTime.now().minusDays(1));
         assertThat(mfaTrustEngine.get(LocalDateTime.now().minusDays(30)), hasSize(2));
-        assertThat(mfaTrustEngine.get(LocalDateTime.now()), hasSize(2));
+        assertThat(mfaTrustEngine.get(LocalDateTime.now().minusSeconds(1)), hasSize(2));
 
         emptyTrustEngine();
     }
