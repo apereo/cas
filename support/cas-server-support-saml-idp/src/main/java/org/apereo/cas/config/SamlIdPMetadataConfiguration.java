@@ -2,10 +2,10 @@ package org.apereo.cas.config;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import net.shibboleth.ext.spring.resource.ResourceHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
@@ -28,7 +28,6 @@ import org.apereo.cas.support.saml.web.idp.metadata.SamlIdPMetadataController;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -79,8 +78,7 @@ public class SamlIdPMetadataConfiguration {
     @Autowired
     public MetadataResolver casSamlIdPMetadataResolver(@Qualifier("samlMetadataLocator") final SamlIdPMetadataLocator samlMetadataLocator) {
         final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
-        final ResourceBackedMetadataResolver resolver = new ResourceBackedMetadataResolver(
-            ResourceHelper.of(samlMetadataLocator.getMetadata()));
+        final InMemoryResourceMetadataResolver resolver = new InMemoryResourceMetadataResolver(samlMetadataLocator.getMetadata(), openSamlConfigBean);
         resolver.setParserPool(this.openSamlConfigBean.getParserPool());
         resolver.setFailFastInitialization(idp.getMetadata().isFailFast());
         resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
@@ -91,8 +89,7 @@ public class SamlIdPMetadataConfiguration {
     @Bean
     @RefreshScope
     public SamlIdPMetadataController samlIdPMetadataController() {
-        return new SamlIdPMetadataController(samlIdPMetadataGenerator(),
-            samlMetadataLocator());
+        return new SamlIdPMetadataController(samlIdPMetadataGenerator(), samlMetadataLocator());
     }
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataGenerator")

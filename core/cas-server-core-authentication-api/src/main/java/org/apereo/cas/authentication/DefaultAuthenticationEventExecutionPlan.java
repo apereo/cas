@@ -50,6 +50,23 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
+    public void registerAuthenticationHandlerWithPrincipalResolvers(final Collection<AuthenticationHandler> handlers,
+                                                                    final PrincipalResolver principalResolver) {
+        handlers.forEach(h -> registerAuthenticationHandlerWithPrincipalResolver(h, principalResolver));
+    }
+
+    @Override
+    public void registerAuthenticationHandlerWithPrincipalResolvers(final List<AuthenticationHandler> handlers, final List<PrincipalResolver> principalResolver) {
+        if (handlers.size() != principalResolver.size()) {
+            LOGGER.error("Total number of authentication handlers must match the number of provided principal resolvers");
+            return;
+        }
+        for (int i = 0; i < handlers.size(); i++) {
+            registerAuthenticationHandlerWithPrincipalResolver(handlers.get(i), principalResolver.get(i));
+        }
+    }
+
+    @Override
     public void registerMetadataPopulator(final AuthenticationMetaDataPopulator populator) {
         LOGGER.debug("Registering metadata populator [{}] into the execution plan", populator);
         authenticationMetaDataPopulatorList.add(populator);
@@ -79,12 +96,6 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     public PrincipalResolver getPrincipalResolverForAuthenticationTransaction(final AuthenticationHandler handler,
                                                                               final AuthenticationTransaction transaction) {
         return authenticationHandlerPrincipalResolverMap.get(handler);
-    }
-
-    @Override
-    public void registerAuthenticationHandlerWithPrincipalResolvers(final Collection<AuthenticationHandler> handlers,
-                                                                    final PrincipalResolver principalResolver) {
-        handlers.forEach(h -> registerAuthenticationHandlerWithPrincipalResolver(h, principalResolver));
     }
 
     @Override

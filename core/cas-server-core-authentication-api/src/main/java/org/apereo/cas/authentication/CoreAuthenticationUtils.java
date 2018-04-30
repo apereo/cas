@@ -9,6 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategy;
+import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
+import org.apereo.cas.authentication.support.password.RejectResultCodePasswordPolicyHandlingStrategy;
+import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 import org.codehaus.groovy.control.CompilerConfiguration;
@@ -109,5 +113,27 @@ public class CoreAuthenticationUtils {
             final Predicate<String> predicate = Pattern.compile(selectionCriteria).asPredicate();
             return credential -> predicate.test(credential.getId());
         }
+    }
+
+    /**
+     * New password policy handling strategy.
+     *
+     * @param properties the properties
+     * @return the authentication password policy handling strategy
+     */
+    public static AuthenticationPasswordPolicyHandlingStrategy newPasswordPolicyHandlingStrategy(final PasswordPolicyProperties properties) {
+        if (properties.getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
+            LOGGER.debug("Created password policy handling strategy based on blacklisted authentication result codes");
+            return new RejectResultCodePasswordPolicyHandlingStrategy();
+        }
+
+        final Resource location = properties.getGroovy().getLocation();
+        if (properties.getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.GROOVY && location != null) {
+            LOGGER.debug("Created password policy handling strategy based on Groovy script [{}]", location);
+            return new GroovyPasswordPolicyHandlingStrategy(location);
+        }
+
+        LOGGER.debug("Created default password policy handling strategy");
+        return new DefaultPasswordPolicyHandlingStrategy();
     }
 }

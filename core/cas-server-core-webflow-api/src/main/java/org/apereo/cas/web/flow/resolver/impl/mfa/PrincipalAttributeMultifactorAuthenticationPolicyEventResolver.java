@@ -37,8 +37,6 @@ import static org.springframework.util.StringUtils.commaDelimitedListToSet;
  */
 @Slf4j
 public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-
-
     /** Principal attribute value regex. */
     protected final String globalPrincipalAttributeValueRegex;
 

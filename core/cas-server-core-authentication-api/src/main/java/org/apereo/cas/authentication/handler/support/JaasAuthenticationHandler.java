@@ -1,23 +1,29 @@
 package org.apereo.cas.authentication.handler.support;
 
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
+import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.util.Assert;
+
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.Configuration;
+import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginContext;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
-import lombok.Setter;
 
 /**
  * JAAS Authentication Handler for CAAS. This is a simple bridge from CAS'
@@ -95,8 +101,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     public JaasAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
-        Assert.notNull(Configuration.getConfiguration(),
-            "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
+        Assert.notNull(Configuration.getConfiguration(), "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
 
     @Override
@@ -112,10 +117,13 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
         final String username = credential.getUsername();
         final String password = credential.getPassword();
+
         Principal principal = null;
-        final LoginContext lc = new LoginContext(this.realm, new UsernamePasswordCallbackHandler(username, password));
+
+        LoginContext lc = null;
         try {
             LOGGER.debug("Attempting authentication for: [{}]", username);
+            lc = new LoginContext(this.realm, new UsernamePasswordCallbackHandler(username, password));
             lc.login();
             final Set<java.security.Principal> principals = lc.getSubject().getPrincipals();
             LOGGER.debug("JAAS principals extracted from subject are [{}}", principals);
@@ -125,9 +133,17 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 principal = this.principalFactory.createPrincipal(secPrincipal.getName());
             }
         } finally {
-            lc.logout();
+            if (lc != null) {
+                lc.logout();
+            }
         }
-        return createHandlerResult(credential, principal);
+        final AuthenticationPasswordPolicyHandlingStrategy strategy = getPasswordPolicyHandlingStrategy();
+        if (principal != null && strategy != null) {
+            LOGGER.debug("Attempting to examine and handle password policy via [{}]", strategy.getClass().getSimpleName());
+            final List<MessageDescriptor> messageList = strategy.handle(principal, getPasswordPolicyConfiguration());
+            return createHandlerResult(credential, principal, messageList);
+        }
+        throw new FailedLoginException("Unable to authenticate " + username);
     }
 
     /**
@@ -136,44 +152,29 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * accepted in the callback array. This code based loosely on example given
      * in Sun's javadoc for CallbackHandler interface.
      */
+    @RequiredArgsConstructor
     protected static class UsernamePasswordCallbackHandler implements CallbackHandler {
-
-        /**
-         * The username of the principal we are trying to authenticate.
-         */
         private final String userName;
-
-        /**
-         * The password of the principal we are trying to authenticate.
-         */
         private final String password;
-
-        /**
-         * Constructor accepts name and password to be used for authentication.
-         *
-         * @param userName name to be used for authentication
-         * @param password Password to be used for authentication
-         */
-        protected UsernamePasswordCallbackHandler(final String userName, final String password) {
-            this.userName = userName;
-            this.password = password;
-        }
 
         @Override
         public void handle(final Callback[] callbacks) {
-            Arrays.stream(callbacks).filter(callback -> {
-                if (callback.getClass().equals(NameCallback.class)) {
-                    ((NameCallback) callback).setName(this.userName);
-                    return false;
-                }
-                if (callback.getClass().equals(PasswordCallback.class)) {
-                    ((PasswordCallback) callback).setPassword(this.password.toCharArray());
-                    return false;
-                }
-                return true;
-            }).findFirst().ifPresent(callback -> {
-                throw new IllegalArgumentException(new UnsupportedCallbackException(callback, "Unrecognized Callback"));
-            });
+            Arrays.stream(callbacks)
+                .filter(callback -> {
+                    if (callback.getClass().equals(NameCallback.class)) {
+                        ((NameCallback) callback).setName(this.userName);
+                        return false;
+                    }
+                    if (callback.getClass().equals(PasswordCallback.class)) {
+                        ((PasswordCallback) callback).setPassword(this.password.toCharArray());
+                        return false;
+                    }
+                    return true;
+                })
+                .findFirst()
+                .ifPresent(callback -> {
+                    throw new IllegalArgumentException(new UnsupportedCallbackException(callback, "Unrecognized Callback"));
+                });
         }
     }
 }
