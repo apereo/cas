@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 /**
  * This is {@link LdapPasswordPolicyProperties}.
