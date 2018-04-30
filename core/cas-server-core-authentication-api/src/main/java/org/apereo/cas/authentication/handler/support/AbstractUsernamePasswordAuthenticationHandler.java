@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 
 /**
  * Abstract class to override supports so that we don't need to duplicate the
@@ -36,7 +37,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     /**
      * Decide how to execute password policy handling, if at all.
      */
-    protected AuthenticationPasswordPolicyHandlingStrategy passwordPolicyHandlingStrategy;
+    protected AuthenticationPasswordPolicyHandlingStrategy passwordPolicyHandlingStrategy = (o, o2) -> new ArrayList<>(0);
     
     private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
 
