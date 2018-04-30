@@ -18,9 +18,11 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -323,4 +325,22 @@ public class HttpUtils {
         return prepareCredentialsIfNeeded(builder, basicAuthUsername, basicAuthPassword).build();
     }
 
+
+    /**
+     * Create headers org . springframework . http . http headers.
+     *
+     * @param basicAuthUser     the basic auth user
+     * @param basicAuthPassword the basic auth password
+     * @return the org . springframework . http . http headers
+     */
+    public static org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser, final String basicAuthPassword) {
+        final org.springframework.http.HttpHeaders acceptHeaders = new org.springframework.http.HttpHeaders();
+        acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+        if (StringUtils.isNotBlank(basicAuthUser) && StringUtils.isNotBlank(basicAuthPassword)) {
+            final String authorization = basicAuthUser + ':' + basicAuthPassword;
+            final String basic = EncodingUtils.encodeBase64(authorization.getBytes(Charset.forName("US-ASCII")));
+            acceptHeaders.set("Authorization", "Basic " + basic);
+        }
+        return acceptHeaders;
+    }
 }
