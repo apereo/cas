@@ -43,8 +43,8 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
             return no();
         }
         final String principal = c.getPrincipal().getId();
-        final LocalDate onOrAfter = LocalDate.now().minus(trustedProperties.getExpiration(),
-                DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit()));
+        final ChronoUnit unit = DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit());
+        final LocalDate onOrAfter = LocalDateTime.now().minus(trustedProperties.getExpiration(), unit).toLocalDate();
         LOGGER.warn("Retrieving trusted authentication records for [{}] that are on/after [{}]", principal, onOrAfter);
         final Set<MultifactorAuthenticationTrustRecord> results = storage.get(principal, onOrAfter);
         if (results.isEmpty()) {
