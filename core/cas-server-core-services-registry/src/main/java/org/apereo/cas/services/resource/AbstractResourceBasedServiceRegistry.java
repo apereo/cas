@@ -139,6 +139,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      * @param enableWatcher                        the enable watcher
      * @param eventPublisher                       the event publisher
      * @param registeredServiceReplicationStrategy the registered service replication strategy
+     * @param resourceNamingStrategy               the registered service naming strategy
      * @throws Exception the exception
      */
     public AbstractResourceBasedServiceRegistry(final Resource configDirectory,

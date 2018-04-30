@@ -51,6 +51,7 @@ public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
      * @param enableWatcher                        the enable watcher
      * @param eventPublisher                       the event publisher
      * @param registeredServiceReplicationStrategy the registered service replication strategy
+     * @param resourceNamingStrategy               the registered service naming strategy
      */
     public YamlServiceRegistry(final Path configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
@@ -68,6 +69,7 @@ public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
      * @param enableWatcher                        the enable watcher
      * @param eventPublisher                       the event publisher
      * @param registeredServiceReplicationStrategy the registered service replication strategy
+     * @param resourceNamingStrategy               the registered service naming strategy
      * @throws Exception the IO exception
      */
     public YamlServiceRegistry(final Resource configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,

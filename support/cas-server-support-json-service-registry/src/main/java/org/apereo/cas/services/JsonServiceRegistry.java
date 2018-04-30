@@ -42,6 +42,7 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
      * @param enableWatcher                        the enable watcher
      * @param eventPublisher                       the event publisher
      * @param registeredServiceReplicationStrategy the registered service replication strategy
+     * @param resourceNamingStrategy               the registered service namimg strategy
      */
     public JsonServiceRegistry(final Path configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
@@ -59,6 +60,7 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
      * @param enableWatcher                        the enable watcher
      * @param eventPublisher                       the event publisher
      * @param registeredServiceReplicationStrategy the registered service replication strategy
+     * @param resourceNamingStrategy               the registered service naming strategy
      * @throws Exception the IO exception
      */
     public JsonServiceRegistry(final Resource configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
