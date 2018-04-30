@@ -1,6 +1,5 @@
 package org.apereo.cas.trusted.authentication.api;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * This is {@link MultifactorAuthenticationTrustRecord}.
@@ -46,8 +46,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     private String deviceFingerprint;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate recordDate;
+    private LocalDateTime recordDate;
 
     @Column(length = 10_000, nullable = false)
     private String recordKey;
@@ -69,7 +68,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
      */
     public static MultifactorAuthenticationTrustRecord newInstance(final String principal, final String geography, final String fingerprint) {
         final MultifactorAuthenticationTrustRecord r = new MultifactorAuthenticationTrustRecord();
-        r.setRecordDate(LocalDate.now());
+        r.setRecordDate(LocalDateTime.now());
         r.setPrincipal(principal);
         r.setDeviceFingerprint(fingerprint);
         r.setName(principal.concat("-").concat(LocalDate.now().toString()).concat("-").concat(geography));

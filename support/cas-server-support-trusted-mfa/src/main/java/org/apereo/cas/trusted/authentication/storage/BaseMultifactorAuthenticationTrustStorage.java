@@ -10,7 +10,7 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.ToString;
 import lombok.Setter;
@@ -41,7 +41,7 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final String principal, final LocalDate onOrAfterDate) {
+    public Set<MultifactorAuthenticationTrustRecord> get(final String principal, final LocalDateTime onOrAfterDate) {
         final Set<MultifactorAuthenticationTrustRecord> res = get(principal);
         res.removeIf(entry -> {
             if (entry.getRecordDate().isBefore(onOrAfterDate)) {

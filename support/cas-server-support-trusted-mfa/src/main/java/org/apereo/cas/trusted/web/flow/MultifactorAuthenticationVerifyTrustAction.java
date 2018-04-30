@@ -14,7 +14,8 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Set;
 
 /**
@@ -39,9 +40,9 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
             return no();
         }
         final String principal = c.getPrincipal().getId();
-        final LocalDate onOrAfter = LocalDate.now().minus(trustedProperties.getExpiration(),
-            DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit()));
-        LOGGER.warn("Retrieving trusted authentication records for [{}] that are on/after [{}]", principal, onOrAfter);
+        final ChronoUnit unit = DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit());
+        final LocalDateTime onOrAfter = LocalDateTime.now().minus(trustedProperties.getExpiration(), unit);
+        LOGGER.debug("Retrieving trusted authentication records for [{}] that are on/after [{}]", principal, onOrAfter);
         final Set<MultifactorAuthenticationTrustRecord> results = storage.get(principal, onOrAfter);
         if (results.isEmpty()) {
             LOGGER.debug("No valid trusted authentication records could be found for [{}]", principal);
@@ -49,8 +50,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
         }
         final String fingerprint = deviceFingerprintStrategy.determineFingerprint(principal, requestContext, false);
         LOGGER.debug("Retrieving authentication records for [{}] that matches [{}]", principal, fingerprint);
-        if (results.stream()
-            .noneMatch(entry -> entry.getDeviceFingerprint().equals(fingerprint))) {
+        if (results.stream().noneMatch(entry -> entry.getDeviceFingerprint().equals(fingerprint))) {
             LOGGER.debug("No trusted authentication records could be found for [{}] to match the current device fingerprint", principal);
             return no();
         }
