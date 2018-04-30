@@ -9,9 +9,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
@@ -20,6 +20,7 @@ import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Resolves principals by querying a data source using the Jasig
@@ -63,19 +64,19 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     protected final String principalAttributeName;
 
     public PersonDirectoryPrincipalResolver() {
-        this(new StubPersonAttributeDao(new HashMap<>()), new DefaultPrincipalFactory(), false, formUserId -> formUserId, null);
+        this(new StubPersonAttributeDao(new HashMap<>()), PrincipalFactoryUtils.newPrincipalFactory(), false, formUserId -> formUserId, null);
     }
 
     public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository, final String principalAttributeName) {
-        this(attributeRepository, new DefaultPrincipalFactory(), false, formUserId -> formUserId, principalAttributeName);
+        this(attributeRepository, PrincipalFactoryUtils.newPrincipalFactory(), false, formUserId -> formUserId, principalAttributeName);
     }
 
     public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository) {
-        this(attributeRepository, new DefaultPrincipalFactory(), false, formUserId -> formUserId, null);
+        this(attributeRepository, PrincipalFactoryUtils.newPrincipalFactory(), false, formUserId -> formUserId, null);
     }
 
     public PersonDirectoryPrincipalResolver(final boolean returnNullIfNoAttributes, final String principalAttributeName) {
-        this(new StubPersonAttributeDao(new HashMap<>()), new DefaultPrincipalFactory(),
+        this(new StubPersonAttributeDao(new HashMap<>()), PrincipalFactoryUtils.newPrincipalFactory(),
             returnNullIfNoAttributes, formUserId -> formUserId, principalAttributeName);
     }
 
@@ -91,7 +92,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     }
 
     @Override
-    public Principal resolve(final Credential credential, final Principal currentPrincipal, final AuthenticationHandler handler) {
+    public Principal resolve(final Credential credential, final Optional<Principal> currentPrincipal, final Optional<AuthenticationHandler> handler) {
         LOGGER.debug("Attempting to resolve a principal...");
         String principalId = extractPrincipalId(credential, currentPrincipal);
         if (principalNameTransformer != null) {
@@ -173,7 +174,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * @param currentPrincipal the current principal
      * @return the username, or null if it could not be resolved.
      */
-    protected String extractPrincipalId(final Credential credential, final Principal currentPrincipal) {
+    protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
         return credential.getId();
     }
 

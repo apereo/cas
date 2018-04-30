@@ -8,6 +8,8 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Optional;
+
 import static org.junit.Assert.*;
 
 /**
@@ -31,8 +33,8 @@ public class SpnegoCredentialsToPrincipalResolverTests {
     public void verifyValidCredentials() {
         this.spnegoCredentials.setPrincipal(new DefaultPrincipalFactory().createPrincipal("test"));
         assertEquals("test", this.resolver.resolve(this.spnegoCredentials,
-                CoreAuthenticationTestUtils.getPrincipal(),
-                new SimpleTestUsernamePasswordAuthenticationHandler()).getId());
+                Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+                    Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler())).getId());
     }
 
     @Test

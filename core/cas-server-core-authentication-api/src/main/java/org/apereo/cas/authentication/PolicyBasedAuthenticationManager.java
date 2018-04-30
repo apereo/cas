@@ -28,6 +28,7 @@ import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -111,7 +112,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                                          final Credential credential, final Principal principal) {
         if (resolver.supports(credential)) {
             try {
-                final Principal p = resolver.resolve(credential, principal, handler);
+                final Principal p = resolver.resolve(credential, Optional.ofNullable(principal), Optional.ofNullable(handler));
                 LOGGER.debug("[{}] resolved [{}] from [{}]", resolver, p, credential);
                 return p;
             } catch (final Exception e) {

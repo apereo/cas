@@ -11,6 +11,7 @@ import org.springframework.core.io.InputStreamSource;
 
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -30,8 +31,8 @@ public class X509CommonNameEDIPIPrincipalResolverTests extends AbstractX509Certi
             final X509Certificate cert = CertUtils.readCertificate(iso);
             final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[]{cert});
             c.setCertificate(cert);
-            final Principal principal = this.resolver.resolve(c, CoreAuthenticationTestUtils.getPrincipal(),
-                new SimpleTestUsernamePasswordAuthenticationHandler());
+            final Principal principal = this.resolver.resolve(c, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+                Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
             assertEquals("1234567890", principal.getId());
         }
     }

@@ -12,6 +12,7 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This class resolves the principal id regarding the WsFederation credentials.
@@ -39,7 +40,7 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
      * @return the principal id
      */
     @Override
-    protected String extractPrincipalId(final Credential credentials, final Principal currentPrincipal) {
+    protected String extractPrincipalId(final Credential credentials, final Optional<Principal> currentPrincipal) {
         final WsFederationCredential wsFedCredentials = (WsFederationCredential) credentials;
         final Map<String, List<Object>> attributes = wsFedCredentials.getAttributes();
         LOGGER.debug("Credential attributes provided are: [{}]", attributes);

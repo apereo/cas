@@ -8,6 +8,8 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Optional;
+
 import static org.junit.Assert.*;
 
 /**
@@ -33,9 +35,9 @@ public class PrincipalBearingCredentialsToPrincipalResolverTests {
     @Test
     public void verifyReturnedPrincipal() {
         assertEquals("test", this.resolver.resolve(
-                new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("test")),
-                CoreAuthenticationTestUtils.getPrincipal(),
-                new SimpleTestUsernamePasswordAuthenticationHandler()).getId());
+            new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("test")),
+            Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler())));
     }
 
 }

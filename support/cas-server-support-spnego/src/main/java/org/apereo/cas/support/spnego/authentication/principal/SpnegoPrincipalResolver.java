@@ -10,6 +10,8 @@ import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipa
 import org.apereo.services.persondir.IPersonAttributeDao;
 import lombok.NoArgsConstructor;
 
+import java.util.Optional;
+
 /**
  * Implementation of a CredentialToPrincipalResolver that takes a
  * SpnegoCredential and returns a SimplePrincipal.
@@ -29,7 +31,7 @@ public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
     }
 
     @Override
-    protected String extractPrincipalId(final Credential credential, final Principal currentPrincipal) {
+    protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
         final SpnegoCredential c = (SpnegoCredential) credential;
         final String id = c.getPrincipal().getId();
         return id;
