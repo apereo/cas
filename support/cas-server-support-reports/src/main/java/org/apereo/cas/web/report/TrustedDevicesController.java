@@ -17,7 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -67,7 +67,7 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
         ensureEndpointAccessIsAuthorized(request, response);
 
         final TrustedDevicesMultifactorProperties trusted = casProperties.getAuthn().getMfa().getTrusted();
-        final LocalDate onOrAfter = LocalDate.now().minus(trusted.getExpiration(), DateTimeUtils.toChronoUnit(trusted.getTimeUnit()));
+        final LocalDateTime onOrAfter = LocalDateTime.now().minus(trusted.getExpiration(), DateTimeUtils.toChronoUnit(trusted.getTimeUnit()));
 
         this.mfaTrustEngine.expire(onOrAfter);
         return this.mfaTrustEngine.get(onOrAfter);

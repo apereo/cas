@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.model.support.mfa.trusteddevice.DeviceFinger
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -93,20 +94,13 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
 
     @Getter
     @Setter
-    public static class Rest implements Serializable {
-
+    public static class Rest extends RestEndpointProperties {
         private static final long serialVersionUID = 3659099897056632608L;
-
-        /**
-         * Endpoint where trusted device records will be submitted to.
-         */
-        private String endpoint;
     }
 
     @Getter
     @Setter
     public static class Jpa extends AbstractJpaProperties {
-
         private static final long serialVersionUID = -8329950619696176349L;
     }
 
