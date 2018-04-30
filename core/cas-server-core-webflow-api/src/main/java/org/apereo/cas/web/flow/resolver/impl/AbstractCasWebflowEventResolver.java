@@ -499,7 +499,8 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             return null;
         }
 
-        return resolveEventViaAttribute(principal, principal.getAttributes(), attributeNames, service, context, providers, predicate);
+        final Map<String, Object> attributes = getPrincipalAttributesForMultifactorAuthentication(principal);
+        return resolveEventViaAttribute(principal, attributes, attributeNames, service, context, providers, predicate);
     }
 
     @Override
@@ -605,4 +606,13 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         }
     }
 
+    /**
+     * Gets principal attributes for multifactor authentication.
+     *
+     * @param principal the principal
+     * @return the principal attributes for multifactor authentication
+     */
+    protected Map<String, Object> getPrincipalAttributesForMultifactorAuthentication(final Principal principal) {
+        return principal.getAttributes();
+    }
 }
