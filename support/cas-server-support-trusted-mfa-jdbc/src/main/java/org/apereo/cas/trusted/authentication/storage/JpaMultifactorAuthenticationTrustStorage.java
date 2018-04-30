@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,7 +43,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     }
 
     @Override
-    public void expire(final LocalDate onOrBefore) {
+    public void expire(final LocalDateTime onOrBefore) {
         try {
             final int count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r where r.recordDate <= :date")
                     .setParameter("date", onOrBefore)
@@ -55,7 +55,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
+    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
         try {
             final List<MultifactorAuthenticationTrustRecord> results =
                     this.entityManager.createQuery("SELECT r FROM " + TABLE_NAME + " r where r.recordDate >= :date",

@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,7 +38,7 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
     }
 
     @Override
-    public void expire(final LocalDate onOrBefore) {
+    public void expire(final LocalDateTime onOrBefore) {
         try {
             final Query query = new Query();
             query.addCriteria(Criteria.where("date").lte(onOrBefore));
@@ -50,7 +50,7 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
+    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
         final Query query = new Query();
         query.addCriteria(Criteria.where("date").gte(onOrAfterDate));
         final List<MultifactorAuthenticationTrustRecord> results =
