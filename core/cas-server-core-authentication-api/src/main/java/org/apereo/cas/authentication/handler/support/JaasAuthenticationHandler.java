@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -136,9 +137,10 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 lc.logout();
             }
         }
-        if (principal != null) {
-            LOGGER.debug("Attempting to examine and handle password policy via [{}]", getPasswordPolicyHandlingStrategy().getClass().getSimpleName());
-            final List<MessageDescriptor> messageList = getPasswordPolicyHandlingStrategy().handle(principal, getPasswordPolicyConfiguration());
+        final AuthenticationPasswordPolicyHandlingStrategy strategy = getPasswordPolicyHandlingStrategy();
+        if (principal != null && strategy != null) {
+            LOGGER.debug("Attempting to examine and handle password policy via [{}]", strategy.getClass().getSimpleName());
+            final List<MessageDescriptor> messageList = strategy.handle(principal, getPasswordPolicyConfiguration());
             return createHandlerResult(credential, principal, messageList);
         }
         throw new FailedLoginException("Unable to authenticate " + username);
