@@ -8,9 +8,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 /**
  * This is {@link InMemoryResourceMetadataResolver}.
@@ -30,7 +30,7 @@ public class InMemoryResourceMetadataResolver extends DOMMetadataResolver {
     }
 
     public InMemoryResourceMetadataResolver(final File metadataResource, final OpenSamlConfigBean configBean) throws IOException {
-        super(getMetadataRootElement(new FileInputStream(metadataResource), configBean));
+        super(getMetadataRootElement(Files.newInputStream(metadataResource.toPath()), configBean));
     }
 
     @SneakyThrows
