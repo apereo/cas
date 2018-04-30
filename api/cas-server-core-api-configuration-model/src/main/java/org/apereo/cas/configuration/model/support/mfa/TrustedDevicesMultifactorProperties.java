@@ -106,7 +106,6 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     @Getter
     @Setter
     public static class Jpa extends AbstractJpaProperties {
-
         private static final long serialVersionUID = -8329950619696176349L;
     }
 

@@ -1,14 +1,17 @@
 package org.apereo.cas.trusted.authentication.api;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.util.jpa.SkippingNanoSecondsLocalDateTimeConverter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -46,6 +49,8 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     private String deviceFingerprint;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
+    @Convert(converter = SkippingNanoSecondsLocalDateTimeConverter.class)
     private LocalDateTime recordDate;
 
     @Column(length = 10_000, nullable = false)
