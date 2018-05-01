@@ -38,12 +38,12 @@ class NoOpCipherExecutor<I, O> implements CipherExecutor<I, O> {
     }
 
     @Override
-    public O encode(final I value) {
+    public O encode(final I value, final Object[] parameters) {
         return (O) value;
     }
 
     @Override
-    public O decode(final I value) {
+    public O decode(final I value, final Object[] parameters) {
         return (O) value;
     }
 }
