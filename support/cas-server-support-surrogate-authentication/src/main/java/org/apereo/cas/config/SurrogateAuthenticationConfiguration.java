@@ -6,7 +6,10 @@ import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
+import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.SurrogateAuthenticationPostProcessor;
+import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
+import org.apereo.cas.authentication.SurrogatePrincipalElectionStrategy;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
 import org.apereo.cas.authentication.audit.SurrogateAuditPrincipalIdProvider;
 import org.apereo.cas.authentication.event.SurrogateAuthenticationEventListener;
@@ -125,21 +128,24 @@ public class SurrogateAuthenticationConfiguration {
     @Bean
     public AuthenticationPostProcessor surrogateAuthenticationPostProcessor() {
         return new SurrogateAuthenticationPostProcessor(
-            surrogatePrincipalFactory(),
-            personDirectoryPrincipalResolver(),
             surrogateAuthenticationService(),
             servicesManager,
             eventPublisher,
             registeredServiceAccessStrategyEnforcer,
-            surrogateEligibilityAuditableExecution);
+            surrogateEligibilityAuditableExecution,
+            surrogatePrincipalBuilder());
     }
 
-    @ConditionalOnMissingBean(name = "surrogateAuthenticationPrincipalFactory")
+    @ConditionalOnMissingBean(name = "surrogatePrincipalBuilder")
     @Bean
-    public PrincipalFactory surrogateAuthenticationPrincipalFactory() {
-        return PrincipalFactoryUtils.newPrincipalFactory();
+    public SurrogatePrincipalBuilder surrogatePrincipalBuilder() {
+        return new SurrogatePrincipalBuilder(surrogatePrincipalFactory(), attributeRepository.getIfAvailable());
     }
 
+    @Bean
+    public PrincipalElectionStrategy principalElectionStrategy() {
+        return new SurrogatePrincipalElectionStrategy();
+    }
     @Bean
     public AuditPrincipalIdProvider surrogateAuditPrincipalIdProvider() {
         return new SurrogateAuditPrincipalIdProvider();

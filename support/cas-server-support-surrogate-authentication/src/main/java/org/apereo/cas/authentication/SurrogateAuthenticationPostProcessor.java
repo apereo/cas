@@ -7,10 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.audit.AuditableExecutionResult;
-import org.apereo.cas.authentication.principal.CompositePrincipal;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -23,7 +20,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import javax.security.auth.login.CredentialNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.util.Map;
-import java.util.Optional;
 
 
 /**
@@ -35,19 +31,18 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class SurrogateAuthenticationPostProcessor implements AuthenticationPostProcessor {
-    private final PrincipalFactory principalFactory;
-    private final PrincipalResolver principalResolver;
     private final SurrogateAuthenticationService surrogateAuthenticationService;
     private final ServicesManager servicesManager;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
     private final AuditableExecution surrogateEligibilityAuditableExecution;
+    private final SurrogatePrincipalBuilder surrogatePrincipalBuilder;
 
     @Override
     public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws AuthenticationException {
         final Authentication authentication = builder.build();
         final Principal primaryPrincipal = authentication.getPrincipal();
-        
+
         @NonNull
         final SurrogateUsernamePasswordCredential surrogateCredentials = (SurrogateUsernamePasswordCredential) transaction.getPrimaryCredential().get();
         final String targetUserId = surrogateCredentials.getSurrogateUsername();
@@ -75,12 +70,6 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
 
             if (this.surrogateAuthenticationService.canAuthenticateAs(targetUserId, primaryPrincipal, transaction.getService())) {
                 LOGGER.debug("Principal [{}] is authorized to authenticate as [{}]", primaryPrincipal, targetUserId);
-
-                final Principal initialSurrogatePrincipal = principalFactory.createPrincipal(targetUserId);
-                final Principal surrogatePrincipal = principalResolver.resolve(surrogateCredentials, Optional.of(initialSurrogatePrincipal), Optional.empty());
-                final CompositePrincipal composite = new CompositePrincipal(surrogatePrincipal, primaryPrincipal);
-                builder.setPrincipal(composite);
-                
                 publishSuccessEvent(primaryPrincipal, targetUserId);
 
                 final AuditableContext surrogateEligibleAudit = AuditableContext.builder()
