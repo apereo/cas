@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
@@ -23,7 +22,7 @@ import static org.mockito.Mockito.*;
 @Slf4j
 public class ChainingPrincipalResolverTests {
 
-    private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    private final PrincipalFactory principalFactory = PrincipalFactoryUtils.newPrincipalFactory();
 
     @Test
     public void examineSupports() {
@@ -49,14 +48,11 @@ public class ChainingPrincipalResolverTests {
 
         final PrincipalResolver resolver1 = mock(PrincipalResolver.class);
         when(resolver1.supports(eq(credential))).thenReturn(true);
-        when(resolver1.resolve(eq(credential), Optional.of(any(Principal.class)),
-            Optional.of(any(AuthenticationHandler.class))))
-            .thenReturn(principalOut);
+        when(resolver1.resolve(eq(credential), any(Optional.class), any(Optional.class))).thenReturn(principalOut);
 
         final PrincipalResolver resolver2 = mock(PrincipalResolver.class);
         when(resolver2.supports(any(Credential.class))).thenReturn(true);
-        when(resolver2.resolve(any(Credential.class), Optional.of(any(Principal.class)),
-            Optional.of(any(AuthenticationHandler.class))))
+        when(resolver2.resolve(any(Credential.class), any(Optional.class), any(Optional.class)))
             .thenReturn(principalFactory.createPrincipal("output", Collections.singletonMap("mail", "final@example.com")));
 
         final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
