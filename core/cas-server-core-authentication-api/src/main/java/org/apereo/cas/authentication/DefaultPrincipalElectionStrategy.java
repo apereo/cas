@@ -33,7 +33,7 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
                               final Map<String, Object> principalAttributes) {
         final Principal principal = getPrincipalFromAuthentication(authentications);
         final Principal finalPrincipal = this.principalFactory.createPrincipal(principal.getId(), principalAttributes);
-        LOGGER.warn("Nominated [{}] as the primary principal", finalPrincipal);
+        LOGGER.debug("Nominated [{}] as the primary principal", finalPrincipal);
         return finalPrincipal;
     }
 
