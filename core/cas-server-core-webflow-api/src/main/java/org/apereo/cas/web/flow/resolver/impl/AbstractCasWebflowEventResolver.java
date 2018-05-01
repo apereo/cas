@@ -3,18 +3,13 @@ package org.apereo.cas.web.flow.resolver.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
@@ -23,7 +18,6 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -112,22 +106,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      */
     protected final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
 
-
-    /**
-     * Adds a warning message to the message context.
-     *
-     * @param context Message context.
-     * @param warning Warning message.
-     */
-    protected static void addMessageDescriptorToMessageContext(final MessageContext context, final MessageDescriptor warning) {
-        final MessageBuilder builder = new MessageBuilder()
-            .warning()
-            .code(warning.getCode())
-            .defaultText(warning.getDefaultMessage())
-            .args((Object[]) warning.getParams());
-        context.addMessage(builder.build());
-    }
-
     /**
      * New event based on the id, which contains an error attribute referring to the exception occurred.
      *
@@ -160,27 +138,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         return new Event(this, id, attributes);
     }
 
-    /**
-     * Add warning messages to message context if needed.
-     *
-     * @param tgtId          the tgt id
-     * @param messageContext the message context
-     * @return authn warnings from all handlers and results
-     * @since 4.1.0
-     */
-    private static Collection<MessageDescriptor> calculateAuthenticationWarningMessages(final TicketGrantingTicket tgtId, final MessageContext messageContext) {
-        final Set<Map.Entry<String, AuthenticationHandlerExecutionResult>> entries = tgtId.getAuthentication().getSuccesses().entrySet();
-        return entries
-            .stream()
-            .map(entry -> entry.getValue().getWarnings())
-            .flatMap(Collection::stream)
-            .map(message -> {
-                addMessageDescriptorToMessageContext(messageContext, message);
-                return message;
-            })
-            .collect(Collectors.toSet());
-    }
-
 
     /**
      * Gets credential from context.
@@ -203,68 +160,9 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     protected Event grantTicketGrantingTicketToAuthenticationResult(final RequestContext context,
                                                                     final AuthenticationResultBuilder authenticationResultBuilder,
                                                                     final Service service) {
-
-        LOGGER.debug("Finalizing authentication transactions and issuing ticket-granting ticket");
-        final AuthenticationResult authenticationResult =
-            this.authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
-        final Authentication authentication = authenticationResult.getAuthentication();
-        final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
-        final TicketGrantingTicket tgt = createOrUpdateTicketGrantingTicket(authenticationResult, authentication, ticketGrantingTicket);
-
-        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        WebUtils.putAuthenticationResult(authenticationResult, context);
-        WebUtils.putAuthentication(tgt.getAuthentication(), context);
-
-        final Collection<MessageDescriptor> warnings = calculateAuthenticationWarningMessages(tgt, context.getMessageContext());
-        if (!warnings.isEmpty()) {
-            final LocalAttributeMap attributes = new LocalAttributeMap(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, warnings);
-            return newEvent(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, attributes);
-        }
-
+        WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, context);
+        WebUtils.putService(context, service);
         return newEvent(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-    }
-
-    private TicketGrantingTicket createOrUpdateTicketGrantingTicket(final AuthenticationResult authenticationResult,
-                                                                    final Authentication authentication, final String ticketGrantingTicket) {
-        final TicketGrantingTicket tgt;
-        if (shouldIssueTicketGrantingTicket(authentication, ticketGrantingTicket)) {
-            tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
-        } else {
-            tgt = this.centralAuthenticationService.getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
-            tgt.getAuthentication().update(authentication);
-            this.centralAuthenticationService.updateTicket(tgt);
-        }
-        return tgt;
-    }
-
-    private boolean shouldIssueTicketGrantingTicket(final Authentication authentication, final String ticketGrantingTicket) {
-        boolean issueTicketGrantingTicket = true;
-        if (StringUtils.isNotBlank(ticketGrantingTicket)) {
-            LOGGER.debug("Located ticket-granting ticket in the context. Retrieving associated authentication");
-            final Authentication authenticationFromTgt = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
-            if (authenticationFromTgt == null) {
-                LOGGER.debug("Authentication session associated with [{}] is no longer valid", ticketGrantingTicket);
-                this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
-            } else if (areAuthenticationsEssentiallyEqual(authentication, authenticationFromTgt)) {
-                LOGGER.debug("Resulting authentication matches the authentication from context");
-                issueTicketGrantingTicket = false;
-            } else {
-                LOGGER.debug("Resulting authentication is different from the context");
-            }
-        }
-        return issueTicketGrantingTicket;
-    }
-
-    private boolean areAuthenticationsEssentiallyEqual(final Authentication auth1, final Authentication auth2) {
-        if ((auth1 == null && auth2 != null) || (auth1 != null && auth2 == null)) {
-            return false;
-        }
-        final EqualsBuilder builder = new EqualsBuilder();
-        builder.append(auth1.getPrincipal(), auth2.getPrincipal());
-        builder.append(auth1.getCredentials(), auth2.getCredentials());
-        builder.append(auth1.getSuccesses(), auth2.getSuccesses());
-        builder.append(auth1.getAttributes(), auth2.getAttributes());
-        return builder.isEquals();
     }
 
     /**
