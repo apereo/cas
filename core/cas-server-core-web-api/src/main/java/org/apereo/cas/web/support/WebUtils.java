@@ -30,6 +30,7 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -424,13 +425,13 @@ public class WebUtils {
      */
     public static void putWarnCookieIfRequestParameterPresent(final CookieGenerator warnCookieGenerator, final RequestContext context) {
         if (warnCookieGenerator != null) {
-            LOGGER.debug("Evaluating request to determine if warning cookie should be generated");
+            LOGGER.trace("Evaluating request to determine if warning cookie should be generated");
             final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
             if (StringUtils.isNotBlank(context.getExternalContext().getRequestParameterMap().get("warn"))) {
                 warnCookieGenerator.addCookie(response, "true");
             }
         } else {
-            LOGGER.debug("No warning cookie generator is defined");
+            LOGGER.trace("No warning cookie generator is defined");
         }
     }
 
@@ -760,5 +761,59 @@ public class WebUtils {
             authentication = AuthenticationCredentialsThreadLocalBinder.getInProgressAuthentication();
         }
         return authentication;
+    }
+
+    /**
+     * Put passwordless authentication enabled.
+     *
+     * @param requestContext the request context
+     * @param value          the value
+     */
+    public static void putPasswordlessAuthenticationEnabled(final RequestContext requestContext, final Boolean value) {
+        requestContext.getFlowScope().put("passwordlessAuthenticationEnabled", value);
+    }
+
+    /**
+     * Put passwordless authentication account.
+     *
+     * @param requestContext the request context
+     * @param account        the account
+     */
+    public static void putPasswordlessAuthenticationAccount(final RequestContext requestContext, final Object account) {
+        requestContext.getFlowScope().put("passwordlessAccount", account);
+    }
+
+    /**
+     * Gets passwordless authentication account.
+     *
+     * @param <T>   the type parameter
+     * @param event the event
+     * @param clazz the clazz
+     * @return the passwordless authentication account
+     */
+    public static <T> T getPasswordlessAuthenticationAccount(final Event event, final Class<T> clazz) {
+        return event.getAttributes().get("passwordlessAccount", clazz);
+    }
+
+    /**
+     * Gets passwordless authentication account.
+     *
+     * @param <T>   the type parameter
+     * @param event the event
+     * @param clazz the clazz
+     * @return the passwordless authentication account
+     */
+    public static <T> T getPasswordlessAuthenticationAccount(final RequestContext event, final Class<T> clazz) {
+        return getPasswordlessAuthenticationAccount(event.getCurrentEvent(), clazz);
+    }
+
+    /**
+     * Has passwordless authentication account.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static boolean hasPasswordlessAuthenticationAccount(final RequestContext requestContext) {
+        return requestContext.getFlowScope().contains("passwordlessAccount");
     }
 }

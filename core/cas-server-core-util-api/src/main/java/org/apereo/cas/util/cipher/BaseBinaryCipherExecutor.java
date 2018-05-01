@@ -69,7 +69,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
 
     @Override
     @SneakyThrows
-    public byte[] encode(final byte[] value) {
+    public byte[] encode(final byte[] value, final Object[] parameters) {
         this.aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey);
         final byte[] result = this.aesCipher.doFinal(value);
         return sign(result);
@@ -77,7 +77,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
 
     @Override
     @SneakyThrows
-    public byte[] decode(final byte[] value) {
+    public byte[] decode(final byte[] value, final Object[] parameters) {
         final byte[] verifiedValue = verifySignature(value);
         this.aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey);
         final byte[] bytePlainText = aesCipher.doFinal(verifiedValue);

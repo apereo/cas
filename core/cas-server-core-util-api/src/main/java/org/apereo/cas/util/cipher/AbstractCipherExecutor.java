@@ -27,15 +27,6 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
     private Key signingKey;
 
     /**
-     * Instantiates a new cipher executor.
-     *
-     * @param signingSecretKey the signing key
-     */
-    public AbstractCipherExecutor(final String signingSecretKey) {
-        configureSigningKey(signingSecretKey);
-    }
-
-    /**
      * Sign the array by first turning it into a base64 encoded string.
      *
      * @param value the value
@@ -52,7 +43,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      *
      * @param signingSecretKey the signing secret key
      */
-    public void configureSigningKey(final String signingSecretKey) {
+    protected void configureSigningKey(final String signingSecretKey) {
         try {
             if (ResourceUtils.isFile(signingSecretKey) && ResourceUtils.doesResourceExist(signingSecretKey)) {
                 final Resource resource = ResourceUtils.getResourceFrom(signingSecretKey);

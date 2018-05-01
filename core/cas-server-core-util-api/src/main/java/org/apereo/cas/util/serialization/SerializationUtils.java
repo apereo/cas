@@ -92,33 +92,65 @@ public class SerializationUtils {
     /**
      * Serialize and encode object.
      *
-     * @param cipher the cipher
-     * @param object the object
+     * @param cipher     the cipher
+     * @param object     the object
+     * @param parameters the parameters
      * @return the byte []
      * @since 4.2
      */
     public static byte[] serializeAndEncodeObject(final CipherExecutor cipher,
-                                                  final Serializable object) {
+                                                  final Serializable object,
+                                                  final Object[] parameters) {
         final byte[] outBytes = serialize(object);
-        return (byte[]) cipher.encode(outBytes);
+        return (byte[]) cipher.encode(outBytes, parameters);
+    }
+
+    /**
+     * Serialize and encode object byte [ ].
+     *
+     * @param cipher the cipher
+     * @param object the object
+     * @return the byte []
+     */
+    public static byte[] serializeAndEncodeObject(final CipherExecutor cipher,
+                                                  final Serializable object) {
+        return serializeAndEncodeObject(cipher, object, new Object[]{});
     }
 
     /**
      * Decode and serialize object.
      *
-     * @param <T>    the type parameter
-     * @param object the object
-     * @param cipher the cipher
-     * @param type   the type
+     * @param <T>        the type parameter
+     * @param object     the object
+     * @param cipher     the cipher
+     * @param type       the type
+     * @param parameters the parameters
      * @return the t
      * @since 4.2
      */
     @SneakyThrows
     public static <T extends Serializable> T decodeAndDeserializeObject(final byte[] object,
                                                                         final CipherExecutor cipher,
-                                                                        final Class<T> type) {
-        final byte[] decoded = (byte[]) cipher.decode(object);
+                                                                        final Class<T> type,
+                                                                        final Object[] parameters) {
+        final byte[] decoded = (byte[]) cipher.decode(object, parameters);
         return deserializeAndCheckObject(decoded, type);
+    }
+
+    /**
+     * Decode and deserialize object t.
+     *
+     * @param <T>    the type parameter
+     * @param object the object
+     * @param cipher the cipher
+     * @param type   the type
+     * @return the t
+     */
+    @SneakyThrows
+    public static <T extends Serializable> T decodeAndDeserializeObject(final byte[] object,
+                                                                        final CipherExecutor cipher,
+                                                                        final Class<T> type) {
+        return decodeAndDeserializeObject(object, cipher, type, new Object[]{});
     }
 
     /**
