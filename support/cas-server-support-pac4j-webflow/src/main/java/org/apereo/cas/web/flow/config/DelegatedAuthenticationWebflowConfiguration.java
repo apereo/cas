@@ -149,9 +149,10 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     }
 
     @RefreshScope
+    @ConditionalOnMissingBean(name = "delegatedClientAuthenticationAction")
     @Bean
     @Lazy
-    public Action clientAction() {
+    public Action delegatedClientAuthenticationAction() {
         return new DelegatedClientAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
             serviceTicketRequestWebflowEventResolver,
             adaptiveAuthenticationPolicy,
@@ -188,6 +189,7 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
         return new Saml2ClientMetadataController(builtClients, configBean);
     }
 
+    @ConditionalOnMissingBean(name = "delegatedClientNavigationController")
     @Bean
     public DelegatedClientNavigationController delegatedClientNavigationController() {
         return new DelegatedClientNavigationController(builtClients, delegatedClientWebflowManager(), delegatedSessionCookieManager);
