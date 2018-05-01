@@ -34,6 +34,7 @@ import org.apereo.cas.web.flow.PasswordlessAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.PrepareForPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -83,11 +84,11 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
-    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
+    private ObjectProvider<AdaptiveAuthenticationPolicy> adaptiveAuthenticationPolicy;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
     @Qualifier("serviceTicketRequestWebflowEventResolver")
@@ -175,9 +176,9 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
     public Action acceptPasswordlessAuthenticationAction() {
         return new AcceptPasswordlessAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
             serviceTicketRequestWebflowEventResolver,
-            adaptiveAuthenticationPolicy,
+            adaptiveAuthenticationPolicy.getIfAvailable(),
             passwordlessTokenRepository(),
-            authenticationSystemSupport,
+            authenticationSystemSupport.getIfAvailable(),
             passwordlessUserAccountStore());
     }
 
