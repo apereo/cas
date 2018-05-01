@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordA
 import org.junit.Test;
 
 import java.security.cert.X509Certificate;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -26,8 +27,8 @@ public class X509SubjectDNPrincipalResolverTests extends AbstractX509Certificate
         final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
         assertEquals(VALID_CERTIFICATE.getSubjectDN().getName(), this.resolver.resolve(c,
-            CoreAuthenticationTestUtils.getPrincipal(),
-            new SimpleTestUsernamePasswordAuthenticationHandler()).getId());
+            Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler())).getId());
     }
 
     @Test

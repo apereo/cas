@@ -9,13 +9,16 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.flow.SurrogateMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.SurrogateWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.util.CookieGenerator;
@@ -30,7 +33,9 @@ import org.springframework.web.util.CookieGenerator;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SurrogateWebflowEventResolutionConfiguration {
-
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -63,14 +68,32 @@ public class SurrogateWebflowEventResolutionConfiguration {
     @Qualifier("multifactorAuthenticationProviderSelector")
     private MultifactorAuthenticationProviderSelector selector;
 
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
+
     @ConditionalOnMissingBean(name = "surrogateWebflowEventResolver")
     @Bean
-    public CasWebflowEventResolver surrogateWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport")
-                                                                 final AuthenticationSystemSupport authenticationSystemSupport) {
+    public CasWebflowEventResolver surrogateWebflowEventResolver() {
         final CasWebflowEventResolver r = new SurrogateWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService,
-                servicesManager, ticketRegistrySupport, warnCookieGenerator,
-                authenticationRequestServiceSelectionStrategies,
-                selector, surrogateAuthenticationService);
+            servicesManager, ticketRegistrySupport, warnCookieGenerator,
+            authenticationRequestServiceSelectionStrategies,
+            selector, surrogateAuthenticationService);
+        this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r);
+        return r;
+    }
+
+    @Bean
+    @RefreshScope
+    public CasWebflowEventResolver surrogateMultifactorAuthenticationWebflowEventResolver() {
+        final AbstractCasWebflowEventResolver r = new SurrogateMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport,
+            centralAuthenticationService, servicesManager,
+            ticketRegistrySupport, warnCookieGenerator,
+            authenticationRequestServiceSelectionStrategies,
+            selector,
+            casProperties);
+        LOGGER.debug("Activating MFA event resolver based on Grouper groups...");
+        
         this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r);
         return r;
     }

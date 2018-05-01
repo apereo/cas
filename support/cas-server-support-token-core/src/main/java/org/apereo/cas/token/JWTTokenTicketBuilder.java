@@ -2,8 +2,8 @@ package org.apereo.cas.token;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
@@ -31,7 +31,7 @@ import java.util.Map;
  */
 @Slf4j
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class JWTTokenTicketBuilder implements TokenTicketBuilder {
 
     private final TicketValidator ticketValidator;
@@ -75,7 +75,8 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
 
     private String buildJwt(final String jwtId, final String audience,
                             final Date issueDate, final String subject,
-                            final Date validUntilDate, final Map<String, Object> attributes) {
+                            final Date validUntilDate,
+                            final Map<String, Object> attributes) {
         final JWTClaimsSet.Builder claims =
             new JWTClaimsSet.Builder()
                 .audience(audience)
