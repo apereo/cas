@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow.login;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -21,7 +21,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SendTicketGrantingTicketAction extends AbstractAction {
     private final CentralAuthenticationService centralAuthenticationService;
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
@@ -44,7 +44,7 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
             this.ticketGrantingTicketCookieGenerator.addCookie(context, ticketGrantingTicketId);
         } else {
             LOGGER.info("Authentication session is renewed but CAS is not configured to create the SSO session. "
-                    + "SSO cookie will not be generated. Subsequent requests will be challenged for credentials.");
+                + "SSO cookie will not be generated. Subsequent requests will be challenged for credentials.");
         }
 
         if (ticketGrantingTicketValueFromCookie != null && !ticketGrantingTicketId.equals(ticketGrantingTicketValueFromCookie)) {

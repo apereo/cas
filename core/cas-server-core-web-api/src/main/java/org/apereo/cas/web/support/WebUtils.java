@@ -816,4 +816,34 @@ public class WebUtils {
     public static boolean hasPasswordlessAuthenticationAccount(final RequestContext requestContext) {
         return requestContext.getFlowScope().contains("passwordlessAccount");
     }
+
+    /**
+     * Put request surrogate authentication.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putRequestSurrogateAuthentication(final RequestContext context, final Boolean value) {
+        context.getFlowScope().put("requestSurrogateAccount", value);
+    }
+
+    /**
+     * Has request surrogate authentication request.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static boolean hasRequestSurrogateAuthenticationRequest(final RequestContext requestContext) {
+        return requestContext.getFlowScope().getBoolean("requestSurrogateAccount", Boolean.FALSE);
+    }
+
+    /**
+     * Has request surrogate authentication request.
+     *
+     * @param requestContext the request context
+     */
+    public static void removeRequestSurrogateAuthenticationRequest(final RequestContext requestContext) {
+        requestContext.getFlowScope().remove("requestSurrogateAccount");
+    }
+
 }

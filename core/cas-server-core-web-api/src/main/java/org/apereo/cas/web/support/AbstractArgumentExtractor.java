@@ -33,9 +33,9 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
         final WebApplicationService service = extractServiceInternal(request);
 
         if (service == null) {
-            LOGGER.debug("Extractor did not generate service.");
+            LOGGER.trace("Extractor did not generate service.");
         } else {
-            LOGGER.debug("Extractor generated service type [{}] for: [{}]", service.getClass().getName(), service.getId());
+            LOGGER.trace("Extractor generated service type [{}] for: [{}]", service.getClass().getName(), service.getId());
         }
 
         return service;

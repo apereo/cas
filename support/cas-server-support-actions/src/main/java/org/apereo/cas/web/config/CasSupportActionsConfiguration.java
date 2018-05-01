@@ -17,6 +17,7 @@ import org.apereo.cas.web.flow.GenerateServiceTicketAction;
 import org.apereo.cas.web.flow.ServiceAuthorizationCheck;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.actions.InitialAuthenticationAction;
+import org.apereo.cas.web.flow.login.CreateTicketGrantingTicketAction;
 import org.apereo.cas.web.flow.login.GenericSuccessViewAction;
 import org.apereo.cas.web.flow.login.InitialAuthenticationRequestValidationAction;
 import org.apereo.cas.web.flow.login.InitialFlowSetupAction;
@@ -144,6 +145,14 @@ public class CasSupportActionsConfiguration {
     public Action sendTicketGrantingTicketAction() {
         return new SendTicketGrantingTicketAction(centralAuthenticationService,
             ticketGrantingTicketCookieGenerator.getIfAvailable(), webflowSingleSignOnParticipationStrategy);
+    }
+
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "createTicketGrantingTicketAction")
+    @Bean
+    public Action createTicketGrantingTicketAction() {
+        return new CreateTicketGrantingTicketAction(centralAuthenticationService,
+            authenticationSystemSupport, ticketRegistrySupport);
     }
 
     @RefreshScope

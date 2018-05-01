@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.principal.CompositePrincipal;
+import org.apereo.cas.authentication.SurrogatePrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
@@ -35,10 +35,10 @@ public class SurrogateMultifactorAuthenticationPolicyEventResolver extends Princ
 
     @Override
     protected Map<String, Object> getPrincipalAttributesForMultifactorAuthentication(final Principal principal) {
-        if (CompositePrincipal.class.isInstance(principal)) {
-            final CompositePrincipal c = CompositePrincipal.class.cast(principal);
-            final Map<String, Object> attributes = c.getAttributes();
-            attributes.putAll(c.getSecondary().getAttributes());
+        if (SurrogatePrincipal.class.isInstance(principal)) {
+            final SurrogatePrincipal c = SurrogatePrincipal.class.cast(principal);
+            final Map<String, Object> attributes = c.getPrimary().getAttributes();
+            attributes.putAll(c.getSurrogate().getAttributes());
             return attributes;
         }
         return super.getPrincipalAttributesForMultifactorAuthentication(principal);

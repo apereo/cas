@@ -45,12 +45,12 @@ public class DefaultArgumentExtractor extends AbstractArgumentExtractor {
         return getServiceFactories().stream().map(factory -> {
             final WebApplicationService service = factory.createService(request);
             if (service != null) {
-                LOGGER.debug("Created [{}] based on [{}]", service, factory);
+                LOGGER.trace("Created [{}] based on [{}]", service, factory);
                 return service;
             }
             return null;
         }).filter(Objects::nonNull).findFirst().orElseGet(() -> {
-            LOGGER.debug("No service could be extracted based on the given request");
+            LOGGER.trace("No service could be extracted based on the given request");
             return null;
         });
     }
