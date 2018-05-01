@@ -94,7 +94,7 @@ public class EhCacheStatistics implements CacheStatistics {
     }
 
     @Override
-    public void toString(final StringBuilder builder) {
+    public String toString(final StringBuilder builder) {
         final String name = this.getName();
         if (StringUtils.isNotBlank(name)) {
             builder.append(name).append(':');
@@ -111,5 +111,6 @@ public class EhCacheStatistics implements CacheStatistics {
             builder.append(getPercentFree()).append(" perfect free, ");
             builder.append(getEvictions()).append(" evictions");
         }
+        return builder.toString();
     }
 }
