@@ -34,6 +34,7 @@ import org.apereo.cas.web.report.StatisticsController;
 import org.apereo.cas.web.report.StatusController;
 import org.apereo.cas.web.report.TrustedDevicesController;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.endpoint.HealthEndpoint;
@@ -115,7 +116,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private ObjectProvider<CookieRetrievingCookieGenerator> ticketGrantingTicketCookieGenerator;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -180,7 +181,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Bean
     public MvcEndpoint ssoStatusController() {
-        return new SingleSignOnSessionStatusController(ticketGrantingTicketCookieGenerator, ticketRegistrySupport, casProperties);
+        return new SingleSignOnSessionStatusController(ticketGrantingTicketCookieGenerator.getIfAvailable(), ticketRegistrySupport, casProperties);
     }
 
     @Bean
