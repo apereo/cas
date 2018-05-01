@@ -34,12 +34,12 @@ public class Base64CipherExecutor extends AbstractCipherExecutor<Serializable, S
     }
 
     @Override
-    public String encode(final Serializable value) {
+    public String encode(final Serializable value, final Object[] parameters) {
         return EncodingUtils.encodeBase64(value.toString().getBytes(StandardCharsets.UTF_8));
     }
 
     @Override
-    public String decode(final Serializable value) {
+    public String decode(final Serializable value, final Object[] parameters) {
         final byte[] decoded = EncodingUtils.decodeBase64(value.toString());
         return new String(decoded, StandardCharsets.UTF_8);
     }

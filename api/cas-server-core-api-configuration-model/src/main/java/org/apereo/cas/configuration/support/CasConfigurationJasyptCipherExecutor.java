@@ -142,12 +142,12 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     }
 
     @Override
-    public String encode(final String value) {
+    public String encode(final String value, final Object[] parameters) {
         return encryptValue(value);
     }
 
     @Override
-    public String decode(final String value) {
+    public String decode(final String value, final Object[] parameters) {
         return decryptValue(value);
     }
 
@@ -219,8 +219,8 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         }
         return value;
     }
-    
-    
+
+
     /**
      * Initialize jasypt instance if necessary.
      */
