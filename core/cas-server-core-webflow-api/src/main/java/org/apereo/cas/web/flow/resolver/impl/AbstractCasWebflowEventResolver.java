@@ -293,12 +293,14 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the event
      */
     @SneakyThrows
-    protected Event validateEventIdForMatchingTransitionInContext(final String eventId, final RequestContext context, final Map<String, Object> attributes) {
+    protected Event validateEventIdForMatchingTransitionInContext(final String eventId, final RequestContext context,
+                                                                  final Map<String, Object> attributes) {
 
         final AttributeMap<Object> attributesMap = new LocalAttributeMap<>(attributes);
         final Event event = new Event(this, eventId, attributesMap);
 
-        LOGGER.debug("Resulting event id is [{}]. Locating transitions in the context for that event id...", event.getId());
+        LOGGER.debug("Resulting event id is [{}] by provider [{}]. Locating transitions in the context for that event id...",
+            event.getId(), getName());
 
         final TransitionDefinition def = context.getMatchingTransition(event.getId());
         if (def == null) {
@@ -505,6 +507,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
     @Override
     public Set<Event> resolve(final RequestContext context) {
+        LOGGER.debug("Attempting to resolve authentication event using resolver [{}]", getName());
         WebUtils.putWarnCookieIfRequestParameterPresent(this.warnCookieGenerator, context);
         WebUtils.putPublicWorkstationToFlowIfRequestParameterPresent(context);
         return resolveInternal(context);

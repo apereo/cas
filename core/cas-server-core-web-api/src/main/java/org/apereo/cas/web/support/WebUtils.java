@@ -424,13 +424,13 @@ public class WebUtils {
      */
     public static void putWarnCookieIfRequestParameterPresent(final CookieGenerator warnCookieGenerator, final RequestContext context) {
         if (warnCookieGenerator != null) {
-            LOGGER.debug("Evaluating request to determine if warning cookie should be generated");
+            LOGGER.trace("Evaluating request to determine if warning cookie should be generated");
             final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
             if (StringUtils.isNotBlank(context.getExternalContext().getRequestParameterMap().get("warn"))) {
                 warnCookieGenerator.addCookie(response, "true");
             }
         } else {
-            LOGGER.debug("No warning cookie generator is defined");
+            LOGGER.trace("No warning cookie generator is defined");
         }
     }
 
@@ -760,5 +760,15 @@ public class WebUtils {
             authentication = AuthenticationCredentialsThreadLocalBinder.getInProgressAuthentication();
         }
         return authentication;
+    }
+
+    /**
+     * Put passwordless authentication enabled.
+     *
+     * @param requestContext the request context
+     * @param value          the value
+     */
+    public static void putPasswordlessAuthenticationEnabled(final RequestContext requestContext, final Boolean value) {
+        requestContext.getFlowScope().put("passwordlessAuthenticationEnabled", value);
     }
 }
