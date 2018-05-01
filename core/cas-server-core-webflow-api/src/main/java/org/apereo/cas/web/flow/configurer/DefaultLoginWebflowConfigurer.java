@@ -130,6 +130,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      * @param flow the flow
      */
     protected void createDefaultActionStates(final Flow flow) {
+        createCreateTicketGrantingTicketAction(flow);
         createSendTicketGrantingTicketAction(flow);
         createGenerateServiceTicketAction(flow);
         createTerminateSessionAction(flow);
@@ -143,6 +144,12 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
         final ActionState action = createActionState(flow, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET,
             createEvaluateAction(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET));
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SERVICE_CHECK);
+    }
+
+    private void createCreateTicketGrantingTicketAction(final Flow flow) {
+        final ActionState action = createActionState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET,
+            createEvaluateAction(CasWebflowConstants.ACTION_ID_CREATE_TICKET_GRANTING_TICKET));
+        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET);
     }
 
     /**
