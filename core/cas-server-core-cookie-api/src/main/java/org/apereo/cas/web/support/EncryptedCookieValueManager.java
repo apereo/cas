@@ -27,12 +27,12 @@ public class EncryptedCookieValueManager implements CookieValueManager {
     public final String buildCookieValue(final String givenCookieValue, final HttpServletRequest request) {
         final String res = buildCompoundCookieValue(givenCookieValue, request);
         LOGGER.debug("Encoding cookie value [{}]", res);
-        return cipherExecutor.encode(res).toString();
+        return cipherExecutor.encode(res, new Object[]{}).toString();
     }
 
     @Override
     public final String obtainCookieValue(final Cookie cookie, final HttpServletRequest request) {
-        final String cookieValue = cipherExecutor.decode(cookie.getValue()).toString();
+        final String cookieValue = cipherExecutor.decode(cookie.getValue(), new Object[]{}).toString();
         LOGGER.debug("Decoded cookie value is [{}]", cookieValue);
         if (StringUtils.isBlank(cookieValue)) {
             LOGGER.debug("Retrieved decoded cookie value is blank. Failed to decode cookie [{}]", cookie.getName());
@@ -46,7 +46,7 @@ public class EncryptedCookieValueManager implements CookieValueManager {
      * Build the compound cookie value.
      *
      * @param cookieValue the raw cookie value that is being stored
-     * @param request the current web request
+     * @param request     the current web request
      * @return a compound cookie value that may contain additional data beyond the raw cookieValue
      */
     protected String buildCompoundCookieValue(final String cookieValue, final HttpServletRequest request) {
@@ -57,7 +57,7 @@ public class EncryptedCookieValueManager implements CookieValueManager {
      * Obtain the cookie value from the compound cookie value.
      *
      * @param compoundValue The compound cookie value
-     * @param request the current web request
+     * @param request       the current web request
      * @return the original cookie value that was stored in the provided compound value.
      */
     protected String obtainValueFromCompoundCookie(final String compoundValue, final HttpServletRequest request) {

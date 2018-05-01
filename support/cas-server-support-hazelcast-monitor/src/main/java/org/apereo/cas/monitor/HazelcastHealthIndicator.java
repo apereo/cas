@@ -91,7 +91,7 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
         }
 
         @Override
-        public void toString(final StringBuilder builder) {
+        public String toString(final StringBuilder builder) {
             final LocalMapStats localMapStats = map.getLocalMapStats();
             builder.append("Creation time: ")
                 .append(localMapStats.getCreationTime())
@@ -124,6 +124,7 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
             if (localMapStats.getNearCacheStats() != null) {
                 builder.append(", Misses: ").append(localMapStats.getNearCacheStats().getMisses());
             }
+            return builder.toString();
         }
     }
 }

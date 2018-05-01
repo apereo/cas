@@ -129,7 +129,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     }
 
     private Map<String, Object> decryptProperties(final Map properties) {
-        return this.configurationCipherExecutor.decode(properties);
+        return this.configurationCipherExecutor.decode(properties, new Object[] {});
     }
 
     private static String buildPatternForConfigurationFileDiscovery(final File config, final List<String> profiles) {

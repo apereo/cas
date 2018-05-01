@@ -42,7 +42,7 @@ public class SimpleCacheStatistics implements CacheStatistics {
     }
 
     @Override
-    public void toString(final StringBuilder builder) {
+    public String toString(final StringBuilder builder) {
         if (this.name != null) {
             builder.append(this.name).append(':');
         }
@@ -52,5 +52,6 @@ public class SimpleCacheStatistics implements CacheStatistics {
         builder.append("MB used, ");
         builder.append(getPercentFree()).append(" percent free, ");
         builder.append(this.evictions).append(" evictions");
+        return builder.toString();
     }
 }

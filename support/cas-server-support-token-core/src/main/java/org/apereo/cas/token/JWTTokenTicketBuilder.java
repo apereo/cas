@@ -66,15 +66,19 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
 
         final ZonedDateTime dt = ZonedDateTime.now().plusSeconds(expirationPolicy.getTimeToLive());
         final Date validUntilDate = DateTimeUtils.dateOf(dt);
-        return buildJwt(ticketGrantingTicket.getId(), casSeverPrefix,
+        return buildJwt(ticketGrantingTicket.getId(),
+            casSeverPrefix,
             DateTimeUtils.dateOf(ticketGrantingTicket.getCreationTime()),
             authentication.getPrincipal().getId(),
-            validUntilDate, attributes);
+            validUntilDate,
+            attributes);
 
     }
 
-    private String buildJwt(final String jwtId, final String audience,
-                            final Date issueDate, final String subject,
+    private String buildJwt(final String jwtId,
+                            final String audience,
+                            final Date issueDate,
+                            final String subject,
                             final Date validUntilDate,
                             final Map<String, Object> attributes) {
         final JWTClaimsSet.Builder claims =
