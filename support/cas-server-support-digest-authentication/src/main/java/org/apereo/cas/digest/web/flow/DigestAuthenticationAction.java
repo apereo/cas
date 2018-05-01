@@ -28,20 +28,16 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class DigestAuthenticationAction extends AbstractNonInteractiveCredentialsAction {
-
-
-
     private final String nonce = DigestAuthenticationUtils.createNonce();
-
     private final DigestHashedCredentialRetriever credentialRetriever;
-    private String realm = "CAS";
-    private String authenticationMethod = "auth";
+    private final String realm;
+    private final String authenticationMethod;
 
     public DigestAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                       final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-                                      final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy, 
+                                      final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
                                       final String realm,
-                                      final String authenticationMethod, 
+                                      final String authenticationMethod,
                                       final DigestHashedCredentialRetriever credentialRetriever) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
         this.realm = realm;
@@ -61,14 +57,14 @@ public class DigestAuthenticationAction extends AbstractNonInteractiveCredential
             final DigestCredentials credentials = extractor.extract(webContext);
             if (credentials == null) {
                 response.addHeader(HttpConstants.AUTHENTICATE_HEADER,
-                        DigestAuthenticationUtils.createAuthenticateHeader(this.realm, this.authenticationMethod, this.nonce));
+                    DigestAuthenticationUtils.createAuthenticateHeader(this.realm, this.authenticationMethod, this.nonce));
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return null;
             }
 
             LOGGER.debug("Received digest authentication request from credentials [{}] ", credentials);
             final String serverResponse = credentials.calculateServerDigest(true,
-                    this.credentialRetriever.findCredential(credentials.getUsername(), this.realm));
+                this.credentialRetriever.findCredential(credentials.getUsername(), this.realm));
 
             final String clientResponse = credentials.getToken();
             if (!serverResponse.equals(clientResponse)) {

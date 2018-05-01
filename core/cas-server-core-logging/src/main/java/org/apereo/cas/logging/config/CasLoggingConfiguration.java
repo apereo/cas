@@ -6,6 +6,7 @@ import org.apereo.cas.logging.web.ThreadContextMDCServletFilter;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,7 +31,7 @@ public class CasLoggingConfiguration {
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private ObjectProvider<CookieRetrievingCookieGenerator> ticketGrantingTicketCookieGenerator;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
@@ -40,7 +41,7 @@ public class CasLoggingConfiguration {
     public FilterRegistrationBean threadContextMDCServletFilter() {
         final Map<String, String> initParams = new HashMap<>();
         final FilterRegistrationBean bean = new FilterRegistrationBean();
-        bean.setFilter(new ThreadContextMDCServletFilter(ticketRegistrySupport, this.ticketGrantingTicketCookieGenerator));
+        bean.setFilter(new ThreadContextMDCServletFilter(ticketRegistrySupport, this.ticketGrantingTicketCookieGenerator.getIfAvailable()));
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setInitParameters(initParams);
         bean.setName("threadContextMDCServletFilter");

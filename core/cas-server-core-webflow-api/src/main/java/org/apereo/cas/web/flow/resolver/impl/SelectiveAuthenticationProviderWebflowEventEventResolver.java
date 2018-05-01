@@ -35,8 +35,6 @@ import java.util.Set;
  */
 @Slf4j
 public class SelectiveAuthenticationProviderWebflowEventEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-
-    
     public SelectiveAuthenticationProviderWebflowEventEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                                     final CentralAuthenticationService centralAuthenticationService,
                                                                     final ServicesManager servicesManager,
@@ -71,8 +69,12 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
      */
     protected Set<Event> resolveEventsInternal(final Set<Event> resolveEvents, final Authentication authentication, final RegisteredService registeredService,
                                                final HttpServletRequest request, final RequestContext context) {
-        LOGGER.debug("Collection of resolved events for this authentication sequence are:");
-        resolveEvents.forEach(e -> LOGGER.debug("Event id [{}] resolved from [{}]", e.getId(), e.getSource().getClass().getName()));
+        if (!resolveEvents.isEmpty()) {
+            LOGGER.debug("Collection of resolved events for this authentication sequence are:");
+            resolveEvents.forEach(e -> LOGGER.debug("Event id [{}] resolved from [{}]", e.getId(), e.getSource().getClass().getName()));
+        } else {
+            LOGGER.debug("No events could be resolved for this authentication transaction [{}] and service [{}]", authentication, registeredService);
+        }
         final Pair<Set<Event>, Collection<MultifactorAuthenticationProvider>> pair =
                 filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request);
         WebUtils.putResolvedMultifactorAuthenticationProviders(context, pair.getValue());

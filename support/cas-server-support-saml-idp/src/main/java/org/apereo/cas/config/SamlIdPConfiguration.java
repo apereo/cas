@@ -57,6 +57,7 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.ecp.Response;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -80,7 +81,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private ObjectProvider<CookieRetrievingCookieGenerator> ticketGrantingTicketCookieGenerator;
 
     @Autowired
     @Qualifier("ticketRegistry")
@@ -142,7 +143,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
             samlObjectEncrypter(),
             ticketRegistry,
             samlArtifactTicketFactory(),
-            ticketGrantingTicketCookieGenerator,
+            ticketGrantingTicketCookieGenerator.getIfAvailable(),
             samlArtifactMap(),
             samlAttributeQueryTicketFactory());
     }
@@ -166,7 +167,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @RefreshScope
     public SAMLArtifactMap samlArtifactMap() {
         final CasSamlArtifactMap map = new CasSamlArtifactMap(ticketRegistry, samlArtifactTicketFactory(),
-            ticketGrantingTicketCookieGenerator);
+            ticketGrantingTicketCookieGenerator.getIfAvailable());
         map.setArtifactLifetime(TimeUnit.SECONDS.toMillis(samlArtifactTicketExpirationPolicy().getTimeToLive()));
         return map;
     }
