@@ -26,8 +26,6 @@ import java.util.Collection;
  */
 @Slf4j
 public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
-
-
     public FileSystemResourceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                               final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);

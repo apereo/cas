@@ -10,7 +10,6 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.HttpUtils;
-import org.apereo.cas.util.http.HttpClient;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.springframework.http.HttpStatus;
 
@@ -30,9 +29,8 @@ import java.util.Map;
 public class DynamicMetadataResolver extends UrlResourceMetadataResolver {
 
     public DynamicMetadataResolver(final SamlIdPProperties samlIdPProperties,
-                                   final OpenSamlConfigBean configBean,
-                                   final HttpClient httpClient) {
-        super(samlIdPProperties, configBean, httpClient);
+                                   final OpenSamlConfigBean configBean) {
+        super(samlIdPProperties, configBean);
     }
 
     @Override

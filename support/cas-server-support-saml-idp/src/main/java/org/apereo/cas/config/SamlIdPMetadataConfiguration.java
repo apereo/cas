@@ -136,9 +136,9 @@ public class SamlIdPMetadataConfiguration {
         final DefaultSamlRegisteredServiceMetadataResolutionPlan plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
 
         final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
-        plan.registerMetadataResolver(new DynamicMetadataResolver(samlIdp, openSamlConfigBean, httpClient));
+        plan.registerMetadataResolver(new DynamicMetadataResolver(samlIdp, openSamlConfigBean));
         plan.registerMetadataResolver(new FileSystemResourceMetadataResolver(samlIdp, openSamlConfigBean));
-        plan.registerMetadataResolver(new UrlResourceMetadataResolver(samlIdp, openSamlConfigBean, httpClient));
+        plan.registerMetadataResolver(new UrlResourceMetadataResolver(samlIdp, openSamlConfigBean));
         plan.registerMetadataResolver(new ClasspathResourceMetadataResolver(samlIdp, openSamlConfigBean));
         plan.registerMetadataResolver(new GroovyResourceMetadataResolver(samlIdp, openSamlConfigBean));
 
