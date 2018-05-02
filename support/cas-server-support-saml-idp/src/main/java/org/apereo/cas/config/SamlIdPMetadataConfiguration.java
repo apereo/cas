@@ -4,9 +4,9 @@ import net.shibboleth.ext.spring.resource.ResourceHelper;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceMetadataResolverCacheLoader;
-import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceDefaultCachingMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceDefaultCachingMetadataResolver;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceMetadataResolverCacheLoader;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.ClasspathResourceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.DynamicMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.FileSystemResourceMetadataResolver;
@@ -45,14 +45,14 @@ public class SamlIdPMetadataConfiguration {
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
     private OpenSamlConfigBean openSamlConfigBean;
-    
+
     @Lazy
     @Bean
     @DependsOn("shibbolethIdpMetadataAndCertificatesGenerationService")
@@ -60,7 +60,7 @@ public class SamlIdPMetadataConfiguration {
         try {
             final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
             final ResourceBackedMetadataResolver resolver = new ResourceBackedMetadataResolver(
-                    ResourceHelper.of(new FileSystemResource(idp.getMetadata().getMetadataFile())));
+                ResourceHelper.of(new FileSystemResource(idp.getMetadata().getMetadataFile())));
             resolver.setParserPool(this.openSamlConfigBean.getParserPool());
             resolver.setFailFastInitialization(idp.getMetadata().isFailFast());
             resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
@@ -87,32 +87,35 @@ public class SamlIdPMetadataConfiguration {
     @ConditionalOnMissingBean(name = "chainingMetadataResolverCacheLoader")
     @Bean
     @RefreshScope
-    public SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader() {
+    public SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader()
+        throws Exception {
         return new SamlRegisteredServiceMetadataResolverCacheLoader(
-                openSamlConfigBean, httpClient,
-                casProperties.getAuthn().getSamlIdp(),
-                samlRegisteredServiceMetadataResolvers());
+            openSamlConfigBean, httpClient,
+            casProperties.getAuthn().getSamlIdp(),
+            samlRegisteredServiceMetadataResolvers());
     }
 
     @ConditionalOnMissingBean(name = "samlRegisteredServiceMetadataResolvers")
     @Bean
     @RefreshScope
-    public Collection<SamlRegisteredServiceMetadataResolver> samlRegisteredServiceMetadataResolvers() {
+    public Collection<SamlRegisteredServiceMetadataResolver> samlRegisteredServiceMetadataResolvers()
+        throws Exception {
         return CollectionUtils.wrapSet(
-                new DynamicMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean, httpClient),
-                new FileSystemResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean),
-                new UrlResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean, httpClient),
-                new ClasspathResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean)
+            new DynamicMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean, httpClient),
+            new FileSystemResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean),
+            new UrlResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean),
+            new ClasspathResourceMetadataResolver(casProperties.getAuthn().getSamlIdp(), openSamlConfigBean)
         );
     }
 
     @ConditionalOnMissingBean(name = "defaultSamlRegisteredServiceCachingMetadataResolver")
     @Bean
     @RefreshScope
-    public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() {
+    public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver()
+        throws Exception {
         return new SamlRegisteredServiceDefaultCachingMetadataResolver(
-                casProperties.getAuthn().getSamlIdp().getMetadata().getCacheExpirationMinutes(),
-                chainingMetadataResolverCacheLoader()
+            casProperties.getAuthn().getSamlIdp().getMetadata().getCacheExpirationMinutes(),
+            chainingMetadataResolverCacheLoader()
         );
     }
 

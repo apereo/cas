@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
-import net.shibboleth.ext.spring.resource.ResourceHelper;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
@@ -10,7 +10,6 @@ import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.LocalDynamicMetadataResolver;
-import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractResource;
@@ -27,9 +26,9 @@ import java.util.Collection;
  * @since 5.2.0
  */
 public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DynamicMetadataResolver.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemResourceMetadataResolver.class);
 
-    public FileSystemResourceMetadataResolver(final SamlIdPProperties samlIdPProperties, 
+    public FileSystemResourceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                               final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);
     }
@@ -46,7 +45,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
             if (metadataFile.isDirectory()) {
                 metadataResolver = new LocalDynamicMetadataResolver(new FilesystemLoadSaveManager<>(metadataFile, configBean.getParserPool()));
             } else {
-                metadataResolver = new ResourceBackedMetadataResolver(ResourceHelper.of(metadataResource));
+                metadataResolver = new InMemoryResourceMetadataResolver(metadataResource, configBean);
             }
             buildSingleMetadataResolver(metadataResolver, service);
             return CollectionUtils.wrap(metadataResolver);
