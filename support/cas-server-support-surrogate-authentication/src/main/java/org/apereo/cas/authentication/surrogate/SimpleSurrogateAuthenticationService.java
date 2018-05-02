@@ -17,8 +17,6 @@ import java.util.Set;
  */
 @Slf4j
 public class SimpleSurrogateAuthenticationService extends BaseSurrogateAuthenticationService {
-
-    
     private final Map<String, Set> eligibleAccounts;
 
     /**
