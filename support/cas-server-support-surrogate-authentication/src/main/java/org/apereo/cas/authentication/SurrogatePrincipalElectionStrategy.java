@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apereo.cas.authentication.principal.Principal;
 
 import java.util.Collection;
@@ -14,6 +15,7 @@ import java.util.Optional;
 public class SurrogatePrincipalElectionStrategy extends DefaultPrincipalElectionStrategy {
     private static final long serialVersionUID = -3112906686072339162L;
 
+    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     @Override
     protected Principal getPrincipalFromAuthentication(final Collection<Authentication> authentications) {
         final Optional<SurrogatePrincipal> result = authentications
