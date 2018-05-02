@@ -30,6 +30,7 @@ import org.apereo.cas.configuration.model.support.clearpass.ClearpassProperties;
 import org.apereo.cas.configuration.model.support.consent.ConsentProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties;
+import org.apereo.cas.configuration.model.support.custom.CasCustomProperties;
 import org.apereo.cas.configuration.model.support.geo.googlemaps.GoogleMapsProperties;
 import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
@@ -306,6 +307,12 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private WebflowProperties webflow = new WebflowProperties();
+
+    /**
+     * Custom properties.
+     */
+    @NestedConfigurationProperty
+    private CasCustomProperties custom = new CasCustomProperties();
 
     /**
      * Standalone configuration settings.

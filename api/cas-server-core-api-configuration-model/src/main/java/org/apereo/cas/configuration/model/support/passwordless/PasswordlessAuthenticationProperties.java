@@ -40,8 +40,9 @@ public class PasswordlessAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-passwordless")
     @Getter
     @Setter
-    public static class Accounts {
+    public static class Accounts implements Serializable {
 
+        private static final long serialVersionUID = -8424650395669337488L;
         /**
          * Passwordless authentication settings via REST.
          */
@@ -63,8 +64,9 @@ public class PasswordlessAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-passwordless")
     @Getter
     @Setter
-    public static class Tokens {
+    public static class Tokens implements Serializable {
 
+        private static final long serialVersionUID = 8371063350377031703L;
         /**
          * Indicate how long should the token be considered valid.
          */
