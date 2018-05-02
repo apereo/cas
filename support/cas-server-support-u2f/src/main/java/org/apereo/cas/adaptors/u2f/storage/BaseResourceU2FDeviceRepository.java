@@ -57,9 +57,6 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
                 return list.stream()
                         .map(d -> DeviceRegistration.fromJson(d.getRecord()))
                         .collect(Collectors.toList());
-
-
-
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -103,10 +100,18 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
             device.setRecord(registration.toJson());
             device.setCreatedDate(LocalDate.now());
 
-            final Collection<DeviceRegistration> devices = getRegisteredDevices(username);
-            final List<U2FDeviceRegistration> list = getU2fDeviceRegistrations(username, devices);
+            final Map<String, List<U2FDeviceRegistration>> devices = readDevicesFromResource();
+            final List<U2FDeviceRegistration> list = new ArrayList<>(0);
+
+            if (!devices.isEmpty()) {
+                final List<U2FDeviceRegistration> devs = devices.get(MAP_KEY_SERVICES);
+                LOGGER.debug("Located [{}] devices in repository", devs.size());
+                list.addAll(devs.stream().collect(Collectors.toList()));
+            }
             list.add(device);
+            LOGGER.debug("There are [{}] device(s) remaining in repository. Storing...", list.size());
             writeDevicesBackToResource(list);
+
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -149,8 +154,9 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
 
     /**
      * Write devices back to resource.
+     * (It overrides  all devices saved before)
      *
-     * @param list the list
+     * @param list the list of devices to write
      * @throws Exception the exception
      */
     protected abstract void writeDevicesBackToResource(List<U2FDeviceRegistration> list) throws Exception;
