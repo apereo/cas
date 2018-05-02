@@ -37,11 +37,34 @@ public class InitialFlowSetupAction extends AbstractAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InitialFlowSetupAction.class);
 
+    /**
+     * Protected casProperties.
+     */ 
     protected CasConfigurationProperties casProperties;
+    
+    /**
+     * Protected servicesManager.
+     */ 
     protected ServicesManager servicesManager;
+    
+    /**
+     * Protected authenticationRequestServiceSelectionStrategies.
+     */ 
     protected AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    
+    /**
+     * Protected warnCookieGenerator.
+     */ 
     protected CookieRetrievingCookieGenerator warnCookieGenerator;
+    
+    /**
+     * Protected ticketGrantingTicketCookieGenerator.
+     */ 
     protected CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    
+    /**
+     * Protected argumentExtractors.
+     */ 
     protected List<ArgumentExtractor> argumentExtractors;
 
     public InitialFlowSetupAction(final List<ArgumentExtractor> argumentExtractors,
@@ -66,6 +89,11 @@ public class InitialFlowSetupAction extends AbstractAction {
         return success();
     }
 
+    /**
+     * configureWebflowContext.
+     * 
+     * @param context   a request context
+     */ 
     protected void configureWebflowContextForService(final RequestContext context) {
         final Service service = WebUtils.getService(this.argumentExtractors, context);
         if (service != null) {
@@ -96,6 +124,11 @@ public class InitialFlowSetupAction extends AbstractAction {
         WebUtils.putService(context, service);
     }
 
+    /**
+     * configureWebflowContext.
+     * 
+     * @param context   a request context
+     */ 
     protected void configureWebflowContext(final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         WebUtils.putTicketGrantingTicketInScopes(context, this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
@@ -110,6 +143,11 @@ public class InitialFlowSetupAction extends AbstractAction {
         WebUtils.putRememberMeAuthenticationEnabled(context, casProperties.getTicket().getTgt().getRememberMe().isEnabled());
     }
 
+    /**
+     * configureCookieGenerators.
+     * 
+     * @param context   a request context
+     */ 
     protected void configureCookieGenerators(final RequestContext context) {
         final String contextPath = context.getExternalContext().getContextPath();
         final String cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
@@ -129,7 +167,12 @@ public class InitialFlowSetupAction extends AbstractAction {
                     this.ticketGrantingTicketCookieGenerator.getCookiePath());
         }
     }
-
+    
+    /**
+     * Get ServicesManager.
+     * 
+     * @return ServicesManager
+     */
     public ServicesManager getServicesManager() {
         return servicesManager;
     }
