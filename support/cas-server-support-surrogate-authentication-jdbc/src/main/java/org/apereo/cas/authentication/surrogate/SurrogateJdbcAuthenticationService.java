@@ -13,7 +13,6 @@ import javax.persistence.NoResultException;
 import javax.sql.DataSource;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Getter;
@@ -60,10 +59,10 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     @Override
-    public Collection<String> getEligibleAccountsForSurrogateToProxy(final String username) {
+    public List<String> getEligibleAccountsForSurrogateToProxy(final String username) {
         try {
             final List<SurrogateAccount> results = this.jdbcTemplate.query(this.surrogateAccountQuery, new BeanPropertyRowMapper<>(SurrogateAccount.class));
-            return results.stream().map(SurrogateAccount::getSurrogateAccount).collect(Collectors.toSet());
+            return results.stream().map(SurrogateAccount::getSurrogateAccount).collect(Collectors.toList());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

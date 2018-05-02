@@ -6,7 +6,10 @@ import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
+import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.SurrogateAuthenticationPostProcessor;
+import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
+import org.apereo.cas.authentication.SurrogatePrincipalElectionStrategy;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
 import org.apereo.cas.authentication.audit.SurrogateAuditPrincipalIdProvider;
 import org.apereo.cas.authentication.event.SurrogateAuthenticationEventListener;
@@ -36,9 +39,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link SurrogateAuthenticationConfiguration}.
@@ -104,8 +108,8 @@ public class SurrogateAuthenticationConfiguration {
             LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getLocation());
             return new JsonResourceSurrogateAuthenticationService(su.getJson().getLocation(), servicesManager);
         }
-        final Map<String, Set> accounts = new LinkedHashMap<>();
-        su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, StringUtils.commaDelimitedListToSet(v)));
+        final Map<String, List> accounts = new LinkedHashMap<>();
+        su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, new ArrayList<>(StringUtils.commaDelimitedListToSet(v))));
         LOGGER.debug("Using accounts [{}] for surrogate authentication", accounts);
         return new SimpleSurrogateAuthenticationService(accounts, servicesManager);
     }
@@ -125,21 +129,24 @@ public class SurrogateAuthenticationConfiguration {
     @Bean
     public AuthenticationPostProcessor surrogateAuthenticationPostProcessor() {
         return new SurrogateAuthenticationPostProcessor(
-            surrogatePrincipalFactory(),
-            personDirectoryPrincipalResolver(),
             surrogateAuthenticationService(),
             servicesManager,
             eventPublisher,
             registeredServiceAccessStrategyEnforcer,
-            surrogateEligibilityAuditableExecution);
+            surrogateEligibilityAuditableExecution,
+            surrogatePrincipalBuilder());
     }
 
-    @ConditionalOnMissingBean(name = "surrogateAuthenticationPrincipalFactory")
+    @ConditionalOnMissingBean(name = "surrogatePrincipalBuilder")
     @Bean
-    public PrincipalFactory surrogateAuthenticationPrincipalFactory() {
-        return PrincipalFactoryUtils.newPrincipalFactory();
+    public SurrogatePrincipalBuilder surrogatePrincipalBuilder() {
+        return new SurrogatePrincipalBuilder(surrogatePrincipalFactory(), attributeRepository.getIfAvailable());
     }
 
+    @Bean
+    public PrincipalElectionStrategy principalElectionStrategy() {
+        return new SurrogatePrincipalElectionStrategy();
+    }
     @Bean
     public AuditPrincipalIdProvider surrogateAuditPrincipalIdProvider() {
         return new SurrogateAuditPrincipalIdProvider();

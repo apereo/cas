@@ -8,6 +8,7 @@ import org.apereo.cas.interrupt.GroovyScriptInterruptInquirer;
 import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.InterruptResponse;
 import org.apereo.cas.interrupt.JsonResourceInterruptInquirer;
+import org.apereo.cas.interrupt.RegexAttributeInterruptInquirer;
 import org.apereo.cas.interrupt.RestEndpointInterruptInquirer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,6 +33,9 @@ public class CasInterruptConfiguration {
     @ConditionalOnMissingBean(name = "interruptInquirer")
     public InterruptInquirer interruptInquirer() {
         final InterruptProperties ip = casProperties.getInterrupt();
+        if (StringUtils.isNotBlank(ip.getAttributeName()) && StringUtils.isNotBlank(ip.getAttributeValue())) {
+            return new RegexAttributeInterruptInquirer(ip.getAttributeName(), ip.getAttributeValue());
+        }
         if (ip.getJson().getLocation() != null) {
             return new JsonResourceInterruptInquirer(ip.getJson().getLocation());
         }
