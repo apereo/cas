@@ -89,8 +89,8 @@ public class Pac4jWebflowConfiguration {
     @RefreshScope
     @Bean
     @Autowired
-    @ConditionalOnMissingBean(name = "Pac4jInitialFlowSetupAction")
-    public Action Pac4jInitialFlowSetupAction(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
+    @ConditionalOnMissingBean(name = "pac4jInitialFlowSetupAction")
+    public Action pac4jInitialFlowSetupAction(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         return new Pac4jInitialFlowSetupAction(
             CollectionUtils.wrap(argumentExtractor),
             servicesManager,
