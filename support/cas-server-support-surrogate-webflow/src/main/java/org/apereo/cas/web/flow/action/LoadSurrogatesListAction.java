@@ -14,7 +14,7 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -32,6 +32,7 @@ public class LoadSurrogatesListAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
+
         if (WebUtils.hasRequestSurrogateAuthenticationRequest(requestContext)) {
             WebUtils.removeRequestSurrogateAuthenticationRequest(requestContext);
             LOGGER.debug("Attempting to load surrogates...");
@@ -58,10 +59,10 @@ public class LoadSurrogatesListAction extends AbstractAction {
         if (c instanceof UsernamePasswordCredential) {
             final String username = c.getId();
             LOGGER.debug("Loading eligible accounts for [{}] to proxy", username);
-            final Collection<String> surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
+            final List<String> surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
             LOGGER.debug("Surrogate accounts found are [{}]", surrogates);
             if (!surrogates.isEmpty()) {
-                surrogates.add(username);
+                surrogates.add(surrogates.size(), username);
                 requestContext.getFlowScope().put("surrogates", surrogates);
                 return true;
             }

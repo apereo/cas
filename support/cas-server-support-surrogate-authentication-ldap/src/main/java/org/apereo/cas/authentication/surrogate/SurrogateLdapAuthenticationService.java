@@ -15,8 +15,8 @@ import org.ldaptive.Response;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -63,18 +63,17 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     @Override
-    public Collection<String> getEligibleAccountsForSurrogateToProxy(final String username) {
-        final Collection<String> eligible = new LinkedHashSet<>();
+    public List<String> getEligibleAccountsForSurrogateToProxy(final String username) {
+        final List<String> eligible = new ArrayList<>();
         try {
             final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(), CollectionUtils.wrap(username));
             LOGGER.debug("Using search filter to find eligible accounts: [{}]", filter);
 
-            final Response<SearchResult> response = LdapUtils.executeSearchOperation(this.connectionFactory,
-                ldapProperties.getBaseDn(), filter);
+            final Response<SearchResult> response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter);
             LOGGER.debug("LDAP response: [{}]", response);
 
             if (!LdapUtils.containsResultEntry(response)) {
-                LOGGER.warn("LDAP response is not found");
+                LOGGER.warn("LDAP response is not found or does not contain a result entry for [{}]", username);
                 return eligible;
             }
 
@@ -100,6 +99,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
                         }
                         return p.group();
                     })
+                    .sorted()
                     .collect(Collectors.toList()));
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
