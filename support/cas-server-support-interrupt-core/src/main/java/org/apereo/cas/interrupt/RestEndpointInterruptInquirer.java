@@ -53,6 +53,6 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return new InterruptResponse(false);
+        return InterruptResponse.none();
     }
 }

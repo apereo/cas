@@ -3657,6 +3657,13 @@ Interrupt the authentication flow to reach out to external services. To learn mo
 # cas.interrupt.json.location=file:/etc/cas/config/interrupt.json
 ```
 
+#### Authentication Interrupt Regex Attributes
+
+```properties
+# cas.interrupt.attributeName=attribute-name-pattern
+# cas.interrupt.attributeValue=attribute-value-pattern
+```
+
 #### Authentication Interrupt Groovy
 
 ```properties

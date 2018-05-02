@@ -13,8 +13,6 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 public class PrepareInterruptViewAction extends AbstractAction {
-
-    
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         return null;

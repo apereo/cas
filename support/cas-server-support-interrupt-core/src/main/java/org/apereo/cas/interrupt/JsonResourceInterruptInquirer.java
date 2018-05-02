@@ -42,7 +42,7 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer {
         if (interrupts.containsKey(user)) {
             return interrupts.get(user);
         }
-        return new InterruptResponse(false);
+        return InterruptResponse.none();
     }
 
     @SneakyThrows

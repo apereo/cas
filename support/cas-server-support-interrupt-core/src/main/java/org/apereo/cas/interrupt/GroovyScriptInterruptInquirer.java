@@ -33,6 +33,6 @@ public class GroovyScriptInterruptInquirer extends BaseInterruptInquirer {
             final Object[] args = {principal.getId(), attributes, service != null ? service.getId() : null, LOGGER};
             return ScriptingUtils.executeGroovyScript(resource, args, InterruptResponse.class);
         }
-        return new InterruptResponse(false);
+        return InterruptResponse.none();
     }
 }

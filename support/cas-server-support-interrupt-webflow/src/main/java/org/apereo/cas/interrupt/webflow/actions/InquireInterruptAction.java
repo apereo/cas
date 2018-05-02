@@ -1,6 +1,6 @@
 package org.apereo.cas.interrupt.webflow.actions;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
@@ -20,7 +20,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class InquireInterruptAction extends AbstractAction {
     private final InterruptInquirer interruptInquirer;
 
@@ -29,7 +29,7 @@ public class InquireInterruptAction extends AbstractAction {
         final Authentication authentication = WebUtils.getAuthentication(requestContext);
         final Service service = WebUtils.getService(requestContext);
         final RegisteredService registeredService = WebUtils.getRegisteredService(requestContext);
-        
+
         final InterruptResponse response = this.interruptInquirer.inquire(authentication, registeredService, service);
         if (response == null || !response.isInterrupt()) {
             return no();
