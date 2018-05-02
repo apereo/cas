@@ -149,10 +149,10 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     }
 
     @RefreshScope
-    @ConditionalOnMissingBean(name = "delegatedClientAuthenticationAction")
+    @ConditionalOnMissingBean(name = "clientAction")
     @Bean
     @Lazy
-    public Action delegatedClientAuthenticationAction() {
+    public Action clientAction() {
         return new DelegatedClientAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
             serviceTicketRequestWebflowEventResolver,
             adaptiveAuthenticationPolicy,
