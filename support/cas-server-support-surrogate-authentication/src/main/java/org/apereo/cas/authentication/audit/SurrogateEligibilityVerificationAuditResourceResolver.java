@@ -31,7 +31,7 @@ public class SurrogateEligibilityVerificationAuditResourceResolver extends Retur
         surrogateEligibilityResult.getAuthentication().ifPresent(it -> builder.append("selfPrincipal", it.getPrincipal()));
         builder.append("surrogatePrincipal", surrogateEligibilityResult.getProperties().get("targetUserId"));
 
-        return new String[]{builder.toString()};
+        return new String[]{buildeSurrogatePrincipalElectionStrategyr.toString()};
     }
 }
 
