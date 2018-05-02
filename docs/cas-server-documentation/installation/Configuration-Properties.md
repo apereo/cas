@@ -30,6 +30,14 @@ create attribute release policies, etc. CAS at runtime will auto-configure all r
 A number of CAS configuration options equally apply to a number of modules and features. To understand and 
 take note of those options, please [review this guide](Configuration-Properties-Common.html).
 
+## Custom Settings
+
+The following settings could be used to extend CAS with arbitrary configuration keys and values:
+
+```properties
+# cas.custom.[property-name]=[property-value]
+``` 
+
 ## Configuration Storage
 
 ### Standalone
