@@ -62,6 +62,14 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 CAS presents the ability to allow the user to accept the usage policy before moving on to the application.
 See [this guide](Webflow-Customization-AUP.html) for more info.
 
-## Customizing errors
+## Customizing Errors
 
 See [this guide](Webflow-Customization-Exceptions.html) for more info.
+
+## Custom Settings
+
+All webflow components and CAS views have access to the entire bundle of CAS settings defined from a variety of configuration sources. This allows one to extend and modify
+any CAS view or webflow component using the variable `casProperties` to gain access to a specific setting.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#custom-settings).
+
