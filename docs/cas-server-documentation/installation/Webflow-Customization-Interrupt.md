@@ -66,6 +66,14 @@ This option is most useful during development, testing and demos.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-interrupt-json).
 
+## Regex Attribute
+
+This strategy allows one to define regular expression patterns in CAS settings that would be matched against attributes names and values.
+If a successful match is produced while CAS examines the collection of both authentication and principal attributes, the authentication flow
+would be interrupted.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-interrupt-regex-attributes).
+
 ### Groovy
 
 This strategy reaches out to a Groovy resource whose job is to dynamically calculate whether the authentication flow should be interrupted given the provided username and certain number of other parameters.
