@@ -7,8 +7,11 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.net.URI;
 
 /**
  * This is {@link FinalizeInterruptFlowAction}.
@@ -24,10 +27,12 @@ public class FinalizeInterruptFlowAction extends AbstractAction {
         final InterruptResponse response = InterruptUtils.getInterruptFrom(requestContext);
         
         if (response.isBlock()) {
-            if (registeredService != null && registeredService.getAccessStrategy().getUnauthorizedRedirectUrl() != null) {
-                final String url = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl().toURL().toExternalForm();
-                requestContext.getExternalContext().requestExternalRedirect(url);
-                requestContext.getExternalContext().recordResponseComplete();
+            final URI accessUrl = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl();
+            if (registeredService != null && accessUrl != null) {
+                final String url = accessUrl.toURL().toExternalForm();
+                final ExternalContext externalContext = requestContext.getExternalContext();
+                externalContext.requestExternalRedirect(url);
+                externalContext.recordResponseComplete();
                 return no();
             }
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Denied");
