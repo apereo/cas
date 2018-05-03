@@ -50,7 +50,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
                 final String currentDn = response.getResult().getEntry().getDn();
                 LOGGER.debug("Updating [{}]", currentDn);
                 return LdapUtils.executeModifyOperation(currentDn, this.connectionFactory,
-                        CollectionUtils.wrap(this.aupAttributeName, CollectionUtils.wrap(Boolean.TRUE.toString())));
+                        CollectionUtils.wrapSet(this.aupAttributeName, CollectionUtils.wrap(Boolean.TRUE.toString())));
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
