@@ -1,8 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import net.sf.ehcache.distribution.CacheReplicator;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -19,38 +16,30 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.EhcacheTicketRegistryConfiguration;
-import org.apereo.cas.config.EhcacheTicketRegistryTicketCatalogConfiguration;
+import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
+import org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import java.util.Arrays;
-import java.util.Collection;
-
-import static org.mockito.Mockito.*;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Unit test for {@link EhCacheTicketRegistry}.
+ * This is {@link AbstractIgniteTicketRegistryTests}.
  *
- * @author Scott Battaglia
- * @since 3.0.0
+ * @author Misagh Moayyed
+ * @since 5.3.0
  */
-@RunWith(Parameterized.class)
+@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-    EhCacheTicketRegistryTests.EhcacheTicketRegistryTestConfiguration.class,
-    EhcacheTicketRegistryConfiguration.class,
-    RefreshAutoConfiguration.class,
-    EhcacheTicketRegistryTicketCatalogConfiguration.class,
+    IgniteTicketRegistryConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    IgniteTicketRegistryTicketCatalogConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -66,41 +55,22 @@ import static org.mockito.Mockito.*;
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreServicesConfiguration.class,
+    CasCoreLogoutConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class})
-@Slf4j
-public class EhCacheTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
-
+    CasWebApplicationServiceFactoryConfiguration.class
+})
+@TestPropertySource(locations = {"classpath:/igniteregistry.properties"})
+public abstract class AbstractIgniteTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
-    public EhCacheTicketRegistryTests(final boolean useEncryption) {
+    public AbstractIgniteTicketRegistryTests(final boolean useEncryption) {
         super(useEncryption);
     }
 
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(false, true);
-    }
-
     @Override
-    public TicketRegistry getNewTicketRegistry() {
+    protected TicketRegistry getNewTicketRegistry() {
         return ticketRegistry;
-    }
-
-
-    @Configuration("EhcacheTicketRegistryTestConfiguration")
-    public static class EhcacheTicketRegistryTestConfiguration {
-        @Bean
-        @SneakyThrows
-        public CacheReplicator ticketRMISynchronousCacheReplicator() {
-            final CacheReplicator replicator = mock(CacheReplicator.class);
-            when(replicator.isReplicateUpdatesViaCopy()).thenReturn(false);
-            when(replicator.notAlive()).thenReturn(false);
-            when(replicator.alive()).thenReturn(false);
-            when(replicator.clone()).thenReturn(null);
-            return replicator;
-        }
     }
 }

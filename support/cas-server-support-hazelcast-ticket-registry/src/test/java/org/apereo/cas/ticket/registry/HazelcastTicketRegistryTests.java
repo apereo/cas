@@ -65,7 +65,7 @@ import org.springframework.test.context.TestPropertySource;
 })
 @TestPropertySource(properties = {"cas.ticket.registry.hazelcast.cluster.instanceName=testlocalhostinstance"})
 @Slf4j
-public class HazelcastTicketRegistryTests extends AbstractTicketRegistryTests {
+public class HazelcastTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")
