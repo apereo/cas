@@ -84,4 +84,5 @@ jobs:
         - MATRIX_JOB_TYPE=CFGMETADATA
         - MATRIX_JOB_TYPE=DEPANALYZE
     - stage: deploy
-      env: MATRIX_JOB_TYPE=SNAPSHOT
+      env:
+        - MATRIX_JOB_TYPE=SNAPSHOT
