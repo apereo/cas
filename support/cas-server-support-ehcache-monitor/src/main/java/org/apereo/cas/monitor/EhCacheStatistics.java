@@ -80,7 +80,7 @@ public class EhCacheStatistics implements CacheStatistics {
     }
 
     @Override
-    public int getPercentFree() {
+    public long getPercentFree() {
         final long capacity = getCapacity();
         if (capacity == 0) {
             return 0;

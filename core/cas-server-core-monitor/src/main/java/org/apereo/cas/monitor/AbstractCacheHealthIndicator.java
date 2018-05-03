@@ -36,7 +36,10 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
                 return;
             }
 
-            final Set<Status> statuses = Arrays.stream(statistics).map(this::status).collect(Collectors.toSet());
+            final Set<Status> statuses = Arrays.stream(statistics)
+                .map(this::status)
+                .collect(Collectors.toSet());
+            
             if (statuses.contains(Status.OUT_OF_SERVICE)) {
                 builder.outOfService();
             } else if (statuses.contains(Status.DOWN)) {

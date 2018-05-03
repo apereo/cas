@@ -40,7 +40,7 @@ public interface CacheStatistics {
      *
      * @return Percent of space/capacity free.
      */
-    default int getPercentFree() {
+    default long getPercentFree() {
         return 0;
     }
 
