@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  */
 public class RestAcceptableUsagePolicyRepositoryTests {
     @Test
-    public void verifyFindToken() {
+    public void verify() {
         final TicketRegistrySupport ticketRegistrySupport = mock(TicketRegistrySupport.class);
         final AcceptableUsagePolicyProperties.Rest props = new AcceptableUsagePolicyProperties.Rest();
         props.setUrl("http://localhost:9298");
