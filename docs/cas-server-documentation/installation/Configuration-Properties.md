@@ -35,7 +35,7 @@ take note of those options, please [review this guide](Configuration-Properties-
 The following settings could be used to extend CAS with arbitrary configuration keys and values:
 
 ```properties
-# cas.custom.[property-name]=[property-value]
+# cas.custom.properties.[property-name]=[property-value]
 ``` 
 
 ## Configuration Storage
