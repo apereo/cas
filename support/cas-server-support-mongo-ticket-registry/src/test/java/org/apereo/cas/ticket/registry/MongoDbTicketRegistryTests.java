@@ -70,7 +70,7 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(locations = {"classpath:/mongoregistry.properties"})
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
 @Slf4j
-public class MongoDbTicketRegistryTests extends AbstractTicketRegistryTests {
+public class MongoDbTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")

@@ -18,7 +18,7 @@ import java.util.Collection;
  */
 @RunWith(Parameterized.class)
 @Slf4j
-public class JmsTicketRegistryTests extends AbstractTicketRegistryTests {
+public class JmsTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     public JmsTicketRegistryTests(final boolean useEncryption) {
         super(useEncryption);

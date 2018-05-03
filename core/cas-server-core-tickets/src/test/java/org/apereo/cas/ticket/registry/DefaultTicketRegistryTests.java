@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(Parameterized.class)
 @Slf4j
-public class DefaultTicketRegistryTests extends AbstractTicketRegistryTests {
+public class DefaultTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     public DefaultTicketRegistryTests(final boolean useEncryption) {
         super(useEncryption);

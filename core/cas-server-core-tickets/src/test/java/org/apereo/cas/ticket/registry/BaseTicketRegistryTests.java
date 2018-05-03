@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -19,11 +18,7 @@ import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.junit.Assume;
 import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.test.util.AopTestUtils;
 
 import java.util.ArrayList;
@@ -34,15 +29,12 @@ import java.util.stream.IntStream;
 import static org.junit.Assert.*;
 
 /**
- * @author Scott Battaglia
- * @since 3.0.0
+ * This is {@link BaseTicketRegistryTests}.
+ *
+ * @author Misagh Moayyed
+ * @since 5.3.0
  */
-@Slf4j
-public abstract class AbstractTicketRegistryTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
+public abstract class BaseTicketRegistryTests {
     private static final String TGT_ID = "TGT";
     private static final String ST_1_ID = "ST1";
     private static final String PGT_1_ID = "PGT-1";
@@ -51,13 +43,10 @@ public abstract class AbstractTicketRegistryTests {
     private static final String EXCEPTION_CAUGHT_NONE_EXPECTED = "Exception caught.  None expected.";
     private static final String CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED = "Caught an exception. But no exception should have been thrown: ";
 
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     private final boolean useEncryption;
     private TicketRegistry ticketRegistry;
 
-    public AbstractTicketRegistryTests(final boolean useEncryption) {
+    public BaseTicketRegistryTests(final boolean useEncryption) {
         this.useEncryption = useEncryption;
     }
 
@@ -69,6 +58,8 @@ public abstract class AbstractTicketRegistryTests {
             setUpEncryption();
         }
     }
+
+    protected abstract TicketRegistry getNewTicketRegistry();
 
     private void setUpEncryption() {
         final AbstractTicketRegistry registry = AopTestUtils.getTargetObject(this.ticketRegistry);
@@ -82,24 +73,12 @@ public abstract class AbstractTicketRegistryTests {
     }
 
     /**
-     * Abstract method to retrieve a new ticket registry. Implementing classes
-     * return the TicketRegistry they wish to test.
-     *
-     * @return the TicketRegistry we wish to test
-     */
-    public abstract TicketRegistry getNewTicketRegistry();
-
-    /**
      * Determine whether the tested registry is able to iterate its tickets.
      */
     protected boolean isIterableRegistry() {
         return true;
     }
 
-    /**
-     * Method to add a TicketGrantingTicket to the ticket cache. This should add
-     * the ticket and return. Failure upon any exception.
-     */
     @Test
     public void verifyAddTicketToCache() {
         try {
