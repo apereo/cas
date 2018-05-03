@@ -28,7 +28,7 @@ public class ScimWebflowConfigurer extends AbstractCasWebflowConfigurer {
     protected void doInitialize() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
-            final ActionState tgtAction = getState(flow, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET, ActionState.class);
+            final ActionState tgtAction = getState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET, ActionState.class);
             tgtAction.getExitActionList().add(createEvaluateAction("principalScimProvisionerAction"));
         }
     }

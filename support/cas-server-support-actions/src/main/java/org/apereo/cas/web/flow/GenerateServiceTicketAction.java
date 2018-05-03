@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
@@ -36,7 +36,7 @@ import java.net.URI;
  * @since 3.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GenerateServiceTicketAction extends AbstractAction {
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
@@ -121,7 +121,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
 
     protected boolean isGatewayPresent(final RequestContext context) {
         return StringUtils.hasText(context.getExternalContext()
-                .getRequestParameterMap().get(CasProtocolConstants.PARAMETER_GATEWAY));
+            .getRequestParameterMap().get(CasProtocolConstants.PARAMETER_GATEWAY));
     }
 
     /**
