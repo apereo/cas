@@ -169,8 +169,9 @@ public class MonitorProperties implements Serializable {
      */
     @Setter
     @Getter
-    public abstract static class BaseEndpoint {
+    public abstract static class BaseEndpoint implements Serializable {
 
+        private static final long serialVersionUID = -6342643529009550539L;
         /**
          * Disable access to the endpoint completely.
          */
@@ -187,7 +188,7 @@ public class MonitorProperties implements Serializable {
          * set this endpoint to true and configure spring security appropriate as is described by the docs.
          * <p>
          * By default all endpoints are considered disabled and sensitive.
-         * <p>
+         * </p>
          * <p>It's important to note that these endpoints and their settings only affect
          * what CAS provides. Additional endpoints provided by Spring Boot are controlled
          * elsewhere by Spring Boot itself.</p>
@@ -199,7 +200,7 @@ public class MonitorProperties implements Serializable {
     @Getter
     @Setter
     public static class Endpoints extends BaseEndpoint {
-
+        private static final long serialVersionUID = -4725314424606890035L;
         /**
          * Dashboard related settings.
          */
@@ -292,70 +293,87 @@ public class MonitorProperties implements Serializable {
 
         @RequiresModule(name = "cas-server-support-reports", automated = true)
         public static class Dashboard extends BaseEndpoint {
+            private static final long serialVersionUID = 6907100597153582851L;
         }
 
         @RequiresModule(name = "cas-server-support-reports", automated = true)
         public static class AuditEvents extends BaseEndpoint {
+            private static final long serialVersionUID = 3343622053293351139L;
         }
 
         @RequiresModule(name = "cas-server-support-reports", automated = true)
         public static class AuthenticationEvents extends BaseEndpoint {
+            private static final long serialVersionUID = -3437901726997576756L;
         }
 
         @RequiresModule(name = "cas-server-core-configuration", automated = true)
         public static class ConfigurationState extends BaseEndpoint {
+            private static final long serialVersionUID = 5810340952202590071L;
         }
 
         @RequiresModule(name = "cas-server-core-monitor", automated = true)
         public static class HealthCheck extends BaseEndpoint {
+            private static final long serialVersionUID = 1304521673247289954L;
         }
 
         @RequiresModule(name = "cas-server-core-logging", automated = true)
         public static class LoggingConfig extends BaseEndpoint {
+            private static final long serialVersionUID = 3380609022897326907L;
         }
 
         @RequiresModule(name = "cas-server-support-metrics", automated = true)
         public static class Metrics extends BaseEndpoint {
+            private static final long serialVersionUID = 8904907489485781427L;
         }
 
         @RequiresModule(name = "cas-server-support-person-directory", automated = true)
         public static class AttributeResolution extends BaseEndpoint {
+            private static final long serialVersionUID = -8767474517054230527L;
         }
 
         @RequiresModule(name = "cas-server-core-web", automated = true)
         public static class SingleSignOnReport extends BaseEndpoint {
+            private static final long serialVersionUID = -6733579261041320425L;
         }
 
         @RequiresModule(name = "cas-server-core-web", automated = true)
         public static class Statistics extends BaseEndpoint {
+            private static final long serialVersionUID = 4244607771350272091L;
         }
 
         @RequiresModule(name = "cas-server-support-mfa-trusted", automated = true)
         public static class TrustedDevices extends BaseEndpoint {
+            private static final long serialVersionUID = -9185848511703326325L;
         }
 
         @RequiresModule(name = "cas-server-core-web", automated = true)
         public static class Status extends BaseEndpoint {
+            private static final long serialVersionUID = -750490138316116795L;
         }
 
         @RequiresModule(name = "cas-server-support-discovery", automated = true)
         public static class Discovery extends BaseEndpoint {
+            private static final long serialVersionUID = 6642274054226792542L;
         }
 
         @RequiresModule(name = "cas-server-core", automated = true)
         public static class SingleSignOnStatus extends BaseEndpoint {
+            private static final long serialVersionUID = 6835023873478746895L;
         }
 
         @RequiresModule(name = "cas-server-core-webflow", automated = true)
         public static class SpringWebflowReport extends BaseEndpoint {
+            private static final long serialVersionUID = -6188494393130226404L;
         }
 
         @RequiresModule(name = "cas-server-core-services", automated = true)
         public static class RegisteredServicesReport extends BaseEndpoint {
+            private static final long serialVersionUID = 821037221486732220L;
         }
 
         @RequiresModule(name = "cas-server-core-configuration", automated = true)
         public static class ConfigurationMetadata extends BaseEndpoint {
+            private static final long serialVersionUID = 8568828537931315971L;
         }
     }
 }
