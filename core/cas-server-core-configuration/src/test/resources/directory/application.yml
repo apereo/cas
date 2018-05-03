@@ -1,0 +1,5 @@
+test:
+  dir:
+    app: dirAppYml
+    cas: dirAppYml
+  file: dirAppYml

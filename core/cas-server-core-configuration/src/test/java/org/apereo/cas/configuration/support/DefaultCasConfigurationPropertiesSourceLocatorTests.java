@@ -45,6 +45,7 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
 
     static {
         System.setProperty("spring.profiles.active", "standalone");
+        System.setProperty("cas.standalone.configurationDirectory", "src/test/resources/directory");
         System.setProperty("cas.standalone.configurationFile", "src/test/resources/standalone.properties");
     }
 
@@ -56,5 +57,23 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
         final CompositePropertySource composite = (CompositePropertySource) source;
         assertEquals("https://cas.example.org:9999", composite.getProperty("cas.server.name"));
         assertEquals("https://cas.example.org/something", composite.getProperty("cas.server.prefix"));
+    }
+
+    @Test
+    public void verifyPriority() {
+        final PropertySource source = casConfigurationPropertiesSourceLocator.locate(environment, resourceLoader);
+        assertTrue(source instanceof CompositePropertySource);
+
+        // Ensure standalone property sources priority order is:
+        // 1. file
+        // 2. dir cas.props
+        // 3. dir app.props
+        // 4. classpath app.yml
+
+        final CompositePropertySource composite = (CompositePropertySource) source;
+        assertEquals("file", composite.getProperty("test.file"));
+        assertEquals("dirCasProp", composite.getProperty("test.dir.cas"));
+        assertEquals("dirAppYml", composite.getProperty("test.dir.app"));
+        assertEquals("classpathAppYml", composite.getProperty("test.classpath"));
     }
 }
