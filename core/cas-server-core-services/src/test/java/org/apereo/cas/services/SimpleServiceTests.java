@@ -15,7 +15,7 @@ public class SimpleServiceTests {
 
     @Test
     public void verifyProperId() {
-        assertEquals("Ids are not equal!", RegisteredServiceTestUtils.CONST_TEST_URL, RegisteredServiceTestUtils.getService().getId());
+        assertEquals("Ids are not equal.", RegisteredServiceTestUtils.CONST_TEST_URL, RegisteredServiceTestUtils.getService().getId());
     }
 
     @Test
