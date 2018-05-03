@@ -66,7 +66,7 @@ import java.util.Collection;
     RefreshAutoConfiguration.class})
 @TestPropertySource(locations = "classpath:/dynamodb-ticketregistry.properties")
 @Slf4j
-public class DynamoDbTicketRegistryTests extends AbstractTicketRegistryTests {
+public class DynamoDbTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;

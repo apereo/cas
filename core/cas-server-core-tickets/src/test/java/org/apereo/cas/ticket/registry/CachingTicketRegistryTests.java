@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(Parameterized.class)
 @Slf4j
-public class CachingTicketRegistryTests extends AbstractTicketRegistryTests {
+public class CachingTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     public CachingTicketRegistryTests(final boolean useEncryption) {
         super(useEncryption);
