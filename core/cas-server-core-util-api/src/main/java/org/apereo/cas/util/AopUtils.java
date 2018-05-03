@@ -24,7 +24,7 @@ public class AopUtils {
      */
     public static JoinPoint unWrapJoinPoint(final JoinPoint point) {
         JoinPoint naked = point;
-        while (naked.getArgs().length > 0 && naked.getArgs()[0] instanceof JoinPoint) {
+        while (naked.getArgs() != null && naked.getArgs().length > 0 && naked.getArgs()[0] instanceof JoinPoint) {
             naked = (JoinPoint) naked.getArgs()[0];
         }
         return naked;

@@ -30,8 +30,11 @@ public class TicketValidationResourceResolver extends TicketAsFirstParameterReso
     public String[] resolveFrom(final JoinPoint joinPoint, final Object object) {
         final List<String> auditResourceResults = new ArrayList<>();
 
-        final String ticketId = AopUtils.unWrapJoinPoint(joinPoint).getArgs()[0].toString();
-        auditResourceResults.add(ticketId);
+        final Object[] args = AopUtils.unWrapJoinPoint(joinPoint).getArgs();
+        if (args != null && args.length > 0) {
+            final String ticketId = args[0].toString();
+            auditResourceResults.add(ticketId);
+        }
 
         if (object instanceof Assertion) {
             final Assertion assertion = Assertion.class.cast(object);
