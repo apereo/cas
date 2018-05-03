@@ -62,7 +62,7 @@ public class LoadSurrogatesListAction extends AbstractAction {
             final List<String> surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
             LOGGER.debug("Surrogate accounts found are [{}]", surrogates);
             if (!surrogates.isEmpty()) {
-                surrogates.add(surrogates.size(), username);
+                surrogates.add(username);
                 requestContext.getFlowScope().put("surrogates", surrogates);
                 return true;
             }
