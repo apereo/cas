@@ -23,7 +23,7 @@ import java.util.HashMap;
  */
 @Slf4j
 public class RestAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
-    
+
     private static final long serialVersionUID = 1600024683199961892L;
 
     private final AcceptableUsagePolicyProperties.Rest properties;
@@ -39,9 +39,10 @@ public class RestAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
     public boolean submit(final RequestContext requestContext, final Credential credential) {
         try {
             final HttpResponse response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
-                    properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
-                    CollectionUtils.wrap("username", credential.getId()), new HashMap<>());
-            return response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
+                properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
+                CollectionUtils.wrap("username", credential.getId()), new HashMap<>());
+            final int statusCode = response.getStatusLine().getStatusCode();
+            return HttpStatus.valueOf(statusCode).is2xxSuccessful();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
