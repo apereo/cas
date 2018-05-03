@@ -21,29 +21,23 @@ import org.apereo.cas.config.DynamoDbTicketRegistryConfiguration;
 import org.apereo.cas.config.DynamoDbTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalParameterizedRunner;
-import org.apereo.cas.util.junit.RunningStandaloneCondition;
+import org.apereo.cas.util.junit.ConditionalSpringRunner;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 /**
- * This is {@link DynamoDbTicketRegistryTests}.
+ * This is {@link AbstractDynamoDbTicketRegistryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RunWith(ConditionalParameterizedRunner.class)
-@ConditionalIgnore(condition = RunningStandaloneCondition.class, port = 8000)
-@SpringBootTest(classes = {DynamoDbTicketRegistryConfiguration.class,
+@RunWith(ConditionalSpringRunner.class)
+@SpringBootTest(classes = {
+    DynamoDbTicketRegistryConfiguration.class,
     DynamoDbTicketRegistryTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
@@ -63,10 +57,11 @@ import java.util.Collection;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    RefreshAutoConfiguration.class})
+    RefreshAutoConfiguration.class
+})
 @TestPropertySource(locations = "classpath:/dynamodb-ticketregistry.properties")
 @Slf4j
-public class DynamoDbTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public abstract class AbstractDynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
@@ -76,13 +71,8 @@ public class DynamoDbTicketRegistryTests extends BaseSpringRunnableTicketRegistr
         System.setProperty("aws.secretKey", "UpigXEQDU1tnxolpXBM8OK8G7/a+goMDTJkQPvxQ");
     }
 
-    public DynamoDbTicketRegistryTests(final boolean useEncryption) {
+    public AbstractDynamoDbTicketRegistryTests(final boolean useEncryption) {
         super(useEncryption);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(false, true);
     }
 
     @Override
