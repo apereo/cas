@@ -86,9 +86,9 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
 
             final JWSAlgorithm signingAlg = findAlgorithmFamily(sets, signingSecretAlg, JWSAlgorithm.class);
 
-            final JwtAuthenticator a = new JwtAuthenticator();
+            final JwtAuthenticator jwtAuthenticator = new JwtAuthenticator();
             final byte[] secretBytes = getSecretBytes(signingSecret, secretsAreBase64Encoded);
-            a.setSignatureConfiguration(new SecretSignatureConfiguration(secretBytes, signingAlg));
+            jwtAuthenticator.setSignatureConfiguration(new SecretSignatureConfiguration(secretBytes, signingAlg));
 
             if (StringUtils.isNotBlank(encryptionSecret)) {
                 sets = new HashSet<>();
@@ -108,11 +108,11 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
 
                 final EncryptionMethod encMethod = findAlgorithmFamily(sets, encryptionSecretMethod, EncryptionMethod.class);
                 final byte[] encSecretBytes = getSecretBytes(encryptionSecret, secretsAreBase64Encoded);
-                a.setEncryptionConfiguration(new SecretEncryptionConfiguration(encSecretBytes, encAlg, encMethod));
+                jwtAuthenticator.setEncryptionConfiguration(new SecretEncryptionConfiguration(encSecretBytes, encAlg, encMethod));
             } else {
-                LOGGER.warn("JWT authentication is configured to share a single key for both signing/encryption");
+                LOGGER.warn("JWT authentication is configured to share jwtAuthenticator single key for both signing/encryption");
             }
-            return a;
+            return jwtAuthenticator;
         }
         LOGGER.warn("No token signing secret is defined for service [{}]. Ensure [{}] property is defined for service",
             service.getServiceId(),

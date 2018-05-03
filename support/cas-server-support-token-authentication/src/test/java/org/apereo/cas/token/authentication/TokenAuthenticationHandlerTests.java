@@ -56,24 +56,24 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        TokenAuthenticationHandlerTests.TestTokenAuthenticationConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, 
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        TokenAuthenticationConfiguration.class})
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    TokenAuthenticationHandlerTests.TestTokenAuthenticationConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    TokenAuthenticationConfiguration.class})
 @Slf4j
 public class TokenAuthenticationHandlerTests {
 
@@ -89,8 +89,7 @@ public class TokenAuthenticationHandlerTests {
     public void verifyKeysAreSane() throws Exception {
         final JwtGenerator<CommonProfile> g = new JwtGenerator<>();
         g.setSignatureConfiguration(new SecretSignatureConfiguration(SIGNING_SECRET, JWSAlgorithm.HS256));
-        g.setEncryptionConfiguration(new SecretEncryptionConfiguration(ENCRYPTION_SECRET,
-                JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
+        g.setEncryptionConfiguration(new SecretEncryptionConfiguration(ENCRYPTION_SECRET, JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
 
         final CommonProfile profile = new CommonProfile();
         profile.setId("casuser");
