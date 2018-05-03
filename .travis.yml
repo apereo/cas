@@ -38,15 +38,6 @@ env:
   - secure: "ScUSTo0if5m7ddnwUA7EaYucc6yzEUrKLk0DzCvkMfjn2h5taUFSKHx+S0hd2EzJofv+Em4eI5qncSK5LTxgD7HhHR1e3iZp+SqJenhhOnbuciZfg4QA+tUGw3XUdmREac5cz2l0qhi1q4vsnnZARj2d4vvf2HWuNtEOBu/ZAKI="
   - secure: "iWPPLKSS3zBs2adqLPkMiHfCj2hSLyD5BoV3oodhR7Ne83Kpn1khRcEWFoHF3Ed11eSU+glNdPSzUpc8TzwTZGx5B3RU2Qp36hZFyjuzNWJARmoVPYMiEg3FFBQrUR75w+Tbtn6zPkiAk6nl0K5ewmY0/xixVdnTLXL5HjpE2rc="
   - secure: "f3mDIZ8m6NYJXI8KvWD/sZRSeCCyIyfgPRy3Q6o9u9WyHZuYaJf95Ia0eJQ3gxUDS1TKL31Vk08dhFKrfIcKgifFPa2uQ2uyJkvGxlarMTQ+tpqsZYp4zAJgKc9r4xdZasvF2k4xqr+pl9AFjlpXB4jDD59XPXt3DcRABOYA9sM="
-  matrix:
-  - MATRIX_JOB_TYPE=BUILD
-  - MATRIX_JOB_TYPE=STYLE
-  - MATRIX_JOB_TYPE=JAVADOC
-  - MATRIX_JOB_TYPE=TEST
-  - MATRIX_JOB_TYPE=SNAPSHOT
-  - MATRIX_JOB_TYPE=DEPUPDATE
-  - MATRIX_JOB_TYPE=CFGMETADATA
-  - MATRIX_JOB_TYPE=DEPANALYZE
 before_install:
 - chmod -R 777 ./ci/run-ldap-server.sh
 - ./ci/run-ldap-server.sh
@@ -73,5 +64,25 @@ script:
 after_script:
 - chmod -R 777 ./ci/stop.sh
 - ./ci/stop.sh
-
-
+stages:
+  - build
+  - test
+  - doc
+  - name: deploy
+    if: branch = master
+jobs:
+  include:
+    - stage: build
+      env: MATRIX_JOB_TYPE=BUILD
+    - stage: test
+      - env: MATRIX_JOB_TYPE=TEST
+      - env: MATRIX_JOB_TYPE=STYLE
+    - stage: doc
+      matrix:
+        - MATRIX_JOB_TYPE=JAVADOC
+        - MATRIX_JOB_TYPE=DEPUPDATE
+        - MATRIX_JOB_TYPE=CFGMETADATA
+        - MATRIX_JOB_TYPE=DEPANALYZE
+    - stage: deploy
+      env:
+        - MATRIX_JOB_TYPE=SNAPSHOT
