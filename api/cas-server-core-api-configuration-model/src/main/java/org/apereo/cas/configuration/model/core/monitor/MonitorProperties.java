@@ -188,7 +188,7 @@ public class MonitorProperties implements Serializable {
          * set this endpoint to true and configure spring security appropriate as is described by the docs.
          * <p>
          * By default all endpoints are considered disabled and sensitive.
-         * <p>
+         * </p>
          * <p>It's important to note that these endpoints and their settings only affect
          * what CAS provides. Additional endpoints provided by Spring Boot are controlled
          * elsewhere by Spring Boot itself.</p>
