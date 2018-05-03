@@ -98,11 +98,13 @@ public class TerminateSessionAction extends AbstractAction {
         final ProfileManager manager = Pac4jUtils.getPac4jProfileManager(request, response);
         manager.logout();
 
-        final HttpSession session = request.getSession();
+        final HttpSession session = request.getSession(false);
         if (session != null) {
-            final Object requestedUrl = request.getSession().getAttribute(Pac4jConstants.REQUESTED_URL);
+            final Object requestedUrl = session.getAttribute(Pac4jConstants.REQUESTED_URL);
             session.invalidate();
-            request.getSession(true).setAttribute(Pac4jConstants.REQUESTED_URL, requestedUrl);
+            if (requestedUrl != null && !requestedUrl.equals("")) {
+                request.getSession(true).setAttribute(Pac4jConstants.REQUESTED_URL, requestedUrl);
+            }
         }
     }
 
