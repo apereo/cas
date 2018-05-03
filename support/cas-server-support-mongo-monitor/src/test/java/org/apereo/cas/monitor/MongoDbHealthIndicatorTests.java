@@ -1,7 +1,4 @@
-package org.apereo.cas.ticket.registry;
-
-import java.util.Arrays;
-import java.util.Collection;
+package org.apereo.cas.monitor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -15,38 +12,44 @@ import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.MongoDbTicketRegistryConfiguration;
-import org.apereo.cas.config.MongoDbTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.junit.Before;
+import org.apereo.cas.monitor.config.MongoDbMonitoringConfiguration;
+import org.apereo.cas.util.junit.ConditionalSpringRunner;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.Map;
+
+import static org.junit.Assert.*;
+
 /**
- * This is {@link MongoDbTicketRegistryTests}.
+ * This is {@link MongoDbHealthIndicatorTests}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.3.0
  */
-@RunWith(Parameterized.class)
+@RunWith(ConditionalSpringRunner.class)
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
+    MongoDbMonitoringConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
     CasCoreUtilConfiguration.class,
-    AopAutoConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreLogoutConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
@@ -55,44 +58,32 @@ import org.springframework.test.context.TestPropertySource;
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreHttpConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    CasCoreLogoutConfiguration.class,
+    RefreshAutoConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    MongoDbTicketRegistryTicketCatalogConfiguration.class,
-    MongoDbTicketRegistryConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreLogoutConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class})
-@EnableScheduling
-@TestPropertySource(locations = {"classpath:/mongoregistry.properties"})
-@DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    CasWebApplicationServiceFactoryConfiguration.class
+})
+@TestPropertySource(locations = "classpath:mongomonitor.properties")
 @Slf4j
-public class MongoDbTicketRegistryTests extends AbstractTicketRegistryTests {
+public class MongoDbHealthIndicatorTests {
 
     @Autowired
-    @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
+    @Qualifier("mongoHealthIndicator")
+    private HealthIndicator mongoHealthIndicator;
 
-    public MongoDbTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
+    @Test
+    public void verifyMonitor() {
+        final Health health = mongoHealthIndicator.health();
+        assertEquals(Status.UP, health.getStatus());
+        final Map<String, Object> details = health.getDetails();
+        assertTrue(details.containsKey("size"));
+        assertTrue(details.containsKey("capacity"));
+        assertTrue(details.containsKey("evictions"));
+        assertTrue(details.containsKey("percentFree"));
+        assertTrue(details.containsKey("name"));
+        assertNotNull(mongoHealthIndicator.toString());
     }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(true, false);
-    }
-
-    @Before
-    public void before() {
-        ticketRegistry.deleteAll();
-    }
-
-    @Override
-    public TicketRegistry getNewTicketRegistry() {
-        return this.ticketRegistry;
-    }
-
 }
