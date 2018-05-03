@@ -22,6 +22,7 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationAuditConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationMetadataConfiguration;
+import org.apereo.cas.config.SurrogateRestAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
@@ -39,6 +40,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
@@ -79,8 +81,10 @@ import static org.junit.Assert.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     SurrogateAuthenticationConfiguration.class,
     SurrogateAuthenticationAuditConfiguration.class,
-    SurrogateAuthenticationMetadataConfiguration.class
+    SurrogateAuthenticationMetadataConfiguration.class,
+    SurrogateRestAuthenticationConfiguration.class
 })
+@TestPropertySource(properties = "cas.authn.surrogate.rest.url=http://localhost:9293")
 public class SurrogateRestAuthenticationServiceTests {
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .findAndRegisterModules()
