@@ -37,15 +37,15 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
         super(servicesManager);
         this.properties = properties;
     }
-
-
+    
     @Override
     public boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Service service) {
         try {
             final HttpResponse response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
                 properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
                 CollectionUtils.wrap("surrogate", surrogate, "principal", principal.getId()), new HashMap<>());
-            return response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
+            final int statusCode = response.getStatusLine().getStatusCode();
+            return HttpStatus.valueOf(statusCode).is2xxSuccessful();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
