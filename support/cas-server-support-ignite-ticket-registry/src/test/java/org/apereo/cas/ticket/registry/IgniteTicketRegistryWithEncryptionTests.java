@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ignite.Ignition;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -22,6 +23,7 @@ import org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.ConditionalParameterizedRunner;
+import org.junit.AfterClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,23 +69,28 @@ import java.util.Collection;
 })
 @TestPropertySource(locations = {"classpath:/igniteregistry.properties"})
 @Slf4j
-public class IgniteTicketRegistryTests extends AbstractTicketRegistryTests {
+public class IgniteTicketRegistryWithEncryptionTests extends AbstractTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
-    public IgniteTicketRegistryTests(final boolean useEncryption) {
+    public IgniteTicketRegistryWithEncryptionTests(final boolean useEncryption) {
         super(useEncryption);
     }
 
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() {
-        return Arrays.asList(true, false);
+        return Arrays.asList(true);
     }
 
     @Override
     public TicketRegistry getNewTicketRegistry() {
         return this.ticketRegistry;
+    }
+
+    @AfterClass
+    public static void shutdown() {
+        Ignition.stopAll(true);
     }
 }
