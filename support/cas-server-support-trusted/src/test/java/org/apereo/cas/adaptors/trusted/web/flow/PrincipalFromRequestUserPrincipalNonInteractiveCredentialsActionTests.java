@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.trusted.web.flow;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.adaptors.trusted.config.TrustedAuthenticationConfiguration;
-import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,6 +13,8 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -26,7 +27,7 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
     @Autowired
     @Qualifier("principalFromRemoteUserPrincipalAction")
     private Action action;
-    
+
     @Test
     public void verifyRemoteUserExists() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -34,18 +35,18 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
 
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
-                new MockServletContext(), request, new MockHttpServletResponse()));
+            new MockServletContext(), request, new MockHttpServletResponse()));
 
-        Assert.assertEquals("success", this.action.execute(context).getId());
+        assertEquals("success", this.action.execute(context).getId());
     }
 
     @Test
     public void verifyRemoteUserDoesntExists() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
-                new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
+            new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
 
-        Assert.assertEquals("error", this.action.execute(context).getId());
+        assertEquals("error", this.action.execute(context).getId());
     }
 
 }
