@@ -136,6 +136,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     @Counted(name = "AUTHENTICATE_COUNT", monotonic = true)
     public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(transaction.getCredentials());
+        invokeAuthenticationPreProcessors(transaction);
         final AuthenticationBuilder builder = authenticateInternal(transaction);
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(builder);
 
@@ -154,6 +155,26 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(auth);
 
         return auth;
+    }
+
+    /**
+     * Invoke authentication pre processors.
+     *
+     * @param transaction the transaction
+     */
+    protected void invokeAuthenticationPreProcessors(final AuthenticationTransaction transaction) {
+        LOGGER.debug("Invoking authentication pre processors for authentication transaction");
+        final Collection<AuthenticationPreProcessor> pops = authenticationEventExecutionPlan.getAuthenticationPreProcessors(transaction);
+
+        final Collection<AuthenticationPreProcessor> supported = pops.stream().filter(processor -> transaction.getCredentials()
+            .stream()
+            .filter(processor::supports)
+            .findFirst()
+            .isPresent())
+            .collect(Collectors.toList());
+        for (final AuthenticationPreProcessor p : supported) {
+            p.process(transaction);
+        }
     }
 
     /**
