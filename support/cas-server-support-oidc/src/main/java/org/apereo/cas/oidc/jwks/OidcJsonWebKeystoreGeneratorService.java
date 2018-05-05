@@ -1,6 +1,6 @@
 package org.apereo.cas.oidc.jwks;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -10,7 +10,6 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwk.RsaJwkGenerator;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 
@@ -21,14 +20,13 @@ import java.nio.charset.StandardCharsets;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OidcJsonWebKeystoreGeneratorService {
     private final OidcProperties oidcProperties;
 
     /**
      * Generate.
      */
-    @PostConstruct
     @SneakyThrows
     public void generate() {
         final File file = oidcProperties.getJwksFile().getFile();
