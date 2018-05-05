@@ -29,8 +29,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 public class TokenAuthenticationAction extends AbstractNonInteractiveCredentialsAction {
-
-
     private final TokenRequestExtractor tokenRequestExtractor;
     private final ServicesManager servicesManager;
 
