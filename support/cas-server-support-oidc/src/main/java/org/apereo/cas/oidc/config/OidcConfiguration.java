@@ -503,7 +503,9 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
 
     @Bean
     public OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService() {
-        return new OidcJsonWebKeystoreGeneratorService(casProperties.getAuthn().getOidc());
+        final OidcJsonWebKeystoreGeneratorService s = new OidcJsonWebKeystoreGeneratorService(casProperties.getAuthn().getOidc());
+        s.generate();
+        return s;
     }
 
     @Bean
