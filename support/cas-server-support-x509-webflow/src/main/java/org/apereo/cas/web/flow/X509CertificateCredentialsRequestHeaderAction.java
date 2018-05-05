@@ -23,7 +23,7 @@ import java.security.cert.X509Certificate;
 @Slf4j
 public class X509CertificateCredentialsRequestHeaderAction extends X509CertificateCredentialsNonInteractiveAction {
 
-    private X509CertificateExtractor x509CertificateExtractor;
+    private final X509CertificateExtractor x509CertificateExtractor;
 
     public X509CertificateCredentialsRequestHeaderAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                          final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
