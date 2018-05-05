@@ -20,8 +20,6 @@ import java.util.List;
  */
 public class Pac4jInitialFlowSetupAction extends InitialFlowSetupAction {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Pac4jInitialFlowSetupAction.class);
-
     public Pac4jInitialFlowSetupAction(final List<ArgumentExtractor> argumentExtractors,
                                   final ServicesManager servicesManager,
                                   final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionPlan,
