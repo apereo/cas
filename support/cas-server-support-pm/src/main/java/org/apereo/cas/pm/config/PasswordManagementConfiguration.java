@@ -105,7 +105,7 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
     }
 
     @PostConstruct
-    public void init() {
+    public void initialize() {
         final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
         if (pm.isEnabled()) {
             communicationsManager.validate();
