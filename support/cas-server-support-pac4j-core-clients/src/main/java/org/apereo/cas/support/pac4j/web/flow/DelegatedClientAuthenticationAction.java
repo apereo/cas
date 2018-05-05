@@ -154,7 +154,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                     final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
                     WebUtils.putTicketGrantingTicketInScopes(context, tgt);
                 } catch (final PrincipalException e) {
-                    LOGGER.warn("PrincipalException caught on service [{}]", e.getMessage());
+                    LOGGER.warn("Principal attributes have not been validated on service [{}]", e.getMessage());
                     return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
                 }
                 return success();
@@ -222,7 +222,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                         } else {
                             redirectionUrl = action.getLocation();
                         }
-                        
+
                         LOGGER.debug("[{}] -> [{}]", name, redirectionUrl);
                         urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, type, getCssClass(name)));
                     } catch (final HttpAction e) {

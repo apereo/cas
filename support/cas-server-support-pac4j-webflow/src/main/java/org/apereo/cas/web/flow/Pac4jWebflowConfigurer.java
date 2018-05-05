@@ -31,6 +31,8 @@ import java.util.Optional;
  */
 public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
+    private static final String TRANSITION_ID_PAC4J_AUTHENTICATION_FAILURE = "pac4jFailure";
+
     private final Action saml2ClientLogoutAction;
 
     public Pac4jWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
@@ -51,7 +53,7 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
             createStopWebflowViewState(flow);
             createSaml2ClientLogoutAction();
 
-            createAuthnFailureAction(flow);
+            createAuthnFailureActionState(flow);
         }
     }
 
@@ -69,13 +71,13 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
         actionState.getTransitionSet().add(createTransition(DelegatedClientAuthenticationAction.STOP,
                 DelegatedClientAuthenticationAction.STOP_WEBFLOW));
-        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, "pac4jFailure");
+        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.TRANSITION_ID_PAC4J_AUTHENTICATION_FAILURE);
 
         setStartState(flow, actionState);
     }
 
-    private void createAuthnFailureAction(final Flow flow){
-        final ActionState actionState = createActionState(flow, "pac4jFailure",
+    private void createAuthnFailureActionState(final Flow flow){
+        final ActionState actionState = createActionState(flow, this.TRANSITION_ID_PAC4J_AUTHENTICATION_FAILURE,
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER));
 
         actionState.getEntryActionList().add(createEvaluateAction("pac4jInitialFlowSetupAction"));
