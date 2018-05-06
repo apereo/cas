@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepository {
     /**
-     * Key in the map that indicates list of services.
+     * Key in the map that indicates list of devices.
      */
-    public static final String MAP_KEY_SERVICES = "services";
+    public static final String MAP_KEY_DEVICES = "devices";
 
 
     private final long expirationTime;
@@ -46,7 +46,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
             final Map<String, List<U2FDeviceRegistration>> devices = readDevicesFromResource();
 
             if (!devices.isEmpty()) {
-                final List<U2FDeviceRegistration> devs = devices.get(MAP_KEY_SERVICES);
+                final List<U2FDeviceRegistration> devs = devices.get(MAP_KEY_DEVICES);
                 final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
                 LOGGER.debug("Filtering devices for [{}] based on device expiration date [{}]", username, expirationDate);
                 final List<U2FDeviceRegistration> list = devs
@@ -110,7 +110,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
             final List<U2FDeviceRegistration> list = new ArrayList<>(0);
 
             if (!devices.isEmpty()) {
-                final List<U2FDeviceRegistration> devs = devices.get(MAP_KEY_SERVICES);
+                final List<U2FDeviceRegistration> devs = devices.get(MAP_KEY_DEVICES);
                 LOGGER.debug("Located [{}] devices in repository", devs.size());
                 list.addAll(devs.stream().collect(Collectors.toList()));
             }
@@ -133,7 +133,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
         try {
             final Map<String, List<U2FDeviceRegistration>> devices = readDevicesFromResource();
             if (!devices.isEmpty()) {
-                final List<U2FDeviceRegistration> devs = devices.get(MAP_KEY_SERVICES);
+                final List<U2FDeviceRegistration> devs = devices.get(MAP_KEY_DEVICES);
                 LOGGER.debug("Located [{}] devices in repository", devs.size());
 
                 final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));

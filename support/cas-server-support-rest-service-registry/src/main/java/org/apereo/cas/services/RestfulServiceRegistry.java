@@ -1,10 +1,9 @@
 package org.apereo.cas.services;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -15,14 +14,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * This is {@link RestServiceRegistry}.
+ * This is {@link RestfulServiceRegistry}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
-public class RestServiceRegistry extends AbstractServiceRegistry {
+@RequiredArgsConstructor
+public class RestfulServiceRegistry extends AbstractServiceRegistry {
     private final transient RestTemplate restTemplate;
     private final String url;
     private final MultiValueMap<String, String> headers;
@@ -30,8 +29,8 @@ public class RestServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
         final ResponseEntity<RegisteredService> responseEntity = restTemplate.exchange(this.url, HttpMethod.POST,
-                new HttpEntity<>(registeredService, this.headers), RegisteredService.class);
-        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            new HttpEntity<>(registeredService, this.headers), RegisteredService.class);
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
             return responseEntity.getBody();
         }
         return null;
@@ -40,15 +39,15 @@ public class RestServiceRegistry extends AbstractServiceRegistry {
     @Override
     public boolean delete(final RegisteredService registeredService) {
         final ResponseEntity<Integer> responseEntity = restTemplate.exchange(this.url, HttpMethod.DELETE,
-                new HttpEntity<>(registeredService, this.headers), Integer.class);
-        return responseEntity.getStatusCode() == HttpStatus.OK;
+            new HttpEntity<>(registeredService, this.headers), Integer.class);
+        return responseEntity.getStatusCode().is2xxSuccessful();
     }
 
     @Override
     public List<RegisteredService> load() {
         final ResponseEntity<RegisteredService[]> responseEntity = restTemplate.exchange(this.url, HttpMethod.GET,
-                new HttpEntity<>(this.headers), RegisteredService[].class);
-        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            new HttpEntity<>(this.headers), RegisteredService[].class);
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
             final RegisteredService[] results = responseEntity.getBody();
             return Stream.of(results).collect(Collectors.toList());
         }
@@ -58,8 +57,8 @@ public class RestServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService findServiceById(final long id) {
         final ResponseEntity<RegisteredService> responseEntity = restTemplate.exchange(this.url, HttpMethod.GET,
-                new HttpEntity<>(id, this.headers), RegisteredService.class);
-        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            new HttpEntity<>(id, this.headers), RegisteredService.class);
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
             return responseEntity.getBody();
         }
         return null;
@@ -68,8 +67,8 @@ public class RestServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService findServiceById(final String id) {
         final ResponseEntity<RegisteredService> responseEntity = restTemplate.exchange(this.url, HttpMethod.GET,
-                new HttpEntity<>(id, this.headers), RegisteredService.class);
-        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            new HttpEntity<>(id, this.headers), RegisteredService.class);
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
             return responseEntity.getBody();
         }
         return null;
