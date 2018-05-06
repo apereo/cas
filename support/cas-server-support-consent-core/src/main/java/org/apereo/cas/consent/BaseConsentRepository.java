@@ -1,16 +1,18 @@
 package org.apereo.cas.consent;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.RandomUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.Setter;
 
 /**
  * This is {@link BaseConsentRepository}.
@@ -62,7 +64,9 @@ public abstract class BaseConsentRepository implements ConsentRepository {
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
         final Collection<ConsentDecision> decisions = findConsentDecisions(principal);
-        return this.consentDecisions.remove(decisions.stream().filter(d -> d.getId() == decisionId).findFirst().get());
+        final Optional<ConsentDecision> result = decisions.stream().filter(d -> d.getId() == decisionId).findFirst();
+        result.ifPresent(value -> this.consentDecisions.remove(value));
+        return result.isPresent();
     }
 
     protected Set<ConsentDecision> getConsentDecisions() {

@@ -2,7 +2,7 @@ import com.yubico.u2f.data.*
 import org.apereo.cas.adaptors.u2f.storage.*
 import org.apereo.cas.util.*
 
-import java.time.LocalDate
+import java.time.*
 
 def read(Object[] args) {
     def logger = args[0]
