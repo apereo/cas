@@ -17,8 +17,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class U2FGroovyResourceDeviceRepository extends BaseResourceU2FDeviceRepository {
-
-
     private final Resource groovyScript;
 
     public U2FGroovyResourceDeviceRepository(final LoadingCache<String, String> requestStorage,
