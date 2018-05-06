@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.junit.runner.RunWith;
@@ -13,13 +12,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.File;
-
 /**
- * This is {@link U2FJsonResourceDeviceRepositoryTests}.
+ * This is {@link U2FInMemoryDeviceRepositoryTests}.
  *
  * @author Misagh Moayyed
- * @since 5.2.0
+ * @since 5.3.0
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
@@ -29,26 +26,11 @@ import java.io.File;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class U2FJsonResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
-
-
-    static {
-        try {
-            final File file = new File(System.getProperty("java.io.tmpdir"), "u2f.json");
-            if (file.exists()) {
-                FileUtils.forceDelete(file);
-            }
-            System.setProperty("cas.authn.mfa.u2f.json.location", "file://" + file.getCanonicalPath());
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-    }
-
+public class U2FInMemoryDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired
     @Qualifier("u2fDeviceRepository")
     private U2FDeviceRepository u2fDeviceRepository;
-
-
+    
     @Override
     protected U2FDeviceRepository getDeviceRepository() {
         return this.u2fDeviceRepository;
