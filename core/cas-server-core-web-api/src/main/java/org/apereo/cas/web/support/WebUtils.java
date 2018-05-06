@@ -846,4 +846,23 @@ public class WebUtils {
         requestContext.getFlowScope().remove("requestSurrogateAccount");
     }
 
+    /**
+     * Put surrogate authentication accounts.
+     *
+     * @param requestContext the request context
+     * @param surrogates     the surrogates
+     */
+    public static void putSurrogateAuthenticationAccounts(final RequestContext requestContext, final List<String> surrogates) {
+        requestContext.getFlowScope().put("surrogates", surrogates);
+    }
+
+    /**
+     * Gets surrogate authentication accounts.
+     *
+     * @param requestContext the request context
+     * @return the surrogate authentication accounts
+     */
+    public static List<String> getSurrogateAuthenticationAccounts(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("surrogates", List.class);
+    }
 }

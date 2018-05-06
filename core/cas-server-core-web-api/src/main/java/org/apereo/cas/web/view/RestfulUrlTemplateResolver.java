@@ -4,12 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.web.support.WebUtils;
+import org.springframework.http.HttpStatus;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresource.ITemplateResource;
 import org.thymeleaf.templateresource.StringTemplateResource;
@@ -55,7 +55,8 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
         }
         try {
             final HttpResponse response = HttpUtils.execute(rest.getUrl(), rest.getMethod(), rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), headers);
-            if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            final int statusCode = response.getStatusLine().getStatusCode();
+            if (response != null && HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
                 final String result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 return new StringTemplateResource(result);
             }
