@@ -23,18 +23,15 @@ import static org.junit.Assert.*;
 public class ReturnAllowedAttributeReleasePolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "returnAllowedAttributeReleasePolicy.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Test
     public void verifySerializeAReturnAllowedAttributeReleasePolicyToJson() throws IOException {
         final List<String> allowedAttributes = new ArrayList<>();
         allowedAttributes.add("attributeOne");
         final ReturnAllowedAttributeReleasePolicy policyWritten = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
-
         MAPPER.writeValue(JSON_FILE, policyWritten);
-
         final RegisteredServiceAttributeReleasePolicy policyRead = MAPPER.readValue(JSON_FILE, ReturnAllowedAttributeReleasePolicy.class);
-
         assertEquals(policyWritten, policyRead);
     }
 }
