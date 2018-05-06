@@ -4,7 +4,6 @@ import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
@@ -13,19 +12,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.io.File;
 
 import static org.junit.Assert.*;
 
+
 /**
- * This is {@link JsonGoogleAuthenticatorTokenCredentialRepositoryTests}.
+ * This is {@link InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests}.
  *
  * @author Misagh Moayyed
- * @since 5.2.0
+ * @since 5.3.0
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
@@ -33,9 +29,7 @@ import static org.junit.Assert.*;
     CasCoreUtilConfiguration.class
 })
 @Slf4j
-public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests {
-    private static final Resource JSON_FILE = new FileSystemResource(new File(FileUtils.getTempDirectoryPath(), "repository.json"));
-
+public class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
     private IGoogleAuthenticator google;
 
     @Before
@@ -45,23 +39,17 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    public void verifyCreate() throws Exception {
-        if (JSON_FILE.exists()) {
-            FileUtils.forceDelete(JSON_FILE.getFile());
-        }
-        final JsonGoogleAuthenticatorTokenCredentialRepository repo =
-            new JsonGoogleAuthenticatorTokenCredentialRepository(JSON_FILE, google, CipherExecutor.noOpOfStringToString());
+    public void verifyCreate() {
+        final InMemoryGoogleAuthenticatorTokenCredentialRepository repo =
+            new InMemoryGoogleAuthenticatorTokenCredentialRepository(CipherExecutor.noOpOfStringToString(), google);
         final OneTimeTokenAccount acct = repo.create("casuser");
         assertNotNull(acct);
     }
 
     @Test
-    public void verifyGet() throws Exception {
-        if (JSON_FILE.exists()) {
-            FileUtils.forceDelete(JSON_FILE.getFile());
-        }
-        final JsonGoogleAuthenticatorTokenCredentialRepository repo =
-            new JsonGoogleAuthenticatorTokenCredentialRepository(JSON_FILE, google, CipherExecutor.noOpOfStringToString());
+    public void verifyGet() {
+        final InMemoryGoogleAuthenticatorTokenCredentialRepository repo =
+            new InMemoryGoogleAuthenticatorTokenCredentialRepository(CipherExecutor.noOpOfStringToString(), google);
         OneTimeTokenAccount acct = repo.get("casuser");
         assertNull(acct);
         acct = repo.create("casuser");
