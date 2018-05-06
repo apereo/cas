@@ -52,9 +52,11 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
     private final Set<String> availableAttributes;
 
     private Map<String, String> locateMultifactorAuthenticationProviderTypesActive() {
-        return MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext)
-            .values().stream().collect(Collectors.toMap(MultifactorAuthenticationProvider::getId,
-                MultifactorAuthenticationProvider::getFriendlyName));
+        final Map<String, MultifactorAuthenticationProvider> providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
+        return providers
+            .values()
+            .stream()
+            .collect(Collectors.toMap(MultifactorAuthenticationProvider::getId, MultifactorAuthenticationProvider::getFriendlyName));
     }
 
     private Map<String, String> locateMultifactorAuthenticationProviderTypesSupported() {
@@ -70,12 +72,15 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         };
         final Predicate filter = o -> !VariegatedMultifactorAuthenticationProvider.class.isAssignableFrom(Class.class.cast(o));
         final Collector collector = Collectors.toMap(MultifactorAuthenticationProvider::getId, MultifactorAuthenticationProvider::getFriendlyName);
-        return (Map) locateSubtypesByReflection(mapper, collector,
-            AbstractMultifactorAuthenticationProvider.class, filter, CentralAuthenticationService.NAMESPACE);
+        return (Map) locateSubtypesByReflection(mapper, collector, AbstractMultifactorAuthenticationProvider.class, filter, CentralAuthenticationService.NAMESPACE);
     }
 
     private Map<String, Class> locateRegisteredServiceTypesActive() {
-        return this.servicesManager.getAllServices().stream().map(svc -> Pair.of(svc.getFriendlyName(), svc.getClass())).distinct().collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+        return this.servicesManager.getAllServices()
+            .stream()
+            .map(svc -> Pair.of(svc.getFriendlyName(), svc.getClass()))
+            .distinct()
+            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     private Map<String, Class> locateRegisteredServiceTypesSupported() {

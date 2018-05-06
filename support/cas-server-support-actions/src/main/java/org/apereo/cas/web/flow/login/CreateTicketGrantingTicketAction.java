@@ -30,8 +30,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Action that handles the TicketGrantingTicket creation and destruction. If the
- * action is given a TicketGrantingTicket and one also already exists, the old
+ * Action that handles the {@link TicketGrantingTicket} creation and destruction. If the
+ * action is given a {@link TicketGrantingTicket} and one also already exists, the old
  * one is destroyed and replaced with the new one. This action always returns
  * "success".
  *
