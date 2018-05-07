@@ -44,10 +44,12 @@ public class MemcachedMonitorConfiguration {
 
     @Bean
     public HealthIndicator memcachedHealthIndicator() {
-        final var memcached = casProperties.getMonitor().getMemcached();
-        final var factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedMonitorTranscoder());
-        final ObjectPool<MemcachedClientIF> pool = new GenericObjectPool<>(factory);
-        return new MemcachedHealthIndicator(pool,
+        return new MemcachedHealthIndicator(memcachedHealthClientPool(), casProperties);
+    }
+
+    @Bean
+    public ObjectPool<MemcachedClientIF> memcachedHealthClientPool() {
+        return new GenericObjectPool<>(factory);
             casProperties.getMonitor().getWarn().getEvictionThreshold(),
             casProperties.getMonitor().getWarn().getThreshold());
     }

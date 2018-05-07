@@ -24,10 +24,6 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
      * Transition to obtain username.
      */
     public static final String TRANSITION_ID_PASSWORDLESS_GET_USERID = "passwordlessGetUserId";
-    /**
-     * passwordless user account in the flow.
-     */
-    public static final String PARAMETER_PASSWORDLESS_USER_ACCOUNT = "passwordlessAccount";
 
     /**
      * passwordless view.

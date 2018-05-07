@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.ldap.serviceregistry;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -13,7 +12,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-ldap-service-registry")
-@Slf4j
+
 @Getter
 @Setter
 public class LdapServiceRegistryProperties extends AbstractLdapSearchProperties {

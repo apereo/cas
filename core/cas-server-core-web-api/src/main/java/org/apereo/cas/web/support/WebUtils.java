@@ -30,6 +30,7 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -424,13 +425,13 @@ public class WebUtils {
      */
     public static void putWarnCookieIfRequestParameterPresent(final CookieGenerator warnCookieGenerator, final RequestContext context) {
         if (warnCookieGenerator != null) {
-            LOGGER.debug("Evaluating request to determine if warning cookie should be generated");
+            LOGGER.trace("Evaluating request to determine if warning cookie should be generated");
             final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
             if (StringUtils.isNotBlank(context.getExternalContext().getRequestParameterMap().get("warn"))) {
                 warnCookieGenerator.addCookie(response, "true");
             }
         } else {
-            LOGGER.debug("No warning cookie generator is defined");
+            LOGGER.trace("No warning cookie generator is defined");
         }
     }
 
@@ -760,5 +761,108 @@ public class WebUtils {
             authentication = AuthenticationCredentialsThreadLocalBinder.getInProgressAuthentication();
         }
         return authentication;
+    }
+
+    /**
+     * Put passwordless authentication enabled.
+     *
+     * @param requestContext the request context
+     * @param value          the value
+     */
+    public static void putPasswordlessAuthenticationEnabled(final RequestContext requestContext, final Boolean value) {
+        requestContext.getFlowScope().put("passwordlessAuthenticationEnabled", value);
+    }
+
+    /**
+     * Put passwordless authentication account.
+     *
+     * @param requestContext the request context
+     * @param account        the account
+     */
+    public static void putPasswordlessAuthenticationAccount(final RequestContext requestContext, final Object account) {
+        requestContext.getFlowScope().put("passwordlessAccount", account);
+    }
+
+    /**
+     * Gets passwordless authentication account.
+     *
+     * @param <T>   the type parameter
+     * @param event the event
+     * @param clazz the clazz
+     * @return the passwordless authentication account
+     */
+    public static <T> T getPasswordlessAuthenticationAccount(final Event event, final Class<T> clazz) {
+        return event.getAttributes().get("passwordlessAccount", clazz);
+    }
+
+    /**
+     * Gets passwordless authentication account.
+     *
+     * @param <T>   the type parameter
+     * @param event the event
+     * @param clazz the clazz
+     * @return the passwordless authentication account
+     */
+    public static <T> T getPasswordlessAuthenticationAccount(final RequestContext event, final Class<T> clazz) {
+        return getPasswordlessAuthenticationAccount(event.getCurrentEvent(), clazz);
+    }
+
+    /**
+     * Has passwordless authentication account.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static boolean hasPasswordlessAuthenticationAccount(final RequestContext requestContext) {
+        return requestContext.getFlowScope().contains("passwordlessAccount");
+    }
+
+    /**
+     * Put request surrogate authentication.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putRequestSurrogateAuthentication(final RequestContext context, final Boolean value) {
+        context.getFlowScope().put("requestSurrogateAccount", value);
+    }
+
+    /**
+     * Has request surrogate authentication request.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static boolean hasRequestSurrogateAuthenticationRequest(final RequestContext requestContext) {
+        return requestContext.getFlowScope().getBoolean("requestSurrogateAccount", Boolean.FALSE);
+    }
+
+    /**
+     * Has request surrogate authentication request.
+     *
+     * @param requestContext the request context
+     */
+    public static void removeRequestSurrogateAuthenticationRequest(final RequestContext requestContext) {
+        requestContext.getFlowScope().remove("requestSurrogateAccount");
+    }
+
+    /**
+     * Put surrogate authentication accounts.
+     *
+     * @param requestContext the request context
+     * @param surrogates     the surrogates
+     */
+    public static void putSurrogateAuthenticationAccounts(final RequestContext requestContext, final List<String> surrogates) {
+        requestContext.getFlowScope().put("surrogates", surrogates);
+    }
+
+    /**
+     * Gets surrogate authentication accounts.
+     *
+     * @param requestContext the request context
+     * @return the surrogate authentication accounts
+     */
+    public static List<String> getSurrogateAuthenticationAccounts(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("surrogates", List.class);
     }
 }

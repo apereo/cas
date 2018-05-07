@@ -38,14 +38,14 @@ public class ChainingThemeResolver extends AbstractThemeResolver {
         final var it = chain.iterator();
         while (it.hasNext()) {
             final var r = it.next();
-            LOGGER.debug("Attempting to resolve theme via [{}]", r.getClass().getSimpleName());
+            LOGGER.trace("Attempting to resolve theme via [{}]", r.getClass().getSimpleName());
             final var resolverTheme = r.resolveThemeName(httpServletRequest);
             if (!resolverTheme.equalsIgnoreCase(getDefaultThemeName())) {
-                LOGGER.debug("Resolved theme [{}]", resolverTheme);
+                LOGGER.trace("Resolved theme [{}]", resolverTheme);
                 return resolverTheme;
             }
         }
-        LOGGER.debug("No specific theme could be found. Using default theme [{}}", getDefaultThemeName());
+        LOGGER.trace("No specific theme could be found. Using default theme [{}}", getDefaultThemeName());
         return getDefaultThemeName();
     }
 

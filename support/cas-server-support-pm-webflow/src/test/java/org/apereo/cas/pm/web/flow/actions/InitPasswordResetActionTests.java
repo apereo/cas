@@ -1,6 +1,5 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import lombok.SneakyThrows;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
@@ -26,21 +25,24 @@ import static org.junit.Assert.*;
 public class InitPasswordResetActionTests extends BasePasswordManagementActionTests {
 
     @Test
-    @SneakyThrows
     public void verifyAction() {
-        final var request = new MockHttpServletRequest();
-        request.setRemoteAddr("1.2.3.4");
-        request.setLocalAddr("1.2.3.4");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        try {
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setRemoteAddr("1.2.3.4");
+            request.setLocalAddr("1.2.3.4");
+            ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-        final var token = passwordManagementService.createToken("casuser");
-        final var context = new MockRequestContext();
+            final String token = passwordManagementService.createToken("casuser");
+            final MockRequestContext context = new MockRequestContext();
 
-        context.getFlowScope().put("token", token);
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertEquals("success", initPasswordResetAction.execute(context).getId());
-        final var c = WebUtils.getCredential(context, UsernamePasswordCredential.class);
-        assertNotNull(c);
-        assertEquals("casuser", c.getUsername());
+            context.getFlowScope().put("token", token);
+            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            assertEquals("success", initPasswordResetAction.execute(context).getId());
+            final UsernamePasswordCredential c = WebUtils.getCredential(context, UsernamePasswordCredential.class);
+            assertNotNull(c);
+            assertEquals("casuser", c.getUsername());
+        } catch (final Exception e) {
+            throw new AssertionError(e.getMessage(), e);
+        }
     }
 }

@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -27,7 +27,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class AbstractAuthenticationAction extends AbstractAction {
 
     private final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;

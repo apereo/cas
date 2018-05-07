@@ -26,6 +26,7 @@ import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -109,7 +110,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                                          final Credential credential, final Principal principal) {
         if (resolver.supports(credential)) {
             try {
-                final var p = resolver.resolve(credential, principal, handler);
+                final Principal p = resolver.resolve(credential, Optional.ofNullable(principal), Optional.ofNullable(handler));
                 LOGGER.debug("[{}] resolved [{}] from [{}]", resolver, p, credential);
                 return p;
             } catch (final Exception e) {
@@ -130,6 +131,11 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         resourceResolverName = "AUTHENTICATION_RESOURCE_RESOLVER")
     @Timed("AUTHENTICATE_TIMER")
     public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
+        final boolean result = invokeAuthenticationPreProcessors(transaction);
+        if (!result) {
+            LOGGER.warn("An authentication pre-processor could not successfully process the authentication transaction");
+            throw new AuthenticationException("Authentication pre-processor has failed to process transaction");
+        }
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(transaction.getCredentials());
         final var builder = authenticateInternal(transaction);
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(builder);
@@ -149,6 +155,32 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(auth);
 
         return auth;
+    }
+
+    /**
+     * Invoke authentication pre processors.
+     *
+     * @param transaction the transaction
+     * @return the boolean
+     */
+    protected boolean invokeAuthenticationPreProcessors(final AuthenticationTransaction transaction) {
+        LOGGER.debug("Invoking authentication pre processors for authentication transaction");
+        final Collection<AuthenticationPreProcessor> pops = authenticationEventExecutionPlan.getAuthenticationPreProcessors(transaction);
+
+        final Collection<AuthenticationPreProcessor> supported = pops.stream().filter(processor -> transaction.getCredentials()
+            .stream()
+            .filter(processor::supports)
+            .findFirst()
+            .isPresent())
+            .collect(Collectors.toList());
+
+        boolean processed = true;
+        final Iterator<AuthenticationPreProcessor> it = supported.iterator();
+        while (processed && it.hasNext()) {
+            final AuthenticationPreProcessor processor = it.next();
+            processed = processor.process(transaction);
+        }
+        return processed;
     }
 
     /**

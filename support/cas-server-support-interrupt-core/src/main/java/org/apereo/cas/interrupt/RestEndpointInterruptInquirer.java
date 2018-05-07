@@ -35,7 +35,7 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
     @Override
     public InterruptResponse inquireInternal(final Authentication authentication, final RegisteredService registeredService, final Service service) {
         try {
-            final Map<String, String> parameters = new HashMap<>();
+            final Map<String, Object> parameters = new HashMap<>();
             parameters.put("username", authentication.getPrincipal().getId());
             
             if (service != null) {
@@ -53,6 +53,6 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return new InterruptResponse(false);
+        return InterruptResponse.none();
     }
 }
