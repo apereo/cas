@@ -121,9 +121,9 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public Collection<AuthenticationPreProcessor> getAuthenticationPreProcessors(final AuthenticationTransaction transaction) {
-        final List<AuthenticationPreProcessor> list = new ArrayList(this.authenticationPostProcessors);
+        final List<AuthenticationPreProcessor> list = new ArrayList(this.authenticationPreProcessors);
         OrderComparator.sort(list);
-        LOGGER.debug("Sorted and registered authentication post processors for this transaction are [{}]", list);
+        LOGGER.debug("Sorted and registered authentication pre processors for this transaction are [{}]", list);
         return list;
     }
 
