@@ -67,6 +67,6 @@ public class GoogleAuthenticatorMongoDbConfiguration {
         final GAuthMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
         return new GoogleAuthenticatorMongoDbTokenRepository(mongoDbGoogleAuthenticatorTemplate(),
                 mongo.getTokenCollection(),
-                casProperties.getAuthn().getMfa().getGauth().getTimeStepSize());
+                casProperties.getAuthn().getMfa().getGauth().getTimeStepSize() * casProperties.getAuthn().getMfa().getGauth().getWindowSize());
     }
 }
