@@ -27,17 +27,17 @@ public class JsonConsentRepositoryTests {
 
     @Test
     public void verifyConsentDecisionStored() {
-        final DefaultConsentDecisionBuilder builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
-        final AbstractRegisteredService regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
-        final Service svc = RegisteredServiceTestUtils.getService();
-        final ConsentDecision decision = builder.build(svc,
+        final var builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
+        final var regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
+        final var svc = RegisteredServiceTestUtils.getService();
+        final var decision = builder.build(svc,
             regSvc, "casuser",
             CollectionUtils.wrap("attribute", "value"));
-        final JsonConsentRepository repo = new JsonConsentRepository(JSON_FILE);
+        final var repo = new JsonConsentRepository(JSON_FILE);
         assertTrue(repo.storeConsentDecision(decision));
 
         assertTrue(repo.getConsentDecisions().size() == 1);
-        final boolean b = repo.deleteConsentDecision(decision.getId(), "casuser");
+        final var b = repo.deleteConsentDecision(decision.getId(), "casuser");
         assertTrue(b);
     }
 }

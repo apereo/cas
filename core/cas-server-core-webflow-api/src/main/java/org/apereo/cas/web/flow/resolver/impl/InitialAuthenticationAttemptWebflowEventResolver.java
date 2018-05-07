@@ -146,7 +146,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                                                               final Service service,
                                                               final RegisteredService registeredService) {
 
-        final Comparator<Event> byEventId = Comparator.comparing(Event::getId);
+        final var byEventId = Comparator.comparing(Event::getId);
         final Supplier<TreeSet<Event>> supplier = () -> new TreeSet<>(byEventId);
 
         return this.orderedResolvers

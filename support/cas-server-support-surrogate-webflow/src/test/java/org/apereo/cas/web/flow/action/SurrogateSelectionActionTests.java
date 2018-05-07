@@ -54,7 +54,7 @@ public class SurrogateSelectionActionTests extends BaseSurrogateInitialAuthentic
             WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
             final var request = new MockHttpServletRequest();
 
-            final AuthenticationResultBuilder builder = mock(AuthenticationResultBuilder.class);
+            final var builder = mock(AuthenticationResultBuilder.class);
             when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication()));
             when(builder.collect(any(Authentication.class))).thenReturn(builder);
 

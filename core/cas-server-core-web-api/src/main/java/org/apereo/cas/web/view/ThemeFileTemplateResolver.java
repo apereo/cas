@@ -32,9 +32,9 @@ public class ThemeFileTemplateResolver extends FileTemplateResolver {
     protected ITemplateResource computeTemplateResource(final IEngineConfiguration configuration, final String ownerTemplate,
                                                         final String template, final String resourceName, final String characterEncoding,
                                                         final Map<String, Object> templateResolutionAttributes) {
-        final String themeName = getCurrentTheme();
+        final var themeName = getCurrentTheme();
         if (StringUtils.isNotBlank(themeName)) {
-            final String themeTemplate = String.format(resourceName, themeName);
+            final var themeTemplate = String.format(resourceName, themeName);
             return super.computeTemplateResource(configuration, ownerTemplate, template, themeTemplate, characterEncoding, templateResolutionAttributes);
         }
         return super.computeTemplateResource(configuration, ownerTemplate, template, resourceName, characterEncoding, templateResolutionAttributes);
@@ -46,7 +46,7 @@ public class ThemeFileTemplateResolver extends FileTemplateResolver {
      * @return the current theme
      */
     protected String getCurrentTheme() {
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
         if (request != null) {
             return (String) request.getSession().getAttribute(casProperties.getTheme().getParamName());
         }

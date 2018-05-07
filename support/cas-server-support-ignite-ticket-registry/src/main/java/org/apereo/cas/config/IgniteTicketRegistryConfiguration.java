@@ -81,7 +81,7 @@ public class IgniteTicketRegistryConfiguration {
         config.setCacheConfiguration(cacheConfigurations.toArray(new CacheConfiguration[]{}));
         config.setClientMode(ignite.isClientMode());
 
-        final SslContextFactory factory = buildSecureTransportForIgniteConfiguration();
+        final var factory = buildSecureTransportForIgniteConfiguration();
         if (factory != null) {
             config.setSslContextFactory(factory);
         }
@@ -99,9 +99,9 @@ public class IgniteTicketRegistryConfiguration {
     @Bean
     @RefreshScope
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        final IgniteProperties igniteProperties = casProperties.getTicket().getRegistry().getIgnite();
-        final IgniteConfiguration igniteConfiguration = igniteConfiguration(ticketCatalog);
-        final IgniteTicketRegistry r = new IgniteTicketRegistry(ticketCatalog, igniteConfiguration, igniteProperties);
+        final var igniteProperties = casProperties.getTicket().getRegistry().getIgnite();
+        final var igniteConfiguration = igniteConfiguration(ticketCatalog);
+        final var r = new IgniteTicketRegistry(ticketCatalog, igniteConfiguration, igniteProperties);
         r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(igniteProperties.getCrypto(), "ignite"));
         r.initialize();
         return r;
@@ -113,14 +113,14 @@ public class IgniteTicketRegistryConfiguration {
         return definitions
             .stream()
             .map(t -> {
-                final CacheConfiguration ticketsCache = new CacheConfiguration();
+                final var ticketsCache = new CacheConfiguration();
                 ticketsCache.setName(t.getProperties().getStorageName());
                 ticketsCache.setCacheMode(CacheMode.valueOf(ignite.getTicketsCache().getCacheMode()));
                 ticketsCache.setAtomicityMode(CacheAtomicityMode.valueOf(ignite.getTicketsCache().getAtomicityMode()));
-                final CacheWriteSynchronizationMode writeSync =
+                final var writeSync =
                     CacheWriteSynchronizationMode.valueOf(ignite.getTicketsCache().getWriteSynchronizationMode());
                 ticketsCache.setWriteSynchronizationMode(writeSync);
-                final Duration duration = new Duration(TimeUnit.SECONDS, t.getProperties().getStorageTimeout());
+                final var duration = new Duration(TimeUnit.SECONDS, t.getProperties().getStorageTimeout());
                 ticketsCache.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(duration));
                 return ticketsCache;
             })
@@ -128,11 +128,11 @@ public class IgniteTicketRegistryConfiguration {
     }
 
     private SslContextFactory buildSecureTransportForIgniteConfiguration() {
-        final IgniteProperties properties = casProperties.getTicket().getRegistry().getIgnite();
-        final String nullKey = "NULL";
+        final var properties = casProperties.getTicket().getRegistry().getIgnite();
+        final var nullKey = "NULL";
         if (StringUtils.hasText(properties.getKeyStoreFilePath()) && StringUtils.hasText(properties.getKeyStorePassword())
             && StringUtils.hasText(properties.getTrustStoreFilePath()) && StringUtils.hasText(properties.getTrustStorePassword())) {
-            final SslContextFactory sslContextFactory = new SslContextFactory();
+            final var sslContextFactory = new SslContextFactory();
             sslContextFactory.setKeyStoreFilePath(properties.getKeyStoreFilePath());
             sslContextFactory.setKeyStorePassword(properties.getKeyStorePassword().toCharArray());
             if (nullKey.equals(properties.getTrustStoreFilePath()) && nullKey.equals(properties.getTrustStorePassword())) {

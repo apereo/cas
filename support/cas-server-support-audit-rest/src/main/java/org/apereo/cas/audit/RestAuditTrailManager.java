@@ -65,7 +65,7 @@ public class RestAuditTrailManager implements AuditTrailManager {
     public Set<AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
         try {
             LOGGER.debug("Sending query to audit REST endpoint to fetch records from [{}]", localDate);
-            final HttpResponse response = HttpUtils.executeGet(properties.getUrl(), properties.getBasicAuthUsername(),
+            final var response = HttpUtils.executeGet(properties.getUrl(), properties.getBasicAuthUsername(),
                 properties.getBasicAuthPassword(), CollectionUtils.wrap("date", String.valueOf(localDate.toEpochDay())));
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 final var result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);

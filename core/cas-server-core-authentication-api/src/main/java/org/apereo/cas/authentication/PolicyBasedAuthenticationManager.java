@@ -110,7 +110,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                                          final Credential credential, final Principal principal) {
         if (resolver.supports(credential)) {
             try {
-                final Principal p = resolver.resolve(credential, Optional.ofNullable(principal), Optional.ofNullable(handler));
+                final var p = resolver.resolve(credential, Optional.ofNullable(principal), Optional.ofNullable(handler));
                 LOGGER.debug("[{}] resolved [{}] from [{}]", resolver, p, credential);
                 return p;
             } catch (final Exception e) {
@@ -131,7 +131,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         resourceResolverName = "AUTHENTICATION_RESOURCE_RESOLVER")
     @Timed("AUTHENTICATE_TIMER")
     public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
-        final boolean result = invokeAuthenticationPreProcessors(transaction);
+        final var result = invokeAuthenticationPreProcessors(transaction);
         if (!result) {
             LOGGER.warn("An authentication pre-processor could not successfully process the authentication transaction");
             throw new AuthenticationException("Authentication pre-processor has failed to process transaction");
@@ -165,7 +165,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      */
     protected boolean invokeAuthenticationPreProcessors(final AuthenticationTransaction transaction) {
         LOGGER.debug("Invoking authentication pre processors for authentication transaction");
-        final Collection<AuthenticationPreProcessor> pops = authenticationEventExecutionPlan.getAuthenticationPreProcessors(transaction);
+        final var pops = authenticationEventExecutionPlan.getAuthenticationPreProcessors(transaction);
 
         final Collection<AuthenticationPreProcessor> supported = pops.stream().filter(processor -> transaction.getCredentials()
             .stream()
@@ -174,10 +174,10 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             .isPresent())
             .collect(Collectors.toList());
 
-        boolean processed = true;
-        final Iterator<AuthenticationPreProcessor> it = supported.iterator();
+        var processed = true;
+        final var it = supported.iterator();
         while (processed && it.hasNext()) {
-            final AuthenticationPreProcessor processor = it.next();
+            final var processor = it.next();
             processed = processor.process(transaction);
         }
         return processed;

@@ -19,9 +19,9 @@ public class TicketValidationResourceResolverTests {
 
     @Test
     public void verifyActionPassed() {
-        final JoinPoint jp = mock(JoinPoint.class);
+        final var jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{});
-        final Assertion assertion = mock(Assertion.class);
+        final var assertion = mock(Assertion.class);
         when(assertion.getPrimaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         assertTrue(r.resolveFrom(jp, assertion).length > 0);
     }

@@ -36,8 +36,8 @@ public class SurrogateMultifactorAuthenticationPolicyEventResolver extends Princ
     @Override
     protected Map<String, Object> getPrincipalAttributesForMultifactorAuthentication(final Principal principal) {
         if (SurrogatePrincipal.class.isInstance(principal)) {
-            final SurrogatePrincipal c = SurrogatePrincipal.class.cast(principal);
-            final Map<String, Object> attributes = c.getPrimary().getAttributes();
+            final var c = SurrogatePrincipal.class.cast(principal);
+            final var attributes = c.getPrimary().getAttributes();
             attributes.putAll(c.getSurrogate().getAttributes());
             return attributes;
         }

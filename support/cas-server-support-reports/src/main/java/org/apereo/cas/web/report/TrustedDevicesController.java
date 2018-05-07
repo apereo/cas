@@ -67,7 +67,7 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
         ensureEndpointAccessIsAuthorized(request, response);
 
         final TrustedDevicesMultifactorProperties trusted = casProperties.getAuthn().getMfa().getTrusted();
-        final LocalDateTime onOrAfter = LocalDateTime.now().minus(trusted.getExpiration(), DateTimeUtils.toChronoUnit(trusted.getTimeUnit()));
+        final var onOrAfter = LocalDateTime.now().minus(trusted.getExpiration(), DateTimeUtils.toChronoUnit(trusted.getTimeUnit()));
 
         this.mfaTrustEngine.expire(onOrAfter);
         return this.mfaTrustEngine.get(onOrAfter);

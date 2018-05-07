@@ -147,7 +147,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
     @ConditionalOnMissingBean(name = "passwordlessCipherExecutor")
     public CipherExecutor passwordlessCipherExecutor() {
         final var tokens = casProperties.getAuthn().getPasswordless().getTokens();
-        final EncryptionJwtSigningJwtCryptographyProperties crypto = tokens.getRest().getCrypto();
+        final var crypto = tokens.getRest().getCrypto();
         final CipherExecutor cipher;
         if (crypto.isEnabled()) {
             cipher = new PasswordlessTokenCipherExecutor(
@@ -164,7 +164,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
     @RefreshScope
     @ConditionalOnMissingBean(name = "passwordlessTokenRepository")
     public PasswordlessTokenRepository passwordlessTokenRepository() {
-        final PasswordlessAuthenticationProperties.Tokens tokens = casProperties.getAuthn().getPasswordless().getTokens();
+        final var tokens = casProperties.getAuthn().getPasswordless().getTokens();
         if (StringUtils.isNotBlank(tokens.getRest().getUrl())) {
             return new RestfulPasswordlessTokenRepository(tokens.getExpireInSeconds(), tokens.getRest(), passwordlessCipherExecutor());
         }

@@ -51,7 +51,7 @@ public class DelegatedSessionCookieManager {
         final var value = cookieGenerator.retrieveCookieValue(webContext.getRequest());
         if (StringUtils.isNotBlank(value)) {
             final var blob = EncodingUtils.hexDecode(value);
-            final Map<String, Object> session = serializer.from(blob);
+            final var session = serializer.from(blob);
             session.forEach((k, v) -> webContext.getSessionStore().set(webContext, k, v));
         }
         cookieGenerator.removeCookie(webContext.getResponse());

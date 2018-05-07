@@ -56,10 +56,10 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
         try {
-            final TypedQuery<MultifactorAuthenticationTrustRecord> query = this.entityManager
+            final var query = this.entityManager
                 .createQuery("SELECT r FROM " + TABLE_NAME + " r where r.recordDate >= :date", MultifactorAuthenticationTrustRecord.class)
                 .setParameter("date", onOrAfterDate);
-            final List<MultifactorAuthenticationTrustRecord> results = query.getResultList();
+            final var results = query.getResultList();
             return new HashSet<>(results);
         } catch (final NoResultException e) {
             LOGGER.info("No trusted authentication records could be found for [{}]", onOrAfterDate);
@@ -70,10 +70,10 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
         try {
-            final TypedQuery<MultifactorAuthenticationTrustRecord> query = this.entityManager
+            final var query = this.entityManager
                 .createQuery("SELECT r FROM " + TABLE_NAME + " r where r.principal = :principal", MultifactorAuthenticationTrustRecord.class)
                 .setParameter("principal", principal);
-            final List<MultifactorAuthenticationTrustRecord> results = query.getResultList();
+            final var results = query.getResultList();
             return new HashSet<>(results);
         } catch (final NoResultException e) {
             LOGGER.info("No trusted authentication records could be found for [{}]", principal);

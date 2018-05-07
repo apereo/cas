@@ -27,18 +27,18 @@ public class InitPasswordResetActionTests extends BasePasswordManagementActionTe
     @Test
     public void verifyAction() {
         try {
-            final MockHttpServletRequest request = new MockHttpServletRequest();
+            final var request = new MockHttpServletRequest();
             request.setRemoteAddr("1.2.3.4");
             request.setLocalAddr("1.2.3.4");
             ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-            final String token = passwordManagementService.createToken("casuser");
-            final MockRequestContext context = new MockRequestContext();
+            final var token = passwordManagementService.createToken("casuser");
+            final var context = new MockRequestContext();
 
             context.getFlowScope().put("token", token);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals("success", initPasswordResetAction.execute(context).getId());
-            final UsernamePasswordCredential c = WebUtils.getCredential(context, UsernamePasswordCredential.class);
+            final var c = WebUtils.getCredential(context, UsernamePasswordCredential.class);
             assertNotNull(c);
             assertEquals("casuser", c.getUsername());
         } catch (final Exception e) {

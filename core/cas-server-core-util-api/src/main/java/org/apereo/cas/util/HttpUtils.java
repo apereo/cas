@@ -334,11 +334,11 @@ public class HttpUtils {
      * @return the org . springframework . http . http headers
      */
     public static org.springframework.http.HttpHeaders createBasicAuthHeaders(final String basicAuthUser, final String basicAuthPassword) {
-        final org.springframework.http.HttpHeaders acceptHeaders = new org.springframework.http.HttpHeaders();
+        final var acceptHeaders = new org.springframework.http.HttpHeaders();
         acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         if (StringUtils.isNotBlank(basicAuthUser) && StringUtils.isNotBlank(basicAuthPassword)) {
-            final String authorization = basicAuthUser + ':' + basicAuthPassword;
-            final String basic = EncodingUtils.encodeBase64(authorization.getBytes(Charset.forName("US-ASCII")));
+            final var authorization = basicAuthUser + ':' + basicAuthPassword;
+            final var basic = EncodingUtils.encodeBase64(authorization.getBytes(Charset.forName("US-ASCII")));
             acceptHeaders.set("Authorization", "Basic " + basic);
         }
         return acceptHeaders;

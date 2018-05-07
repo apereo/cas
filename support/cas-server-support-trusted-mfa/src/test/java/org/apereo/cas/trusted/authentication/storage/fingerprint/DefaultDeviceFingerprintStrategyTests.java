@@ -22,18 +22,18 @@ import static org.junit.Assert.*;
 public class DefaultDeviceFingerprintStrategyTests extends AbstractMultifactorAuthenticationTrustStorageTests {
     @Test
     public void verifyAction() {
-        final MockRequestContext context = new MockRequestContext();
+        final var context = new MockRequestContext();
 
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var request = new MockHttpServletRequest();
         request.setRemoteAddr("123.456.789.000");
         request.setLocalAddr("123.456.789.000");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final var response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        String f1 = deviceFingerprintStrategy.determineFingerprint("casuser", context, false);
-        String f2 = deviceFingerprintStrategy.determineFingerprint("casuser", context, false);
+        var f1 = deviceFingerprintStrategy.determineFingerprint("casuser", context, false);
+        var f2 = deviceFingerprintStrategy.determineFingerprint("casuser", context, false);
         assertNotEquals(f1, f2);
 
         f1 = deviceFingerprintStrategy.determineFingerprint("casuser", context, true);

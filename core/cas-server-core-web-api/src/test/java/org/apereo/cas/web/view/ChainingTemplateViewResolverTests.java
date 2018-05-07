@@ -19,12 +19,12 @@ import static org.mockito.Mockito.*;
 public class ChainingTemplateViewResolverTests {
     @Test
     public void verifyAction() {
-        final ChainingTemplateViewResolver r = new ChainingTemplateViewResolver();
-        final StringTemplateResolver resolver = new StringTemplateResolver();
+        final var r = new ChainingTemplateViewResolver();
+        final var resolver = new StringTemplateResolver();
         resolver.setCheckExistence(true);
         r.addResolver(resolver);
         r.initialize();
-        final TemplateResolution res = r.resolveTemplate(mock(IEngineConfiguration.class), "cas",
+        final var res = r.resolveTemplate(mock(IEngineConfiguration.class), "cas",
             "template", new LinkedHashMap<>());
         assertNotNull(res);
     }

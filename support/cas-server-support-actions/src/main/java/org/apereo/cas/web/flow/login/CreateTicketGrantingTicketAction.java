@@ -49,22 +49,22 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
     @Override
     public Event doExecute(final RequestContext context) {
         final Service service = WebUtils.getService(context);
-        final AuthenticationResultBuilder authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(context);
+        final var authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(context);
 
         LOGGER.debug("Finalizing authentication transactions and issuing ticket-granting ticket");
-        final AuthenticationResult authenticationResult =
+        final var authenticationResult =
             this.authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
-        final Authentication authentication = buildFinalAuthentication(authenticationResult);
-        final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
-        final TicketGrantingTicket tgt = createOrUpdateTicketGrantingTicket(authenticationResult, authentication, ticketGrantingTicket);
+        final var authentication = buildFinalAuthentication(authenticationResult);
+        final var ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
+        final var tgt = createOrUpdateTicketGrantingTicket(authenticationResult, authentication, ticketGrantingTicket);
         
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         WebUtils.putAuthenticationResult(authenticationResult, context);
         WebUtils.putAuthentication(tgt.getAuthentication(), context);
 
-        final Collection<MessageDescriptor> warnings = calculateAuthenticationWarningMessages(tgt, context.getMessageContext());
+        final var warnings = calculateAuthenticationWarningMessages(tgt, context.getMessageContext());
         if (!warnings.isEmpty()) {
-            final LocalAttributeMap attributes = new LocalAttributeMap(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, warnings);
+            final var attributes = new LocalAttributeMap(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, warnings);
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, attributes);
         }
         return success();
@@ -102,10 +102,10 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
     }
 
     private boolean shouldIssueTicketGrantingTicket(final Authentication authentication, final String ticketGrantingTicket) {
-        boolean issueTicketGrantingTicket = true;
+        var issueTicketGrantingTicket = true;
         if (StringUtils.isNotBlank(ticketGrantingTicket)) {
             LOGGER.debug("Located ticket-granting ticket in the context. Retrieving associated authentication");
-            final Authentication authenticationFromTgt = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
+            final var authenticationFromTgt = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
             if (authenticationFromTgt == null) {
                 LOGGER.debug("Authentication session associated with [{}] is no longer valid", ticketGrantingTicket);
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
@@ -123,7 +123,7 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
         if ((auth1 == null && auth2 != null) || (auth1 != null && auth2 == null)) {
             return false;
         }
-        final EqualsBuilder builder = new EqualsBuilder();
+        final var builder = new EqualsBuilder();
         builder.append(auth1.getPrincipal(), auth2.getPrincipal());
         builder.append(auth1.getCredentials(), auth2.getCredentials());
         builder.append(auth1.getSuccesses(), auth2.getSuccesses());
@@ -140,7 +140,7 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
      * @since 4.1.0
      */
     private static Collection<MessageDescriptor> calculateAuthenticationWarningMessages(final TicketGrantingTicket tgtId, final MessageContext messageContext) {
-        final Set<Map.Entry<String, AuthenticationHandlerExecutionResult>> entries = tgtId.getAuthentication().getSuccesses().entrySet();
+        final var entries = tgtId.getAuthentication().getSuccesses().entrySet();
         return entries
             .stream()
             .map(entry -> entry.getValue().getWarnings())
@@ -159,7 +159,7 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
      * @param warning Warning message.
      */
     protected static void addMessageDescriptorToMessageContext(final MessageContext context, final MessageDescriptor warning) {
-        final MessageBuilder builder = new MessageBuilder()
+        final var builder = new MessageBuilder()
             .warning()
             .code(warning.getCode())
             .defaultText(warning.getDefaultMessage())

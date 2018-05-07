@@ -61,7 +61,7 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
     public Set<MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
         final var query = new Query();
         query.addCriteria(Criteria.where("recordDate").gte(onOrAfterDate));
-        final List<MultifactorAuthenticationTrustRecord> results = mongoTemplate.find(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
+        final var results = mongoTemplate.find(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
         return new HashSet<>(results);
     }
 

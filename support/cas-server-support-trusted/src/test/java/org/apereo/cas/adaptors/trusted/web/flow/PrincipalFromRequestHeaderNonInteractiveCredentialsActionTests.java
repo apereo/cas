@@ -34,11 +34,11 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests exte
 
     @Test
     public void verifyRemoteUserExists() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockRequestContext context = new MockRequestContext();
+        final var request = new MockHttpServletRequest();
+        final var context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        final Principal principal = mock(Principal.class);
+        final var principal = mock(Principal.class);
         when(principal.getName()).thenReturn("casuser");
         request.setUserPrincipal(principal);
         assertEquals("success", this.action.execute(context).getId());

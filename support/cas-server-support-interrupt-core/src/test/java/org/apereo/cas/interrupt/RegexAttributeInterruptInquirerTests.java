@@ -14,9 +14,9 @@ import static org.junit.Assert.*;
 public class RegexAttributeInterruptInquirerTests {
     @Test
     public void verifyResponseCanBeFoundFromAttributes() {
-        final RegexAttributeInterruptInquirer q =
+        final var q =
             new RegexAttributeInterruptInquirer("member..", "CA.|system");
-        final InterruptResponse response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
+        final var response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             CoreAuthenticationTestUtils.getRegisteredService(),
             CoreAuthenticationTestUtils.getService());
         assertNotNull(response);

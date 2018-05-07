@@ -18,7 +18,7 @@ public class SurrogatePrincipalElectionStrategy extends DefaultPrincipalElection
     @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     @Override
     protected Principal getPrincipalFromAuthentication(final Collection<Authentication> authentications) {
-        final Optional<SurrogatePrincipal> result = authentications
+        final var result = authentications
             .stream()
             .map(Authentication::getPrincipal)
             .filter(SurrogatePrincipal.class::isInstance)

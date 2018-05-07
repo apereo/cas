@@ -31,7 +31,7 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
         try {
-            final MemcachedClient client = (MemcachedClient) getClientFromPool();
+            final var client = (MemcachedClient) getClientFromPool();
             if (client.getAvailableServers().isEmpty()) {
                 LOGGER.warn("No available memcached servers can be found");
                 builder.outOfService().withDetail("message", "No memcached servers available.");
