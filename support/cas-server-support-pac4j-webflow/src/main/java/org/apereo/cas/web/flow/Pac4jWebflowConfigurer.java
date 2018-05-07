@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.pac4j.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
@@ -30,9 +31,11 @@ import java.util.Optional;
  */
 public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
+    private static final String TRANSITION_ID_PAC4J_AUTHENTICATION_FAILURE = "pac4jFailure";
+
     private final Action saml2ClientLogoutAction;
-    
-    public Pac4jWebflowConfigurer(final FlowBuilderServices flowBuilderServices, 
+
+    public Pac4jWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                   final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                   final FlowDefinitionRegistry logoutFlowDefinitionRegistry,
                                   final Action saml2ClientLogoutAction, final ApplicationContext applicationContext,
@@ -49,6 +52,8 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
             createClientActionActionState(flow);
             createStopWebflowViewState(flow);
             createSaml2ClientLogoutAction();
+
+            createAuthnFailureActionState(flow);
         }
     }
 
@@ -66,7 +71,21 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
         actionState.getTransitionSet().add(createTransition(DelegatedClientAuthenticationAction.STOP,
                 DelegatedClientAuthenticationAction.STOP_WEBFLOW));
+        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.TRANSITION_ID_PAC4J_AUTHENTICATION_FAILURE);
+
         setStartState(flow, actionState);
+    }
+
+    private void createAuthnFailureActionState(final Flow flow){
+        final ActionState actionState = createActionState(flow, this.TRANSITION_ID_PAC4J_AUTHENTICATION_FAILURE,
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER));
+
+        actionState.getEntryActionList().add(createEvaluateAction("pac4jInitialFlowSetupAction"));
+
+        createTransitionForState(actionState, UnauthorizedAuthenticationException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_AUTHENTICATION_BLOCKED);
+        createTransitionForState(actionState, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
+        createStateDefaultTransition(actionState, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+
     }
 
     private void createStopWebflowViewState(final Flow flow) {
