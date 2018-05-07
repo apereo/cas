@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
@@ -85,9 +86,10 @@ public class RegisteredServiceResourceTests {
         final AuthenticationManager mgmr = mock(AuthenticationManager.class);
         when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("test")))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("testfail")))).thenThrow(AuthenticationException.class);
-        
+
+        final ApplicationEventPublisher publisher = mock(ApplicationEventPublisher.class);
         return new RegisteredServiceResource(new DefaultAuthenticationSystemSupport(
-            new DefaultAuthenticationTransactionManager(mgmr),
+            new DefaultAuthenticationTransactionManager(publisher, mgmr),
             new DefaultPrincipalElectionStrategy()),
             new WebApplicationServiceFactory(), servicesManager,
             attrName, attrValue);

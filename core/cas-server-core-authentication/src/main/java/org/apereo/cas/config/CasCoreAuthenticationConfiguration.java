@@ -47,14 +47,16 @@ public class CasCoreAuthenticationConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    public AuthenticationTransactionManager authenticationTransactionManager(@Qualifier("casAuthenticationManager") final AuthenticationManager authenticationManager) {
-        return new DefaultAuthenticationTransactionManager(authenticationManager);
+    public AuthenticationTransactionManager authenticationTransactionManager(@Qualifier("casAuthenticationManager")
+                                                                             final AuthenticationManager authenticationManager) {
+        return new DefaultAuthenticationTransactionManager(applicationEventPublisher, authenticationManager);
     }
 
     @ConditionalOnMissingBean(name = "casAuthenticationManager")
     @Autowired
     @Bean
-    public AuthenticationManager casAuthenticationManager(@Qualifier("authenticationEventExecutionPlan") final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+    public AuthenticationManager casAuthenticationManager(@Qualifier("authenticationEventExecutionPlan")
+                                                          final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
         return new PolicyBasedAuthenticationManager(
             authenticationEventExecutionPlan,
             casProperties.getPersonDirectory().isPrincipalResolutionFailureFatal(),
