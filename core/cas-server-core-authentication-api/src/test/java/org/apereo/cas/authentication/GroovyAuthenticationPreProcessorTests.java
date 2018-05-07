@@ -23,8 +23,8 @@ import static org.mockito.Mockito.*;
 public class GroovyAuthenticationPreProcessorTests {
     @Test
     public void verifyAction() {
-        final GroovyAuthenticationPreProcessor g = new GroovyAuthenticationPreProcessor(new ClassPathResource("GroovyPreProcessor.groovy"));
-        final AuthenticationTransaction transaction = mock(AuthenticationTransaction.class);
+        final var g = new GroovyAuthenticationPreProcessor(new ClassPathResource("GroovyPreProcessor.groovy"));
+        final var transaction = mock(AuthenticationTransaction.class);
         when(transaction.getPrimaryCredential()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
         assertTrue(g.process(transaction));
         assertTrue(g.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));

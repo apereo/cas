@@ -45,7 +45,7 @@ public class UrlResourceMetadataResolverTests {
     @Test
     public void verifyResolverSupports() {
         final var props = new SamlIdPProperties();
-        final UrlResourceMetadataResolver resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
+        final var resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
         final var service = new SamlRegisteredService();
         service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
         assertTrue(resolver.supports(service));
@@ -56,7 +56,7 @@ public class UrlResourceMetadataResolverTests {
     @Test
     public void verifyResolverResolves() {
         final var props = new SamlIdPProperties();
-        final UrlResourceMetadataResolver resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
+        final var resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
         final var service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);

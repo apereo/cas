@@ -66,7 +66,7 @@ public class ServiceTicketResourceTests {
         when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
-        final ApplicationEventPublisher publisher = mock(ApplicationEventPublisher.class);
+        final var publisher = mock(ApplicationEventPublisher.class);
         this.serviceTicketResource = new ServiceTicketResource(
             new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(publisher, mgmr),
                 new DefaultPrincipalElectionStrategy()),

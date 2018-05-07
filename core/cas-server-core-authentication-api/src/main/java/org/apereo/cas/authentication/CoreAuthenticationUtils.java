@@ -127,7 +127,7 @@ public class CoreAuthenticationUtils {
             return new RejectResultCodePasswordPolicyHandlingStrategy();
         }
 
-        final Resource location = properties.getGroovy().getLocation();
+        final var location = properties.getGroovy().getLocation();
         if (properties.getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.GROOVY && location != null) {
             LOGGER.debug("Created password policy handling strategy based on Groovy script [{}]", location);
             return new GroovyPasswordPolicyHandlingStrategy(location);

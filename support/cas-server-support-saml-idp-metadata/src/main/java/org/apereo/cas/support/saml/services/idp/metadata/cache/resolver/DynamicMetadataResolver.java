@@ -41,7 +41,7 @@ public class DynamicMetadataResolver extends UrlResourceMetadataResolver {
 
     @Override
     protected HttpResponse fetchMetadata(final String metadataLocation) {
-        final SamlIdPMetadataProperties metadata = samlIdPProperties.getMetadata();
+        final var metadata = samlIdPProperties.getMetadata();
         final Map headers = new LinkedHashMap();
         headers.put("Content-Type", metadata.getSupportedContentTypes());
         headers.put("Accept", "*/*");
@@ -75,9 +75,9 @@ public class DynamicMetadataResolver extends UrlResourceMetadataResolver {
             return new InMemoryResourceMetadataResolver(backupFile, this.configBean);
         }
 
-        final InputStream ins = response.getEntity().getContent();
-        final byte[] source = ByteStreams.toByteArray(ins);
-        final ByteArrayInputStream bais = new ByteArrayInputStream(source);
+        final var ins = response.getEntity().getContent();
+        final var source = ByteStreams.toByteArray(ins);
+        final var bais = new ByteArrayInputStream(source);
         return new InMemoryResourceMetadataResolver(bais, this.configBean);
     }
 }

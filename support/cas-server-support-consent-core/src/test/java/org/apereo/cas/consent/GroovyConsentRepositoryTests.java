@@ -21,21 +21,21 @@ public class GroovyConsentRepositoryTests {
 
     @Test
     public void verifyConsentDecisionIsDeleted() {
-        final GroovyConsentRepository repo = new GroovyConsentRepository(groovyResource);
-        final boolean b = repo.deleteConsentDecision(1, "CasUser");
+        final var repo = new GroovyConsentRepository(groovyResource);
+        final var b = repo.deleteConsentDecision(1, "CasUser");
         assertTrue(b);
     }
 
     @Test
     public void verifyConsentDecisionStored() {
-        final DefaultConsentDecisionBuilder builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
-        final AbstractRegisteredService regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
-        final Service svc = RegisteredServiceTestUtils.getService();
-        final ConsentDecision decision = builder.build(svc,
+        final var builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
+        final var regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
+        final var svc = RegisteredServiceTestUtils.getService();
+        final var decision = builder.build(svc,
             regSvc, "casuser",
             CollectionUtils.wrap("attribute", "value"));
 
-        final GroovyConsentRepository repo = new GroovyConsentRepository(groovyResource);
+        final var repo = new GroovyConsentRepository(groovyResource);
         assertTrue(repo.storeConsentDecision(decision));
 
         assertTrue(repo.getConsentDecisions().size() == 1);

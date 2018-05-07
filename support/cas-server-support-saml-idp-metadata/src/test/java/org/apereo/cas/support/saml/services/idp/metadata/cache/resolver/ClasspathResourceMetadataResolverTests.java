@@ -40,9 +40,9 @@ public class ClasspathResourceMetadataResolverTests {
 
     @Test
     public void verifyResolverSupports() {
-        final SamlIdPProperties props = new SamlIdPProperties();
-        final ClasspathResourceMetadataResolver resolver = new ClasspathResourceMetadataResolver(props, openSamlConfigBean);
-        final SamlRegisteredService service = new SamlRegisteredService();
+        final var props = new SamlIdPProperties();
+        final var resolver = new ClasspathResourceMetadataResolver(props, openSamlConfigBean);
+        final var service = new SamlRegisteredService();
         service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
         assertFalse(resolver.supports(service));
         service.setMetadataLocation("classpath:sample-sp.xml");
@@ -51,9 +51,9 @@ public class ClasspathResourceMetadataResolverTests {
 
     @Test
     public void verifyResolverResolves() {
-        final SamlIdPProperties props = new SamlIdPProperties();
-        final ClasspathResourceMetadataResolver resolver = new ClasspathResourceMetadataResolver(props, openSamlConfigBean);
-        final SamlRegisteredService service = new SamlRegisteredService();
+        final var props = new SamlIdPProperties();
+        final var resolver = new ClasspathResourceMetadataResolver(props, openSamlConfigBean);
+        final var service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);
         service.setMetadataLocation("classpath:sample-sp.xml");

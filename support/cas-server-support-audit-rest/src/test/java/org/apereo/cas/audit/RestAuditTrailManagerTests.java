@@ -36,15 +36,15 @@ public class RestAuditTrailManagerTests {
 
     @Test
     public void verifyAction() throws Exception {
-        final AuditRestProperties props = new AuditRestProperties();
+        final var props = new AuditRestProperties();
         props.setUrl("http://localhost:9296");
-        final RestAuditTrailManager r = new RestAuditTrailManager(props);
+        final var r = new RestAuditTrailManager(props);
         r.setAsynchronous(false);
 
-        final AuditActionContext audit = new AuditActionContext("casuser", "resource", "action",
+        final var audit = new AuditActionContext("casuser", "resource", "action",
             "CAS", new Date(), "123.456.789.000", "123.456.789.000");
-        final String data = MAPPER.writeValueAsString(CollectionUtils.wrapSet(audit));
-        try (MockWebServer webServer = new MockWebServer(9296,
+        final var data = MAPPER.writeValueAsString(CollectionUtils.wrapSet(audit));
+        try (var webServer = new MockWebServer(9296,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             r.record(audit);

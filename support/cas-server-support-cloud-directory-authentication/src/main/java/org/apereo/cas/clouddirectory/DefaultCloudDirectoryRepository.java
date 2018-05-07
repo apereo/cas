@@ -34,7 +34,7 @@ public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository
 
     @Override
     public Map<String, Object> getUser(final String username) {
-        final ListIndexResult indexResult = getIndexResult(username);
+        final var indexResult = getIndexResult(username);
         if (indexResult == null) {
             LOGGER.warn("Index result could not be found for user [{}]", username);
             return new LinkedHashMap<>();
@@ -43,9 +43,9 @@ public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository
     }
 
     private ListIndexResult getIndexResult(final String username) {
-        final ObjectReference reference = CloudDirectoryUtils.getObjectRefByPath(properties.getUsernameIndexPath());
+        final var reference = CloudDirectoryUtils.getObjectRefByPath(properties.getUsernameIndexPath());
         if (reference != null) {
-            final ListIndexRequest listIndexRequest = CloudDirectoryUtils.getListIndexRequest(
+            final var listIndexRequest = CloudDirectoryUtils.getListIndexRequest(
                 properties.getUsernameAttributeName(),
                 username, reference, properties);
 
@@ -71,12 +71,12 @@ public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository
         }
 
         final String identifier = attachment.getObjectIdentifier();
-        final ListObjectAttributesRequest listObjectAttributesRequest = CloudDirectoryUtils.getListObjectAttributesRequest(properties.getDirectoryArn(), identifier);
+        final var listObjectAttributesRequest = CloudDirectoryUtils.getListObjectAttributesRequest(properties.getDirectoryArn(), identifier);
         if (listObjectAttributesRequest == null) {
             LOGGER.warn("No object attribute request is available for identifier [{}]", identifier);
             return null;
         }
-        final ListObjectAttributesResult attributesResult = amazonCloudDirectory.listObjectAttributes(listObjectAttributesRequest);
+        final var attributesResult = amazonCloudDirectory.listObjectAttributes(listObjectAttributesRequest);
         if (attributesResult == null || attributesResult.getAttributes() == null || attributesResult.getAttributes().isEmpty()) {
             LOGGER.warn("No object attribute result is available for identifier [{}] or not attributes are found", identifier);
             return null;
@@ -86,7 +86,7 @@ public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository
             .stream()
             .map(a -> {
                 Object value = null;
-                final TypedAttributeValue attributeValue = a.getValue();
+                final var attributeValue = a.getValue();
                 LOGGER.debug("Examining attribute [{}]", a);
 
                 if (StringUtils.isNotBlank(attributeValue.getNumberValue())) {

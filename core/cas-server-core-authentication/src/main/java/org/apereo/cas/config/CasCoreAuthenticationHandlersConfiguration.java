@@ -171,18 +171,18 @@ public class CasCoreAuthenticationHandlersConfiguration {
                 .stream()
                 .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
                 .map(jaas -> {
-                    final JaasAuthenticationHandler h = new JaasAuthenticationHandler(jaas.getName(), servicesManager, jaasPrincipalFactory(), jaas.getOrder());
+                    final var h = new JaasAuthenticationHandler(jaas.getName(), servicesManager, jaasPrincipalFactory(), jaas.getOrder());
 
                     h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());
                     h.setKerberosRealmSystemProperty(jaas.getKerberosRealmSystemProperty());
                     h.setRealm(jaas.getRealm());
                     h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jaas.getPasswordEncoder()));
                     h.setPasswordPolicyConfiguration(jaasPasswordPolicyConfiguration());
-                    final PasswordPolicyProperties passwordPolicy = jaas.getPasswordPolicy();
+                    final var passwordPolicy = jaas.getPasswordPolicy();
                     h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(jaas.getPasswordPolicy()));
                     if (passwordPolicy.isEnabled()) {
                         LOGGER.debug("Password policy is enabled for JAAS. Constructing password policy configuration for [{}]", jaas.getRealm());
-                        final PasswordPolicyConfiguration cfg = new PasswordPolicyConfiguration(passwordPolicy);
+                        final var cfg = new PasswordPolicyConfiguration(passwordPolicy);
                         if (passwordPolicy.isAccountStateHandlingEnabled()) {
                             cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));
                         } else {

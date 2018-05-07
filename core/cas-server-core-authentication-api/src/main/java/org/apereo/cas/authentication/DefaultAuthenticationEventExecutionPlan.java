@@ -62,7 +62,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
             LOGGER.error("Total number of authentication handlers must match the number of provided principal resolvers");
             return;
         }
-        for (int i = 0; i < handlers.size(); i++) {
+        for (var i = 0; i < handlers.size(); i++) {
             registerAuthenticationHandlerWithPrincipalResolver(handlers.get(i), principalResolver.get(i));
         }
     }

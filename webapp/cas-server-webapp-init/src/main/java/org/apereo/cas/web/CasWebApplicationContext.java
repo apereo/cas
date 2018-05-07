@@ -24,7 +24,7 @@ public class CasWebApplicationContext extends AnnotationConfigEmbeddedWebApplica
      */
     @Override
     protected void onRefresh() {
-        final ScheduledAnnotationBeanPostProcessor sch =
+        final var sch =
             (ScheduledAnnotationBeanPostProcessor) getBeanFactory()
                 .getBean(TaskManagementConfigUtils.SCHEDULED_ANNOTATION_PROCESSOR_BEAN_NAME, BeanPostProcessor.class);
         sch.setEmbeddedValueResolver(new CasEmbeddedValueResolver(this));

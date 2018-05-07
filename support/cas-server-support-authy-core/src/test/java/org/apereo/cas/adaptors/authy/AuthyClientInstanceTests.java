@@ -28,19 +28,19 @@ public class AuthyClientInstanceTests {
     @Test
     public void verifyAction() {
         try {
-            final AuthyClientInstance client = new AuthyClientInstance("apikey", "https://api.authy.com",
+            final var client = new AuthyClientInstance("apikey", "https://api.authy.com",
                 "mail", "phone", "1");
-            final User user = client.getOrCreateUser(CoreAuthenticationTestUtils.getPrincipal("casuser",
+            final var user = client.getOrCreateUser(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("mail", "casuser@example.org", "phone", "123-456-6789")));
             assertNotNull(user);
             assertTrue(user.getId() <= 0);
             assertTrue(user.getStatus() <= 0);
 
-            final Error error = new Error();
+            final var error = new Error();
             error.setCountryCode("1");
             error.setMessage("Error");
             error.setUrl("http://app.example.org");
-            final String msg = AuthyClientInstance.getErrorMessage(error);
+            final var msg = AuthyClientInstance.getErrorMessage(error);
             assertNotNull(msg);
 
         } catch (final Exception e) {

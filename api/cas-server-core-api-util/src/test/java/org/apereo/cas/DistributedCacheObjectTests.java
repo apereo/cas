@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 public class DistributedCacheObjectTests {
     @Test
     public void verifyAction() {
-        final DistributedCacheObject o = new DistributedCacheObject("objectValue");
+        final var o = new DistributedCacheObject("objectValue");
         assertTrue(o.getProperties().isEmpty());
         o.getProperties().put("key", "value");
         assertFalse(o.getProperties().isEmpty());

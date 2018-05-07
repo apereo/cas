@@ -82,7 +82,7 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
      * @param flow the flow
      */
     protected void createAcceptableUsagePolicyView(final Flow flow) {
-        final ViewState viewState = createViewState(flow, VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW, "casAcceptableUsagePolicyView");
+        final var viewState = createViewState(flow, VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW, "casAcceptableUsagePolicyView");
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, AUP_ACCEPTED_ACTION);
     }
 

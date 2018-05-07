@@ -48,7 +48,7 @@ public class ServiceWarningActionTests extends AbstractCentralAuthenticationServ
 
     @Test
     public void verifyAction() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var request = new MockHttpServletRequest();
         request.addParameter(ServiceWarningAction.PARAMETER_NAME_IGNORE_WARNING, "true");
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 

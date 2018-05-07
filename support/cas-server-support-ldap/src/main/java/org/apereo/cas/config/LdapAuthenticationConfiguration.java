@@ -133,10 +133,10 @@ public class LdapAuthenticationConfiguration {
                         l.getLdapUrl());
                 }
 
-                final LdapPasswordPolicyProperties passwordPolicy = l.getPasswordPolicy();
+                final var passwordPolicy = l.getPasswordPolicy();
                 if (passwordPolicy.isEnabled()) {
                     LOGGER.debug("Password policy is enabled for [{}]. Constructing password policy configuration", l.getLdapUrl());
-                    final PasswordPolicyConfiguration cfg = createLdapPasswordPolicyConfiguration(passwordPolicy, authenticator, multiMapAttributes);
+                    final var cfg = createLdapPasswordPolicyConfiguration(passwordPolicy, authenticator, multiMapAttributes);
                     handler.setPasswordPolicyConfiguration(cfg);
                 }
 
@@ -185,7 +185,7 @@ public class LdapAuthenticationConfiguration {
     private PasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(final LdapPasswordPolicyProperties passwordPolicy,
                                                                               final Authenticator authenticator,
                                                                               final Multimap<String, Object> attributes) {
-        final PasswordPolicyConfiguration cfg = new PasswordPolicyConfiguration(passwordPolicy);
+        final var cfg = new PasswordPolicyConfiguration(passwordPolicy);
         final Set<AuthenticationResponseHandler> handlers = new HashSet<>();
 
         final var customPolicyClass = passwordPolicy.getCustomPolicyClass();
@@ -235,7 +235,7 @@ public class LdapAuthenticationConfiguration {
             cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));
             LOGGER.debug("Handling LDAP account states is disabled via CAS configuration");
         } else if (StringUtils.isNotBlank(passwordPolicy.getWarningAttributeName()) && StringUtils.isNotBlank(passwordPolicy.getWarningAttributeValue())) {
-            final OptionalWarningLdapAccountStateHandler accountHandler = new OptionalWarningLdapAccountStateHandler();
+            final var accountHandler = new OptionalWarningLdapAccountStateHandler();
             accountHandler.setDisplayWarningOnMatch(passwordPolicy.isDisplayWarningOnMatch());
             accountHandler.setWarnAttributeName(passwordPolicy.getWarningAttributeName());
             accountHandler.setWarningAttributeValue(passwordPolicy.getWarningAttributeValue());
@@ -244,7 +244,7 @@ public class LdapAuthenticationConfiguration {
             LOGGER.debug("Configuring an warning account state handler for LDAP authentication for warning attribute [{}] and value [{}]",
                 passwordPolicy.getWarningAttributeName(), passwordPolicy.getWarningAttributeValue());
         } else {
-            final DefaultLdapAccountStateHandler accountHandler = new DefaultLdapAccountStateHandler();
+            final var accountHandler = new DefaultLdapAccountStateHandler();
             accountHandler.setAttributesToErrorMap(passwordPolicy.getPolicyAttributes());
             cfg.setAccountStateHandler(accountHandler);
             LOGGER.debug("Configuring the default account state handler for LDAP authentication");

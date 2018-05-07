@@ -399,7 +399,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             return null;
         }
 
-        final Map<String, Object> attributes = getPrincipalAttributesForMultifactorAuthentication(principal);
+        final var attributes = getPrincipalAttributesForMultifactorAuthentication(principal);
         return resolveEventViaAttribute(principal, attributes, attributeNames, service, context, providers, predicate);
     }
 

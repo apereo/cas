@@ -29,7 +29,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
 
     @Test
     public void verifySuccessfulAuthenticationWithDomainName() throws Exception {
-        final SpnegoCredential credentials = new SpnegoCredential(new byte[]{0, 1, 2});
+        final var credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         final AuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null, new MockJcifsAuthentication(), true, true);
         assertNotNull(authenticationHandler.authenticate(credentials));
         assertEquals("test", credentials.getPrincipal().getId());
@@ -38,7 +38,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
 
     @Test
     public void verifySuccessfulAuthenticationWithoutDomainName() throws Exception {
-        final SpnegoCredential credentials = new SpnegoCredential(new byte[]{0, 1, 2});
+        final var credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         final AuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null, new MockJcifsAuthentication(), false, true);
         assertNotNull(authenticationHandler.authenticate(credentials));
         assertEquals("test", credentials.getPrincipal().getId());
@@ -47,7 +47,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
 
     @Test
     public void verifyUnsuccessfulAuthenticationWithExceptionOnProcess() throws Exception {
-        final SpnegoCredential credentials = new SpnegoCredential(new byte[]{0, 1, 2});
+        final var credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         final AuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null, new MockUnsuccessfulJcifsAuthentication(true),
             true, true);
 
@@ -62,7 +62,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
 
     @Test
     public void verifyUnsuccessfulAuthentication() throws Exception {
-        final SpnegoCredential credentials = new SpnegoCredential(new byte[]{0, 1, 2});
+        final var credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         final AuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null, new MockUnsuccessfulJcifsAuthentication(false),
             true, true);
 
@@ -98,7 +98,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         assertEquals(factory.createPrincipal(myNtlmUserWithNoDomain), authenticationHandler.getPrincipal(myNtlmUserWithNoDomain, false));
         assertEquals(factory.createPrincipal(myKerberosUser), authenticationHandler.getPrincipal(myKerberosUser, false));
 
-        final JcifsSpnegoAuthenticationHandler handlerNoDomain =
+        final var handlerNoDomain =
             new JcifsSpnegoAuthenticationHandler(StringUtils.EMPTY, mock(ServicesManager.class),
                 new DefaultPrincipalFactory(), new MockJcifsAuthentication(), false, true);
         assertEquals(factory.createPrincipal(USERNAME), handlerNoDomain.getPrincipal(myNtlmUser, true));

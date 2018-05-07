@@ -96,8 +96,8 @@ public class SurrogateJdbcAuthenticationServiceTests {
 
     @Test
     public void verifyAccountQualifying() {
-        final Principal casuser = CoreAuthenticationTestUtils.getPrincipal("casuser");
-        final Service service = CoreAuthenticationTestUtils.getService();
+        final var casuser = CoreAuthenticationTestUtils.getPrincipal("casuser");
+        final var service = CoreAuthenticationTestUtils.getService();
         assertTrue(surrogateAuthenticationService.canAuthenticateAs("surrogate1", casuser, service));
         assertTrue(surrogateAuthenticationService.canAuthenticateAs("surrogate2", casuser, service));
         assertTrue(surrogateAuthenticationService.canAuthenticateAs("surrogate3", casuser, service));

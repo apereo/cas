@@ -42,7 +42,7 @@ public class AmazonEnvironmentAwareClientBuilder {
      * @return the setting
      */
     public String getSetting(final String key, final String defaultValue) {
-        final String result = environment.getProperty(this.propertyPrefix + '.' + key);
+        final var result = environment.getProperty(this.propertyPrefix + '.' + key);
         return StringUtils.defaultIfBlank(result, defaultValue);
     }
 
@@ -67,9 +67,9 @@ public class AmazonEnvironmentAwareClientBuilder {
      * @return the client instance
      */
     public <T> T build(final AwsClientBuilder builder, final Class<T> clientType) {
-        final ClientConfiguration cfg = new ClientConfiguration();
+        final var cfg = new ClientConfiguration();
         try {
-            final String localAddress = getSetting("localAddress");
+            final var localAddress = getSetting("localAddress");
             if (StringUtils.isNotBlank(localAddress)) {
                 cfg.setLocalAddress(InetAddress.getByName(localAddress));
             }
@@ -78,31 +78,31 @@ public class AmazonEnvironmentAwareClientBuilder {
         }
         builder.withClientConfiguration(cfg);
 
-        final String key = getSetting("credentialAccessKey");
-        final String secret = getSetting("credentialSecretKey");
-        final AWSCredentialsProvider credentials = ChainingAWSCredentialsProvider.getInstance(key, secret);
+        final var key = getSetting("credentialAccessKey");
+        final var secret = getSetting("credentialSecretKey");
+        final var credentials = ChainingAWSCredentialsProvider.getInstance(key, secret);
         builder.withCredentials(credentials);
 
-        String region = getSetting("region");
-        final Region currentRegion = Regions.getCurrentRegion();
+        var region = getSetting("region");
+        final var currentRegion = Regions.getCurrentRegion();
         if (currentRegion != null && StringUtils.isBlank(region)) {
             region = currentRegion.getName();
         }
-        String regionOverride = getSetting("regionOverride");
+        var regionOverride = getSetting("regionOverride");
         if (StringUtils.isNotBlank(regionOverride)) {
             regionOverride = currentRegion.getName();
         }
-        final String finalRegion = StringUtils.defaultIfBlank(regionOverride, region);
+        final var finalRegion = StringUtils.defaultIfBlank(regionOverride, region);
         if (StringUtils.isNotBlank(finalRegion)) {
             builder.withRegion(finalRegion);
         }
 
-        final String endpoint = getSetting("endpoint");
+        final var endpoint = getSetting("endpoint");
         if (StringUtils.isNotBlank(endpoint) && StringUtils.isNotBlank(finalRegion)) {
             builder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, finalRegion));
         }
 
-        final Object result = builder.build();
+        final var result = builder.build();
         return clientType.cast(result);
     }
 }

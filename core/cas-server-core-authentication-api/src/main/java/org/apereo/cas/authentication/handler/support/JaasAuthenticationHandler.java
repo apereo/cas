@@ -137,7 +137,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 lc.logout();
             }
         }
-        final AuthenticationPasswordPolicyHandlingStrategy strategy = getPasswordPolicyHandlingStrategy();
+        final var strategy = getPasswordPolicyHandlingStrategy();
         if (principal != null && strategy != null) {
             LOGGER.debug("Attempting to examine and handle password policy via [{}]", strategy.getClass().getSimpleName());
             final List<MessageDescriptor> messageList = strategy.handle(principal, getPasswordPolicyConfiguration());

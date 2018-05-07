@@ -22,25 +22,25 @@ public class OidcAuthorizationRequestSupportTests {
 
     @Test
     public void verifyOidcPrompt() {
-        final String url = "https://tralala.whapi.com/something?" + OidcConstants.PROMPT + "=value1";
+        final var url = "https://tralala.whapi.com/something?" + OidcConstants.PROMPT + "=value1";
         final var authorizationRequest = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
         assertEquals("value1", authorizationRequest.toArray()[0]);
     }
 
     @Test
     public void verifyOidcPromptFromContext() {
-        final String url = "https://tralala.whapi.com/something?" + OidcConstants.PROMPT + "=value1";
-        final WebContext context = mock(WebContext.class);
+        final var url = "https://tralala.whapi.com/something?" + OidcConstants.PROMPT + "=value1";
+        final var context = mock(WebContext.class);
         when(context.getFullRequestURL()).thenReturn(url);
-        final Set<String> authorizationRequest = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(context);
+        final var authorizationRequest = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(context);
         assertEquals("value1", authorizationRequest.toArray()[0]);
     }
 
     @Test
     public void verifyOidcMaxAge() {
-        final WebContext context = mock(WebContext.class);
+        final var context = mock(WebContext.class);
         when(context.getFullRequestURL()).thenReturn("https://tralala.whapi.com/something?" + OidcConstants.MAX_AGE + "=1000");
-        Optional<Long> age = OidcAuthorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context);
+        var age = OidcAuthorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context);
         assertTrue(age.isPresent());
         assertTrue(1000 == age.get());
 
@@ -56,7 +56,7 @@ public class OidcAuthorizationRequestSupportTests {
 
     @Test
     public void verifyAuthnProfile() {
-        final WebContext context = mock(WebContext.class);
+        final var context = mock(WebContext.class);
         when(context.getSessionStore()).thenReturn(mock(SessionStore.class));
         when(context.getRequestAttribute(anyString())).thenReturn(new CommonProfile());
         assertTrue(OidcAuthorizationRequestSupport.isAuthenticationProfileAvailable(context).isPresent());

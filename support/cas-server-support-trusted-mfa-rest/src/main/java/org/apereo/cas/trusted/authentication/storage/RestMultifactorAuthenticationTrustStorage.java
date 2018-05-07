@@ -48,21 +48,21 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     @Override
     public void expire(final LocalDateTime onOrBefore) {
-        final HttpEntity<Object> entity = getHttpEntity(onOrBefore);
+        final var entity = getHttpEntity(onOrBefore);
         restTemplate.exchange(getEndpointUrl(null), HttpMethod.POST, entity, Object.class);
     }
 
 
     @Override
     public void expire(final String key) {
-        final HttpEntity<Object> entity = getHttpEntity(key);
+        final var entity = getHttpEntity(key);
         restTemplate.exchange(getEndpointUrl(null), HttpMethod.POST, entity, Object.class);
     }
 
     @Override
     protected MultifactorAuthenticationTrustRecord setInternal(final MultifactorAuthenticationTrustRecord record) {
-        final HttpEntity<Object> entity = getHttpEntity(record);
-        final ResponseEntity<Object> response = restTemplate.exchange(getEndpointUrl(null), HttpMethod.POST, entity, Object.class);
+        final var entity = getHttpEntity(record);
+        final var response = restTemplate.exchange(getEndpointUrl(null), HttpMethod.POST, entity, Object.class);
         if (response != null && response.getStatusCode() == HttpStatus.OK) {
             return record;
         }
@@ -70,7 +70,7 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     private Set<MultifactorAuthenticationTrustRecord> getResults(final String url) {
-        final HttpEntity<Object> entity = getHttpEntity(null);
+        final var entity = getHttpEntity(null);
 
             restTemplate.exchange(url, HttpMethod.GET, entity, MultifactorAuthenticationTrustRecord[].class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
@@ -82,12 +82,12 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     private HttpEntity<Object> getHttpEntity(final Object body) {
-        final TrustedDevicesMultifactorProperties.Rest rest = properties.getAuthn().getMfa().getTrusted().getRest();
+        final var rest = properties.getAuthn().getMfa().getTrusted().getRest();
         return new HttpEntity<>(body, HttpUtils.createBasicAuthHeaders(rest.getBasicAuthUsername(), rest.getBasicAuthPassword()));
     }
 
     private String getEndpointUrl(final String path) {
-        final String endpoint = properties.getAuthn().getMfa().getTrusted().getRest().getUrl();
+        final var endpoint = properties.getAuthn().getMfa().getTrusted().getRest().getUrl();
         return (!endpoint.endsWith("/") ? endpoint.concat("/") : endpoint).concat(StringUtils.defaultString(path));
     }
 

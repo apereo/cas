@@ -27,21 +27,21 @@ import static org.mockito.Mockito.*;
 public class SamlResponseAuditPrincipalIdProviderTests {
     @Test
     public void verifyAction() {
-        final SamlResponseAuditPrincipalIdProvider r = new SamlResponseAuditPrincipalIdProvider();
-        final Response response = mock(Response.class);
-        final Issuer issuer = mock(Issuer.class);
+        final var r = new SamlResponseAuditPrincipalIdProvider();
+        final var response = mock(Response.class);
+        final var issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");
         when(response.getIssuer()).thenReturn(issuer);
         when(response.getDestination()).thenReturn("https://sp.example.org");
 
-        final Assertion assertion = mock(Assertion.class);
-        final Subject subject = mock(Subject.class);
-        final NameID nameId = mock(NameID.class);
+        final var assertion = mock(Assertion.class);
+        final var subject = mock(Subject.class);
+        final var nameId = mock(NameID.class);
         when(nameId.getValue()).thenReturn("casuser");
         when(subject.getNameID()).thenReturn(nameId);
         when(assertion.getSubject()).thenReturn(subject);
         when(response.getAssertions()).thenReturn(CollectionUtils.wrapList(assertion));
-        final String result = r.getPrincipalIdFrom(CoreAuthenticationTestUtils.getAuthentication(), response, null);
+        final var result = r.getPrincipalIdFrom(CoreAuthenticationTestUtils.getAuthentication(), response, null);
         assertNotNull(result);
         assertEquals("casuser", result);
         assertTrue(r.supports(CoreAuthenticationTestUtils.getAuthentication(), response, null));

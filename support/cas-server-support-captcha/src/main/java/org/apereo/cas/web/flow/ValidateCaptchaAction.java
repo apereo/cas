@@ -49,7 +49,7 @@ public class ValidateCaptchaAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        final String gRecaptchaResponse = request.getParameter(REQUEST_PARAM_RECAPTCHA_RESPONSE);
+        final var gRecaptchaResponse = request.getParameter(REQUEST_PARAM_RECAPTCHA_RESPONSE);
 
         if (StringUtils.isBlank(gRecaptchaResponse)) {
             LOGGER.warn("Recaptcha response is missing from the request");
@@ -57,7 +57,7 @@ public class ValidateCaptchaAction extends AbstractAction {
         }
         try {
             final var obj = new URL(recaptchaProperties.getVerifyUrl());
-            final HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            final var con = (HttpURLConnection) obj.openConnection();
 
             con.setRequestMethod("POST");
             con.setRequestProperty("User-Agent", WebUtils.getHttpServletRequestUserAgentFromRequestContext());

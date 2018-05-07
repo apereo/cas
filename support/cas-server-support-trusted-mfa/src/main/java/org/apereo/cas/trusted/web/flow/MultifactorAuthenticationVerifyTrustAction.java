@@ -40,8 +40,8 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
             return no();
         }
         final var principal = c.getPrincipal().getId();
-        final ChronoUnit unit = DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit());
-        final LocalDateTime onOrAfter = LocalDateTime.now().minus(trustedProperties.getExpiration(), unit);
+        final var unit = DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit());
+        final var onOrAfter = LocalDateTime.now().minus(trustedProperties.getExpiration(), unit);
         LOGGER.debug("Retrieving trusted authentication records for [{}] that are on/after [{}]", principal, onOrAfter);
         final var results = storage.get(principal, onOrAfter);
         if (results.isEmpty()) {

@@ -44,7 +44,7 @@ public class MultifactorAuthenticationTrustStorageCleaner {
         try {
             LOGGER.debug("Proceeding to clean up expired trusted authentication records...");
             SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-            final LocalDateTime validDate = LocalDateTime.now().minus(trustedProperties.getExpiration(),
+            final var validDate = LocalDateTime.now().minus(trustedProperties.getExpiration(),
                 DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit()));
             LOGGER.info("Expiring records that are on/before [{}]", validDate);
             this.storage.expire(validDate);

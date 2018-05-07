@@ -45,7 +45,7 @@ public class SurrogateJdbcAuthenticationConfiguration {
 
     @Bean
     public DataSource surrogateAuthenticationJdbcDataSource() {
-        final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
+        final var su = casProperties.getAuthn().getSurrogate();
         return JpaBeans.newDataSource(su.getJdbc());
     }
 }

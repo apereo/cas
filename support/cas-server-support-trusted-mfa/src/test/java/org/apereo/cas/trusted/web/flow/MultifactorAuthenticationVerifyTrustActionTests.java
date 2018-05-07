@@ -37,11 +37,11 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
 
     @Test
     public void verifyDeviceNotTrusted() throws Exception {
-        final MultifactorAuthenticationTrustRecord r = getMultifactorAuthenticationTrustRecord();
+        final var r = getMultifactorAuthenticationTrustRecord();
         r.setRecordDate(LocalDateTime.now().minusSeconds(5));
         mfaTrustEngine.set(r);
 
-        final MockRequestContext context = new MockRequestContext();
+        final var context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(r.getPrincipal()), context);
         assertEquals("no", mfaVerifyTrustAction.execute(context).getId());
@@ -49,18 +49,18 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
 
     @Test
     public void verifyDeviceTrusted() throws Exception {
-        final MockRequestContext context = new MockRequestContext();
+        final var context = new MockRequestContext();
 
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var request = new MockHttpServletRequest();
         request.setRemoteAddr("123.456.789.000");
         request.setLocalAddr("123.456.789.000");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final var response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        final MultifactorAuthenticationTrustRecord r = getMultifactorAuthenticationTrustRecord();
+        final var r = getMultifactorAuthenticationTrustRecord();
         r.setRecordDate(LocalDateTime.now().minusSeconds(5));
         r.setDeviceFingerprint(deviceFingerprintStrategy.determineFingerprint(r.getPrincipal(), context, true));
         mfaTrustEngine.set(r);
@@ -69,7 +69,7 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
         assertTrue(response.getCookies().length == 1);
         request.setCookies(response.getCookies());
 
-        final Authentication authn = CoreAuthenticationTestUtils.getAuthentication(r.getPrincipal());
+        final var authn = CoreAuthenticationTestUtils.getAuthentication(r.getPrincipal());
         WebUtils.putAuthentication(authn, context);
         assertEquals("yes", mfaVerifyTrustAction.execute(context).getId());
 

@@ -69,7 +69,7 @@ public class CachingOneTimeTokenRepositoryTests {
 
     @Test
     public void verifyTokenSave() {
-        final OneTimeToken token = new OneTimeToken(1234, "casuser");
+        final var token = new OneTimeToken(1234, "casuser");
         repository.store(token);
         repository.store(token);
         repository.clean();

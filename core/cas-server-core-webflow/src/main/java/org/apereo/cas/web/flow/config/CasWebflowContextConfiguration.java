@@ -127,7 +127,7 @@ public class CasWebflowContextConfiguration {
     @RefreshScope
     @Bean
     public FlowBuilderServices builder() {
-        final FlowBuilderServicesBuilder builder = new FlowBuilderServicesBuilder();
+        final var builder = new FlowBuilderServicesBuilder();
         builder.setViewFactoryCreator(viewFactoryCreator());
         builder.setExpressionParser(expressionParser());
         builder.setDevelopmentMode(casProperties.getWebflow().isRefresh());

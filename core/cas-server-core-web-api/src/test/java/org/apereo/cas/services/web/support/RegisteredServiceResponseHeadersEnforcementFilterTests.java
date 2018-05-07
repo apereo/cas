@@ -35,17 +35,17 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
 
     @Test
     public void verifyCacheControl() throws Exception {
-        final RegisteredServiceResponseHeadersEnforcementFilter filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL);
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final var filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL);
+        final var response = new MockHttpServletResponse();
         filter.doFilter(new MockHttpServletRequest(), response, new MockFilterChain());
         assertNotNull(response.getHeader("Cache-Control"));
     }
 
     @Test
     public void verifyContentSecurityPolicy() throws Exception {
-        final RegisteredServiceResponseHeadersEnforcementFilter filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY);
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY);
+        final var response = new MockHttpServletResponse();
+        final var request = new MockHttpServletRequest();
         request.setRequestURI("/cas/login");
         filter.setContentSecurityPolicy("sample-policy");
         filter.doFilter(request, response, new MockFilterChain());
@@ -54,9 +54,9 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
 
     @Test
     public void verifyStrictTransport() throws Exception {
-        final RegisteredServiceResponseHeadersEnforcementFilter filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_STRICT_TRANSPORT_SECURITY);
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_STRICT_TRANSPORT_SECURITY);
+        final var response = new MockHttpServletResponse();
+        final var request = new MockHttpServletRequest();
         request.setSecure(true);
         filter.doFilter(request, response, new MockFilterChain());
         assertNotNull(response.getHeader("Strict-Transport-Security"));
@@ -64,37 +64,37 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
 
     @Test
     public void verifyXContentOptions() throws Exception {
-        final RegisteredServiceResponseHeadersEnforcementFilter filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XCONTENT_OPTIONS);
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final var filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XCONTENT_OPTIONS);
+        final var response = new MockHttpServletResponse();
         filter.doFilter(new MockHttpServletRequest(), response, new MockFilterChain());
         assertNotNull(response.getHeader("X-Content-Type-Options"));
     }
 
     @Test
     public void verifyXframeOptions() throws Exception {
-        final RegisteredServiceResponseHeadersEnforcementFilter filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS);
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final var filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS);
+        final var response = new MockHttpServletResponse();
         filter.doFilter(new MockHttpServletRequest(), response, new MockFilterChain());
         assertNotNull(response.getHeader("X-Frame-Options"));
     }
 
     @Test
     public void verifyXssProtection() throws Exception {
-        final RegisteredServiceResponseHeadersEnforcementFilter filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XSS_PROTECTION);
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final var filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XSS_PROTECTION);
+        final var response = new MockHttpServletResponse();
         filter.doFilter(new MockHttpServletRequest(), response, new MockFilterChain());
         assertNotNull(response.getHeader("X-XSS-Protection"));
     }
 
     private RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final RegisteredServiceProperties p) {
-        final ServicesManager servicesManager = mock(ServicesManager.class);
-        final ArgumentExtractor argumentExtractor = mock(ArgumentExtractor.class);
-        final WebApplicationService webApplicationService = mock(WebApplicationService.class);
+        final var servicesManager = mock(ServicesManager.class);
+        final var argumentExtractor = mock(ArgumentExtractor.class);
+        final var webApplicationService = mock(WebApplicationService.class);
         when(argumentExtractor.extractService(any(HttpServletRequest.class))).thenReturn(webApplicationService);
 
-        final RegisteredService registeredService = mock(RegisteredService.class);
+        final var registeredService = mock(RegisteredService.class);
         final Map<String, RegisteredServiceProperty> props = new LinkedHashMap<>();
-        final RegisteredServiceProperty prop = mock(RegisteredServiceProperty.class);
+        final var prop = mock(RegisteredServiceProperty.class);
         when(prop.getValue()).thenReturn(Boolean.TRUE.toString());
         props.put(p.getPropertyName(), prop);
         when(registeredService.getProperties()).thenReturn(props);

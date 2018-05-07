@@ -98,9 +98,9 @@ public class TerminateSessionAction extends AbstractAction {
         final var manager = Pac4jUtils.getPac4jProfileManager(request, response);
         manager.logout();
 
-        final HttpSession session = request.getSession(false);
+        final var session = request.getSession(false);
         if (session != null) {
-            final Object requestedUrl = session.getAttribute(Pac4jConstants.REQUESTED_URL);
+            final var requestedUrl = session.getAttribute(Pac4jConstants.REQUESTED_URL);
             session.invalidate();
             if (requestedUrl != null && !requestedUrl.equals("")) {
                 request.getSession(true).setAttribute(Pac4jConstants.REQUESTED_URL, requestedUrl);

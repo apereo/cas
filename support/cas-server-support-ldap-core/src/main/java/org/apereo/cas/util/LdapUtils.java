@@ -357,15 +357,15 @@ public class LdapUtils {
                                                  final Map<String, Set<String>> attributes) {
         try (var modifyConnection = createConnection(connectionFactory)) {
             final var operation = new ModifyOperation(modifyConnection);
-            final AttributeModification[] mods = attributes.entrySet()
+            final var mods = attributes.entrySet()
                 .stream()
                 .map(entry -> {
-                    final String[] values = entry.getValue().toArray(new String[]{});
-                    final LdapAttribute attr = new LdapAttribute(entry.getKey(), values);
+                    final var values = entry.getValue().toArray(new String[]{});
+                    final var attr = new LdapAttribute(entry.getKey(), values);
                     return new AttributeModification(AttributeModificationType.REPLACE, attr);
                 })
                 .toArray(value -> new AttributeModification[attributes.size()]);
-            final ModifyRequest request = new ModifyRequest(currentDn, mods);
+            final var request = new ModifyRequest(currentDn, mods);
             request.setReferralHandler(new ModifyReferralHandler());
             operation.execute(request);
             return true;
@@ -548,15 +548,15 @@ public class LdapUtils {
      * @return the search filter
      */
     public static SearchFilter newLdaptiveSearchFilter(final String filterQuery, final List<String> paramName, final List<String> params) {
-        final SearchFilter filter = new SearchFilter();
+        final var filter = new SearchFilter();
         filter.setFilter(filterQuery);
         if (params != null) {
             IntStream.range(0, params.size()).forEach(i -> {
-                final String value = params.get(i);
+                final var value = params.get(i);
                 if (filter.getFilter().contains("{" + i + '}')) {
                     filter.setParameter(i, value);
                 }
-                final String name = paramName.get(i);
+                final var name = paramName.get(i);
                 if (filter.getFilter().contains("{" + name + '}')) {
                     filter.setParameter(name, value);
                 }

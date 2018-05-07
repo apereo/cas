@@ -26,7 +26,7 @@ public class SurrogateEligibilityVerificationAuditResourceResolver extends Retur
         final var outcome = "Surrogate Authentication " + BooleanUtils
             .toString(surrogateEligibilityResult.getProperties().containsKey("eligible"), "Eligible", "Ineligible");
 
-        final ToStringBuilder builder = new ToStringBuilder(this, NO_CLASS_NAME_STYLE).append("result", outcome);
+        final var builder = new ToStringBuilder(this, NO_CLASS_NAME_STYLE).append("result", outcome);
         surrogateEligibilityResult.getService().ifPresent(it -> builder.append("service", it.getId()));
         surrogateEligibilityResult.getAuthentication().ifPresent(it -> builder.append("selfPrincipal", it.getPrincipal()));
         builder.append("surrogatePrincipal", surrogateEligibilityResult.getProperties().get("targetUserId"));

@@ -86,7 +86,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
                 + "with different identifiers which typically is the result of a configuration issue.",
                 new HashMap<>(0), new HashMap<>(0));
         }
-        final String principalId = principal.isPresent() ? principal.get().getId() : principals.get(0).getId();
+        final var principalId = principal.isPresent() ? principal.get().getId() : principals.get(0).getId();
         final var finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
         LOGGER.debug("Final principal constructed by the chain of resolvers is [{}]", finalPrincipal);
         return finalPrincipal;

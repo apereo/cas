@@ -65,21 +65,21 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
     @Override
     public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
         try {
-            final String metadataLocation = getMetadataLocationForService(service);
+            final var metadataLocation = getMetadataLocationForService(service);
             LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
-            final UrlResource metadataResource = new UrlResource(metadataLocation);
+            final var metadataResource = new UrlResource(metadataLocation);
 
             final var backupFile = getMetadataBackupFile(metadataResource, service);
             final var canonicalPath = backupFile.getCanonicalPath();
             LOGGER.debug("Metadata backup file will be at [{}]", canonicalPath);
             FileUtils.forceMkdirParent(backupFile);
 
-            final HttpResponse response = fetchMetadata(metadataLocation);
+            final var response = fetchMetadata(metadataLocation);
             cleanUpExpiredBackupMetadataFilesFor(metadataResource, service);
             if (response != null) {
-                final HttpStatus status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+                final var status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
                 if (shouldHttpResponseStatusBeProcessed(status)) {
-                    final AbstractMetadataResolver metadataProvider = getMetadataResolverFromResponse(response, backupFile);
+                    final var metadataProvider = getMetadataResolverFromResponse(response, backupFile);
                     configureAndInitializeSingleMetadataResolver(metadataProvider, service);
                     return CollectionUtils.wrap(metadataProvider);
                 }
@@ -111,8 +111,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      * @throws Exception the exception
      */
     protected AbstractMetadataResolver getMetadataResolverFromResponse(final HttpResponse response, final File backupFile) throws Exception {
-        final String result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-        try (FileWriter output = new FileWriter(backupFile)) {
+        final var result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+        try (var output = new FileWriter(backupFile)) {
             IOUtils.write(result, output);
             output.flush();
         }
@@ -196,7 +196,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
     @Override
     public boolean supports(final SamlRegisteredService service) {
         try {
-            final String metadataLocation = getMetadataLocationForService(service);
+            final var metadataLocation = getMetadataLocationForService(service);
             final var metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

@@ -27,19 +27,19 @@ import static org.mockito.Mockito.*;
 public class RestAcceptableUsagePolicyRepositoryTests {
     @Test
     public void verify() {
-        final TicketRegistrySupport ticketRegistrySupport = mock(TicketRegistrySupport.class);
-        final AcceptableUsagePolicyProperties.Rest props = new AcceptableUsagePolicyProperties.Rest();
+        final var ticketRegistrySupport = mock(TicketRegistrySupport.class);
+        final var props = new AcceptableUsagePolicyProperties.Rest();
         props.setUrl("http://localhost:9298");
-        final RestAcceptableUsagePolicyRepository r = new RestAcceptableUsagePolicyRepository(ticketRegistrySupport, "givenName", props);
+        final var r = new RestAcceptableUsagePolicyRepository(ticketRegistrySupport, "givenName", props);
 
-        final String data = "";
-        try (MockWebServer webServer = new MockWebServer(9298,
+        final var data = "";
+        try (var webServer = new MockWebServer(9298,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertFalse(r.isUsagePolicyAcceptedBy(CoreAuthenticationTestUtils.getPrincipal()));
 
-            final MockRequestContext context = new MockRequestContext();
-            final MockHttpServletRequest request = new MockHttpServletRequest();
+            final var context = new MockRequestContext();
+            final var request = new MockHttpServletRequest();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertTrue(r.submit(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
         } catch (final Exception e) {

@@ -28,7 +28,7 @@ public class PrincipalBearingCredentialsToPrincipalResolverTests {
 
     @Test
     public void verifySupports() {
-        final PrincipalBearingCredential credential = new PrincipalBearingCredential(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test"));
+        final var credential = new PrincipalBearingCredential(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test"));
         assertTrue(this.resolver.supports(credential));
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
         assertFalse(this.resolver.supports(null));
@@ -36,8 +36,8 @@ public class PrincipalBearingCredentialsToPrincipalResolverTests {
 
     @Test
     public void verifyReturnedPrincipal() {
-        final PrincipalBearingCredential credential = new PrincipalBearingCredential(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test"));
-        final Principal p = this.resolver.resolve(credential,
+        final var credential = new PrincipalBearingCredential(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test"));
+        final var p = this.resolver.resolve(credential,
             Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertEquals("test", p.getId());

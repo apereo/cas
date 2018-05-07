@@ -80,7 +80,7 @@ public class GroovyPasswordlessUserAccountStoreTests {
 
     @Test
     public void verifyAction() {
-        final Optional<PasswordlessUserAccount> user = passwordlessUserAccountStore.findUser("casuser");
+        final var user = passwordlessUserAccountStore.findUser("casuser");
         assertTrue(user.isPresent());
     }
 }

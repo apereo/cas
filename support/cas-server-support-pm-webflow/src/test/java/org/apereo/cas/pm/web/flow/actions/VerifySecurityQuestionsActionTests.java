@@ -23,8 +23,8 @@ public class VerifySecurityQuestionsActionTests extends BasePasswordManagementAc
     @Test
     public void verifyAction() {
         try {
-            final MockRequestContext context = new MockRequestContext();
-            final MockHttpServletRequest request = new MockHttpServletRequest();
+            final var context = new MockRequestContext();
+            final var request = new MockHttpServletRequest();
             request.addParameter("q0", "securityAnswer1");
             context.getFlowScope().put("username", "casuser");
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

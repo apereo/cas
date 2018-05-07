@@ -146,7 +146,7 @@ public class DynamoDbServiceRegistryFacilitator {
         final var bb = returnItem.get(ColumnNames.ENCODED.getColumnName()).getB();
         LOGGER.debug("Located binary encoding of service item [{}]. Transforming item into service object", returnItem);
 
-        try (ByteArrayInputStream is = new ByteArrayInputStream(bb.array(), bb.arrayOffset() + bb.position(), bb.remaining())) {
+        try (var is = new ByteArrayInputStream(bb.array(), bb.arrayOffset() + bb.position(), bb.remaining())) {
             return this.jsonSerializer.from(is);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

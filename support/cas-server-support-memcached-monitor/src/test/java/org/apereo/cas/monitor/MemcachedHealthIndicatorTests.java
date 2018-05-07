@@ -41,7 +41,7 @@ public class MemcachedHealthIndicatorTests {
 
     @Test
     public void verifyMonitorNotRunning() {
-        final Health health = monitor.health();
+        final var health = monitor.health();
         assertEquals(Status.OUT_OF_SERVICE, health.getStatus());
     }
 }

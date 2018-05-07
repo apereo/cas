@@ -31,8 +31,8 @@ public class BinaryCipherExecutorTests {
             "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w",
             512,
             16);
-        final byte[] bytes = cc.encode(value.getBytes(StandardCharsets.UTF_8), new Object[]{});
-        final byte[] decoded = cc.decode(bytes, new Object[]{});
+        final var bytes = cc.encode(value.getBytes(StandardCharsets.UTF_8), new Object[]{});
+        final var decoded = cc.decode(bytes, new Object[]{});
         assertEquals(value, new String(decoded, StandardCharsets.UTF_8));
     }
 
@@ -54,8 +54,8 @@ public class BinaryCipherExecutorTests {
             "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w",
             512,
             16);
-        final byte[] bytes = cc.encode(value.getBytes(StandardCharsets.UTF_8), new Object[]{});
-        final byte[] decoded = cc.decode(bytes, new Object[]{});
+        final var bytes = cc.encode(value.getBytes(StandardCharsets.UTF_8), new Object[]{});
+        final var decoded = cc.decode(bytes, new Object[]{});
         assertEquals(value, new String(decoded, StandardCharsets.UTF_8));
     }
 

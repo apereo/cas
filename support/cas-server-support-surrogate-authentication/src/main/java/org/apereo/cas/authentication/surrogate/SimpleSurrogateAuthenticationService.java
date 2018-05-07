@@ -32,7 +32,7 @@ public class SimpleSurrogateAuthenticationService extends BaseSurrogateAuthentic
     @Override
     public boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Service service) {
         if (this.eligibleAccounts.containsKey(principal.getId())) {
-            final List surrogates = this.eligibleAccounts.get(principal.getId());
+            final var surrogates = this.eligibleAccounts.get(principal.getId());
             LOGGER.debug("Surrogate accounts authorized for [{}] are [{}]", principal.getId(), surrogates);
             return surrogates.contains(surrogate);
         }

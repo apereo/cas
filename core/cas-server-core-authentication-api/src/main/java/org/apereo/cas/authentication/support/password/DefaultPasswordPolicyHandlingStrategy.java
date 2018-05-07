@@ -24,7 +24,7 @@ public class DefaultPasswordPolicyHandlingStrategy<AuthnResponse> implements Aut
             LOGGER.debug("No password policy configuration is defined");
             return new ArrayList<>(0);
         }
-        final AuthenticationAccountStateHandler accountStateHandler = configuration.getAccountStateHandler();
+        final var accountStateHandler = configuration.getAccountStateHandler();
         LOGGER.debug("Applying password policy [{}] to [{}]", response, accountStateHandler);
         return accountStateHandler.handle(response, configuration);
     }

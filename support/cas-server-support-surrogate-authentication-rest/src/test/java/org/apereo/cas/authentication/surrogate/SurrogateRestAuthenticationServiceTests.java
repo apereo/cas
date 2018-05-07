@@ -97,8 +97,8 @@ public class SurrogateRestAuthenticationServiceTests {
 
     @Test
     public void verifyAccountsQualifying() throws Exception {
-        final String data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
-        try (MockWebServer webServer = new MockWebServer(9293,
+        final var data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
+        try (var webServer = new MockWebServer(9293,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             final Collection results = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy("casuser");
@@ -107,10 +107,10 @@ public class SurrogateRestAuthenticationServiceTests {
             throw new AssertionError(e.getMessage(), e);
         }
 
-        try (MockWebServer webServer = new MockWebServer(9293,
+        try (var webServer = new MockWebServer(9293,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            final boolean result = surrogateAuthenticationService.canAuthenticateAs("cassurrogate",
+            final var result = surrogateAuthenticationService.canAuthenticateAs("cassurrogate",
                 CoreAuthenticationTestUtils.getPrincipal("casuser"),
                 CoreAuthenticationTestUtils.getService());
             assertTrue(result);

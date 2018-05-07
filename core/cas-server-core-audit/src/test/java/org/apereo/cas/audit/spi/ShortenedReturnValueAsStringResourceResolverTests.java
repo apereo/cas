@@ -18,7 +18,7 @@ public class ShortenedReturnValueAsStringResourceResolverTests {
 
     @Test
     public void verifyActionPassed() {
-        final JoinPoint jp = mock(JoinPoint.class);
+        final var jp = mock(JoinPoint.class);
         assertTrue(r.resolveFrom(jp, RandomStringUtils.randomAlphabetic(52)).length > 0);
     }
 }

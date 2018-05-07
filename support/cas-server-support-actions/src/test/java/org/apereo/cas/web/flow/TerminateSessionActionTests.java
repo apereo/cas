@@ -38,7 +38,7 @@ public class TerminateSessionActionTests extends AbstractCentralAuthenticationSe
 
     @Test
     public void verifyTerminateAction() throws Exception {
-        final MockRequestContext context = new MockRequestContext();
+        final var context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         WebUtils.putTicketGrantingTicketInScopes(context, "TGT-123456-something");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
@@ -47,8 +47,8 @@ public class TerminateSessionActionTests extends AbstractCentralAuthenticationSe
 
     @Test
     public void verifyTerminateActionByCookie() throws Exception {
-        final MockRequestContext context = new MockRequestContext();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var context = new MockRequestContext();
+        final var request = new MockHttpServletRequest();
         request.setCookies(new Cookie("TGC", "TGT-123456-something"));
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());

@@ -114,14 +114,14 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
         }
         if (isNtlm) {
             if (Pattern.matches("\\S+\\\\\\S+", name)) {
-                final List<String> splitList = Splitter.on(Pattern.compile("\\\\")).splitToList(name);
+                final var splitList = Splitter.on(Pattern.compile("\\\\")).splitToList(name);
                 if (splitList.size() == 2) {
                     return this.principalFactory.createPrincipal(splitList.get(1));
                 }
             }
             return this.principalFactory.createPrincipal(name);
         }
-        final List<String> splitList = Splitter.on("@").splitToList(name);
+        final var splitList = Splitter.on("@").splitToList(name);
         return this.principalFactory.createPrincipal(splitList.get(0));
     }
 }

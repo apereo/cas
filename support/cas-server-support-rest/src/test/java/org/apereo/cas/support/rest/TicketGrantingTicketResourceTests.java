@@ -68,7 +68,7 @@ public class TicketGrantingTicketResourceTests {
 
     @Before
     public void setUp() {
-        final ApplicationEventPublisher publisher = mock(ApplicationEventPublisher.class);
+        final var publisher = mock(ApplicationEventPublisher.class);
         when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 

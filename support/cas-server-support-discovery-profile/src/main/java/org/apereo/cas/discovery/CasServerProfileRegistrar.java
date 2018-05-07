@@ -52,7 +52,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
     private final Set<String> availableAttributes;
 
     private Map<String, String> locateMultifactorAuthenticationProviderTypesActive() {
-        final Map<String, MultifactorAuthenticationProvider> providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
+        final var providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
         return providers
             .values()
             .stream()

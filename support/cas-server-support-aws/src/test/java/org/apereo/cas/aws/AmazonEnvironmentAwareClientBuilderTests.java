@@ -31,10 +31,10 @@ public class AmazonEnvironmentAwareClientBuilderTests {
 
     @Test
     public void verifyAction() {
-        final AmazonEnvironmentAwareClientBuilder builder = new AmazonEnvironmentAwareClientBuilder("aws", environment);
-        final AwsClientBuilder mock = mock(AwsClientBuilder.class);
+        final var builder = new AmazonEnvironmentAwareClientBuilder("aws", environment);
+        final var mock = mock(AwsClientBuilder.class);
         when(mock.build()).thenReturn(new Object());
-        final Object client = builder.build(mock, Object.class);
+        final var client = builder.build(mock, Object.class);
         assertNotNull(client);
         assertNotNull(builder.getSetting("secretKey"));
         assertNotNull(builder.getSetting("secretKey", String.class));

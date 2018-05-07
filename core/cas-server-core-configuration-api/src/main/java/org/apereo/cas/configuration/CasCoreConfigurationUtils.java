@@ -23,7 +23,7 @@ public final class CasCoreConfigurationUtils {
      * @return the map
      */
     public static Map loadYamlProperties(final Resource... resource) {
-        final YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
+        final var factory = new YamlPropertiesFactoryBean();
         factory.setResolutionMethod(YamlProcessor.ResolutionMethod.OVERRIDE);
         factory.setResources(resource);
         factory.setSingleton(true);

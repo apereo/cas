@@ -41,7 +41,7 @@ public class AuthyClientInstance {
 
         final var authyUrl = StringUtils.defaultIfBlank(apiUrl, AuthyApiClient.DEFAULT_API_URI);
         final var url = new URL(authyUrl);
-        final boolean testFlag = url.getProtocol().equalsIgnoreCase("http");
+        final var testFlag = url.getProtocol().equalsIgnoreCase("http");
         this.authyClient = new AuthyApiClient(apiKey, authyUrl, testFlag);
         this.authyUsers = this.authyClient.getUsers();
         this.authyTokens = this.authyClient.getTokens();

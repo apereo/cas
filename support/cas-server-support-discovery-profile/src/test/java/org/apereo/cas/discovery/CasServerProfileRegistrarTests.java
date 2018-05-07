@@ -43,7 +43,7 @@ public class CasServerProfileRegistrarTests {
     @Test
     public void verifyAction() {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        final CasServerProfile profile = casServerProfileRegistrar.getProfile();
+        final var profile = casServerProfileRegistrar.getProfile();
         assertNotNull(profile);
         assertNotNull(profile.getAvailableAttributes());
         assertNotNull(profile.getDelegatedClientTypes());

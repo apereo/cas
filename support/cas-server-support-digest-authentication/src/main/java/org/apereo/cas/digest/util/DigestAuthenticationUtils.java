@@ -61,7 +61,7 @@ public class DigestAuthenticationUtils {
      * @return the header string
      */
     public static String createAuthenticateHeader(final String realm, final String authMethod, final String nonce) {
-        final StringBuilder stringBuilder = new StringBuilder("Digest realm=\"")
+        final var stringBuilder = new StringBuilder("Digest realm=\"")
             .append(realm).append("\",");
         if (StringUtils.isNotBlank(authMethod)) {
             stringBuilder.append("qop=").append(authMethod).append(',');

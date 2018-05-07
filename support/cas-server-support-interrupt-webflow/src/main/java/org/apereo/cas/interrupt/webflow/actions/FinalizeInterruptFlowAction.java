@@ -27,10 +27,10 @@ public class FinalizeInterruptFlowAction extends AbstractAction {
         final var response = InterruptUtils.getInterruptFrom(requestContext);
         
         if (response.isBlock()) {
-            final URI accessUrl = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl();
+            final var accessUrl = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl();
             if (registeredService != null && accessUrl != null) {
-                final String url = accessUrl.toURL().toExternalForm();
-                final ExternalContext externalContext = requestContext.getExternalContext();
+                final var url = accessUrl.toURL().toExternalForm();
+                final var externalContext = requestContext.getExternalContext();
                 externalContext.requestExternalRedirect(url);
                 externalContext.recordResponseComplete();
                 return no();

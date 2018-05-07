@@ -209,7 +209,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Bean
     public TaskExecutor logTailingTaskExecutor() {
-        final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        final var executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(LOG_TAILING_CORE_POOL_SIZE);
         executor.setQueueCapacity(LOG_TAILING_QUEUE_CAPACITY);
         return executor;

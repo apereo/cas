@@ -30,9 +30,9 @@ public class TicketValidationResourceResolver extends TicketAsFirstParameterReso
     public String[] resolveFrom(final JoinPoint joinPoint, final Object object) {
         final List<String> auditResourceResults = new ArrayList<>();
 
-        final Object[] args = AopUtils.unWrapJoinPoint(joinPoint).getArgs();
+        final var args = AopUtils.unWrapJoinPoint(joinPoint).getArgs();
         if (args != null && args.length > 0) {
-            final String ticketId = args[0].toString();
+            final var ticketId = args[0].toString();
             auditResourceResults.add(ticketId);
         }
 

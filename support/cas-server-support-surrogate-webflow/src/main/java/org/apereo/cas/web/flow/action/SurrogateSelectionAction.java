@@ -38,8 +38,8 @@ public class SurrogateSelectionAction extends AbstractAction {
 
             LOGGER.debug("Located surrogate target as [{}]", target);
             if (StringUtils.isNotBlank(target)) {
-                final AuthenticationResultBuilder authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
-                final Optional<AuthenticationResultBuilder> result =
+                final var authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
+                final var result =
                     surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(authenticationResultBuilder, credential, target);
                 if (result.isPresent()) {
                     WebUtils.putAuthenticationResultBuilder(result.get(), requestContext);

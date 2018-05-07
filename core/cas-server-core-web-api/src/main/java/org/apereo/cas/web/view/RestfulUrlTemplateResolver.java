@@ -36,8 +36,8 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
     protected ITemplateResource computeTemplateResource(final IEngineConfiguration configuration, final String ownerTemplate,
                                                         final String template, final String resourceName, final String characterEncoding,
                                                         final Map<String, Object> templateResolutionAttributes) {
-        final ViewProperties.Rest rest = casProperties.getView().getRest();
-        final String themeName = getCurrentTheme();
+        final var rest = casProperties.getView().getRest();
+        final var themeName = getCurrentTheme();
 
         final Map headers = new LinkedHashMap();
         headers.put("owner", ownerTemplate);
@@ -48,16 +48,16 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
             headers.put("theme", themeName);
         }
 
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
         if (request != null) {
             headers.put("locale", request.getLocale().getCountry());
             headers.putAll(HttpRequestUtils.getRequestHeaders(request));
         }
         try {
-            final HttpResponse response = HttpUtils.execute(rest.getUrl(), rest.getMethod(), rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), headers);
-            final int statusCode = response.getStatusLine().getStatusCode();
+            final var response = HttpUtils.execute(rest.getUrl(), rest.getMethod(), rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), headers);
+            final var statusCode = response.getStatusLine().getStatusCode();
             if (response != null && HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
-                final String result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                final var result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                 return new StringTemplateResource(result);
             }
         } catch (final Exception e) {

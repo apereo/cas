@@ -21,7 +21,7 @@ public class TicketAsFirstParameterResourceResolver implements AuditResourceReso
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object object) {
-        final JoinPoint jp = AopUtils.unWrapJoinPoint(joinPoint);
+        final var jp = AopUtils.unWrapJoinPoint(joinPoint);
         if (jp != null && jp.getArgs() != null) {
             return new String[]{jp.getArgs()[0].toString()};
         }

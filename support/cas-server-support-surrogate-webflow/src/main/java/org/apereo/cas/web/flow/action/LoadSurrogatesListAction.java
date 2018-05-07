@@ -41,11 +41,11 @@ public class LoadSurrogatesListAction extends AbstractAction {
             return error();
         }
 
-        final Credential c = WebUtils.getCredential(requestContext);
+        final var c = WebUtils.getCredential(requestContext);
         if (c instanceof SurrogateUsernamePasswordCredential) {
-            final AuthenticationResultBuilder authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
-            final SurrogateUsernamePasswordCredential credential = (SurrogateUsernamePasswordCredential) c;
-            final Optional<AuthenticationResultBuilder> result =
+            final var authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
+            final var credential = (SurrogateUsernamePasswordCredential) c;
+            final var result =
                 surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(authenticationResultBuilder, c, credential.getSurrogateUsername());
             if (result.isPresent()) {
                 WebUtils.putAuthenticationResultBuilder(result.get(), requestContext);
@@ -55,11 +55,11 @@ public class LoadSurrogatesListAction extends AbstractAction {
     }
 
     private boolean loadSurrogates(final RequestContext requestContext) {
-        final Credential c = WebUtils.getCredential(requestContext);
+        final var c = WebUtils.getCredential(requestContext);
         if (c instanceof UsernamePasswordCredential) {
-            final String username = c.getId();
+            final var username = c.getId();
             LOGGER.debug("Loading eligible accounts for [{}] to proxy", username);
-            final List<String> surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
+            final var surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
             LOGGER.debug("Surrogate accounts found are [{}]", surrogates);
             if (surrogates != null && !surrogates.isEmpty()) {
                 surrogates.add(0, username);

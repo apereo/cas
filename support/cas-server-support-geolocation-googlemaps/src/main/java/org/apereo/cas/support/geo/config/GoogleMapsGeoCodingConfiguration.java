@@ -36,8 +36,8 @@ public class GoogleMapsGeoCodingConfiguration {
     @Bean
     @RefreshScope
     public GeoLocationService geoLocationService() {
-        final GeoApiContext.Builder builder = new GeoApiContext.Builder();
-        final GoogleMapsProperties properties = casProperties.getGoogleMaps();
+        final var builder = new GeoApiContext.Builder();
+        final var properties = casProperties.getGoogleMaps();
         if (properties.isGoogleAppsEngine()) {
             builder.requestHandlerBuilder(new GaeRequestHandler.Builder());
         }

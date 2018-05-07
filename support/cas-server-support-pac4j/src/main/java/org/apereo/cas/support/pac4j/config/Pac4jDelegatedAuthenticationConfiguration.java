@@ -69,7 +69,7 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     @Bean
     @ConditionalOnMissingBean(name = "pac4jDelegatedSessionStoreCookieSerializer")
     public StringSerializer<Map<String, Object>> pac4jDelegatedSessionStoreCookieSerializer() {
-        final SessionStoreCookieSerializer serializer = new SessionStoreCookieSerializer();
+        final var serializer = new SessionStoreCookieSerializer();
         serializer.getObjectMapper().registerModule(pac4jJacksonModule());
         return serializer;
     }
@@ -77,7 +77,7 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     @Bean
     @ConditionalOnMissingBean(name = "pac4jJacksonModule")
     public Module pac4jJacksonModule() {
-        final SimpleModule module = new SimpleModule();
+        final var module = new SimpleModule();
         module.setMixInAnnotation(OAuth1RequestToken.class, AbstractOAuth1RequestTokenMixin.class);
         return module;
     }

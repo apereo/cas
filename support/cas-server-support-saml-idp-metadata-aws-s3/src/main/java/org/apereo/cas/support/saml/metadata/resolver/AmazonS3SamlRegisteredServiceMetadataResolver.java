@@ -47,20 +47,20 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
     public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
         try {
             LOGGER.debug("Locating S3 object(s) from bucket [{}]...", bucketName);
-            final ListObjectsV2Result result = s3Client.listObjectsV2(bucketName);
-            final List<S3ObjectSummary> objects = result.getObjectSummaries();
+            final var result = s3Client.listObjectsV2(bucketName);
+            final var objects = result.getObjectSummaries();
             LOGGER.debug("Located [{}] S3 object(s) from bucket [{}]", objects.size(), bucketName);
 
             return objects.stream()
                 .map(obj -> {
-                    final String objectKey = obj.getKey();
+                    final var objectKey = obj.getKey();
                     LOGGER.debug("Fetching object [{}] from bucket [{}]", objectKey, bucketName);
-                    final S3Object object = s3Client.getObject(obj.getBucketName(), objectKey);
-                    try (S3ObjectInputStream is = object.getObjectContent()) {
-                        final SamlMetadataDocument document = new SamlMetadataDocument();
+                    final var object = s3Client.getObject(obj.getBucketName(), objectKey);
+                    try (var is = object.getObjectContent()) {
+                        final var document = new SamlMetadataDocument();
                         document.setId(System.nanoTime());
                         document.setName(objectKey);
-                        final ObjectMetadata objectMetadata = object.getObjectMetadata();
+                        final var objectMetadata = object.getObjectMetadata();
                         if (objectMetadata != null) {
                             document.setSignature(objectMetadata.getUserMetaDataOf("signature"));
                             if (StringUtils.isNotBlank(document.getSignature())) {
@@ -85,7 +85,7 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
     @Override
     public boolean supports(final SamlRegisteredService service) {
         try {
-            final String metadataLocation = service.getMetadataLocation();
+            final var metadataLocation = service.getMetadataLocation();
             return metadataLocation.trim().startsWith("awss3://");
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -96,8 +96,8 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
     @Override
     @SneakyThrows
     public void saveOrUpdate(final SamlMetadataDocument document) {
-        final ByteArrayInputStream is = new ByteArrayInputStream(document.getValue().getBytes(StandardCharsets.UTF_8));
-        final ObjectMetadata metadata = new ObjectMetadata();
+        final var is = new ByteArrayInputStream(document.getValue().getBytes(StandardCharsets.UTF_8));
+        final var metadata = new ObjectMetadata();
         metadata.getUserMetadata().put("signature", document.getSignature());
         this.s3Client.putObject(bucketName, document.getName(), is, metadata);
     }

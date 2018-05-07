@@ -34,23 +34,23 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Before
     public void setup() {
-        final GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
+        final var bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
         this.google = new GoogleAuthenticator(bldr.build());
     }
 
     @Test
     public void verifyCreate() {
-        final InMemoryGoogleAuthenticatorTokenCredentialRepository repo =
+        final var repo =
             new InMemoryGoogleAuthenticatorTokenCredentialRepository(CipherExecutor.noOpOfStringToString(), google);
-        final OneTimeTokenAccount acct = repo.create("casuser");
+        final var acct = repo.create("casuser");
         assertNotNull(acct);
     }
 
     @Test
     public void verifyGet() {
-        final InMemoryGoogleAuthenticatorTokenCredentialRepository repo =
+        final var repo =
             new InMemoryGoogleAuthenticatorTokenCredentialRepository(CipherExecutor.noOpOfStringToString(), google);
-        OneTimeTokenAccount acct = repo.get("casuser");
+        var acct = repo.get("casuser");
         assertNull(acct);
         acct = repo.create("casuser");
         repo.save(acct.getUsername(), acct.getSecretKey(), acct.getValidationCode(), acct.getScratchCodes());

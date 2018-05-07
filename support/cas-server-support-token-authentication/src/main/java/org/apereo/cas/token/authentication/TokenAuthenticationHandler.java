@@ -87,7 +87,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
 
             final var signingAlg = findAlgorithmFamily(sets, signingSecretAlg, JWSAlgorithm.class);
 
-            final JwtAuthenticator jwtAuthenticator = new JwtAuthenticator();
+            final var jwtAuthenticator = new JwtAuthenticator();
             final var secretBytes = getSecretBytes(signingSecret, secretsAreBase64Encoded);
             jwtAuthenticator.setSignatureConfiguration(new SecretSignatureConfiguration(secretBytes, signingAlg));
 

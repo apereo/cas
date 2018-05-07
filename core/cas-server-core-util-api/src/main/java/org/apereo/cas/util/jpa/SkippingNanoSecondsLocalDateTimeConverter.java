@@ -16,13 +16,13 @@ import java.time.LocalTime;
 public class SkippingNanoSecondsLocalDateTimeConverter implements AttributeConverter<LocalDateTime, Timestamp> {
     @Override
     public Timestamp convertToDatabaseColumn(final LocalDateTime dt) {
-        final LocalDateTime result = LocalDateTime.of(dt.toLocalDate(), LocalTime.of(dt.getHour(), dt.getMinute(), dt.getSecond()));
+        final var result = LocalDateTime.of(dt.toLocalDate(), LocalTime.of(dt.getHour(), dt.getMinute(), dt.getSecond()));
         return Timestamp.valueOf(result);
     }
 
     @Override
     public LocalDateTime convertToEntityAttribute(final Timestamp timestamp) {
-        final LocalDateTime dt = timestamp.toLocalDateTime();
+        final var dt = timestamp.toLocalDateTime();
         return LocalDateTime.of(dt.toLocalDate(), LocalTime.of(dt.getHour(), dt.getMinute(), dt.getSecond()));
     }
 }

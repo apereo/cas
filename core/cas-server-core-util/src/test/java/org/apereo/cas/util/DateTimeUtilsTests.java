@@ -52,7 +52,7 @@ public class DateTimeUtilsTests {
 
     @Test
     public void verifyParsingCalendar() {
-        final Calendar calendar = Calendar.getInstance();
+        final var calendar = Calendar.getInstance();
         assertNotNull(DateTimeUtils.zonedDateTimeOf(calendar));
     }
 

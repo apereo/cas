@@ -51,8 +51,8 @@ public class WsFederationCookieManager {
         }
 
         final var configuration = configurations.stream().filter(c -> c.getId().equals(wCtx)).findFirst().orElse(null);
-        final CookieRetrievingCookieGenerator cookieGen = configuration.getCookieGenerator();
-        final String value = cookieGen.retrieveCookieValue(request);
+        final var cookieGen = configuration.getCookieGenerator();
+        final var value = cookieGen.retrieveCookieValue(request);
         if (StringUtils.isBlank(value)) {
             LOGGER.error("No cookie value could be retrieved to determine the state of the delegated authentication session");
             throw new IllegalArgumentException("No cookie could be found to determine session state");
@@ -97,7 +97,7 @@ public class WsFederationCookieManager {
         }
 
         final var cookieValue = serializeSessionValues(session);
-        final CookieRetrievingCookieGenerator cookieGen = configuration.getCookieGenerator();
+        final var cookieGen = configuration.getCookieGenerator();
         cookieGen.addCookie(request, response, cookieValue);
     }
 

@@ -34,9 +34,9 @@ public class AmazonS3SamlRegisteredServiceMetadataResolverTests {
 
     @Test
     public void verifyAction() throws Exception {
-        final AmazonS3Client client = mock(AmazonS3Client.class);
-        final ListObjectsV2Result result = new ListObjectsV2Result();
-        final S3ObjectSummary summary = new S3ObjectSummary();
+        final var client = mock(AmazonS3Client.class);
+        final var result = new ListObjectsV2Result();
+        final var summary = new S3ObjectSummary();
         summary.setBucketName("CAS");
         summary.setSize(1000);
         summary.setKey("SAML-Document.xml");
@@ -44,11 +44,11 @@ public class AmazonS3SamlRegisteredServiceMetadataResolverTests {
         result.setBucketName("CAS");
         when(client.listObjectsV2(anyString())).thenReturn(result);
 
-        final S3Object object = new S3Object();
+        final var object = new S3Object();
         object.setBucketName("CAS");
         object.setKey("SAML-Document.xml");
 
-        final ObjectMetadata metadata = new ObjectMetadata();
+        final var metadata = new ObjectMetadata();
         metadata.setUserMetadata(CollectionUtils.wrap("signature",
             "MIICNTCCAZ6gAwIBAgIES343gjANBgkqhkiG9w0BAQUFADBVMQswCQYDVQQGEwJVUzELMAkGA1UE"
                 + "CAwCQ0ExFjAUBgNVBAcMDU1vdW50YWluIFZpZXcxDTALBgNVBAoMBFdTTzIxEjAQBgNVBAMMCWxv"
@@ -65,21 +65,21 @@ public class AmazonS3SamlRegisteredServiceMetadataResolverTests {
         object.setObjectContent(new S3ObjectInputStream(new ClassPathResource("sp-metadata.xml").getInputStream(), new HttpGet()));
         when(client.getObject(anyString(), anyString())).thenReturn(object);
 
-        final SamlIdPProperties properties = new SamlIdPProperties();
+        final var properties = new SamlIdPProperties();
         properties.getMetadata().getAmazonS3().setBucketName("CAS");
 
-        final BasicParserPool parserPool = new BasicParserPool();
+        final var parserPool = new BasicParserPool();
         parserPool.initialize();
-        final OpenSamlConfigBean configBean = new OpenSamlConfigBean(parserPool);
+        final var configBean = new OpenSamlConfigBean(parserPool);
         assertNotNull(configBean.getUnmarshallerFactory());
         assertNotNull(configBean.getBuilderFactory());
         assertNotNull(configBean.getMarshallerFactory());
         assertNotNull(configBean.getParserPool());
 
-        final AmazonS3SamlRegisteredServiceMetadataResolver r = new AmazonS3SamlRegisteredServiceMetadataResolver(
+        final var r = new AmazonS3SamlRegisteredServiceMetadataResolver(
             properties, configBean, client);
 
-        final SamlRegisteredService service = new SamlRegisteredService();
+        final var service = new SamlRegisteredService();
         service.setName("SAML");
         service.setId(100);
         assertFalse(r.resolve(service).isEmpty());

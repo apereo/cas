@@ -87,7 +87,7 @@ public class RegisteredServiceResourceTests {
         when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("test")))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("testfail")))).thenThrow(AuthenticationException.class);
 
-        final ApplicationEventPublisher publisher = mock(ApplicationEventPublisher.class);
+        final var publisher = mock(ApplicationEventPublisher.class);
         return new RegisteredServiceResource(new DefaultAuthenticationSystemSupport(
             new DefaultAuthenticationTransactionManager(publisher, mgmr),
             new DefaultPrincipalElectionStrategy()),

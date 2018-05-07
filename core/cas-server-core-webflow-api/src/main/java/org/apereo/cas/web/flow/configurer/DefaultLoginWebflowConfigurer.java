@@ -147,7 +147,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
     }
 
     private void createCreateTicketGrantingTicketAction(final Flow flow) {
-        final ActionState action = createActionState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET,
+        final var action = createActionState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET,
             createEvaluateAction(CasWebflowConstants.ACTION_ID_CREATE_TICKET_GRANTING_TICKET));
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET);
     }

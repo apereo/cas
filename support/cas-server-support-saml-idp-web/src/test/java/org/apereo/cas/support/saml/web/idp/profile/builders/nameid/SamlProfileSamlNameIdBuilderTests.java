@@ -48,26 +48,26 @@ public class SamlProfileSamlNameIdBuilderTests {
 
     @Test
     public void verifyAction() {
-        final SamlProfileSamlNameIdBuilder b = new SamlProfileSamlNameIdBuilder(openSamlConfigBean, new ShibbolethCompatiblePersistentIdGenerator());
-        final AuthnRequest authnRequest = mock(AuthnRequest.class);
-        final Issuer issuer = mock(Issuer.class);
+        final var b = new SamlProfileSamlNameIdBuilder(openSamlConfigBean, new ShibbolethCompatiblePersistentIdGenerator());
+        final var authnRequest = mock(AuthnRequest.class);
+        final var issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");
         when(authnRequest.getIssuer()).thenReturn(issuer);
 
-        final NameIDPolicy policy = mock(NameIDPolicy.class);
+        final var policy = mock(NameIDPolicy.class);
         when(policy.getFormat()).thenReturn(NameID.EMAIL);
         when(authnRequest.getNameIDPolicy()).thenReturn(policy);
 
-        final SamlRegisteredService service = new SamlRegisteredService();
+        final var service = new SamlRegisteredService();
         service.setServiceId("entity-id");
         service.setRequiredNameIdFormat(NameID.EMAIL);
-        final SamlRegisteredServiceServiceProviderMetadataFacade facade = mock(SamlRegisteredServiceServiceProviderMetadataFacade.class);
+        final var facade = mock(SamlRegisteredServiceServiceProviderMetadataFacade.class);
         when(facade.getEntityId()).thenReturn(service.getServiceId());
-        final Assertion assertion = mock(Assertion.class);
+        final var assertion = mock(Assertion.class);
         when(assertion.getPrincipal()).thenReturn(new AttributePrincipalImpl("casuser"));
 
         when(facade.getSupportedNameIdFormats()).thenReturn(CollectionUtils.wrapList(NameID.TRANSIENT, NameID.EMAIL));
-        final NameID result = b.build(authnRequest, new MockHttpServletRequest(), new MockHttpServletResponse(),
+        final var result = b.build(authnRequest, new MockHttpServletRequest(), new MockHttpServletResponse(),
             assertion, service, facade, SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(result);
         assertEquals(NameID.EMAIL, result.getFormat());

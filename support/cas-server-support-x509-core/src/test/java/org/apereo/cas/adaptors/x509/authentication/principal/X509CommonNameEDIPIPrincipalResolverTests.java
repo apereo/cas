@@ -26,12 +26,12 @@ public class X509CommonNameEDIPIPrincipalResolverTests extends AbstractX509Certi
 
     @Test
     public void verifyResolvePrincipalInternal() throws Exception {
-        try (InputStream is = new ClassPathResource("edipi.cer").getInputStream()) {
+        try (var is = new ClassPathResource("edipi.cer").getInputStream()) {
             final InputStreamSource iso = new InputStreamResource(is);
-            final X509Certificate cert = CertUtils.readCertificate(iso);
-            final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[]{cert});
+            final var cert = CertUtils.readCertificate(iso);
+            final var c = new X509CertificateCredential(new X509Certificate[]{cert});
             c.setCertificate(cert);
-            final Principal principal = this.resolver.resolve(c, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+            final var principal = this.resolver.resolve(c, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
                 Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
             assertEquals("1234567890", principal.getId());
         }

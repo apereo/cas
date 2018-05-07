@@ -72,9 +72,9 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
 
     @Before
     public void before() {
-        final AbstractRegisteredService svc = RegisteredServiceTestUtils.getRegisteredService("https://example.token.org");
+        final var svc = RegisteredServiceTestUtils.getRegisteredService("https://example.token.org");
         svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        DefaultRegisteredServiceProperty prop = new DefaultRegisteredServiceProperty();
+        var prop = new DefaultRegisteredServiceProperty();
         prop.addValue(SIGNING_SECRET);
         svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING.getPropertyName(), prop);
         prop = new DefaultRegisteredServiceProperty();
@@ -90,16 +90,16 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
         g.setSignatureConfiguration(new SecretSignatureConfiguration(SIGNING_SECRET, JWSAlgorithm.HS256));
         g.setEncryptionConfiguration(new SecretEncryptionConfiguration(ENCRYPTION_SECRET, JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
 
-        final CommonProfile profile = new CommonProfile();
+        final var profile = new CommonProfile();
         profile.setId("casuser");
         profile.addAttribute("uid", "uid");
         profile.addAttribute("givenName", "CASUser");
         profile.addAttribute("memberOf", CollectionUtils.wrapSet("system", "cas", "admin"));
-        final String token = g.generate(profile);
+        final var token = g.generate(profile);
 
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var request = new MockHttpServletRequest();
         request.addHeader(TokenConstants.PARAMETER_NAME_TOKEN, token);
-        final MockRequestContext context = new MockRequestContext();
+        final var context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService("https://example.token.org"));
         assertEquals("success", this.action.execute(context).getId());

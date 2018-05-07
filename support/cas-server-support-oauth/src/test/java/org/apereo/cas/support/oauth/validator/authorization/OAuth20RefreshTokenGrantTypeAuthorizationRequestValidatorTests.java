@@ -26,20 +26,20 @@ import static org.mockito.Mockito.*;
 public class OAuth20RefreshTokenGrantTypeAuthorizationRequestValidatorTests {
     @Test
     public void verifyValidator() {
-        final ServicesManager serviceManager = mock(ServicesManager.class);
-        final OAuthRegisteredService service = new OAuthRegisteredService();
+        final var serviceManager = mock(ServicesManager.class);
+        final var service = new OAuthRegisteredService();
         service.setName("OAuth");
         service.setClientId("client");
         service.setClientSecret("secret");
         service.setServiceId("https://callback.example.org");
 
         when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(service));
-        final OAuth20RefreshTokenGrantTypeAuthorizationRequestValidator v =
+        final var v =
             new OAuth20RefreshTokenGrantTypeAuthorizationRequestValidator(serviceManager, new WebApplicationServiceFactory(),
                 new RegisteredServiceAccessStrategyAuditableEnforcer());
 
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final var request = new MockHttpServletRequest();
+        final var response = new MockHttpServletResponse();
         assertFalse(v.validate(new J2EContext(request, response)));
 
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.getType());

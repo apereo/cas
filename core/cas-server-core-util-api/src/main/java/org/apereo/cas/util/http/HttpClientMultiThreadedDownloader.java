@@ -29,9 +29,9 @@ public class HttpClientMultiThreadedDownloader {
      */
     @SneakyThrows
     public void download() {
-        final AtomicBoolean stop = new AtomicBoolean(false);
-        final DownloadInfo info = new DownloadInfo(resourceToDownload.getURL());
-        final DownloadStatusListener status = new DownloadStatusListener(info);
+        final var stop = new AtomicBoolean(false);
+        final var info = new DownloadInfo(resourceToDownload.getURL());
+        final var status = new DownloadStatusListener(info);
 
         info.extract(stop, status);
 

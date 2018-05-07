@@ -46,7 +46,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     public PropertySource<?> locate(final Environment environment, final ResourceLoader resourceLoader) {
         final var compositePropertySource = new CompositePropertySource("casCompositePropertySource");
 
-        final File configFile = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile();
+        final var configFile = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile();
         if (configFile != null) {
             final PropertySource<?> sourceStandalone = loadSettingsFromStandaloneConfigFile(configFile);
             compositePropertySource.addPropertySource(sourceStandalone);
@@ -111,7 +111,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         final var props = new Properties();
         final var resource = resourceLoader.getResource("classpath:/application.yml");
         if (resource != null && resource.exists()) {
-            final Map pp = CasCoreConfigurationUtils.loadYamlProperties(resource);
+            final var pp = CasCoreConfigurationUtils.loadYamlProperties(resource);
             if (pp.isEmpty()) {
                 LOGGER.debug("No properties were located inside [{}]", resource);
             } else {

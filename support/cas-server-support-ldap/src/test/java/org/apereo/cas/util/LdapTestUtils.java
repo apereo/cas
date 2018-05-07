@@ -108,12 +108,12 @@ public class LdapTestUtils {
      * @param entries    the entries
      */
     public static void modifyLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries) {
-        for (final LdapEntry entry : entries) {
+        for (final var entry : entries) {
             final Collection<Attribute> attrs = new ArrayList<>(entry.getAttributeNames().length);
             attrs.addAll(entry.getAttributes().stream()
                 .map(a -> new Attribute(a.getName(), a.getStringValues()))
                 .collect(Collectors.toList()));
-            for (final LdapAttribute ldapAttribute : entry.getAttributes()) {
+            for (final var ldapAttribute : entry.getAttributes()) {
                 modifyLdapEntry(connection, entry, ldapAttribute);
             }
         }

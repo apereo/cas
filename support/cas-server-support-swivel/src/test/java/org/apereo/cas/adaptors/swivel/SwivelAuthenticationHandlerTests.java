@@ -99,7 +99,7 @@ public class SwivelAuthenticationHandlerTests {
 
     @Before
     public void setup() {
-        final String data = "<?xml version=\"1.0\" ?>"
+        final var data = "<?xml version=\"1.0\" ?>"
             + "<SASResponse secret=\"MyAdminAgent\" version=\"3.4\">"
             + "<Version>3.6</Version>\n"
             + "<Result>PASS</Result>\n"
@@ -124,8 +124,8 @@ public class SwivelAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthn() throws Exception {
-        final SwivelTokenCredential c = new SwivelTokenCredential("123456");
-        final MockRequestContext context = new MockRequestContext();
+        final var c = new SwivelTokenCredential("123456");
+        final var context = new MockRequestContext();
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         RequestContextHolder.setRequestContext(context);

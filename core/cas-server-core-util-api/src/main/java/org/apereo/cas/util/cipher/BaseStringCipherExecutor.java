@@ -136,7 +136,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
     @Override
     public String encode(final Serializable value, final Object[] parameters) {
-        final String encoded = this.encryptionEnabled
+        final var encoded = this.encryptionEnabled
             ? EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value, this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier)
             : value.toString();
         return new String(sign(encoded.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
