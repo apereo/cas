@@ -97,6 +97,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -195,6 +196,9 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    private ResourceLoader resourceLoader;
+    
     @Autowired
     @Qualifier("oauthSecConfig")
     private Config oauthSecConfig;
@@ -493,7 +497,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
 
     @Bean
     public OidcServiceJsonWebKeystoreCacheLoader oidcServiceJsonWebKeystoreCacheLoader() {
-        return new OidcServiceJsonWebKeystoreCacheLoader();
+        return new OidcServiceJsonWebKeystoreCacheLoader(resourceLoader);
     }
 
     @Bean
