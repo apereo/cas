@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
@@ -22,7 +21,7 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-web", automated = true)
-@Slf4j
+
 @Getter
 @Setter
 public class AdminPagesSecurityProperties implements Serializable {

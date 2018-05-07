@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -163,6 +162,6 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
      * when composing the authentication chain for the caller.
      */
     private Principal getPrimaryPrincipal(final Set<Authentication> authentications, final Map<String, Object> principalAttributes) {
-        return this.principalElectionStrategy.nominate(new HashSet<>(authentications), principalAttributes);
+        return this.principalElectionStrategy.nominate(new LinkedHashSet<>(authentications), principalAttributes);
     }
 }

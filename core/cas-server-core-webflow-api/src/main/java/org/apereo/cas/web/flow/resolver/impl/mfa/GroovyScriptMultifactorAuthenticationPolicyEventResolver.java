@@ -39,9 +39,7 @@ import java.util.Set;
  */
 @Slf4j
 public class GroovyScriptMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-
-
-    private final Resource groovyScript;
+    private final transient Resource groovyScript;
 
     public GroovyScriptMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                                     final CentralAuthenticationService centralAuthenticationService,

@@ -18,9 +18,7 @@ import java.io.StringWriter;
 @Slf4j
 @ToString
 public class MongoDbCacheStatistics implements CacheStatistics {
-
     private final DBCollection collection;
-
     private final CommandResult statistics;
 
     public MongoDbCacheStatistics(final DBCollection collection) {
@@ -30,7 +28,7 @@ public class MongoDbCacheStatistics implements CacheStatistics {
 
     @Override
     public long getSize() {
-        return statistics.getLong("objects");
+        return statistics.getLong("size");
     }
 
     @Override
@@ -39,12 +37,17 @@ public class MongoDbCacheStatistics implements CacheStatistics {
     }
 
     @Override
+    public long getPercentFree() {
+        return getCapacity() - statistics.getLong("totalIndexSize");
+    }
+
+    @Override
     public String getName() {
         return this.collection.getName();
     }
 
     @Override
-    public void toString(final StringBuilder builder) {
+    public String toString(final StringBuilder builder) {
         try {
             final var json = JsonValue.readJSON(this.statistics.toString());
             final var writer = new StringWriter();
@@ -53,5 +56,6 @@ public class MongoDbCacheStatistics implements CacheStatistics {
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+        return builder.toString();
     }
 }

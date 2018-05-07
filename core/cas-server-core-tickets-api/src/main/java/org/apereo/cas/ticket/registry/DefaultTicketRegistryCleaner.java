@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.Ticket;
@@ -18,7 +18,7 @@ import java.io.Serializable;
  */
 @Transactional(transactionManager = "ticketTransactionManager")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Serializable {
     private static final long serialVersionUID = -8581398063126547772L;
 

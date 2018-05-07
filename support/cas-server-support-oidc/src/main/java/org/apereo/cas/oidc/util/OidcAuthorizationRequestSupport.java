@@ -44,10 +44,10 @@ public class OidcAuthorizationRequestSupport {
      */
     public static Set<String> getOidcPromptFromAuthorizationRequest(@NonNull final String url) {
         return new URIBuilder(url).getQueryParams().stream()
-                .filter(p -> OidcConstants.PROMPT.equals(p.getName()))
-                .map(param -> param.getValue().split(" "))
-                .flatMap(Arrays::stream)
-                .collect(Collectors.toSet());
+            .filter(p -> OidcConstants.PROMPT.equals(p.getName()))
+            .map(param -> param.getValue().split(" "))
+            .flatMap(Arrays::stream)
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -69,8 +69,8 @@ public class OidcAuthorizationRequestSupport {
     public static Optional<Long> getOidcMaxAgeFromAuthorizationRequest(final WebContext context) {
         final var builderContext = new URIBuilder(context.getFullRequestURL());
         final var parameter = builderContext.getQueryParams()
-                .stream().filter(p -> OidcConstants.MAX_AGE.equals(p.getName()))
-                .findFirst();
+            .stream().filter(p -> OidcConstants.MAX_AGE.equals(p.getName()))
+            .findFirst();
 
         if (parameter.isPresent()) {
             final var maxAge = NumberUtils.toLong(parameter.get().getValue(), -1);
@@ -127,7 +127,7 @@ public class OidcAuthorizationRequestSupport {
             final var diffInSeconds = now - authTime;
             if (diffInSeconds > maxAge.get()) {
                 LOGGER.info("Authentication is too old: [{}] and was created [{}] seconds ago.",
-                        authTime, diffInSeconds);
+                    authTime, diffInSeconds);
                 return true;
             }
         }
@@ -156,8 +156,7 @@ public class OidcAuthorizationRequestSupport {
     public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
                                                                        final UserProfile profile) {
 
-        final var authTime =
-                profile.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
+        final Object authTime = profile.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
         if (authTime == null) {
             return false;
         }

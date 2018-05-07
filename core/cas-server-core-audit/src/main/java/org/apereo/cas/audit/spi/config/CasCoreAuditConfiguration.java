@@ -211,7 +211,7 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
     @ConditionalOnMissingBean(name = "messageBundleAwareResourceResolver")
     @Bean
     public AuditResourceResolver messageBundleAwareResourceResolver() {
-        return new MessageBundleAwareResourceResolver();
+        return new MessageBundleAwareResourceResolver(applicationContext);
     }
 
     @ConditionalOnMissingBean(name = "auditPrincipalIdProvider")

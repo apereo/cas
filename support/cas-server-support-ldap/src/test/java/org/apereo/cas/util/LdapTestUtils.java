@@ -3,6 +3,8 @@ package org.apereo.cas.util;
 import com.unboundid.ldap.sdk.AddRequest;
 import com.unboundid.ldap.sdk.Attribute;
 import com.unboundid.ldap.sdk.LDAPConnection;
+import com.unboundid.ldap.sdk.LDAPException;
+import com.unboundid.ldap.sdk.ResultCode;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.ldaptive.AttributeModification;
@@ -88,9 +90,34 @@ public class LdapTestUtils {
                 LOGGER.debug("Creating entry [{}] with attributes [{}]", entry, attrs);
                 connection.add(ad);
             }
+        } catch (final LDAPException e) {
+            if (e.getResultCode() == ResultCode.ENTRY_ALREADY_EXISTS) {
+                modifyLdapEntries(connection, entries);
+            } else {
+                LOGGER.error(e.getMessage(), e);
+            }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Modify ldap entries.
+     *
+     * @param connection the connection
+     * @param entries    the entries
+     */
+    public static void modifyLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries) {
+        for (final LdapEntry entry : entries) {
+            final Collection<Attribute> attrs = new ArrayList<>(entry.getAttributeNames().length);
+            attrs.addAll(entry.getAttributes().stream()
+                .map(a -> new Attribute(a.getName(), a.getStringValues()))
+                .collect(Collectors.toList()));
+            for (final LdapAttribute ldapAttribute : entry.getAttributes()) {
+                modifyLdapEntry(connection, entry, ldapAttribute);
+            }
+        }
+
     }
 
     /**

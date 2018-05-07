@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.jpa;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 
 import javax.sql.DataSource;
@@ -17,7 +16,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Slf4j
+
 @Getter
 @Setter
 @RequiredArgsConstructor

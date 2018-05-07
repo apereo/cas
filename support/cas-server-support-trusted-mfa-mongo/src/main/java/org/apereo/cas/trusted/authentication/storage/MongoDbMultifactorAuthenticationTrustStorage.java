@@ -1,14 +1,14 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 import com.mongodb.client.result.DeleteResult;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,7 +20,7 @@ import java.util.Set;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
     private final String collectionName;
     private final MongoOperations mongoTemplate;
@@ -29,7 +29,7 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
     public void expire(final String key) {
         try {
             final var query = new Query();
-            query.addCriteria(Criteria.where("key").is(key));
+            query.addCriteria(Criteria.where("recordKey").is(key));
             final var res = this.mongoTemplate.remove(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
             LOGGER.info("Found and removed [{}]", res.getDeletedCount());
         } catch (final Exception e) {
@@ -42,10 +42,10 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
     }
 
     @Override
-    public void expire(final LocalDate onOrBefore) {
+    public void expire(final LocalDateTime onOrBefore) {
         try {
             final var query = new Query();
-            query.addCriteria(Criteria.where("date").lte(onOrBefore));
+            query.addCriteria(Criteria.where("recordDate").lte(onOrBefore));
             final var res = this.mongoTemplate.remove(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
             LOGGER.info("Found and removed [{}]", res.getDeletedCount());
         } catch (final Exception e) {
@@ -58,11 +58,10 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
+    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
         final var query = new Query();
-        query.addCriteria(Criteria.where("date").gte(onOrAfterDate));
-        final var results =
-            this.mongoTemplate.find(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
+        query.addCriteria(Criteria.where("recordDate").gte(onOrAfterDate));
+        final List<MultifactorAuthenticationTrustRecord> results = mongoTemplate.find(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
         return new HashSet<>(results);
     }
 

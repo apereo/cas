@@ -12,15 +12,26 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":support:cas-server-support-swivel-core")
-    
+    implementation files("./lib/pinsafe.client.jar")
+
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-webflow")
-
-    implementation files("./lib/pinsafe.client.jar")
+    
     testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    
     compileOnly project(":support:cas-server-support-trusted-mfa")
 }

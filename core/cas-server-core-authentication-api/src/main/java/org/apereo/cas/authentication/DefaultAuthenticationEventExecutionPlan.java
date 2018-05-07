@@ -23,6 +23,7 @@ import java.util.Set;
 public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEventExecutionPlan {
     private final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulatorList = new ArrayList<>();
     private final List<AuthenticationPostProcessor> authenticationPostProcessors = new ArrayList<>();
+    private final List<AuthenticationPreProcessor> authenticationPreProcessors = new ArrayList<>();
 
     private final List<AuthenticationPolicy> authenticationPolicies = new ArrayList<>();
     private final List<AuthenticationHandlerResolver> authenticationHandlerResolvers = new ArrayList<>();
@@ -47,6 +48,23 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     @Override
     public void registerAuthenticationHandlerWithPrincipalResolver(final Map<AuthenticationHandler, PrincipalResolver> plan) {
         plan.forEach(this::registerAuthenticationHandlerWithPrincipalResolver);
+    }
+
+    @Override
+    public void registerAuthenticationHandlerWithPrincipalResolvers(final Collection<AuthenticationHandler> handlers,
+                                                                    final PrincipalResolver principalResolver) {
+        handlers.forEach(h -> registerAuthenticationHandlerWithPrincipalResolver(h, principalResolver));
+    }
+
+    @Override
+    public void registerAuthenticationHandlerWithPrincipalResolvers(final List<AuthenticationHandler> handlers, final List<PrincipalResolver> principalResolver) {
+        if (handlers.size() != principalResolver.size()) {
+            LOGGER.error("Total number of authentication handlers must match the number of provided principal resolvers");
+            return;
+        }
+        for (int i = 0; i < handlers.size(); i++) {
+            registerAuthenticationHandlerWithPrincipalResolver(handlers.get(i), principalResolver.get(i));
+        }
     }
 
     @Override
@@ -82,12 +100,6 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
-    public void registerAuthenticationHandlerWithPrincipalResolvers(final Collection<AuthenticationHandler> handlers,
-                                                                    final PrincipalResolver principalResolver) {
-        handlers.forEach(h -> registerAuthenticationHandlerWithPrincipalResolver(h, principalResolver));
-    }
-
-    @Override
     public void registerAuthenticationPostProcessor(final AuthenticationPostProcessor processor) {
         LOGGER.debug("Registering authentication post processor [{}] into the execution plan", processor);
         authenticationPostProcessors.add(processor);
@@ -96,6 +108,20 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     @Override
     public Collection<AuthenticationPostProcessor> getAuthenticationPostProcessors(final AuthenticationTransaction transaction) {
         final List<AuthenticationPostProcessor> list = new ArrayList(this.authenticationPostProcessors);
+        OrderComparator.sort(list);
+        LOGGER.debug("Sorted and registered authentication post processors for this transaction are [{}]", list);
+        return list;
+    }
+
+    @Override
+    public void registerAuthenticationPreProcessor(final AuthenticationPreProcessor processor) {
+        LOGGER.debug("Registering authentication pre processor [{}] into the execution plan", processor);
+        authenticationPreProcessors.add(processor);
+    }
+
+    @Override
+    public Collection<AuthenticationPreProcessor> getAuthenticationPreProcessors(final AuthenticationTransaction transaction) {
+        final List<AuthenticationPreProcessor> list = new ArrayList(this.authenticationPostProcessors);
         OrderComparator.sort(list);
         LOGGER.debug("Sorted and registered authentication post processors for this transaction are [{}]", list);
         return list;

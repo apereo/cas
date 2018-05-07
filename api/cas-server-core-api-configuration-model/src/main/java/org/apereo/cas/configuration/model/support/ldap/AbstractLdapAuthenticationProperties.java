@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,7 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
+
 @Getter
 @Setter
 public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapSearchProperties {

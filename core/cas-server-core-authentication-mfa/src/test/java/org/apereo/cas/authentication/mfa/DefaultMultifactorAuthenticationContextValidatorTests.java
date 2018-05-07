@@ -4,6 +4,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;
@@ -68,4 +69,48 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
             "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
         assertTrue(result.getKey());
     }
+
+    @Test
+    public void verifyTrustedAuthnFoundInContext() {
+        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        final AuthenticationContextValidator v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
+            "OPEN", "trusted_authn", applicationContext);
+        final Authentication authentication = MultifactorAuthenticationTestUtils.getAuthentication(
+            MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
+            CollectionUtils.wrap("authn_method", "mfa-other", "trusted_authn", "mfa-dummy"));
+        final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result = v.validate(authentication,
+            "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
+        assertTrue(result.getKey());
+    }
+
+    @Test
+    public void verifyBypassAuthnFoundInContext() {
+        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        final AuthenticationContextValidator v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
+            "OPEN", "trusted_authn", applicationContext);
+        final Authentication authentication = MultifactorAuthenticationTestUtils.getAuthentication(
+            MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
+            CollectionUtils.wrap("authn_method", "mfa-other",
+                MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, true,
+            MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, "mfa-dummy"));
+        final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result = v.validate(authentication,
+            "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
+        assertTrue(result.getKey());
+    }
+
+    @Test
+    public void verifyBypassAuthnNotFoundInContext() {
+        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+        final AuthenticationContextValidator v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
+            "OPEN", "trusted_authn", applicationContext);
+        final Authentication authentication = MultifactorAuthenticationTestUtils.getAuthentication(
+            MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
+            CollectionUtils.wrap("authn_method", "mfa-other",
+                MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, true,
+                MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, "mfa-other"));
+        final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result = v.validate(authentication,
+            "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
+        assertFalse(result.getKey());
+    }
+
 }

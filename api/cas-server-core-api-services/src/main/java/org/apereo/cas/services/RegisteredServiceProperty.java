@@ -70,7 +70,10 @@ public interface RegisteredServiceProperty extends Serializable {
          * Secrets are Base64 encoded.
          **/
         TOKEN_SECRETS_ARE_BASE64_ENCODED("jwtSecretsAreBase64Encoded", "false"),
-
+        /**
+         * Whether interrupt notifications should be skipped.
+         **/
+        SKIP_INTERRUPT_NOTIFICATIONS("skipInterrupt", "false"),
         /**
          * Whether CAS should inject cache control headers into the response when this service is in process.
          */
