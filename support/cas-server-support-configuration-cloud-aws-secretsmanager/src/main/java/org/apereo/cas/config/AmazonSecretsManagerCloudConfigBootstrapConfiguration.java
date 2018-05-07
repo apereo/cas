@@ -35,8 +35,8 @@ public class AmazonSecretsManagerCloudConfigBootstrapConfiguration implements Pr
     public PropertySource<?> locate(final Environment environment) {
         final var props = new Properties();
         try {
-            final AmazonEnvironmentAwareClientBuilder builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
-            final AWSSecretsManager secretsManager = builder.build(AWSSecretsManagerClientBuilder.standard(), AWSSecretsManager.class);
+            final var builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
+            final var secretsManager = builder.build(AWSSecretsManagerClientBuilder.standard(), AWSSecretsManager.class);
 
             if (secretList != null && secretList.isEmpty()) {
                 LOGGER.debug("Fetched [{}] secret(s)", secretList.size());

@@ -33,13 +33,13 @@ public class CasTomcatBannerTests {
 
     @Test
     public void verifyAction() {
-        final CasTomcatBanner banner = new CasTomcatBanner();
-        final StringWriter writer = new StringWriter();
-        final WriterOutputStream out = new WriterOutputStream(writer, StandardCharsets.UTF_8);
-        try (PrintStream stream = new PrintStream(out)) {
+        final var banner = new CasTomcatBanner();
+        final var writer = new StringWriter();
+        final var out = new WriterOutputStream(writer, StandardCharsets.UTF_8);
+        try (var stream = new PrintStream(out)) {
             banner.printBanner(environment, CasTomcatBanner.class, stream);
         }
-        final String output = writer.toString();
+        final var output = writer.toString();
         assertNotNull(output);
     }
 }

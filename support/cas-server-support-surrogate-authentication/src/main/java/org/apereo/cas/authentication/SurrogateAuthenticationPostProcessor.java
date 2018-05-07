@@ -41,7 +41,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
     @Override
     public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws AuthenticationException {
         final var authentication = builder.build();
-        final Principal primaryPrincipal = authentication.getPrincipal();
+        final var primaryPrincipal = authentication.getPrincipal();
 
         @NonNull
         final var targetUserId = surrogateCredentials.getSurrogateUsername();
@@ -56,7 +56,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
             if (transaction.getService() != null) {
                 final var svc = this.servicesManager.findServiceBy(transaction.getService());
 
-                final AuditableContext serviceAccessAudit = AuditableContext.builder()
+                final var serviceAccessAudit = AuditableContext.builder()
                     .service(transaction.getService())
                     .authentication(authentication)
                     .registeredService(svc)

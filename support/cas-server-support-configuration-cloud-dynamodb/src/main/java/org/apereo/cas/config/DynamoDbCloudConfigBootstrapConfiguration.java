@@ -59,18 +59,18 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
-        final Properties props = new Properties();
+        final var props = new Properties();
 
         try {
-            final AmazonEnvironmentAwareClientBuilder builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
-            final AmazonDynamoDB amazonDynamoDBClient = builder.build(AmazonDynamoDBClient.builder(), AmazonDynamoDB.class);
-            final Boolean preventTableCreationOnStartup = builder.getSetting("preventTableCreationOnStartup", Boolean.class);
+            final var builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
+            final var amazonDynamoDBClient = builder.build(AmazonDynamoDBClient.builder(), AmazonDynamoDB.class);
+            final var preventTableCreationOnStartup = builder.getSetting("preventTableCreationOnStartup", Boolean.class);
             if (!preventTableCreationOnStartup) {
                 createSettingsTable(amazonDynamoDBClient, false);
             }
-            final ScanRequest scan = new ScanRequest(TABLE_NAME);
+            final var scan = new ScanRequest(TABLE_NAME);
             LOGGER.debug("Scanning table with request [{}]", scan);
-            final ScanResult result = amazonDynamoDBClient.scan(scan);
+            final var result = amazonDynamoDBClient.scan(scan);
             LOGGER.debug("Scanned table with result [{}]", scan);
 
             result.getItems()

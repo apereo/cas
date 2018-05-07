@@ -54,7 +54,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     public DeviceFingerprintComponentExtractor deviceFingerprintClientIpComponent() {
         final var properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getClientIp();
         if (properties.isEnabled()) {
-            final ClientIpDeviceFingerprintComponentExtractor component = new ClientIpDeviceFingerprintComponentExtractor();
+            final var component = new ClientIpDeviceFingerprintComponentExtractor();
             component.setOrder(properties.getOrder());
             return component;
         }
@@ -81,9 +81,9 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @Bean
     @RefreshScope
     public DeviceFingerprintComponentExtractor deviceFingerprintUserAgentComponent() {
-        final UserAgent properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getUserAgent();
+        final var properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getUserAgent();
         if (properties.isEnabled()) {
-            final UserAgentDeviceFingerprintComponentExtractor component = new UserAgentDeviceFingerprintComponentExtractor();
+            final var component = new UserAgentDeviceFingerprintComponentExtractor();
             component.setOrder(properties.getOrder());
             return component;
         }
@@ -96,7 +96,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @Bean(BEAN_DEVICE_FINGERPRINT_STRATEGY)
     @RefreshScope
     public DeviceFingerprintStrategy deviceFingerprintStrategy(final List<DeviceFingerprintComponentExtractor> extractors) {
-        final DeviceFingerprintProperties properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint();
+        final var properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint();
         return new DefaultDeviceFingerprintStrategy(extractors, properties.getComponentSeparator());
     }
 

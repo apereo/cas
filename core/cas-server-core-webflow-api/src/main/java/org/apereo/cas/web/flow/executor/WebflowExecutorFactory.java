@@ -58,7 +58,7 @@ public class WebflowExecutorFactory {
             new SerializedFlowExecutionSnapshotFactory(executionFactory, this.flowDefinitionRegistry);
         flowExecutionSnapshotFactory.setCompress(session.isCompress());
 
-        final DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(conversationManager, flowExecutionSnapshotFactory);
+        final var repository = new DefaultFlowExecutionRepository(conversationManager, flowExecutionSnapshotFactory);
         executionFactory.setExecutionKeyFactory(repository);
         return new FlowExecutorImpl(this.flowDefinitionRegistry, executionFactory, repository);
     }

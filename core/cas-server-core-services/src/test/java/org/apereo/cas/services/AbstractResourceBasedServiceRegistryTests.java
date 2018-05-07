@@ -82,13 +82,13 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
     @Test
     public void verifySizeAndSearch() throws Exception {
         prepTests();
-        final RegexRegisteredService r = new RegexRegisteredService();
+        final var r = new RegexRegisteredService();
         r.setName("checkSize");
         r.setServiceId(SERVICE_ID);
         r.setTheme(THEME);
         r.setDescription(DESCRIPTION);
 
-        final RegisteredService r2 = this.dao.save(r);
+        final var r2 = this.dao.save(r);
         assertTrue(dao.size() > 0);
         assertEquals(r2, this.dao.findServiceById(SERVICE_ID));
         r2.setEvaluationOrder(2000);

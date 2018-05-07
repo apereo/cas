@@ -29,19 +29,19 @@ import static org.mockito.Mockito.*;
 public class SamlResponseAuditResourceResolverTests {
     @Test
     public void verifyAction() {
-        final SamlResponseAuditResourceResolver r = new SamlResponseAuditResourceResolver();
-        final Response response = mock(Response.class);
-        final Issuer issuer = mock(Issuer.class);
+        final var r = new SamlResponseAuditResourceResolver();
+        final var response = mock(Response.class);
+        final var issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");
         when(response.getIssuer()).thenReturn(issuer);
         when(response.getDestination()).thenReturn("https://sp.example.org");
 
-        String[] result = r.resolveFrom(mock(JoinPoint.class), response);
+        var result = r.resolveFrom(mock(JoinPoint.class), response);
         assertNotNull(result);
         assertTrue(result.length > 0);
         
-        final Envelope envelope = mock(Envelope.class);
-        final Body body = mock(Body.class);
+        final var envelope = mock(Envelope.class);
+        final var body = mock(Body.class);
 
         when(body.getUnknownXMLObjects()).thenReturn(CollectionUtils.wrapList(response));
         when(envelope.getBody()).thenReturn(body);
@@ -49,10 +49,10 @@ public class SamlResponseAuditResourceResolverTests {
         assertNotNull(result);
         assertTrue(result.length > 0);
 
-        final Fault fault = mock(Fault.class);
-        final FaultActor actor = mock(FaultActor.class);
+        final var fault = mock(Fault.class);
+        final var actor = mock(FaultActor.class);
         when(actor.getValue()).thenReturn("actor");
-        final FaultString msg = mock(FaultString.class);
+        final var msg = mock(FaultString.class);
         when(msg.getValue()).thenReturn("message");
         when(fault.getMessage()).thenReturn(msg);
         when(fault.getActor()).thenReturn(actor);

@@ -25,8 +25,8 @@ public class VerifyPasswordResetRequestActionTests extends BasePasswordManagemen
     @Test
     public void verifyAction() {
         try {
-            final MockRequestContext context = new MockRequestContext();
-            final MockHttpServletRequest request = new MockHttpServletRequest();
+            final var context = new MockRequestContext();
+            final var request = new MockHttpServletRequest();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals("error", verifyPasswordResetRequestAction.execute(context).getId());
 
@@ -35,7 +35,7 @@ public class VerifyPasswordResetRequestActionTests extends BasePasswordManagemen
             request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
             ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-            final String token = passwordManagementService.createToken("casuser");
+            final var token = passwordManagementService.createToken("casuser");
             request.addParameter(SendPasswordResetInstructionsAction.PARAMETER_NAME_TOKEN, token);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals("success", verifyPasswordResetRequestAction.execute(context).getId());

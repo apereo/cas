@@ -37,7 +37,7 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyNullPrincipal() {
         final var resolver = new PersonDirectoryPrincipalResolver();
-        final Principal p = resolver.resolve(() -> null, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+        final var p = resolver.resolve(() -> null, Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertNull(p);
     }

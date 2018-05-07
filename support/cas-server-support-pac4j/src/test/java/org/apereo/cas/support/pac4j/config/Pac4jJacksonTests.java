@@ -20,18 +20,18 @@ public class Pac4jJacksonTests {
     @Test
     public void serialiseDeserialiseOAuth1RequestToken() {
 
-        final StringSerializer<Map<String, Object>> sessionStoreCookieSerializer = new Pac4jDelegatedAuthenticationConfiguration().pac4jDelegatedSessionStoreCookieSerializer();
+        final var sessionStoreCookieSerializer = new Pac4jDelegatedAuthenticationConfiguration().pac4jDelegatedSessionStoreCookieSerializer();
 
-        final String key = "requestToken";
-        final OAuth1RequestToken requestToken = new OAuth1RequestToken("token", "secret", true, "token=token&secret=secret");
+        final var key = "requestToken";
+        final var requestToken = new OAuth1RequestToken("token", "secret", true, "token=token&secret=secret");
 
         final Map<String, Object> session = new HashMap<>();
         session.put(key, requestToken);
-        final String serialisedSession = sessionStoreCookieSerializer.toString(session);
+        final var serialisedSession = sessionStoreCookieSerializer.toString(session);
 
         assertThat(session).isNotEmpty();
 
-        final Map<String, Object> deserialisedSession = sessionStoreCookieSerializer.from(serialisedSession);
+        final var deserialisedSession = sessionStoreCookieSerializer.from(serialisedSession);
 
         assertThat(deserialisedSession).isEqualTo(session);
     }

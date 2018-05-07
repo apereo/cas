@@ -19,17 +19,17 @@ import static org.junit.Assert.*;
 public class SurrogateAuthenticationMetaDataPopulatorTests {
     @Test
     public void verifyAction() {
-        final SurrogateAuthenticationMetaDataPopulator p = new SurrogateAuthenticationMetaDataPopulator();
+        final var p = new SurrogateAuthenticationMetaDataPopulator();
         assertFalse(p.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
 
-        final SurrogateUsernamePasswordCredential c = new SurrogateUsernamePasswordCredential();
+        final var c = new SurrogateUsernamePasswordCredential();
         c.setSurrogateUsername("cassurrogate");
         c.setUsername("casuser");
         c.setPassword("password");
 
-        final AuthenticationBuilder builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        final var builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         p.populateAttributes(builder, DefaultAuthenticationTransaction.of(c));
-        final Authentication auth = builder.build();
+        final var auth = builder.build();
         assertTrue(auth.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED));
         assertTrue(auth.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL));
         assertTrue(auth.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER));

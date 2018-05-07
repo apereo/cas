@@ -100,7 +100,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                 + "delegated authentication cookie.");
             cipher = CipherExecutor.noOp();
         }
-        final WsFederationCookieGenerator cookieGen = new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher),
+        final var cookieGen = new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher),
             cookie.getName(), cookie.getPath(), cookie.getMaxAge(),
             cookie.isSecure(), cookie.getDomain(), cookie.isHttpOnly());
         config.setCookieGenerator(cookieGen);

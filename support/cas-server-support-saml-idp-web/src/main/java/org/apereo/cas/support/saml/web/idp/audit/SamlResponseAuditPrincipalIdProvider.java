@@ -23,7 +23,7 @@ public class SamlResponseAuditPrincipalIdProvider extends DefaultAuditPrincipalI
         final var response = (Response) returnValue;
         if (response.getAssertions().size() > 0) {
             final var assertion = response.getAssertions().get(0);
-            final Subject subject = assertion.getSubject();
+            final var subject = assertion.getSubject();
             if (subject != null && subject.getNameID() != null) {
                 return subject.getNameID().getValue();
             }

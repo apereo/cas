@@ -76,9 +76,9 @@ public class MongoDbHealthIndicatorTests {
 
     @Test
     public void verifyMonitor() {
-        final Health health = mongoHealthIndicator.health();
+        final var health = mongoHealthIndicator.health();
         assertEquals(Status.UP, health.getStatus());
-        final Map<String, Object> details = health.getDetails();
+        final var details = health.getDetails();
         assertTrue(details.containsKey("size"));
         assertTrue(details.containsKey("capacity"));
         assertTrue(details.containsKey("evictions"));

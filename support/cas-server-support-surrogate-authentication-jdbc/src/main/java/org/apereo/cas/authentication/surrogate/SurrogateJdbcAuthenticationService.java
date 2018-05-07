@@ -62,7 +62,7 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
     @Override
     public List<String> getEligibleAccountsForSurrogateToProxy(final String username) {
         try {
-            final List<SurrogateAccount> results = this.jdbcTemplate.query(this.surrogateAccountQuery,
+            final var results = this.jdbcTemplate.query(this.surrogateAccountQuery,
                 new BeanPropertyRowMapper<>(SurrogateAccount.class), username);
             return results.stream().map(SurrogateAccount::getSurrogateAccount).collect(Collectors.toList());
         } catch (final Exception e) {

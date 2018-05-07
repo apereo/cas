@@ -41,13 +41,13 @@ public class CasCoreViewsConfiguration {
     public AbstractTemplateResolver chainingTemplateViewResolver() {
         final var chain = new ChainingTemplateViewResolver();
 
-        final List<String> templatePrefixes = casProperties.getView().getTemplatePrefixes();
+        final var templatePrefixes = casProperties.getView().getTemplatePrefixes();
         templatePrefixes.forEach(Unchecked.consumer(prefix -> {
             final var viewPath = StringUtils.appendIfMissing(prefixPath, "/");
 
-            final ViewProperties.Rest rest = casProperties.getView().getRest();
+            final var rest = casProperties.getView().getRest();
             if (StringUtils.isNotBlank(rest.getUrl())) {
-                final RestfulUrlTemplateResolver url = new RestfulUrlTemplateResolver(casProperties);
+                final var url = new RestfulUrlTemplateResolver(casProperties);
                 configureTemplateViewResolver(url);
                 chain.addResolver(url);
             }

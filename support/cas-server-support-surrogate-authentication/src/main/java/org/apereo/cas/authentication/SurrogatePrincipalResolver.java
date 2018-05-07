@@ -40,7 +40,7 @@ public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver
         if (currentPrincipal == null || !currentPrincipal.isPresent()) {
             throw new IllegalArgumentException("Current principal resolved cannot be null");
         }
-        final String id = currentPrincipal.get().getId();
+        final var id = currentPrincipal.get().getId();
         LOGGER.debug("Resolving principal id for surrogate authentication as [{}]", id);
         return id;
     }

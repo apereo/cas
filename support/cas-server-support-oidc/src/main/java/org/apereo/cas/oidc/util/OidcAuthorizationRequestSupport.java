@@ -156,7 +156,7 @@ public class OidcAuthorizationRequestSupport {
     public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
                                                                        final UserProfile profile) {
 
-        final Object authTime = profile.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
+        final var authTime = profile.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
         if (authTime == null) {
             return false;
         }

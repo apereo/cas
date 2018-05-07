@@ -28,9 +28,9 @@ public class SurrogateAuditPrincipalIdProvider extends DefaultAuditPrincipalIdPr
             return Credential.UNKNOWN_ID;
         }
         if (supports(authentication, returnValue, exception)) {
-            final Map<String, Object> attributes = authentication.getAttributes();
-            final String surrogateUser = attributes.get(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER).toString();
-            final String principalId = attributes.get(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL).toString();
+            final var attributes = authentication.getAttributes();
+            final var surrogateUser = attributes.get(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER).toString();
+            final var principalId = attributes.get(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL).toString();
             return String.format("(Primary User: [%s], Surrogate User: [%s])", principalId, surrogateUser);
         }
         return super.getPrincipalIdFrom(authentication, returnValue, exception);

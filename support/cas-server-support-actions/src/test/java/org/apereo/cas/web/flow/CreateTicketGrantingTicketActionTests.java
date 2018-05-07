@@ -58,12 +58,12 @@ public class CreateTicketGrantingTicketActionTests extends AbstractCentralAuthen
     public void verifyCreateTgt() throws Exception {
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
 
-        final AuthenticationResultBuilder builder = mock(AuthenticationResultBuilder.class);
-        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication();
+        final var builder = mock(AuthenticationResultBuilder.class);
+        final var authentication = CoreAuthenticationTestUtils.getAuthentication();
         when(builder.getInitialAuthentication()).thenReturn(Optional.of(authentication));
         when(builder.collect(any(Authentication.class))).thenReturn(builder);
 
-        final AuthenticationResult result = mock(AuthenticationResult.class);
+        final var result = mock(AuthenticationResult.class);
         when(result.getAuthentication()).thenReturn(authentication);
 
         when(builder.build()).thenReturn(result);
@@ -72,7 +72,7 @@ public class CreateTicketGrantingTicketActionTests extends AbstractCentralAuthen
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
-        final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
+        final var tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("TGT-123456");
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
 

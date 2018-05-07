@@ -25,18 +25,18 @@ import static org.mockito.Mockito.*;
 public class SamlRequestAuditResourceResolverTests {
     @Test
     public void verifyAction() {
-        final SamlRequestAuditResourceResolver r = new SamlRequestAuditResourceResolver();
-        final AuthnRequest authnRequest = mock(AuthnRequest.class);
-        final Issuer issuer = mock(Issuer.class);
+        final var r = new SamlRequestAuditResourceResolver();
+        final var authnRequest = mock(AuthnRequest.class);
+        final var issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");
         when(authnRequest.getIssuer()).thenReturn(issuer);
         when(authnRequest.getProtocolBinding()).thenReturn("ProtocolBinding");
         Pair pair = Pair.of(authnRequest, null);
-        String[] result = r.resolveFrom(mock(JoinPoint.class), pair);
+        var result = r.resolveFrom(mock(JoinPoint.class), pair);
         assertNotNull(result);
         assertTrue(result.length > 0);
 
-        final LogoutRequest logoutRequest = mock(LogoutRequest.class);
+        final var logoutRequest = mock(LogoutRequest.class);
         when(logoutRequest.getIssuer()).thenReturn(issuer);
         pair = Pair.of(authnRequest, null);
         result = r.resolveFrom(mock(JoinPoint.class), pair);

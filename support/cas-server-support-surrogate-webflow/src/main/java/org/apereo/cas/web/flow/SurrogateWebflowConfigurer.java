@@ -51,9 +51,9 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
         final var actionState = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
 
         LOGGER.debug("Locating transition id [{}] to for state [{}", CasWebflowConstants.TRANSITION_ID_SUCCESS, actionState.getId());
-        final String targetSuccessId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
+        final var targetSuccessId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
 
-        final ActionState loadSurrogatesAction = createActionState(flow, "loadSurrogatesAction", "loadSurrogatesListAction");
+        final var loadSurrogatesAction = createActionState(flow, "loadSurrogatesAction", "loadSurrogatesListAction");
         createTransitionForState(loadSurrogatesAction, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetSuccessId);
         createTransitionForState(loadSurrogatesAction, VIEW_ID_SURROGATE_VIEW, VIEW_ID_SURROGATE_VIEW);
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, loadSurrogatesAction.getId(), true);
@@ -61,9 +61,9 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void createSurrogateSelectionActionState(final Flow flow) {
-        final ActionState selectSurrogate = createActionState(flow, "selectSurrogate", "selectSurrogateAction");
-        final ActionState actionState = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
-        final String targetSuccessId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
+        final var selectSurrogate = createActionState(flow, "selectSurrogate", "selectSurrogateAction");
+        final var actionState = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
+        final var targetSuccessId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         createTransitionForState(selectSurrogate, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetSuccessId);
     }
 
