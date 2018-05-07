@@ -1,11 +1,10 @@
 package org.apereo.cas.util.io;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
@@ -19,14 +18,10 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class CommunicationsManager {
-    @Autowired(required = false)
-    @Qualifier("smsSender")
-    private SmsSender smsSender;
-
-    @Autowired(required = false)
-    @Qualifier("mailSender")
-    private JavaMailSender mailSender;
+    private final SmsSender smsSender;
+    private final JavaMailSender mailSender;
 
     public boolean isMailSenderDefined() {
         return this.mailSender != null;

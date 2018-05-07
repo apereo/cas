@@ -11,7 +11,6 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
@@ -32,7 +31,7 @@ import java.util.Map;
 public class CasConfigurationPropertiesEnvironmentManager {
     @NonNull
     private final ConfigurationPropertiesBindingPostProcessor binder;
-    
+
     private final Environment environment;
 
     /**
