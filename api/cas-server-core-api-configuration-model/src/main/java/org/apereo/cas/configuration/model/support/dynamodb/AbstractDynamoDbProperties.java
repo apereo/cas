@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.dynamodb;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.aws.BaseAmazonWebServicesProperties;
 
 /**
@@ -11,7 +10,7 @@ import org.apereo.cas.configuration.model.support.aws.BaseAmazonWebServicesPrope
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
+
 @Getter
 @Setter
 public abstract class AbstractDynamoDbProperties extends BaseAmazonWebServicesProperties {

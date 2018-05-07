@@ -27,7 +27,16 @@ create attribute release policies, etc. CAS at runtime will auto-configure all r
 
 ## General
 
-A number of CAS configuration options equally apply to a number of modules and features. To understand and take note of those options, please [review this guide](Configuration-Properties-Common.html).
+A number of CAS configuration options equally apply to a number of modules and features. To understand and 
+take note of those options, please [review this guide](Configuration-Properties-Common.html).
+
+## Custom Settings
+
+The following settings could be used to extend CAS with arbitrary configuration keys and values:
+
+```properties
+# cas.custom.properties.[property-name]=[property-value]
+``` 
 
 ## Configuration Storage
 
@@ -144,19 +153,27 @@ Allow the CAS Spring Cloud configuration server to load settings from an Apache 
 # spring.cloud.zookeeper.config.root=cas/config
 ```
 
-### DynamoDb
+### Amazon Secrets Manager
 
-Allow the CAS Spring Cloud configuration server to load settings from a DynamoDb instance.
+Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
+under the configuration key `cas.spring.cloud.aws.secretsManager`.
+
+### Amazon S3
+
+The following settings may be passed using strategies outlined [here](Configuration-Management.html#overview) in order for CAS to establish a connection,
+using the configuration key `cas.spring.cloud.aws.s3`.
 
 ```properties
-# cas.spring.cloud.dynamodb.credentialAccessKey=
-# cas.spring.cloud.dynamodb.credentialSecretKey=
-# cas.spring.cloud.dynamodb.endpoint=http://localhost:8000
-# cas.spring.cloud.dynamodb.localAddress=
-# cas.spring.cloud.dynamodb.endpoint=
-# cas.spring.cloud.dynamodb.region=
-# cas.spring.cloud.dynamodb.regionOverride=
+# ${configurationKey}.bucketName=cas-properties
 ```
+
+Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
+under the configuration key `cas.spring.cloud.aws.s3`.
+
+### DynamoDb
+
+Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
+under the configuration key `cas.spring.cloud.dynamodb`. 
 
 ### JDBC
 
@@ -567,6 +584,11 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 # above which is handled via Thymeleaf.
 # cas.view.templatePrefixes[0]=file:///etc/cas/templates
 ```
+
+### Restful Views
+
+Control the resolution of CAS views via REST. RESTful settings for this feature are 
+available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.view.rest`.
 
 ## Logging
 
@@ -1049,6 +1071,10 @@ To learn more about this topic, [please review this guide](Surrogate-Authenticat
 # cas.authn.surrogate.separator=+
 ```
 
+Principal resolution and Person Directory settings for this feature 
+are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) 
+under the configuration key `cas.authn.surrogate.principal`.
+
 ### Static Surrogate Accounts
 
 ```properties
@@ -1494,7 +1520,8 @@ To learn more about this topic, [please review this guide](../integration/Google
 
 Allow CAS to become an OpenID authentication provider. To learn more about this topic, [please review this guide](../protocol/OpenID-Protocol.html).
 
-Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.openid.principal`.
+Principal resolution and Person Directory settings for this feature 
+are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.openid.principal`.
 
 ```properties
 # cas.authn.openid.enforceRpId=false
@@ -1562,8 +1589,17 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas[0].kerberosKdcSystemProperty=
 # cas.authn.jaas[0].kerberosRealmSystemProperty=
 # cas.authn.jaas[0].name=
+# cas.authn.jaas[0].order=
 # cas.authn.jaas[0].credentialCriteria=
 ```
+
+Principal resolution and Person Directory settings for this feature 
+are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) 
+under the configuration key `cas.authn.jaas[0].principal`.
+
+Password policy settings for this feature are available [here](Configuration-Properties-Common.html#password-policy-settings) 
+under the configuration key `cas.authn.jaas[0].passwordPolicy`.
+
 
 ## GUA Authentication
 
@@ -2282,15 +2318,27 @@ A given attribute that is to be encoded in the final SAML response may contain a
 
 #### SAML Metadata JPA
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.samlIdp.metadata.jpa`.
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
+under the configuration key `cas.authn.samlIdp.metadata.jpa`.
 
 #### SAML Metadata MongoDb
 
- Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.samlIdp.metadata`.
-
+ Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) 
+ under the configuration key `cas.authn.samlIdp.metadata`.
+ 
  #### SAML Metadata REST
+ 
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.samlIdp.metadata.rest`.
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.samlIdp.metadata.rest`.
+#### SAML Metadata Amazon S3
+ 
+Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
+under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
+
+```properties
+# cas.authn.samlIdp.metadata.amazonS3.bucketName=
+```
 
 ### SAML Logout
 
@@ -3508,6 +3556,13 @@ Interrupt the authentication flow to reach out to external services. To learn mo
 
 ```properties
 # cas.interrupt.json.location=file:/etc/cas/config/interrupt.json
+```
+
+#### Authentication Interrupt Regex Attributes
+
+```properties
+# cas.interrupt.attributeName=attribute-name-pattern
+# cas.interrupt.attributeValue=attribute-value-pattern
 ```
 
 #### Authentication Interrupt Groovy

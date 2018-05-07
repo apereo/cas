@@ -36,7 +36,10 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
                 return;
             }
 
-            final var statuses = Arrays.stream(statistics).map(this::status).collect(Collectors.toSet());
+            final Set<Status> statuses = Arrays.stream(statistics)
+                .map(this::status)
+                .collect(Collectors.toSet());
+            
             if (statuses.contains(Status.OUT_OF_SERVICE)) {
                 builder.outOfService();
             } else if (statuses.contains(Status.DOWN)) {
@@ -47,12 +50,14 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
                 builder.up();
             }
 
-            Arrays.stream(statistics).forEach(s ->
+            Arrays.stream(statistics).forEach(s -> {
                 builder.withDetail("size", s.getSize())
                     .withDetail("capacity", s.getCapacity())
                     .withDetail("evictions", s.getEvictions())
                     .withDetail("percentFree", s.getPercentFree())
-                    .withDetail("name", s.getName()));
+                    .withDetail("percentFree", s.toString(new StringBuilder()))
+                    .withDetail("name", s.getName());
+            });
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             builder.down(e);

@@ -84,5 +84,7 @@ public class HazelcastHealthIndicatorTests {
         assertTrue(health.getDetails().containsKey("evictions"));
         assertTrue(health.getDetails().containsKey("percentFree"));
         assertTrue(health.getDetails().containsKey("name"));
+        assertNotNull(hazelcastHealthIndicator.toString());
+
     }
 }

@@ -123,7 +123,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                     throw new IllegalArgumentException("Unable to determine credentials from the context with client " + client.getName());
                 }
             } catch (final Exception e) {
-                LOGGER.debug(e.getMessage(), e);
+                LOGGER.info(e.getMessage(), e);
                 throw new IllegalArgumentException("Delegated authentication has failed with client " + client.getName());
             }
 
@@ -148,6 +148,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
         WebUtils.putAuthentication(authenticationResult.getAuthentication(), context);
         WebUtils.putAuthenticationResult(authenticationResult, context);
+        WebUtils.putCredential(context, clientCredential);
+        WebUtils.putService(context, service);
         return success();
     }
 

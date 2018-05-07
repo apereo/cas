@@ -269,7 +269,9 @@ Support is provided via the following dependency in the WAR overlay:
 
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#zookeeper).
 
-You will need to map CAS settings to ZooKeeper's nodes that contain values. The parent node for all settings should match the configuration root value provided to CAS. Under the root, you could have folders such as `cas`, `cas,dev`, `cas,local`, etc where `dev` and `local` are Spring profiles.
+You will need to map CAS settings to ZooKeeper's nodes that contain values. The parent node for all settings should 
+match the configuration root value provided to CAS. Under the root, you could have folders such 
+as `cas`, `cas,dev`, `cas,local`, etc where `dev` and `local` are Spring profiles.
 
 To create nodes and values in Apache ZooKeeper, try the following commands
 as a sample:
@@ -282,16 +284,32 @@ create /cas/config/cas cas
 create /cas/config/cas/settingName casuser::Test
 ```
 
-Creating nodes and directories in Apache ZooKeeper may require providing a value. The above sample commands show that the value `cas` is provided when creating directories. Always check with the official Apache ZooKeeper guides. You may not need to do that step.
+Creating nodes and directories in Apache ZooKeeper may require providing a value. The above sample commands show that 
+the value `cas` is provided when creating directories. Always check with the official Apache ZooKeeper guides. You may not need to do that step.
 
 Finally in your CAS properties, the new `settingName` setting can be used as a reference.
 
 ```properties
-cas.something.something=${settingName}
+# cas.something.something=${settingName}
 ```
 
 ...where `${settingName}` gets the value of the contents of the Apache ZooKeeper node `cas/config/cas/settingName`.
 
+##### Amazon S3
+
+CAS is also able to use [Amazon S3](https://docs.aws.amazon.com/AmazonS3/latest/dev) to locate properties and settings.
+
+Support is provided via the following dependency in the WAR overlay:
+ 
+ ```xml
+ <dependency>
+      <groupId>org.apereo.cas</groupId>
+      <artifactId>cas-server-support-configuration-cloud-aws-s3</artifactId>
+      <version>${cas.version}</version>
+ </dependency>
+ ```
+ 
+ See [this guide](Configuration-Properties.html#amazon-s3) for relevant settings.
 
 ##### Amazon Secrets Manager
 
@@ -307,16 +325,7 @@ Support is provided via the following dependency in the WAR overlay:
 </dependency>
 ```
 
-The following setting may be passed using strategies outlined [here](Configuration-Management.html#overview) in order for CAS to establish a connection,
-using the configuration key `cas.spring.cloud.aws.secretsManager`:
-
-```properties
-${configurationKey}.credentialAccessKey=
-${configurationKey}.credentialSecretKey=
-${configurationKey}.region=
-${configurationKey}.regionOverride=
-${configurationKey}.endpoint=
-```
+See [this guide](Configuration-Properties.html#amazon-secrets-manager) for relevant settings.
 
 ##### DynamoDb
 
@@ -342,17 +351,7 @@ The `DynamoDbCasProperties` table is automatically created by CAS with the follo
 }
 ```
 
-The following setting may be passed using strategies outlined [here](Configuration-Management.html#overview) in order for CAS to establish a connection,
-using the configuration key `cas.spring.cloud.dynamodb`:
-
-```properties
-${configurationKey}.localAddress=
-${configurationKey}.credentialAccessKey=
-${configurationKey}.credentialSecretKey=
-${configurationKey}.region=
-${configurationKey}.regionOverride=
-${configurationKey}.endpoint=
-```
+See [this guide](Configuration-Properties.html#dynamodb) for relevant settings.
 
 ##### Azure KeyVault Secrets
 
@@ -371,6 +370,8 @@ To see the relevant list of CAS properties for this feature, please [review this
 **IMPORTANT**: The allowed  name pattern in Azure Key Vault is `^[0-9a-zA-Z-]+$`. For properties that contain 
 that contain `.` in the name (i.e. `cas.some.property`),  replace `.` with `-` when you store the setting in Azure Key Vault (i.e. `cas-some-property`). 
 The module will handle the transformation for you. 
+
+See [this guide](Configuration-Properties.html#azure-keyvault-secrets) for relevant settings.
 
 ##### JDBC
 

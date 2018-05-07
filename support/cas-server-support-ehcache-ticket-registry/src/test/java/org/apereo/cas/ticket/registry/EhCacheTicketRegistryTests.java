@@ -69,7 +69,7 @@ import static org.mockito.Mockito.*;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class})
 @Slf4j
-public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
+public class EhCacheTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")

@@ -26,7 +26,7 @@ import java.util.Collection;
         CasCoreUtilSerializationConfiguration.class})
 @TestPropertySource(locations = {"classpath:/memcached.properties"})
 @Slf4j
-public class MemcachedTicketRegistryTests extends AbstractTicketRegistryTests {
+public class MemcachedTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
   
     @Autowired
     @Qualifier("ticketRegistry")

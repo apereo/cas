@@ -11,4 +11,21 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":support:cas-server-support-token-core")
     implementation project(":support:cas-server-support-token-authentication")
+    implementation project(":core:cas-server-core-authentication-attributes")
+    
+    implementation libraries.pac4j
+    
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-logout-api")
+    testImplementation project(":core:cas-server-core-monitor")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-logout")
 }

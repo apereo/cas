@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.adaptive;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
@@ -8,8 +9,8 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+
 import java.util.regex.Pattern;
-import lombok.Setter;
 
 /**
  * This is {@link DefaultAdaptiveAuthenticationPolicy}.
@@ -18,12 +19,11 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @Slf4j
-@Setter
+@RequiredArgsConstructor
 public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticationPolicy {
 
-    private GeoLocationService geoLocationService;
-
-    private AdaptiveAuthenticationProperties adaptiveAuthenticationProperties;
+    private final GeoLocationService geoLocationService;
+    private final AdaptiveAuthenticationProperties adaptiveAuthenticationProperties;
 
     @Override
     public boolean apply(final String userAgent, final GeoLocationRequest location) {

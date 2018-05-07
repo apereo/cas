@@ -63,7 +63,7 @@ import java.util.Collection;
     RefreshAutoConfiguration.class},
     properties = {"cas.ticket.registry.couchbase.password=password", "cas.ticket.registry.couchbase.bucket=testbucket"})
 @Slf4j
-public class CouchbaseTicketRegistryTests extends AbstractTicketRegistryTests {
+public class CouchbaseTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;

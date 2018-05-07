@@ -66,6 +66,14 @@ This option is most useful during development, testing and demos.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-interrupt-json).
 
+### Regex Attribute
+
+This strategy allows one to define regular expression patterns in CAS settings that would be matched against attributes names and values.
+If a successful match is produced while CAS examines the collection of both authentication and principal attributes, the authentication flow
+would be interrupted.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-interrupt-regex-attributes).
+
 ### Groovy
 
 This strategy reaches out to a Groovy resource whose job is to dynamically calculate whether the authentication flow should be interrupted given the provided username and certain number of other parameters.
@@ -134,3 +142,23 @@ public class MyInterruptConfiguration {
 ```
 
 [See this guide](Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+
+## Skipping Interrupts
+
+Interrupt notifications may be disabled on a per-service basis. A sample JSON file follows:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://.+",
+  "name" : "sample service",
+  "id" : 100,
+  "properties" : {
+    "@class" : "java.util.HashMap",
+    "skipInterrupt" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "true" ] ]
+    }
+  }
+}
+```

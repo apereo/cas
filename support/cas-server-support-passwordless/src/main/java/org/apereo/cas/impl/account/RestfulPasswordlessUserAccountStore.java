@@ -33,7 +33,7 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
     @Override
     public Optional<PasswordlessUserAccount> findUser(final String username) {
         try {
-            final Map<String, String> parameters = new HashMap<>();
+            final Map<String, Object> parameters = new HashMap<>();
             parameters.put("username", username);
 
             final var response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),

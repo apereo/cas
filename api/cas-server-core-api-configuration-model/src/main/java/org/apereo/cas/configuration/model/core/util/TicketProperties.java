@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.util;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.ticket.ProxyGrantingTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.ProxyTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.ServiceTicketProperties;
@@ -20,7 +19,7 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
-@Slf4j
+
 @Getter
 @Setter
 public class TicketProperties implements Serializable {

@@ -37,7 +37,7 @@ import redis.embedded.RedisServer;
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @Slf4j
-public class RedisTicketRegistryTests extends AbstractTicketRegistryTests {
+public class RedisTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     private static RedisServer REDIS_SERVER;
 

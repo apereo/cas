@@ -8,7 +8,6 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -32,17 +31,18 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class SurrogateAuthenticationPostProcessor implements AuthenticationPostProcessor {
-    private final PrincipalFactory principalFactory;
     private final SurrogateAuthenticationService surrogateAuthenticationService;
     private final ServicesManager servicesManager;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
     private final AuditableExecution surrogateEligibilityAuditableExecution;
+    private final SurrogatePrincipalBuilder surrogatePrincipalBuilder;
 
     @Override
     public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws AuthenticationException {
         final var authentication = builder.build();
-        final var principal = authentication.getPrincipal();
+        final Principal primaryPrincipal = authentication.getPrincipal();
+
         @NonNull
         final var targetUserId = surrogateCredentials.getSurrogateUsername();
 
@@ -52,12 +52,12 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                 LOGGER.error("No surrogate username was specified as part of the credential");
                 throw new CredentialNotFoundException("Missing surrogate username in credential");
             }
-
-            LOGGER.debug("Authenticated [{}] will be checked for surrogate eligibility next...", principal);
+            LOGGER.debug("Authenticated [{}] will be checked for surrogate eligibility next for [{}]...", primaryPrincipal, targetUserId);
             if (transaction.getService() != null) {
                 final var svc = this.servicesManager.findServiceBy(transaction.getService());
 
-                final var serviceAccessAudit = AuditableContext.builder().service(transaction.getService())
+                final AuditableContext serviceAccessAudit = AuditableContext.builder()
+                    .service(transaction.getService())
                     .authentication(authentication)
                     .registeredService(svc)
                     .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
@@ -67,10 +67,9 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                 accessResult.throwExceptionIfNeeded();
             }
 
-            if (this.surrogateAuthenticationService.canAuthenticateAs(targetUserId, principal, transaction.getService())) {
-                LOGGER.debug("Principal [{}] is authorized to authenticate as [{}]", principal, targetUserId);
-                builder.setPrincipal(this.principalFactory.createPrincipal(targetUserId));
-                publishSuccessEvent(principal, targetUserId);
+            if (this.surrogateAuthenticationService.canAuthenticateAs(targetUserId, primaryPrincipal, transaction.getService())) {
+                LOGGER.debug("Principal [{}] is authorized to authenticate as [{}]", primaryPrincipal, targetUserId);
+                publishSuccessEvent(primaryPrincipal, targetUserId);
 
                 final var surrogateEligibleAudit = AuditableContext.builder()
                     .service(transaction.getService())
@@ -81,12 +80,12 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                 this.surrogateEligibilityAuditableExecution.execute(surrogateEligibleAudit);
                 return;
             }
-            LOGGER.error("Principal [{}] is unable/unauthorized to authenticate as [{}]", principal, targetUserId);
+            LOGGER.error("Principal [{}] is unable/unauthorized to authenticate as [{}]", primaryPrincipal, targetUserId);
             throw new FailedLoginException();
         } catch (final Exception e) {
-            publishFailureEvent(principal, targetUserId);
+            publishFailureEvent(primaryPrincipal, targetUserId);
             final Map<String, Throwable> map = CollectionUtils.wrap(getClass().getSimpleName(),
-                new SurrogateAuthenticationException("Principal " + principal + " is unauthorized to authenticate as " + targetUserId));
+                new SurrogateAuthenticationException("Principal " + primaryPrincipal + " is unauthorized to authenticate as " + targetUserId));
 
             final var surrogateIneligibleAudit = AuditableContext.builder()
                 .service(transaction.getService())

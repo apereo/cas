@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.support;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.CipherExecutor;
@@ -18,7 +17,7 @@ import java.security.Security;
  * @since 5.1.0
  */
 
-@Slf4j
+
 public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<String, String> {
     /**
      * Prefix inserted at the beginning of a value to indicate it's encrypted.
@@ -143,12 +142,12 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     }
 
     @Override
-    public String encode(final String value) {
+    public String encode(final String value, final Object[] parameters) {
         return encryptValue(value);
     }
 
     @Override
-    public String decode(final String value) {
+    public String decode(final String value, final Object[] parameters) {
         return decryptValue(value);
     }
 
@@ -220,8 +219,8 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         }
         return value;
     }
-    
-    
+
+
     /**
      * Initialize jasypt instance if necessary.
      */

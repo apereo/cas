@@ -80,8 +80,6 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         putCredentialInRequestScope(context, c);
 
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
-        assertNotNull(WebUtils.getTicketGrantingTicketId(context));
-        assertNotNull(response.getCookie(this.warnCookieGenerator.getCookieName()));
     }
 
     @Test

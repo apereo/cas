@@ -60,9 +60,8 @@
                            th:value="#{screen.interrupt.btn.proceed}"
                            value="Proceed"
                            type="submit"/>
-                    &nbsp;
-                    <a class="btn btn-warning" id="cancel" name="cancel" th:href="@{/login}"
-                       th:text="#{screen.interrupt.btn.cancel}">Cancel</a>
+                    &nbsp;<a class="btn btn-primary" id="login" name="login"
+                             th:href="${service.id}" th:text="#{screen.error.page.loginagain}">Login</a>
                 </div>
             </div>
         </form>

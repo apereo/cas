@@ -54,7 +54,7 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
     /**
      * List of warnings issued by the authentication source while authenticating the credential.
      */
-    private List<MessageDescriptor> warnings;
+    private List<MessageDescriptor> warnings = new ArrayList<>();
 
     /**
      * Instantiates a new handler result.

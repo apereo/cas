@@ -91,7 +91,7 @@ public class PasswordManagementWebflowConfiguration implements CasWebflowExecuti
     @RefreshScope
     @Bean
     public Action initPasswordChangeAction() {
-        return new InitPasswordChangeAction();
+        return new InitPasswordChangeAction(casProperties);
     }
 
     @ConditionalOnMissingBean(name = "initPasswordResetAction")

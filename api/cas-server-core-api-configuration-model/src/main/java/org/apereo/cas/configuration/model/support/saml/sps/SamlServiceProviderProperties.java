@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.saml.sps;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import java.io.Serializable;
 import lombok.NoArgsConstructor;
@@ -14,7 +13,7 @@ import lombok.NoArgsConstructor;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-saml-sp-integrations")
-@Slf4j
+
 @Getter
 @Setter
 @NoArgsConstructor

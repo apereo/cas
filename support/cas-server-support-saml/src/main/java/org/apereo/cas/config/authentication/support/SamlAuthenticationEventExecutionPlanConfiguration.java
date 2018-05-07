@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 public class SamlAuthenticationEventExecutionPlanConfiguration {
 
+    @ConditionalOnMissingBean(name = "samlAuthenticationMetaDataPopulator")
     @Bean
     public AuthenticationMetaDataPopulator samlAuthenticationMetaDataPopulator() {
         return new SamlAuthenticationMetaDataPopulator();

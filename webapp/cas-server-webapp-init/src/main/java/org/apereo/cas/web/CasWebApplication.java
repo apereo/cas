@@ -1,7 +1,6 @@
 package org.apereo.cas.web;
 
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.boot.Banner;
@@ -39,19 +38,19 @@ import java.util.Map;
     JerseyAutoConfiguration.class,
     GroovyTemplateAutoConfiguration.class,
     JmxAutoConfiguration.class,
-    IntegrationAutoConfiguration.class,
     DataSourceAutoConfiguration.class,
     RedisAutoConfiguration.class,
     MongoAutoConfiguration.class,
     MongoDataAutoConfiguration.class,
     CassandraAutoConfiguration.class,
     DataSourceTransactionManagerAutoConfiguration.class,
-    RedisRepositoriesAutoConfiguration.class})
+    MetricsDropwizardAutoConfiguration.class,
+    RedisRepositoriesAutoConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableScheduling
-@Slf4j
 @NoArgsConstructor
 public class CasWebApplication {
 
@@ -64,9 +63,11 @@ public class CasWebApplication {
         final var properties = CasEmbeddedContainerUtils.getRuntimeProperties(Boolean.TRUE);
         final var banner = CasEmbeddedContainerUtils.getCasBannerInstance();
         new SpringApplicationBuilder(CasWebApplication.class)
-            .banner(banner).web(true)
+            .banner(banner)
+            .web(true)
             .properties(properties)
             .logStartupInfo(true)
+            .contextClass(CasWebApplicationContext.class)
             .run(args);
     }
 }

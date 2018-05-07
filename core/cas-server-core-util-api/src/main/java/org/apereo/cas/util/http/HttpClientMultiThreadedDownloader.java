@@ -29,23 +29,18 @@ public class HttpClientMultiThreadedDownloader {
      */
     @SneakyThrows
     public void download() {
-        final var stop = new AtomicBoolean(false);
-        final var info = new DownloadInfo(resourceToDownload.getURL());
-        final var status = new DownloadStatusListener(info);
+        final AtomicBoolean stop = new AtomicBoolean(false);
+        final DownloadInfo info = new DownloadInfo(resourceToDownload.getURL());
+        final DownloadStatusListener status = new DownloadStatusListener(info);
 
-        // extract information from the web
         info.extract(stop, status);
 
-        // enable multipart download
         info.enableMultipart();
 
-        // create downloader
         final var w = new WGet(info, this.targetDestination);
 
-        // init speed info
         status.speedInfo.start(0);
 
-        // will blocks until download finishes
         LOGGER.info("Starting to download resource [{}] into [{}]", this.resourceToDownload, targetDestination);
         w.download(stop, status);
 

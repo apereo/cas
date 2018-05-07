@@ -1,9 +1,5 @@
 package org.apereo.cas.config;
 
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
 import com.amazonaws.services.secretsmanager.model.GetSecretValueRequest;
@@ -13,8 +9,7 @@ import com.amazonaws.services.secretsmanager.model.ListSecretsResult;
 import com.amazonaws.services.secretsmanager.model.SecretListEntry;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
+import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -34,16 +29,15 @@ import java.util.Properties;
 @Slf4j
 @Getter
 public class AmazonSecretsManagerCloudConfigBootstrapConfiguration implements PropertySourceLocator {
+    private static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.aws.secretsManager";
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
         final var props = new Properties();
-        final var secretsManager = getAmazonSecretsManagerClient(environment);
-
         try {
-            final var listRequest = new ListSecretsRequest();
-            final var listResults = secretsManager.listSecrets(listRequest);
-            final var secretList = listResults.getSecretList();
+            final AmazonEnvironmentAwareClientBuilder builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
+            final AWSSecretsManager secretsManager = builder.build(AWSSecretsManagerClientBuilder.standard(), AWSSecretsManager.class);
+
             if (secretList != null && secretList.isEmpty()) {
                 LOGGER.debug("Fetched [{}] secret(s)", secretList.size());
                 secretList
@@ -63,34 +57,5 @@ public class AmazonSecretsManagerCloudConfigBootstrapConfiguration implements Pr
         }
         LOGGER.debug("Located [{}] secret(s)", props.size());
         return new PropertiesPropertySource(getClass().getSimpleName(), props);
-    }
-
-    private static String getSetting(final Environment environment, final String key) {
-        return environment.getProperty("cas.spring.cloud.aws.secretsManager." + key);
-    }
-
-    private static AWSSecretsManager getAmazonSecretsManagerClient(final Environment environment) {
-        final var key = getSetting(environment, "credentialAccessKey");
-        final var secret = getSetting(environment, "credentialSecretKey");
-        final var credentials = ChainingAWSCredentialsProvider.getInstance(key, secret);
-        var region = getSetting(environment, "region");
-        final var currentRegion = Regions.getCurrentRegion();
-        if (currentRegion != null && StringUtils.isBlank(region)) {
-            region = currentRegion.getName();
-        }
-        var regionOverride = getSetting(environment, "regionOverride");
-        if (currentRegion != null && StringUtils.isNotBlank(regionOverride)) {
-            regionOverride = currentRegion.getName();
-        }
-        final var endpoint = getSetting(environment, "endpoint");
-        final var builder = AWSSecretsManagerClientBuilder.standard()
-            .withCredentials(credentials)
-            .withRegion(region);
-
-        
-        if (StringUtils.isNotBlank(endpoint) && StringUtils.isNotBlank(regionOverride)) {
-            builder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, regionOverride));
-        }
-        return builder.build();
     }
 }

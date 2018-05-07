@@ -91,10 +91,12 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
         if (!satisfiedProviders.isEmpty()) {
             final var providers = satisfiedProviders.toArray(new MultifactorAuthenticationProvider[] {});
             OrderComparator.sortIfNecessary(providers);
-            final var result = Arrays.stream(providers).filter(provider -> {
-                final var p = requestedProvider.get();
-                return provider.equals(p) || provider.getOrder() >= p.getOrder();
-            }).findFirst();
+            final Optional<MultifactorAuthenticationProvider> result = Arrays.stream(providers)
+                .filter(provider -> {
+                    final MultifactorAuthenticationProvider p = requestedProvider.get();
+                    return provider.equals(p) || provider.getOrder() >= p.getOrder();
+                })
+                .findFirst();
             if (result.isPresent()) {
                 LOGGER.debug("Current provider [{}] already satisfies the authentication requirements of [{}]; proceed with flow normally.",
                     result.get(), requestedProvider);

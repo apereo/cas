@@ -28,6 +28,7 @@ import org.apereo.cas.ws.idp.services.WSFederationServiceRegistry;
 import org.apereo.cas.ws.idp.web.WSFederationValidateRequestCallbackController;
 import org.apereo.cas.ws.idp.web.WSFederationValidateRequestController;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -56,7 +57,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private ObjectProvider<CookieRetrievingCookieGenerator> ticketGrantingTicketCookieGenerator;
 
     @Autowired
     @Qualifier("noRedirectHttpClient")
@@ -90,7 +91,8 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     public WSFederationValidateRequestController federationValidateRequestController() {
         return new WSFederationValidateRequestController(servicesManager,
             webApplicationServiceFactory, casProperties, wsFederationAuthenticationServiceSelectionStrategy(),
-            httpClient, securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator,
+            httpClient, securityTokenTicketFactory, ticketRegistry,
+            ticketGrantingTicketCookieGenerator.getIfAvailable(),
             ticketRegistrySupport, wsFederationCallbackService());
     }
 
@@ -103,7 +105,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
             webApplicationServiceFactory, casProperties, wsFederationRelyingPartyTokenProducer,
             wsFederationAuthenticationServiceSelectionStrategy(),
             httpClient, securityTokenTicketFactory, ticketRegistry,
-            ticketGrantingTicketCookieGenerator,
+            ticketGrantingTicketCookieGenerator.getIfAvailable(),
             ticketRegistrySupport, casClientTicketValidator,
             wsFederationCallbackService());
     }

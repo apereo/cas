@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.passwordless;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
@@ -22,7 +21,7 @@ import java.util.Map;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-passwordless")
-@Slf4j
+
 @Getter
 @Setter
 public class PasswordlessAuthenticationProperties implements Serializable {
@@ -41,8 +40,9 @@ public class PasswordlessAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-passwordless")
     @Getter
     @Setter
-    public static class Accounts {
+    public static class Accounts implements Serializable {
 
+        private static final long serialVersionUID = -8424650395669337488L;
         /**
          * Passwordless authentication settings via REST.
          */
@@ -64,8 +64,9 @@ public class PasswordlessAuthenticationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-passwordless")
     @Getter
     @Setter
-    public static class Tokens {
+    public static class Tokens implements Serializable {
 
+        private static final long serialVersionUID = 8371063350377031703L;
         /**
          * Indicate how long should the token be considered valid.
          */

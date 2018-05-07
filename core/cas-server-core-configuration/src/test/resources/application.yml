@@ -11,3 +11,10 @@ cas:
   authn:
     accept:
       users: casuser::Mellon
+
+test:
+  classpath: classpathAppYml
+  dir:
+    app: classpathAppYml
+    cas: classpathAppYml
+  file: classpathAppYml

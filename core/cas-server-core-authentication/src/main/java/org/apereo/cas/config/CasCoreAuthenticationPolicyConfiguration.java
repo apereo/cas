@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
@@ -43,7 +44,6 @@ public class CasCoreAuthenticationPolicyConfiguration {
     @Qualifier("ticketRegistry")
     private ObjectProvider<TicketRegistry> ticketRegistry;
 
-    @Autowired
     @Qualifier("geoLocationService")
     private ObjectProvider<GeoLocationService> geoLocationService;
 
@@ -91,11 +91,9 @@ public class CasCoreAuthenticationPolicyConfiguration {
 
     @ConditionalOnMissingBean(name = "adaptiveAuthenticationPolicy")
     @Bean
+    @RefreshScope
     public AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy() {
-        final var p = new DefaultAdaptiveAuthenticationPolicy();
-        p.setGeoLocationService(this.geoLocationService.getIfAvailable());
-        p.setAdaptiveAuthenticationProperties(casProperties.getAuthn().getAdaptive());
-        return p;
+        return new DefaultAdaptiveAuthenticationPolicy(this.geoLocationService, casProperties.getAuthn().getAdaptive());
     }
 
     @ConditionalOnMissingBean(name = "requiredHandlerAuthenticationPolicyFactory")

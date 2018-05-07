@@ -9,8 +9,6 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.jooq.lambda.Unchecked;
-import org.springframework.beans.factory.config.YamlProcessor;
-import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -48,8 +46,11 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     public PropertySource<?> locate(final Environment environment, final ResourceLoader resourceLoader) {
         final var compositePropertySource = new CompositePropertySource("casCompositePropertySource");
 
-        final PropertySource<?> sourceYaml = loadEmbeddedYamlOverriddenProperties(resourceLoader);
-        compositePropertySource.addPropertySource(sourceYaml);
+        final File configFile = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile();
+        if (configFile != null) {
+            final PropertySource<?> sourceStandalone = loadSettingsFromStandaloneConfigFile(configFile);
+            compositePropertySource.addPropertySource(sourceStandalone);
+        }
 
         final var config = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
         LOGGER.debug("Located CAS standalone configuration directory at [{}]", config);
@@ -60,11 +61,9 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
             LOGGER.info("Configuration directory [{}] is not a directory or cannot be found at the specific path", config);
         }
 
-        final var configFile = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile();
-        if (configFile != null) {
-            final PropertySource<?> sourceStandalone = loadSettingsFromStandaloneConfigFile(configFile);
-            compositePropertySource.addFirstPropertySource(sourceStandalone);
-        }
+        final PropertySource<?> sourceYaml = loadEmbeddedYamlOverriddenProperties(resourceLoader);
+        compositePropertySource.addPropertySource(sourceYaml);
+
         return compositePropertySource;
     }
 
@@ -94,7 +93,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         configFiles.forEach(Unchecked.consumer(f -> {
             LOGGER.debug("Loading configuration file [{}]", f);
             if (f.getName().toLowerCase().endsWith("yml")) {
-                final Map<String, Object> pp = loadYamlProperties(new FileSystemResource(f));
+                final Map<String, Object> pp = CasCoreConfigurationUtils.loadYamlProperties(new FileSystemResource(f));
                 LOGGER.debug("Found settings [{}] in YAML file [{}]", pp.keySet(), f);
                 props.putAll(decryptProperties(pp));
             } else {
@@ -112,7 +111,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         final var props = new Properties();
         final var resource = resourceLoader.getResource("classpath:/application.yml");
         if (resource != null && resource.exists()) {
-            final var pp = loadYamlProperties(resource);
+            final Map pp = CasCoreConfigurationUtils.loadYamlProperties(resource);
             if (pp.isEmpty()) {
                 LOGGER.debug("No properties were located inside [{}]", resource);
             } else {
@@ -131,7 +130,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     }
 
     private Map<String, Object> decryptProperties(final Map properties) {
-        return this.configurationCipherExecutor.decode(properties);
+        return this.configurationCipherExecutor.decode(properties, new Object[] {});
     }
 
     private static String buildPatternForConfigurationFileDiscovery(final File config, final List<String> profiles) {
@@ -152,12 +151,5 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         return profiles;
     }
 
-    private static Map loadYamlProperties(final Resource... resource) {
-        final var factory = new YamlPropertiesFactoryBean();
-        factory.setResolutionMethod(YamlProcessor.ResolutionMethod.OVERRIDE);
-        factory.setResources(resource);
-        factory.setSingleton(true);
-        factory.afterPropertiesSet();
-        return factory.getObject();
-    }
+
 }

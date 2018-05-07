@@ -22,9 +22,11 @@ import java.io.File;
  * @since 5.2.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {U2FConfiguration.class,
-        AopAutoConfiguration.class,
-        RefreshAutoConfiguration.class})
+@SpringBootTest(classes = {
+    U2FConfiguration.class,
+    AopAutoConfiguration.class,
+    RefreshAutoConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class U2FJsonResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {

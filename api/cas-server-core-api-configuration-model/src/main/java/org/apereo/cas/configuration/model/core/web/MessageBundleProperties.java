@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.core.web;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
@@ -18,7 +17,7 @@ import java.util.stream.Stream;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-web", automated = true)
-@Slf4j
+
 @Getter
 @Setter
 public class MessageBundleProperties implements Serializable {

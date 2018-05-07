@@ -14,7 +14,9 @@ import org.apereo.cas.web.flow.configurer.DefaultLoginWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.DefaultLogoutWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.GroovyWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.plan.DefaultCasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.executor.CasFlowExecutionListener;
 import org.apereo.cas.web.flow.executor.WebflowExecutorFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.convert.ConversionService;
@@ -41,6 +43,7 @@ import org.springframework.webflow.context.servlet.FlowUrlHandler;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.ViewFactoryCreator;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser;
 import org.springframework.webflow.mvc.builder.MvcViewFactoryCreator;
@@ -73,7 +76,7 @@ public class CasWebflowContextConfiguration {
 
     @Autowired
     @Qualifier("registeredServiceViewResolver")
-    private ViewResolver registeredServiceViewResolver;
+    private ObjectProvider<ViewResolver> registeredServiceViewResolver;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -96,7 +99,7 @@ public class CasWebflowContextConfiguration {
     @Bean
     public ViewFactoryCreator viewFactoryCreator() {
         final var resolver = new MvcViewFactoryCreator();
-        resolver.setViewResolvers(CollectionUtils.wrap(this.registeredServiceViewResolver));
+        resolver.setViewResolvers(CollectionUtils.wrap(this.registeredServiceViewResolver.getIfAvailable()));
         return resolver;
     }
 
@@ -124,7 +127,7 @@ public class CasWebflowContextConfiguration {
     @RefreshScope
     @Bean
     public FlowBuilderServices builder() {
-        final var builder = new FlowBuilderServicesBuilder(this.applicationContext);
+        final FlowBuilderServicesBuilder builder = new FlowBuilderServicesBuilder();
         builder.setViewFactoryCreator(viewFactoryCreator());
         builder.setExpressionParser(expressionParser());
         builder.setDevelopmentMode(casProperties.getWebflow().isRefresh());
@@ -198,15 +201,22 @@ public class CasWebflowContextConfiguration {
     @Bean
     public FlowExecutor logoutFlowExecutor() {
         final var factory = new WebflowExecutorFactory(casProperties.getWebflow(),
-            logoutFlowRegistry(), this.webflowCipherExecutor);
+            logoutFlowRegistry(), this.webflowCipherExecutor, new FlowExecutionListener[]{casFlowExecutionListener()});
         return factory.build();
+    }
+
+    @Bean
+    public FlowExecutionListener casFlowExecutionListener() {
+        return new CasFlowExecutionListener(casProperties);
     }
 
     @RefreshScope
     @Bean
     public FlowExecutor loginFlowExecutor() {
         final var factory = new WebflowExecutorFactory(casProperties.getWebflow(),
-            loginFlowRegistry(), this.webflowCipherExecutor);
+            loginFlowRegistry(), this.webflowCipherExecutor,
+            new FlowExecutionListener[]{casFlowExecutionListener()});
+
         return factory.build();
     }
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
+import com.google.common.base.Splitter;
 import jcifs.spnego.Authentication;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
@@ -12,10 +13,13 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
+
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.List;
 import java.util.regex.Pattern;
+
 import lombok.Setter;
 
 /**
@@ -109,8 +113,15 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
             return this.principalFactory.createPrincipal(name);
         }
         if (isNtlm) {
-            return Pattern.matches("\\S+\\\\\\S+", name) ? this.principalFactory.createPrincipal(name.split("\\\\")[1]) : this.principalFactory.createPrincipal(name);
+            if (Pattern.matches("\\S+\\\\\\S+", name)) {
+                final List<String> splitList = Splitter.on(Pattern.compile("\\\\")).splitToList(name);
+                if (splitList.size() == 2) {
+                    return this.principalFactory.createPrincipal(splitList.get(1));
+                }
+            }
+            return this.principalFactory.createPrincipal(name);
         }
-        return this.principalFactory.createPrincipal(name.split("@")[0]);
+        final List<String> splitList = Splitter.on("@").splitToList(name);
+        return this.principalFactory.createPrincipal(splitList.get(0));
     }
 }

@@ -84,11 +84,11 @@ public class CoreAuthenticationTestUtils {
         return getService(CONST_TEST_URL);
     }
 
-    public static Service getWebApplicationService() {
+    public static WebApplicationService getWebApplicationService() {
         return getWebApplicationService("https://github.com/apereo/cas");
     }
 
-    public static Service getWebApplicationService(final String id) {
+    public static WebApplicationService getWebApplicationService(final String id) {
         final var svc = mock(WebApplicationService.class);
         when(svc.getId()).thenReturn(id);
         when(svc.matches(any(WebApplicationService.class))).thenReturn(true);

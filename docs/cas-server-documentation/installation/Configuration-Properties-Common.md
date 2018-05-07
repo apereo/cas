@@ -753,20 +753,23 @@ The following options are shared and apply when CAS is configured to integrate w
 
 ## Amazon Integration Settings
 
-The following options are shared and apply when CAS is configured to integrate with various Amazon Web Service features, given the provider's *configuration key*:
+The following options are shared and apply when CAS is configured to integrate with various 
+Amazon Web Service features, given the provider's *configuration key*:
 
 ```properties
 # Path to an external properties file that contains 'accessKey' and 'secretKey' fields.
-# ${configurationKey}.dynamoDb.credentialsPropertiesFile=file:/path/to/file.properties
+# ${configurationKey}.credentialsPropertiesFile=file:/path/to/file.properties
 
 # Alternatively, you may directly provide credentials to CAS
-# ${configurationKey}.dynamoDb.credentialAccessKey=
-# ${configurationKey}.dynamoDb.credentialSecretKey=
+# ${configurationKey}.credentialAccessKey=
+# ${configurationKey}.credentialSecretKey=
 
-# ${configurationKey}.dynamoDb.endpoint=http://localhost:8000
-# ${configurationKey}.dynamoDb.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
-# ${configurationKey}.dynamoDb.regionOverride=
-# ${configurationKey}.dynamoDb.serviceNameIntern=
+# ${configurationKey}.endpoint=http://localhost:8000
+# ${configurationKey}.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
+# ${configurationKey}.regionOverride=
+# ${configurationKey}.serviceNameIntern=
+
+# ${configurationKey}.localAddress=
 ```
 
 ## Memcached Integration Settings

@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.saml.idp;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.saml.idp.metadata.SamlIdPMetadataProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -18,7 +17,7 @@ import java.util.List;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-saml-idp")
-@Slf4j
+
 @Getter
 @Setter
 public class SamlIdPProperties implements Serializable {

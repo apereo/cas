@@ -5,14 +5,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.TicketState;
 import org.springframework.util.Assert;
-import javax.annotation.PostConstruct;
+
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import lombok.NoArgsConstructor;
 
 /**
  * Provides the Ticket Granting Ticket expiration policy.  Ticket Granting Tickets
@@ -54,19 +54,11 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
         this.timeToKillInSeconds = timeToKill;
     }
 
-    /**
-     * After properties set.
-     */
-    @PostConstruct
-    public void afterPropertiesSet() {
-        Assert.isTrue(this.maxTimeToLiveInSeconds >= this.timeToKillInSeconds, "maxTimeToLiveInSeconds must be greater than or equal to timeToKillInSeconds.");
-    }
-
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        final var currentSystemTime = getCurrentSystemTime();
-        final var creationTime = ticketState.getCreationTime();
-        final var lastTimeUsed = ticketState.getLastTimeUsed();
+        Assert.isTrue(this.maxTimeToLiveInSeconds >= this.timeToKillInSeconds,
+            "maxTimeToLiveInSeconds must be greater than or equal to timeToKillInSeconds.");
+
         // Ticket has been used, check maxTimeToLive (hard window)
         var expirationTime = creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
         if (currentSystemTime.isAfter(expirationTime)) {

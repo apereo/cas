@@ -40,7 +40,7 @@ public interface CacheStatistics {
      *
      * @return Percent of space/capacity free.
      */
-    default int getPercentFree() {
+    default long getPercentFree() {
         return 0;
     }
 
@@ -55,7 +55,8 @@ public interface CacheStatistics {
      * Writes a string representation of cache statistics to the given string builder.
      *
      * @param builder String builder to which string representation is appended.
+     * @return the string
      */
-    void toString(StringBuilder builder);
+    String toString(StringBuilder builder);
 
 }

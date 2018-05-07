@@ -56,8 +56,6 @@ import java.util.Set;
  */
 @Slf4j
 public class SamlObjectSignatureValidator {
-
-
     /**
      * The Override signature reference digest methods.
      */

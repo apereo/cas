@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.services;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
@@ -28,7 +27,7 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-services", automated = true)
-@Slf4j
+
 @Getter
 @Setter
 public class ServiceRegistryProperties implements Serializable {

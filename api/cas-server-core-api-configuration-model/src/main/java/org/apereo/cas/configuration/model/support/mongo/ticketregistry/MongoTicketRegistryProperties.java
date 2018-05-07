@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.mongo.ticketregistry;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -15,7 +14,7 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-mongo-ticket-registry")
-@Slf4j
+
 @Getter
 @Setter
 public class MongoTicketRegistryProperties extends BaseMongoDbProperties {

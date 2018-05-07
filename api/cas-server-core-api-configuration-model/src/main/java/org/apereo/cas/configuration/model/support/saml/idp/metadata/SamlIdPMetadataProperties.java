@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -21,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-saml-idp")
-@Slf4j
+
 @Getter
 @Setter
 public class SamlIdPMetadataProperties implements Serializable {
@@ -70,6 +69,12 @@ public class SamlIdPMetadataProperties implements Serializable {
     private RestSamlMetadataProperties rest = new RestSamlMetadataProperties();
 
     /**
+     * Properties pertaining to AWS S3 metadata resolution.
+     */
+    @NestedConfigurationProperty
+    private AmazonS3SamlMetadataProperties amazonS3 = new AmazonS3SamlMetadataProperties();
+
+    /**
      * Algorithm name to use when generating private key.
      */
     private String privateKeyAlgName = "RSA";
@@ -89,4 +94,8 @@ public class SamlIdPMetadataProperties implements Serializable {
      */
     private List<String> supportedContentTypes = new ArrayList<>();
 
+    public SamlIdPMetadataProperties() {
+        supportedContentTypes.add("application/xml");
+        supportedContentTypes.add("text/xml");
+    }
 }

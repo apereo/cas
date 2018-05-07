@@ -95,7 +95,7 @@ public class SamlIdPEndpointsConfiguration implements ServiceRegistryExecutionPl
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private ObjectProvider<CookieRetrievingCookieGenerator> ticketGrantingTicketCookieGenerator;
 
     @Autowired
     @Qualifier("casSamlIdPMetadataResolver")
@@ -330,7 +330,7 @@ public class SamlIdPEndpointsConfiguration implements ServiceRegistryExecutionPl
             samlObjectSignatureValidator(),
             ticketRegistry,
             samlProfileSamlAttributeQueryFaultResponseBuilder,
-            ticketGrantingTicketCookieGenerator,
+            ticketGrantingTicketCookieGenerator.getIfAvailable(),
             samlAttributeQueryTicketFactory,
             samlIdPCallbackService());
     }

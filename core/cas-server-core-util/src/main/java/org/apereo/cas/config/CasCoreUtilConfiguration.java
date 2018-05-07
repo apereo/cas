@@ -8,7 +8,7 @@ import org.apereo.cas.util.io.SmsSender;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.Converters;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolator;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -48,6 +48,14 @@ import java.time.ZonedDateTime;
 public class CasCoreUtilConfiguration implements InitializingBean {
 
     @Autowired
+    @Qualifier("smsSender")
+    private ObjectProvider<SmsSender> smsSender;
+
+    @Autowired
+    @Qualifier("mailSender")
+    private ObjectProvider<JavaMailSender> mailSender;
+
+    @Autowired
     private ApplicationContext applicationContext;
 
     @Autowired
@@ -70,7 +78,7 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     
     @Bean
     public CommunicationsManager communicationsManager() {
-        return new CommunicationsManager(smsSenderObjectProvider.getIfAvailable(),
+        return new CommunicationsManager(smsSender.getIfAvailable(), mailSender.getIfAvailable());
             emailSenderObjectProvider.getIfAvailable());
     }
 

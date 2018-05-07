@@ -10,6 +10,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
+import java.util.function.Function;
 
 
 /**
@@ -20,7 +21,7 @@ import java.nio.charset.StandardCharsets;
  * @since 3.4.6
  */
 @Slf4j
-public class MockWebServer {
+public class MockWebServer implements AutoCloseable {
     /**
      * Request handler.
      */
@@ -47,6 +48,14 @@ public class MockWebServer {
         }
     }
 
+    public MockWebServer(final int port, final Function funcExec) {
+        try {
+            this.worker = new Worker(new ServerSocket(port), funcExec);
+        } catch (final IOException e) {
+            throw new IllegalArgumentException("Cannot create Web server", e);
+        }
+    }
+
     /**
      * Starts the Web server so it can accept requests on the listening port.
      */
@@ -68,6 +77,11 @@ public class MockWebServer {
         } catch (final InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public void close() throws Exception {
+        stop();
     }
 
     /**
@@ -99,26 +113,11 @@ public class MockWebServer {
          */
         private static final int BUFFER_SIZE = 2048;
 
-        /**
-         * Run flag.
-         */
         private boolean running;
-
-        /**
-         * Server socket.
-         */
         private final ServerSocket serverSocket;
-
-        /**
-         * Resource to serve.
-         */
         private final Resource resource;
-
-        /**
-         * MIME content type of resource to serve.
-         */
         private final String contentType;
-
+        private final Function<Socket, Object> functionToExecute;
 
         /**
          * Creates a request-handling worker that listens for requests on the
@@ -132,6 +131,15 @@ public class MockWebServer {
             this.serverSocket = sock;
             this.resource = resource;
             this.contentType = contentType;
+            this.functionToExecute = null;
+            this.running = true;
+        }
+
+        Worker(final ServerSocket sock, final Function<Socket, Object> functionToExecute) {
+            this.serverSocket = sock;
+            this.functionToExecute = functionToExecute;
+            this.resource = null;
+            this.contentType = null;
             this.running = true;
         }
 
@@ -139,7 +147,13 @@ public class MockWebServer {
         public void run() {
             while (this.running) {
                 try {
-                    writeResponse(this.serverSocket.accept());
+                    final Socket socket = this.serverSocket.accept();
+                    if (this.functionToExecute != null) {
+                        LOGGER.trace("Executed function with result [{}]", functionToExecute.apply(socket));
+                    } else {
+                        writeResponse(socket);
+                    }
+                    socket.shutdownOutput();
                     Thread.sleep(100);
                 } catch (final SocketException e) {
                     LOGGER.debug("Stopping on socket close.");
@@ -159,23 +173,23 @@ public class MockWebServer {
         }
 
         private void writeResponse(final Socket socket) throws IOException {
-            LOGGER.debug("Socket response for resource [{}]", resource.getFilename());
-            final var out = socket.getOutputStream();
-            out.write(STATUS_LINE.getBytes(StandardCharsets.UTF_8));
-            out.write(header("Content-Length", this.resource.contentLength()));
-            out.write(header("Content-Type", this.contentType));
-            out.write(SEPARATOR.getBytes(StandardCharsets.UTF_8));
+            if (resource != null) {
+                LOGGER.debug("Socket response for resource [{}]", resource.getFilename());
+                final OutputStream out = socket.getOutputStream();
+                out.write(STATUS_LINE.getBytes(StandardCharsets.UTF_8));
+                out.write(header("Content-Length", this.resource.contentLength()));
+                out.write(header("Content-Type", this.contentType));
+                out.write(SEPARATOR.getBytes(StandardCharsets.UTF_8));
 
-            final var buffer = new byte[BUFFER_SIZE];
-            try (var in = this.resource.getInputStream()) {
-                int count;
-                while ((count = in.read(buffer)) > -1) {
-                    out.write(buffer, 0, count);
+                final byte[] buffer = new byte[BUFFER_SIZE];
+                try (InputStream in = this.resource.getInputStream()) {
+                    int count;
+                    while ((count = in.read(buffer)) > -1) {
+                        out.write(buffer, 0, count);
+                    }
                 }
+                LOGGER.debug("Wrote response for resource [{}] for [{}]", resource.getFilename(), resource.contentLength());
             }
-            LOGGER.debug("Wrote response for resource [{}] for [{}]", resource.getFilename(), resource.contentLength());
-
-            socket.shutdownOutput();
         }
 
         private static byte[] header(final String name, final Object value) {

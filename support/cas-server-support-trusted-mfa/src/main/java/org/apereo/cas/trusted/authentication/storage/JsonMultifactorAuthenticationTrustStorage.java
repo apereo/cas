@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -46,7 +46,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     @Override
-    public void expire(final LocalDate onOrBefore) {
+    public void expire(final LocalDateTime onOrBefore) {
         final var results = storage
             .values()
             .stream()
@@ -64,7 +64,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
+    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
         expire(onOrAfterDate);
         return storage
             .values()

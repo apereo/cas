@@ -8,14 +8,15 @@ import com.nimbusds.jose.util.Base64;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.integration.pac4j.authentication.handler.support.AbstractTokenWrapperAuthenticationHandler;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.pac4j.core.credentials.TokenCredentials;
@@ -63,18 +64,18 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         final var encryptionSecret = getRegisteredServiceJwtEncryptionSecret(service);
 
         final var serviceSigningAlg = getRegisteredServiceJwtProperty(service,
-            RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING_ALG);
+            RegisteredServiceProperties.TOKEN_SECRET_SIGNING_ALG);
         final var signingSecretAlg = StringUtils.defaultString(serviceSigningAlg, JWSAlgorithm.HS256.getName());
 
         final var encryptionAlg = getRegisteredServiceJwtProperty(service,
-            RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_ALG);
+            RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_ALG);
         final var encryptionSecretAlg = StringUtils.defaultString(encryptionAlg, JWEAlgorithm.DIR.getName());
 
         final var encryptionMethod = getRegisteredServiceJwtProperty(service,
-            RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_METHOD);
+            RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_METHOD);
         final var encryptionSecretMethod = StringUtils.defaultString(encryptionMethod, EncryptionMethod.A192CBC_HS384.getName());
         final var secretIsBase64String = getRegisteredServiceJwtProperty(service,
-            RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRETS_ARE_BASE64_ENCODED);
+            RegisteredServiceProperties.TOKEN_SECRETS_ARE_BASE64_ENCODED);
         final var secretsAreBase64Encoded = BooleanUtils.toBoolean(secretIsBase64String);
 
         if (StringUtils.isNotBlank(signingSecret)) {
@@ -86,9 +87,9 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
 
             final var signingAlg = findAlgorithmFamily(sets, signingSecretAlg, JWSAlgorithm.class);
 
-            final var a = new JwtAuthenticator();
+            final JwtAuthenticator jwtAuthenticator = new JwtAuthenticator();
             final var secretBytes = getSecretBytes(signingSecret, secretsAreBase64Encoded);
-            a.setSignatureConfiguration(new SecretSignatureConfiguration(secretBytes, signingAlg));
+            jwtAuthenticator.setSignatureConfiguration(new SecretSignatureConfiguration(secretBytes, signingAlg));
 
             if (StringUtils.isNotBlank(encryptionSecret)) {
                 sets = new HashSet<>();
@@ -108,11 +109,11 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
 
                 final var encMethod = findAlgorithmFamily(sets, encryptionSecretMethod, EncryptionMethod.class);
                 final var encSecretBytes = getSecretBytes(encryptionSecret, secretsAreBase64Encoded);
-                a.setEncryptionConfiguration(new SecretEncryptionConfiguration(encSecretBytes, encAlg, encMethod));
+                jwtAuthenticator.setEncryptionConfiguration(new SecretEncryptionConfiguration(encSecretBytes, encAlg, encMethod));
             } else {
-                LOGGER.warn("JWT authentication is configured to share a single key for both signing/encryption");
+                LOGGER.warn("JWT authentication is configured to share jwtAuthenticator single key for both signing/encryption");
             }
-            return a;
+            return jwtAuthenticator;
         }
         LOGGER.warn("No token signing secret is defined for service [{}]. Ensure [{}] property is defined for service",
             service.getServiceId(),

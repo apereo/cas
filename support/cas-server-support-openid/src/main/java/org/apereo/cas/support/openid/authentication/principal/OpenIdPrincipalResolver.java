@@ -8,6 +8,8 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
+import java.util.Optional;
+
 /**
  * Implementation of PrincipalResolver that converts the OpenId
  * user name to a Principal.
@@ -25,7 +27,7 @@ public class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
     }
 
     @Override
-    protected String extractPrincipalId(final Credential credential, final Principal currentPrincipal) {
+    protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
         return ((OpenIdCredential) credential).getUsername();
     }
 

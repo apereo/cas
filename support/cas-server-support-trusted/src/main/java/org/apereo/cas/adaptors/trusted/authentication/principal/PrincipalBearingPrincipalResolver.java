@@ -9,6 +9,8 @@ import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipa
 import org.apereo.services.persondir.IPersonAttributeDao;
 import lombok.NoArgsConstructor;
 
+import java.util.Optional;
+
 /**
  * Extracts the Principal out of PrincipalBearingCredential. It is very simple
  * to resolve PrincipalBearingCredential to a Principal since the credentials
@@ -28,7 +30,7 @@ public class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalR
     }
 
     @Override
-    protected String extractPrincipalId(final Credential credential, final Principal currentPrincipal) {
+    protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
         return ((PrincipalBearingCredential) credential).getPrincipal().getId();
     }
 

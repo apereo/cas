@@ -180,6 +180,11 @@ public interface CasWebflowConstants {
     String STATE_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
 
     /**
+     * The state id 'createTicketGrantingTicket'.
+     */
+    String STATE_ID_CREATE_TICKET_GRANTING_TICKET = "createTicketGrantingTicket";
+    
+    /**
      * The state 'initializeLoginForm'.
      */
     String STATE_ID_INIT_LOGIN_FORM = "initializeLoginForm";
@@ -461,6 +466,11 @@ public interface CasWebflowConstants {
      * Action id 'sendTicketGrantingTicketAction'.
      */
     String ACTION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicketAction";
+
+    /**
+     * Action id 'createTicketGrantingTicketAction'.
+     */
+    String ACTION_ID_CREATE_TICKET_GRANTING_TICKET = "createTicketGrantingTicketAction";
 
     /**
      * State id 'proceedFromAuthenticationWarningView'.

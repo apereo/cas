@@ -5,26 +5,27 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.support.DefaultLdapLdapAccountStateHandler;
-import org.apereo.cas.authentication.support.DefaultLdapPasswordPolicyHandlingStrategy;
-import org.apereo.cas.authentication.support.GroovyLdapPasswordPolicyHandlingStrategy;
-import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
-import org.apereo.cas.authentication.support.LdapPasswordPolicyHandlingStrategy;
-import org.apereo.cas.authentication.support.OptionalWarningLdapLdapAccountStateHandler;
+import org.apereo.cas.authentication.support.DefaultLdapAccountStateHandler;
+import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategy;
+import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
+import org.apereo.cas.authentication.support.OptionalWarningLdapAccountStateHandler;
 import org.apereo.cas.authentication.support.RejectResultCodeLdapPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
+import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapPasswordPolicyProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResponseHandler;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
@@ -99,7 +100,7 @@ public class LdapAuthenticationConfiguration {
                     multiMapAttributes.keySet(), l.getLdapUrl(), l.getBaseDn());
 
                 LOGGER.debug("Creating LDAP password policy handling strategy for [{}]", l.getLdapUrl());
-                final var strategy = createLdapPasswordPolicyHandlingStrategy(l);
+                final AuthenticationPasswordPolicyHandlingStrategy strategy = createLdapPasswordPolicyHandlingStrategy(l);
 
                 LOGGER.debug("Creating LDAP authentication handler for [{}]", l.getLdapUrl());
                 final var handler = new LdapAuthenticationHandler(l.getName(),
@@ -132,9 +133,10 @@ public class LdapAuthenticationConfiguration {
                         l.getLdapUrl());
                 }
 
-                if (l.getPasswordPolicy().isEnabled()) {
+                final LdapPasswordPolicyProperties passwordPolicy = l.getPasswordPolicy();
+                if (passwordPolicy.isEnabled()) {
                     LOGGER.debug("Password policy is enabled for [{}]. Constructing password policy configuration", l.getLdapUrl());
-                    final var cfg = createLdapPasswordPolicyConfiguration(l, authenticator, multiMapAttributes);
+                    final PasswordPolicyConfiguration cfg = createLdapPasswordPolicyConfiguration(passwordPolicy, authenticator, multiMapAttributes);
                     handler.setPasswordPolicyConfiguration(cfg);
                 }
 
@@ -163,27 +165,27 @@ public class LdapAuthenticationConfiguration {
         };
     }
 
-    private LdapPasswordPolicyHandlingStrategy createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l) {
-        if (l.getPasswordPolicy().getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
+    private AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyConfiguration>
+        createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l) {
+        if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
             LOGGER.debug("Created LDAP password policy handling strategy based on blacklisted authentication result codes");
             return new RejectResultCodeLdapPasswordPolicyHandlingStrategy();
         }
 
         final var location = l.getPasswordPolicy().getGroovy().getLocation();
-        if (l.getPasswordPolicy().getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.GROOVY && location != null) {
+        if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.GROOVY && location != null) {
             LOGGER.debug("Created LDAP password policy handling strategy based on Groovy script [{}]", location);
-            return new GroovyLdapPasswordPolicyHandlingStrategy(location);
+            return new GroovyPasswordPolicyHandlingStrategy(location);
         }
 
         LOGGER.debug("Created default LDAP password policy handling strategy");
-        return new DefaultLdapPasswordPolicyHandlingStrategy();
+        return new DefaultPasswordPolicyHandlingStrategy();
     }
 
-    private LdapPasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(final LdapAuthenticationProperties l,
-                                                                                  final Authenticator authenticator,
-                                                                                  final Multimap<String, Object> attributes) {
-        final var passwordPolicy = l.getPasswordPolicy();
-        final var cfg = new LdapPasswordPolicyConfiguration(passwordPolicy);
+    private PasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(final LdapPasswordPolicyProperties passwordPolicy,
+                                                                              final Authenticator authenticator,
+                                                                              final Multimap<String, Object> attributes) {
+        final PasswordPolicyConfiguration cfg = new PasswordPolicyConfiguration(passwordPolicy);
         final Set<AuthenticationResponseHandler> handlers = new HashSet<>();
 
         final var customPolicyClass = passwordPolicy.getCustomPolicyClass();
@@ -233,6 +235,7 @@ public class LdapAuthenticationConfiguration {
             cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));
             LOGGER.debug("Handling LDAP account states is disabled via CAS configuration");
         } else if (StringUtils.isNotBlank(passwordPolicy.getWarningAttributeName()) && StringUtils.isNotBlank(passwordPolicy.getWarningAttributeValue())) {
+            final OptionalWarningLdapAccountStateHandler accountHandler = new OptionalWarningLdapAccountStateHandler();
             accountHandler.setDisplayWarningOnMatch(passwordPolicy.isDisplayWarningOnMatch());
             accountHandler.setWarnAttributeName(passwordPolicy.getWarningAttributeName());
             accountHandler.setWarningAttributeValue(passwordPolicy.getWarningAttributeValue());
@@ -241,7 +244,7 @@ public class LdapAuthenticationConfiguration {
             LOGGER.debug("Configuring an warning account state handler for LDAP authentication for warning attribute [{}] and value [{}]",
                 passwordPolicy.getWarningAttributeName(), passwordPolicy.getWarningAttributeValue());
         } else {
-            final var accountHandler = new DefaultLdapLdapAccountStateHandler();
+            final DefaultLdapAccountStateHandler accountHandler = new DefaultLdapAccountStateHandler();
             accountHandler.setAttributesToErrorMap(passwordPolicy.getPolicyAttributes());
             cfg.setAccountStateHandler(accountHandler);
             LOGGER.debug("Configuring the default account state handler for LDAP authentication");

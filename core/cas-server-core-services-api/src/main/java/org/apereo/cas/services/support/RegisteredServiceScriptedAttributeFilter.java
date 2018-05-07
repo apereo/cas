@@ -45,7 +45,7 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
             return filterInlinedGroovyAttributeValues(givenAttributes, matcherInline.group(1));
         }
         if (matcherFile.find()) {
-            return filterFileBasedGroovyAttributeValues(givenAttributes, matcherFile.group(1));
+            return filterFileBasedGroovyAttributeValues(givenAttributes, matcherFile.group(2));
         }
         return givenAttributes;
     }

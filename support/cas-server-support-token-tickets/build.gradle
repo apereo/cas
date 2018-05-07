@@ -12,6 +12,8 @@ dependencies {
     implementation project(":support:cas-server-support-token-core")
     implementation project(":support:cas-server-support-pac4j-authentication")
 
+    implementation libraries.pac4j
+    
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-authentication-api")

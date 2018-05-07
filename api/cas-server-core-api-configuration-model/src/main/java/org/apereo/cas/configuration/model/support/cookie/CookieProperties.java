@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.cookie;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.RequiresModule;
 import java.io.Serializable;
@@ -14,7 +13,7 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-cookie", automated = true)
-@Slf4j
+
 @Getter
 @Setter
 public class CookieProperties implements Serializable {

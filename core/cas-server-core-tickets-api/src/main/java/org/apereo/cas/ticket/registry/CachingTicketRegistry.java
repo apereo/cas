@@ -34,6 +34,10 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
 
     private final LogoutManager logoutManager;
 
+    public CachingTicketRegistry(final LogoutManager logoutManager) {
+        this(CipherExecutor.noOp(), logoutManager);
+    }
+
     public CachingTicketRegistry(final CipherExecutor cipherExecutor, final LogoutManager logoutManager) {
         super(cipherExecutor);
         this.storage = Caffeine.newBuilder()

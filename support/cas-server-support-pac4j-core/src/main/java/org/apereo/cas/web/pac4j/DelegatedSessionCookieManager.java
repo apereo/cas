@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.context.J2EContext;
 
@@ -21,7 +22,7 @@ import java.util.Map;
 public class DelegatedSessionCookieManager {
 
     private final CookieRetrievingCookieGenerator cookieGenerator;
-    private final SessionStoreCookieSerializer serializer = new SessionStoreCookieSerializer();
+    private final StringSerializer<Map<String, Object>> serializer;
 
     /**
      * Store.

@@ -80,7 +80,7 @@ public class EhCacheStatistics implements CacheStatistics {
     }
 
     @Override
-    public int getPercentFree() {
+    public long getPercentFree() {
         final var capacity = getCapacity();
         if (capacity == 0) {
             return 0;
@@ -94,7 +94,7 @@ public class EhCacheStatistics implements CacheStatistics {
     }
 
     @Override
-    public void toString(final StringBuilder builder) {
+    public String toString(final StringBuilder builder) {
         final var name = this.getName();
         if (StringUtils.isNotBlank(name)) {
             builder.append(name).append(':');
@@ -109,8 +109,9 @@ public class EhCacheStatistics implements CacheStatistics {
                 builder.append(this.diskSize).append(" items on disk, ");
             }
             formatter.format("%.2f MB off-heap, ", this.offHeapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
-            builder.append(getPercentFree()).append("% free, ");
+            builder.append(getPercentFree()).append(" perfect free, ");
             builder.append(getEvictions()).append(" evictions");
         }
+        return builder.toString();
     }
 }

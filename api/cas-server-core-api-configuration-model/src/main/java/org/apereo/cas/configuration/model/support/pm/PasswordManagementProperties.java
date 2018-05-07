@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.pm;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
@@ -24,7 +23,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-pm-webflow")
-@Slf4j
+
 @Getter
 @Setter
 @NoArgsConstructor
