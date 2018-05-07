@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
-import org.apereo.cas.services.RestServiceRegistry;
+import org.apereo.cas.services.RestfulServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
@@ -51,7 +51,7 @@ public class RestServiceRegistryConfiguration implements ServiceRegistryExecutio
             final var authHeader = "Basic " + new String(encodedAuth, StandardCharsets.UTF_8);
             headers.put("Authorization", CollectionUtils.wrap(authHeader));
         }
-        return new RestServiceRegistry(restTemplate, registry.getRest().getUrl(), headers);
+        return new RestfulServiceRegistry(restTemplate, registry.getRest().getUrl(), headers);
 
     }
 

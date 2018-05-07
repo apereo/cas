@@ -30,9 +30,12 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -90,8 +93,10 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                 if (finalResolvedEvent != null) {
                     return CollectionUtils.wrapSet(finalResolvedEvent);
                 }
+            } else {
+                LOGGER.debug("No candidate authentication events were resolved for service [{}]", service);
             }
-            final var builder = WebUtils.getAuthenticationResultBuilder(context);
+
             if (builder == null) {
                 throw new IllegalArgumentException("No authentication result builder can be located in the context");
             }
@@ -138,11 +143,20 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
      * @return the set
      */
     protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context,
-                                                              final Service service, final RegisteredService registeredService) {
-        return this.orderedResolvers.stream()
-            .map(resolver -> resolver.resolveSingle(context))
+                                                              final Service service,
+                                                              final RegisteredService registeredService) {
+
+        final Comparator<Event> byEventId = Comparator.comparing(Event::getId);
+        final Supplier<TreeSet<Event>> supplier = () -> new TreeSet<>(byEventId);
+
+        return this.orderedResolvers
+            .stream()
+            .map(resolver -> {
+                LOGGER.debug("Resolving candidate authentication event for service [{}] using [{}]", service, resolver.getName());
+                return resolver.resolveSingle(context);
+            })
             .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
+            .collect(Collectors.toCollection(supplier));
     }
 
     @Override

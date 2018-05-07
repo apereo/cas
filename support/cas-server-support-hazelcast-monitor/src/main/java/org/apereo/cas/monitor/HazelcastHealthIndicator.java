@@ -83,7 +83,7 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
         }
 
         @Override
-        public int getPercentFree() {
+        public long getPercentFree() {
             final var capacity = getCapacity();
             if (capacity == 0) {
                 return 0;
@@ -92,7 +92,7 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
         }
 
         @Override
-        public void toString(final StringBuilder builder) {
+        public String toString(final StringBuilder builder) {
             final var localMapStats = map.getLocalMapStats();
             builder.append("Creation time: ")
                 .append(localMapStats.getCreationTime())
@@ -125,6 +125,7 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
             if (localMapStats.getNearCacheStats() != null) {
                 builder.append(", Misses: ").append(localMapStats.getNearCacheStats().getMisses());
             }
+            return builder.toString();
         }
     }
 }

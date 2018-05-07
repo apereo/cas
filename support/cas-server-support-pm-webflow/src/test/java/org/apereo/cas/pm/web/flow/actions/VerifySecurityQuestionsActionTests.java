@@ -1,6 +1,5 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import lombok.SneakyThrows;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 import org.junit.Test;
@@ -22,13 +21,16 @@ import static org.junit.Assert.*;
 public class VerifySecurityQuestionsActionTests extends BasePasswordManagementActionTests {
 
     @Test
-    @SneakyThrows
     public void verifyAction() {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
-        request.addParameter("q0", "securityAnswer1");
-        context.getFlowScope().put("username", "casuser");
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertEquals("success", verifySecurityQuestionsAction.execute(context).getId());
+        try {
+            final MockRequestContext context = new MockRequestContext();
+            final MockHttpServletRequest request = new MockHttpServletRequest();
+            request.addParameter("q0", "securityAnswer1");
+            context.getFlowScope().put("username", "casuser");
+            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            assertEquals("success", verifySecurityQuestionsAction.execute(context).getId());
+        } catch (final Exception e) {
+            throw new AssertionError(e.getMessage(), e);
+        }
     }
 }

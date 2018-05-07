@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.logout;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import java.io.Serializable;
 import lombok.Getter;
@@ -13,7 +12,7 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-logout", automated = true)
-@Slf4j
+
 @Getter
 @Setter
 public class LogoutProperties implements Serializable {

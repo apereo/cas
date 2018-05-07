@@ -1,7 +1,8 @@
 package org.apereo.cas.web.flow.login;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -32,8 +33,13 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ServiceWarningAction extends AbstractAction {
+
+    /**
+     * Parameter name indicating that warning should be ignored and removed.
+     */
+    public static final String PARAMETER_NAME_IGNORE_WARNING = "ignorewarn";
 
     private final CentralAuthenticationService centralAuthenticationService;
     private final AuthenticationSystemSupport authenticationSystemSupport;
@@ -47,23 +53,25 @@ public class ServiceWarningAction extends AbstractAction {
 
         final Service service = WebUtils.getService(context);
         final var ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
+        if (StringUtils.isBlank(ticketGrantingTicket)) {
+            throw new InvalidTicketException(new AuthenticationException("No ticket-granting ticket could be found in the context"), ticketGrantingTicket);
+        }
 
         final var authentication = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
         if (authentication == null) {
-            throw new InvalidTicketException(
-                    new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket), ticketGrantingTicket);
+            throw new InvalidTicketException(new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket), ticketGrantingTicket);
         }
 
         final var credential = WebUtils.getCredential(context);
         final var authenticationResultBuilder =
-                authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
+            authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
         final var authenticationResult = authenticationResultBuilder.build(service);
 
         final var serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
         WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
 
-        if (request.getParameterMap().containsKey("ignorewarn")) {
-            if (Boolean.parseBoolean(request.getParameter("ignorewarn"))) {
+        if (request.getParameterMap().containsKey(PARAMETER_NAME_IGNORE_WARNING)) {
+            if (Boolean.parseBoolean(request.getParameter(PARAMETER_NAME_IGNORE_WARNING))) {
                 this.warnCookieGenerator.removeCookie(response);
             }
         }

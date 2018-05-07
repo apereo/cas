@@ -73,7 +73,7 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
             attributes.put("error", e);
             final var account = passwordlessUserAccountStore.findUser(username);
             if (account.isPresent()) {
-                attributes.put(PasswordlessAuthenticationWebflowConfigurer.PARAMETER_PASSWORDLESS_USER_ACCOUNT, account.get());
+                attributes.put("passwordlessAccount", account.get());
                 return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, attributes);
             }
         }

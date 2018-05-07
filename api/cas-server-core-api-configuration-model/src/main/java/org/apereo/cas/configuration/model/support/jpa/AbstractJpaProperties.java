@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
@@ -16,7 +15,7 @@ import lombok.Setter;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Slf4j
+
 @Getter
 @Setter
 public abstract class AbstractJpaProperties implements Serializable {

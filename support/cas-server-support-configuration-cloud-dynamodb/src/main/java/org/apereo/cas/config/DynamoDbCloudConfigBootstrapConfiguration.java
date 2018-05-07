@@ -1,12 +1,5 @@
 package org.apereo.cas.config;
 
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
@@ -26,15 +19,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 
-import java.net.InetAddress;
 import java.util.Map;
 import java.util.Properties;
 
@@ -48,7 +40,7 @@ import java.util.Properties;
 @Slf4j
 @Getter
 public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySourceLocator {
-
+    private static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.dynamodb";
     private static final String TABLE_NAME = "DynamoDbCasProperties";
 
     private static final long PROVISIONED_THROUGHPUT = 10;
@@ -67,16 +59,28 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
-        final var amazonDynamoDBClient = getAmazonDynamoDbClient(environment);
-        final var preventTableCreationOnStartup = Boolean.valueOf(getSetting(environment, "preventTableCreationOnStartup"));
-        if (!preventTableCreationOnStartup) {
-            createSettingsTable(amazonDynamoDBClient, false);
-        final var scan = new ScanRequest(TABLE_NAME);
-        LOGGER.debug("Scanning table with request [{}]", scan);
-        final var result = amazonDynamoDBClient.scan(scan);
-        LOGGER.debug("Scanned table with result [{}]", scan);
-        final var props = new Properties();
-        result.getItems().stream().map(DynamoDbCloudConfigBootstrapConfiguration::retrieveSetting).forEach(p -> props.put(p.getKey(), p.getValue()));
+        final Properties props = new Properties();
+
+        try {
+            final AmazonEnvironmentAwareClientBuilder builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
+            final AmazonDynamoDB amazonDynamoDBClient = builder.build(AmazonDynamoDBClient.builder(), AmazonDynamoDB.class);
+            final Boolean preventTableCreationOnStartup = builder.getSetting("preventTableCreationOnStartup", Boolean.class);
+            if (!preventTableCreationOnStartup) {
+                createSettingsTable(amazonDynamoDBClient, false);
+            }
+            final ScanRequest scan = new ScanRequest(TABLE_NAME);
+            LOGGER.debug("Scanning table with request [{}]", scan);
+            final ScanResult result = amazonDynamoDBClient.scan(scan);
+            LOGGER.debug("Scanned table with result [{}]", scan);
+
+            result.getItems()
+                .stream()
+                .map(DynamoDbCloudConfigBootstrapConfiguration::retrieveSetting)
+                .forEach(p -> props.put(p.getKey(), p.getValue()));
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+
         return new PropertiesPropertySource(getClass().getSimpleName(), props);
     }
 
@@ -84,40 +88,6 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         final var name = entry.get(ColumnNames.NAME.getColumnName()).getS();
         final var value = entry.get(ColumnNames.VALUE.getColumnName()).getS();
         return Pair.of(name, value);
-    }
-
-    private static String getSetting(final Environment environment, final String key) {
-        return environment.getProperty("cas.spring.cloud.dynamodb." + key);
-    }
-
-    private static AmazonDynamoDB getAmazonDynamoDbClient(final Environment environment) {
-        final var cfg = new ClientConfiguration();
-        try {
-            final var localAddress = getSetting(environment, "localAddress");
-            if (StringUtils.isNotBlank(localAddress)) {
-                cfg.setLocalAddress(InetAddress.getByName(localAddress));
-            }
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        final var key = getSetting(environment, "credentialAccessKey");
-        final var secret = getSetting(environment, "credentialSecretKey");
-        final AWSCredentials credentials = new BasicAWSCredentials(key, secret);
-        var region = getSetting(environment, "region");
-        final var currentRegion = Regions.getCurrentRegion();
-        if (StringUtils.isBlank(region)) {
-            region = currentRegion.getName();
-        }
-        var regionOverride = getSetting(environment, "regionOverride");
-        if (StringUtils.isNotBlank(regionOverride)) {
-            regionOverride = currentRegion.getName();
-        }
-        final var endpoint = getSetting(environment, "endpoint");
-        final var client = AmazonDynamoDBClient.builder().withCredentials(new AWSStaticCredentialsProvider(credentials))
-            .withClientConfiguration(cfg)
-            .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, regionOverride))
-            .withRegion(region).build();
-        return client;
     }
 
     @SneakyThrows

@@ -30,12 +30,11 @@ public class InitialFlowSetupActionTests extends AbstractCentralAuthenticationSe
     @Autowired
     @Qualifier("initialFlowSetupAction")
     private Action action;
-        
+
     @Test
     public void verifyNoServiceFound() throws Exception {
         final var context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(),
-                new MockHttpServletResponse()));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         final var event = this.action.execute(context);
         assertNull(WebUtils.getService(context));
         assertEquals("success", event.getId());

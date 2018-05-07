@@ -22,7 +22,6 @@ public class ClientIpDeviceFingerprintComponentExtractor implements DeviceFinger
     @Override
     public Optional<String> extractComponent(final String principal, final RequestContext context,
                                              final boolean isNew) {
-        return Optional.ofNullable(ClientInfoHolder.getClientInfo())
-                .map(ClientInfo::getClientIpAddress);
+        return Optional.ofNullable(ClientInfoHolder.getClientInfo()).map(ClientInfo::getClientIpAddress);
     }
 }

@@ -38,7 +38,6 @@ public class CasDiscoveryProfileConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
     @Qualifier("builtClients")
     private ObjectProvider<Clients> builtClients;
 
@@ -55,9 +54,12 @@ public class CasDiscoveryProfileConfiguration {
 
     @Bean
     public Set<String> availableAttributes() {
-        final LinkedHashSet<String> attributes = new LinkedHashSet<>(0);
-        attributes.addAll(attributeRepository.getPossibleUserAttributeNames());
-
+        final Set<String> attributes = new LinkedHashSet<>(0);
+        final Set<String> possibleUserAttributeNames = attributeRepository.getPossibleUserAttributeNames();
+        if (possibleUserAttributeNames != null) {
+            attributes.addAll(possibleUserAttributeNames);
+        }
+        
         final var ldapProps = casProperties.getAuthn().getLdap();
         if (ldapProps != null) {
             ldapProps.stream()

@@ -1,5 +1,11 @@
 package org.apereo.cas.support.pac4j.config;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.github.scribejava.core.model.OAuth1RequestToken;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.AuditableExecution;
@@ -7,6 +13,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedSessionCookieProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.validation.Pac4jServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
@@ -15,6 +22,7 @@ import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan
 import org.apereo.cas.web.pac4j.DelegatedSessionCookieCipherExecutor;
 import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
 import org.apereo.cas.web.pac4j.SessionStoreCookieGenerator;
+import org.apereo.cas.web.pac4j.SessionStoreCookieSerializer;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.DefaultCasCookieValueManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +32,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Map;
 
 /**
  * This is {@link Pac4jDelegatedAuthenticationConfiguration}.
@@ -53,7 +63,23 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     @Bean
     @ConditionalOnMissingBean(name = "pac4jDelegatedSessionCookieManager")
     public DelegatedSessionCookieManager pac4jDelegatedSessionCookieManager() {
-        return new DelegatedSessionCookieManager(pac4jSessionStoreCookieGenerator());
+        return new DelegatedSessionCookieManager(pac4jSessionStoreCookieGenerator(), pac4jDelegatedSessionStoreCookieSerializer());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "pac4jDelegatedSessionStoreCookieSerializer")
+    public StringSerializer<Map<String, Object>> pac4jDelegatedSessionStoreCookieSerializer() {
+        final SessionStoreCookieSerializer serializer = new SessionStoreCookieSerializer();
+        serializer.getObjectMapper().registerModule(pac4jJacksonModule());
+        return serializer;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "pac4jJacksonModule")
+    public Module pac4jJacksonModule() {
+        final SimpleModule module = new SimpleModule();
+        module.setMixInAnnotation(OAuth1RequestToken.class, AbstractOAuth1RequestTokenMixin.class);
+        return module;
     }
 
     @Bean
@@ -89,5 +115,24 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     @Override
     public void configureAuthorizersExecutionPlan(final ServiceTicketValidationAuthorizersExecutionPlan plan) {
         plan.registerAuthorizer(pac4jServiceTicketValidationAuthorizer());
+    }
+
+    /**
+     * The type Oauth1 request token mixin.
+     */
+    private abstract static class AbstractOAuth1RequestTokenMixin extends OAuth1RequestToken {
+        private static final long serialVersionUID = -7839084408338396531L;
+
+        @JsonCreator
+        AbstractOAuth1RequestTokenMixin(@JsonProperty("token") final String token,
+                                        @JsonProperty("tokenSecret") final String tokenSecret,
+                                        @JsonProperty("oauthCallbackConfirmed") final boolean oauthCallbackConfirmed,
+                                        @JsonProperty("rawResponse") final String rawResponse) {
+            super(token, tokenSecret, oauthCallbackConfirmed, rawResponse);
+        }
+
+        @JsonIgnore
+        @Override
+        public abstract boolean isEmpty();
     }
 }

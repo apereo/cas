@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.services.stream.hazelcast;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.model.support.services.stream.BaseStreamServicesProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -15,7 +14,7 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-service-registry-stream-hazelcast")
-@Slf4j
+
 @Getter
 @Setter
 public class StreamServicesHazelcastProperties extends BaseStreamServicesProperties {

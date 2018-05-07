@@ -2,8 +2,8 @@ package org.apereo.cas.token;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
@@ -31,7 +31,7 @@ import java.util.Map;
  */
 @Slf4j
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class JWTTokenTicketBuilder implements TokenTicketBuilder {
 
     private final TicketValidator ticketValidator;
@@ -66,17 +66,21 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
 
         final var dt = ZonedDateTime.now().plusSeconds(expirationPolicy.getTimeToLive());
         final var validUntilDate = DateTimeUtils.dateOf(dt);
-        return buildJwt(ticketGrantingTicket.getId(), casSeverPrefix,
+        return buildJwt(ticketGrantingTicket.getId(),
+            casSeverPrefix,
             DateTimeUtils.dateOf(ticketGrantingTicket.getCreationTime()),
             authentication.getPrincipal().getId(),
-            validUntilDate, attributes);
+            validUntilDate,
+            attributes);
 
     }
 
-    private String buildJwt(final String jwtId, final String audience,
-                            final Date issueDate, final String subject,
-                            final Date validUntilDate, final Map<String, Object> attributes) {
-        final var claims =
+    private String buildJwt(final String jwtId,
+                            final String audience,
+                            final Date issueDate,
+                            final String subject,
+                            final Date validUntilDate,
+                            final Map<String, Object> attributes) {
             new JWTClaimsSet.Builder()
                 .audience(audience)
                 .issuer(casSeverPrefix)

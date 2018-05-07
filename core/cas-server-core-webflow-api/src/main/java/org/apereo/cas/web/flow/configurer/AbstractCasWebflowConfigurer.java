@@ -159,7 +159,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public Flow getLogoutFlow() {
         if (this.logoutFlowDefinitionRegistry == null) {
-            LOGGER.error("Logout flow registry is not configured correctly.");
+            LOGGER.warn("Logout flow registry is not configured correctly.");
             return null;
         }
         return (Flow) this.logoutFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGOUT);
