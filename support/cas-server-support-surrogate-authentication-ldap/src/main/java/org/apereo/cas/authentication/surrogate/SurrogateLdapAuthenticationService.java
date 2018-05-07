@@ -44,16 +44,16 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
     @Override
     public boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Service service) {
         try {
-            final String id = principal.getId();
+            final var id = principal.getId();
             if (surrogate.equalsIgnoreCase(id)) {
                 return true;
             }
-            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSurrogateSearchFilter(),
+            final var filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSurrogateSearchFilter(),
                 CollectionUtils.wrapList(LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, "surrogate"),
                 CollectionUtils.wrapList(id, surrogate));
             LOGGER.debug("Using search filter to locate surrogate accounts for [{}]: [{}]", id, filter);
 
-            final Response<SearchResult> response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter);
+            final var response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter);
             LOGGER.debug("LDAP response: [{}]", response);
             return LdapUtils.containsResultEntry(response);
         } catch (final Exception e) {
@@ -69,7 +69,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
             final var filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(), CollectionUtils.wrap(username));
             LOGGER.debug("Using search filter to find eligible accounts: [{}]", filter);
 
-            final Response<SearchResult> response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter);
+            final var response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter);
             LOGGER.debug("LDAP response: [{}]", response);
 
             if (!LdapUtils.containsResultEntry(response)) {

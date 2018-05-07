@@ -44,9 +44,9 @@ public class DynamicResourceMetadataResolverTests {
 
     @Test
     public void verifyResolverSupports() {
-        final SamlIdPProperties props = new SamlIdPProperties();
-        final DynamicMetadataResolver resolver = new DynamicMetadataResolver(props, openSamlConfigBean);
-        final SamlRegisteredService service = new SamlRegisteredService();
+        final var props = new SamlIdPProperties();
+        final var resolver = new DynamicMetadataResolver(props, openSamlConfigBean);
+        final var service = new SamlRegisteredService();
         service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
         assertFalse(resolver.supports(service));
         service.setMetadataLocation("http://mdq-beta.incommon.org/global/entities/{0}");
@@ -55,9 +55,9 @@ public class DynamicResourceMetadataResolverTests {
 
     @Test
     public void verifyResolverResolves() {
-        final SamlIdPProperties props = new SamlIdPProperties();
-        final DynamicMetadataResolver resolver = new DynamicMetadataResolver(props, openSamlConfigBean);
-        final SamlRegisteredService service = new SamlRegisteredService();
+        final var props = new SamlIdPProperties();
+        final var resolver = new DynamicMetadataResolver(props, openSamlConfigBean);
+        final var service = new SamlRegisteredService();
         service.setId(100);
         service.setName("Dynamic");
         service.setMetadataLocation("http://mdq-beta.incommon.org/global/entities/{0}");

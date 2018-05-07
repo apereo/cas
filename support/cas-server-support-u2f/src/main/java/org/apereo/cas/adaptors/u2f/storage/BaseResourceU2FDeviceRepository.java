@@ -46,7 +46,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
             final var devices = readDevicesFromResource();
 
             if (!devices.isEmpty()) {
-                final List<U2FDeviceRegistration> devs = devices.get(MAP_KEY_DEVICES);
+                final var devs = devices.get(MAP_KEY_DEVICES);
                 final var expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
                 LOGGER.debug("Filtering devices for [{}] based on device expiration date [{}]", username, expirationDate);
                 final var list = devs
@@ -106,11 +106,11 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
             device.setRecord(registration.toJson());
             device.setCreatedDate(LocalDate.now());
 
-            final Map<String, List<U2FDeviceRegistration>> devices = readDevicesFromResource();
+            final var devices = readDevicesFromResource();
             final List<U2FDeviceRegistration> list = new ArrayList<>(0);
 
             if (!devices.isEmpty()) {
-                final List<U2FDeviceRegistration> devs = devices.get(MAP_KEY_DEVICES);
+                final var devs = devices.get(MAP_KEY_DEVICES);
                 LOGGER.debug("Located [{}] devices in repository", devs.size());
                 list.addAll(devs.stream().collect(Collectors.toList()));
             }
@@ -133,7 +133,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
         try {
             final var devices = readDevicesFromResource();
             if (!devices.isEmpty()) {
-                final List<U2FDeviceRegistration> devs = devices.get(MAP_KEY_DEVICES);
+                final var devs = devices.get(MAP_KEY_DEVICES);
                 LOGGER.debug("Located [{}] devices in repository", devs.size());
 
                 final var expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));

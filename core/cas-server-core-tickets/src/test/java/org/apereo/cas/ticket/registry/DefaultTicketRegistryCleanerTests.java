@@ -17,13 +17,13 @@ public class DefaultTicketRegistryCleanerTests {
 
     @Test
     public void verifyAction() {
-        final LogoutManager logoutManager = mock(LogoutManager.class);
+        final var logoutManager = mock(LogoutManager.class);
         final TicketRegistry ticketRegistry = new DefaultTicketRegistry();
-        final MockTicketGrantingTicket casuser = new MockTicketGrantingTicket("casuser");
+        final var casuser = new MockTicketGrantingTicket("casuser");
         casuser.markTicketExpired();
         ticketRegistry.addTicket(casuser);
         assertTrue(ticketRegistry.getTickets().size() == 1);
-        final DefaultTicketRegistryCleaner c = new DefaultTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, ticketRegistry);
+        final var c = new DefaultTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, ticketRegistry);
         c.clean();
         assertTrue(ticketRegistry.sessionCount() == 0);
     }

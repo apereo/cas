@@ -35,7 +35,7 @@ public class InMemoryResourceMetadataResolver extends DOMMetadataResolver {
 
     @SneakyThrows
     private static Element getMetadataRootElement(final InputStream metadataResource, final OpenSamlConfigBean configBean) {
-        final Document document = configBean.getParserPool().parse(metadataResource);
+        final var document = configBean.getParserPool().parse(metadataResource);
         return document.getDocumentElement();
     }
 }

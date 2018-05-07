@@ -132,7 +132,7 @@ public class SerializationUtils {
                                                                         final CipherExecutor cipher,
                                                                         final Class<T> type,
                                                                         final Object[] parameters) {
-        final byte[] decoded = (byte[]) cipher.decode(object, parameters);
+        final var decoded = (byte[]) cipher.decode(object, parameters);
         return deserializeAndCheckObject(decoded, type);
     }
 

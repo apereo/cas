@@ -16,11 +16,11 @@ public class AmazonDynamoDbClientFactoryTests {
 
     @Test
     public void verifyAction() {
-        final AmazonDynamoDbClientFactory factory = new AmazonDynamoDbClientFactory();
+        final var factory = new AmazonDynamoDbClientFactory();
         final AbstractDynamoDbProperties properties = new AbstractDynamoDbProperties() {
             private static final long serialVersionUID = -3599433486448467450L;
         };
-        final AmazonDynamoDB client = factory.createAmazonDynamoDb(properties);
+        final var client = factory.createAmazonDynamoDb(properties);
         assertNotNull(client);
     }
 }

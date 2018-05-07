@@ -24,10 +24,10 @@ import static org.junit.Assert.*;
 public class SurrogateAuditPrincipalIdProviderTests {
     @Test
     public void verifyAction() {
-        final SurrogateAuditPrincipalIdProvider p = new SurrogateAuditPrincipalIdProvider();
+        final var p = new SurrogateAuditPrincipalIdProvider();
         assertEquals(Credential.UNKNOWN_ID, p.getPrincipalIdFrom(null, null, null));
 
-        final Authentication auth = CoreAuthenticationTestUtils.getAuthentication(
+        final var auth = CoreAuthenticationTestUtils.getAuthentication(
             CoreAuthenticationTestUtils.getPrincipal(),
             CollectionUtils.wrap(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, "true",
                 SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL, "principal",

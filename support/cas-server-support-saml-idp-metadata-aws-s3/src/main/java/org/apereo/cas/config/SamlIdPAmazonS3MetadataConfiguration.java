@@ -46,7 +46,7 @@ public class SamlIdPAmazonS3MetadataConfiguration implements SamlRegisteredServi
 
     @Bean
     public SamlRegisteredServiceMetadataResolver amazonS3SamlRegisteredServiceMetadataResolver() {
-        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
+        final var idp = casProperties.getAuthn().getSamlIdp();
         return new AmazonS3SamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean, amazonS3Client());
     }
 
@@ -54,9 +54,9 @@ public class SamlIdPAmazonS3MetadataConfiguration implements SamlRegisteredServi
     @Bean
     @RefreshScope
     public AmazonS3 amazonS3Client() {
-        final AmazonS3SamlMetadataProperties amz = casProperties.getAuthn().getSamlIdp().getMetadata().getAmazonS3();
-        final AwsClientBuilder.EndpointConfiguration endpoint = new AwsClientBuilder.EndpointConfiguration(amz.getEndpoint(), amz.getRegion());
-        final AWSCredentialsProvider credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(),
+        final var amz = casProperties.getAuthn().getSamlIdp().getMetadata().getAmazonS3();
+        final var endpoint = new AwsClientBuilder.EndpointConfiguration(amz.getEndpoint(), amz.getRegion());
+        final var credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(),
             amz.getCredentialSecretKey(),
             amz.getCredentialsPropertiesFile(),
             amz.getProfilePath(),

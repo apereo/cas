@@ -60,19 +60,19 @@ public class RestConsentRepositoryTests {
     @Test
     public void verifyConsentDecisionsFound() throws Exception {
 
-        final DefaultConsentDecisionBuilder builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
-        final AbstractRegisteredService regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
-        final Service svc = RegisteredServiceTestUtils.getService();
-        final ConsentDecision decision = builder.build(svc,
+        final var builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
+        final var regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
+        final var svc = RegisteredServiceTestUtils.getService();
+        final var decision = builder.build(svc,
             regSvc, "casuser",
             CollectionUtils.wrap("attribute", "value"));
-        final String body = MAPPER.writeValueAsString(CollectionUtils.wrapList(decision));
+        final var body = MAPPER.writeValueAsString(CollectionUtils.wrapList(decision));
         server.expect(manyTimes(), requestTo("/consent"))
             .andExpect(method(HttpMethod.GET))
             .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
 
-        final RestConsentRepository repo = new RestConsentRepository(this.restTemplate, "/consent");
-        Collection<ConsentDecision> d = repo.findConsentDecisions("casuser");
+        final var repo = new RestConsentRepository(this.restTemplate, "/consent");
+        var d = repo.findConsentDecisions("casuser");
         assertNotNull(d);
         assertFalse(d.isEmpty());
         server.verify();
@@ -91,7 +91,7 @@ public class RestConsentRepositoryTests {
         final var decision = builder.build(svc,
             regSvc, "casuser",
             CollectionUtils.wrap("attribute", "value"));
-        final String body = MAPPER.writeValueAsString(decision);
+        final var body = MAPPER.writeValueAsString(decision);
         server.expect(manyTimes(), requestTo("/consent"))
             .andExpect(method(HttpMethod.GET))
             .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
@@ -105,17 +105,17 @@ public class RestConsentRepositoryTests {
 
     @Test
     public void verifyConsentDecisionStored() throws Exception {
-        final DefaultConsentDecisionBuilder builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
-        final AbstractRegisteredService regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
-        final Service svc = RegisteredServiceTestUtils.getService();
-        final ConsentDecision decision = builder.build(svc,
+        final var builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
+        final var regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
+        final var svc = RegisteredServiceTestUtils.getService();
+        final var decision = builder.build(svc,
             regSvc, "casuser",
             CollectionUtils.wrap("attribute", "value"));
-        final String body = MAPPER.writeValueAsString(decision);
+        final var body = MAPPER.writeValueAsString(decision);
         server.expect(manyTimes(), requestTo("/consent"))
             .andExpect(method(HttpMethod.POST))
             .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
-        final RestConsentRepository repo = new RestConsentRepository(this.restTemplate, "/consent");
+        final var repo = new RestConsentRepository(this.restTemplate, "/consent");
         assertTrue(repo.storeConsentDecision(decision));
         server.verify();
     }

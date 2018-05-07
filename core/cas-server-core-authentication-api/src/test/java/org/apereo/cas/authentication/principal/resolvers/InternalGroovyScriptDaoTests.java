@@ -34,7 +34,7 @@ public class InternalGroovyScriptDaoTests {
 
     @Test
     public void verifyAction() {
-        final InternalGroovyScriptDao d = new InternalGroovyScriptDao(new StaticApplicationContext(), casProperties);
+        final var d = new InternalGroovyScriptDao(new StaticApplicationContext(), casProperties);
         final Map results = d.getAttributesForUser("casuser");
         assertFalse(results.isEmpty());
         assertFalse(d.getPersonAttributesFromMultivaluedAttributes(results).isEmpty());

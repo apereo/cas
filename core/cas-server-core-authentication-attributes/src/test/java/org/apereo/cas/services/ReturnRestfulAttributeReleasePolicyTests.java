@@ -33,7 +33,7 @@ public class ReturnRestfulAttributeReleasePolicyTests {
 
     @Test
     public void verifySerializeAttributeReleasePolicyToJson() throws IOException {
-        final ReturnRestfulAttributeReleasePolicy policyWritten = new ReturnRestfulAttributeReleasePolicy("http://endpoint.example.org");
+        final var policyWritten = new ReturnRestfulAttributeReleasePolicy("http://endpoint.example.org");
         MAPPER.writeValue(JSON_FILE, policyWritten);
         final RegisteredServiceAttributeReleasePolicy policyRead = MAPPER.readValue(JSON_FILE, ReturnRestfulAttributeReleasePolicy.class);
         assertEquals(policyWritten, policyRead);
@@ -41,12 +41,12 @@ public class ReturnRestfulAttributeReleasePolicyTests {
 
     @Test
     public void verifyPolicy() throws IOException {
-        final String data = MAPPER.writeValueAsString(CollectionUtils.wrap("givenName", "CASUSER", "familyName", "CAS"));
-        try (MockWebServer webServer = new MockWebServer(9299,
+        final var data = MAPPER.writeValueAsString(CollectionUtils.wrap("givenName", "CASUSER", "familyName", "CAS"));
+        try (var webServer = new MockWebServer(9299,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
 
-            final ReturnRestfulAttributeReleasePolicy policyWritten = new ReturnRestfulAttributeReleasePolicy("http://localhost:9299");
+            final var policyWritten = new ReturnRestfulAttributeReleasePolicy("http://localhost:9299");
             final Map attributes = policyWritten.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
                 CoreAuthenticationTestUtils.getService(),
                 CoreAuthenticationTestUtils.getRegisteredService());

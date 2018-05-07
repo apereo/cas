@@ -90,18 +90,18 @@ public class ValidateCaptchaActionTests {
 
     @Test
     public void verifyCaptchaValidated() {
-        final MockRequestContext context = new MockRequestContext();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var context = new MockRequestContext();
+        final var request = new MockHttpServletRequest();
 
-        final String data = "{\"success\": true }";
+        final var data = "{\"success\": true }";
         request.addParameter(ValidateCaptchaAction.REQUEST_PARAM_RECAPTCHA_RESPONSE, data);
 
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        try (MockWebServer webServer = new MockWebServer(9294,
+        try (var webServer = new MockWebServer(9294,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            final Event result = validateCaptchaAction.execute(context);
+            final var result = validateCaptchaAction.execute(context);
             assertNull(result);
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
@@ -110,14 +110,14 @@ public class ValidateCaptchaActionTests {
 
     @Test
     public void verifyCaptchaFails() {
-        final MockRequestContext context = new MockRequestContext();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var context = new MockRequestContext();
+        final var request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        try (MockWebServer webServer = new MockWebServer(9294,
+        try (var webServer = new MockWebServer(9294,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            final Event result = validateCaptchaAction.execute(context);
+            final var result = validateCaptchaAction.execute(context);
             assertNotNull(result);
             assertEquals(ValidateCaptchaAction.EVENT_ID_ERROR, result.getId());
         } catch (final Exception e) {

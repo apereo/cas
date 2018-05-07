@@ -55,7 +55,7 @@ public class CasDiscoveryProfileConfiguration {
     @Bean
     public Set<String> availableAttributes() {
         final Set<String> attributes = new LinkedHashSet<>(0);
-        final Set<String> possibleUserAttributeNames = attributeRepository.getPossibleUserAttributeNames();
+        final var possibleUserAttributeNames = attributeRepository.getPossibleUserAttributeNames();
         if (possibleUserAttributeNames != null) {
             attributes.addAll(possibleUserAttributeNames);
         }

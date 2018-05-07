@@ -71,7 +71,7 @@ public abstract class BaseConsentRepository implements ConsentRepository {
     @Override
     public boolean deleteConsentDecision(final long decisionId) {
         final var decisions = findConsentDecisions();
-        final Optional<ConsentDecision> result = decisions.stream().filter(d -> d.getId() == decisionId).findFirst();
+        final var result = decisions.stream().filter(d -> d.getId() == decisionId).findFirst();
         result.ifPresent(value -> this.consentDecisions.remove(value));
         return result.isPresent();
     }

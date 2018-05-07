@@ -117,7 +117,7 @@ public class SurrogateAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public PrincipalResolver personDirectoryPrincipalResolver() {
-        final PersonDirectoryPrincipalResolverProperties principal = casProperties.getAuthn().getSurrogate().getPrincipal();
+        final var principal = casProperties.getAuthn().getSurrogate().getPrincipal();
         return new SurrogatePrincipalResolver(attributeRepository.getIfAvailable(),
             surrogatePrincipalFactory(),
             principal.isReturnNull(),

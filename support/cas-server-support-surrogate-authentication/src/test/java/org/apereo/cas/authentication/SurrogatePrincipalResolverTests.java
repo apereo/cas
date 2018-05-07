@@ -59,7 +59,7 @@ public class SurrogatePrincipalResolverTests {
         final var credential = new SurrogateUsernamePasswordCredential();
         credential.setSurrogateUsername("surrogate");
         credential.setUsername("username");
-        final Principal p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal("casuser")),
+        final var p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal("casuser")),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertNotNull(p);
         assertTrue(p.getId().equals("casuser"));

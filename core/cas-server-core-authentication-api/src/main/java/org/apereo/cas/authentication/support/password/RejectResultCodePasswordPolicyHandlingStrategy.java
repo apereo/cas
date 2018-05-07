@@ -38,8 +38,8 @@ public class RejectResultCodePasswordPolicyHandlingStrategy<AuthnResponse> exten
             return false;
         }
 
-        final Collection<String> currentCodes = getAuthenticationResponseResultCodes(response);
-        final Optional<String> result = this.resultCodes.stream().filter(currentCodes::contains).findAny();
+        final var currentCodes = getAuthenticationResponseResultCodes(response);
+        final var result = this.resultCodes.stream().filter(currentCodes::contains).findAny();
 
         if (result.isPresent()) {
             LOGGER.debug("Unable to support authentication response [{}] with a blacklisted authentication result code [{}]", response, result.get());

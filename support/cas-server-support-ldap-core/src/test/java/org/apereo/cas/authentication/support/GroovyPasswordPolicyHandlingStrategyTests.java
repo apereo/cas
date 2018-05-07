@@ -29,7 +29,7 @@ public class GroovyPasswordPolicyHandlingStrategyTests {
     @Test
     public void verifyStrategySupportsDefault() {
         final var resource = new ClassPathResource("lppe-strategy.groovy");
-        final GroovyPasswordPolicyHandlingStrategy s = new GroovyPasswordPolicyHandlingStrategy(resource);
+        final var s = new GroovyPasswordPolicyHandlingStrategy(resource);
         final var res = mock(AuthenticationResponse.class);
 
         when(res.getAuthenticationResultCode()).thenReturn(AuthenticationResultCode.INVALID_CREDENTIAL);

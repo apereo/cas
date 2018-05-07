@@ -38,18 +38,18 @@ public class GroovyResourceMetadataResolverTests {
 
     @Test
     public void verifyResolverSupports() {
-        final SamlIdPProperties props = new SamlIdPProperties();
-        final GroovyResourceMetadataResolver resolver = new GroovyResourceMetadataResolver(props, openSamlConfigBean);
-        final SamlRegisteredService service = new SamlRegisteredService();
+        final var props = new SamlIdPProperties();
+        final var resolver = new GroovyResourceMetadataResolver(props, openSamlConfigBean);
+        final var service = new SamlRegisteredService();
         service.setMetadataLocation("classpath:GroovyMetadataResolver.groovy");
         assertTrue(resolver.supports(service));
     }
 
     @Test
     public void verifyResolverResolves() {
-        final SamlIdPProperties props = new SamlIdPProperties();
-        final GroovyResourceMetadataResolver resolver = new GroovyResourceMetadataResolver(props, openSamlConfigBean);
-        final SamlRegisteredService service = new SamlRegisteredService();
+        final var props = new SamlIdPProperties();
+        final var resolver = new GroovyResourceMetadataResolver(props, openSamlConfigBean);
+        final var service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);
         service.setMetadataLocation("classpath:GroovyMetadataResolver.groovy");
