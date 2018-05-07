@@ -32,8 +32,7 @@ import java.util.Map;
 public class CasConfigurationPropertiesEnvironmentManager {
     @NonNull
     private final ConfigurationPropertiesBindingPostProcessor binder;
-
-    @Autowired
+    
     private final Environment environment;
 
     /**
