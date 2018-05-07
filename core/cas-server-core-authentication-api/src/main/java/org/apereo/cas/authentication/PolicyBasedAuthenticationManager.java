@@ -135,8 +135,12 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     @Metered(name = "AUTHENTICATE_METER")
     @Counted(name = "AUTHENTICATE_COUNT", monotonic = true)
     public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
+        final boolean result = invokeAuthenticationPreProcessors(transaction);
+        if (!result) {
+            LOGGER.warn("An authentication pre-processor could not successfully process the authentication transaction");
+            throw new AuthenticationException("Authentication pre-processor has failed to process transaction");
+        }
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(transaction.getCredentials());
-        invokeAuthenticationPreProcessors(transaction);
         final AuthenticationBuilder builder = authenticateInternal(transaction);
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(builder);
 
@@ -161,8 +165,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * Invoke authentication pre processors.
      *
      * @param transaction the transaction
+     * @return the boolean
      */
-    protected void invokeAuthenticationPreProcessors(final AuthenticationTransaction transaction) {
+    protected boolean invokeAuthenticationPreProcessors(final AuthenticationTransaction transaction) {
         LOGGER.debug("Invoking authentication pre processors for authentication transaction");
         final Collection<AuthenticationPreProcessor> pops = authenticationEventExecutionPlan.getAuthenticationPreProcessors(transaction);
 
@@ -172,9 +177,14 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             .findFirst()
             .isPresent())
             .collect(Collectors.toList());
-        for (final AuthenticationPreProcessor p : supported) {
-            p.process(transaction);
+
+        boolean processed = true;
+        final Iterator<AuthenticationPreProcessor> it = supported.iterator();
+        while (processed && it.hasNext()) {
+            final AuthenticationPreProcessor processor = it.next();
+            processed = processor.process(transaction);
         }
+        return processed;
     }
 
     /**
