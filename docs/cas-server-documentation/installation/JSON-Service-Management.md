@@ -122,7 +122,7 @@ A few things to note:
 
 ### Jasig Namespace
 
-CAS automatically should remain backwards compatible with service definitions
+CAS automatically should remain backward compatible with service definitions
 that were created by a CAS `4.2.x` instance. Warnings should show up in the logs
 when such deprecated service definitions are found. Deployers are advised to review each definition
 and consult the docs to apply the new syntax.
