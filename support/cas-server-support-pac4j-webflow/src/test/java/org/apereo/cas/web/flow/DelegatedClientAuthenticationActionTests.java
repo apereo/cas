@@ -230,7 +230,8 @@ public class DelegatedClientAuthenticationActionTests {
             enforcer,
             manager,
             new DelegatedSessionCookieManager(mock(CookieRetrievingCookieGenerator.class), mock(SessionStoreCookieSerializer.class)),
-            support);
+            support,
+  "locale", "theme");
 
     }
 }
