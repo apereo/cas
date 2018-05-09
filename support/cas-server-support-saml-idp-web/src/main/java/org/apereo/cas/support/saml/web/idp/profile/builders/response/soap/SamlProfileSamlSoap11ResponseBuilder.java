@@ -64,7 +64,8 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                      final HttpServletRequest request,
                                      final HttpServletResponse response,
-                                     final String binding) throws SamlException {
+                                     final String binding,
+                                     final MessageContext messageContext) throws SamlException {
 
         LOGGER.debug("Locating the assertion consumer service url for binding [{}]", binding);
         @NonNull
@@ -75,7 +76,7 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
         header.getUnknownXMLObjects().add(ecpResponse);
         final Body body = newSoapObject(Body.class);
         final org.opensaml.saml.saml2.core.Response saml2Response =
-            buildSaml2Response(casAssertion, authnRequest, service, adaptor, request, binding);
+            buildSaml2Response(casAssertion, authnRequest, service, adaptor, request, binding, messageContext);
         body.getUnknownXMLObjects().add(saml2Response);
         final Envelope envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
@@ -87,22 +88,24 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
     /**
      * Build saml2 response.
      *
-     * @param casAssertion the cas assertion
-     * @param authnRequest the authn request
-     * @param service      the service
-     * @param adaptor      the adaptor
-     * @param request      the request
-     * @param binding      the binding
+     * @param casAssertion   the cas assertion
+     * @param authnRequest   the authn request
+     * @param service        the service
+     * @param adaptor        the adaptor
+     * @param request        the request
+     * @param binding        the binding
+     * @param messageContext the message context
      * @return the org . opensaml . saml . saml 2 . core . response
      */
     protected org.opensaml.saml.saml2.core.Response buildSaml2Response(final Object casAssertion,
                                                                        final RequestAbstractType authnRequest, final SamlRegisteredService service,
                                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                                        final HttpServletRequest request,
-                                                                       final String binding) {
+                                                                       final String binding,
+                                                                       final MessageContext messageContext) {
         return (org.opensaml.saml.saml2.core.Response)
             saml2ResponseBuilder.build(authnRequest, request, null,
-                casAssertion, service, adaptor, binding);
+                casAssertion, service, adaptor, binding, messageContext);
     }
 
     @Override

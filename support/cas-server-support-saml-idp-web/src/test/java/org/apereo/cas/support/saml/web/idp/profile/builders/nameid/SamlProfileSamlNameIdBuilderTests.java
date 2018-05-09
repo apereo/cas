@@ -12,6 +12,7 @@ import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.Assertion;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
@@ -68,7 +69,7 @@ public class SamlProfileSamlNameIdBuilderTests {
 
         when(facade.getSupportedNameIdFormats()).thenReturn(CollectionUtils.wrapList(NameID.TRANSIENT, NameID.EMAIL));
         final NameID result = b.build(authnRequest, new MockHttpServletRequest(), new MockHttpServletResponse(),
-            assertion, service, facade, SAMLConstants.SAML2_POST_BINDING_URI);
+            assertion, service, facade, SAMLConstants.SAML2_POST_BINDING_URI, mock(MessageContext.class));
         assertNotNull(result);
         assertEquals(NameID.EMAIL, result.getFormat());
         assertEquals("casuser", result.getValue());

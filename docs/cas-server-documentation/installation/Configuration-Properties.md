@@ -1698,6 +1698,8 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas[0].name=
 # cas.authn.jaas[0].order=
 # cas.authn.jaas[0].credentialCriteria=
+# cas.authn.jaas[0].loginConfigType=JavaLoginConfig
+# cas.authn.jaas[0].loginConfigurationFile=/path/to/jaas.conf
 ```
 
 Principal resolution and Person Directory settings for this feature 

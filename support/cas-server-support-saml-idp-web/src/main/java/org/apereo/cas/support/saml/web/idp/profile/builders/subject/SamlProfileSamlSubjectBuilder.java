@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.jasig.cas.client.validation.Assertion;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Subject;
@@ -29,8 +30,7 @@ import java.time.ZonedDateTime;
 @Slf4j
 public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Subject> {
     private static final long serialVersionUID = 4782621942035583007L;
-
-
+    
     private final SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder;
 
     private final int skewAllowance;
@@ -48,8 +48,9 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
                          final HttpServletResponse response,
                          final Object assertion, final SamlRegisteredService service,
                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                         final String binding) throws SamlException {
-        return buildSubject(request, response, authnRequest, assertion, service, adaptor, binding);
+                         final String binding,
+                         final MessageContext messageContext) throws SamlException {
+        return buildSubject(request, response, authnRequest, assertion, service, adaptor, binding, messageContext);
     }
 
     private Subject buildSubject(final HttpServletRequest request,
@@ -58,7 +59,8 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
                                  final Object casAssertion,
                                  final SamlRegisteredService service,
                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                 final String binding) throws SamlException {
+                                 final String binding,
+                                 final MessageContext messageContext) throws SamlException {
 
         final Assertion assertion = Assertion.class.cast(casAssertion);
         final ZonedDateTime validFromDate = ZonedDateTime.ofInstant(assertion.getValidFromDate().toInstant(), ZoneOffset.UTC);
@@ -70,7 +72,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
             LOGGER.warn("Subject recipient is not defined from either authentication request or metadata for [{}]", adaptor.getEntityId());
         }
 
-        final NameID nameId = getNameIdForService(request, response, authnRequest, service, adaptor, binding, assertion);
+        final NameID nameId = getNameIdForService(request, response, authnRequest, service, adaptor, binding, assertion, messageContext);
         final Subject subject = newSubject(nameId,
             service.isSkipGeneratingSubjectConfirmationRecipient() ? null : location,
             service.isSkipGeneratingSubjectConfirmationNotOnOrAfter() ? null : validFromDate.plusSeconds(this.skewAllowance),
@@ -83,11 +85,11 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
 
     private NameID getNameIdForService(final HttpServletRequest request, final HttpServletResponse response, final RequestAbstractType authnRequest,
                                        final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                       final String binding, final Assertion assertion) {
+                                       final String binding, final Assertion assertion, final MessageContext messageContext) {
         if (service.isSkipGeneratingAssertionNameId()) {
             LOGGER.warn("Assertion will skip assigning/generating a nameId based on service [{}]", service);
             return null;
         }
-        return this.ssoPostProfileSamlNameIdBuilder.build(authnRequest, request, response, assertion, service, adaptor, binding);
+        return this.ssoPostProfileSamlNameIdBuilder.build(authnRequest, request, response, assertion, service, adaptor, binding, messageContext);
     }
 }

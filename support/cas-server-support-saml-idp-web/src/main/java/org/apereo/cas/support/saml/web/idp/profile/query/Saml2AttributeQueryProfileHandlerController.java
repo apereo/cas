@@ -120,11 +120,11 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
             }
 
             final Assertion casAssertion = buildCasAssertion(issuer, service, attrs);
-            this.responseBuilder.build(query, request, response, casAssertion, service, facade, SAMLConstants.SAML2_SOAP11_BINDING_URI);
+            this.responseBuilder.build(query, request, response, casAssertion, service, facade, SAMLConstants.SAML2_SOAP11_BINDING_URI, ctx);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             request.setAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR, e.getMessage());
-            samlFaultResponseBuilder.build(query, request, response, null, null, null, SAMLConstants.SAML2_SOAP11_BINDING_URI);
+            samlFaultResponseBuilder.build(query, request, response, null, null, null, SAMLConstants.SAML2_SOAP11_BINDING_URI, ctx);
         }
     }
 }

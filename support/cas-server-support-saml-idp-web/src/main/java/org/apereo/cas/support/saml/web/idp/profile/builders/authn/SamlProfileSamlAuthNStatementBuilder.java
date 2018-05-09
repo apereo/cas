@@ -13,6 +13,7 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.jasig.cas.client.validation.Assertion;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.SubjectLocality;
@@ -53,24 +54,27 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
                                 final Object assertion,
                                 final SamlRegisteredService service,
                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                final String binding) throws SamlException {
-        return buildAuthnStatement(assertion, authnRequest, adaptor, service, binding);
+                                final String binding,
+                                final MessageContext messageContext) throws SamlException {
+        return buildAuthnStatement(assertion, authnRequest, adaptor, service, binding, messageContext);
     }
 
     /**
      * Creates an authentication statement for the current request.
      *
-     * @param assertion    the assertion
-     * @param authnRequest the authn request
-     * @param adaptor      the adaptor
-     * @param service      the service
-     * @param binding      the binding
+     * @param casAssertion   the cas assertion
+     * @param authnRequest   the authn request
+     * @param adaptor        the adaptor
+     * @param service        the service
+     * @param binding        the binding
+     * @param messageContext the message context
      * @return constructed authentication statement
      * @throws SamlException the saml exception
      */
     private AuthnStatement buildAuthnStatement(final Object casAssertion, final RequestAbstractType authnRequest,
                                                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                               final SamlRegisteredService service, final String binding) throws SamlException {
+                                               final SamlRegisteredService service, final String binding,
+                                               final MessageContext messageContext) throws SamlException {
 
         final Assertion assertion = Assertion.class.cast(casAssertion);
         final String authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
