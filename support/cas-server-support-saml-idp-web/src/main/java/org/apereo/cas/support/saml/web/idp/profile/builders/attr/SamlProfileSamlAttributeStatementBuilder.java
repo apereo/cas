@@ -11,6 +11,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.jasig.cas.client.validation.Assertion;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,14 +48,16 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
                                     final Object assertion,
                                     final SamlRegisteredService service,
                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                    final String binding) throws SamlException {
-        return buildAttributeStatement(assertion, authnRequest, service, adaptor);
+                                    final String binding,
+                                    final MessageContext messageContext) throws SamlException {
+        return buildAttributeStatement(assertion, authnRequest, service, adaptor, messageContext);
     }
 
     private AttributeStatement buildAttributeStatement(final Object casAssertion,
                                                        final RequestAbstractType authnRequest,
                                                        final SamlRegisteredService service,
-                                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+                                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                       final MessageContext messageContext) throws SamlException {
 
         final Assertion assertion = Assertion.class.cast(casAssertion);
         final Map<String, Object> attributes = new HashMap<>(assertion.getAttributes());

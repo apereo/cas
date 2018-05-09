@@ -14,6 +14,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSig
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
@@ -79,9 +80,12 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
                    final Object casAssertion,
                    final SamlRegisteredService service,
                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                   final String binding) throws SamlException {
-        final Assertion assertion = buildSamlAssertion(authnRequest, request, response, casAssertion, service, adaptor, binding);
-        final T finalResponse = buildResponse(assertion, casAssertion, authnRequest, service, adaptor, request, response, binding);
+                   final String binding,
+                   final MessageContext messageContext) throws SamlException {
+        final Assertion assertion = buildSamlAssertion(authnRequest, request, response,
+            casAssertion, service, adaptor, binding, messageContext);
+        final T finalResponse = buildResponse(assertion, casAssertion, authnRequest,
+            service, adaptor, request, response, binding, messageContext);
         return encodeFinalResponse(request, response, service, adaptor, finalResponse, binding, authnRequest, casAssertion);
     }
 
@@ -114,13 +118,14 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
     /**
      * Build saml assertion assertion.
      *
-     * @param authnRequest the authn request
-     * @param request      the request
-     * @param response     the response
-     * @param casAssertion the cas assertion
-     * @param service      the service
-     * @param adaptor      the adaptor
-     * @param binding      the binding
+     * @param authnRequest   the authn request
+     * @param request        the request
+     * @param response       the response
+     * @param casAssertion   the cas assertion
+     * @param service        the service
+     * @param adaptor        the adaptor
+     * @param binding        the binding
+     * @param messageContext the message context
      * @return the assertion
      */
     protected Assertion buildSamlAssertion(final RequestAbstractType authnRequest,
@@ -129,22 +134,24 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
                                            final Object casAssertion,
                                            final SamlRegisteredService service,
                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                           final String binding) {
+                                           final String binding,
+                                           final MessageContext messageContext) {
         return this.samlProfileSamlAssertionBuilder.build(authnRequest, request, response,
-            casAssertion, service, adaptor, binding);
+            casAssertion, service, adaptor, binding, messageContext);
     }
 
     /**
      * Build response response.
      *
-     * @param assertion    the assertion
-     * @param casAssertion the cas assertion
-     * @param authnRequest the authn request
-     * @param service      the service
-     * @param adaptor      the adaptor
-     * @param request      the request
-     * @param response     the response
-     * @param binding      the binding
+     * @param assertion      the assertion
+     * @param casAssertion   the cas assertion
+     * @param authnRequest   the authn request
+     * @param service        the service
+     * @param adaptor        the adaptor
+     * @param request        the request
+     * @param response       the response
+     * @param binding        the binding
+     * @param messageContext the message context
      * @return the response
      * @throws SamlException the saml exception
      */
@@ -155,7 +162,8 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
                                        SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                        HttpServletRequest request,
                                        HttpServletResponse response,
-                                       String binding) throws SamlException;
+                                       String binding,
+                                       MessageContext messageContext) throws SamlException;
 
     /**
      * Build entity issuer issuer.
