@@ -48,7 +48,17 @@ public class JaasAuthenticationHandlerTests {
             PrincipalFactoryUtils.newPrincipalFactory(), 0);
         handler.setLoginConfigType("JavaLoginConfig");
         handler.setLoginConfigurationFile(this.fileName);
+        handler.setRealm("CAS");
         assertNotNull(handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
+    @Test
+    public void verifyWithValidCredentialsPreDefined() throws Exception {
+        final JaasAuthenticationHandler handler = new JaasAuthenticationHandler("JAAS", mock(ServicesManager.class),
+            PrincipalFactoryUtils.newPrincipalFactory(), 0);
+        handler.setLoginConfigType("JavaLoginConfig");
+        handler.setLoginConfigurationFile(this.fileName);
+        handler.setRealm("ACCTS");
+        assertNotNull(handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon")));
+    }
 }
