@@ -17,6 +17,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.util.CollectionUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.validation.Assertion;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameID;
@@ -49,8 +50,8 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                         final HttpServletResponse response,
                         final Object assertion, final SamlRegisteredService service,
                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                        final String binding) throws SamlException {
-        return buildNameId(authnRequest, assertion, service, adaptor);
+                        final String binding, final MessageContext messageContext) throws SamlException {
+        return buildNameId(authnRequest, assertion, service, adaptor, messageContext);
     }
 
     /**
@@ -68,7 +69,8 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     private NameID buildNameId(final RequestAbstractType authnRequest,
                                final Object assertion,
                                final SamlRegisteredService service,
-                               final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+                               final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                               final MessageContext messageContext) throws SamlException {
         final List<String> supportedNameFormats = getSupportedNameIdFormats(service, adaptor);
         final String requiredNameFormat = getRequiredNameIdFormatIfAny(authnRequest);
         validateRequiredNameIdFormatIfAny(authnRequest, adaptor, supportedNameFormats, requiredNameFormat);

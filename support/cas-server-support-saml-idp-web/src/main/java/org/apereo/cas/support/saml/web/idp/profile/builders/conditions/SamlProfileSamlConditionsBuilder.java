@@ -9,6 +9,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,24 +44,25 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
                             final HttpServletResponse response,
                             final Object assertion, final SamlRegisteredService service,
                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                            final String binding)
-        throws SamlException {
-        return buildConditions(authnRequest, assertion, service, adaptor);
+                            final String binding, final MessageContext messageContext) throws SamlException {
+        return buildConditions(authnRequest, assertion, service, adaptor, messageContext);
     }
 
     /**
      * Build conditions conditions.
      *
-     * @param authnRequest the authn request
-     * @param assertion    the assertion
-     * @param service      the service
-     * @param adaptor      the adaptor
+     * @param authnRequest   the authn request
+     * @param assertion      the assertion
+     * @param service        the service
+     * @param adaptor        the adaptor
+     * @param messageContext the message context
      * @return the conditions
      * @throws SamlException the saml exception
      */
     protected Conditions buildConditions(final RequestAbstractType authnRequest,
                                          final Object assertion, final SamlRegisteredService service,
-                                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+                                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                         final MessageContext messageContext) throws SamlException {
 
         final ZonedDateTime currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
         int skewAllowance = casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance();
