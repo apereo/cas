@@ -2,8 +2,11 @@ package org.apereo.cas.support.pac4j.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.pac4j.web.flow.DelegatedClientAuthenticationAction;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.pac4j.core.client.Clients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,8 +28,20 @@ import org.springframework.webflow.execution.Action;
 public class Pac4jDelegatedAuthenticationConfiguration {
 
     @Autowired
-    private CasConfigurationProperties casProperties;
+    @Qualifier("adaptiveAuthenticationPolicy")
+    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
+
+    @Autowired
+    @Qualifier("serviceTicketRequestWebflowEventResolver")
+    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
+
+    @Autowired
+    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
     
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
@@ -34,17 +49,21 @@ public class Pac4jDelegatedAuthenticationConfiguration {
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-    
+
     @Autowired
     @RefreshScope
     @Bean
     @Lazy
     public Action clientAction(@Qualifier("builtClients") final Clients builtClients) {
-        return new DelegatedClientAuthenticationAction(builtClients, 
-                authenticationSystemSupport, 
-                centralAuthenticationService, 
-                casProperties.getTheme().getParamName(), 
-                casProperties.getLocale().getParamName(), 
-                casProperties.getAuthn().getPac4j().isAutoRedirect());
+        return new DelegatedClientAuthenticationAction(
+            initialAuthenticationAttemptWebflowEventResolver,
+            serviceTicketRequestWebflowEventResolver,
+            adaptiveAuthenticationPolicy,
+            builtClients,
+            authenticationSystemSupport,
+            centralAuthenticationService,
+            casProperties.getTheme().getParamName(),
+            casProperties.getLocale().getParamName(),
+            casProperties.getAuthn().getPac4j().isAutoRedirect());
     }
 }

@@ -6,11 +6,15 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.Pac4jUtils;
+import org.apereo.cas.web.flow.actions.AbstractAuthenticationAction;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
@@ -24,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -52,7 +55,7 @@ import java.util.regex.Pattern;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public class DelegatedClientAuthenticationAction extends AbstractAction {
+public class DelegatedClientAuthenticationAction extends AbstractAuthenticationAction {
     /**
      * Stop the webflow for pac4j and route to view.
      */
@@ -90,9 +93,15 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     private final String localParamName;
     private final boolean autoRedirect;
 
-    public DelegatedClientAuthenticationAction(final Clients clients, final AuthenticationSystemSupport authenticationSystemSupport,
-                                               final CentralAuthenticationService centralAuthenticationService, final String themeParamName,
-                                               final String localParamName, final boolean autoRedirect) {
+    public DelegatedClientAuthenticationAction(
+        final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+        final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
+        final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
+        final Clients clients, final AuthenticationSystemSupport authenticationSystemSupport,
+        final CentralAuthenticationService centralAuthenticationService, final String themeParamName,
+        final String localParamName, final boolean autoRedirect) {
+        super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
+
         this.clients = clients;
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.centralAuthenticationService = centralAuthenticationService;
@@ -102,7 +111,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
+    public Event doExecute(final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         final HttpSession session = request.getSession();
@@ -145,10 +154,14 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             if (credentials != null) {
                 final ClientCredential clientCredential = new ClientCredential(credentials);
                 final AuthenticationResult authenticationResult =
-                        this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
+                    this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
                 final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
                 WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-                return success();
+                WebUtils.putAuthentication(authenticationResult.getAuthentication(), context);
+                WebUtils.putAuthenticationResult(authenticationResult, context);
+                WebUtils.putCredential(context, clientCredential);
+                WebUtils.putService(context, service);
+                return super.doExecute(context);
             }
         }
 
@@ -161,12 +174,16 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         if (this.autoRedirect) {
             final Set<ProviderLoginPageConfiguration> urls = context.getFlowScope().get(PAC4J_URLS, Set.class);
             if (urls != null && urls.size() == 1) {
-                final ProviderLoginPageConfiguration cfg = urls.stream().findFirst().get();
-                LOGGER.debug("Auto-redirecting to client url [{}]", cfg.getRedirectUrl());
-                response.sendRedirect(cfg.getRedirectUrl());
-                final ExternalContext externalContext = context.getExternalContext();
-                externalContext.recordResponseComplete();
-                return stopWebflow();
+                try {
+                    final ProviderLoginPageConfiguration cfg = urls.stream().findFirst().get();
+                    LOGGER.debug("Auto-redirecting to client url [{}]", cfg.getRedirectUrl());
+                    response.sendRedirect(cfg.getRedirectUrl());
+                    final ExternalContext externalContext = context.getExternalContext();
+                    externalContext.recordResponseComplete();
+                    return stopWebflow();
+                } catch (final Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
             }
         }
         return error();
@@ -196,46 +213,46 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();
 
         this.clients.findAllClients()
-                .stream()
-                .filter(IndirectClient.class::isInstance)
-                .forEach(client -> {
-                    try {
-                        final IndirectClient indirectClient = (IndirectClient) client;
+            .stream()
+            .filter(IndirectClient.class::isInstance)
+            .forEach(client -> {
+                try {
+                    final IndirectClient indirectClient = (IndirectClient) client;
 
-                        final String name = client.getName();
-                        final Matcher matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
-                        final String type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
+                    final String name = client.getName();
+                    final Matcher matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
+                    final String type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
 
-                        final String redirectionUrl;
-                        final RedirectAction action = indirectClient.getRedirectAction(webContext);
-                        if (RedirectAction.RedirectType.SUCCESS.equals(action.getType())) {
-                            redirectionUrl = String.format("javascript:document.write('%1$s');document.close()", action.getContent().replaceAll("\n", ""));
-                        } else {
-                            redirectionUrl = action.getLocation();
-                        }
-                        
-                        LOGGER.debug("[{}] -> [{}]", name, redirectionUrl);
-                        urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, type, getCssClass(name)));
-                    } catch (final HttpAction e) {
-                        if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
-                            LOGGER.debug("Authentication request was denied from the provider [{}]", client.getName());
-                        } else {
-                            LOGGER.warn(e.getMessage(), e);
-                        }
-                    } catch (final Exception e) {
-                        LOGGER.error("Cannot process client [{}]", client, e);
+                    final String redirectionUrl;
+                    final RedirectAction action = indirectClient.getRedirectAction(webContext);
+                    if (RedirectAction.RedirectType.SUCCESS.equals(action.getType())) {
+                        redirectionUrl = String.format("javascript:document.write('%1$s');document.close()", action.getContent().replaceAll("\n", ""));
+                    } else {
+                        redirectionUrl = action.getLocation();
                     }
-                });
+
+                    LOGGER.debug("[{}] -> [{}]", name, redirectionUrl);
+                    urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, type, getCssClass(name)));
+                } catch (final HttpAction e) {
+                    if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
+                        LOGGER.debug("Authentication request was denied from the provider [{}]", client.getName());
+                    } else {
+                        LOGGER.warn(e.getMessage(), e);
+                    }
+                } catch (final Exception e) {
+                    LOGGER.error("Cannot process client [{}]", client, e);
+                }
+            });
         if (!urls.isEmpty()) {
             context.getFlowScope().put(PAC4J_URLS, urls);
         } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
             LOGGER.warn("No clients could be determined based on the provided configuration");
         }
     }
-    
+
     /**
      * Get a valid CSS class for the given provider name.
-     * 
+     *
      * @param name Name of the provider
      */
     private String getCssClass(final String name) {
@@ -244,7 +261,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             computedCssClass = computedCssClass.concat(" " + PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN.matcher(name).replaceAll("-"));
         }
         LOGGER.debug("cssClass for {} is {} ", name, computedCssClass);
-        return computedCssClass;            
+        return computedCssClass;
     }
 
     /**
@@ -287,7 +304,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     public static Optional<ModelAndView> hasDelegationRequestFailed(final HttpServletRequest request, final int status) {
         final Map<String, String[]> params = request.getParameterMap();
         if (params.containsKey("error") || params.containsKey("error_code") || params.containsKey("error_description")
-                || params.containsKey("error_message")) {
+            || params.containsKey("error_message")) {
             final Map<String, Object> model = new HashMap<>();
             if (params.containsKey("error_code")) {
                 model.put("code", StringEscapeUtils.escapeHtml4(request.getParameter("error_code")));
@@ -347,7 +364,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         public String getType() {
             return type;
         }
-        
+
         public String getCssClass() {
             return cssClass;
         }

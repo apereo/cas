@@ -4,16 +4,21 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationManager;
+import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
 import org.pac4j.core.client.Clients;
@@ -43,7 +48,7 @@ import static org.mockito.Mockito.*;
  * @since 3.5.2
  */
 public class DelegatedClientAuthenticationActionTests {
-    
+
     private static final String TGT_ID = "TGT-00-xxxxxxxxxxxxxxxxxxxxxxxxxx.cas0";
 
     private static final String MY_KEY = "my_key";
@@ -82,9 +87,17 @@ public class DelegatedClientAuthenticationActionTests {
         final FacebookClient facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
         final TwitterClient twitterClient = new TwitterClient("3nJPbVTVRZWAyUgoUKQ8UA", "h6LZyZJmcW46Vu8R47MYfeXTSYGI30EqnWaSwVhFkbA");
         final Clients clients = new Clients(MY_LOGIN_URL, facebookClient, twitterClient);
-        final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients,
-                null, mock(CentralAuthenticationService.class),
-                ThemeChangeInterceptor.DEFAULT_PARAM_NAME, LocaleChangeInterceptor.DEFAULT_PARAM_NAME, false);
+
+        final CasDelegatingWebflowEventResolver initialResolver = mock(CasDelegatingWebflowEventResolver.class);
+        when(initialResolver.resolveSingle(any())).thenReturn(new Event(this, "success"));
+
+        final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(
+            initialResolver,
+            mock(CasWebflowEventResolver.class),
+            mock(AdaptiveAuthenticationPolicy.class),
+            clients,
+            null, mock(CentralAuthenticationService.class),
+            ThemeChangeInterceptor.DEFAULT_PARAM_NAME, LocaleChangeInterceptor.DEFAULT_PARAM_NAME, false);
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("error", event.getId());
@@ -92,9 +105,9 @@ public class DelegatedClientAuthenticationActionTests {
         assertEquals(MY_LOCALE, mockSession.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(MY_METHOD, mockSession.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
-        final Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration> urls = 
-                (Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration>) 
-                        flowScope.get(DelegatedClientAuthenticationAction.PAC4J_URLS);
+        final Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration> urls =
+            (Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration>)
+                flowScope.get(DelegatedClientAuthenticationAction.PAC4J_URLS);
 
         assertFalse(urls.isEmpty());
         assertSame(2, urls.size());
@@ -139,11 +152,23 @@ public class DelegatedClientAuthenticationActionTests {
         when(transManager.getAuthenticationManager()).thenReturn(authNManager);
         when(transManager.handle(any(AuthenticationTransaction.class), any(AuthenticationResultBuilder.class))).thenReturn(transManager);
 
+        final AuthenticationResult authnResult = mock(AuthenticationResult.class);
+        when(authnResult.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        when(authnResult.getService()).thenReturn(service);
+
         final AuthenticationSystemSupport support = mock(AuthenticationSystemSupport.class);
         when(support.getAuthenticationTransactionManager()).thenReturn(transManager);
+        when(support.handleAndFinalizeSingleAuthenticationTransaction(any(), (Credential[]) any())).thenReturn(authnResult);
 
-        final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients, support, casImpl,
-                "theme", "locale", false);
+        final CasDelegatingWebflowEventResolver initialResolver = mock(CasDelegatingWebflowEventResolver.class);
+        when(initialResolver.resolveSingle(any())).thenReturn(new Event(this, "success"));
+
+        final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(
+            initialResolver,
+            mock(CasWebflowEventResolver.class),
+            mock(AdaptiveAuthenticationPolicy.class),
+            clients, support, casImpl,
+            "theme", "locale", false);
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("success", event.getId());
