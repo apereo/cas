@@ -32,6 +32,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -165,12 +166,20 @@ public class CasCoreAuthenticationHandlersConfiguration {
                 .stream()
                 .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
                 .map(jaas -> {
-                    final JaasAuthenticationHandler h = new JaasAuthenticationHandler(jaas.getName(), servicesManager, jaasPrincipalFactory(), jaas.getOrder());
+                    final JaasAuthenticationHandler h = new JaasAuthenticationHandler(jaas.getName(), servicesManager,
+                        jaasPrincipalFactory(), jaas.getOrder());
 
                     h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());
                     h.setKerberosRealmSystemProperty(jaas.getKerberosRealmSystemProperty());
                     h.setRealm(jaas.getRealm());
                     h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jaas.getPasswordEncoder()));
+
+                    if (StringUtils.isNotBlank(jaas.getLoginConfigType())) {
+                        h.setLoginConfigType(jaas.getLoginConfigType());
+                    }
+                    if (StringUtils.isNotBlank(jaas.getLoginConfigurationFile())) {
+                        h.setLoginConfigurationFile(new File(jaas.getLoginConfigurationFile()));
+                    }
 
                     final PasswordPolicyProperties passwordPolicy = jaas.getPasswordPolicy();
                     h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(jaas.getPasswordPolicy()));
