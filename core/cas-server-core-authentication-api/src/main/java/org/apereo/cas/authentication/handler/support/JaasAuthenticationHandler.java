@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.handler.support;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.MessageDescriptor;
@@ -20,7 +21,9 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginContext;
+import java.io.File;
 import java.security.GeneralSecurityException;
+import java.security.URIParameter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -90,6 +93,10 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     private String kerberosKdcSystemProperty;
 
+    private String loginConfigType;
+
+    private File loginConfigurationFile;
+
     /**
      * Instantiates a new Jaas authentication handler,
      * and attempts to load/verify the configuration.
@@ -107,23 +114,37 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                                         final String originalPassword) throws GeneralSecurityException {
-        if (this.kerberosKdcSystemProperty != null) {
+        if (StringUtils.isNotBlank(this.kerberosKdcSystemProperty)) {
             LOGGER.debug("Configured kerberos system property [{}] to [{}]", SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
             System.setProperty(SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
         }
-        if (this.kerberosRealmSystemProperty != null) {
+        if (StringUtils.isNotBlank(this.kerberosRealmSystemProperty)) {
             LOGGER.debug("Setting kerberos system property [{}] to [{}]", SYS_PROP_KRB5_REALM, this.kerberosRealmSystemProperty);
             System.setProperty(SYS_PROP_KRB5_REALM, this.kerberosRealmSystemProperty);
         }
-        final String username = credential.getUsername();
-        final String password = credential.getPassword();
 
+        final Principal principal = authenticateAndGetPrincipal(credential);
+        final AuthenticationPasswordPolicyHandlingStrategy strategy = getPasswordPolicyHandlingStrategy();
+        if (principal != null && strategy != null) {
+            LOGGER.debug("Attempting to examine and handle password policy via [{}]", strategy.getClass().getSimpleName());
+            final List<MessageDescriptor> messageList = strategy.handle(principal, getPasswordPolicyConfiguration());
+            return createHandlerResult(credential, principal, messageList);
+        }
+        throw new FailedLoginException("Unable to authenticate " + credential.getId());
+    }
+
+    /**
+     * Authenticate and get principal principal.
+     *
+     * @param credential the credential
+     * @return the principal
+     * @throws GeneralSecurityException the general security exception
+     */
+    protected Principal authenticateAndGetPrincipal(final UsernamePasswordCredential credential) throws GeneralSecurityException {
         Principal principal = null;
-
         LoginContext lc = null;
         try {
-            LOGGER.debug("Attempting authentication for: [{}]", username);
-            lc = new LoginContext(this.realm, new UsernamePasswordCallbackHandler(username, password));
+            lc = getLoginContext(credential);
             lc.login();
             final Set<java.security.Principal> principals = lc.getSubject().getPrincipals();
             LOGGER.debug("JAAS principals extracted from subject are [{}}", principals);
@@ -137,13 +158,25 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 lc.logout();
             }
         }
-        final AuthenticationPasswordPolicyHandlingStrategy strategy = getPasswordPolicyHandlingStrategy();
-        if (principal != null && strategy != null) {
-            LOGGER.debug("Attempting to examine and handle password policy via [{}]", strategy.getClass().getSimpleName());
-            final List<MessageDescriptor> messageList = strategy.handle(principal, getPasswordPolicyConfiguration());
-            return createHandlerResult(credential, principal, messageList);
+        return principal;
+    }
+
+    /**
+     * Gets login context.
+     *
+     * @param credential the credential
+     * @return the login context
+     * @throws GeneralSecurityException the general security exception
+     */
+    protected LoginContext getLoginContext(final UsernamePasswordCredential credential) throws GeneralSecurityException {
+        final UsernamePasswordCallbackHandler callbackHandler = new UsernamePasswordCallbackHandler(credential.getUsername(), credential.getPassword());
+        if (StringUtils.isNotBlank(this.loginConfigType) && this.loginConfigurationFile != null
+            && this.loginConfigurationFile.exists() && this.loginConfigurationFile.canRead()) {
+            final Configuration.Parameters parameters = new URIParameter(loginConfigurationFile.toURI());
+            final Configuration loginConfig = Configuration.getInstance(this.loginConfigType, parameters);
+            return new LoginContext(this.realm, null, callbackHandler, loginConfig);
         }
-        throw new FailedLoginException("Unable to authenticate " + username);
+        return new LoginContext(this.realm, callbackHandler);
     }
 
     /**
