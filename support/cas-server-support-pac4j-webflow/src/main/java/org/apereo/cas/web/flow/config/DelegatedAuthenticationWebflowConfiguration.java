@@ -161,7 +161,9 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
             registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
             delegatedClientWebflowManager(),
             delegatedSessionCookieManager,
-            authenticationSystemSupport);
+            authenticationSystemSupport,
+            casProperties.getLocale().getParamName(),
+            casProperties.getTheme().getParamName());
     }
 
     @ConditionalOnMissingBean(name = "delegatedAuthenticationWebflowConfigurer")
