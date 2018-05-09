@@ -55,6 +55,8 @@ import org.apereo.cas.util.cipher.ProtocolTicketCipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
 import org.jasig.cas.client.ssl.HttpURLConnectionFactory;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
+import org.jasig.cas.client.validation.Cas10TicketValidator;
+import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
 import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -128,7 +130,20 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     public AbstractUrlBasedTicketValidator casClientTicketValidator() {
         final String prefix = StringUtils.defaultString(casProperties.getClient().getPrefix(), casProperties.getServer().getPrefix());
-        final Cas30ServiceTicketValidator validator = new Cas30ServiceTicketValidator(prefix);
+
+        final AbstractUrlBasedTicketValidator validator;
+        switch (casProperties.getClient().getValidatorType()) {
+            case CAS10:
+                validator = new Cas10TicketValidator(prefix);
+                break;
+            case CAS20:
+                validator = new Cas20ServiceTicketValidator(prefix);
+                break;
+            case CAS30:
+            default:
+                validator = new Cas30ServiceTicketValidator(prefix);
+        }
+
         final HttpURLConnectionFactory factory = new HttpURLConnectionFactory() {
             private static final long serialVersionUID = 3692658214483917813L;
 
