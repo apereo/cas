@@ -67,6 +67,7 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
         actionState.getTransitionSet().add(createTransition(DelegatedClientAuthenticationAction.STOP,
                 DelegatedClientAuthenticationAction.STOP_WEBFLOW));
         setStartState(flow, actionState);
+        registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
     }
 
     private void createStopWebflowViewState(final Flow flow) {
