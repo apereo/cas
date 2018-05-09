@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -38,6 +40,7 @@ import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -202,8 +205,12 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         final String name = client.getName();
         final Matcher matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
         final String type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
-        final String redirectUrl = DelegatedClientNavigationController.ENDPOINT_REDIRECT
-            + "?" + Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER + "=" + name;
+        val uriBuilder = UriComponentsBuilder.fromUriString(DelegatedClientNavigationController.ENDPOINT_REDIRECT).queryParam(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, name);
+        val serviceParam = webContext.getRequestParameter(CasProtocolConstants.PARAMETER_SERVICE);
+        if (StringUtils.isNotBlank(serviceParam)) {
+            uriBuilder.queryParam(CasProtocolConstants.PARAMETER_SERVICE, serviceParam);
+        }
+        final String redirectUrl = uriBuilder.toUriString();
         final boolean autoRedirect = (Boolean) client.getCustomProperties().getOrDefault("autoRedirect", Boolean.FALSE);
         final ProviderLoginPageConfiguration p = new ProviderLoginPageConfiguration(name, redirectUrl, type, getCssClass(name), autoRedirect);
         return Optional.of(p);
