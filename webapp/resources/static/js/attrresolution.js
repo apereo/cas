@@ -73,6 +73,7 @@ function releaseAttributes(uid, psw, service) {
     $('cas3Xml').empty();
     $('cas3Json').empty();
 
+    $('#submitRelease').attr('disabled', 'disabled');
     $.ajax({
         type: 'post',
         url: urls.releaseAttributes,
@@ -107,6 +108,9 @@ function releaseAttributes(uid, psw, service) {
                 + 'Message: <code>' + err.responseJSON.message + '</code><p/>'
                 + '</div>';
             $('#validationresponse').html(html);
+        },
+        complete: function() {
+            $('#submitRelease').removeAttr('disabled');
         }
     });
 }
