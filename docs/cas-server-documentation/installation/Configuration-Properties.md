@@ -3892,6 +3892,7 @@ Configure settings relevant to the Java CAS client configured to handle inbound 
 
 ```properties
 # cas.client.prefix=https://sso.example.org/cas
+# cas.client.validatorType=CAS10|CAS20|CAS30
 ```
 
 ## Password Management
