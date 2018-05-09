@@ -35,7 +35,7 @@ public class JaasAuthenticationHandlerTests {
     @Before
     public void setUp() throws Exception {
         final ClassPathResource resource = new ClassPathResource("jaas.conf");
-        this.fileName = new File(System.getProperty("java.io.tmpdir"), "jaas.conf");
+        this.fileName = new File(System.getProperty("java.io.tmpdir"), "jaas-custom.conf");
         try (Writer writer = Files.newBufferedWriter(fileName.toPath(), StandardCharsets.UTF_8)) {
             IOUtils.copy(resource.getInputStream(), writer, Charset.defaultCharset());
             writer.flush();

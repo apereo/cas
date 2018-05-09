@@ -171,7 +171,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     protected LoginContext getLoginContext(final UsernamePasswordCredential credential) throws GeneralSecurityException {
         final UsernamePasswordCallbackHandler callbackHandler = new UsernamePasswordCallbackHandler(credential.getUsername(), credential.getPassword());
-        if (StringUtils.isNotBlank(this.loginConfigType) && this.loginConfigurationFile != null
+        if (this.loginConfigurationFile != null && StringUtils.isNotBlank(this.loginConfigType)
             && this.loginConfigurationFile.exists() && this.loginConfigurationFile.canRead()) {
             final Configuration.Parameters parameters = new URIParameter(loginConfigurationFile.toURI());
             final Configuration loginConfig = Configuration.getInstance(this.loginConfigType, parameters);
