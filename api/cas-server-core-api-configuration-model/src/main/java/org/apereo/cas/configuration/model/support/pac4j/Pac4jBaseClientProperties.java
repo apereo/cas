@@ -27,6 +27,7 @@ public class Pac4jBaseClientProperties implements Serializable {
      * custom styling of individual IdPs (e.g. for an organization logo).
      */
     private String clientName;
+    
     /**
      * Auto-redirect to this client.
      */
