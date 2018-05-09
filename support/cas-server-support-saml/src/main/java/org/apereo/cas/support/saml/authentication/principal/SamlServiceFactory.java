@@ -18,8 +18,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
-
-    
     private static final int CONST_REQUEST_ID_LENGTH = 11;
 
     private static final String CONST_START_ARTIFACT_XML_TAG_NO_NAMESPACE = "<AssertionArtifact>";
@@ -38,7 +36,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
         final String requestId;
 
         if (!StringUtils.hasText(service) && !StringUtils.hasText(requestBody)) {
-            LOGGER.debug("Request does not specify a [{}] or request body is empty", SamlProtocolConstants.CONST_PARAM_TARGET);
+            LOGGER.trace("Request does not specify a [{}] or request body is empty", SamlProtocolConstants.CONST_PARAM_TARGET);
             return null;
         }
 
