@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -83,6 +82,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     private final DelegatedClientWebflowManager delegatedClientWebflowManager;
     private final DelegatedSessionCookieManager delegatedSessionCookieManager;
     private final AuthenticationSystemSupport authenticationSystemSupport;
+    private final String localeParamName;
+    private final String themeParamName;
 
     public DelegatedClientAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
@@ -92,7 +93,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                                                final AuditableExecution delegatedAuthenticationPolicyEnforcer,
                                                final DelegatedClientWebflowManager delegatedClientWebflowManager,
                                                final DelegatedSessionCookieManager delegatedSessionCookieManager,
-                                               final AuthenticationSystemSupport authenticationSystemSupport) {
+                                               final AuthenticationSystemSupport authenticationSystemSupport,
+                                               final String localeParamName,
+                                               final String themeParamName) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
         this.clients = clients;
         this.servicesManager = servicesManager;
@@ -100,6 +103,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         this.delegatedClientWebflowManager = delegatedClientWebflowManager;
         this.delegatedSessionCookieManager = delegatedSessionCookieManager;
         this.authenticationSystemSupport = authenticationSystemSupport;
+        this.localeParamName = localeParamName;
+        this.themeParamName = themeParamName;
     }
 
     @Override
@@ -205,10 +210,22 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         final String name = client.getName();
         final Matcher matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
         final String type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
-        val uriBuilder = UriComponentsBuilder.fromUriString(DelegatedClientNavigationController.ENDPOINT_REDIRECT).queryParam(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, name);
-        val serviceParam = webContext.getRequestParameter(CasProtocolConstants.PARAMETER_SERVICE);
+        final UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(DelegatedClientNavigationController.ENDPOINT_REDIRECT).queryParam(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, name);
+        final String serviceParam = webContext.getRequestParameter(CasProtocolConstants.PARAMETER_SERVICE);
         if (StringUtils.isNotBlank(serviceParam)) {
             uriBuilder.queryParam(CasProtocolConstants.PARAMETER_SERVICE, serviceParam);
+        }
+        final String methodParam = webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD);
+        if (StringUtils.isNotBlank(methodParam)) {
+            uriBuilder.queryParam(CasProtocolConstants.PARAMETER_METHOD, methodParam);
+        }
+        final String localeParam = webContext.getRequestParameter(this.localeParamName);
+        if (StringUtils.isNotBlank(localeParam)) {
+            uriBuilder.queryParam(this.localeParamName, localeParam);
+        }
+        final String themeParam = webContext.getRequestParameter(this.themeParamName);
+        if (StringUtils.isNotBlank(themeParam)) {
+            uriBuilder.queryParam(this.themeParamName, themeParam);
         }
         final String redirectUrl = uriBuilder.toUriString();
         final boolean autoRedirect = (Boolean) client.getCustomProperties().getOrDefault("autoRedirect", Boolean.FALSE);
