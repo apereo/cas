@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.handler.support;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.handler.support.jaas.JaasAuthenticationHandler;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
