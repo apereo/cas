@@ -33,11 +33,10 @@ import lombok.NoArgsConstructor;
  * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
-@SpringBootApplication(exclude = { HibernateJpaAutoConfiguration.class, JerseyAutoConfiguration.class, GroovyTemplateAutoConfiguration.class,
+@SpringBootApplication(exclude = {HibernateJpaAutoConfiguration.class, JerseyAutoConfiguration.class, GroovyTemplateAutoConfiguration.class,
     JmxAutoConfiguration.class, DataSourceAutoConfiguration.class, RedisAutoConfiguration.class, MongoAutoConfiguration.class,
     MongoDataAutoConfiguration.class, CassandraAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class,
-    MetricsDropwizardAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class })
-
+    MetricsDropwizardAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync
 @Slf4j
