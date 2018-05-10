@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.handler.support;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.handler.support.jaas.JaasAuthenticationHandler;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,8 +35,8 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
 
     @Before
     public void setUp() throws Exception {
-        final ClassPathResource resource = new ClassPathResource("jaas.conf");
-        final File fileName = new File(System.getProperty("java.io.tmpdir"), "jaas.conf");
+        final ClassPathResource resource = new ClassPathResource("jaas-system.conf");
+        final File fileName = new File(System.getProperty("java.io.tmpdir"), "jaas-system.conf");
         try (Writer writer = Files.newBufferedWriter(fileName.toPath(), StandardCharsets.UTF_8)) {
             IOUtils.copy(resource.getInputStream(), writer, Charset.defaultCharset());
             writer.flush();
@@ -49,7 +50,6 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
     @Test
     public void verifyWithAlternativeRealm() throws Exception {
         this.thrown.expect(LoginException.class);
-
         this.handler.setRealm("TEST");
         this.handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, "test1"));
     }
