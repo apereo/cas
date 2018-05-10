@@ -1,10 +1,11 @@
 package org.apereo.cas.configuration.model.support.saml.sps;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apereo.cas.configuration.support.RequiresModule;
+
 import java.io.Serializable;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link SamlServiceProviderProperties}.
@@ -19,15 +20,70 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SamlServiceProviderProperties implements Serializable {
 
-    /**
-     * {@code email} attribute to release.
-     */
-    private static final String EMAIL = "email";
+    @Getter
+    private enum CommonAttributeNames {
+        /**
+         * Attribute name.
+         */
+        EDU_PERSON_PRINCIPAL_NAME("eduPersonPrincipalName"),
+        /**
+         * Attribute name.
+         */
+        EDU_PERSON_SCOPED_AFFILIATION("eduPersonScopedAffiliation"),
+        /**
+         * Attribute name.
+         */
+        GIVEN_NAME("givenName"),
+        /**
+         * Attribute name.
+         */
+        DISPLAY_NAME("displayName"),
+        /**
+         * Attribute name.
+         */
+        SURNAME("surname"),
+        /**
+         * Attribute name.
+         */
+        UID("uid"),
+        /**
+         * Attribute name.
+         */
+        USERNAME("username"),
+        /**
+         * Attribute name.
+         */
+        FIRST_NAME("firstName"),
+        /**
+         * Attribute name.
+         */
+        LAST_NAME("lastName"),
+        /**
+         * Attribute name.
+         */
+        SN("sn"),
+        /**
+         * Attribute name.
+         */
+        CN("cn"),
+        /**
+         * Attribute name.
+         */
+        MAIL("mail"),
+        /**
+         * Attribute name.
+         */
+        EMAIL("email");
 
-    /**
-     * {@code eduPersonPrincipalName} attribute to release.
-     */
-    private static final String EDU_PERSON_PRINCIPAL_NAME = "eduPersonPrincipalName";
+        /**
+         * Attribute name.
+         */
+        private final String attributeName;
+
+        CommonAttributeNames(final String name) {
+            this.attributeName = name;
+        }
+    }
 
     private static final long serialVersionUID = 8602328179113963081L;
 
@@ -241,6 +297,26 @@ public class SamlServiceProviderProperties implements Serializable {
      */
     private Amazon amazon = new Amazon();
 
+    /**
+     * Settings related to BlackBaud acting as a SAML service provider.
+     */
+    private BlackBaud blackBaud = new BlackBaud();
+
+    /**
+     * Settings related to GiveCampus acting as a SAML service provider.
+     */
+    private GiveCampus giveCampus = new GiveCampus();
+
+    /**
+     * Settings related to WarpWire acting as a SAML service provider.
+     */
+    private WarpWire warpWire = new WarpWire();
+
+    /**
+     * Settings related to RocketChat acting as a SAML service provider.
+     */
+    private RocketChat rocketChat = new RocketChat();
+
     @RequiresModule(name = "cas-server-support-saml-sp-integrations")
     @Getter
     @Setter
@@ -249,7 +325,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -8275173711355379058L;
 
         public Dropbox() {
-            setNameIdAttribute("mail");
+            setNameIdAttribute(CommonAttributeNames.MAIL.getAttributeName());
         }
     }
 
@@ -261,7 +337,9 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -5320292115253509284L;
 
         public Box() {
-            addAttributes(EMAIL, "firstName", "lastName");
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.FIRST_NAME.getAttributeName(),
+                CommonAttributeNames.LAST_NAME.getAttributeName());
         }
     }
 
@@ -273,7 +351,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -8695176237527302883L;
 
         public SAManage() {
-            setNameIdAttribute("mail");
+            setNameIdAttribute(CommonAttributeNames.MAIL.getAttributeName());
         }
     }
 
@@ -306,7 +384,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = 4685484530782109454L;
 
         public Salesforce() {
-            addAttributes("mail", EDU_PERSON_PRINCIPAL_NAME);
+            addAttributes(CommonAttributeNames.MAIL.getAttributeName(), CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
         }
     }
 
@@ -318,7 +396,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = 4329681021653966734L;
 
         public ServiceNow() {
-            addAttributes(EDU_PERSON_PRINCIPAL_NAME);
+            addAttributes(CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
         }
     }
 
@@ -357,7 +435,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = 8449304623099588610L;
 
         public WebAdvisor() {
-            addAttributes("uid");
+            addAttributes(CommonAttributeNames.UID.getAttributeName());
         }
     }
 
@@ -369,8 +447,8 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = 1957066095836617091L;
 
         public Webex() {
-            setNameIdAttribute(EMAIL);
-            addAttributes("firstName", "lastName");
+            setNameIdAttribute(CommonAttributeNames.EMAIL.getAttributeName());
+            addAttributes(CommonAttributeNames.FIRST_NAME.getAttributeName(), CommonAttributeNames.LAST_NAME.getAttributeName());
             setSignResponses(false);
             setSignAssertions(true);
         }
@@ -384,7 +462,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -2426590644028989950L;
 
         public Tableau() {
-            addAttributes("username");
+            addAttributes(CommonAttributeNames.USERNAME.getAttributeName());
         }
     }
 
@@ -397,7 +475,7 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public TestShib() {
             //setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
-            addAttributes(EDU_PERSON_PRINCIPAL_NAME);
+            addAttributes(CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
         }
     }
 
@@ -409,8 +487,9 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -4877129302021248398L;
 
         public Zoom() {
-            setNameIdAttribute("mail");
-            addAttributes("mail", "sn", "givenName");
+            setNameIdAttribute(CommonAttributeNames.MAIL.getAttributeName());
+            addAttributes(CommonAttributeNames.MAIL.getAttributeName(),
+                CommonAttributeNames.SN.getAttributeName(), CommonAttributeNames.GIVEN_NAME.getAttributeName());
         }
     }
 
@@ -423,7 +502,7 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public ArcGIS() {
             setNameIdAttribute("arcNameId");
-            addAttributes("mail", "givenName", "arcNameId");
+            addAttributes(CommonAttributeNames.MAIL.getAttributeName(), CommonAttributeNames.GIVEN_NAME.getAttributeName(), "arcNameId");
         }
     }
 
@@ -437,7 +516,7 @@ public class SamlServiceProviderProperties implements Serializable {
         public InCommon() {
             //setMetadata("http://md.incommon.org/InCommon/InCommon-metadata.xml");
             //setSignatureLocation("/etc/cas/config/certs/inc-md-cert.pem");
-            addAttributes(EDU_PERSON_PRINCIPAL_NAME);
+            addAttributes(CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
         }
     }
 
@@ -449,7 +528,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -1333379518527897627L;
 
         public Evernote() {
-            setNameIdAttribute(EMAIL);
+            setNameIdAttribute(CommonAttributeNames.EMAIL.getAttributeName());
             setNameIdFormat("emailAddress");
         }
     }
@@ -462,7 +541,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = 6392492484052314295L;
 
         public Asana() {
-            setNameIdAttribute(EMAIL);
+            setNameIdAttribute(CommonAttributeNames.EMAIL.getAttributeName());
             setNameIdFormat("emailAddress");
         }
     }
@@ -476,7 +555,7 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public OpenAthens() {
             //setMetadata("https://login.openathens.net/saml/2/metadata-sp");
-            addAttributes(EDU_PERSON_PRINCIPAL_NAME, EMAIL);
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(), CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
         }
     }
 
@@ -500,7 +579,8 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -5466434234795577247L;
 
         public AdobeCloud() {
-            addAttributes("firstName", "lastName", EMAIL);
+            addAttributes(CommonAttributeNames.FIRST_NAME.getAttributeName(), CommonAttributeNames.LAST_NAME.getAttributeName(),
+                CommonAttributeNames.EMAIL.getAttributeName());
         }
     }
 
@@ -512,7 +592,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = 5855725238963607605L;
 
         public AcademicWorks() {
-            addAttributes("displayName", EMAIL);
+            addAttributes(CommonAttributeNames.DISPLAY_NAME.getAttributeName(), CommonAttributeNames.EMAIL.getAttributeName());
         }
     }
 
@@ -548,7 +628,8 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -1688194227471468248L;
 
         public SecuringTheHuman() {
-            addAttributes("firstName", "lastName", EMAIL, "scopedUserId", "department", "reference");
+            addAttributes(CommonAttributeNames.FIRST_NAME.getAttributeName(), CommonAttributeNames.LAST_NAME.getAttributeName(),
+                CommonAttributeNames.EMAIL.getAttributeName(), "scopedUserId", "department", "reference");
         }
     }
 
@@ -584,7 +665,6 @@ public class SamlServiceProviderProperties implements Serializable {
     @Getter
     @Setter
     public static class Bynder extends AbstractSamlSPProperties {
-
         private static final long serialVersionUID = -3168960591734555088L;
     }
 
@@ -592,7 +672,6 @@ public class SamlServiceProviderProperties implements Serializable {
     @Getter
     @Setter
     public static class CherWell extends AbstractSamlSPProperties {
-
         private static final long serialVersionUID = -3168960591734555088L;
     }
 
@@ -664,7 +743,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -6141931806328699054L;
 
         public Gitlab() {
-            addAttributes(EMAIL, "last_name", "first_name", "name");
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(), "last_name", "first_name", "name");
         }
     }
 
@@ -676,7 +755,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -6141931806328699054L;
 
         public Hipchat() {
-            addAttributes(EMAIL, "last_name", "first_name", "title");
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(), "last_name", "first_name", "title");
         }
     }
 
@@ -716,7 +795,7 @@ public class SamlServiceProviderProperties implements Serializable {
         public PollEverywhere() {
             setSignAssertions(true);
             setSignResponses(false);
-            setNameIdAttribute(EMAIL);
+            setNameIdAttribute(CommonAttributeNames.EMAIL.getAttributeName());
         }
     }
 
@@ -730,7 +809,73 @@ public class SamlServiceProviderProperties implements Serializable {
         public ConcurSolutions() {
             setSignAssertions(true);
             setSignResponses(false);
-            setNameIdAttribute(EMAIL);
+            setNameIdAttribute(CommonAttributeNames.EMAIL.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class BlackBaud extends AbstractSamlSPProperties {
+
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public BlackBaud() {
+            setSignAssertions(true);
+            setSignResponses(false);
+            addAttributes(CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName(), CommonAttributeNames.EMAIL.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class GiveCampus extends AbstractSamlSPProperties {
+
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public GiveCampus() {
+            setSignAssertions(true);
+            setSignResponses(false);
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName(),
+                CommonAttributeNames.DISPLAY_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class RocketChat extends AbstractSamlSPProperties {
+
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public RocketChat() {
+            setSignAssertions(true);
+            setSignResponses(false);
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.CN.getAttributeName(),
+                CommonAttributeNames.USERNAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class WarpWire extends AbstractSamlSPProperties {
+
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public WarpWire() {
+            setSignAssertions(true);
+            setSignResponses(false);
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName(),
+                "employeeNumber",
+                CommonAttributeNames.EDU_PERSON_SCOPED_AFFILIATION.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
         }
     }
 }
