@@ -156,7 +156,10 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <img src="https://user-images.githubusercontent.com/1205228/39860502-c72d1614-5452-11e8-956d-28a4b3a7a757.png" height="58" width="220"></a>
 
 <a href="hhttps://www.givecampus.com/">
-<img src="hhttps://user-images.githubusercontent.com/1205228/39861201-1e668012-5455-11e8-8bd8-917befb64f0d.png" height="58" width="220"></a>
+<img src="https://user-images.githubusercontent.com/1205228/39861201-1e668012-5455-11e8-8bd8-917befb64f0d.png" height="58" width="220"></a>
+
+<a href="hhttps://www.warpwire.com/">
+<img src="https://user-images.githubusercontent.com/1205228/39861404-b73f4bca-5455-11e8-9035-e0ecf1f8dcd0.png" height="58" width="220"></a>
 
 </div>
 
