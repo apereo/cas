@@ -33,9 +33,9 @@ public abstract class BaseInterruptInquirer implements InterruptInquirer {
             LOGGER.debug("Checking interrupt rules for service [{}]", registeredService.getName());
             if (RegisteredServiceProperties.SKIP_INTERRUPT_NOTIFICATIONS.isAssignedTo(registeredService)) {
                 LOGGER.debug("Service [{}] is set to skip interrupt notifications", registeredService.getName());
-            } else {
-                LOGGER.debug("Service [{}] is set to not skip interrupt notifications", registeredService.getName());
+                return true;
             }
+            LOGGER.debug("Service [{}] is set to not skip interrupt notifications", registeredService.getName());
         } else {
             LOGGER.debug("No service was found in the request context. Proceeding as usual...");
         }
