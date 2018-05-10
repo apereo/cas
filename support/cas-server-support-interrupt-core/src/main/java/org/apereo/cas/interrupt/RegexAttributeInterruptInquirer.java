@@ -29,7 +29,7 @@ public class RegexAttributeInterruptInquirer extends BaseInterruptInquirer {
         final Map<String, Object> attributes = new LinkedHashMap<>(authentication.getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());
 
-        LOGGER.debug("Looking for [{}] in attributes [{}]", attributes);
+        LOGGER.debug("Looking for [{}] in attributes [{}]", this.interruptAttributeName, attributes);
         final Optional result = attributes.entrySet()
             .stream()
             .filter(entry -> entry.getKey().matches(this.interruptAttributeName))

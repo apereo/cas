@@ -25,7 +25,7 @@ public class WebUtilTests {
     @Test
     public void verifyFindService() {
         final DefaultArgumentExtractor casArgumentExtractor =
-                new DefaultArgumentExtractor(new WebApplicationServiceFactory());
+            new DefaultArgumentExtractor(new WebApplicationServiceFactory());
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
 
@@ -37,7 +37,7 @@ public class WebUtilTests {
 
     @Test
     public void verifyFoundNoService() {
-        final DefaultArgumentExtractor casArgumentExtractor = new DefaultArgumentExtractor(new SamlServiceFactory());
+        final DefaultArgumentExtractor casArgumentExtractor = new DefaultArgumentExtractor(new SamlServiceFactory(null));
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
         final Service service = HttpRequestUtils.getService(Collections.singletonList(casArgumentExtractor), request);

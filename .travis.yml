@@ -40,14 +40,16 @@ env:
   - secure: "f3mDIZ8m6NYJXI8KvWD/sZRSeCCyIyfgPRy3Q6o9u9WyHZuYaJf95Ia0eJQ3gxUDS1TKL31Vk08dhFKrfIcKgifFPa2uQ2uyJkvGxlarMTQ+tpqsZYp4zAJgKc9r4xdZasvF2k4xqr+pl9AFjlpXB4jDD59XPXt3DcRABOYA9sM="
   matrix:
   - MATRIX_JOB_TYPE=BUILD
+  - MATRIX_JOB_TYPE=TEST
   - MATRIX_JOB_TYPE=STYLE
   - MATRIX_JOB_TYPE=JAVADOC
-  - MATRIX_JOB_TYPE=TEST
   - MATRIX_JOB_TYPE=SNAPSHOT
   - MATRIX_JOB_TYPE=DEPUPDATE
   - MATRIX_JOB_TYPE=CFGMETADATA
   - MATRIX_JOB_TYPE=DEPANALYZE
 before_install:
+- chmod -R 777 ./ci/run-docker.sh
+- ./ci/run-docker.sh
 - chmod -R 777 ./ci/run-ldap-server.sh
 - ./ci/run-ldap-server.sh
 - chmod -R 777 ./ci/run-mail-server.sh

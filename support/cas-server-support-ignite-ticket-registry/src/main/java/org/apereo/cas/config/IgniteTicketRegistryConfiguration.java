@@ -5,6 +5,8 @@ import org.apache.ignite.cache.CacheAtomicityMode;
 import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.cache.CacheWriteSynchronizationMode;
 import org.apache.ignite.configuration.CacheConfiguration;
+import org.apache.ignite.configuration.DataRegionConfiguration;
+import org.apache.ignite.configuration.DataStorageConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
@@ -86,6 +88,16 @@ public class IgniteTicketRegistryConfiguration {
             config.setSslContextFactory(factory);
         }
 
+        final DataStorageConfiguration dataStorageConfiguration = new DataStorageConfiguration();
+        final DataRegionConfiguration dataRegionConfiguration = new DataRegionConfiguration();
+        dataRegionConfiguration.setName("DefaultRegion");
+        dataRegionConfiguration.setMaxSize(ignite.getDefaultRegionMaxSize());
+        dataRegionConfiguration.setPersistenceEnabled(ignite.isDefaultPersistenceEnabled());
+        dataStorageConfiguration.setDefaultDataRegionConfiguration(dataRegionConfiguration);
+
+        dataStorageConfiguration.setSystemRegionMaxSize(ignite.getDefaultRegionMaxSize());
+        config.setDataStorageConfiguration(dataStorageConfiguration);
+        
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("igniteConfiguration.cacheConfiguration=[{}]", (Object[]) config.getCacheConfiguration());
             LOGGER.debug("igniteConfiguration.getDiscoverySpi=[{}]", config.getDiscoverySpi());
