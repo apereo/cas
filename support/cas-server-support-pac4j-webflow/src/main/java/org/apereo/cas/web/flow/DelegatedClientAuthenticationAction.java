@@ -16,6 +16,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -192,7 +193,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             .map(IndirectClient.class::cast)
             .forEach(client -> {
                 try {
-                    final Optional<ProviderLoginPageConfiguration> provider = buildProviderConfiguration(client, webContext);
+                    final Optional<ProviderLoginPageConfiguration> provider = buildProviderConfiguration(client, webContext, service);
                     provider.ifPresent(urls::add);
                 } catch (final Exception e) {
                     LOGGER.error("Cannot process client [{}]", client, e);
@@ -206,14 +207,18 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         }
     }
 
-    private Optional<ProviderLoginPageConfiguration> buildProviderConfiguration(final IndirectClient client, final WebContext webContext) {
+    private Optional<ProviderLoginPageConfiguration> buildProviderConfiguration(final IndirectClient client, final WebContext webContext, final Service service) {
         final String name = client.getName();
         final Matcher matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
         final String type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
-        final UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(DelegatedClientNavigationController.ENDPOINT_REDIRECT).queryParam(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, name);
-        final String serviceParam = webContext.getRequestParameter(CasProtocolConstants.PARAMETER_SERVICE);
-        if (StringUtils.isNotBlank(serviceParam)) {
-            uriBuilder.queryParam(CasProtocolConstants.PARAMETER_SERVICE, serviceParam);
+        final UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(DelegatedClientNavigationController.ENDPOINT_REDIRECT)
+                .queryParam(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, name);
+        if (service instanceof WebApplicationService) {
+            final WebApplicationService webApplicationService = (WebApplicationService) service;
+            final String serviceParam = webApplicationService.getOriginalUrl();
+            if (StringUtils.isNotBlank(serviceParam)) {
+                uriBuilder.queryParam(CasProtocolConstants.PARAMETER_SERVICE, serviceParam);
+            }
         }
         final String methodParam = webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD);
         if (StringUtils.isNotBlank(methodParam)) {

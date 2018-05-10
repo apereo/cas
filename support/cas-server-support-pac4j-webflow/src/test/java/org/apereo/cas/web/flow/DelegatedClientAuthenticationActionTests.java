@@ -33,6 +33,7 @@ import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.Pac4jUtils;
+import org.apereo.cas.web.DelegatedClientNavigationController;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -52,6 +53,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
@@ -63,6 +65,7 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * This class tests the {@link DelegatedClientAuthenticationAction} class.
@@ -89,8 +92,9 @@ public class DelegatedClientAuthenticationActionTests {
     public void verifyStartAuthentication() throws Exception {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        final String locale = Locale.getDefault().getCountry();
         mockRequest.setParameter(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, MY_THEME);
-        mockRequest.setParameter(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, Locale.getDefault().getCountry());
+        mockRequest.setParameter(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, locale);
         mockRequest.setParameter(CasProtocolConstants.PARAMETER_METHOD, HttpMethod.POST.name());
 
         final ServletExternalContext servletExternalContext = mock(ServletExternalContext.class);
@@ -134,6 +138,16 @@ public class DelegatedClientAuthenticationActionTests {
 
         assertFalse(urls.isEmpty());
         assertSame(2, urls.size());
+        urls.stream()
+                .map(url -> UriComponentsBuilder.fromUriString(url.getRedirectUrl()).build())
+                .forEach(uriComponents -> {
+                    assertThat(uriComponents.getPath()).isEqualTo(DelegatedClientNavigationController.ENDPOINT_REDIRECT);
+                    assertThat(uriComponents.getQueryParams().get("client_name")).hasSize(1).isSubsetOf("FacebookClient", "TwitterClient");
+                    assertThat(uriComponents.getQueryParams().get(CasProtocolConstants.PARAMETER_SERVICE)).hasSize(1).contains(MY_SERVICE);
+                    assertThat(uriComponents.getQueryParams().get(CasProtocolConstants.PARAMETER_METHOD)).hasSize(1).contains(HttpMethod.POST.toString());
+                    assertThat(uriComponents.getQueryParams().get(ThemeChangeInterceptor.DEFAULT_PARAM_NAME)).hasSize(1).contains(MY_THEME);
+                    assertThat(uriComponents.getQueryParams().get(LocaleChangeInterceptor.DEFAULT_PARAM_NAME)).hasSize(1).contains(locale);
+        });
     }
 
     @Test
