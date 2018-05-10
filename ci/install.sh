@@ -5,7 +5,7 @@ branchName="master"
 prepCommand="echo 'Running command...'; "
 gradle="sudo ./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon --parallel"
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
@@ -44,9 +44,36 @@ elif [ "$MATRIX_JOB_TYPE" == "JAVADOC" ]; then
      -DskipGradleLint=true -DskipSass=true -DenableIncremental=true -DskipNestedConfigMetadataGen=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
-    gradleBuild="$gradleBuild test coveralls -x javadoc -x check \
+    if [ "$MATRIX_SERVER" == "NONE" ]; then
+        gradleBuild="$gradleBuild test coveralls "
+    elif [ "$MATRIX_SERVER" == "CASSANDRA" ]; then
+        gradleBuild="$gradleBuild testCassandra coveralls "
+    elif [ "$MATRIX_SERVER" == "COUCHBASE" ]; then
+        gradleBuild="$gradleBuild testCouchbase coveralls "
+    elif [ "$MATRIX_SERVER" == "COSMOSDB" ]; then
+        gradleBuild="$gradleBuild testCosmosDb coveralls "
+    elif [ "$MATRIX_SERVER" == "DYNAMODB" ]; then
+        gradleBuild="$gradleBuild testDynamoDb coveralls "
+    elif [ "$MATRIX_SERVER" == "FILESYSTEM" ]; then
+        gradleBuild="$gradleBuild testFileSystem coveralls "
+    elif [ "$MATRIX_SERVER" == "IGNITE" ]; then
+        gradleBuild="$gradleBuild testIgnite coveralls "
+    elif [ "$MATRIX_SERVER" == "INFLUXDB" ]; then
+        gradleBuild="$gradleBuild testInfluxDb coveralls "
+    elif [ "$MATRIX_SERVER" == "LDAP" ]; then
+        gradleBuild="$gradleBuild testLdap coveralls "
+    elif [ "$MATRIX_SERVER" == "MAIL" ]; then
+        gradleBuild="$gradleBuild testMail coveralls "
+    elif [ "$MATRIX_SERVER" == "MONGODB" ]; then
+        gradleBuild="$gradleBuild testMongoDb coveralls "
+    elif [ "$MATRIX_SERVER" == "REDIS" ]; then
+        gradleBuild="$gradleBuild testRedis coveralls "
+    elif [ "$MATRIX_SERVER" == "ALL" ]; then
+        gradleBuild="$gradleBuild testAll coveralls "
+    fi
+    gradleBuild="$gradleBuild -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
-    -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
+    -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true -DskipErrorProneCompiler=true"
 elif [ "$MATRIX_JOB_TYPE" == "DEPANALYZE" ]; then
     gradleBuild="$gradleBuild dependencyCheckAnalyze dependencyCheckUpdate -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \

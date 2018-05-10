@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
+if [[ "$MATRIX_SERVER" == "MAIL" || "$MATRIX_SERVER" == "ALL" ]]; then
     # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
     echo "Downloading SMTP mail mock server..."
