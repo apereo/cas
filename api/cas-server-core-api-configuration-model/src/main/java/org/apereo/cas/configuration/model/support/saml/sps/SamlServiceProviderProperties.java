@@ -29,6 +29,10 @@ public class SamlServiceProviderProperties implements Serializable {
         /**
          * Attribute name.
          */
+        EDU_PERSON_SCOPED_AFFILIATION("eduPersonScopedAffiliation"),
+        /**
+         * Attribute name.
+         */
         GIVEN_NAME("givenName"),
         /**
          * Attribute name.
@@ -298,6 +302,11 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to GiveCampus acting as a SAML service provider.
      */
     private GiveCampus giveCampus = new GiveCampus();
+
+    /**
+     * Settings related to WarpWire acting as a SAML service provider.
+     */
+    private WarpWire warpWire = new WarpWire();
 
     @RequiresModule(name = "cas-server-support-saml-sp-integrations")
     @Getter
@@ -823,6 +832,25 @@ public class SamlServiceProviderProperties implements Serializable {
                 CommonAttributeNames.SURNAME.getAttributeName(),
                 CommonAttributeNames.GIVEN_NAME.getAttributeName(),
                 CommonAttributeNames.DISPLAY_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class WarpWire extends AbstractSamlSPProperties {
+
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public WarpWire() {
+            setSignAssertions(true);
+            setSignResponses(false);
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.SURNAME.getAttributeName(),
+                CommonAttributeNames.GIVEN_NAME.getAttributeName(),
+                "employeeNumber",
+                CommonAttributeNames.EDU_PERSON_SCOPED_AFFILIATION.getAttributeName(),
+                CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName());
         }
     }
 }
