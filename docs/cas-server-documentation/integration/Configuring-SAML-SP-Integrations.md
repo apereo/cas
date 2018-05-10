@@ -161,6 +161,9 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.warpwire.com/">
 <img src="https://user-images.githubusercontent.com/1205228/39861404-b73f4bca-5455-11e8-9035-e0ecf1f8dcd0.png" height="58" width="170"></a>
 
+<a href="https://rocket.chat/docs/administrator-guides/authentication/saml/">
+<img src="https://user-images.githubusercontent.com/1205228/39862698-bc1862cc-5459-11e8-8f2a-60c1642ac837.png" height="58" width="170"></a>
+
 </div>
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#saml-sps).

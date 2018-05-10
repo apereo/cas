@@ -2537,6 +2537,7 @@ Configuration settings for all SAML2 service providers are [available here](Conf
 | BlackBaud                 | `cas.samlSp.blackBaud` | `email`, `eduPersonPrincipalName`
 | GiveCampus                | `cas.samlSp.giveCampus` | `email`, `givenName`, `surname`, `displayName`
 | WarpWire                  | `cas.samlSp.warpWire` | `email`, `givenName`, `eduPersonPrincipalName`, `surname`, `eduPersonScopedAffiliation`, `employeeNumber`
+| WarpWire                  | `cas.samlSp.rocketChat` | `email`, `cn`, `username`
 
 **Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds can be regular expression patterns and are mapped to CAS' `serviceId` field in the registry. The signature location MUST BE the public key used to sign the metadata.
 
