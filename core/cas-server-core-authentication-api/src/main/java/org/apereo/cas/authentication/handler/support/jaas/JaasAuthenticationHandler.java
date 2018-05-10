@@ -1,4 +1,4 @@
-package org.apereo.cas.authentication.handler.support;
+package org.apereo.cas.authentication.handler.support.jaas;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -8,10 +8,10 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.springframework.util.Assert;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -108,7 +108,6 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     public JaasAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
-        Assert.notNull(Configuration.getConfiguration(), "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
 
     @Override
@@ -170,7 +169,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     protected LoginContext getLoginContext(final UsernamePasswordCredential credential) throws GeneralSecurityException {
         final UsernamePasswordCallbackHandler callbackHandler = new UsernamePasswordCallbackHandler(credential.getUsername(), credential.getPassword());
-        if (StringUtils.isNotBlank(this.loginConfigType) && this.loginConfigurationFile != null
+        if (this.loginConfigurationFile != null && StringUtils.isNotBlank(this.loginConfigType)
             && this.loginConfigurationFile.exists() && this.loginConfigurationFile.canRead()) {
             final Configuration.Parameters parameters = new URIParameter(loginConfigurationFile.toURI());
             final Configuration loginConfig = Configuration.getInstance(this.loginConfigType, parameters);

@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.yubikey;
 import com.yubico.client.v2.ResponseStatus;
 import com.yubico.client.v2.VerificationResponse;
 import com.yubico.client.v2.YubicoClient;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultYubiKeyAccountValidator implements YubiKeyAccountValidator {
 
     private final YubicoClient client;
