@@ -1,7 +1,7 @@
 package org.apereo.cas.shell.commands;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
@@ -55,6 +55,7 @@ public class ValidateEndpointCommand implements CommandMarker {
         try {
             final URL constructedUrl = new URL(url);
             final URLConnection conn;
+            LOGGER.info("Trying to connect to [{}]", url);
             if (StringUtils.isNotBlank(proxy)) {
                 final URL proxyUrl = new URL(proxy);
                 LOGGER.info("Using proxy address [{}]");
@@ -66,7 +67,6 @@ public class ValidateEndpointCommand implements CommandMarker {
             LOGGER.info("Setting connection timeout to [{}]", timeout);
             conn.setConnectTimeout(timeout);
 
-            LOGGER.info("Trying to connect to [{}]", url);
             try (InputStreamReader reader = new InputStreamReader(conn.getInputStream(), "UTF-8");
                  BufferedReader in = new BufferedReader(reader)) {
                 in.readLine();
@@ -82,7 +82,6 @@ public class ValidateEndpointCommand implements CommandMarker {
             LOGGER.info("The error is: " + e.getMessage());
             LOGGER.info("Here are the details:");
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(e);
         }
     }
 }
