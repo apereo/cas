@@ -65,6 +65,10 @@ public class SamlServiceProviderProperties implements Serializable {
         /**
          * Attribute name.
          */
+        CN("cn"),
+        /**
+         * Attribute name.
+         */
         MAIL("mail"),
         /**
          * Attribute name.
@@ -307,6 +311,11 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to WarpWire acting as a SAML service provider.
      */
     private WarpWire warpWire = new WarpWire();
+
+    /**
+     * Settings related to RocketChat acting as a SAML service provider.
+     */
+    private RocketChat rocketChat = new RocketChat();
 
     @RequiresModule(name = "cas-server-support-saml-sp-integrations")
     @Getter
@@ -832,6 +841,22 @@ public class SamlServiceProviderProperties implements Serializable {
                 CommonAttributeNames.SURNAME.getAttributeName(),
                 CommonAttributeNames.GIVEN_NAME.getAttributeName(),
                 CommonAttributeNames.DISPLAY_NAME.getAttributeName());
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class RocketChat extends AbstractSamlSPProperties {
+
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public RocketChat() {
+            setSignAssertions(true);
+            setSignResponses(false);
+            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
+                CommonAttributeNames.CN.getAttributeName(),
+                CommonAttributeNames.USERNAME.getAttributeName());
         }
     }
 
