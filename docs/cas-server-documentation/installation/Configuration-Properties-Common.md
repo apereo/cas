@@ -1046,6 +1046,7 @@ In addition to common LDAP connection settings above, there are cases where CAS 
 
 # ${configurationKey}.baseDn=dc=example,dc=org
 # ${configurationKey}.subtreeSearch=true
+# ${configurationKey}.searchFilter=cn={user}
 
 # ${configurationKey}.enhanceWithEntryResolver=true
 # ${configurationKey}.derefAliases=NEVER|SEARCHING|FINDING|ALWAYS

@@ -202,9 +202,11 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
             LOGGER.debug("Evaluating NameID format [{}]", nameFormat);
             final NameID nameid = encodeNameIdBasedOnNameFormat(authnRequest, assertion, nameFormat, service, adaptor);
             if (nameid != null) {
+                LOGGER.debug("Determined NameID based on format [{}] to be [{}]", nameFormat, nameid.getValue());
                 return nameid;
             }
         }
+        LOGGER.warn("No NameID could be determined based on the supported formats [{}]", supportedNameFormats);
         return null;
     }
 
@@ -229,6 +231,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                 final AttributeQuery query = AttributeQuery.class.cast(authnRequest);
                 final NameID nameID = query.getSubject().getNameID();
                 nameID.detach();
+                LOGGER.debug("Choosing NameID format [{}] with value [{}] for attribute query", nameID.getFormat(), nameID.getValue());
                 return nameID;
             }
 
@@ -259,10 +262,15 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         final IdPAttribute attribute = new IdPAttribute(AttributePrincipal.class.getName());
 
         final String nameIdValue;
+        final String principalName = assertion.getPrincipal().getName();
+
+        LOGGER.debug("Preparing NameID attribute for principal [{}]", principalName);
         if (nameFormat.trim().equalsIgnoreCase(NameIDType.TRANSIENT)) {
-            nameIdValue = persistentIdGenerator.generate(assertion.getPrincipal().getName(), adaptor.getEntityId());
+            final String entityId = adaptor.getEntityId();
+            LOGGER.debug("Generating transient NameID value for principal [{}] and entity id [{}]", principalName, entityId);
+            nameIdValue = persistentIdGenerator.generate(principalName, entityId);
         } else {
-            nameIdValue = assertion.getPrincipal().getName();
+            nameIdValue = principalName;
         }
 
         final IdPAttributeValue<String> value = new StringAttributeValue(nameIdValue);
@@ -298,6 +306,8 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
 
     private static String parseAndBuildRequiredNameIdFormat(final SamlRegisteredService service) {
         final String fmt = service.getRequiredNameIdFormat().trim();
+        LOGGER.debug("Required NameID format assigned to service [{}] is [{}]", service.getName(), fmt);
+
         if (StringUtils.containsIgnoreCase(NameIDType.EMAIL, fmt)) {
             return NameIDType.EMAIL;
         }
