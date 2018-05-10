@@ -152,6 +152,12 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.polleverywhere.com/">
 <img src="https://user-images.githubusercontent.com/1205228/36302795-026f57d2-12c7-11e8-931e-0f8700df1864.png" height="58" width="220"></a>
 
+<a href="https://www.blackbaud.com/files/support/helpfiles/auth/content/auth-saml.html">
+<img src="https://user-images.githubusercontent.com/1205228/39860502-c72d1614-5452-11e8-956d-28a4b3a7a757.png" height="58" width="220"></a>
+
+<a href="hhttps://www.givecampus.com/">
+<img src="hhttps://user-images.githubusercontent.com/1205228/39861201-1e668012-5455-11e8-8bd8-917befb64f0d.png" height="58" width="220"></a>
+
 </div>
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#saml-sps).
