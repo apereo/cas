@@ -36,4 +36,4 @@ org.apereo.cas.config.CasSamlSPBynderConfiguration,\
 org.apereo.cas.config.CasSamlSPFamisConfiguration,\
 org.apereo.cas.config.CasSamlSPInCommonConfiguration,\
 org.apereo.cas.config.CasSamlSPPollEverywhereConfiguration,\
-org.apereo.cas.config.CasSamlSPConcurSolutionsConfiguration  
+org.apereo.cas.config.CasSamlSPConcurSolutionsConfiguration
