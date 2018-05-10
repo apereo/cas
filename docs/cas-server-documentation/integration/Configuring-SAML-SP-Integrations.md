@@ -156,13 +156,13 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <img src="https://user-images.githubusercontent.com/1205228/39860502-c72d1614-5452-11e8-956d-28a4b3a7a757.png" height="58" width="160"></a>
 
 <a href="https://www.givecampus.com/">
-<img src="https://user-images.githubusercontent.com/1205228/39861201-1e668012-5455-11e8-8bd8-917befb64f0d.png" height="58" width="170"></a>
+<img src="https://user-images.githubusercontent.com/1205228/39876988-eb009f5c-5489-11e8-8b74-940f75997f41.png" height="58" width="170"></a>
 
 <a href="https://www.warpwire.com/">
 <img src="https://user-images.githubusercontent.com/1205228/39861404-b73f4bca-5455-11e8-9035-e0ecf1f8dcd0.png" height="58" width="170"></a>
 
 <a href="https://rocket.chat/docs/administrator-guides/authentication/saml/">
-<img src="https://user-images.githubusercontent.com/1205228/39862698-bc1862cc-5459-11e8-8f2a-60c1642ac837.png" height="58" width="170"></a>
+<img src="https://user-images.githubusercontent.com/1205228/39877039-1128c7ae-548a-11e8-8735-1abf90883df6.png" height="58" width="170"></a>
 
 </div>
 
