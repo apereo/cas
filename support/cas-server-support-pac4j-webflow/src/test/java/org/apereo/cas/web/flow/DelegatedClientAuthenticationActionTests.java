@@ -245,7 +245,8 @@ public class DelegatedClientAuthenticationActionTests {
             manager,
             new DelegatedSessionCookieManager(mock(CookieRetrievingCookieGenerator.class), mock(SessionStoreCookieSerializer.class)),
             support,
-  "locale", "theme");
+            LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
+            ThemeChangeInterceptor.DEFAULT_PARAM_NAME);
 
     }
 }
