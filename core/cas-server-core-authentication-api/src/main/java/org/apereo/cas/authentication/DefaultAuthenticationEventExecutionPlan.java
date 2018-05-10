@@ -23,6 +23,7 @@ import java.util.Set;
 public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEventExecutionPlan {
     private final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulatorList = new ArrayList<>();
     private final List<AuthenticationPostProcessor> authenticationPostProcessors = new ArrayList<>();
+    private final List<AuthenticationPreProcessor> authenticationPreProcessors = new ArrayList<>();
 
     private final List<AuthenticationPolicy> authenticationPolicies = new ArrayList<>();
     private final List<AuthenticationHandlerResolver> authenticationHandlerResolvers = new ArrayList<>();
@@ -109,6 +110,20 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
         final List<AuthenticationPostProcessor> list = new ArrayList(this.authenticationPostProcessors);
         OrderComparator.sort(list);
         LOGGER.debug("Sorted and registered authentication post processors for this transaction are [{}]", list);
+        return list;
+    }
+
+    @Override
+    public void registerAuthenticationPreProcessor(final AuthenticationPreProcessor processor) {
+        LOGGER.debug("Registering authentication pre processor [{}] into the execution plan", processor);
+        authenticationPreProcessors.add(processor);
+    }
+
+    @Override
+    public Collection<AuthenticationPreProcessor> getAuthenticationPreProcessors(final AuthenticationTransaction transaction) {
+        final List<AuthenticationPreProcessor> list = new ArrayList(this.authenticationPreProcessors);
+        OrderComparator.sort(list);
+        LOGGER.debug("Sorted and registered authentication pre processors for this transaction are [{}]", list);
         return list;
     }
 

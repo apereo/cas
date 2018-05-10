@@ -32,13 +32,13 @@ public class LoadSurrogatesListAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-
         if (WebUtils.hasRequestSurrogateAuthenticationRequest(requestContext)) {
             WebUtils.removeRequestSurrogateAuthenticationRequest(requestContext);
             LOGGER.debug("Attempting to load surrogates...");
             if (loadSurrogates(requestContext)) {
                 return new Event(this, SurrogateWebflowConfigurer.VIEW_ID_SURROGATE_VIEW);
             }
+            return error();
         }
 
         final Credential c = WebUtils.getCredential(requestContext);
@@ -61,9 +61,9 @@ public class LoadSurrogatesListAction extends AbstractAction {
             LOGGER.debug("Loading eligible accounts for [{}] to proxy", username);
             final List<String> surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
             LOGGER.debug("Surrogate accounts found are [{}]", surrogates);
-            if (!surrogates.isEmpty()) {
-                surrogates.add(username);
-                requestContext.getFlowScope().put("surrogates", surrogates);
+            if (surrogates != null && !surrogates.isEmpty()) {
+                surrogates.add(0, username);
+                WebUtils.putSurrogateAuthenticationAccounts(requestContext, surrogates);
                 return true;
             }
             LOGGER.debug("No surrogate accounts could be located for [{}]", username);

@@ -1,9 +1,10 @@
 package org.apereo.cas.monitor;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import java.util.Formatter;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Formatter;
 
 /**
  * Simple implementation of cache statistics.
@@ -34,11 +35,11 @@ public class SimpleCacheStatistics implements CacheStatistics {
 
 
     @Override
-    public int getPercentFree() {
+    public long getPercentFree() {
         if (this.capacity == 0) {
             return 0;
         }
-        return (int) ((this.capacity - this.size) * PERCENTAGE_VALUE / this.capacity);
+        return (this.capacity - this.size) * PERCENTAGE_VALUE / this.capacity;
     }
 
     @Override

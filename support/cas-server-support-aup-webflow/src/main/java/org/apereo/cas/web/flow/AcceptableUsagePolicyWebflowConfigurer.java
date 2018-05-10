@@ -98,6 +98,6 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
         final String target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         final TransitionSet transitionSet = actionState.getTransitionSet();
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, target));
-        transitionSet.add(createTransition(AcceptableUsagePolicySubmitAction.EVENT_ID_MUST_ACCEPT, VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW));
+        transitionSet.add(createTransition(AcceptableUsagePolicyVerifyAction.EVENT_ID_MUST_ACCEPT, VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW));
     }
 }

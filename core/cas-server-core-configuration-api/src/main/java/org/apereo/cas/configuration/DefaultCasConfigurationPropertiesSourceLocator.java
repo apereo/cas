@@ -46,8 +46,11 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     public PropertySource<?> locate(final Environment environment, final ResourceLoader resourceLoader) {
         final CompositePropertySource compositePropertySource = new CompositePropertySource("casCompositePropertySource");
 
-        final PropertySource<?> sourceYaml = loadEmbeddedYamlOverriddenProperties(resourceLoader);
-        compositePropertySource.addPropertySource(sourceYaml);
+        final File configFile = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile();
+        if (configFile != null) {
+            final PropertySource<?> sourceStandalone = loadSettingsFromStandaloneConfigFile(configFile);
+            compositePropertySource.addPropertySource(sourceStandalone);
+        }
 
         final File config = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
         LOGGER.debug("Located CAS standalone configuration directory at [{}]", config);
@@ -58,11 +61,9 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
             LOGGER.info("Configuration directory [{}] is not a directory or cannot be found at the specific path", config);
         }
 
-        final File configFile = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile();
-        if (configFile != null) {
-            final PropertySource<?> sourceStandalone = loadSettingsFromStandaloneConfigFile(configFile);
-            compositePropertySource.addFirstPropertySource(sourceStandalone);
-        }
+        final PropertySource<?> sourceYaml = loadEmbeddedYamlOverriddenProperties(resourceLoader);
+        compositePropertySource.addPropertySource(sourceYaml);
+
         return compositePropertySource;
     }
 

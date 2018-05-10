@@ -29,8 +29,8 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-        AopAutoConfiguration.class,
-        CasCoreUtilConfiguration.class
+    AopAutoConfiguration.class,
+    CasCoreUtilConfiguration.class
 })
 @Slf4j
 public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests {

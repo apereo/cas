@@ -1,13 +1,13 @@
 package org.apereo.cas.oidc.jwks;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.RsaJsonWebKey;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
@@ -21,10 +21,10 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OidcRegisteredService, Optional<RsaJsonWebKey>> {
 
-    @Autowired
-    private ResourceLoader resourceLoader;
+    private final ResourceLoader resourceLoader;
 
     @Override
     public Optional<RsaJsonWebKey> load(final OidcRegisteredService svc) {
@@ -72,9 +72,9 @@ public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OidcRe
             }
 
             final long badKeysCount = jsonWebKeySet.getJsonWebKeys().stream().filter(k ->
-                    StringUtils.isBlank(k.getAlgorithm())
-                            && StringUtils.isBlank(k.getKeyId())
-                            && StringUtils.isBlank(k.getKeyType())).count();
+                StringUtils.isBlank(k.getAlgorithm())
+                    && StringUtils.isBlank(k.getKeyId())
+                    && StringUtils.isBlank(k.getKeyType())).count();
 
             if (badKeysCount == jsonWebKeySet.getJsonWebKeys().size()) {
                 LOGGER.warn("No valid JSON web keys could be found for [{}]", service);

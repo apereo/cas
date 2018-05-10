@@ -11,6 +11,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
@@ -54,7 +55,8 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
                           final Object casAssertion,
                           final SamlRegisteredService service,
                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                          final String binding) throws SamlException {
+                          final String binding,
+                          final MessageContext messageContext) throws SamlException {
         final Header header = newSoapObject(Header.class);
 
         final Body body = newSoapObject(Body.class);

@@ -19,11 +19,6 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 @RequiredArgsConstructor
 public class AcceptableUsagePolicySubmitAction extends AbstractAction {
-    /**
-     * Event id to signal the policy needs to be accepted.
-     **/
-    protected static final String EVENT_ID_MUST_ACCEPT = "mustAccept";
-
     private final AcceptableUsagePolicyRepository repository;
 
     /**
