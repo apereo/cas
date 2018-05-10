@@ -52,6 +52,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
     private static final String TEST_VALUE = "testValue";
     private static final String TEST_ATTRIBUTE = "testAttribute";
     private static final String PRINCIPAL_ID = "testPrincipal";
+    
     private Saml10SuccessResponseView response;
 
     @Before
@@ -65,9 +66,13 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         mgmr.load();
 
         this.response = new Saml10SuccessResponseView(new DefaultCasProtocolAttributeEncoder(mgmr, CipherExecutor.noOpOfStringToString()),
-                mgmr, "attribute", new Saml10ObjectBuilder(configBean),
-                new DefaultArgumentExtractor(new SamlServiceFactory()), StandardCharsets.UTF_8.name(), 1000, 30,
-                "testIssuer", "whatever", new DefaultAuthenticationAttributeReleasePolicy());
+            mgmr, "attribute",
+            new Saml10ObjectBuilder(configBean),
+            new DefaultArgumentExtractor(new SamlServiceFactory(new Saml10ObjectBuilder(configBean))),
+            StandardCharsets.UTF_8.name(), 1000, 30,
+            "testIssuer",
+            "whatever",
+            new DefaultAuthenticationAttributeReleasePolicy());
     }
 
     @Test
@@ -82,13 +87,13 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         final Map<String, Object> authAttributes = new HashMap<>();
         authAttributes.put(
-                SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
-                SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
+            SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
+            SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
         authAttributes.put("testSamlAttribute", "value");
 
         final Authentication primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
         final Assertion assertion = new DefaultAssertionBuilder(primary).with(Collections.singletonList(primary)).with(
-                CoreAuthenticationTestUtils.getService()).with(true).build();
+            CoreAuthenticationTestUtils.getService()).with(true).build();
         model.put("assertion", assertion);
 
         final MockHttpServletResponse servletResponse = new MockHttpServletResponse();
@@ -119,16 +124,16 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         final Map<String, Object> authAttributes = new HashMap<>();
         authAttributes.put(
-                SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
-                SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
+            SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
+            SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
         authAttributes.put("testSamlAttribute", "value");
 
         final Authentication primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
         final Assertion assertion = new DefaultAssertionBuilder(primary)
-                .with(Collections.singletonList(primary))
-                .with(CoreAuthenticationTestUtils.getService())
-                .with(true)
-                .build();
+            .with(Collections.singletonList(primary))
+            .with(CoreAuthenticationTestUtils.getService())
+            .with(true)
+            .build();
 
         model.put("assertion", assertion);
 
@@ -158,10 +163,10 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final Authentication primary = CoreAuthenticationTestUtils.getAuthentication(principal, authnAttributes);
 
         final Assertion assertion = new DefaultAssertionBuilder(primary)
-                .with(Collections.singletonList(primary))
-                .with(CoreAuthenticationTestUtils.getService())
-                .with(true)
-                .build();
+            .with(Collections.singletonList(primary))
+            .with(CoreAuthenticationTestUtils.getService())
+            .with(true)
+            .build();
         model.put("assertion", assertion);
 
         final MockHttpServletResponse servletResponse = new MockHttpServletResponse();

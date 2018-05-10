@@ -231,8 +231,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             final SAXBuilder builder = new SAXBuilder();
             builder.setFeature("http://xml.org/sax/features/external-general-entities", false);
             builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            return builder
-                .build(new ByteArrayInputStream(xmlString.getBytes(Charset.defaultCharset())));
+            return builder.build(new ByteArrayInputStream(xmlString.getBytes(Charset.defaultCharset())));
         } catch (final Exception e) {
             return null;
         }
