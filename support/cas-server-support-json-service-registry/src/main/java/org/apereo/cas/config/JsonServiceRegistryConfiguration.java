@@ -43,7 +43,7 @@ public class JsonServiceRegistryConfiguration implements ServiceRegistryExecutio
     private RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy;
 
     @Autowired
-    @Qualifier("resourceNamingStrategy")
+    @Qualifier("registeredServiceResourceNamingStrategy")
     private RegisteredServiceResourceNamingStrategy resourceNamingStrategy;
 
 

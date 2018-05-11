@@ -142,10 +142,10 @@ public class CasCoreServicesConfiguration {
         return new NoOpRegisteredServiceReplicationStrategy();
     }
 
-    @ConditionalOnMissingBean(name = "registeredServiceresourceNamingStrategy")
+    @ConditionalOnMissingBean(name = "registeredServiceResourceNamingStrategy")
     @Bean
     @RefreshScope
-    public RegisteredServiceResourceNamingStrategy resourceNamingStrategy() {
+    public RegisteredServiceResourceNamingStrategy registeredServiceResourceNamingStrategy() {
         return new DefaultRegisteredServiceResourceNamingStrategy();
     }
 
