@@ -10,6 +10,9 @@ package org.apereo.cas.support.saml;
  * @since 4.1
  */
 public interface SamlProtocolConstants {
+    /** Constant representing the assertion consumer service url. */
+    String PARAMETER_SAML_ACS_URL ="AssertionConsumerServiceURL";
+
     /** Constant representing the saml request. */
     String PARAMETER_SAML_REQUEST = "SAMLRequest";
 

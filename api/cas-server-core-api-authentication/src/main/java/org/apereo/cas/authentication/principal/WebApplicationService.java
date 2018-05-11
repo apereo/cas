@@ -18,6 +18,14 @@ public interface WebApplicationService extends Service {
     String getArtifactId();
 
     /**
+     * Indicates the source from which the service object was extracted and built.
+     * Typically maps to a request parameter or attribute that provides the request.
+     *
+     * @return the source if it exists, null otherwise.
+     */
+    String getSource();
+
+    /**
      * Return the original url provided (as {@code service} or {@code targetService} request parameter).
      * Used to reconstruct the redirect url.
      *

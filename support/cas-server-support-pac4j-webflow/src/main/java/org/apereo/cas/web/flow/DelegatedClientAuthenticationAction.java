@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -12,6 +11,7 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.AuthenticationResult;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ClientCredential;
@@ -85,6 +85,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final String localeParamName;
     private final String themeParamName;
+    private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     public DelegatedClientAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
@@ -96,7 +97,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                                                final DelegatedSessionCookieManager delegatedSessionCookieManager,
                                                final AuthenticationSystemSupport authenticationSystemSupport,
                                                final String localeParamName,
-                                               final String themeParamName) {
+                                               final String themeParamName,
+                                               final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
         this.clients = clients;
         this.servicesManager = servicesManager;
@@ -106,6 +108,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.localeParamName = localeParamName;
         this.themeParamName = themeParamName;
+        this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
     }
 
     @Override
@@ -181,7 +184,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @param context The current webflow context
      */
     protected void prepareForLoginPage(final RequestContext context) {
-        final Service service = WebUtils.getService(context);
+        final Service currentService = WebUtils.getService(context);
+        final WebApplicationService service = authenticationRequestServiceSelectionStrategies.resolveService(currentService, WebApplicationService.class);
+
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
@@ -207,19 +212,18 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         }
     }
 
-    private Optional<ProviderLoginPageConfiguration> buildProviderConfiguration(final IndirectClient client, final WebContext webContext, final Service service) {
+    private Optional<ProviderLoginPageConfiguration> buildProviderConfiguration(final IndirectClient client, final WebContext webContext,
+                                                                                final WebApplicationService service) {
         final String name = client.getName();
         final Matcher matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
         final String type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
-        final UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(DelegatedClientNavigationController.ENDPOINT_REDIRECT)
-                .queryParam(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, name);
-        if (service instanceof WebApplicationService) {
-            final WebApplicationService webApplicationService = (WebApplicationService) service;
-            final String serviceParam = webApplicationService.getOriginalUrl();
-            if (StringUtils.isNotBlank(serviceParam)) {
-                uriBuilder.queryParam(CasProtocolConstants.PARAMETER_SERVICE, serviceParam);
-            }
-        }
+        final UriComponentsBuilder uriBuilder = UriComponentsBuilder
+            .fromUriString(DelegatedClientNavigationController.ENDPOINT_REDIRECT)
+            .queryParam(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, name);
+
+        final String serviceParam = service.getOriginalUrl();
+        uriBuilder.queryParam(service.getSource(), serviceParam);
+
         final String methodParam = webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD);
         if (StringUtils.isNotBlank(methodParam)) {
             uriBuilder.queryParam(CasProtocolConstants.PARAMETER_METHOD, methodParam);
