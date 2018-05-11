@@ -6,17 +6,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
-import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.support.ArgumentExtractor;
+import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.BaseClient;
+import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.oauth.client.OAuth10Client;
 import org.pac4j.oauth.client.OAuth20Client;
@@ -51,10 +52,9 @@ public class DelegatedClientWebflowManager {
     private final TicketFactory ticketFactory;
     private final String themeParamName;
     private final String localParamName;
-    private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
-    private final String casLoginEndpoint;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-    
+    private final ArgumentExtractor argumentExtractor;
+
     /**
      * Store.
      *
@@ -62,7 +62,7 @@ public class DelegatedClientWebflowManager {
      * @param client     the client
      * @return the ticket
      */
-    public Ticket store(final WebContext webContext, final BaseClient client) {
+    public Ticket store(final J2EContext webContext, final BaseClient client) {
         final Map<String, Serializable> properties = new LinkedHashMap<>();
 
         final Service service = determineService(webContext);
@@ -107,9 +107,9 @@ public class DelegatedClientWebflowManager {
         return ticket;
     }
 
-    private Service determineService(final WebContext ctx) {
-        final String serviceParameter = StringUtils.defaultIfBlank(ctx.getRequestParameter(CasProtocolConstants.PARAMETER_SERVICE), casLoginEndpoint);
-        return this.authenticationRequestServiceSelectionStrategies.resolveService(webApplicationServiceFactory.createService(serviceParameter));
+    private Service determineService(final J2EContext ctx) {
+        final Service service = argumentExtractor.extractService(ctx.getRequest());
+        return this.authenticationRequestServiceSelectionStrategies.resolveService(service);
     }
 
     /**
@@ -144,7 +144,7 @@ public class DelegatedClientWebflowManager {
         final Service service = ticket.getService();
         LOGGER.debug("Restoring requested service [{}] back in the authentication flow", service);
 
-        requestContext.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
+        WebUtils.putService(requestContext, service);
         webContext.setRequestAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
         webContext.setRequestAttribute(this.themeParamName, ticket.getProperties().get(this.themeParamName));
         webContext.setRequestAttribute(this.localParamName, ticket.getProperties().get(this.localParamName));
