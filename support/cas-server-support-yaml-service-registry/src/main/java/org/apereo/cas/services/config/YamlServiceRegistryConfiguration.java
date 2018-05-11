@@ -9,6 +9,7 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.YamlServiceRegistry;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
+import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -37,13 +38,18 @@ public class YamlServiceRegistryConfiguration implements ServiceRegistryExecutio
     @Qualifier("registeredServiceReplicationStrategy")
     private RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy;
 
+    @Autowired
+    @Qualifier("registeredServiceResourceNamingStrategy")
+    private RegisteredServiceResourceNamingStrategy resourceNamingStrategy;
+
     @Bean
     @RefreshScope
     @SneakyThrows
     public ServiceRegistry yamlServiceRegistry() {
         final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
         return new YamlServiceRegistry(registry.getYaml().getLocation(),
-            registry.isWatcherEnabled(), eventPublisher, registeredServiceReplicationStrategy);
+            registry.isWatcherEnabled(), eventPublisher,
+                registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
     @Override
