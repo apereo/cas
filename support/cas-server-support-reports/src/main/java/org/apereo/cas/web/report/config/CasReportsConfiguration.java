@@ -71,9 +71,9 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 @EnableWebSocketMessageBroker
 @Slf4j
 public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfigurer {
-    private static final int LOG_TAILING_CORE_POOL_SIZE =5;
+    private static final int LOG_TAILING_CORE_POOL_SIZE = 5;
     private static final int LOG_TAILING_QUEUE_CAPACITY = 25;
-    
+
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
@@ -112,7 +112,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Autowired
     @Qualifier("principalFactory")
-    private PrincipalFactory principalFactory;
+    private ObjectProvider<PrincipalFactory> principalFactory;
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
@@ -146,9 +146,16 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Bean
     public MvcEndpoint personDirectoryAttributeResolutionController() {
-        return new PersonDirectoryAttributeResolutionController(casProperties, servicesManager,
-            authenticationSystemSupport, personDirectoryPrincipalResolver, webApplicationServiceFactory,
-            principalFactory, cas3ServiceSuccessView, cas3ServiceJsonView, cas2ServiceSuccessView, cas1ServiceSuccessView);
+        return new PersonDirectoryAttributeResolutionController(casProperties,
+            servicesManager,
+            authenticationSystemSupport,
+            personDirectoryPrincipalResolver,
+            webApplicationServiceFactory,
+            principalFactory.getIfAvailable(),
+            cas3ServiceSuccessView,
+            cas3ServiceJsonView,
+            cas2ServiceSuccessView,
+            cas1ServiceSuccessView);
     }
 
     @Profile("standalone")

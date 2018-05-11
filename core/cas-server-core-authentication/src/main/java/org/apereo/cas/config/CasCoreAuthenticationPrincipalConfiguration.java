@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolv
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -37,7 +38,6 @@ import java.util.List;
 @Slf4j
 public class CasCoreAuthenticationPrincipalConfiguration {
 
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -50,28 +50,29 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     private IPersonAttributeDao attributeRepository;
 
     @ConditionalOnMissingBean(name = "principalElectionStrategy")
-    @Autowired
     @Bean
-    public PrincipalElectionStrategy principalElectionStrategy(@Qualifier("principalFactory") final PrincipalFactory principalFactory) {
-        return new DefaultPrincipalElectionStrategy(principalFactory);
+    @RefreshScope
+    public PrincipalElectionStrategy principalElectionStrategy() {
+        return new DefaultPrincipalElectionStrategy(principalFactory());
     }
 
     @ConditionalOnMissingBean(name = "principalFactory")
     @Bean
+    @RefreshScope
     public PrincipalFactory principalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-    @Autowired
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "personDirectoryPrincipalResolver")
-    public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("principalFactory") final PrincipalFactory principalFactory) {
+    public PrincipalResolver personDirectoryPrincipalResolver() {
+        final PersonDirectoryPrincipalResolverProperties personDirectory = casProperties.getPersonDirectory();
         final PersonDirectoryPrincipalResolver bean = new PersonDirectoryPrincipalResolver(
             attributeRepository,
-            principalFactory,
-            casProperties.getPersonDirectory().isReturnNull(),
-            casProperties.getPersonDirectory().getPrincipalAttribute()
+            principalFactory(),
+            personDirectory.isReturnNull(),
+            personDirectory.getPrincipalAttribute()
         );
 
         final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
