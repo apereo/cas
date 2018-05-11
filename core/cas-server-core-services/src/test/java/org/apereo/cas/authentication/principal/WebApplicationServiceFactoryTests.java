@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.junit.Assert.*;
 
@@ -18,6 +20,8 @@ public class WebApplicationServiceFactoryTests {
 
     @Test
     public void verifyServiceCreationSuccessfullyById() {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final WebApplicationService service = factory.createService("testservice");
         assertNotNull(service);
