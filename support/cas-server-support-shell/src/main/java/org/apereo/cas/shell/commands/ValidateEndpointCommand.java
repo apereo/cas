@@ -79,8 +79,6 @@ public class ValidateEndpointCommand implements CommandMarker {
             }
         } catch (final Exception e) {
             LOGGER.info("Could not connect to the host address [{}]", url);
-            LOGGER.info("The error is: " + e.getMessage());
-            LOGGER.info("Here are the details:");
             LOGGER.error(e.getMessage(), e);
         }
     }

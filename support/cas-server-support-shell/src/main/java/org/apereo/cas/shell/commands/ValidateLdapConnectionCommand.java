@@ -101,7 +101,7 @@ public class ValidateLdapConnectionCommand implements CommandMarker {
             LOGGER.error("Could not connect to any of the provided LDAP urls based on the given credentials.");
             return;
         }
-        
+
         DirContext ctx = null;
         try {
             ctx = pair.getValue();
@@ -119,15 +119,9 @@ public class ValidateLdapConnectionCommand implements CommandMarker {
             LOGGER.info("******* Ldap Search *******");
             LOGGER.info("Ldap filter: [{}]", searchFilter);
             LOGGER.info("Ldap search base: [{}]", baseDn);
-            LOGGER.info("Returning attributes: " + Arrays.toString(attrIDs));
-            LOGGER.info("***************************\n");
+            LOGGER.info("Returning attributes: [{}]\n", Arrays.toString(attrIDs));
 
-            final SearchControls ctls = new SearchControls();
-            ctls.setDerefLinkFlag(true);
-            ctls.setTimeLimit(TIMEOUT);
-            ctls.setReturningAttributes(attrIDs);
-            ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-
+            final SearchControls ctls = getSearchControls(attrIDs);
             final NamingEnumeration<SearchResult> answer = ctx.search(baseDn, searchFilter, ctls);
             if (answer.hasMoreElements()) {
                 LOGGER.info("******* Ldap Search Results *******");
@@ -139,13 +133,7 @@ public class ValidateLdapConnectionCommand implements CommandMarker {
                     if (userPassword != null) {
                         LOGGER.info("Attempting to authenticate [{}] with password [{}]", result.getName(), userPassword);
 
-                        final Hashtable<String, String> env = new Hashtable<>(6);
-                        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-                        env.put(Context.PROVIDER_URL, pair.getKey().trim());
-                        env.put(Context.SECURITY_AUTHENTICATION, "simple");
-                        env.put(Context.SECURITY_PRINCIPAL, result.getNameInNamespace());
-                        env.put(Context.SECURITY_CREDENTIALS, userPassword);
-                        env.put("com.sun.jndi.ldap.connect.timeout", String.valueOf(TIMEOUT));
+                        final Hashtable<String, String> env = getLdapDirectoryContextSettings(result.getNameInNamespace(), userPassword, pair.getKey());
                         new InitialDirContext(env);
                         LOGGER.info("Successfully authenticated [{}] with password [{}]", result.getName(), userPassword);
                     }
@@ -155,11 +143,9 @@ public class ValidateLdapConnectionCommand implements CommandMarker {
                         LOGGER.info("[{}] => [{}]", id, result.getAttributes().get(id));
                     }
                 }
-                LOGGER.info("************************************");
             } else {
                 LOGGER.info("No search results could be found.");
             }
-
             LOGGER.info("Ldap search completed successfully.");
         } finally {
             if (ctx != null) {
@@ -168,19 +154,22 @@ public class ValidateLdapConnectionCommand implements CommandMarker {
         }
     }
 
+    private SearchControls getSearchControls(final String[] attrIDs) {
+        final SearchControls ctls = new SearchControls();
+        ctls.setDerefLinkFlag(true);
+        ctls.setTimeLimit(TIMEOUT);
+        ctls.setReturningAttributes(attrIDs);
+        ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        return ctls;
+    }
+
     private Pair<String, DirContext> getContext(final String ldapUrl, final String bindDn, final String bindCredential) {
         final Set<String> urls = StringUtils.commaDelimitedListToSet(ldapUrl);
         for (final String url : urls) {
             if (ldapUrl != null && !ldapUrl.isEmpty()) {
                 LOGGER.info("Attempting connect to LDAP instance [{}]", url);
 
-                final Hashtable<String, String> env = new Hashtable<>(6);
-                env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-                env.put(Context.PROVIDER_URL, url.trim());
-                env.put(Context.SECURITY_AUTHENTICATION, "simple");
-                env.put(Context.SECURITY_PRINCIPAL, bindDn);
-                env.put(Context.SECURITY_CREDENTIALS, bindCredential);
-                env.put("com.sun.jndi.ldap.connect.timeout", String.valueOf(TIMEOUT));
+                final Hashtable<String, String> env = getLdapDirectoryContextSettings(bindDn, bindCredential, url);
                 try {
                     return Pair.of(ldapUrl, new InitialDirContext(env));
                 } catch (final Exception e) {
@@ -190,5 +179,17 @@ public class ValidateLdapConnectionCommand implements CommandMarker {
         }
 
         return null;
+    }
+
+    @SuppressWarnings("JdkObsolete")
+    private Hashtable<String, String> getLdapDirectoryContextSettings(final String bindDn, final String bindCredential, final String url) {
+        final Hashtable<String, String> env = new Hashtable<>(6);
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.PROVIDER_URL, url.trim());
+        env.put(Context.SECURITY_AUTHENTICATION, "simple");
+        env.put(Context.SECURITY_PRINCIPAL, bindDn);
+        env.put(Context.SECURITY_CREDENTIALS, bindCredential);
+        env.put("com.sun.jndi.ldap.connect.timeout", String.valueOf(TIMEOUT));
+        return env;
     }
 }
