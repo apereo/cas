@@ -115,7 +115,7 @@ import static org.mockito.Mockito.*;
     CasCoreAuthenticationPrincipalConfiguration.class
 })
 @Slf4j
-public class CentralAuthenticationServiceImplWithMockitoTests {
+public class DefaultCentralAuthenticationServiceMockitoTests {
 
     private static final String TGT_ID = "tgt-id";
     private static final String TGT2_ID = "tgt2-id";
