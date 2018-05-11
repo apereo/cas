@@ -9,6 +9,7 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
+import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -41,12 +42,18 @@ public class JsonServiceRegistryConfiguration implements ServiceRegistryExecutio
     @Qualifier("registeredServiceReplicationStrategy")
     private RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy;
 
+    @Autowired
+    @Qualifier("registeredServiceResourceNamingStrategy")
+    private RegisteredServiceResourceNamingStrategy resourceNamingStrategy;
+
+
     @Bean
     @SneakyThrows
     public ServiceRegistry jsonServiceRegistry() {
         final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
         return new JsonServiceRegistry(registry.getJson().getLocation(),
-            registry.isWatcherEnabled(), eventPublisher, registeredServiceReplicationStrategy);
+            registry.isWatcherEnabled(), eventPublisher,
+            registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
     @Override
