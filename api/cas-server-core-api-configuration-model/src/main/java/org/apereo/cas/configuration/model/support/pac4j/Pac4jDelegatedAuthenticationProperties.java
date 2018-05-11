@@ -31,6 +31,11 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     private boolean typedIdUsed;
 
     /**
+     * The attribute to use as the principal identifier built during and upon a successful authentication attempt.
+     */
+    private String principalAttributeId;
+    
+    /**
      * Settings that deal with having Facebook as an external delegated-to authentication provider.
      */
     private Facebook facebook = new Facebook();
