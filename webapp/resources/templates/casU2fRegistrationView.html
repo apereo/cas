@@ -47,7 +47,7 @@
         </p>
         </p>
 
-        <form method="POST" id="form">
+        <form method="POST" id="form" th:action="@{/login}">
             <input type="hidden" name="tokenResponse" id="tokenResponse"/>
             <input type="hidden" name="_eventId" value="submit"/>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>

@@ -9,7 +9,7 @@
 <div layout:fragment="content">
     <div class="box fl-panel" id="login">
 
-        <form method="post" id="yubiKeyForm" class="fm-v clearfix" th:object="${credential}">
+        <form method="post" id="yubiKeyForm" class="fm-v clearfix" th:object="${credential}" th:action="@{/login}">
             <div class="alert alert-info">
                 <p th:text="#{cas.mfa.yubikey.authenticate}"/>
             </div>
