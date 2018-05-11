@@ -119,7 +119,7 @@ public class ValidateLdapConnectionCommand implements CommandMarker {
             LOGGER.info("******* Ldap Search *******");
             LOGGER.info("Ldap filter: [{}]", searchFilter);
             LOGGER.info("Ldap search base: [{}]", baseDn);
-            LOGGER.info("Returning attributes: " + Arrays.toString(attrIDs));
+            LOGGER.info("Returning attributes: {}", Arrays.toString(attrIDs));
             LOGGER.info("***************************\n");
 
             final SearchControls ctls = new SearchControls();
