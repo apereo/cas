@@ -67,22 +67,26 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
             throw new IllegalArgumentException("Request context has no reference to an authentication event to locate a principal");
         }
         final String uid = authentication.getPrincipal().getId();
-
         LOGGER.debug("Received principal id [{}]", uid);
+
+        LOGGER.debug("Locating principal id [{}] in credential repository", uid);
         final OneTimeTokenAccount acct = this.credentialRepository.get(uid);
         if (acct == null || StringUtils.isBlank(acct.getSecretKey())) {
             throw new AccountNotFoundException(uid + " cannot be found in the registry");
         }
 
+        LOGGER.debug("Locating OTP [{}] for principal [{}] in token repository", otp, uid);
         if (this.tokenRepository.exists(uid, otp)) {
             throw new AccountExpiredException(uid + " cannot reuse OTP " + otp + " as it may be expired/invalid");
         }
 
+        LOGGER.debug("Attempting to authorize OTP [{}]", otp);
         final boolean isCodeValid = this.googleAuthenticatorInstance.authorize(acct.getSecretKey(), otp);
         if (isCodeValid) {
             this.tokenRepository.store(new GoogleAuthenticatorToken(otp, uid));
             return createHandlerResult(tokenCredential, this.principalFactory.createPrincipal(uid), null);
         }
+        LOGGER.warn("Token authorization for OTP [{}] has failed", otp);
         throw new FailedLoginException("Failed to authenticate code " + otp);
     }
 
