@@ -1,16 +1,24 @@
 package org.apereo.cas.support.saml.authentication;
 
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.metadata.BaseAuthenticationMetaDataPopulator;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
+
 import java.util.HashMap;
 import java.util.Map;
-import lombok.Setter;
+import java.util.Set;
 
 /**
  * Capture SAML authentication metadata.
@@ -44,10 +52,17 @@ public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetaD
      * Instantiates a new SAML authentication meta data populator.
      */
     public SamlAuthenticationMetaDataPopulator() {
+        final String packageName = CentralAuthenticationService.NAMESPACE;
+        final Reflections reflections =
+            new Reflections(new ConfigurationBuilder()
+                .filterInputsBy(new FilterBuilder().includePackage(packageName))
+                .setUrls(ClasspathHelper.forPackage(packageName))
+                .setScanners(new SubTypesScanner(true)));
+
+        final Set<Class<? extends Credential>> subTypes = reflections.getSubTypesOf(Credential.class);
+        subTypes.forEach(t -> this.authenticationMethods.put(t.getName(), AUTHN_METHOD_UNSPECIFIED));
         this.authenticationMethods.put(HttpBasedServiceCredential.class.getName(), AUTHN_METHOD_SSL_TLS_CLIENT);
         this.authenticationMethods.put(UsernamePasswordCredential.class.getName(), AUTHN_METHOD_PASSWORD);
-        // Next two classes are in other modules, so avoid using Class#getName() to prevent circular dependency
-        this.authenticationMethods.put("org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredentials", AUTHN_METHOD_UNSPECIFIED);
         this.authenticationMethods.put("org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredentials", AUTHN_METHOD_X509_PUBLICKEY);
     }
 
