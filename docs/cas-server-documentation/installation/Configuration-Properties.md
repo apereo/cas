@@ -2583,6 +2583,7 @@ To learn more about this topic, [please review this guide](../integration/Delega
 
 ```properties
 # cas.authn.pac4j.typedIdUsed=false
+# cas.authn.pac4j.principalAttributeId=
 # cas.authn.pac4j.name=
 ```
 

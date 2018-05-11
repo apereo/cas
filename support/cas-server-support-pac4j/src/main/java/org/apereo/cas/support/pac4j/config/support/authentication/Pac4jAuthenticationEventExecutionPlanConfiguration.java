@@ -97,6 +97,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
         final ClientAuthenticationHandler h = new ClientAuthenticationHandler(pac4j.getName(), servicesManager,
             clientPrincipalFactory(), builtClients());
         h.setTypedIdUsed(pac4j.isTypedIdUsed());
+        h.setPrincipalAttributeId(pac4j.getPrincipalAttributeId());
         return h;
     }
 
