@@ -19,6 +19,7 @@ import org.apereo.cas.services.ServiceContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -45,7 +46,7 @@ public class CasCoreConfiguration {
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
     private AuditableExecution registeredServiceAccessStrategyEnforcer;
-    
+
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
@@ -54,19 +55,31 @@ public class CasCoreConfiguration {
 
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("logoutManager")
-    private LogoutManager logoutManager;
+    private ObjectProvider<LogoutManager> logoutManager;
 
     @Autowired
     @Qualifier("defaultTicketFactory")
-    private TicketFactory ticketFactory;
+    private ObjectProvider<TicketFactory> ticketFactory;
+
+    @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
+
+    @Autowired
+    @Qualifier("principalFactory")
+    private ObjectProvider<PrincipalFactory> principalFactory;
+
+    @Autowired
+    @Qualifier("protocolTicketCipherExecutor")
+    private ObjectProvider<CipherExecutor> cipherExecutor;
 
     @Bean
     @ConditionalOnMissingBean(name = "authenticationPolicyFactory")
@@ -90,15 +103,18 @@ public class CasCoreConfiguration {
         return plan;
     }
 
-    @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "centralAuthenticationService")
-    public CentralAuthenticationService centralAuthenticationService(
-        @Qualifier("authenticationServiceSelectionPlan") final AuthenticationServiceSelectionPlan selectionStrategies,
-        @Qualifier("principalFactory") final PrincipalFactory principalFactory,
-        @Qualifier("protocolTicketCipherExecutor") final CipherExecutor cipherExecutor) {
+    public CentralAuthenticationService centralAuthenticationService() {
         return new DefaultCentralAuthenticationService(applicationEventPublisher,
-            ticketRegistry, servicesManager, logoutManager, ticketFactory, selectionStrategies,
-            authenticationPolicyFactory(), principalFactory, cipherExecutor, registeredServiceAccessStrategyEnforcer);
+            ticketRegistry.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            logoutManager.getIfAvailable(),
+            ticketFactory.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            authenticationPolicyFactory(),
+            principalFactory.getIfAvailable(),
+            cipherExecutor.getIfAvailable(),
+            registeredServiceAccessStrategyEnforcer);
     }
 }
