@@ -11,6 +11,7 @@ import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
+import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,8 +35,8 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
     @Override
     public SamlService createService(final HttpServletRequest request) {
         final String service = request.getParameter(SamlProtocolConstants.CONST_PARAM_TARGET);
+        final String requestBody = request.getMethod().equalsIgnoreCase(HttpMethod.POST.name()) ? getRequestBody(request) : null;
         final String artifactId;
-        final String requestBody = request.getMethod().equalsIgnoreCase("POST") ? getRequestBody(request) : null;
         final String requestId;
 
         if (!StringUtils.hasText(service) && !StringUtils.hasText(requestBody)) {
@@ -68,7 +69,9 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
         }
 
         LOGGER.debug("Request Body: [{}]\n\"Extracted ArtifactId: [{}]. Extracted Request Id: [{}]", requestBody, artifactId, requestId);
-        return new SamlService(id, service, artifactId, requestId);
+        final SamlService samlService = new SamlService(id, service, artifactId, requestId);
+        samlService.setSource(SamlProtocolConstants.CONST_PARAM_TARGET);
+        return samlService;
     }
 
     @Override
