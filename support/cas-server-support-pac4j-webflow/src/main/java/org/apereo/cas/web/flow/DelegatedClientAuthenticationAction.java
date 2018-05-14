@@ -221,8 +221,13 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             .fromUriString(DelegatedClientNavigationController.ENDPOINT_REDIRECT)
             .queryParam(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, name);
 
-        final String serviceParam = service.getOriginalUrl();
-        uriBuilder.queryParam(service.getSource(), serviceParam);
+        if (service != null) {
+            final String sourceParam = service.getSource();
+            final String serviceParam = service.getOriginalUrl();
+            if (StringUtils.isNotBlank(sourceParam) && StringUtils.isNotBlank(serviceParam)) {
+                uriBuilder.queryParam(sourceParam, serviceParam);
+            }
+        }
 
         final String methodParam = webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD);
         if (StringUtils.isNotBlank(methodParam)) {

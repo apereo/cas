@@ -49,6 +49,9 @@ public class DefaultAuthenticationServiceSelectionPlan implements Authentication
     @Override
     public <T extends Service> T resolveService(final Service service, final Class<T> clazz) {
         final Service result = resolveService(service);
+        if (result == null) {
+            return null;
+        }
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Object [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
         }

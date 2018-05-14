@@ -90,7 +90,17 @@ public class DelegatedClientAuthenticationActionTests {
     private static final String MY_THEME = "my_theme";
 
     @Test
-    public void verifyStartAuthentication() throws Exception {
+    public void verifyStartAuthenticationNoService() throws Exception {
+        verifyStartAuthentication(null);
+    }
+
+    @Test
+    public void verifyStartAuthenticationWithService() throws Exception {
+        final Service service = RegisteredServiceTestUtils.getService(MY_SERVICE);
+        verifyStartAuthentication(service);
+    }
+
+    private void verifyStartAuthentication(final Service service) throws Exception {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         final String locale = Locale.getDefault().getCountry();
@@ -105,8 +115,9 @@ public class DelegatedClientAuthenticationActionTests {
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
 
-        final Service service = RegisteredServiceTestUtils.getService(MY_SERVICE);
-        mockRequestContext.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
+        if (service != null) {
+            mockRequestContext.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
+        }
 
         final FacebookClient facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
         final TwitterClient twitterClient = new TwitterClient("3nJPbVTVRZWAyUgoUKQ8UA", "h6LZyZJmcW46Vu8R47MYfeXTSYGI30EqnWaSwVhFkbA");
@@ -143,8 +154,12 @@ public class DelegatedClientAuthenticationActionTests {
             .map(url -> UriComponentsBuilder.fromUriString(url.getRedirectUrl()).build())
             .forEach(uriComponents -> {
                 assertThat(uriComponents.getPath()).isEqualTo(DelegatedClientNavigationController.ENDPOINT_REDIRECT);
-                assertThat(uriComponents.getQueryParams().get("client_name")).hasSize(1).isSubsetOf("FacebookClient", "TwitterClient");
-                assertThat(uriComponents.getQueryParams().get(CasProtocolConstants.PARAMETER_SERVICE)).hasSize(1).contains(MY_SERVICE);
+                assertThat(uriComponents.getQueryParams().get(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER)).hasSize(1).isSubsetOf("FacebookClient", "TwitterClient");
+                if (service != null) {
+                    assertThat(uriComponents.getQueryParams().get(CasProtocolConstants.PARAMETER_SERVICE)).hasSize(1).contains(MY_SERVICE);
+                } else {
+                    assertThat(uriComponents.getQueryParams().get(CasProtocolConstants.PARAMETER_SERVICE)).isNull();
+                }
                 assertThat(uriComponents.getQueryParams().get(CasProtocolConstants.PARAMETER_METHOD)).hasSize(1).contains(HttpMethod.POST.toString());
                 assertThat(uriComponents.getQueryParams().get(ThemeChangeInterceptor.DEFAULT_PARAM_NAME)).hasSize(1).contains(MY_THEME);
                 assertThat(uriComponents.getQueryParams().get(LocaleChangeInterceptor.DEFAULT_PARAM_NAME)).hasSize(1).contains(locale);
@@ -190,11 +205,13 @@ public class DelegatedClientAuthenticationActionTests {
 
     private ServicesManager getServicesManagerWith(final Service service, final BaseClient client) {
         final ServicesManager mgr = mock(ServicesManager.class);
-        final AbstractRegisteredService regSvc = RegisteredServiceTestUtils.getRegisteredService(service.getId());
+        final AbstractRegisteredService regSvc = service != null ? RegisteredServiceTestUtils.getRegisteredService(service.getId()) : null;
 
-        final DefaultRegisteredServiceAccessStrategy strategy = new DefaultRegisteredServiceAccessStrategy();
-        strategy.setDelegatedAuthenticationPolicy(new DefaultRegisteredServiceDelegatedAuthenticationPolicy(CollectionUtils.wrapList(client.getName())));
-        regSvc.setAccessStrategy(strategy);
+        if (regSvc != null) {
+            final DefaultRegisteredServiceAccessStrategy strategy = new DefaultRegisteredServiceAccessStrategy();
+            strategy.setDelegatedAuthenticationPolicy(new DefaultRegisteredServiceDelegatedAuthenticationPolicy(CollectionUtils.wrapList(client.getName())));
+            regSvc.setAccessStrategy(strategy);
+        }
         when(mgr.findServiceBy(any(Service.class))).thenReturn(regSvc);
 
         return mgr;

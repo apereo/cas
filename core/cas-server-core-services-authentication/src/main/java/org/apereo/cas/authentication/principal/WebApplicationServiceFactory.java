@@ -52,7 +52,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         final String id = cleanupUrl(serviceToUse);
         final AbstractWebApplicationService newService = new SimpleWebApplicationServiceImpl(id, serviceToUse, artifactId);
         determineWebApplicationFormat(request, newService);
-        final String source = getSourceParameter(request, CasProtocolConstants.PARAMETER_TARGET_SERVICE, CasProtocolConstants.PARAMETER_TARGET_SERVICE);
+        final String source = getSourceParameter(request, CasProtocolConstants.PARAMETER_TARGET_SERVICE, CasProtocolConstants.PARAMETER_SERVICE);
         newService.setSource(source);
         return newService;
     }
