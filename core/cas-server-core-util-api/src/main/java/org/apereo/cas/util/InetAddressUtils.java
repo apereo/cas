@@ -57,6 +57,10 @@ public class InetAddressUtils {
      */
     @SneakyThrows
     public static String getCasServerHostAddress(final String name) {
-        return getByName(name).getHostAddress();
+        final InetAddress host = getByName(name);
+        if (host != null) {
+            return host.getHostAddress();
+        }
+        return null;
     }
 }
