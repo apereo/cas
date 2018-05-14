@@ -4,6 +4,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -66,9 +67,9 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
      * @return the source parameter
      */
     protected static String getSourceParameter(final HttpServletRequest request, final String... paramNames) {
-        final Map<String, String[]> parameterMap = request.getParameterMap();
+        final Map<String, String[]> parameterMap = request != null ? request.getParameterMap() : Collections.emptyMap();
         final String param = Stream.of(paramNames)
-            .filter(p -> parameterMap.containsKey(p) || request.getAttribute(p) != null)
+            .filter(p -> parameterMap.containsKey(p) || (request != null && request.getAttribute(p) != null))
             .findFirst()
             .orElse(null);
         return param;
