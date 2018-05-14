@@ -33,12 +33,14 @@ import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.Pac4jUtils;
+import org.apereo.cas.web.DelegatedClientNavigationController;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
 import org.apereo.cas.web.pac4j.SessionStoreCookieSerializer;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.junit.Test;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
@@ -52,6 +54,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
@@ -61,6 +64,7 @@ import org.springframework.webflow.test.MockRequestContext;
 import java.util.Locale;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -86,11 +90,22 @@ public class DelegatedClientAuthenticationActionTests {
     private static final String MY_THEME = "my_theme";
 
     @Test
-    public void verifyStartAuthentication() throws Exception {
+    public void verifyStartAuthenticationNoService() throws Exception {
+        verifyStartAuthentication(null);
+    }
+
+    @Test
+    public void verifyStartAuthenticationWithService() throws Exception {
+        final Service service = RegisteredServiceTestUtils.getService(MY_SERVICE);
+        verifyStartAuthentication(service);
+    }
+
+    private void verifyStartAuthentication(final Service service) throws Exception {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        final String locale = Locale.getDefault().getCountry();
         mockRequest.setParameter(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, MY_THEME);
-        mockRequest.setParameter(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, Locale.getDefault().getCountry());
+        mockRequest.setParameter(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, locale);
         mockRequest.setParameter(CasProtocolConstants.PARAMETER_METHOD, HttpMethod.POST.name());
 
         final ServletExternalContext servletExternalContext = mock(ServletExternalContext.class);
@@ -100,8 +115,9 @@ public class DelegatedClientAuthenticationActionTests {
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
 
-        final Service service = RegisteredServiceTestUtils.getService(MY_SERVICE);
-        mockRequestContext.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
+        if (service != null) {
+            mockRequestContext.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
+        }
 
         final FacebookClient facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
         final TwitterClient twitterClient = new TwitterClient("3nJPbVTVRZWAyUgoUKQ8UA", "h6LZyZJmcW46Vu8R47MYfeXTSYGI30EqnWaSwVhFkbA");
@@ -113,8 +129,8 @@ public class DelegatedClientAuthenticationActionTests {
         final DelegatedClientWebflowManager manager = new DelegatedClientWebflowManager(ticketRegistry,
             new DefaultTransientSessionTicketFactory(new HardTimeoutExpirationPolicy(60)),
             ThemeChangeInterceptor.DEFAULT_PARAM_NAME, LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
-            new WebApplicationServiceFactory(), "https://cas.example.org",
-            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
+            new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
         final Ticket ticket = manager.store(Pac4jUtils.getPac4jJ2EContext(mockRequest, new MockHttpServletResponse()), facebookClient);
 
         mockRequest.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
@@ -134,6 +150,20 @@ public class DelegatedClientAuthenticationActionTests {
 
         assertFalse(urls.isEmpty());
         assertSame(2, urls.size());
+        urls.stream()
+            .map(url -> UriComponentsBuilder.fromUriString(url.getRedirectUrl()).build())
+            .forEach(uriComponents -> {
+                assertThat(uriComponents.getPath()).isEqualTo(DelegatedClientNavigationController.ENDPOINT_REDIRECT);
+                assertThat(uriComponents.getQueryParams().get(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER)).hasSize(1).isSubsetOf("FacebookClient", "TwitterClient");
+                if (service != null) {
+                    assertThat(uriComponents.getQueryParams().get(CasProtocolConstants.PARAMETER_SERVICE)).hasSize(1).contains(MY_SERVICE);
+                } else {
+                    assertThat(uriComponents.getQueryParams().get(CasProtocolConstants.PARAMETER_SERVICE)).isNull();
+                }
+                assertThat(uriComponents.getQueryParams().get(CasProtocolConstants.PARAMETER_METHOD)).hasSize(1).contains(HttpMethod.POST.toString());
+                assertThat(uriComponents.getQueryParams().get(ThemeChangeInterceptor.DEFAULT_PARAM_NAME)).hasSize(1).contains(MY_THEME);
+                assertThat(uriComponents.getQueryParams().get(LocaleChangeInterceptor.DEFAULT_PARAM_NAME)).hasSize(1).contains(locale);
+            });
     }
 
     @Test
@@ -175,11 +205,13 @@ public class DelegatedClientAuthenticationActionTests {
 
     private ServicesManager getServicesManagerWith(final Service service, final BaseClient client) {
         final ServicesManager mgr = mock(ServicesManager.class);
-        final AbstractRegisteredService regSvc = RegisteredServiceTestUtils.getRegisteredService(service.getId());
+        final AbstractRegisteredService regSvc = service != null ? RegisteredServiceTestUtils.getRegisteredService(service.getId()) : null;
 
-        final DefaultRegisteredServiceAccessStrategy strategy = new DefaultRegisteredServiceAccessStrategy();
-        strategy.setDelegatedAuthenticationPolicy(new DefaultRegisteredServiceDelegatedAuthenticationPolicy(CollectionUtils.wrapList(client.getName())));
-        regSvc.setAccessStrategy(strategy);
+        if (regSvc != null) {
+            final DefaultRegisteredServiceAccessStrategy strategy = new DefaultRegisteredServiceAccessStrategy();
+            strategy.setDelegatedAuthenticationPolicy(new DefaultRegisteredServiceDelegatedAuthenticationPolicy(CollectionUtils.wrapList(client.getName())));
+            regSvc.setAccessStrategy(strategy);
+        }
         when(mgr.findServiceBy(any(Service.class))).thenReturn(regSvc);
 
         return mgr;
@@ -212,9 +244,8 @@ public class DelegatedClientAuthenticationActionTests {
         final DelegatedClientWebflowManager manager = new DelegatedClientWebflowManager(ticketRegistry,
             new DefaultTransientSessionTicketFactory(new HardTimeoutExpirationPolicy(60)),
             ThemeChangeInterceptor.DEFAULT_PARAM_NAME, LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
-            new WebApplicationServiceFactory(),
-            "https://cas.example.org",
-            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
+            new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
         final Ticket ticket = manager.store(Pac4jUtils.getPac4jJ2EContext(mockRequest, new MockHttpServletResponse()), client);
 
         mockRequest.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
@@ -230,7 +261,10 @@ public class DelegatedClientAuthenticationActionTests {
             enforcer,
             manager,
             new DelegatedSessionCookieManager(mock(CookieRetrievingCookieGenerator.class), mock(SessionStoreCookieSerializer.class)),
-            support);
+            support,
+            LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
+            ThemeChangeInterceptor.DEFAULT_PARAM_NAME,
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
 
     }
 }

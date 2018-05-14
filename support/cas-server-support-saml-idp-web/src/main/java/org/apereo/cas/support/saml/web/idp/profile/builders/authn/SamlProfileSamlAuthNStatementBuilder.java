@@ -1,10 +1,10 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
@@ -17,13 +17,11 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.SubjectLocality;
-import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.net.InetAddress;
-import java.time.ZonedDateTime;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.ZonedDateTime;
 
 /**
  * This is {@link SamlProfileSamlAuthNStatementBuilder}.
@@ -75,7 +73,6 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
                                                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                final SamlRegisteredService service, final String binding,
                                                final MessageContext messageContext) throws SamlException {
-
         final Assertion assertion = Assertion.class.cast(casAssertion);
         final String authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
         final String id = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
@@ -83,9 +80,10 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
         if (assertion.getValidUntilDate() != null) {
             final ZonedDateTime dt = DateTimeUtils.zonedDateTimeOf(assertion.getValidUntilDate());
             statement.setSessionNotOnOrAfter(
-                    DateTimeUtils.dateTimeOf(dt.plusSeconds(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance())));
+                DateTimeUtils.dateTimeOf(dt.plusSeconds(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance())));
         }
-        statement.setSubjectLocality(buildSubjectLocality(assertion, authnRequest, adaptor, binding));
+        final SubjectLocality subjectLocality = buildSubjectLocality(assertion, authnRequest, adaptor, binding);
+        statement.setSubjectLocality(subjectLocality);
         return statement;
     }
 
@@ -101,16 +99,12 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
      */
     protected SubjectLocality buildSubjectLocality(final Object assertion, final RequestAbstractType authnRequest,
                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                   final String binding)
-            throws SamlException {
+                                                   final String binding) throws SamlException {
         final SubjectLocality subjectLocality = newSamlObject(SubjectLocality.class);
-        final AssertionConsumerService acs = adaptor.getAssertionConsumerService(binding);
-        if (acs != null && StringUtils.isNotBlank(acs.getLocation())) {
-            final InetAddress ip = InetAddressUtils.getByName(acs.getLocation());
-            if (ip != null) {
-                subjectLocality.setAddress(ip.getHostName());
-            }
-        }
+        final String hostAddress = InetAddressUtils.getCasServerHostAddress(casProperties.getServer().getName());
+        final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
+        LOGGER.debug("Built subject locality address [{}] for the saml authentication statement prepped for [{}]", hostAddress, issuer);
+        subjectLocality.setAddress(hostAddress);
         return subjectLocality;
     }
 }

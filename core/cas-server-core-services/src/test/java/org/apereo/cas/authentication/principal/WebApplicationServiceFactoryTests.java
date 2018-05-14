@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.junit.Assert.*;
 
@@ -18,6 +20,8 @@ public class WebApplicationServiceFactoryTests {
 
     @Test
     public void verifyServiceCreationSuccessfullyById() {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final WebApplicationService service = factory.createService("testservice");
         assertNotNull(service);
@@ -30,6 +34,7 @@ public class WebApplicationServiceFactoryTests {
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final WebApplicationService service = factory.createService(request);
         assertNotNull(service);
+        assertEquals(CasProtocolConstants.PARAMETER_SERVICE, service.getSource());
     }
 
     @Test
@@ -39,6 +44,7 @@ public class WebApplicationServiceFactoryTests {
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final WebApplicationService service = factory.createService(request);
         assertNotNull(service);
+        assertEquals(CasProtocolConstants.PARAMETER_TARGET_SERVICE, service.getSource());
     }
 
     @Test
@@ -61,5 +67,13 @@ public class WebApplicationServiceFactoryTests {
 
         final WebApplicationService service = factory.createService(request);
         assertNull(service);
+    }
+
+    @Test
+    public void verifyServiceCreationNoRequest() {
+        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
+
+        final WebApplicationService service = factory.createService("testservice");
+        assertNotNull(service);
     }
 }

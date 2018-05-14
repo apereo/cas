@@ -14,7 +14,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-geolocation-maxmind")
-
 @Getter
 @Setter
 public class MaxmindProperties implements Serializable {

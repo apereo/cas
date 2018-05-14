@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
  */
 @DirtiesContext
 @Slf4j
-public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthenticationServiceTests {
+public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthenticationServiceTests {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

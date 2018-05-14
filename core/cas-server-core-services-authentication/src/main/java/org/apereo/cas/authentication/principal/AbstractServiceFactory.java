@@ -1,9 +1,11 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
-import lombok.ToString;
+import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * The {@link AbstractServiceFactory} is the parent class providing
@@ -54,5 +56,24 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
             return url.substring(0, url.indexOf(";jsession"));
         }
         return url.substring(0, jsessionPosition) + url.substring(questionMarkPosition);
+    }
+
+    /**
+     * Gets source parameter.
+     *
+     * @param request    the request
+     * @param paramNames the param names
+     * @return the source parameter
+     */
+    protected static String getSourceParameter(final HttpServletRequest request, final String... paramNames) {
+        if (request != null) {
+            final Map<String, String[]> parameterMap = request.getParameterMap();
+            final String param = Stream.of(paramNames)
+                .filter(p -> parameterMap.containsKey(p) || request.getAttribute(p) != null)
+                .findFirst()
+                .orElse(null);
+            return param;
+        }
+        return null;
     }
 }
