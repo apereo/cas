@@ -34,6 +34,7 @@ public class WebApplicationServiceFactoryTests {
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final WebApplicationService service = factory.createService(request);
         assertNotNull(service);
+        assertEquals(CasProtocolConstants.PARAMETER_SERVICE, service.getSource());
     }
 
     @Test
@@ -43,6 +44,7 @@ public class WebApplicationServiceFactoryTests {
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final WebApplicationService service = factory.createService(request);
         assertNotNull(service);
+        assertEquals(CasProtocolConstants.PARAMETER_TARGET_SERVICE, service.getSource());
     }
 
     @Test
@@ -65,5 +67,13 @@ public class WebApplicationServiceFactoryTests {
 
         final WebApplicationService service = factory.createService(request);
         assertNull(service);
+    }
+
+    @Test
+    public void verifyServiceCreationNoRequest() {
+        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
+
+        final WebApplicationService service = factory.createService("testservice");
+        assertNotNull(service);
     }
 }
