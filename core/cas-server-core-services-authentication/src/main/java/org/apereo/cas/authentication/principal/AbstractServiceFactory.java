@@ -66,11 +66,14 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
      * @return the source parameter
      */
     protected static String getSourceParameter(final HttpServletRequest request, final String... paramNames) {
-        final Map<String, String[]> parameterMap = request.getParameterMap();
-        final String param = Stream.of(paramNames)
-            .filter(p -> parameterMap.containsKey(p) || request.getAttribute(p) != null)
-            .findFirst()
-            .orElse(null);
-        return param;
+        if (request != null) {
+            final Map<String, String[]> parameterMap = request.getParameterMap();
+            final String param = Stream.of(paramNames)
+                .filter(p -> parameterMap.containsKey(p) || request.getAttribute(p) != null)
+                .findFirst()
+                .orElse(null);
+            return param;
+        }
+        return null;
     }
 }
