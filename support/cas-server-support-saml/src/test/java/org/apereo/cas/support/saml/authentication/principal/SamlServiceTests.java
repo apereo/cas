@@ -92,6 +92,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
             + "MinorVersion=\"1\" RequestID=\"_192.168.16.51.1024506224022\" IssueInstant=\"2002-06-19T17:03:44.022Z\">"
             + "<samlp:AssertionArtifact>artifact</samlp:AssertionArtifact></samlp:Request></SOAP-ENV:Body></SOAP-ENV:Envelope>";
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod("POST");
         request.setContent(body.getBytes(StandardCharsets.UTF_8));
 
         final SamlService impl = samlServiceFactory.createService(request);
