@@ -23,8 +23,6 @@ import java.net.InetAddress;
  */
 @Slf4j
 public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationService {
-
-
     private final DatabaseReader cityDatabaseReader;
     private final DatabaseReader countryDatabaseReader;
 
