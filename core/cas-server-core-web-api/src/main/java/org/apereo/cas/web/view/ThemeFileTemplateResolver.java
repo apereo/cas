@@ -11,6 +11,7 @@ import org.thymeleaf.templateresolver.FileTemplateResolver;
 import org.thymeleaf.templateresource.ITemplateResource;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 /**
@@ -48,7 +49,10 @@ public class ThemeFileTemplateResolver extends FileTemplateResolver {
     protected String getCurrentTheme() {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
         if (request != null) {
-            return (String) request.getSession().getAttribute(casProperties.getTheme().getParamName());
+            final HttpSession session = request.getSession(false);
+            if (session != null) {
+                return (String) session.getAttribute(casProperties.getTheme().getParamName());
+            }
         }
         return null;
     }
