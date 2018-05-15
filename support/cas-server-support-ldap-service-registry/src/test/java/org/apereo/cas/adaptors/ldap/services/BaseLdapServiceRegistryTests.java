@@ -1,8 +1,8 @@
 package org.apereo.cas.adaptors.ldap.services;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.ldap.services.config.LdapServiceRegistryConfiguration;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
@@ -18,22 +18,27 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
 
@@ -46,9 +51,19 @@ import static org.junit.Assert.*;
 @EnableScheduling
 @DirtiesContext
 @Slf4j
-@RunWith(SpringRunner.class)
+@Category(LdapCategory.class)
 @SpringBootTest(classes = {LdapServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
 public class BaseLdapServiceRegistryTests {
+
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
+
     @Autowired
     @Qualifier("ldapServiceRegistry")
     private ServiceRegistry dao;
