@@ -38,16 +38,11 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                                         final String originalPassword)
         throws GeneralSecurityException, PreventedException {
-
-        if (getDataSource() == null) {
-            throw new GeneralSecurityException("Authentication handler is not configured correctly");
-        }
-
         Connection connection = null;
         try {
             final String username = credential.getUsername();
             final String password = credential.getPassword();
-            connection = this.getDataSource().getConnection(username, password);
+            connection = getDataSource().getConnection(username, password);
             return createHandlerResult(credential, this.principalFactory.createPrincipal(username), new ArrayList<>(0));
         } catch (final SQLException e) {
             throw new FailedLoginException(e.getMessage());
@@ -55,7 +50,7 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
             throw new PreventedException("Unexpected SQL connection error", e);
         } finally {
             if (connection != null) {
-                DataSourceUtils.releaseConnection(connection, this.getDataSource());
+                DataSourceUtils.releaseConnection(connection, getDataSource());
             }
         }
     }

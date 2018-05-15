@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandlerTests;
@@ -15,9 +16,12 @@ import org.junit.runners.Suite;
  * @since 4.2.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({QueryAndEncodeDatabaseAuthenticationHandlerTests.class, 
-        QueryDatabaseAuthenticationHandlerTests.class,
-        SearchModeSearchDatabaseAuthenticationHandlerTests.class})
+@Suite.SuiteClasses({
+    QueryAndEncodeDatabaseAuthenticationHandlerTests.class,
+    QueryDatabaseAuthenticationHandlerTests.class,
+    BindModeSearchDatabaseAuthenticationHandlerTests.class,
+    SearchModeSearchDatabaseAuthenticationHandlerTests.class
+})
 @Slf4j
 public class AllTestsSuite {
 }
