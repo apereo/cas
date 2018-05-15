@@ -21,8 +21,6 @@ import java.util.Map;
  */
 @Slf4j
 public class CloudDirectoryAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-
-
     private final CloudDirectoryRepository repository;
     private final CloudDirectoryProperties cloudDirectoryProperties;
 
