@@ -1,9 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -57,6 +53,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class represents an action to put at the beginning of the webflow.
@@ -144,7 +144,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
             try {
                 establishDelegatedAuthenticationSession(context, service, credentials, client);
-            } catch (AuthenticationException e) {
+            } catch (final AuthenticationException e) {
                 LOGGER.warn("Could not establish delegated authentication session [{}]. Routing to [{}]", e.getMessage(), CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
                 return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, new LocalAttributeMap<>(CasWebflowConstants.TRANSITION_ID_ERROR, e));
             }
