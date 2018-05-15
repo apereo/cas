@@ -36,7 +36,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     @Override
     public void cleanInternal() {
         final int count = this.entityManager.createQuery("DELETE FROM " + GoogleAuthenticatorToken.class.getSimpleName()
-                + " r where r.issuedDateTime>= :expired")
+                + " r where r.issuedDateTime<= :expired")
                 .setParameter("expired", LocalDateTime.now().minusSeconds(this.expireTokensInSeconds))
                 .executeUpdate();
         LOGGER.debug("Deleted [{}] expired previously used token record(s)", count);

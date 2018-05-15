@@ -104,7 +104,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     @Bean
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
         return new GoogleAuthenticatorJpaTokenRepository(
-            casProperties.getAuthn().getMfa().getGauth().getTimeStepSize()
+            casProperties.getAuthn().getMfa().getGauth().getTimeStepSize() * casProperties.getAuthn().getMfa().getGauth().getWindowSize()
         );
     }
 
