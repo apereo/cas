@@ -828,7 +828,7 @@ import java.util.*
 
 def Map<String, List<Object>> run(final Object... args) {
     def uid = args[0]
-    def logger = args[1];
+    def logger = args[1]
     def casProperties = args[2]
     def casApplicationContext = args[3]
 
