@@ -2,17 +2,22 @@ package org.apereo.cas.consent;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasConsentCoreConfiguration;
 import org.apereo.cas.config.CasConsentMongoDbConfiguration;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.ConditionalSpringRunner;
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import static org.junit.Assert.*;
 
@@ -22,15 +27,24 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(ConditionalSpringRunner.class)
 @SpringBootTest(classes = {
     CasConsentMongoDbConfiguration.class,
     CasConsentCoreConfiguration.class,
     CasCoreAuditConfiguration.class,
     RefreshAutoConfiguration.class
 })
+@Category(MongoDbCategory.class)
 @TestPropertySource(locations = "classpath:mongo-consent.properties")
 public class MongoDbConsentRepositoryTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
+
     @Autowired
     @Qualifier("consentRepository")
     private ConsentRepository consentRepository;

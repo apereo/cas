@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.config.CasMongoAuthenticationConfiguration;
+import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -18,8 +18,10 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,9 +30,12 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
 
@@ -40,7 +45,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RunWith(SpringRunner.class)
+@Category(MongoDbCategory.class)
 @SpringBootTest(
         classes = {CasMongoAuthenticationConfiguration.class,
                 CasCoreAuthenticationConfiguration.class, 
@@ -64,6 +69,12 @@ import static org.junit.Assert.*;
 @TestPropertySource(locations={"classpath:/mongo.properties"})
 @Slf4j
 public class MongoDbAuthenticationHandlerTests {
+
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("mongoAuthenticationHandler")

@@ -1,8 +1,8 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
@@ -25,8 +25,10 @@ import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -37,7 +39,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
+
+import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
 
@@ -47,7 +52,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
+@Category(MongoDbCategory.class)
 @SpringBootTest(
     classes = {
         MongoDbYubiKeyConfiguration.class,
@@ -80,8 +85,15 @@ import static org.junit.Assert.*;
 @Slf4j
 @TestPropertySource(locations = {"classpath:/yubikey-mongo.properties"})
 public class MongoDbYubiKeyAccountRegistryTests {
+
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
     private static final String BAD_TOKEN = "123456";
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")
