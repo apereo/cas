@@ -146,7 +146,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 establishDelegatedAuthenticationSession(context, service, credentials, client);
             } catch (AuthenticationException e) {
                 LOGGER.warn("Could not establish delegated authentication session [{}]. Routing to [{}]", e.getMessage(), CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, new LocalAttributeMap<>("error", e));
+                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, new LocalAttributeMap<>(CasWebflowConstants.TRANSITION_ID_ERROR, e));
             }
             return super.doExecute(context);
         }
