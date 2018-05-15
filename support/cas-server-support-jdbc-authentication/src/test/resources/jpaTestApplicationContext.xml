@@ -52,9 +52,7 @@
         p:username="${database.user:sa}"
         p:password="${database.password:}"
         p:url="${database.url:jdbc:hsqldb:mem:cas-ticket-registry}" />
-
-
-
+  
 </beans>
 
 
