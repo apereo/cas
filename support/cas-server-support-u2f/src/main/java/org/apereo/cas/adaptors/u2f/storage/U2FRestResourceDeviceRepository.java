@@ -41,7 +41,7 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     }
 
     @Override
-    protected Map<String, List<U2FDeviceRegistration>> readDevicesFromResource() {
+    public Map<String, List<U2FDeviceRegistration>> readDevicesFromResource() {
         try {
             final HttpResponse response = HttpUtils.executeGet(restProperties.getUrl(), 
                     restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
@@ -58,7 +58,7 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     }
 
     @Override
-    protected void writeDevicesBackToResource(final List<U2FDeviceRegistration> list) {
+    public void writeDevicesBackToResource(final List<U2FDeviceRegistration> list) {
         try (StringWriter writer = new StringWriter()) {
             final Map<String, List<U2FDeviceRegistration>> newDevices = new HashMap<>();
             newDevices.put(MAP_KEY_DEVICES, list);
