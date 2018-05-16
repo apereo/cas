@@ -88,7 +88,7 @@ allprojects {
         module {
             downloadSources = false
             downloadJavadoc = false
-            excludeDirs = [file(".gradle")]
+            excludeDirs << file(".gradle")
             ["classes", "bin", "docs", "dependency-cache", "libs", "reports", "resources", "test-results", "tmp"].each {
                 excludeDirs << file("$buildDir/$it")
             }
