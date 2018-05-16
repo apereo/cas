@@ -47,8 +47,7 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
         .findAndRegisterModules();
-
-
+    
     private static MockWebServer WEB_SERVER;
 
     @Autowired
@@ -65,7 +64,6 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
         final Map<String, List<U2FDeviceRegistration>> devices = new HashMap<>();
 
         final DeviceRegistration reg = new DeviceRegistration("123456", "bjsdghj3b", "njsdkhjdfjh45", 1, false);
-
         devices.put(BaseResourceU2FDeviceRepository.MAP_KEY_DEVICES,
             CollectionUtils.wrapList(new U2FDeviceRegistration(2000, "casuser", reg.toJson(), LocalDate.now()),
                 new U2FDeviceRegistration(1000, "casuser", reg.toJson(), LocalDate.now())));
