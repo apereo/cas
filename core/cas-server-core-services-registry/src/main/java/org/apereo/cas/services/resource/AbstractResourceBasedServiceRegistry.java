@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ResourceBasedServiceRegistry;
@@ -90,8 +89,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                                                 final Collection<StringSerializer<RegisteredService>> serializers,
                                                 final ApplicationEventPublisher eventPublisher) throws Exception {
         this(configDirectory, serializers, false, eventPublisher,
-                new NoOpRegisteredServiceReplicationStrategy(),
-                new DefaultRegisteredServiceResourceNamingStrategy());
+            new NoOpRegisteredServiceReplicationStrategy(),
+            new DefaultRegisteredServiceResourceNamingStrategy());
     }
 
     /**
@@ -109,7 +108,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                                 final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
         this(configDirectory, CollectionUtils.wrap(serializer), enableWatcher, eventPublisher,
-                registeredServiceReplicationStrategy, resourceNamingStrategy);
+            registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
     /**
@@ -128,7 +127,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                                 final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
         initializeRegistry(configDirectory, serializers, enableWatcher, eventPublisher, registeredServiceReplicationStrategy,
-                resourceNamingStrategy);
+            resourceNamingStrategy);
     }
 
     /**
@@ -153,7 +152,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         }
         final File file = servicesDirectory.getFile();
         initializeRegistry(Paths.get(file.getCanonicalPath()), serializers, enableWatcher, eventPublisher,
-                registeredServiceReplicationStrategy, resourceNamingStrategy);
+            registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
     private void initializeRegistry(final Path configDirectory, final Collection<StringSerializer<RegisteredService>> serializers,
@@ -164,7 +163,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         this.registeredServiceReplicationStrategy = ObjectUtils.defaultIfNull(registeredServiceReplicationStrategy,
             new NoOpRegisteredServiceReplicationStrategy());
         this.resourceNamingStrategy = ObjectUtils.defaultIfNull(resourceNamingStrategy,
-             new DefaultRegisteredServiceResourceNamingStrategy());
+            new DefaultRegisteredServiceResourceNamingStrategy());
         this.registeredServiceSerializers = serializers;
         this.serviceFileNamePattern = RegexUtils.createPattern(PATTERN_REGISTERED_SERVICE_FILE_NAME + getExtension());
         this.serviceRegistryDirectory = configDirectory;
@@ -291,7 +290,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     @Override
     public RegisteredService save(final RegisteredService service) {
-        if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE && service instanceof AbstractRegisteredService) {
+        if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             LOGGER.debug("Service id not set. Calculating id based on system time...");
             service.setId(System.currentTimeMillis());
         }
