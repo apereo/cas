@@ -2,6 +2,11 @@ package org.apereo.cas;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.authentication.AuthenticationResult;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.PrincipalElectionStrategy;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.config.CasApplicationContextConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -37,6 +42,9 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -52,6 +60,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -67,7 +76,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import static org.junit.Assert.*;
 
 /**
- * This is {@link BaseCasWebflowSessionContextConfiguration}.
+ * This is {@link BaseCasWebflowSessionContextConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -114,7 +123,7 @@ import static org.junit.Assert.*;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 @Slf4j
-public abstract class BaseCasWebflowSessionContextConfiguration {
+public abstract class BaseCasWebflowSessionContextConfigurationTests {
 
     @Test
     public void verifyExecutorsAreBeans() {
@@ -144,8 +153,19 @@ public abstract class BaseCasWebflowSessionContextConfiguration {
      */
     @TestConfiguration("testWebflowContextConfiguration")
     public static class TestWebflowContextConfiguration {
-
         private static final String TEST = "test";
+
+        @Autowired
+        @Qualifier("principalElectionStrategy")
+        private ObjectProvider<PrincipalElectionStrategy> principalElectionStrategy;
+
+        @Autowired
+        @Qualifier("principalFactory")
+        private ObjectProvider<PrincipalFactory> principalFactory;
+
+        @Autowired
+        @Qualifier("defaultAuthenticationSystemSupport")
+        private ObjectProvider<AuthenticationSystemSupport> defaultAuthenticationSystemSupport;
 
         @Bean
         public Action testWebflowSerialization() {
@@ -153,18 +173,29 @@ public abstract class BaseCasWebflowSessionContextConfiguration {
             return new AbstractAction() {
                 @Override
                 protected Event doExecute(final RequestContext requestContext) {
-                    requestContext.getFlowScope().put("test0", Collections.singleton(TEST));
-                    requestContext.getFlowScope().put("test1", Collections.singletonList(TEST));
-                    requestContext.getFlowScope().put("test2", Collections.singletonMap(TEST, TEST));
-                    requestContext.getFlowScope().put("test3", Arrays.asList(TEST, TEST));
-                    requestContext.getFlowScope().put("test4", new ConcurrentSkipListSet());
-                    requestContext.getFlowScope().put("test5", Collections.unmodifiableList(Arrays.asList("test1")));
-                    requestContext.getFlowScope().put("test6", Collections.unmodifiableSet(Collections.singleton(1)));
-                    requestContext.getFlowScope().put("test7", Collections.unmodifiableMap(new HashMap<>()));
-                    requestContext.getFlowScope().put("test8", Collections.emptyMap());
-                    requestContext.getFlowScope().put("test9", new TreeMap<>());
-                    requestContext.getFlowScope().put("test10", Collections.emptySet());
-                    requestContext.getFlowScope().put("test11", Collections.emptyList());
+                    final MutableAttributeMap<Object> flowScope = requestContext.getFlowScope();
+                    flowScope.put("test0", Collections.singleton(TEST));
+                    flowScope.put("test1", Collections.singletonList(TEST));
+                    flowScope.put("test2", Collections.singletonMap(TEST, TEST));
+                    flowScope.put("test3", Arrays.asList(TEST, TEST));
+                    flowScope.put("test4", new ConcurrentSkipListSet());
+                    flowScope.put("test5", Collections.unmodifiableList(Arrays.asList("test1")));
+                    flowScope.put("test6", Collections.unmodifiableSet(Collections.singleton(1)));
+                    flowScope.put("test7", Collections.unmodifiableMap(new HashMap<>()));
+                    flowScope.put("test8", Collections.emptyMap());
+                    flowScope.put("test9", new TreeMap<>());
+                    flowScope.put("test10", Collections.emptySet());
+                    flowScope.put("test11", Collections.emptyList());
+
+                    flowScope.put("principalElectionStrategy", principalElectionStrategy.getIfAvailable());
+                    flowScope.put("principalFactory", principalFactory.getIfAvailable());
+
+                    final AuthenticationSystemSupport authenticationSystemSupport = defaultAuthenticationSystemSupport.getIfAvailable();
+                    flowScope.put("defaultAuthenticationSystemSupport", authenticationSystemSupport);
+
+                    final AuthenticationResult result = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
+                        CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+                    flowScope.put("authenticationResult", result);
                     return success();
                 }
             };
