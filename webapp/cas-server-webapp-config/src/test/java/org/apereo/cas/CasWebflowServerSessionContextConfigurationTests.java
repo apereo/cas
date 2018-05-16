@@ -14,7 +14,7 @@ import org.springframework.webflow.executor.FlowExecutor;
  */
 @TestPropertySource(properties = "cas.webflow.session.storage=true")
 @Slf4j
-public class CasWebflowServerSessionContextConfigurationTests extends BaseCasWebflowSessionContextConfiguration {
+public class CasWebflowServerSessionContextConfigurationTests extends BaseCasWebflowSessionContextConfigurationTests {
 
     @Autowired
     @Qualifier("loginFlowExecutor")
