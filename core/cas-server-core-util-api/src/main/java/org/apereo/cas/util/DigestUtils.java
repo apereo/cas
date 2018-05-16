@@ -76,16 +76,44 @@ public class DigestUtils {
     /**
      * Sha base 64 string.
      *
-     * @param salt the salt
-     * @param data the data
+     * @param salt      the salt
+     * @param data      the data
      * @param separator a string separator, if any
+     * @param chunked   the chunked
+     * @return the string
+     */
+    public static String shaBase64(final String salt, final String data, final String separator, final boolean chunked) {
+        final byte[] result = rawDigest(MessageDigestAlgorithms.SHA_1, salt, separator == null ? data : data + separator);
+        return EncodingUtils.encodeBase64(result, chunked);
+    }
+
+    /**
+     * Sha base 64 string.
+     *
+     * @param salt      the salt
+     * @param data      the data
+     * @param separator the separator
      * @return the string
      */
     public static String shaBase64(final String salt, final String data, final String separator) {
         final byte[] result = rawDigest(MessageDigestAlgorithms.SHA_1, salt, separator == null ? data : data + separator);
         return EncodingUtils.encodeBase64(result);
     }
-    
+
+    /**
+     * Sha base 32 string.
+     *
+     * @param salt      the salt
+     * @param data      the data
+     * @param separator a string separator, if any
+     * @param chunked   the chunked
+     * @return the string
+     */
+    public static String shaBase32(final String salt, final String data, final String separator, final boolean chunked) {
+        final byte[] result = rawDigest(MessageDigestAlgorithms.SHA_1, salt, separator == null ? data : data + separator);
+        return EncodingUtils.encodeBase32(result, chunked);
+    }
+
     /**
      * Computes hex encoded digest.
      *
@@ -124,7 +152,7 @@ public class DigestUtils {
         }
     }
 
-    
+
     /**
      * Raw digest byte [ ].
      *
@@ -152,7 +180,7 @@ public class DigestUtils {
     public static String abbreviate(final String str) {
         return StringUtils.abbreviate(str, ABBREVIATE_MAX_WIDTH);
     }
-    
+
     private static MessageDigest getMessageDigestInstance(final String alg) throws Exception {
         final MessageDigest digest = MessageDigest.getInstance(alg);
         digest.reset();

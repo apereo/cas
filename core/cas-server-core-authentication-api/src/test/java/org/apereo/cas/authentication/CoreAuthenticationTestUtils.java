@@ -109,6 +109,10 @@ public class CoreAuthenticationTestUtils {
         return getPrincipal(CONST_USERNAME);
     }
 
+    public static Principal getPrincipal(final Map<String, Object> attributes) {
+        return getPrincipal(CONST_USERNAME, attributes);
+    }
+
     public static Principal getPrincipal(final String name) {
         final Map backingMap = getAttributeRepository().getBackingMap();
         return getPrincipal(name, backingMap);
