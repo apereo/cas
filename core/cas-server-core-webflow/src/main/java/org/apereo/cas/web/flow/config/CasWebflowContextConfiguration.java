@@ -205,6 +205,7 @@ public class CasWebflowContextConfiguration {
         return factory.build();
     }
 
+    @ConditionalOnMissingBean(name = "casFlowExecutionListener")
     @Bean
     public FlowExecutionListener casFlowExecutionListener() {
         return new CasFlowExecutionListener(casProperties);
