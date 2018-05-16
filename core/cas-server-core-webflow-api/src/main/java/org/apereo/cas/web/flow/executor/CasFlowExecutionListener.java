@@ -35,7 +35,6 @@ public class CasFlowExecutionListener implements FlowExecutionListener {
     }
 
     private void injectIntoRequestContext(final RequestContext context) {
-        injectCasPropertiesIntoScopes(context.getFlowScope());
         injectCasPropertiesIntoScopes(context.getRequestScope());
     }
 
