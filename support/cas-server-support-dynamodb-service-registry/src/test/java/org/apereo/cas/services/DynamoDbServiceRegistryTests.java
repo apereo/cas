@@ -1,21 +1,24 @@
 package org.apereo.cas.services;
 
-import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.category.DynamoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.DynamoDbServiceRegistryConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalSpringRunner;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.IntStream;
+import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
 
@@ -40,9 +44,16 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class})
 @TestPropertySource(locations = "classpath:/dynamodb-serviceregistry.properties")
 @Slf4j
-@RunWith(ConditionalSpringRunner.class)
+@Category(DynamoDbCategory.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class DynamoDbServiceRegistryTests {
+
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Autowired
     @Qualifier("serviceRegistry")
     private ServiceRegistry serviceRegistry;

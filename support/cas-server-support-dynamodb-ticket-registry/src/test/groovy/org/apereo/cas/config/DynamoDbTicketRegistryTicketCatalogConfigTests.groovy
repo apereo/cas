@@ -1,11 +1,12 @@
 package org.apereo.cas.config
 
+import org.apereo.cas.category.DynamoDbCategory
 import org.apereo.cas.configuration.CasConfigurationProperties
 import org.apereo.cas.ticket.TicketCatalogConfigurer
-
 /**
  * @author Dmitriy Kopylenko
  */
+@org.junit.experimental.categories.Category(DynamoDbCategory.class)
 class DynamoDbTicketRegistryTicketCatalogConfigTests extends AbstractTicketRegistryTicketCatalogConfigTests {
 
     @Override
