@@ -37,7 +37,10 @@ public final class EncodingUtils {
      * Default content encryption algorithm.
      */
     public static final String DEFAULT_CONTENT_ENCRYPTION_ALGORITHM = ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256;
-    
+
+    private static final Base64 BASE64_CHUNKED_ENCODER = new Base64(76, new byte[]{10});
+    private static final Base64 BASE64_UNCHUNKED_ENCODER = new Base64(0, new byte[]{10});
+
     /**
      * JSON web key parameter that identifies the key..
      */
@@ -134,6 +137,20 @@ public final class EncodingUtils {
      */
     public static String encodeBase64(final byte[] data) {
         return Base64.encodeBase64String(data);
+    }
+
+    /**
+     * Base64-encode the given byte[] as a string.
+     *
+     * @param data    the byte array to encode
+     * @param chunked the chunked
+     * @return the encoded string
+     */
+    public static String encodeBase64(final byte[] data, final boolean chunked) {
+        if (chunked) {
+            return BASE64_CHUNKED_ENCODER.encodeToString(data).trim();
+        }
+        return BASE64_UNCHUNKED_ENCODER.encodeToString(data).trim();
     }
 
     /**
