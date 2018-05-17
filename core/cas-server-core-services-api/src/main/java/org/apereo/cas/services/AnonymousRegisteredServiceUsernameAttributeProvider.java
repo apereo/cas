@@ -38,7 +38,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider extends BaseReg
 
     @Override
     protected String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
-        final String id = this.persistentIdGenerator.generate(principal, null);
+        final String id = this.persistentIdGenerator.generate(principal, service);
         LOGGER.debug("Resolved username [{}] for anonymous access", id);
         return id;
     }
