@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -28,10 +28,16 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class})
-@ContextConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"})
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    DatabaseAuthenticationTestConfiguration.class
+})
 @Slf4j
-@TestPropertySource(properties = {"database.user=casuser", "database.password=Mellon"})
+@TestPropertySource(properties = {
+    "database.user=casuser",
+    "database.name:cas-bindmode-authentications",
+    "database.password=Mellon"})
+@DirtiesContext
 public class BindModeSearchDatabaseAuthenticationHandlerTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
