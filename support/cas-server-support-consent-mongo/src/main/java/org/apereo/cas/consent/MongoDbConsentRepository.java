@@ -1,6 +1,7 @@
 package org.apereo.cas.consent;
 
-import lombok.AllArgsConstructor;
+import com.mongodb.WriteResult;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
@@ -18,7 +19,7 @@ import java.util.Collection;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MongoDbConsentRepository implements ConsentRepository {
     private static final long serialVersionUID = 7734163279139907616L;
 
@@ -49,11 +50,11 @@ public class MongoDbConsentRepository implements ConsentRepository {
         this.mongoTemplate.save(decision, this.collectionName);
         return true;
     }
-    
+
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
-        final Query query = new Query(Criteria.where("id").is(decisionId));
-        this.mongoTemplate.remove(query, this.collectionName);
-        return true;
+        final Query query = new Query(Criteria.where("id").is(decisionId).and("principal").is(principal));
+        final WriteResult result = this.mongoTemplate.remove(query, ConsentDecision.class, this.collectionName);
+        return result.getN() > 0;
     }
 }

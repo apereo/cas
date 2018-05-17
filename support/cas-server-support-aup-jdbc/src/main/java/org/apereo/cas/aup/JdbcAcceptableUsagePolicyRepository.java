@@ -38,6 +38,7 @@ public class JdbcAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
     public boolean submit(final RequestContext requestContext, final Credential credential) {
         try {
             final String sql = String.format("UPDATE %s SET %s=true WHERE username=?", this.tableName, this.aupAttributeName);
+            LOGGER.debug("Executing update query [{}]", sql);
             return this.jdbcTemplate.update(sql, credential.getId()) > 0;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

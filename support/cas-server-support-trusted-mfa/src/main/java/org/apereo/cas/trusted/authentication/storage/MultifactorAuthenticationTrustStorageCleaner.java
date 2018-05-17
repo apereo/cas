@@ -1,6 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
@@ -22,13 +22,12 @@ import java.time.LocalDateTime;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerU2f")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 public class MultifactorAuthenticationTrustStorageCleaner {
     private final TrustedDevicesMultifactorProperties trustedProperties;
     private final MultifactorAuthenticationTrustStorage storage;
-
-
+    
     /**
      * Clean up expired records.
      */

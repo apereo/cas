@@ -2,6 +2,7 @@ package org.apereo.cas.consent;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +12,7 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+
 import lombok.ToString;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,9 +32,10 @@ import lombok.Setter;
 public class ConsentDecision {
 
     @Id
+    @org.springframework.data.annotation.Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
-    private long id = -1;
+    private long id;
 
     @Column(nullable = false)
     private String principal;
@@ -55,4 +58,8 @@ public class ConsentDecision {
     @Lob
     @Column(name = "attributes", length = Integer.MAX_VALUE)
     private String attributes;
+
+    public ConsentDecision() {
+        this.id = System.currentTimeMillis();
+    }
 }
