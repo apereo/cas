@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +22,7 @@ import java.util.Map;
  */
 @Slf4j
 @Getter
+@Setter
 @RequiredArgsConstructor
 public abstract class AbstractWebApplicationServiceResponseBuilder implements ResponseBuilder<WebApplicationService> {
     private static final long serialVersionUID = -4584738964007702423L;

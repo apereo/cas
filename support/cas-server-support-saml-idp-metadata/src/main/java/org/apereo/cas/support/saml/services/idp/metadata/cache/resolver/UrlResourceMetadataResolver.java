@@ -28,9 +28,10 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -112,7 +113,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      */
     protected AbstractMetadataResolver getMetadataResolverFromResponse(final HttpResponse response, final File backupFile) throws Exception {
         final String result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-        try (FileWriter output = new FileWriter(backupFile)) {
+        try (Writer output = Files.newBufferedWriter(backupFile.toPath(), StandardCharsets.UTF_8)) {
             IOUtils.write(result, output);
             output.flush();
         }

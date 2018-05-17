@@ -17,12 +17,12 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link Pac4jServiceTicketValidationAuthorizerTests}.
+ * This is {@link DelegatedAuthenticationServiceTicketValidationAuthorizerTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class Pac4jServiceTicketValidationAuthorizerTests {
+public class DelegatedAuthenticationServiceTicketValidationAuthorizerTests {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -40,7 +40,7 @@ public class Pac4jServiceTicketValidationAuthorizerTests {
         final Principal principal = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, "CasClient"));
         when(assertion.getPrimaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication(principal, principal.getAttributes()));
 
-        final Pac4jServiceTicketValidationAuthorizer az = new Pac4jServiceTicketValidationAuthorizer(servicesManager,
+        final DelegatedAuthenticationServiceTicketValidationAuthorizer az = new DelegatedAuthenticationServiceTicketValidationAuthorizer(servicesManager,
             new RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer());
         thrown.expect(UnauthorizedServiceException.class);
         az.authorize(new MockHttpServletRequest(), CoreAuthenticationTestUtils.getService(), assertion);

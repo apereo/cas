@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.policy;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationPolicy;
@@ -11,6 +11,8 @@ import org.springframework.core.io.ResourceLoader;
 
 import java.security.GeneralSecurityException;
 import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
 
 /**
  * This is {@link GroovyScriptAuthenticationPolicy}.
@@ -19,25 +21,27 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GroovyScriptAuthenticationPolicy implements AuthenticationPolicy {
     private final ResourceLoader resourceLoader;
     private final String script;
 
     @Override
     public boolean isSatisfiedBy(final Authentication auth) throws Exception {
-        final Exception ex;
-        if (ScriptingUtils.isInlineGroovyScript(script)) {
+        final Optional<Exception> ex;
+        final Matcher matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(script);
+        if (matcherInline.find()) {
             final Map<String, Object> args = CollectionUtils.wrap("principal", auth.getPrincipal(), "logger", LOGGER);
-            ex = ScriptingUtils.executeGroovyShellScript(script, args, Exception.class);
+            final String inlineScript = matcherInline.group(1);
+            ex = ScriptingUtils.executeGroovyShellScript(inlineScript, args, Optional.class);
         } else {
             final Resource res = this.resourceLoader.getResource(script);
             final Object[] args = {auth.getPrincipal(), LOGGER};
-            ex = ScriptingUtils.executeGroovyScript(res, args, Exception.class);
+            ex = ScriptingUtils.executeGroovyScript(res, args, Optional.class);
         }
 
-        if (ex != null) {
-            throw new GeneralSecurityException(ex);
+        if (ex != null && ex.isPresent()) {
+            throw new GeneralSecurityException(ex.get());
         }
         return true;
     }

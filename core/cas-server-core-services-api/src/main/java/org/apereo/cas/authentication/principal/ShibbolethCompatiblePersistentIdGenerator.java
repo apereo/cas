@@ -2,15 +2,16 @@ package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
+
 import java.util.Map;
-import lombok.ToString;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 /**
  * Generates PersistentIds based on the Shibboleth algorithm.
@@ -49,8 +50,16 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         if (StringUtils.isBlank(salt)) {
             this.salt = new DefaultRandomStringGenerator(CONST_DEFAULT_SALT_COUNT).getNewString();
         }
-        final String data = String.join(CONST_SEPARATOR, service, principal);
-        final String result = StringUtils.remove(DigestUtils.shaBase64(this.salt, data, CONST_SEPARATOR), System.getProperty("line.separator"));
+        LOGGER.debug("Using principal [{}] to generate anonymous identifier for service [{}]", principal, service);
+
+        final String data;
+        if (StringUtils.isNotBlank(service)) {
+            data = String.join(CONST_SEPARATOR, service, principal);
+        } else {
+            data = String.join(CONST_SEPARATOR, principal);
+        }
+        final String encoded = DigestUtils.shaBase64(this.salt, data, CONST_SEPARATOR);
+        final String result = StringUtils.remove(encoded, System.getProperty("line.separator"));
         LOGGER.debug("Generated persistent id for [{}] is [{}]", data, result);
         return result;
     }
@@ -59,7 +68,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     public String generate(final Principal principal, final Service service) {
         final Map<String, Object> attributes = principal.getAttributes();
         final String principalId = StringUtils.isNotBlank(this.attribute) && attributes.containsKey(this.attribute) ? attributes.get(this.attribute).toString() : principal.getId();
-        return generate(principalId, service.getId());
+        return generate(principalId, service != null ? service.getId() : null);
     }
 
 }
