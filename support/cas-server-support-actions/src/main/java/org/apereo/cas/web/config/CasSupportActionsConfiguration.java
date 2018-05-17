@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -117,6 +118,10 @@ public class CasSupportActionsConfiguration {
     @Qualifier("singleSignOnParticipationStrategy")
     private SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy;
 
+    @Autowired
+    @Qualifier("principalElectionStrategy")
+    private PrincipalElectionStrategy principalElectionStrategy;
+
     @Bean
     @RefreshScope
     public HandlerExceptionResolver errorHandlerResolver() {
@@ -213,7 +218,8 @@ public class CasSupportActionsConfiguration {
             centralAuthenticationService,
             ticketRegistrySupport,
             authenticationRequestServiceSelectionStrategies,
-            servicesManager);
+            servicesManager,
+            principalElectionStrategy);
     }
 
     @Bean
@@ -254,6 +260,6 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     public Action serviceWarningAction() {
         return new ServiceWarningAction(centralAuthenticationService, authenticationSystemSupport,
-            ticketRegistrySupport, warnCookieGenerator.getIfAvailable());
+            ticketRegistrySupport, warnCookieGenerator.getIfAvailable(), principalElectionStrategy);
     }
 }
