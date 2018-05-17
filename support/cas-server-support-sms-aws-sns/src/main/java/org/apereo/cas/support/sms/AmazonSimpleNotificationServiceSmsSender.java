@@ -43,6 +43,7 @@ public class AmazonSimpleNotificationServiceSmsSender implements SmsSender {
                 .withPhoneNumber(to)
                 .withMessageAttributes(smsAttributes));
             LOGGER.debug("Submitted SMS publish request with resulting message id [{}]", result.getMessageId());
+            return StringUtils.isNotBlank(result.getMessageId());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
