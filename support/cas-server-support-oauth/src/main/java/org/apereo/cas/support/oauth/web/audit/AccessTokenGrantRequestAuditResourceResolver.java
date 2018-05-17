@@ -7,11 +7,11 @@ import org.aspectj.lang.JoinPoint;
 
 import java.util.Objects;
 
-import static org.apache.commons.lang3.builder.ToStringStyle.NO_CLASS_NAME_STYLE;
+import static org.apache.commons.lang3.builder.ToStringStyle.*;
 
 /**
  * The {@link AccessTokenGrantRequestAuditResourceResolver} for audit advice
- * weaved at {@code BaseAccessTokenGrantRequestExtractor#extract} joinpoint.
+ * weaved at {@link org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessTokenGrantRequestExtractor#extract} join point.
  *
  * @author Dmitriy Kopylenko
  * @since 5.3.0
@@ -25,9 +25,9 @@ public class AccessTokenGrantRequestAuditResourceResolver extends ReturnValueAsS
         final String tokenId = accessTokenRequest.getToken() == null ? "N/A" : accessTokenRequest.getToken().getId();
 
         final String result = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
-                .append("oauth_token", tokenId)
+                .append("token", tokenId)
                 .append("client_id", accessTokenRequest.getRegisteredService().getClientId())
-                .append("client_service", accessTokenRequest.getService().getId())
+                .append("service", accessTokenRequest.getService().getId())
                 .append("grant_type", accessTokenRequest.getGrantType().getType())
                 .append("scopes", accessTokenRequest.getScopes())
                 .toString();
