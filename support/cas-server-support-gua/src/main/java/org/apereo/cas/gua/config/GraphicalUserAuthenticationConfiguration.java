@@ -71,7 +71,7 @@ public class GraphicalUserAuthenticationConfiguration implements CasWebflowExecu
     public UserGraphicalAuthenticationRepository userGraphicalAuthenticationRepository() {
         final GraphicalUserAuthenticationProperties gua = casProperties.getAuthn().getGua();
         if (gua.getResource().getLocation() != null) {
-            return new StaticUserGraphicalAuthenticationRepository();
+            return new StaticUserGraphicalAuthenticationRepository(gua.getResource().getLocation());
         }
 
         if (StringUtils.isNotBlank(gua.getLdap().getLdapUrl())
