@@ -62,12 +62,12 @@ public class ServiceTicketResource {
             if (authn == null) {
                 throw new InvalidTicketException(tgtId);
             }
-            final AuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder(this.authenticationSystemSupport.getPrincipalElectionStrategy());
+            final AuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder();
             final Service service = this.argumentExtractor.extractService(httpServletRequest);
             if (service == null) {
                 throw new IllegalArgumentException("Target service/application is unspecified or unrecognized in the request");
             }
-            final AuthenticationResult authenticationResult = builder.collect(authn).build(service);
+            final AuthenticationResult authenticationResult = builder.collect(authn).build(this.authenticationSystemSupport.getPrincipalElectionStrategy(), service);
             return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<>(tgtId + " could not be found or is considered invalid", HttpStatus.NOT_FOUND);

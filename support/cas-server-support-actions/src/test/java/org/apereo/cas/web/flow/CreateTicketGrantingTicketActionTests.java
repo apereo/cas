@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
@@ -65,8 +66,8 @@ public class CreateTicketGrantingTicketActionTests extends AbstractCentralAuthen
         final AuthenticationResult result = mock(AuthenticationResult.class);
         when(result.getAuthentication()).thenReturn(authentication);
 
-        when(builder.build()).thenReturn(result);
-        when(builder.build(any(Service.class))).thenReturn(result);
+        when(builder.build(any(PrincipalElectionStrategy.class))).thenReturn(result);
+        when(builder.build(any(PrincipalElectionStrategy.class), any(Service.class))).thenReturn(result);
 
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService());

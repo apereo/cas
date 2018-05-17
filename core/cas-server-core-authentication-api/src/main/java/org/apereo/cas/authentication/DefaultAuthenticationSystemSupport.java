@@ -26,7 +26,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     @Override
     public AuthenticationResultBuilder handleInitialAuthenticationTransaction(final Service service,
                                                                               final Credential... credential) throws AuthenticationException {
-        final DefaultAuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder(this.principalElectionStrategy);
+        final DefaultAuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder();
         if (credential != null) {
             Stream.of(credential).filter(Objects::nonNull).forEach(builder::collect);
         }
@@ -36,7 +36,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
 
     @Override
     public AuthenticationResultBuilder establishAuthenticationContextFromInitial(final Authentication authentication, final Credential credentials) {
-        return new DefaultAuthenticationResultBuilder(this.principalElectionStrategy).collect(authentication).collect(credentials);
+        return new DefaultAuthenticationResultBuilder().collect(authentication).collect(credentials);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     @Override
     public AuthenticationResult finalizeAllAuthenticationTransactions(final AuthenticationResultBuilder authenticationResultBuilder,
                                                                       final Service service) {
-        return authenticationResultBuilder.build(service);
+        return authenticationResultBuilder.build(principalElectionStrategy, service);
     }
 
     @Override
