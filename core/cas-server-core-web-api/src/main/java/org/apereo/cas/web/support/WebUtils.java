@@ -865,4 +865,55 @@ public class WebUtils {
     public static List<String> getSurrogateAuthenticationAccounts(final RequestContext requestContext) {
         return requestContext.getFlowScope().get("surrogates", List.class);
     }
+
+    /**
+     * Put graphical user authentication enabled.
+     *
+     * @param requestContext the request context
+     * @param value          the value
+     */
+    public static void putGraphicalUserAuthenticationEnabled(final RequestContext requestContext, final Boolean value) {
+        requestContext.getFlowScope().put("guaEnabled", value);
+    }
+
+    /**
+     * Put graphical user authentication username.
+     *
+     * @param requestContext the request context
+     * @param username       the username
+     */
+    public static void putGraphicalUserAuthenticationUsername(final RequestContext requestContext, final String username) {
+        requestContext.getFlowScope().put("guaUsername", username);
+    }
+
+    /**
+     * Contains graphical user authentication username.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static boolean containsGraphicalUserAuthenticationUsername(final RequestContext requestContext) {
+        return requestContext.getFlowScope().contains("guaUsername");
+    }
+
+    /**
+     * Put graphical user authentication image.
+     *
+     * @param requestContext the request context
+     * @param image          the image
+     */
+    public static void putGraphicalUserAuthenticationImage(final RequestContext requestContext, final String image) {
+        requestContext.getFlowScope().put("guaUserImage", image);
+    }
+
+    /**
+     * Contains graphical user authentication image boolean.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static boolean containsGraphicalUserAuthenticationImage(final RequestContext requestContext) {
+        return requestContext.getFlowScope().contains("guaUserImage");
+    }
+
 }
