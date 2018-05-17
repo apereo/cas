@@ -19,13 +19,13 @@ import java.util.Optional;
  * @since 5.3.0
  */
 public class HandlePasswordExpirationWarningMessagesAction extends AbstractAction {
-    @Override
-    protected Event doPreExecute(final RequestContext context) throws Exception {
-        return super.doPreExecute(context);
-    }
+    /**
+     * Attribute indicating password expiration warnings are found.
+     */
+    public static final String ATTRIBUTE_NAME_EXPIRATION_WARNING_FOUND = "passwordExpirationWarningFound";
 
     @Override
-    protected Event doExecute(final RequestContext context) {
+    public Event doExecute(final RequestContext context) {
         final AttributeMap attributes = context.getCurrentEvent().getAttributes();
         final Collection<MessageDescriptor> warnings = (Collection<MessageDescriptor>)
             attributes.get(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, Collection.class, new LinkedHashSet<>());
@@ -33,7 +33,7 @@ public class HandlePasswordExpirationWarningMessagesAction extends AbstractActio
             .stream()
             .filter(PasswordExpiringWarningMessageDescriptor.class::isInstance)
             .findAny();
-        context.getFlowScope().put("passwordExpirationWarningFound", found.isPresent());
+        context.getFlowScope().put(ATTRIBUTE_NAME_EXPIRATION_WARNING_FOUND, found.isPresent());
         return null;
     }
 }
