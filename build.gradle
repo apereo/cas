@@ -217,7 +217,24 @@ subprojects {
     }
 
     sourceSets {
-        test.resources.srcDirs = ["${projectDir}/src/test/resources", "${projectDir}/src/test/java"]
+        main {
+            java {
+                srcDirs = ["${projectDir}/src/main/java", "${projectDir}/src/main/groovy"]
+
+            }
+            resources {
+                srcDirs = ["${projectDir}/src/main/resources"]
+            }
+        }
+        test {
+            java {
+                srcDirs = ["${projectDir}/src/test/java", "${projectDir}/src/test/groovy"]
+
+            }
+            resources {
+                srcDirs = ["${projectDir}/src/test/resources"]
+            }
+        }
     }
 
     ext.buildDate = null
