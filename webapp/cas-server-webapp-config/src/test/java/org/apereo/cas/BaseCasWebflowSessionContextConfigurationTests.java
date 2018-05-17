@@ -2,11 +2,14 @@ package org.apereo.cas;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.config.CasApplicationContextConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -40,6 +43,7 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
+import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.ObjectProvider;
@@ -159,14 +163,6 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
         @Qualifier("principalElectionStrategy")
         private ObjectProvider<PrincipalElectionStrategy> principalElectionStrategy;
 
-        @Autowired
-        @Qualifier("principalFactory")
-        private ObjectProvider<PrincipalFactory> principalFactory;
-
-        @Autowired
-        @Qualifier("defaultAuthenticationSystemSupport")
-        private ObjectProvider<AuthenticationSystemSupport> defaultAuthenticationSystemSupport;
-
         @Bean
         public Action testWebflowSerialization() {
             //CHECKSTYLE:OFF
@@ -187,15 +183,22 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
                     flowScope.put("test10", Collections.emptySet());
                     flowScope.put("test11", Collections.emptyList());
 
-                    flowScope.put("principalElectionStrategy", principalElectionStrategy.getIfAvailable());
-                    flowScope.put("principalFactory", principalFactory.getIfAvailable());
+                    final SimpleWebApplicationServiceImpl service = new SimpleWebApplicationServiceImpl();
+                    service.setId(CoreAuthenticationTestUtils.CONST_TEST_URL);
+                    service.setOriginalUrl(CoreAuthenticationTestUtils.CONST_TEST_URL);
+                    service.setArtifactId(null);
 
-                    final AuthenticationSystemSupport authenticationSystemSupport = defaultAuthenticationSystemSupport.getIfAvailable();
-                    flowScope.put("defaultAuthenticationSystemSupport", authenticationSystemSupport);
+                    final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication();
+                    final AuthenticationResultBuilder authenticationResultBuilder = new DefaultAuthenticationResultBuilder();
+                    final Principal principal = CoreAuthenticationTestUtils.getPrincipal();
+                    authenticationResultBuilder.collect(authentication);
+                    authenticationResultBuilder.collect(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+                    final AuthenticationResult authenticationResult = authenticationResultBuilder.build(principalElectionStrategy.getIfAvailable(), service);
 
-                    final AuthenticationResult result = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
-                        CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-                    flowScope.put("authenticationResult", result);
+                    WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
+                    WebUtils.putAuthenticationResult(authenticationResult, requestContext);
+                    WebUtils.putPrincipal(requestContext, principal);
+
                     return success();
                 }
             };
