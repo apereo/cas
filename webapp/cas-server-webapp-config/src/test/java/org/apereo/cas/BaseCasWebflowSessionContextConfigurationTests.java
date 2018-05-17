@@ -5,12 +5,10 @@ import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.config.CasApplicationContextConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -165,14 +163,6 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
         @Qualifier("principalElectionStrategy")
         private ObjectProvider<PrincipalElectionStrategy> principalElectionStrategy;
 
-        @Autowired
-        @Qualifier("principalFactory")
-        private ObjectProvider<PrincipalFactory> principalFactory;
-
-        @Autowired
-        @Qualifier("defaultAuthenticationSystemSupport")
-        private ObjectProvider<AuthenticationSystemSupport> defaultAuthenticationSystemSupport;
-
         @Bean
         public Action testWebflowSerialization() {
             //CHECKSTYLE:OFF
@@ -209,15 +199,6 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
                     WebUtils.putAuthenticationResult(authenticationResult, requestContext);
                     WebUtils.putPrincipal(requestContext, principal);
 
-//                    flowScope.put("principalElectionStrategy", principalElectionStrategy.getIfAvailable());
-//                    flowScope.put("principalFactory", principalFactory.getIfAvailable());
-
-//                    final AuthenticationSystemSupport authenticationSystemSupport = defaultAuthenticationSystemSupport.getIfAvailable();
-//                    flowScope.put("defaultAuthenticationSystemSupport", authenticationSystemSupport);
-
-//                    final AuthenticationResult result = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(CoreAuthenticationUtils.getService(),
-//                        CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-//                    flowScope.put("authenticationResult", result);
                     return success();
                 }
             };
