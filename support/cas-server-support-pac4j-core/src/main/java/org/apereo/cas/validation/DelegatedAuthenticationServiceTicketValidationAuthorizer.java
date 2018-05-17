@@ -19,14 +19,14 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * This is {@link Pac4jServiceTicketValidationAuthorizer}.
+ * This is {@link DelegatedAuthenticationServiceTicketValidationAuthorizer}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class Pac4jServiceTicketValidationAuthorizer implements ServiceTicketValidationAuthorizer {
+public class DelegatedAuthenticationServiceTicketValidationAuthorizer implements ServiceTicketValidationAuthorizer {
 
     private final ServicesManager servicesManager;
     private final AuditableExecution delegatedAuthenticationPolicyEnforcer;

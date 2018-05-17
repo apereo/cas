@@ -14,7 +14,7 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedSessionCookieProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.serialization.StringSerializer;
-import org.apereo.cas.validation.Pac4jServiceTicketValidationAuthorizer;
+import org.apereo.cas.validation.DelegatedAuthenticationServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizerConfigurer;
@@ -108,7 +108,7 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
 
     @Bean
     public ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer() {
-        return new Pac4jServiceTicketValidationAuthorizer(this.servicesManager,
+        return new DelegatedAuthenticationServiceTicketValidationAuthorizer(this.servicesManager,
             registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer());
     }
 
