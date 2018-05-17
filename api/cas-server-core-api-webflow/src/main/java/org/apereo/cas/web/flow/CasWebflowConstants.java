@@ -180,6 +180,11 @@ public interface CasWebflowConstants {
     String STATE_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
 
     /**
+     * The state id 'createTicketGrantingTicket'.
+     */
+    String STATE_ID_CREATE_TICKET_GRANTING_TICKET = "createTicketGrantingTicket";
+    
+    /**
      * The state 'initializeLoginForm'.
      */
     String STATE_ID_INIT_LOGIN_FORM = "initializeLoginForm";
@@ -234,6 +239,11 @@ public interface CasWebflowConstants {
      * The state 'redirectView'.
      */
     String STATE_ID_REDIR_VIEW = "redirectView";
+
+    /**
+     * The state id 'endWebflowExecution'.
+     */
+    String STATE_ID_END_WEBFLOW = "endWebflowExecution";
 
     /**
      * The state 'viewRedirectToUnauthorizedUrlView'.
@@ -306,6 +316,11 @@ public interface CasWebflowConstants {
      */
     String VAR_ID_CREDENTIAL = "credential";
 
+    /**
+     * Event attribute id 'authenticationWarnings'.
+     */
+    String ATTRIBUTE_ID_AUTHENTICATION_WARNINGS = "authenticationWarnings";
+    
     /**
      * View id 'casResetPasswordSendInstructions'.
      */
@@ -451,6 +466,11 @@ public interface CasWebflowConstants {
      * Action id 'sendTicketGrantingTicketAction'.
      */
     String ACTION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicketAction";
+
+    /**
+     * Action id 'createTicketGrantingTicketAction'.
+     */
+    String ACTION_ID_CREATE_TICKET_GRANTING_TICKET = "createTicketGrantingTicketAction";
 
     /**
      * State id 'proceedFromAuthenticationWarningView'.

@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.pac4j;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -15,7 +14,7 @@ import java.util.List;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-pac4j-webflow")
-@Slf4j
+
 @Getter
 @Setter
 public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {

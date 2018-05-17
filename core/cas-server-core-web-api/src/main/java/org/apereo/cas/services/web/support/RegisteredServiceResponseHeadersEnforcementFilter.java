@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.security.ResponseHeadersEnforcementFilter;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
@@ -31,7 +32,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     @Override
     protected void decideInsertContentSecurityPolicyHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
         if (shouldHttpHeaderBeInjectedIntoResponse(httpServletRequest,
-            RegisteredServiceProperty.RegisteredServiceProperties.HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY)) {
+            RegisteredServiceProperties.HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY)) {
             super.insertContentSecurityPolicyHeader(httpServletResponse, httpServletRequest);
         } else {
             super.decideInsertContentSecurityPolicyHeader(httpServletResponse, httpServletRequest);
@@ -41,7 +42,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     @Override
     protected void decideInsertXSSProtectionHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
         if (shouldHttpHeaderBeInjectedIntoResponse(httpServletRequest,
-            RegisteredServiceProperty.RegisteredServiceProperties.HTTP_HEADER_ENABLE_XSS_PROTECTION)) {
+            RegisteredServiceProperties.HTTP_HEADER_ENABLE_XSS_PROTECTION)) {
             super.insertXSSProtectionHeader(httpServletResponse, httpServletRequest);
         } else {
             super.decideInsertXSSProtectionHeader(httpServletResponse, httpServletRequest);
@@ -51,7 +52,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     @Override
     protected void decideInsertXFrameOptionsHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
         if (shouldHttpHeaderBeInjectedIntoResponse(httpServletRequest,
-            RegisteredServiceProperty.RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS)) {
+            RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS)) {
             super.insertXFrameOptionsHeader(httpServletResponse, httpServletRequest);
         } else {
             super.decideInsertXFrameOptionsHeader(httpServletResponse, httpServletRequest);
@@ -61,7 +62,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     @Override
     protected void decideInsertXContentTypeOptionsHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
         if (shouldHttpHeaderBeInjectedIntoResponse(httpServletRequest,
-            RegisteredServiceProperty.RegisteredServiceProperties.HTTP_HEADER_ENABLE_XCONTENT_OPTIONS)) {
+            RegisteredServiceProperties.HTTP_HEADER_ENABLE_XCONTENT_OPTIONS)) {
             super.insertXContentTypeOptionsHeader(httpServletResponse, httpServletRequest);
         } else {
             super.decideInsertXContentTypeOptionsHeader(httpServletResponse, httpServletRequest);
@@ -71,7 +72,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     @Override
     protected void decideInsertCacheControlHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
         if (shouldHttpHeaderBeInjectedIntoResponse(httpServletRequest,
-            RegisteredServiceProperty.RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL)) {
+            RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL)) {
             super.insertCacheControlHeader(httpServletResponse, httpServletRequest);
         } else {
             super.decideInsertCacheControlHeader(httpServletResponse, httpServletRequest);
@@ -81,7 +82,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     @Override
     protected void decideInsertStrictTransportSecurityHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
         if (shouldHttpHeaderBeInjectedIntoResponse(httpServletRequest,
-            RegisteredServiceProperty.RegisteredServiceProperties.HTTP_HEADER_ENABLE_STRICT_TRANSPORT_SECURITY)) {
+            RegisteredServiceProperties.HTTP_HEADER_ENABLE_STRICT_TRANSPORT_SECURITY)) {
             super.insertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest);
         } else {
             super.decideInsertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest);
@@ -89,7 +90,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     }
 
     private boolean shouldHttpHeaderBeInjectedIntoResponse(final HttpServletRequest request,
-                                                           final RegisteredServiceProperty.RegisteredServiceProperties property) {
+                                                           final RegisteredServiceProperties property) {
         final Optional<RegisteredService> result = getRegisteredServiceFromRequest(request);
         if (result.isPresent()) {
             final Map<String, RegisteredServiceProperty> properties = result.get().getProperties();
@@ -101,6 +102,18 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
         return false;
     }
 
+    /**
+     * Gets registered service from request.
+     * Reading the request body by the argument extractor here may cause the underlying request stream
+     * to close. If there are any underlying controllers or components that expect to read
+     * or parse the request body, like those that handle ticket validation, they would fail given the
+     * {@link HttpServletRequest#getReader()} is consumed by the argument extractor here and not available anymore.
+     * Therefor, any of the inner components of the extractor might have to cache the request body
+     * as an attribute, etc so they can re-process and re-extract as needed.
+     *
+     * @param request the request
+     * @return the registered service from request
+     */
     private Optional<RegisteredService> getRegisteredServiceFromRequest(final HttpServletRequest request) {
         final WebApplicationService service = this.argumentExtractor.extractService(request);
         if (service != null) {

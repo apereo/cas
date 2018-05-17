@@ -94,6 +94,7 @@ public class JpaTicketRegistryConfiguration {
         return JpaBeans.newDataSource(casProperties.getTicket().getRegistry().getJpa());
     }
 
+    @Autowired
     @Bean
     @RefreshScope
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {

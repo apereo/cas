@@ -159,7 +159,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public Flow getLogoutFlow() {
         if (this.logoutFlowDefinitionRegistry == null) {
-            LOGGER.error("Logout flow registry is not configured correctly.");
+            LOGGER.warn("Logout flow registry is not configured correctly.");
             return null;
         }
         return (Flow) this.logoutFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGOUT);
@@ -179,6 +179,18 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     public ActionState createActionState(final Flow flow, final String name) {
         return createActionState(flow, name, new Action[]{});
+    }
+
+    /**
+     * Create action state action state.
+     *
+     * @param flow   the flow
+     * @param name   the name
+     * @param action the action
+     * @return the action state
+     */
+    public ActionState createActionState(final Flow flow, final String name, final String action) {
+        return createActionState(flow, name, createEvaluateAction(action));
     }
 
     /**

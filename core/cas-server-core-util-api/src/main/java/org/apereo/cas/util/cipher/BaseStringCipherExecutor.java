@@ -79,7 +79,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      * @param encryptionEnabled                    the encryption enabled
      */
     public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning, final String contentEncryptionAlgorithmIdentifier, final boolean encryptionEnabled) {
-        this.encryptionEnabled = encryptionEnabled;
+        this.encryptionEnabled = encryptionEnabled || StringUtils.isNotBlank(secretKeyEncryption);
         if (this.encryptionEnabled) {
             configureEncryptionParameters(secretKeyEncryption, contentEncryptionAlgorithmIdentifier);
         } else {
@@ -135,15 +135,15 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     }
 
     @Override
-    public String encode(final Serializable value) {
-        final String encoded = this.encryptionEnabled ? EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value, this.encryptionAlgorithm,
-            this.contentEncryptionAlgorithmIdentifier) : value.toString();
+    public String encode(final Serializable value, final Object[] parameters) {
+        final String encoded = this.encryptionEnabled
+            ? EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value, this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier)
+            : value.toString();
         return new String(sign(encoded.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
     }
 
     @Override
-    public String decode(final Serializable value) {
-
+    public String decode(final Serializable value, final Object[] parameters) {
         final byte[] encoded = verifySignature(value.toString().getBytes(StandardCharsets.UTF_8));
         if (encoded != null && encoded.length > 0) {
             final String encodedObj = new String(encoded, StandardCharsets.UTF_8);

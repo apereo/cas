@@ -1,6 +1,6 @@
 package org.apereo.cas.validation;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
@@ -25,7 +25,7 @@ import java.util.Optional;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class Pac4jServiceTicketValidationAuthorizer implements ServiceTicketValidationAuthorizer {
 
     private final ServicesManager servicesManager;

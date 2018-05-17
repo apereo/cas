@@ -6,18 +6,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
-import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.support.ArgumentExtractor;
+import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.BaseClient;
+import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.oauth.client.OAuth10Client;
 import org.pac4j.oauth.client.OAuth20Client;
 import org.pac4j.oauth.config.OAuth20Configuration;
 import org.pac4j.oidc.client.OidcClient;
@@ -44,15 +46,15 @@ public class DelegatedClientWebflowManager {
      * Client identifier associated with this session/request.
      */
     public static final String PARAMETER_CLIENT_ID = "delegatedclientid";
+    private static final String OAUTH10_CLIENT_ID_SESSION_KEY = "OAUTH10_CLIENT_ID";
 
     private final TicketRegistry ticketRegistry;
     private final TicketFactory ticketFactory;
     private final String themeParamName;
     private final String localParamName;
-    private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
-    private final String casLoginEndpoint;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-    
+    private final ArgumentExtractor argumentExtractor;
+
     /**
      * Store.
      *
@@ -60,7 +62,7 @@ public class DelegatedClientWebflowManager {
      * @param client     the client
      * @return the ticket
      */
-    public Ticket store(final WebContext webContext, final BaseClient client) {
+    public Ticket store(final J2EContext webContext, final BaseClient client) {
         final Map<String, Serializable> properties = new LinkedHashMap<>();
 
         final Service service = determineService(webContext);
@@ -99,12 +101,15 @@ public class DelegatedClientWebflowManager {
             final CasClient casClient = (CasClient) client;
             casClient.getConfiguration().addCustomParam(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticketId);
         }
+        if (client instanceof OAuth10Client) {
+            webContext.getSessionStore().set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, ticket.getId());
+        }
         return ticket;
     }
 
-    private Service determineService(final WebContext ctx) {
-        final String serviceParameter = StringUtils.defaultIfBlank(ctx.getRequestParameter(CasProtocolConstants.PARAMETER_SERVICE), casLoginEndpoint);
-        return this.authenticationRequestServiceSelectionStrategies.resolveService(webApplicationServiceFactory.createService(serviceParameter));
+    private Service determineService(final J2EContext ctx) {
+        final Service service = argumentExtractor.extractService(ctx.getRequest());
+        return this.authenticationRequestServiceSelectionStrategies.resolveService(service);
     }
 
     /**
@@ -139,7 +144,7 @@ public class DelegatedClientWebflowManager {
         final Service service = ticket.getService();
         LOGGER.debug("Restoring requested service [{}] back in the authentication flow", service);
 
-        requestContext.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
+        WebUtils.putService(requestContext, service);
         webContext.setRequestAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
         webContext.setRequestAttribute(this.themeParamName, ticket.getProperties().get(this.themeParamName));
         webContext.setRequestAttribute(this.localParamName, ticket.getProperties().get(this.localParamName));
@@ -157,6 +162,11 @@ public class DelegatedClientWebflowManager {
             if (client instanceof OAuth20Client || client instanceof OidcClient) {
                 LOGGER.debug("Client identifier could not found as part of the request parameters. Looking at state for the OAuth2/Oidc client");
                 clientId = webContext.getRequestParameter(OAuth20Configuration.STATE_REQUEST_PARAMETER);
+            }
+            if (client instanceof OAuth10Client) {
+                LOGGER.debug("Client identifier could not be found as part of request parameters.  Looking at state for the OAuth1 client");
+                clientId = (String) webContext.getSessionStore().get(webContext, OAUTH10_CLIENT_ID_SESSION_KEY);
+                webContext.getSessionStore().set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, null);
             }
         }
         LOGGER.debug("Located delegated client identifier for this request as [{}]", clientId);

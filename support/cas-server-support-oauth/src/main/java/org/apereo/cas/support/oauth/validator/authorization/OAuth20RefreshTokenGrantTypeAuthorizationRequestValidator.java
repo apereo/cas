@@ -1,6 +1,6 @@
 package org.apereo.cas.support.oauth.validator.authorization;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
@@ -8,6 +8,7 @@ import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -24,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OAuth20RefreshTokenGrantTypeAuthorizationRequestValidator implements OAuth20AuthorizationRequestValidator {
 
     private final ServicesManager servicesManager;
@@ -58,6 +59,9 @@ public class OAuth20RefreshTokenGrantTypeAuthorizationRequestValidator implement
 
         final String clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
         final OAuthRegisteredService registeredService = getRegisteredServiceByClientId(clientId);
+        if (registeredService == null) {
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized");
+        }
         final WebApplicationService service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
         final AuditableContext audit = AuditableContext.builder()
             .service(service)
@@ -85,6 +89,6 @@ public class OAuth20RefreshTokenGrantTypeAuthorizationRequestValidator implement
     @Override
     public boolean supports(final J2EContext context) {
         final String grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
-        return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.PASSWORD);
+        return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.REFRESH_TOKEN);
     }
 }

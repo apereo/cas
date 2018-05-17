@@ -34,6 +34,7 @@ import org.apereo.cas.web.report.StatisticsController;
 import org.apereo.cas.web.report.StatusController;
 import org.apereo.cas.web.report.TrustedDevicesController;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.endpoint.HealthEndpoint;
@@ -70,9 +71,9 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 @EnableWebSocketMessageBroker
 @Slf4j
 public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfigurer {
-    private static final int LOG_TAILING_CORE_POOL_SIZE =5;
+    private static final int LOG_TAILING_CORE_POOL_SIZE = 5;
     private static final int LOG_TAILING_QUEUE_CAPACITY = 25;
-    
+
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
@@ -111,11 +112,11 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Autowired
     @Qualifier("principalFactory")
-    private PrincipalFactory principalFactory;
+    private ObjectProvider<PrincipalFactory> principalFactory;
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private ObjectProvider<CookieRetrievingCookieGenerator> ticketGrantingTicketCookieGenerator;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -145,9 +146,16 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Bean
     public MvcEndpoint personDirectoryAttributeResolutionController() {
-        return new PersonDirectoryAttributeResolutionController(casProperties, servicesManager,
-            authenticationSystemSupport, personDirectoryPrincipalResolver, webApplicationServiceFactory,
-            principalFactory, cas3ServiceSuccessView, cas3ServiceJsonView, cas2ServiceSuccessView, cas1ServiceSuccessView);
+        return new PersonDirectoryAttributeResolutionController(casProperties,
+            servicesManager,
+            authenticationSystemSupport,
+            personDirectoryPrincipalResolver,
+            webApplicationServiceFactory,
+            principalFactory.getIfAvailable(),
+            cas3ServiceSuccessView,
+            cas3ServiceJsonView,
+            cas2ServiceSuccessView,
+            cas1ServiceSuccessView);
     }
 
     @Profile("standalone")
@@ -180,7 +188,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Bean
     public MvcEndpoint ssoStatusController() {
-        return new SingleSignOnSessionStatusController(ticketGrantingTicketCookieGenerator, ticketRegistrySupport, casProperties);
+        return new SingleSignOnSessionStatusController(ticketGrantingTicketCookieGenerator.getIfAvailable(), ticketRegistrySupport, casProperties);
     }
 
     @Bean

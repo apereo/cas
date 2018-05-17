@@ -100,7 +100,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
         final Service serviceContext = WebUtils.getService(context);
         final Service service = this.authenticationRequestServiceSelectionStrategies.resolveService(serviceContext);
         if (service == null) {
-            LOGGER.debug("No service is found in the request context. Falling back to the default theme [{}]", getDefaultThemeName());
+            LOGGER.trace("No service is found in the request context. Falling back to the default theme [{}]", getDefaultThemeName());
             return rememberThemeName(request);
         }
 
@@ -110,7 +110,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             return rememberThemeName(request);
         }
         if (StringUtils.isBlank(rService.getTheme())) {
-            LOGGER.debug("No theme name is specified for service [{}]. Using default theme [{}]", rService, getDefaultThemeName());
+            LOGGER.trace("No theme name is specified for service [{}]. Using default theme [{}]", rService, getDefaultThemeName());
             return rememberThemeName(request);
         }
 
@@ -152,7 +152,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             final CasThemeResourceBundleMessageSource messageSource = new CasThemeResourceBundleMessageSource();
             messageSource.setBasename(rService.getTheme());
             if (messageSource.doGetBundle(rService.getTheme(), request.getLocale()) != null) {
-                LOGGER.debug("Found custom theme [{}] for service [{}]", rService.getTheme(), rService);
+                LOGGER.trace("Found custom theme [{}] for service [{}]", rService.getTheme(), rService);
                 return rService.getTheme();
             }
             LOGGER.warn("Custom theme [{}] for service [{}] cannot be located. Falling back to default theme...", rService.getTheme(), rService);

@@ -20,7 +20,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @RunWith(Parameterized.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class, InfinispanTicketRegistryConfiguration.class})
 @Slf4j
-public class InfinispanTicketRegistryTests extends AbstractTicketRegistryTests {
+public class InfinispanTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")

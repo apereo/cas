@@ -29,6 +29,7 @@ def isArtifactSigningRequired = {
 apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
 apply plugin: "com.github.kt3k.coveralls"
+apply plugin: "com.github.ben-manes.versions"
 
 buildscript {
     repositories {
@@ -41,18 +42,15 @@ buildscript {
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:8.3.2"
-        classpath "io.franzbecker:gradle-lombok:1.11"
+        classpath "com.netflix.nebula:gradle-lint-plugin:9.3.1"
+        classpath "io.franzbecker:gradle-lombok:1.14"
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
         classpath "io.spring.gradle:propdeps-plugin:0.0.10.RELEASE"
-        classpath "org.ajoberstar:grgit:2.1.1"
+        classpath "org.ajoberstar:grgit:2.2.0"
         classpath "net.ltgt.gradle:gradle-errorprone-plugin:0.0.13"
         classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2"
         classpath "org.owasp:dependency-check-gradle:3.1.2"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
-        classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion"
     }
 }
 
@@ -68,7 +66,6 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "maven"
     apply plugin: "signing"
-    apply plugin: 'com.github.ben-manes.versions'
     apply plugin: "jacoco"
 
     if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
@@ -91,7 +88,7 @@ allprojects {
         module {
             downloadSources = false
             downloadJavadoc = false
-            excludeDirs = [file(".gradle")]
+            excludeDirs << file(".gradle")
             ["classes", "bin", "docs", "dependency-cache", "libs", "reports", "resources", "test-results", "tmp"].each {
                 excludeDirs << file("$buildDir/$it")
             }
@@ -122,8 +119,6 @@ subprojects {
             description: "Display a graph of all project dependencies") {
         doLast {}
     }
-    apply plugin: "kotlin"
-    apply plugin: "kotlin-spring"
     apply plugin: "java-library"
     if (!Boolean.getBoolean("skipErrorProneCompiler")) {
         apply plugin: "net.ltgt.errorprone"
@@ -245,14 +240,6 @@ subprojects {
         project.buildDate != null || !project.buildJarFile.exists()
     }
 
-    compileKotlin {
-        kotlinOptions.jvmTarget = "$targetCompatibility"
-        kotlinOptions.javaParameters = true
-    }
-
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "$targetCompatibility"
-    }
 
     lombok {
         version = "$lombokVersion"
@@ -331,7 +318,6 @@ subprojects {
         implementation libraries.aspectj
         implementation libraries.validationapi
 
-        api libraries.kotlin
         api libraries.log4j
         api libraries.guava
         api libraries.commons
@@ -413,6 +399,7 @@ task jacocoAggregateReport(type: JacocoReport, description: "Aggregate all test 
                         '**/**WebflowConfigurer.class',
                         '**/**WebflowConfigurer$**',
                         '**/**Exception.class',
+                        '**/**Banner.class',
                         '**/**Exception$**',
                         '**/**Properties.class',
                         '**/**Properties$**'

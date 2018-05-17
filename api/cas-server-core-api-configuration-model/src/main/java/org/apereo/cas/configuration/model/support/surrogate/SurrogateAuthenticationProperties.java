@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.surrogate;
 
-import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
@@ -23,7 +23,7 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-surrogate-webflow")
-@Slf4j
+
 @Getter
 @Setter
 public class SurrogateAuthenticationProperties implements Serializable {
@@ -65,6 +65,12 @@ public class SurrogateAuthenticationProperties implements Serializable {
      */
     private Tgt tgt = new Tgt();
 
+    /**
+     * Principal construction settings.
+     */
+    @NestedConfigurationProperty
+    private PersonDirectoryPrincipalResolverProperties principal = new PersonDirectoryPrincipalResolverProperties();
+    
     /**
      * Email settings for notifications.
      */

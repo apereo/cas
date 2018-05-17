@@ -14,7 +14,9 @@ import org.apereo.cas.web.flow.configurer.DefaultLoginWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.DefaultLogoutWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.GroovyWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.plan.DefaultCasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.executor.CasFlowExecutionListener;
 import org.apereo.cas.web.flow.executor.WebflowExecutorFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.convert.ConversionService;
@@ -41,6 +43,7 @@ import org.springframework.webflow.context.servlet.FlowUrlHandler;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.ViewFactoryCreator;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser;
 import org.springframework.webflow.mvc.builder.MvcViewFactoryCreator;
@@ -62,7 +65,7 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
-public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class CasWebflowContextConfiguration {
 
     private static final int LOGOUT_FLOW_HANDLER_ORDER = 3;
 
@@ -73,7 +76,7 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
 
     @Autowired
     @Qualifier("registeredServiceViewResolver")
-    private ViewResolver registeredServiceViewResolver;
+    private ObjectProvider<ViewResolver> registeredServiceViewResolver;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -96,7 +99,7 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
     @Bean
     public ViewFactoryCreator viewFactoryCreator() {
         final MvcViewFactoryCreator resolver = new MvcViewFactoryCreator();
-        resolver.setViewResolvers(CollectionUtils.wrap(this.registeredServiceViewResolver));
+        resolver.setViewResolvers(CollectionUtils.wrap(this.registeredServiceViewResolver.getIfAvailable()));
         return resolver;
     }
 
@@ -124,7 +127,7 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
     @RefreshScope
     @Bean
     public FlowBuilderServices builder() {
-        final FlowBuilderServicesBuilder builder = new FlowBuilderServicesBuilder(this.applicationContext);
+        final FlowBuilderServicesBuilder builder = new FlowBuilderServicesBuilder();
         builder.setViewFactoryCreator(viewFactoryCreator());
         builder.setExpressionParser(expressionParser());
         builder.setDevelopmentMode(casProperties.getWebflow().isRefresh());
@@ -198,15 +201,23 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
     @Bean
     public FlowExecutor logoutFlowExecutor() {
         final WebflowExecutorFactory factory = new WebflowExecutorFactory(casProperties.getWebflow(),
-            logoutFlowRegistry(), this.webflowCipherExecutor);
+            logoutFlowRegistry(), this.webflowCipherExecutor, new FlowExecutionListener[]{casFlowExecutionListener()});
         return factory.build();
+    }
+
+    @ConditionalOnMissingBean(name = "casFlowExecutionListener")
+    @Bean
+    public FlowExecutionListener casFlowExecutionListener() {
+        return new CasFlowExecutionListener(casProperties);
     }
 
     @RefreshScope
     @Bean
     public FlowExecutor loginFlowExecutor() {
         final WebflowExecutorFactory factory = new WebflowExecutorFactory(casProperties.getWebflow(),
-            loginFlowRegistry(), this.webflowCipherExecutor);
+            loginFlowRegistry(), this.webflowCipherExecutor,
+            new FlowExecutionListener[]{casFlowExecutionListener()});
+
         return factory.build();
     }
 
@@ -248,11 +259,17 @@ public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanCo
         return plan;
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(defaultWebflowConfigurer());
-        plan.registerWebflowConfigurer(defaultLogoutWebflowConfigurer());
-        plan.registerWebflowConfigurer(groovyWebflowConfigurer());
+    @ConditionalOnMissingBean(name = "casDefaultWebflowExecutionPlanConfigurer")
+    @Bean
+    public CasWebflowExecutionPlanConfigurer casDefaultWebflowExecutionPlanConfigurer() {
+        return new CasWebflowExecutionPlanConfigurer() {
+            @Override
+            public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+                plan.registerWebflowConfigurer(defaultWebflowConfigurer());
+                plan.registerWebflowConfigurer(defaultLogoutWebflowConfigurer());
+                plan.registerWebflowConfigurer(groovyWebflowConfigurer());
+            }
+        };
     }
 }
 

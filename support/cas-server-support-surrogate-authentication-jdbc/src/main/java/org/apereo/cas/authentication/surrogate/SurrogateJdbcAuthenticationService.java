@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.surrogate;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
@@ -13,7 +14,6 @@ import javax.persistence.NoResultException;
 import javax.sql.DataSource;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Getter;
@@ -49,7 +49,7 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
                 return true;
             }
             LOGGER.debug("Executing SQL query [{}]", surrogateSearchQuery);
-            final int count = this.jdbcTemplate.queryForObject(surrogateSearchQuery, Integer.class, username);
+            final int count = this.jdbcTemplate.queryForObject(surrogateSearchQuery, Integer.class, surrogate.getId(), username);
             return count > 0;
         } catch (final NoResultException e) {
             LOGGER.debug(e.getMessage());
@@ -60,10 +60,11 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     @Override
-    public Collection<String> getEligibleAccountsForSurrogateToProxy(final String username) {
+    public List<String> getEligibleAccountsForSurrogateToProxy(final String username) {
         try {
-            final List<SurrogateAccount> results = this.jdbcTemplate.query(this.surrogateAccountQuery, new BeanPropertyRowMapper<>(SurrogateAccount.class));
-            return results.stream().map(SurrogateAccount::getSurrogateAccount).collect(Collectors.toSet());
+            final List<SurrogateAccount> results = this.jdbcTemplate.query(this.surrogateAccountQuery,
+                new BeanPropertyRowMapper<>(SurrogateAccount.class), username);
+            return results.stream().map(SurrogateAccount::getSurrogateAccount).collect(Collectors.toList());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -77,10 +78,9 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
     @Getter
     @Setter
     @EqualsAndHashCode
+    @NoArgsConstructor
     public static class SurrogateAccount implements Serializable {
-
         private static final long serialVersionUID = 7734857552147825153L;
-
         private String surrogateAccount;
     }
 }

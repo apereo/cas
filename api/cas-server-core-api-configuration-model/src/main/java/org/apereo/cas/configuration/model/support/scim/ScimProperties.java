@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.scim;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import java.io.Serializable;
@@ -14,7 +13,7 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-scim")
-@Slf4j
+
 @Getter
 @Setter
 public class ScimProperties implements Serializable {

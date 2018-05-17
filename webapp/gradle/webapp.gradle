@@ -125,6 +125,7 @@ dependencies {
     implementation project(":core:cas-server-core-logging")
     implementation project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-validation")
     implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-cookie")
@@ -142,7 +143,7 @@ dependencies {
     implementation project(":support:cas-server-support-themes")
     implementation project(":support:cas-server-support-validation")
     implementation project(":support:cas-server-support-pm-webflow")
-    
+
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")
 

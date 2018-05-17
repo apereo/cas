@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.pm;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
@@ -24,7 +23,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-pm-webflow")
-@Slf4j
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -73,6 +72,11 @@ public class PasswordManagementProperties implements Serializable {
      * Settings related to resetting password.
      */
     private Reset reset = new Reset();
+
+    /**
+     * Handle password policy via Groovy script.
+     */
+    private Groovy groovy = new Groovy();
 
     @RequiresModule(name = "cas-server-support-pm-jdbc")
     @Getter
@@ -182,6 +186,13 @@ public class PasswordManagementProperties implements Serializable {
             this.mail.setText("Reset your password via this link: %s");
             this.mail.setSubject("Password Reset");
         }
+    }
+
+    @RequiresModule(name = "cas-server-support-pm")
+    @Getter
+    @Setter
+    public static class Groovy extends SpringResourceProperties {
+        private static final long serialVersionUID = 8079027843747126083L;
     }
 
     @RequiresModule(name = "cas-server-support-pm")

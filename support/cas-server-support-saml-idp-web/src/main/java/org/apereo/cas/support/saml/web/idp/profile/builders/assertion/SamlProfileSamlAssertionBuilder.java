@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.util.RandomUtils;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnStatement;
@@ -67,14 +68,14 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
     public Assertion build(final RequestAbstractType authnRequest, final HttpServletRequest request, final HttpServletResponse response,
                            final Object casAssertion, final SamlRegisteredService service,
                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                           final String binding) throws SamlException {
+                           final String binding, final MessageContext messageContext) throws SamlException {
 
         final List<Statement> statements = new ArrayList<>();
         final AuthnStatement authnStatement = this.samlProfileSamlAuthNStatementBuilder.build(authnRequest, request, response,
-            casAssertion, service, adaptor, binding);
+            casAssertion, service, adaptor, binding, messageContext);
         statements.add(authnStatement);
         final AttributeStatement attrStatement = this.samlProfileSamlAttributeStatementBuilder.build(authnRequest, request,
-            response, casAssertion, service, adaptor, binding);
+            response, casAssertion, service, adaptor, binding, messageContext);
 
         if (!attrStatement.getAttributes().isEmpty() || !attrStatement.getEncryptedAttributes().isEmpty()) {
             statements.add(attrStatement);
@@ -84,9 +85,9 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
         final Assertion assertion = newAssertion(statements, casProperties.getAuthn().getSamlIdp().getEntityId(),
             ZonedDateTime.now(ZoneOffset.UTC), id);
         assertion.setSubject(this.samlProfileSamlSubjectBuilder.build(authnRequest, request, response,
-            casAssertion, service, adaptor, binding));
+            casAssertion, service, adaptor, binding, messageContext));
         assertion.setConditions(this.samlProfileSamlConditionsBuilder.build(authnRequest,
-            request, response, casAssertion, service, adaptor, binding));
+            request, response, casAssertion, service, adaptor, binding, messageContext));
         signAssertion(assertion, request, response, service, adaptor, binding);
         return assertion;
     }

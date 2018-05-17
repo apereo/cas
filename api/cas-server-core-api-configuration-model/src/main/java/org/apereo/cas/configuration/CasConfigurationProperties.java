@@ -2,7 +2,6 @@ package org.apereo.cas.configuration;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.CasJavaClientProperties;
 import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.apereo.cas.configuration.model.core.HostProperties;
@@ -31,6 +30,7 @@ import org.apereo.cas.configuration.model.support.clearpass.ClearpassProperties;
 import org.apereo.cas.configuration.model.support.consent.ConsentProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties;
+import org.apereo.cas.configuration.model.support.custom.CasCustomProperties;
 import org.apereo.cas.configuration.model.support.geo.googlemaps.GoogleMapsProperties;
 import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
@@ -58,7 +58,6 @@ import java.io.Serializable;
  */
 @ConditionalOnMissingBean
 @ConfigurationProperties(value = "cas", ignoreUnknownFields = false)
-@Slf4j
 @Getter
 @Setter
 public class CasConfigurationProperties implements Serializable {
@@ -220,7 +219,7 @@ public class CasConfigurationProperties implements Serializable {
     private GoogleRecaptchaProperties googleRecaptcha = new GoogleRecaptchaProperties();
 
     /**
-     * SMS & Text messaging settings.
+     * SMS and Text messaging settings.
      */
     @NestedConfigurationProperty
     private SmsProvidersProperties smsProvider = new SmsProvidersProperties();
@@ -308,6 +307,12 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private WebflowProperties webflow = new WebflowProperties();
+
+    /**
+     * Custom properties.
+     */
+    @NestedConfigurationProperty
+    private CasCustomProperties custom = new CasCustomProperties();
 
     /**
      * Standalone configuration settings.

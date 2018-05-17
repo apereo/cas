@@ -18,8 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
 
-
-
     /**
      * Determine web application format boolean.
      *
@@ -54,6 +52,8 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         final String id = cleanupUrl(serviceToUse);
         final AbstractWebApplicationService newService = new SimpleWebApplicationServiceImpl(id, serviceToUse, artifactId);
         determineWebApplicationFormat(request, newService);
+        final String source = getSourceParameter(request, CasProtocolConstants.PARAMETER_TARGET_SERVICE, CasProtocolConstants.PARAMETER_SERVICE);
+        newService.setSource(source);
         return newService;
     }
 
@@ -92,7 +92,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
     public WebApplicationService createService(final HttpServletRequest request) {
         final String serviceToUse = getRequestedService(request);
         if (StringUtils.isBlank(serviceToUse)) {
-            LOGGER.debug("No service is specified in the request. Skipping service creation");
+            LOGGER.trace("No service is specified in the request. Skipping service creation");
             return null;
         }
         return newWebApplicationService(request, serviceToUse);
@@ -102,4 +102,6 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
     public WebApplicationService createService(final String id) {
         return newWebApplicationService(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(), id);
     }
+
+
 }

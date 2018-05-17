@@ -1,6 +1,6 @@
 package org.apereo.cas.services;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -20,7 +20,7 @@ import java.util.List;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RegisteredServicesEventListener {
     private final ServicesManager servicesManager;
     private final CasConfigurationProperties casProperties;

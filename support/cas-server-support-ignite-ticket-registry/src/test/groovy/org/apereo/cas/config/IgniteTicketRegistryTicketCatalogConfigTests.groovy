@@ -6,7 +6,7 @@ import org.apereo.cas.ticket.TicketCatalogConfigurer
 /**
  * @author Dmitriy Kopylenko
  */
-class IgniteTicketRegistryTicketCatalogConfigTests extends AbstractCommonCacheBasedStorageNaming {
+class IgniteTicketRegistryTicketCatalogConfigTests extends AbstractCommonCacheBasedStorageNamingTests {
 
     @Override
     TicketCatalogConfigurer ticketCatalogConfigurerUnderTest() {

@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CompressionUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -53,18 +54,19 @@ public class DefaultLogoutManager implements LogoutManager {
 
     private List<LogoutRequest> performLogoutForTicket(final TicketGrantingTicket ticketToBeLoggedOut) {
         final Stream<Map<String, Service>> streamServices = Stream.concat(Stream.of(ticketToBeLoggedOut.getServices()),
-                Stream.of(ticketToBeLoggedOut.getProxyGrantingTickets()));
+            Stream.of(ticketToBeLoggedOut.getProxyGrantingTickets()));
         return streamServices
-                .map(Map::entrySet)
-                .flatMap(Set::stream)
-                .filter(entry -> entry.getValue() instanceof WebApplicationService)
-                .map(entry -> {
-                    final Service service = entry.getValue();
-                    LOGGER.debug("Handling single logout callback for [{}]", service);
-                    return this.singleLogoutServiceMessageHandler.handle((WebApplicationService) service, entry.getKey());
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+            .map(Map::entrySet)
+            .flatMap(Set::stream)
+            .filter(entry -> entry.getValue() instanceof WebApplicationService)
+            .map(entry -> {
+                final WebApplicationService service = (WebApplicationService) entry.getValue();
+                LOGGER.debug("Handling single logout callback for [{}]", service);
+                return this.singleLogoutServiceMessageHandler.handle(service, entry.getKey());
+            })
+            .flatMap(Collection::stream)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     /**

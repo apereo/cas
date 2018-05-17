@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.event;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -19,7 +19,7 @@ import org.springframework.context.event.EventListener;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SurrogateAuthenticationEventListener {
     private final CommunicationsManager communicationsManager;
     private final CasConfigurationProperties casProperties;

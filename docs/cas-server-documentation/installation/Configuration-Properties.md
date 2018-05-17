@@ -27,7 +27,16 @@ create attribute release policies, etc. CAS at runtime will auto-configure all r
 
 ## General
 
-A number of CAS configuration options equally apply to a number of modules and features. To understand and take note of those options, please [review this guide](Configuration-Properties-Common.html).
+A number of CAS configuration options equally apply to a number of modules and features. To understand and 
+take note of those options, please [review this guide](Configuration-Properties-Common.html).
+
+## Custom Settings
+
+The following settings could be used to extend CAS with arbitrary configuration keys and values:
+
+```properties
+# cas.custom.properties.[property-name]=[property-value]
+``` 
 
 ## Configuration Storage
 
@@ -143,19 +152,27 @@ Load settings from an Apache ZooKeeper instance.
 # spring.cloud.zookeeper.config.root=cas/config
 ```
 
-### DynamoDb
+### Amazon Secrets Manager
 
-Load settings from a DynamoDb instance.
+Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
+under the configuration key `cas.spring.cloud.aws.secretsManager`.
+
+### Amazon S3
+
+The following settings may be passed using strategies outlined [here](Configuration-Management.html#overview) in order for CAS to establish a connection,
+using the configuration key `cas.spring.cloud.aws.s3`.
 
 ```properties
-# cas.spring.cloud.dynamodb.credentialAccessKey=
-# cas.spring.cloud.dynamodb.credentialSecretKey=
-# cas.spring.cloud.dynamodb.endpoint=http://localhost:8000
-# cas.spring.cloud.dynamodb.localAddress=
-# cas.spring.cloud.dynamodb.endpoint=
-# cas.spring.cloud.dynamodb.region=
-# cas.spring.cloud.dynamodb.regionOverride=
+# ${configurationKey}.bucketName=cas-properties
 ```
+
+Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
+under the configuration key `cas.spring.cloud.aws.s3`.
+
+### DynamoDb
+
+Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
+under the configuration key `cas.spring.cloud.dynamodb`. 
 
 ### JDBC
 
@@ -675,6 +692,11 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 # cas.view.templatePrefixes[0]=file:///etc/cas/templates
 ```
 
+### Restful Views
+
+Control the resolution of CAS views via REST. RESTful settings for this feature are 
+available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.view.rest`.
+
 ## Logging
 
 Control the location and other settings of the CAS logging configuration.
@@ -806,7 +828,7 @@ import java.util.*
 
 def Map<String, List<Object>> run(final Object... args) {
     def uid = args[0]
-    def logger = args[1];
+    def logger = args[1]
     def casProperties = args[2]
     def casApplicationContext = args[3]
 
@@ -1155,6 +1177,10 @@ To learn more about this topic, [please review this guide](Surrogate-Authenticat
 ```properties
 # cas.authn.surrogate.separator=+
 ```
+
+Principal resolution and Person Directory settings for this feature 
+are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) 
+under the configuration key `cas.authn.surrogate.principal`.
 
 ### Static Surrogate Accounts
 
@@ -1601,7 +1627,8 @@ To learn more about this topic, [please review this guide](../integration/Google
 
 Allow CAS to become an OpenID authentication provider. To learn more about this topic, [please review this guide](../protocol/OpenID-Protocol.html).
 
-Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.openid.principal`.
+Principal resolution and Person Directory settings for this feature 
+are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.openid.principal`.
 
 ```properties
 # cas.authn.openid.enforceRpId=false
@@ -1669,8 +1696,19 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas[0].kerberosKdcSystemProperty=
 # cas.authn.jaas[0].kerberosRealmSystemProperty=
 # cas.authn.jaas[0].name=
+# cas.authn.jaas[0].order=
 # cas.authn.jaas[0].credentialCriteria=
+# cas.authn.jaas[0].loginConfigType=JavaLoginConfig
+# cas.authn.jaas[0].loginConfigurationFile=/path/to/jaas.conf
 ```
+
+Principal resolution and Person Directory settings for this feature 
+are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) 
+under the configuration key `cas.authn.jaas[0].principal`.
+
+Password policy settings for this feature are available [here](Configuration-Properties-Common.html#password-policy-settings) 
+under the configuration key `cas.authn.jaas[0].passwordPolicy`.
+
 
 ## GUA Authentication
 
@@ -2389,15 +2427,27 @@ A given attribute that is to be encoded in the final SAML response may contain a
 
 #### SAML Metadata JPA
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.samlIdp.metadata.jpa`.
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
+under the configuration key `cas.authn.samlIdp.metadata.jpa`.
 
 #### SAML Metadata MongoDb
 
- Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.samlIdp.metadata`.
-
+ Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) 
+ under the configuration key `cas.authn.samlIdp.metadata`.
+ 
  #### SAML Metadata REST
+ 
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.samlIdp.metadata.rest`.
 
-RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.samlIdp.metadata.rest`.
+#### SAML Metadata Amazon S3
+ 
+Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
+under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
+
+```properties
+# cas.authn.samlIdp.metadata.amazonS3.bucketName=
+```
 
 ### SAML Logout
 
@@ -2441,49 +2491,53 @@ Configuration settings for all SAML2 service providers are [available here](Conf
 
 | Service Provider                       | Configuration Key | Attributes
 |---------------------------|----------------------------------------------------------
-| Gitlab               | `cas.samlSp.gitlab` | `last_name`,`first_name`,`name`
+| Gitlab                | `cas.samlSp.gitlab` | `last_name`,`first_name`,`name`
 | Hipchat               | `cas.samlSp.hipchat` | `last_name`,`first_name`,`title`
 | Dropbox               | `cas.samlSp.dropbox` | `mail`
-| TestShib               | `cas.samlSp.testShib` | `eduPersonPrincipalName`
-| OpenAthens               | `cas.samlSp.openAthens` | `email`, `eduPersonPrincipalName`
-| Egnyte               | `cas.samlSp.egnyte` | N/A
-| EverBridge               | `cas.samlSp.everBridge` | N/A
-| Simplicity               | `cas.samlSp.simplicity` | N/A
-| App Dynamics               | `cas.samlSp.appDynamics` | `User.OpenIDName`, `User.email`, `User.fullName`, `AccessControl`, `Groups-Membership`
-| Yuja               | `cas.samlSp.yuja` | N/A
-| Simplicity               | `cas.samlSp.simplicity` | N/A
-| New Relic               | `cas.samlSp.newRelic` | N/A
+| TestShib              | `cas.samlSp.testShib` | `eduPersonPrincipalName`
+| OpenAthens            | `cas.samlSp.openAthens` | `email`, `eduPersonPrincipalName`
+| Egnyte                | `cas.samlSp.egnyte` | N/A
+| EverBridge            | `cas.samlSp.everBridge` | N/A
+| Simplicity            | `cas.samlSp.simplicity` | N/A
+| App Dynamics          | `cas.samlSp.appDynamics` | `User.OpenIDName`, `User.email`, `User.fullName`, `AccessControl`, `Groups-Membership`
+| Yuja                  | `cas.samlSp.yuja` | N/A
+| Simplicity            | `cas.samlSp.simplicity` | N/A
+| New Relic             | `cas.samlSp.newRelic` | N/A
 | Sunshine State Education and Research Computing Alliance               | `cas.samlSp.sserca` | N/A
 | CherWell               | `cas.samlSp.cherWell` | N/A
-| FAMIS               | `cas.samlSp.famis` | N/A
-| Bynder               | `cas.samlSp.bynder` | N/A
-| Web Advisor               | `cas.samlSp.webAdvisor` | `uid`
-| Adobe Creative Cloud               | `cas.samlSp.adobeCloud` | `firstName`, `lastName`, `email`
-| Securing The Human               | `cas.samlSp.sansSth` | `firstName`, `lastName`, `scopedUserId`, `department`, `reference`, `email`
-| Easy IEP               | `cas.samlSp.easyIep` | `employeeId`
-| Infinite Campus               | `cas.samlSp.infiniteCampus` | `employeeId`
-| Slack               | `cas.samlSp.slack` | `User.Email`, `User.Username`, `first_name`, `last_name`, `employeeId`
+| FAMIS                 | `cas.samlSp.famis` | N/A
+| Bynder                | `cas.samlSp.bynder` | N/A
+| Web Advisor           | `cas.samlSp.webAdvisor` | `uid`
+| Adobe Creative Cloud  | `cas.samlSp.adobeCloud` | `firstName`, `lastName`, `email`
+| Securing The Human    | `cas.samlSp.sansSth` | `firstName`, `lastName`, `scopedUserId`, `department`, `reference`, `email`
+| Easy IEP              | `cas.samlSp.easyIep` | `employeeId`
+| Infinite Campus       | `cas.samlSp.infiniteCampus` | `employeeId`
+| Slack                 | `cas.samlSp.slack` | `User.Email`, `User.Username`, `first_name`, `last_name`, `employeeId`
 | Zendesk               | `cas.samlSp.zendesk` | `organization`, `tags`, `phone`, `role`, `email`
 | Gartner               | `cas.samlSp.gartner` | `urn:oid:2.5.4.42`, `urn:oid:2.5.4.4`, `urn:oid:0.9.2342.19200300.100.1.3`
 | Arc GIS               | `cas.samlSp.arcGIS` | `arcNameId`, `mail`, `givenName`
-| Benefit Focus               | `cas.samlSp.benefitFocus` | `benefitFocusUniqueId`
-| Office365               | `cas.samlSp.office365` | `IDPEmail`, `ImmutableID`, `scopedImmutableID`
-| SAManage               | `cas.samlSp.saManage` | `mail`
-| Salesforce               | `cas.samlSp.salesforce` | `eduPersonPrincipalName`
+| Benefit Focus         | `cas.samlSp.benefitFocus` | `benefitFocusUniqueId`
+| Office365             | `cas.samlSp.office365` | `IDPEmail`, `ImmutableID`, `scopedImmutableID`
+| SAManage              | `cas.samlSp.saManage` | `mail`
+| Salesforce            | `cas.samlSp.salesforce` | `eduPersonPrincipalName`
 | Workday               | `cas.samlSp.workday` | N/A
-| Academic Works               | `cas.samlSp.academicWorks` | `displayName`
-| ZOOM               | `cas.samlSp.zoom` | `mail`, `sn`, `givenName`
-| Evernote               | `cas.samlSp.evernote` | `email`
-| Tableau               | `cas.samlSp.tableau` | `username`
-| Asana               | `cas.samlSp.asana` | `email`
-| Box               | `cas.samlSp.box` | `email`, `firstName`, `lastName`
+| Academic Works            | `cas.samlSp.academicWorks` | `displayName`
+| ZOOM                      | `cas.samlSp.zoom` | `mail`, `sn`, `givenName`
+| Evernote                  | `cas.samlSp.evernote` | `email`
+| Tableau                   | `cas.samlSp.tableau` | `username`
+| Asana                     | `cas.samlSp.asana` | `email`
+| Box                       | `cas.samlSp.box` | `email`, `firstName`, `lastName`
 | Service Now               | `cas.samlSp.serviceNow` | `eduPersonPrincipalName`
 | Net Partner               | `cas.samlSp.netPartner` | `studentId`
-| Webex               | `cas.samlSp.webex` | `firstName`, `lastName`
-| InCommon        |  `cas.samlSp.inCommon` | `eduPersonPrincipalName`
-| Amazon        |  `cas.samlSp.amazon` | `awsRoles`, `awsRoleSessionName`
-| Concur Solutions               | `cas.samlSp.concurSolutions` | `email`
-| PollEverywhere               | `cas.samlSp.pollEverywhere` | `email`
+| Webex                     | `cas.samlSp.webex` | `firstName`, `lastName`
+| InCommon                  |  `cas.samlSp.inCommon` | `eduPersonPrincipalName`
+| Amazon                    |  `cas.samlSp.amazon` | `awsRoles`, `awsRoleSessionName`
+| Concur Solutions          | `cas.samlSp.concurSolutions` | `email`
+| PollEverywhere            | `cas.samlSp.pollEverywhere` | `email`
+| BlackBaud                 | `cas.samlSp.blackBaud` | `email`, `eduPersonPrincipalName`
+| GiveCampus                | `cas.samlSp.giveCampus` | `email`, `givenName`, `surname`, `displayName`
+| WarpWire                  | `cas.samlSp.warpWire` | `email`, `givenName`, `eduPersonPrincipalName`, `surname`, `eduPersonScopedAffiliation`, `employeeNumber`
+| WarpWire                  | `cas.samlSp.rocketChat` | `email`, `cn`, `username`
 
 **Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds can be regular expression patterns and are mapped to CAS' `serviceId` field in the registry. The signature location MUST BE the public key used to sign the metadata.
 
@@ -2529,6 +2583,7 @@ To learn more about this topic, [please review this guide](../integration/Delega
 
 ```properties
 # cas.authn.pac4j.typedIdUsed=false
+# cas.authn.pac4j.principalAttributeId=
 # cas.authn.pac4j.name=
 ```
 
@@ -2854,7 +2909,7 @@ under the configuration key `cas.audit.jdbc`.
 
 ```properties
 # cas.audit.jdbc.asynchronous=true
-# cas.audit.jdbc.maxAge=180
+# cas.audit.jdbc.maxAgeDays=180
 # cas.audit.jdbc.columnLength=100
 # cas.audit.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.audit.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
@@ -3617,6 +3672,13 @@ Interrupt the authentication flow to reach out to external services. To learn mo
 # cas.interrupt.json.location=file:/etc/cas/config/interrupt.json
 ```
 
+#### Authentication Interrupt Regex Attributes
+
+```properties
+# cas.interrupt.attributeName=attribute-name-pattern
+# cas.interrupt.attributeValue=attribute-value-pattern
+```
+
 #### Authentication Interrupt Groovy
 
 ```properties
@@ -3835,6 +3897,7 @@ Configure settings relevant to the Java CAS client configured to handle inbound 
 
 ```properties
 # cas.client.prefix=https://sso.example.org/cas
+# cas.client.validatorType=CAS10|CAS20|CAS30
 ```
 
 ## Password Management
@@ -3867,6 +3930,12 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encrypt
 # cas.authn.pm.json.location=classpath:jsonResourcePassword.json
 ```
 
+### Groovy Password Management
+
+```properties
+# cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy
+```
+
 ### LDAP Password Management
 
 LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.pm.ldap`.
@@ -3882,7 +3951,9 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 
 ### JDBC Password Management
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.pm.jdbc`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.pm.jdbc`.
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
+under the configuration key `cas.authn.pm.jdbc`. Password encoding  settings for this 
+feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.pm.jdbc`.
 
 ```properties
 # The two fields indicated below are expected to be returned

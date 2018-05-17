@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.execution.Action;
 
 /**
  * This is {@link DigestAuthenticationConfiguration}.
@@ -70,8 +71,8 @@ public class DigestAuthenticationConfiguration implements CasWebflowExecutionPla
 
     @Autowired
     @Bean
-    public DigestAuthenticationAction digestAuthenticationAction(@Qualifier("defaultDigestCredentialRetriever")
-                                                                     final DigestHashedCredentialRetriever defaultDigestCredentialRetriever) {
+    public Action digestAuthenticationAction(@Qualifier("defaultDigestCredentialRetriever")
+                                         final DigestHashedCredentialRetriever defaultDigestCredentialRetriever) {
         return new DigestAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
             serviceTicketRequestWebflowEventResolver,
             adaptiveAuthenticationPolicy,

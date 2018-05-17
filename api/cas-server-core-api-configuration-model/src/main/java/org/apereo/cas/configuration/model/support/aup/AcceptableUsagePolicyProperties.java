@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.aup;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
@@ -18,7 +17,7 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-aup-webflow")
-@Slf4j
+
 @Getter
 @Setter
 public class AcceptableUsagePolicyProperties implements Serializable {
@@ -81,7 +80,6 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     @Getter
     @Setter
     public static class Rest extends RestEndpointProperties {
-
         private static final long serialVersionUID = -8102345678378393382L;
     }
 
