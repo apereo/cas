@@ -13,17 +13,22 @@ members MUST take place on the [mailing list](/cas/Mailing-Lists.html).
 The current members of the PMC are:
 
 - [Daniel Frett](https://github.com/frett)
+- [Dmitriy Kopylenko](https://github.com/dima767)
+- [Travis Schmidt](https://github.com/tsschmidt)
+- [Jeff Sittler](https://github.com/mindblender)
+- [Jérôme Leleu](https://github.com/leleuj)
+- [Timur Duehr](https://github.com/tduehr)
+- [Misagh Moayyed](https://github.com/mmoayyed) [Chairman]
+- [Ian Dolphin](https://www.apereo.org/content/leadership) [Executive Director, Apereo Foundation]
+
+Emeritus members are:
+
 - [Scott Battaglia](https://github.com/battags)
 - [Andrew Petro](https://github.com/apetro)
 - [Bill Thompson](https://github.com/wgthom)
 - [Robert Oschwald](https://github.com/robertoschwald)
-- [Dmitriy Kopylenko](https://github.com/dima767)
 - [Marvin Addison](https://github.com/serac)
-- [Travis Schmidt](https://github.com/tsschmidt)
-- [Jeff Sittler](https://github.com/mindblender)
-- [Jérôme Leleu](https://github.com/leleuj)
-- [Misagh Moayyed](https://github.com/mmoayyed) [Chairman]
-- [Ian Dolphin](https://www.apereo.org/content/leadership) [Executive Director, Apereo Foundation]
+
 
 ## Structure
 
