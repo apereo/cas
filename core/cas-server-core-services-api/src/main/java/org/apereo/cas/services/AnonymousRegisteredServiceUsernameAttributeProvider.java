@@ -3,9 +3,9 @@ package org.apereo.cas.services;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
-import org.apereo.cas.authentication.principal.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider extends BaseReg
      * Encoder to generate PseudoIds.
      */
     private PersistentIdGenerator persistentIdGenerator =
-            new ShibbolethCompatiblePersistentIdGenerator(RandomStringUtils.randomAlphanumeric(16));
+        new ShibbolethCompatiblePersistentIdGenerator(RandomStringUtils.randomAlphanumeric(16));
 
     /**
      * Init provider.
@@ -48,25 +48,10 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider extends BaseReg
     public PersistentIdGenerator getPersistentIdGenerator() {
         return this.persistentIdGenerator;
     }
-    
+
     @Override
     protected String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
-        if (this.persistentIdGenerator == null) {
-            throw new IllegalArgumentException("No persistent id generator is defined");
-        }
-        final String id = this.persistentIdGenerator.generate(principal, new Service() {
-            private static final long serialVersionUID = 178464253829044870L;
-
-            @Override
-            public boolean matches(final Service service) {
-                return false;
-            }
-
-            @Override
-            public String getId() {
-                return null;
-            }
-        });
+        final String id = this.persistentIdGenerator.generate(principal, service);
         LOGGER.debug("Resolved username [{}] for anonymous access", id);
         return id;
     }
