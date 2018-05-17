@@ -67,6 +67,7 @@ allprojects {
     apply plugin: "maven"
     apply plugin: "signing"
     apply plugin: "jacoco"
+    apply plugin: "groovy"
 
     if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
         apply plugin: "nebula.lint"
