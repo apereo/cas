@@ -40,7 +40,8 @@ public class ScriptingUtils {
     /**
      * Pattern indicating groovy script is inlined.
      */
-    private static final Pattern INLINE_GROOVY_PATTERN = RegexUtils.createPattern("groovy\\s*\\{(.+)\\}");
+    private static final Pattern INLINE_GROOVY_PATTERN = RegexUtils.createPattern("groovy\\s*\\{\\s*(.+)\\s*\\}",
+        Pattern.DOTALL | Pattern.MULTILINE);
 
     /**
      * Pattern indicating groovy script is a file/resource.
@@ -111,7 +112,7 @@ public class ScriptingUtils {
             LOGGER.debug("Executing groovy script [{}] with variables [{}]", script, binding.getVariables());
 
             final Object result = shell.evaluate(script);
-            if (!clazz.isAssignableFrom(result.getClass())) {
+            if (result != null && !clazz.isAssignableFrom(result.getClass())) {
                 throw new ClassCastException("Result [" + result
                     + " is of type " + result.getClass()
                     + " when we were expecting " + clazz);
