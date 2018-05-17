@@ -18,11 +18,14 @@ import java.util.List;
  */
 @Slf4j
 public class YubiKeyRestHttpRequestCredentialFactory implements RestHttpRequestCredentialFactory {
-
+    /**
+     * OTP token found in the request body.
+     */
+    public static final String PARAMETER_NAME_YUBIKEY_OTP = "yubikeyotp";
 
     @Override
     public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
-        final String otp = requestBody.getFirst("yubikeyotp");
+        final String otp = requestBody.getFirst(PARAMETER_NAME_YUBIKEY_OTP);
         LOGGER.debug("YubiKey token in the request body: [{}]", otp);
         if (StringUtils.isBlank(otp)) {
             return new ArrayList<>(0);
