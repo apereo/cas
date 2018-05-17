@@ -2,6 +2,7 @@ package org.apereo.cas.impl.calcs;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
+import org.apereo.cas.api.AuthenticationRiskNotifier;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -89,6 +90,14 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
 
     @Autowired
     protected CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("authenticationRiskEmailNotifier")
+    protected AuthenticationRiskNotifier authenticationRiskEmailNotifier;
+
+    @Autowired
+    @Qualifier("authenticationRiskSmsNotifier")
+    protected AuthenticationRiskNotifier authenticationRiskSmsNotifier;
 
     @Before
     public void prepTest() {
