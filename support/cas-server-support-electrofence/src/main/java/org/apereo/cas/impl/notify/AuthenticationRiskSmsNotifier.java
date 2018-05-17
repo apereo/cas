@@ -1,6 +1,6 @@
 package org.apereo.cas.impl.notify;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +10,7 @@ import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.util.io.CommunicationsManager;
 
 /**
- * This is {@link AuthenticationRiskTwilioSmsNotifier}.
+ * This is {@link AuthenticationRiskSmsNotifier}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -18,8 +18,8 @@ import org.apereo.cas.util.io.CommunicationsManager;
 @Slf4j
 @Getter
 @Setter
-@AllArgsConstructor
-public class AuthenticationRiskTwilioSmsNotifier extends BaseAuthenticationRiskNotifier {
+@RequiredArgsConstructor
+public class AuthenticationRiskSmsNotifier extends BaseAuthenticationRiskNotifier {
     private final CommunicationsManager communicationsManager;
 
     @Override
