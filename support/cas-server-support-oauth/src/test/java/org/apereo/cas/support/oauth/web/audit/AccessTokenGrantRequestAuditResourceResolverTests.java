@@ -1,6 +1,5 @@
 package org.apereo.cas.support.oauth.web.audit;
 
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -26,7 +25,7 @@ public class AccessTokenGrantRequestAuditResourceResolverTests {
         final OAuthToken token = mock(OAuthToken.class);
         when(token.getId()).thenReturn("CODE");
         when(token.getService()).thenReturn(RegisteredServiceTestUtils.getService());
-        
+
         final OAuthRegisteredService service = new OAuthRegisteredService();
         service.setClientId("CLIENTID");
         service.setName("OAUTH");

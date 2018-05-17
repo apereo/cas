@@ -45,9 +45,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasCoreServicesConfiguration}.
@@ -90,14 +93,16 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "webApplicationResponseBuilderLocator")
     @Bean
     public ResponseBuilderLocator webApplicationResponseBuilderLocator() {
-        return new DefaultWebApplicationResponseBuilderLocator(applicationContext);
+        final Map<String, ResponseBuilder> beans = applicationContext.getBeansOfType(ResponseBuilder.class, false, true);
+        final List<ResponseBuilder> builders = beans.values().stream().collect(Collectors.toList());
+        AnnotationAwareOrderComparator.sortIfNecessary(builders);
+        return new DefaultWebApplicationResponseBuilderLocator(builders);
     }
 
     @ConditionalOnMissingBean(name = "webApplicationServiceResponseBuilder")
     @Bean
-    @Autowired
-    public ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder(@Qualifier("servicesManager") final ServicesManager servicesManager) {
-        return new WebApplicationServiceResponseBuilder(servicesManager);
+    public ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder() {
+        return new WebApplicationServiceResponseBuilder(servicesManager());
     }
 
     @ConditionalOnMissingBean(name = "registeredServiceCipherExecutor")
@@ -117,22 +122,22 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "servicesManager")
     @Bean
     @RefreshScope
-    public ServicesManager servicesManager(@Qualifier("serviceRegistry") final ServiceRegistry serviceRegistry) {
+    public ServicesManager servicesManager() {
         switch (casProperties.getServiceRegistry().getManagementType()) {
             case DOMAIN:
                 LOGGER.debug("Managing CAS service definitions via domains");
-                return new DomainServicesManager(serviceRegistry, eventPublisher);
+                return new DomainServicesManager(serviceRegistry(), eventPublisher);
             case DEFAULT:
             default:
                 break;
         }
-        return new DefaultServicesManager(serviceRegistry, eventPublisher);
+        return new DefaultServicesManager(serviceRegistry(), eventPublisher);
     }
 
     @Bean
     @RefreshScope
-    public RegisteredServicesEventListener registeredServicesEventListener(@Qualifier("servicesManager") final ServicesManager servicesManager) {
-        return new RegisteredServicesEventListener(servicesManager, casProperties, communicationsManager);
+    public RegisteredServicesEventListener registeredServicesEventListener() {
+        return new RegisteredServicesEventListener(servicesManager(), casProperties, communicationsManager);
     }
 
     @ConditionalOnMissingBean(name = "registeredServiceReplicationStrategy")
@@ -173,7 +178,7 @@ public class CasCoreServicesConfiguration {
             }
             plan.registerServiceRegistry(new InMemoryServiceRegistry(services));
         }
-        
+
         return new ChainingServiceRegistry(plan.getServiceRegistries());
     }
 }
