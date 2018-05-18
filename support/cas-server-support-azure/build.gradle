@@ -18,5 +18,6 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":support:cas-server-support-azure-core")
     implementation project(":support:cas-server-support-otp-mfa")
+    
     compileOnly project(":support:cas-server-support-trusted-mfa")
 }
