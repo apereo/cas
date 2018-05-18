@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -44,6 +45,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
     private final TicketRegistrySupport ticketRegistrySupport;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
     private final ServicesManager servicesManager;
+    private final PrincipalElectionStrategy principalElectionStrategy;
 
     /**
      * {@inheritDoc}
@@ -90,7 +92,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
 
             final Credential credential = WebUtils.getCredential(context);
             final AuthenticationResultBuilder builder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
-            final AuthenticationResult authenticationResult = builder.build(service);
+            final AuthenticationResult authenticationResult = builder.build(principalElectionStrategy, service);
 
             LOGGER.debug("Built the final authentication result [{}] to grant service ticket to [{}]", authenticationResult, service);
             final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);

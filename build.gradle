@@ -67,6 +67,7 @@ allprojects {
     apply plugin: "maven"
     apply plugin: "signing"
     apply plugin: "jacoco"
+    apply plugin: "groovy"
 
     if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
         apply plugin: "nebula.lint"
@@ -88,7 +89,7 @@ allprojects {
         module {
             downloadSources = false
             downloadJavadoc = false
-            excludeDirs = [file(".gradle")]
+            excludeDirs << file(".gradle")
             ["classes", "bin", "docs", "dependency-cache", "libs", "reports", "resources", "test-results", "tmp"].each {
                 excludeDirs << file("$buildDir/$it")
             }
@@ -216,7 +217,24 @@ subprojects {
     }
 
     sourceSets {
-        test.resources.srcDirs = ["${projectDir}/src/test/resources", "${projectDir}/src/test/java"]
+        main {
+            java {
+                srcDirs = ["${projectDir}/src/main/java", "${projectDir}/src/main/groovy"]
+
+            }
+            resources {
+                srcDirs = ["${projectDir}/src/main/resources"]
+            }
+        }
+        test {
+            java {
+                srcDirs = ["${projectDir}/src/test/java", "${projectDir}/src/test/groovy"]
+
+            }
+            resources {
+                srcDirs = ["${projectDir}/src/test/resources"]
+            }
+        }
     }
 
     ext.buildDate = null

@@ -1,12 +1,11 @@
 package org.apereo.cas.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.junit.Test;
 
 import java.util.Arrays;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 /**
@@ -18,7 +17,7 @@ public class ServiceRegistryInitializerTests {
 
     @Test
     public void ensureInitFromJsonDoesNotCreateDuplicates() {
-        RegisteredService initialService = CoreAuthenticationTestUtils.getRegisteredService();
+        RegisteredService initialService = newService();
 
         final ServicesManager servicesManager = mock(ServicesManager.class);
         final ServiceRegistry jsonServiceRegistry = mock(ServiceRegistry.class);
@@ -31,10 +30,18 @@ public class ServiceRegistryInitializerTests {
         serviceRegistryInitializer.initServiceRegistryIfNecessary();
         assertThat(serviceRegistry.size()).isEqualTo(1);
 
-        initialService = CoreAuthenticationTestUtils.getRegisteredService();
+        initialService = newService();
         when(jsonServiceRegistry.load()).thenReturn(Arrays.asList(initialService));
 
         serviceRegistryInitializer.initServiceRegistryIfNecessary();
         assertThat(serviceRegistry.size()).isEqualTo(1);
+    }
+
+    private RegisteredService newService() {
+        final RegisteredService service = mock(RegisteredService.class);
+        when(service.getServiceId()).thenReturn("^https?://.*");
+        when(service.getName()).thenReturn("Test");
+        when(service.getDescription()).thenReturn("Test");
+        return service;
     }
 }

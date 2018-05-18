@@ -35,6 +35,11 @@ public class CasFlowExecutionListener implements FlowExecutionListener {
     }
 
     private void injectIntoRequestContext(final RequestContext context) {
-        context.getConversationScope().put("casProperties", casProperties);
+        injectCasPropertiesIntoScopes(context.getRequestScope());
+    }
+
+    private void injectCasPropertiesIntoScopes(final MutableAttributeMap scope) {
+        scope.put("casProperties", casProperties);
+        scope.put("cas", casProperties);
     }
 }
