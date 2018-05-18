@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.azure;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.otp.authentication.OneTimeTokenCredential;
+import org.apereo.cas.authentication.OneTimeTokenCredential;
 
 /**
  * This is {@link AzureAuthenticatorTokenCredential}.

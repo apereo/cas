@@ -145,6 +145,7 @@ public class CasWebflowContextConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "localeChangeInterceptor")
     public LocaleChangeInterceptor localeChangeInterceptor() {
         final LocaleChangeInterceptor bean = new LocaleChangeInterceptor();
         bean.setParamName(this.casProperties.getLocale().getParamName());
