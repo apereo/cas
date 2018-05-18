@@ -2707,6 +2707,12 @@ Delegate authentication to LinkedIn. Common settings for this identity provider 
 # cas.authn.pac4j.linkedIn.scope=
 ```
 
+### Twitter
+Delegate authentication to Twitter.  Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.twitter`.
+
+```properties
+# cas.authn.pac4j.twitter.includeEmail=false
+```
 
 ## WS Federation
 
