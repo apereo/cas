@@ -1,6 +1,5 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasConsentCoreConfiguration;
@@ -35,7 +34,7 @@ public class MongoDbConsentRepositoryTests {
     @Autowired
     @Qualifier("consentRepository")
     private ConsentRepository consentRepository;
-    
+
     @Autowired
     @Qualifier("consentDecisionBuilder")
     private ConsentDecisionBuilder consentDecisionBuilder;
