@@ -1,4 +1,4 @@
-package org.apereo.cas.otp.repository.token;
+package org.apereo.cas.authentication;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
