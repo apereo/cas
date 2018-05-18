@@ -218,6 +218,12 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
 
         private static final long serialVersionUID = 6906343970517008092L;
 
+        /**
+         * Set to true to request the user's email address from the Twitter API.
+         * For this to have an effect it must first be enabled in the Twitter developer console.
+         */
+        private boolean includeEmail;
+
         public Twitter() {
             setClientName("Twitter");
         }
