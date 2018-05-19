@@ -12,13 +12,13 @@ import org.apereo.cas.util.CollectionUtils;
 import java.util.Map;
 
 /**
- * This is {@link Scim1PrincipalAttributeMapper}.
+ * This is {@link ScimV1PrincipalAttributeMapper}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @Slf4j
-public class Scim1PrincipalAttributeMapper {
+public class ScimV1PrincipalAttributeMapper {
 
     /**
      * Gets principal attribute value.
