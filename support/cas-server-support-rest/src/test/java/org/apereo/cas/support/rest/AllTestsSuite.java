@@ -11,7 +11,11 @@ import org.junit.runners.Suite;
  * @since 5.2.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({TicketGrantingTicketResourceTests.class, ServiceTicketResourceTests.class})
+@Suite.SuiteClasses({
+    TicketGrantingTicketResourceTests.class,
+    ServiceTicketResourceTests.class,
+    TicketStatusResourceTests.class
+})
 @Slf4j
 public class AllTestsSuite {
 }
