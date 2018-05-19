@@ -14,13 +14,13 @@ import org.apereo.cas.util.CollectionUtils;
 import java.util.Map;
 
 /**
- * This is {@link Scim2PrincipalAttributeMapper}.
+ * This is {@link ScimV2PrincipalAttributeMapper}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @Slf4j
-public class Scim2PrincipalAttributeMapper {
+public class ScimV2PrincipalAttributeMapper {
 
     /**
      * Gets principal attribute value.
@@ -56,7 +56,7 @@ public class Scim2PrincipalAttributeMapper {
         user.setNickName(attr);
         attr = getPrincipalAttributeValue(p, "displayName");
         user.setDisplayName(attr);
-        
+
         final Name name = new Name();
         attr = getPrincipalAttributeValue(p, "givenName");
         name.setGivenName(attr);
