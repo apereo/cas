@@ -1306,6 +1306,7 @@ Send text messaging using TextMagic.
 ```properties
 # cas.smsProviders.textMagic.username=
 # cas.smsProviders.textMagic.token=
+# cas.smsProviders.textMagic.url=
 ```
 
 ### Clickatell
