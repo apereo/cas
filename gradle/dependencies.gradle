@@ -654,7 +654,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        awss3                  : [
+        awss3                   : [
                 dependencies.create("com.amazonaws:aws-java-sdk-s3:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
@@ -1843,13 +1843,23 @@ ext.libraries = [
             exclude(group: "org.apache.httpcomponents", module: "httpclient")
             force = true
         },
-        textmagic               : dependencies.create("com.textmagic.sdk:textmagic-java-sdk:$textMagicVersion") {
-            exclude(group: "org.slf4j", module: "slf4j-api")
-            exclude(group: "org.apache.httpcomponents", module: "httpclient")
-            exclude(group: "org.codehaus.jackson", module: "jackson-mapper-asl")
-            exclude(group: "commons-lang", module: "commons-lang")
-            force = true
-        },
+        textmagic               : [
+                dependencies.create("com.textmagic.sdk:textmagic-java-sdk:$textMagicVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.codehaus.jackson", module: "jackson-mapper-asl")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    force = true
+                },
+                dependencies.create("org.codehaus.jackson:jackson-mapper-asl:1.9.13") {
+                    transitive = false
+                    force = true
+                },
+                dependencies.create("org.codehaus.jackson:jackson-core-asl:1.9.13") {
+                    transitive = false
+                    force = true
+                }
+        ],
         /*
         springcomponentindexer: [
                 dependencies.create("org.springframework:spring-context-indexer:$springVersion") {
