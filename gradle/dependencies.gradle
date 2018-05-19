@@ -1141,7 +1141,9 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "com.fasterxml.jackson.jaxrs", module: "jackson-jaxrs-json-provider")
-
+                    exclude(group: "org.apache.wink", module: "wink-client")
+                    exclude(group: "org.apache.wink", module: "wink-common")
+                    exclude(group: "org.apache.geronimo.specs", module: "geronimo-jaxrs_1.1_spec")
                     force = true
                 },
                 dependencies.create("com.unboundid.product.scim:scim-sdk:$unboundidScim1Version") {
@@ -1153,6 +1155,9 @@ ext.libraries = [
                     exclude(group: "javax.xml.bind", module: "jaxb-api")
                     exclude(group: "com.sun.xml.bind", module: "jaxb-impl")
                     exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "org.apache.wink", module: "wink-client")
+                    exclude(group: "org.apache.wink", module: "wink-common")
+                    exclude(group: "org.apache.geronimo.specs", module: "geronimo-jaxrs_1.1_spec")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     force = true
@@ -1177,6 +1182,9 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("com.fasterxml.jackson.core:jackson-annotations:$jacksonDatabindVersion") {
+                    force = true
+                },
+                dependencies.create("com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:$jacksonDatabindVersion") {
                     force = true
                 },
                 dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonDatabindVersion") {
