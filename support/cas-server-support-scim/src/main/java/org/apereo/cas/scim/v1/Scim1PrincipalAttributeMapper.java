@@ -4,6 +4,7 @@ import com.unboundid.scim.data.Entry;
 import com.unboundid.scim.data.Name;
 import com.unboundid.scim.data.UserResource;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
@@ -42,20 +43,22 @@ public class Scim1PrincipalAttributeMapper {
      * @param credential the credential
      */
     public void map(final UserResource user, final Principal p,
-                    final UsernamePasswordCredential credential) {
+                    final Credential credential) {
         user.setUserName(p.getId());
-        user.setPassword(credential.getPassword());
+        if (credential instanceof UsernamePasswordCredential) {
+            user.setPassword(UsernamePasswordCredential.class.cast(credential).getPassword());
+        }
         user.setActive(Boolean.TRUE);
 
         user.setNickName(getPrincipalAttributeValue(p, "nickName"));
         user.setDisplayName(getPrincipalAttributeValue(p, "displayName"));
 
         final Name name = new Name(getPrincipalAttributeValue(p, "formattedName"),
-                getPrincipalAttributeValue(p, "familyName"),
-                getPrincipalAttributeValue(p, "middleName"),
-                getPrincipalAttributeValue(p, "givenName"),
-                getPrincipalAttributeValue(p, "honorificPrefix"),
-                getPrincipalAttributeValue(p, "honorificSuffix"));
+            getPrincipalAttributeValue(p, "familyName"),
+            getPrincipalAttributeValue(p, "middleName"),
+            getPrincipalAttributeValue(p, "givenName"),
+            getPrincipalAttributeValue(p, "honorificPrefix"),
+            getPrincipalAttributeValue(p, "honorificSuffix"));
         user.setName(name);
 
         Entry entry = new Entry(getPrincipalAttributeValue(p, "mail"), "primary");
