@@ -1,13 +1,13 @@
 package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.scim.ScimProperties;
 import org.apereo.cas.api.PrincipalProvisioner;
-import org.apereo.cas.scim.v1.Scim1PrincipalAttributeMapper;
+import org.apereo.cas.scim.v1.ScimV1PrincipalAttributeMapper;
 import org.apereo.cas.scim.v1.ScimV1PrincipalProvisioner;
-import org.apereo.cas.scim.v2.Scim2PrincipalAttributeMapper;
+import org.apereo.cas.scim.v2.ScimV2PrincipalAttributeMapper;
 import org.apereo.cas.scim.v2.ScimV2PrincipalProvisioner;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
@@ -63,15 +63,15 @@ public class CasScimConfiguration implements CasWebflowExecutionPlanConfigurer {
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "scim2PrincipalAttributeMapper")
-    public Scim2PrincipalAttributeMapper scim2PrincipalAttributeMapper() {
-        return new Scim2PrincipalAttributeMapper();
+    public ScimV2PrincipalAttributeMapper scim2PrincipalAttributeMapper() {
+        return new ScimV2PrincipalAttributeMapper();
     }
 
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "scim1PrincipalAttributeMapper")
-    public Scim1PrincipalAttributeMapper scim1PrincipalAttributeMapper() {
-        return new Scim1PrincipalAttributeMapper();
+    public ScimV1PrincipalAttributeMapper scim1PrincipalAttributeMapper() {
+        return new ScimV1PrincipalAttributeMapper();
     }
 
     @RefreshScope
@@ -85,7 +85,8 @@ public class CasScimConfiguration implements CasWebflowExecutionPlanConfigurer {
 
         if (casProperties.getScim().getVersion() == 1) {
             return new ScimV1PrincipalProvisioner(scim.getTarget(),
-                scim.getOauthToken(), scim.getUsername(),
+                scim.getOauthToken(),
+                scim.getUsername(),
                 scim.getPassword(),
                 scim1PrincipalAttributeMapper());
         }

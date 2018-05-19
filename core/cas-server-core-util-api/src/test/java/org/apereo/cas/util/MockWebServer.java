@@ -28,6 +28,8 @@ public class MockWebServer implements AutoCloseable {
      */
     private final Worker worker;
 
+    private final Object lock = new Object();
+
     /**
      * Controls the worker thread.
      */
@@ -145,7 +147,7 @@ public class MockWebServer implements AutoCloseable {
         }
 
         @Override
-        public void run() {
+        public synchronized void run() {
             while (this.running) {
                 try {
                     final Socket socket = this.serverSocket.accept();

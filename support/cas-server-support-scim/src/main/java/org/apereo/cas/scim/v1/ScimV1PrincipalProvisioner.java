@@ -27,11 +27,11 @@ import java.net.URI;
 public class ScimV1PrincipalProvisioner implements PrincipalProvisioner {
 
     private final SCIMEndpoint<UserResource> endpoint;
-    private final Scim1PrincipalAttributeMapper mapper;
+    private final ScimV1PrincipalAttributeMapper mapper;
 
     public ScimV1PrincipalProvisioner(final String target, final String oauthToken,
                                       final String username, final String password,
-                                      final Scim1PrincipalAttributeMapper mapper) {
+                                      final ScimV1PrincipalAttributeMapper mapper) {
         this.mapper = mapper;
 
         final URI uri = URI.create(target);
@@ -50,7 +50,7 @@ public class ScimV1PrincipalProvisioner implements PrincipalProvisioner {
     public boolean create(final Authentication auth, final Principal p, final Credential credential) {
         try {
             final Resources<UserResource> resources = endpoint.query("userName eq \"" + p.getId() + "\"");
-            if (resources.getItemsPerPage() == 0) {
+            if (resources.getTotalResults() <= 0) {
                 LOGGER.debug("User [{}] not found", p.getId());
                 return false;
             }

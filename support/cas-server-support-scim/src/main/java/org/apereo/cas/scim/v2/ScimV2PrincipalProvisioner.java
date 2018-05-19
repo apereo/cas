@@ -5,6 +5,7 @@ import com.unboundid.scim2.common.types.UserResource;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.api.PrincipalProvisioner;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -16,7 +17,6 @@ import org.glassfish.jersey.client.oauth2.OAuth2ClientSupport;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
-import org.apereo.cas.api.PrincipalProvisioner;
 
 /**
  * This is {@link ScimV2PrincipalProvisioner}.
@@ -28,11 +28,11 @@ import org.apereo.cas.api.PrincipalProvisioner;
 public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
 
     private final ScimService scimService;
-    private final Scim2PrincipalAttributeMapper mapper;
+    private final ScimV2PrincipalAttributeMapper mapper;
 
     public ScimV2PrincipalProvisioner(final String target, final String oauthToken,
                                       final String username, final String password,
-                                      final Scim2PrincipalAttributeMapper mapper) {
+                                      final ScimV2PrincipalAttributeMapper mapper) {
         final ClientConfig config = new ClientConfig();
         final ApacheConnectorProvider connectorProvider = new ApacheConnectorProvider();
         config.connectorProvider(connectorProvider);
