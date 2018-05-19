@@ -1,6 +1,6 @@
 package org.apereo.cas.support.rest.resources;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -39,7 +39,7 @@ import java.util.Collection;
  */
 @RestController("userAuthenticationResource")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserAuthenticationResource {
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final RestHttpRequestCredentialFactory credentialFactory;
