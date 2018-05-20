@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.util.DefaultRegisteredServiceCipherExecutor;
+import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutor;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,12 +33,12 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
 
     /**
      * Instantiates a new attribute encoder with the default
-     * cipher as {@link DefaultRegisteredServiceCipherExecutor}.
+     * cipher as {@link RegisteredServicePublicKeyCipherExecutor}.
      *
      * @param servicesManager the services manager
      */
     public AbstractProtocolAttributeEncoder(final ServicesManager servicesManager) {
-        this(servicesManager, new DefaultRegisteredServiceCipherExecutor());
+        this(servicesManager, new RegisteredServicePublicKeyCipherExecutor());
     }
 
     @Override
