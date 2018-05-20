@@ -1,15 +1,16 @@
 package org.apereo.cas.adaptors.redis.services;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.springframework.data.redis.core.RedisTemplate;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import lombok.ToString;
 
 /**
  * Implementation of the service registry interface which stores the services in a redis instance.
@@ -19,7 +20,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RedisServiceRegistry extends AbstractServiceRegistry {
 
     private static final String CAS_SERVICE_PREFIX = RegisteredService.class.getSimpleName() + ':';
