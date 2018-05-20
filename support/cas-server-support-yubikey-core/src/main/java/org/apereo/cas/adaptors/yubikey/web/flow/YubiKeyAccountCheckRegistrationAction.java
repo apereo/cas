@@ -1,8 +1,10 @@
 package org.apereo.cas.adaptors.yubikey.web.flow;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -22,7 +24,10 @@ public class YubiKeyAccountCheckRegistrationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final String uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
+        @NonNull
+        final Authentication authentication = WebUtils.getAuthentication(requestContext);
+
+        final String uid = authentication.getPrincipal().getId();
         if (registry.isYubiKeyRegisteredFor(uid)) {
             return success();
         }
