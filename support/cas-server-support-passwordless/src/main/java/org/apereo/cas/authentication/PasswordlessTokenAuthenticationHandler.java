@@ -34,7 +34,7 @@ public class PasswordlessTokenAuthenticationHandler extends AbstractPreAndPostPr
         final OneTimePasswordCredential c = (OneTimePasswordCredential) credential;
         final Optional<String> token = passwordlessTokenRepository.findToken(c.getId());
 
-        if (token.isPresent() && token.get().equalsIgnoreCase(c.getId())) {
+        if (token.isPresent() && token.get().equalsIgnoreCase(c.getPassword())) {
             final Principal principal = principalFactory.createPrincipal(c.getId());
             return createHandlerResult(credential, principal, new ArrayList<>());
         }
