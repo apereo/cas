@@ -76,3 +76,33 @@ Signal the relevant application in CAS service registry to produce JWTs for serv
   }
 }
 ```
+
+### Configure Keys Per Service
+
+By default, the signing and encryption keys used to encode the JWT are global to the CAS server and can be defined via CAS settings. It is also possible
+to override the global keys on a per-service basis, allowing each application to use its own set of signing and encryption keys. To do so, configure
+the service definition in the registry to match the following:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://.*",
+  "name" : "Sample",
+  "id" : 10,
+  "properties" : {
+    "@class" : "java.util.HashMap",
+    "jwtAsServiceTicket" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "true" ] ]
+    },
+    "jwtAsServiceTicketSigningKey" : {
+       "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+       "values" : [ "java.util.HashSet", [ "..." ] ]
+    },
+    "jwtAsServiceTicketEncryptionKey" : {
+         "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+         "values" : [ "java.util.HashSet", [ "..." ] ]
+    }
+  }
+}
+```

@@ -51,8 +51,12 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      * @param secretKeySigning    the secret key signing; must be represented as a octet sequence JSON Web Key (JWK)
      * @param encryptionEnabled   the enable encryption
      */
+    public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning, final boolean encryptionEnabled, final boolean signingEnabled) {
+        this(secretKeyEncryption, secretKeySigning, CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, encryptionEnabled, signingEnabled);
+    }
+
     public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning, final boolean encryptionEnabled) {
-        this(secretKeyEncryption, secretKeySigning, CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, encryptionEnabled, true);
+        this(secretKeyEncryption, secretKeySigning, encryptionEnabled, true);
     }
 
     public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning, final String alg) {
