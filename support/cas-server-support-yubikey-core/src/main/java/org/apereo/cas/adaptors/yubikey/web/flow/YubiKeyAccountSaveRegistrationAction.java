@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.yubikey.web.flow;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class YubiKeyAccountSaveRegistrationAction extends AbstractAction {
     private final YubiKeyAccountRegistry registry;
 
@@ -28,7 +28,7 @@ public class YubiKeyAccountSaveRegistrationAction extends AbstractAction {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         final String token = request.getParameter("token");
         if (StringUtils.isNotBlank(token) && registry.registerAccountFor(uid, token)) {
-            success();
+            return success();
         }
         return error();
     }

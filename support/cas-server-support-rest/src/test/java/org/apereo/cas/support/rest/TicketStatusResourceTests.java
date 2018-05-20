@@ -35,15 +35,15 @@ public class TicketStatusResourceTests {
     private CentralAuthenticationService casMock;
 
     @InjectMocks
-    private TicketStatusResource serviceTicketResource;
+    private TicketStatusResource ticketStatusResource;
 
     private MockMvc mockMvc;
 
     @Before
     public void setUp() {
-        this.serviceTicketResource = new TicketStatusResource(casMock);
+        this.ticketStatusResource = new TicketStatusResource(casMock);
 
-        this.mockMvc = MockMvcBuilders.standaloneSetup(this.serviceTicketResource)
+        this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketStatusResource)
             .defaultRequest(get("/")
                 .contextPath("/cas")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
