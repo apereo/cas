@@ -37,6 +37,13 @@ public class TokenTicketCipherExecutor extends BaseStringCipherExecutor {
         super(secretKeyEncryption, secretKeySigning, encryptionEnabled);
     }
 
+    public TokenTicketCipherExecutor(final String secretKeyEncryption,
+                                     final String secretKeySigning,
+                                     final boolean encryptionEnabled,
+                                     final boolean signingEnabled) {
+        super(secretKeyEncryption, secretKeySigning, encryptionEnabled, signingEnabled);
+    }
+
     @Override
     protected String getEncryptionKeySetting() {
         return "cas.authn.token.crypto.encryption.key";

@@ -2,7 +2,9 @@ package org.apereo.cas.services;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
@@ -10,10 +12,10 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.springframework.context.ApplicationContext;
+
 import javax.persistence.PostLoad;
 import java.util.Locale;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.Optional;
 
 /**
  * This is {@link BaseRegisteredServiceUsernameAttributeProvider}.
@@ -65,7 +67,7 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
     protected String encryptResolvedUsername(final Principal principal, final Service service, final RegisteredService registeredService, final String username) {
         final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
         final RegisteredServiceCipherExecutor cipher = applicationContext.getBean("registeredServiceCipherExecutor", RegisteredServiceCipherExecutor.class);
-        return cipher.encode(username, registeredService);
+        return cipher.encode(username, Optional.of(registeredService));
     }
 
     /**

@@ -10,9 +10,13 @@ import net.minidev.json.JSONObject;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.token.cipher.RegisteredServiceTokenTicketCipherExecutor;
 import org.apereo.cas.util.DateTimeUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
@@ -23,6 +27,7 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link JWTTokenTicketBuilder}.
@@ -98,7 +103,20 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
 
         final String jwtJson = object.toJSONString();
         LOGGER.debug("Generated JWT [{}]", JsonValue.readJSON(jwtJson).toString(Stringify.FORMATTED));
+
+        LOGGER.debug("Locating service [{}] in service registry", serviceAudience);
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(serviceAudience);
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
+
+        LOGGER.debug("Locating service specific signing and encryption keys for [{}] in service registry", serviceAudience);
+        final RegisteredServiceCipherExecutor serviceCipher = new RegisteredServiceTokenTicketCipherExecutor();
+        if (serviceCipher.supports(registeredService)) {
+            LOGGER.debug("Encoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
+            return serviceCipher.encode(jwtJson, Optional.of(registeredService));
+        }
+
         if (defaultTokenCipherExecutor.isEnabled()) {
+            LOGGER.debug("Encoding JWT based on default global keys for [{}]", serviceAudience);
             return defaultTokenCipherExecutor.encode(jwtJson);
         }
         final String token = new PlainJWT(claimsSet).serialize();

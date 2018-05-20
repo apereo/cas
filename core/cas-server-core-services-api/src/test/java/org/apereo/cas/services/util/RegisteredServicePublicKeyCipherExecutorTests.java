@@ -10,16 +10,18 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.Optional;
+
 import static org.junit.Assert.*;
 
 /**
- * This is {@link DefaultRegisteredServiceCipherExecutorTests}.
+ * This is {@link RegisteredServicePublicKeyCipherExecutorTests}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
-public class DefaultRegisteredServiceCipherExecutorTests {
+public class RegisteredServicePublicKeyCipherExecutorTests {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -29,16 +31,16 @@ public class DefaultRegisteredServiceCipherExecutorTests {
         final AbstractRegisteredService svc = getService("classpath:keys/RSA1024Public.key");
 
         final String ticketId = RandomStringUtils.randomAlphanumeric(120);
-        final RegisteredServiceCipherExecutor e = new DefaultRegisteredServiceCipherExecutor();
-        assertNull(e.encode(ticketId, svc));
+        final RegisteredServiceCipherExecutor e = new RegisteredServicePublicKeyCipherExecutor();
+        assertNull(e.encode(ticketId, Optional.of(svc)));
     }
 
     @Test
     public void verifyCipherAbleToEncode() {
         final AbstractRegisteredService svc = getService("classpath:keys/RSA4096Public.key");
         final String ticketId = RandomStringUtils.randomAlphanumeric(120);
-        final RegisteredServiceCipherExecutor e = new DefaultRegisteredServiceCipherExecutor();
-        assertNotNull(e.encode(ticketId, svc));
+        final RegisteredServiceCipherExecutor e = new RegisteredServicePublicKeyCipherExecutor();
+        assertNotNull(e.encode(ticketId, Optional.of(svc)));
     }
 
     private AbstractRegisteredService getService(final String keyLocation) {

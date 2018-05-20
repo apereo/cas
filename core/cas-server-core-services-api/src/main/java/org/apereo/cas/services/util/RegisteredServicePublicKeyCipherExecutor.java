@@ -3,15 +3,15 @@ package org.apereo.cas.services.util;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
-
+import org.apereo.cas.util.EncodingUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.security.Security;
+import java.util.Optional;
 
 /**
  * Default cipher implementation based on public keys.
@@ -20,9 +20,7 @@ import java.security.Security;
  * @since 4.1
  */
 @Slf4j
-public class DefaultRegisteredServiceCipherExecutor implements RegisteredServiceCipherExecutor {
-
-
+public class RegisteredServicePublicKeyCipherExecutor implements RegisteredServiceCipherExecutor {
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
@@ -36,17 +34,25 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
      * @return the encoded piece of data in base64
      */
     @Override
-    public String encode(final String data, final RegisteredService service) {
+    public String encode(final String data, final Optional<RegisteredService> service) {
         try {
-            final PublicKey publicKey = createRegisteredServicePublicKey(service);
-            final byte[] result = encodeInternal(data, publicKey, service);
-            if (result != null) {
-                return EncodingUtils.encodeBase64(result);
+            if (service.isPresent()) {
+                final RegisteredService registeredService = service.get();
+                final PublicKey publicKey = createRegisteredServicePublicKey(registeredService);
+                final byte[] result = encodeInternal(data, publicKey, registeredService);
+                if (result != null) {
+                    return EncodingUtils.encodeBase64(result);
+                }
             }
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
         }
+        return null;
+    }
 
+    @Override
+    public String decode(final String data, final Optional<RegisteredService> service) {
+        LOGGER.warn("Operation is not supported by this cipher");
         return null;
     }
 

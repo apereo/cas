@@ -33,7 +33,7 @@ import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrat
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
-import org.apereo.cas.services.util.DefaultRegisteredServiceCipherExecutor;
+import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,7 +109,7 @@ public class CasCoreServicesConfiguration {
     @Bean
     @RefreshScope
     public RegisteredServiceCipherExecutor registeredServiceCipherExecutor() {
-        return new DefaultRegisteredServiceCipherExecutor();
+        return new RegisteredServicePublicKeyCipherExecutor();
     }
 
     @ConditionalOnMissingBean(name = "registeredServiceAccessStrategyEnforcer")
