@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOptionalJwtCryptographyProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.token.JWTTokenTicketBuilder;
 import org.apereo.cas.token.TokenTicketBuilder;
@@ -31,7 +32,9 @@ import org.springframework.core.Ordered;
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
 public class TokenCoreConfiguration {
-
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -76,6 +79,7 @@ public class TokenCoreConfiguration {
         return new JWTTokenTicketBuilder(casClientTicketValidator,
             casProperties.getServer().getPrefix(),
             tokenCipherExecutor(),
-            grantingTicketExpirationPolicy);
+            grantingTicketExpirationPolicy,
+            this.servicesManager);
     }
 }
