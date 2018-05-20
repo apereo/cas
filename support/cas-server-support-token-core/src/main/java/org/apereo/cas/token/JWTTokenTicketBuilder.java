@@ -10,6 +10,7 @@ import net.minidev.json.JSONObject;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DateTimeUtils;
@@ -36,8 +37,9 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
 
     private final TicketValidator ticketValidator;
     private final String casSeverPrefix;
-    private final CipherExecutor<String, String> tokenCipherExecutor;
+    private final CipherExecutor<String, String> defaultTokenCipherExecutor;
     private final ExpirationPolicy expirationPolicy;
+    private final ServicesManager servicesManager;
 
     @Override
     @SneakyThrows
@@ -96,10 +98,11 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
 
         final String jwtJson = object.toJSONString();
         LOGGER.debug("Generated JWT [{}]", JsonValue.readJSON(jwtJson).toString(Stringify.FORMATTED));
-        if (tokenCipherExecutor.isEnabled()) {
-            return tokenCipherExecutor.encode(jwtJson);
+        if (defaultTokenCipherExecutor.isEnabled()) {
+            return defaultTokenCipherExecutor.encode(jwtJson);
         }
         final String token = new PlainJWT(claimsSet).serialize();
+        LOGGER.trace("Generating plain JWT as the ticket: [{}]", token);
         return token;
     }
 
