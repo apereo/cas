@@ -72,18 +72,17 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
             authentication.getPrincipal().getId(),
             validUntilDate,
             attributes);
-
     }
 
     private String buildJwt(final String jwtId,
-                            final String audience,
+                            final String serviceAudience,
                             final Date issueDate,
                             final String subject,
                             final Date validUntilDate,
                             final Map<String, Object> attributes) {
         final JWTClaimsSet.Builder claims =
             new JWTClaimsSet.Builder()
-                .audience(audience)
+                .audience(serviceAudience)
                 .issuer(casSeverPrefix)
                 .jwtID(jwtId)
                 .issueTime(issueDate)

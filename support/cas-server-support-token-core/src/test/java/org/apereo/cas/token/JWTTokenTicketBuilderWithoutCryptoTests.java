@@ -1,6 +1,7 @@
 package org.apereo.cas.token;
 
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.JWTParser;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -32,48 +33,41 @@ import java.net.URL;
 import static org.junit.Assert.*;
 
 /**
- * This is {@link JWTTokenTicketBuilderWithoutEncryptionTests}.
+ * This is {@link JWTTokenTicketBuilderWithoutCryptoTests}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class,
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
     CasCoreTicketsConfiguration.class,
-    JWTTokenTicketBuilderWithoutEncryptionTests.TokenTicketBuilderTestConfiguration.class,
+    JWTTokenTicketBuilderWithoutCryptoTests.TokenTicketBuilderTestConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    TokenCoreConfiguration.class})
+    TokenCoreConfiguration.class
+})
 @Slf4j
-@TestPropertySource(properties = "cas.authn.token.crypto.encryptionEnabled=false")
-public class JWTTokenTicketBuilderWithoutEncryptionTests {
+@TestPropertySource(properties = {
+    "cas.authn.token.crypto.encryptionEnabled=false",
+    "cas.authn.token.crypto.signingEnabled=false"
+})
+public class JWTTokenTicketBuilderWithoutCryptoTests {
 
     @Autowired
     @Qualifier("tokenTicketBuilder")
     private TokenTicketBuilder tokenTicketBuilder;
 
-    @Autowired
-    @Qualifier("tokenCipherExecutor")
-    private CipherExecutor tokenCipherExecutor;
-
-    @Test
-    public void verifyJwtForServiceTicket() throws Exception {
-        final String jwt = tokenTicketBuilder.build("ST-123456", CoreAuthenticationTestUtils.getService());
-        assertNotNull(jwt);
-        final Object result = tokenCipherExecutor.decode(jwt);
-        final JWTClaimsSet claims = JWTClaimsSet.parse(result.toString());
-        assertEquals("casuser", claims.getSubject());
-    }
-
     @Test
     public void verifyJwtForServiceTicketEncoding() throws Exception {
         final String jwt = tokenTicketBuilder.build("ST-123456", CoreAuthenticationTestUtils.getService());
         assertNotNull(jwt);
-        final String jwtDec = EncodingUtils.decodeBase64ToString(jwt);
-        assertNotNull(jwtDec);
+        final JWTClaimsSet claims = JWTParser.parse(jwt).getJWTClaimsSet();
+        assertEquals("casuser", claims.getSubject());
     }
+
 
     @TestConfiguration
     public static class TokenTicketBuilderTestConfiguration {

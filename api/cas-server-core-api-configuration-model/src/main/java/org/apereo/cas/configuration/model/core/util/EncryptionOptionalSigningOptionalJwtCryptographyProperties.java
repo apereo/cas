@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * This is {@link EncryptionOptionalSigningJwtCryptographyProperties}.
+ * This is {@link EncryptionOptionalSigningOptionalJwtCryptographyProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -12,7 +12,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class EncryptionOptionalSigningJwtCryptographyProperties extends EncryptionJwtSigningJwtCryptographyProperties {
+public class EncryptionOptionalSigningOptionalJwtCryptographyProperties extends EncryptionJwtSigningJwtCryptographyProperties {
 
     private static final long serialVersionUID = 7185404480671258520L;
 
@@ -20,4 +20,9 @@ public class EncryptionOptionalSigningJwtCryptographyProperties extends Encrypti
      * Whether crypto encryption operations are enabled.
      */
     private boolean encryptionEnabled = true;
+
+    /**
+     * Whether crypto signing operations are enabled.
+     */
+    private boolean signingEnabled = true;
 }
