@@ -14,7 +14,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
     TicketGrantingTicketResourceTests.class,
     ServiceTicketResourceTests.class,
-    TicketStatusResourceTests.class
+    TicketStatusResourceTests.class,
+    UserAuthenticationResourceTests.class
 })
 @Slf4j
 public class AllTestsSuite {
