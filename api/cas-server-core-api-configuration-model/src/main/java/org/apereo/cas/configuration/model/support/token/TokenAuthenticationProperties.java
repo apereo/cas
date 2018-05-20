@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.token;
 
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
-import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOptionalJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serializable;
@@ -32,7 +32,7 @@ public class TokenAuthenticationProperties implements Serializable {
      * Crypto settings.
      */
     @NestedConfigurationProperty
-    private EncryptionOptionalSigningJwtCryptographyProperties crypto = new EncryptionOptionalSigningJwtCryptographyProperties();
+    private EncryptionOptionalSigningOptionalJwtCryptographyProperties crypto = new EncryptionOptionalSigningOptionalJwtCryptographyProperties();
 
     /**
      * Name of the authentication handler.
