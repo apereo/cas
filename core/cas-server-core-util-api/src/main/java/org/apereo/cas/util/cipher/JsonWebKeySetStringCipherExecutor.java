@@ -1,18 +1,21 @@
 package org.apereo.cas.util.cipher;
 
 import com.google.common.base.Predicates;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.util.io.FileWatcherService;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.HttpsJwks;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.RsaJsonWebKey;
-import org.springframework.core.io.Resource;
 
+import javax.annotation.PreDestroy;
+import java.io.File;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -26,30 +29,58 @@ import java.util.function.Predicate;
  * @since 5.3.0
  */
 @Slf4j
-public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor {
-    private final JsonWebKeySet webKeySet;
+@Setter
+public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor implements AutoCloseable {
+    private final FileWatcherService keystorePatchWatcherService;
     private final Optional<String> keyIdToUse;
     private final Optional<HttpsJwks> httpsJkws;
 
-    public JsonWebKeySetStringCipherExecutor(final Resource jwksKeystore) {
+    private JsonWebKeySet webKeySet;
+
+    public JsonWebKeySetStringCipherExecutor(final File jwksKeystore) {
         this(jwksKeystore, Optional.empty());
     }
 
-    public JsonWebKeySetStringCipherExecutor(final Resource jwksKeystore, final String httpsJwksEndpointUrl) {
+    public JsonWebKeySetStringCipherExecutor(final File jwksKeystore, final String httpsJwksEndpointUrl) {
         this(jwksKeystore, Optional.empty(), httpsJwksEndpointUrl);
     }
 
-    public JsonWebKeySetStringCipherExecutor(final Resource jwksKeystore, final Optional<String> keyId) {
+    public JsonWebKeySetStringCipherExecutor(final File jwksKeystore, final Optional<String> keyId) {
         this(jwksKeystore, keyId, null);
     }
 
     @SneakyThrows
-    public JsonWebKeySetStringCipherExecutor(final Resource jwksKeystore, final Optional<String> keyId,
+    public JsonWebKeySetStringCipherExecutor(final File jwksKeystore, final Optional<String> keyId,
                                              final String httpsJwksEndpointUrl) {
-        final String json = IOUtils.toString(jwksKeystore.getInputStream(), StandardCharsets.UTF_8);
+
+        final String json = FileUtils.readFileToString(jwksKeystore, StandardCharsets.UTF_8);
+        keystorePatchWatcherService = new FileWatcherService(jwksKeystore, file -> {
+            try {
+                final String reloadedJson = FileUtils.readFileToString(jwksKeystore, StandardCharsets.UTF_8);
+                this.webKeySet = new JsonWebKeySet(reloadedJson);
+            } catch (final Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        });
+
         this.webKeySet = new JsonWebKeySet(json);
         this.keyIdToUse = keyId;
         this.httpsJkws = StringUtils.isNotBlank(httpsJwksEndpointUrl) ? Optional.of(new HttpsJwks(httpsJwksEndpointUrl)) : Optional.empty();
+
+        this.keystorePatchWatcherService.start(getClass().getSimpleName());
+        LOGGER.debug("Started JWKS watcher thread");
+
+    }
+
+    /**
+     * Close.
+     */
+    @PreDestroy
+    @Override
+    public void close() {
+        if (this.keystorePatchWatcherService != null) {
+            this.keystorePatchWatcherService.close();
+        }
     }
 
     @Override
