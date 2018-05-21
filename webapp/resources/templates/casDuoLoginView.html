@@ -19,12 +19,19 @@
 
         <div class="box fl-panel" id="login">
             <iframe id="duo_iframe"
-                    width="620"
-                    height="330"
                     frameborder="0"
                     th:attr="data-host=${apiHost},data-sig-request=${sigRequest}"
                     data-post-argument="signedDuoResponse">
             </iframe>
+            <style>
+                #duo_iframe {
+                    width: 100%;
+                    min-width: 304px;
+                    max-width: 620px;
+                    height: 330px;
+                    border: none;
+                }
+            </style>
         </div>
     </form>
 </div>

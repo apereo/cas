@@ -137,7 +137,7 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
         introspect.setSub(subject);
         introspect.setUniqueSecurityName(subject);
         introspect.setExp(ticket.getExpirationPolicy().getTimeToLive());
-        introspect.setIat(ticket.getCreationTime().toInstant().toEpochMilli());
+        introspect.setIat(ticket.getCreationTime().toInstant().getEpochSecond());
 
         final Object methods = authentication.getAttributes().get(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);
         final String realmNames = CollectionUtils.toCollection(methods)
