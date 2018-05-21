@@ -47,7 +47,6 @@ env:
   - MATRIX_JOB_TYPE=DEPUPDATE
   - MATRIX_JOB_TYPE=CFGMETADATA
   - MATRIX_JOB_TYPE=DEPANALYZE
-  - MATRIX_JOB_TYPE=BUILDSCAN
 before_install:
 - chmod -R 777 ./ci/run-docker.sh
 - ./ci/run-docker.sh
