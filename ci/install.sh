@@ -35,8 +35,6 @@ elif [ "$MATRIX_JOB_TYPE" == "CFGMETADATA" ]; then
      gradleBuild="$gradleBuild :api:cas-server-core-api-configuration-model:build -x check -x test -x javadoc \
      -DskipGradleLint=true -DskipSass=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
-elif [ "$MATRIX_JOB_TYPE" == "BUILDSCAN" ]; then
-     gradleBuild="$gradleBuild build --scan -DskipNestedConfigMetadataGen=true "
 elif [ "$MATRIX_JOB_TYPE" == "STYLE" ]; then
      gradleBuild="$gradleBuild check -x test -x javadoc -DenableIncremental=true \
      -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \

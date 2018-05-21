@@ -11,14 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ProtocolTicketCipherExecutor extends BaseStringCipherExecutor {
 
-    /**
-     * Instantiates a new Protocol ticket cipher executor.
-     *
-     * @param secretKeyEncryption                  the secret key encryption
-     * @param secretKeySigning                     the secret key signing
-     * @param contentEncryptionAlgorithmIdentifier the content encryption algorithm identifier
-     */
-    public ProtocolTicketCipherExecutor(final String secretKeyEncryption, final String secretKeySigning, 
+    public ProtocolTicketCipherExecutor() {
+        super(null, null, DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
+    }
+
+    public ProtocolTicketCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
                                         final String contentEncryptionAlgorithmIdentifier) {
         super(secretKeyEncryption, secretKeySigning, contentEncryptionAlgorithmIdentifier);
     }
