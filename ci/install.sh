@@ -46,6 +46,8 @@ elif [ "$MATRIX_JOB_TYPE" == "JAVADOC" ]; then
 elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     if [ "$MATRIX_SERVER" == "NONE" ]; then
         gradleBuild="$gradleBuild test coveralls "
+    elif [ "$MATRIX_SERVER" == "SERVICE" ]; then
+        serviceRun=true
     elif [ "$MATRIX_SERVER" == "CASSANDRA" ]; then
         gradleBuild="$gradleBuild testCassandra coveralls "
     elif [ "$MATRIX_SERVER" == "COUCHBASE" ]; then
@@ -88,7 +90,9 @@ if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "
 fi
 
-if [ -z "$gradleBuild" ]; then
+if [ $serviceRun ]; then
+    ci/run-service-tests.sh
+elif [ -z "$gradleBuild" ]; then
     echo "Gradle build will be ignored since no commands are specified to run."
 else
     tasks="$gradle $gradleBuildOptions $gradleBuild"
