@@ -945,6 +945,7 @@ Retrieve attributes from a JDBC source. Database settings for this feature are a
 # cas.authn.attributeRepository.jdbc[0].columnMappings.columnAttrName3=columnAttrValue3
 
 # cas.authn.attributeRepository.jdbc[0].sql=SELECT * FROM table WHERE {0}
+# cas.authn.attributeRepository.jdbc[0].username=uid
 ```
 
 ### Grouper
@@ -1306,6 +1307,7 @@ Send text messaging using TextMagic.
 ```properties
 # cas.smsProviders.textMagic.username=
 # cas.smsProviders.textMagic.token=
+# cas.smsProviders.textMagic.url=
 ```
 
 ### Clickatell
@@ -1743,6 +1745,7 @@ or [this guide](../protocol/REST-Protocol.html) for more info.
 
 ```properties
 # cas.authn.token.crypto.encryptionEnabled=true
+# cas.authn.token.crypto.signingEnabled=true
 ```
 
 The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.token`.
@@ -3553,18 +3556,6 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 ```properties
 # cas.ticket.tgt.hardTimeout.timeToKillInSeconds=28800
 ```
-
-### Attributes
-
-Attribute configuration and customizations that are processed and accepted by the management web application are defined via the following settings:
-
-```properties
-# cas.authn.attributeRepository.stub.attributes.uid=uid
-# cas.authn.attributeRepository.stub.attributes.givenName=givenName
-# cas.authn.attributeRepository.stub.attributes.eppn=eppn
-```
-
-Use LDAP to enforce access into the management web application either by group or attribute.
 
 ## Google reCAPTCHA Integration
 
