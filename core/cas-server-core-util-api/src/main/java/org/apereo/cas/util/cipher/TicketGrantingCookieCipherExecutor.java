@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class TicketGrantingCookieCipherExecutor extends BaseStringCipherExecutor {
-    
+
     public TicketGrantingCookieCipherExecutor(final String secretKeyEncryption,
                                               final String secretKeySigning,
                                               final String alg) {
@@ -21,6 +21,10 @@ public class TicketGrantingCookieCipherExecutor extends BaseStringCipherExecutor
     public TicketGrantingCookieCipherExecutor(final String secretKeyEncryption,
                                               final String secretKeySigning) {
         super(secretKeyEncryption, secretKeySigning);
+    }
+
+    public TicketGrantingCookieCipherExecutor() {
+        super(null, null);
     }
 
     @Override

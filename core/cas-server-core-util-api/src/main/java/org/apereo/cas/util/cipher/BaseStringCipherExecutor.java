@@ -1,6 +1,7 @@
 package org.apereo.cas.util.cipher;
 
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
@@ -25,10 +26,9 @@ import java.security.Key;
  */
 @Slf4j
 @NoArgsConstructor
+@Setter
 public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Serializable, String> {
-
     private static final int ENCRYPTION_KEY_SIZE = 256;
-
     private static final int SIGNING_KEY_SIZE = 512;
 
     private String encryptionAlgorithm = KeyManagementAlgorithmIdentifiers.DIRECT;
@@ -86,7 +86,8 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      * @param encryptionEnabled                    the encryption enabled
      * @param signingEnabled                       the signing enabled
      */
-    public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning, final String contentEncryptionAlgorithmIdentifier,
+    public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
+                                    final String contentEncryptionAlgorithmIdentifier,
                                     final boolean encryptionEnabled, final boolean signingEnabled) {
         this.encryptionEnabled = encryptionEnabled || StringUtils.isNotBlank(secretKeyEncryption);
         this.signingEnabled = signingEnabled || StringUtils.isNotBlank(secretKeySigning);
@@ -136,8 +137,8 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
                 factory.setAlgorithm(RsaKeyUtil.RSA);
                 factory.setResource(resource);
                 factory.setSingleton(false);
-                this.secretKeyEncryptionKey = factory.getObject();
-                this.encryptionAlgorithm = KeyManagementAlgorithmIdentifiers.RSA_OAEP_256;
+                setSecretKeyEncryptionKey(factory.getObject());
+                setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -153,9 +154,13 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
     @Override
     public String encode(final Serializable value, final Object[] parameters) {
-        final String encoded = this.encryptionEnabled
-            ? EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value, this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier)
-            : value.toString();
+        final String encoded;
+
+        if (this.encryptionEnabled && this.secretKeyEncryptionKey != null) {
+            encoded = EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value, this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier);
+        } else {
+            encoded = value.toString();
+        }
 
         if (this.signingEnabled) {
             final byte[] signed = sign(encoded.getBytes(StandardCharsets.UTF_8));
@@ -171,10 +176,13 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
         if (encoded != null && encoded.length > 0) {
             final String encodedObj = new String(encoded, StandardCharsets.UTF_8);
-            return this.encryptionEnabled ? EncodingUtils.decryptJwtValue(this.secretKeyEncryptionKey, encodedObj) : encodedObj;
+
+            if (this.encryptionEnabled && this.secretKeyEncryptionKey != null) {
+                return EncodingUtils.decryptJwtValue(this.secretKeyEncryptionKey, encodedObj);
+            }
+            return encodedObj;
         }
         return null;
-
     }
 
     /**
