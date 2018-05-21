@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
@@ -34,7 +33,6 @@ public class WsFederationResponseValidator {
 
     private final WsFederationHelper wsFederationHelper;
     private final Collection<WsFederationConfiguration> configurations;
-    private final CentralAuthenticationService centralAuthenticationService;
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final WsFederationCookieManager wsFederationCookieManager;
 
