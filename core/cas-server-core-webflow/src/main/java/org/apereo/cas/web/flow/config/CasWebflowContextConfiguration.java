@@ -202,7 +202,7 @@ public class CasWebflowContextConfiguration {
     @Bean
     public FlowExecutor logoutFlowExecutor() {
         final WebflowExecutorFactory factory = new WebflowExecutorFactory(casProperties.getWebflow(),
-            logoutFlowRegistry(), this.webflowCipherExecutor, new FlowExecutionListener[]{casFlowExecutionListener()});
+            logoutFlowRegistry(), this.webflowCipherExecutor, new FlowExecutionListener[0]);
         return factory.build();
     }
 
@@ -217,7 +217,7 @@ public class CasWebflowContextConfiguration {
     public FlowExecutor loginFlowExecutor() {
         final WebflowExecutorFactory factory = new WebflowExecutorFactory(casProperties.getWebflow(),
             loginFlowRegistry(), this.webflowCipherExecutor,
-            new FlowExecutionListener[]{casFlowExecutionListener()});
+            new FlowExecutionListener[0]);
 
         return factory.build();
     }

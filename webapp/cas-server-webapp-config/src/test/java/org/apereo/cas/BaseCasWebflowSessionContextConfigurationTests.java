@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -38,6 +39,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logging.config.CasLoggingConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
@@ -71,6 +73,8 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -141,7 +145,27 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
         getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());
     }
 
-    private RequestContext getMockRequestContext() {
+    @Test
+    public void verifyCasPropertiesAreAvailableInView() {
+        final MockRequestContext ctx = getMockRequestContext();
+        final LocalAttributeMap map = new LocalAttributeMap<>();
+        getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());
+        assertResponseWrittenEquals("classpath:expected/end.html", ctx);
+    }
+
+    protected void assertResponseWrittenEquals(String response, MockRequestContext context) {
+        final MockHttpServletResponse nativeResponse = (MockHttpServletResponse) context.getExternalContext().getNativeResponse();
+        try {
+            assertEquals(
+                    IOUtils.toString(new InputStreamReader(ResourceUtils.getResourceFrom(response).getInputStream(), StandardCharsets.UTF_8)),
+                    nativeResponse.getContentAsString()
+            );
+        } catch (java.io.IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private MockRequestContext getMockRequestContext() {
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
@@ -170,6 +194,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
                 @Override
                 protected Event doExecute(final RequestContext requestContext) {
                     final MutableAttributeMap<Object> flowScope = requestContext.getFlowScope();
+                    flowScope.put("test", TEST);
                     flowScope.put("test0", Collections.singleton(TEST));
                     flowScope.put("test1", Collections.singletonList(TEST));
                     flowScope.put("test2", Collections.singletonMap(TEST, TEST));
