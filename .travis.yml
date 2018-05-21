@@ -42,17 +42,7 @@ env:
   matrix:
   - MATRIX_JOB_TYPE=BUILD
   - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=NONE
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=CASSANDRA
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=COUCHBASE
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=COUCHDB
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=DYNAMODB
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=FILESYSTEM
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=IGNITE
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=INFLUXDB
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=LDAP
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=MAIL
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=MONGODB
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=REDIS
+  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=SERVICE
   - MATRIX_JOB_TYPE=STYLE
   - MATRIX_JOB_TYPE=JAVADOC
   - MATRIX_JOB_TYPE=SNAPSHOT
@@ -62,24 +52,12 @@ env:
 before_install:
 - chmod -R 777 ./ci/run-docker.sh
 - ./ci/run-docker.sh
-- chmod -R 777 ./ci/run-ldap-server.sh
-- ./ci/run-ldap-server.sh
-- chmod -R 777 ./ci/run-mail-server.sh
-- ./ci/run-mail-server.sh
-- chmod -R 777 ./ci/run-influxdb-server.sh
-- ./ci/run-influxdb-server.sh
-- chmod -R 777 ./ci/run-dynamodb-server.sh
-- ./ci/run-dynamodb-server.sh
-- chmod -R 777 ./ci/run-couchbase-server.sh
-- ./ci/run-couchbase-server.sh
-- chmod -R 777 ./ci/run-couchdb-server.sh
-- ./ci/run-couchdb-server.sh
-- chmod -R 777 ./ci/run-cassandra-server.sh
-- ./ci/run-cassandra-server.sh
+- chmod -R 777 ./ci/run-service-tests.sh
 - chmod -R 777 ./ci/init-travis-build.sh
 - ./ci/init-travis-build.sh
 - chmod -R 777 ./ci/push-docs-ghpages.sh
 - ./ci/push-docs-ghpages.sh
+- chmod -R 777 ./ci/
 install:
 - chmod -R 777 ./ci/install.sh
 - ./ci/install.sh
