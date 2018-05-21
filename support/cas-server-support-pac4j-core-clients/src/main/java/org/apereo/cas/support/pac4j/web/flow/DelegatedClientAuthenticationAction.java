@@ -163,9 +163,12 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 try {
                     authenticationResult = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
                     tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
-                } catch (AuthenticationException | AbstractTicketException e) {
-                    LOGGER.warn("Could not establish delegated authentication session [{}]. Routing to [{}]", e.getMessage(), CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
-                    return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, new LocalAttributeMap<>(CasWebflowConstants.TRANSITION_ID_ERROR, e));
+                } catch (final AuthenticationException | AbstractTicketException e) {
+                    LOGGER.warn("Could not establish delegated authentication session [{}]. Routing to [{}]",
+                        e.getMessage(), CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
+                    return new EventFactorySupport().event(this,
+                        CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
+                        new LocalAttributeMap<>(CasWebflowConstants.TRANSITION_ID_ERROR, e));
                 }
                 WebUtils.putTicketGrantingTicketInScopes(context, tgt);
                 WebUtils.putAuthentication(authenticationResult.getAuthentication(), context);
