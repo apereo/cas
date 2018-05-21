@@ -243,7 +243,7 @@ public abstract class AbstractOAuth20Tests {
     protected RefreshToken addRefreshToken(final Principal principal, final RegisteredService registeredService) {
         final Authentication authentication = getAuthentication(principal);
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
-        final Service service = factory.createService(registeredService.getServiceId());
+        final Service service = factory.createService("" + registeredService.getId());
         final RefreshToken refreshToken = oAuthRefreshTokenFactory.create(service, authentication, new MockTicketGrantingTicket("casuser"));
         this.ticketRegistry.addTicket(refreshToken);
         return refreshToken;
