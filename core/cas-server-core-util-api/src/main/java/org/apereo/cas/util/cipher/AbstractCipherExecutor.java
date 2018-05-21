@@ -32,7 +32,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
-    
+
     /**
      * Sign the array by first turning it into a base64 encoded string.
      *
@@ -40,6 +40,9 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * @return the byte [ ]
      */
     protected byte[] sign(final byte[] value) {
+        if ("RSA".equalsIgnoreCase(this.signingKey.getAlgorithm())) {
+            return EncodingUtils.signJwsRSASha512(this.signingKey, value);
+        }
         return EncodingUtils.signJwsHMACSha512(this.signingKey, value);
     }
 
