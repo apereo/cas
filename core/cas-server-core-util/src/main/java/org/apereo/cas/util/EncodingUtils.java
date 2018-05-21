@@ -38,13 +38,13 @@ public final class EncodingUtils {
      */
     public static final String DEFAULT_CONTENT_ENCRYPTION_ALGORITHM = ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256;
 
-    private static final Base64 BASE64_CHUNKED_ENCODER = new Base64(76, new byte[]{10});
-    private static final Base64 BASE64_UNCHUNKED_ENCODER = new Base64(0, new byte[]{10});
-
     /**
      * JSON web key parameter that identifies the key..
      */
     public static final String JSON_WEB_KEY = "k";
+
+    private static final Base64 BASE64_CHUNKED_ENCODER = new Base64(76, new byte[]{10});
+    private static final Base64 BASE64_UNCHUNKED_ENCODER = new Base64(0, new byte[]{10});
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EncodingUtils.class);
 
