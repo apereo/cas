@@ -178,7 +178,9 @@
         <module name="SuperFinalize">
             <property name="severity" value="error"/>
         </module>
-        <module name="MethodLength"/>
+        <module name="MethodLength">
+            <property name="max" value="180"/>
+        </module>
         <module name="ParameterNumber">
             <property name="max" value="15"/>
             <property name="severity" value="error"/>
