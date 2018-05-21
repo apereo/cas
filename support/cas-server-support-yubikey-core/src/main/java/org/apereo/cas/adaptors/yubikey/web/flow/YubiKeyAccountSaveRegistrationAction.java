@@ -28,7 +28,7 @@ public class YubiKeyAccountSaveRegistrationAction extends AbstractAction {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         final String token = request.getParameter("token");
         if (StringUtils.isNotBlank(token) && registry.registerAccountFor(uid, token)) {
-            success();
+            return success();
         }
         return error();
     }
