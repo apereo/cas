@@ -15,23 +15,18 @@ import java.security.cert.X509Certificate;
 /**
  * This class is adapted from the Tomcat SSLValve class and uses its parsing
  * logic.
- * <p>
  * Since this version is not a Valve running on every request, it has more debug
  * logging. It only handles the main cert that CAS uses and doesn't process all
  * the headers the SSLValve does.
- * <p>
  * When using mod_proxy_http, the client SSL information is not included in the
  * protocol (unlike mod_jk and mod_proxy_ajp). To make the client SSL
  * information available to Tomcat, some additional configuration is required.
  * In httpd, mod_headers is used to add the SSL information as HTTP headers. In
  * Tomcat, this valve is used to read the information from the HTTP headers and
  * insert it into the request.
- * <p>
  *
  * <b>Note: Ensure that the headers are always set by httpd for all requests to
  * prevent a client spoofing SSL information by sending fake headers. </b>
- * <p>
- * <p>
  * In httpd.conf add the following:
  *
  * <pre>
@@ -76,14 +71,11 @@ public class RequestHeaderX509CertificateExtractor implements X509CertificateExt
 
     /**
      * Extract base64 encoded certificate from header and convert to {@link X509Certificate}.
-     * <p>
      * Known behaviors of reverse proxies that are handled by the processing below:
      * - mod_header converts the '\n' into ' ' - nginx converts the '\n' into
      * multiple ' '
-     * <p>
      * The code assumes that the trimmed header value starts with '-----BEGIN
      * CERTIFICATE-----' and ends with '-----END CERTIFICATE-----'.
-     * <p>
      * Note: For Java 7, the the BEGIN and END markers must be on separate lines as
      * must each of the original content lines. The CertificateFactory is tolerant
      * of any additional whitespace such as leading and trailing spaces and new
