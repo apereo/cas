@@ -51,7 +51,7 @@ public class CasAddonsRegisteredServicesJsonSerializer extends DefaultRegistered
             LOGGER.warn("CAS has successfully loaded [{}] service(s) which contain definitions designed in a legacy syntax provided by cas-addons. "
                     + "While this behavior is strictly kept for backward-compatibility reasons, it is STRONGLY recommended that "
                     + "you convert these definitions into the official syntax to take full advantage of the service capabilities. "
-                    + "Future CAS version may decide to entirely ignore the legacy syntax altogether.", 
+                    + "Future CAS versions may decide to entirely ignore the legacy syntax altogether.",
                     results.size());
             results.forEach(Unchecked.consumer(s -> {
                 final File fileName = new File(FileUtils.getTempDirectory(), s.getName() + "-" + s.getId() + ".json");

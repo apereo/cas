@@ -96,10 +96,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         final Connection c = this.dataSource.getConnection();
         final Statement s = c.createStatement();
         c.setAutoCommit(true);
-
-        for (int i = 0; i < 5; i++) {
-            s.execute("delete from users;");
-        }
+        s.execute("delete from users;");
         c.close();
     }
 
@@ -120,8 +117,6 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
             buildSql("makesNoSenseInSql"), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
 
         this.thrown.expect(PreventedException.class);
-
-
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
@@ -131,8 +126,6 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
             buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
 
         this.thrown.expect(FailedLoginException.class);
-
-
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "password0"));
     }
 
@@ -154,8 +147,6 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
             buildSql(), PASSWORD_FIELD_NAME, "salt", EXPIRED_FIELD_NAME, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
 
         this.thrown.expect(AccountPasswordMustChangeException.class);
-
-
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user20"));
         throw new AssertionError("Shouldn't get here");
     }
@@ -166,8 +157,6 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
             buildSql(), PASSWORD_FIELD_NAME, "salt", null, DISABLED_FIELD_NAME, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
 
         this.thrown.expect(AccountDisabledException.class);
-
-
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user21"));
         throw new AssertionError("Shouldn't get here");
     }
