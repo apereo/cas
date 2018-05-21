@@ -1,6 +1,6 @@
 package org.apereo.cas.support.rest.resources;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.security.auth.login.FailedLoginException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 
@@ -39,7 +40,7 @@ import java.util.Collection;
  */
 @RestController("userAuthenticationResource")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserAuthenticationResource {
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final RestHttpRequestCredentialFactory credentialFactory;
@@ -64,6 +65,9 @@ public class UserAuthenticationResource {
             final Service service = this.serviceFactory.createService(request);
             final AuthenticationResult authenticationResult =
                 authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+            if (authenticationResult == null) {
+                throw new FailedLoginException("Authentication failed");
+            }
             return this.userAuthenticationResourceEntityResponseFactory.build(authenticationResult, request);
         } catch (final AuthenticationException e) {
             return RestResourceUtils.createResponseEntityForAuthnFailure(e);

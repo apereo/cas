@@ -10,8 +10,13 @@ import net.minidev.json.JSONObject;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.RegisteredServiceCipherExecutor;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.token.cipher.RegisteredServiceTokenTicketCipherExecutor;
 import org.apereo.cas.util.DateTimeUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
@@ -22,6 +27,7 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link JWTTokenTicketBuilder}.
@@ -36,8 +42,9 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
 
     private final TicketValidator ticketValidator;
     private final String casSeverPrefix;
-    private final CipherExecutor<String, String> tokenCipherExecutor;
+    private final CipherExecutor<String, String> defaultTokenCipherExecutor;
     private final ExpirationPolicy expirationPolicy;
+    private final ServicesManager servicesManager;
 
     @Override
     @SneakyThrows
@@ -72,18 +79,17 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
             authentication.getPrincipal().getId(),
             validUntilDate,
             attributes);
-
     }
 
     private String buildJwt(final String jwtId,
-                            final String audience,
+                            final String serviceAudience,
                             final Date issueDate,
                             final String subject,
                             final Date validUntilDate,
                             final Map<String, Object> attributes) {
         final JWTClaimsSet.Builder claims =
             new JWTClaimsSet.Builder()
-                .audience(audience)
+                .audience(serviceAudience)
                 .issuer(casSeverPrefix)
                 .jwtID(jwtId)
                 .issueTime(issueDate)
@@ -97,10 +103,24 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
 
         final String jwtJson = object.toJSONString();
         LOGGER.debug("Generated JWT [{}]", JsonValue.readJSON(jwtJson).toString(Stringify.FORMATTED));
-        if (tokenCipherExecutor.isEnabled()) {
-            return tokenCipherExecutor.encode(jwtJson);
+
+        LOGGER.debug("Locating service [{}] in service registry", serviceAudience);
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(serviceAudience);
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
+
+        LOGGER.debug("Locating service specific signing and encryption keys for [{}] in service registry", serviceAudience);
+        final RegisteredServiceCipherExecutor serviceCipher = new RegisteredServiceTokenTicketCipherExecutor();
+        if (serviceCipher.supports(registeredService)) {
+            LOGGER.debug("Encoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
+            return serviceCipher.encode(jwtJson, Optional.of(registeredService));
+        }
+
+        if (defaultTokenCipherExecutor.isEnabled()) {
+            LOGGER.debug("Encoding JWT based on default global keys for [{}]", serviceAudience);
+            return defaultTokenCipherExecutor.encode(jwtJson);
         }
         final String token = new PlainJWT(claimsSet).serialize();
+        LOGGER.trace("Generating plain JWT as the ticket: [{}]", token);
         return token;
     }
 

@@ -123,7 +123,7 @@ public class WsFederationAuthenticationWebflowConfiguration implements CasWebflo
     @ConditionalOnMissingBean(name = "wsFederationResponseValidator")
     public WsFederationResponseValidator wsFederationResponseValidator() {
         return new WsFederationResponseValidator(wsFederationHelper, wsFederationConfigurations,
-            centralAuthenticationService, authenticationSystemSupport, wsFederationCookieManager);
+            authenticationSystemSupport, wsFederationCookieManager);
     }
 
     @Override

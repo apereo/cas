@@ -6,30 +6,32 @@ import com.unboundid.scim.sdk.OAuthToken;
 import com.unboundid.scim.sdk.Resources;
 import com.unboundid.scim.sdk.SCIMEndpoint;
 import com.unboundid.scim.sdk.SCIMService;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.scim.api.ScimProvisioner;
+import org.apereo.cas.api.PrincipalProvisioner;
 
 import javax.ws.rs.core.MediaType;
 import java.net.URI;
 
 /**
- * This is {@link Scim1Provisioner}.
+ * This is {@link ScimV1PrincipalProvisioner}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @Slf4j
-public class Scim1Provisioner implements ScimProvisioner {
+public class ScimV1PrincipalProvisioner implements PrincipalProvisioner {
 
     private final SCIMEndpoint<UserResource> endpoint;
-    private final Scim1PrincipalAttributeMapper mapper;
+    private final ScimV1PrincipalAttributeMapper mapper;
 
-    public Scim1Provisioner(final String target, final String oauthToken,
-                            final String username, final String password,
-                            final Scim1PrincipalAttributeMapper mapper) {
+    public ScimV1PrincipalProvisioner(final String target, final String oauthToken,
+                                      final String username, final String password,
+                                      final ScimV1PrincipalAttributeMapper mapper) {
         this.mapper = mapper;
 
         final URI uri = URI.create(target);
@@ -45,10 +47,10 @@ public class Scim1Provisioner implements ScimProvisioner {
     }
 
     @Override
-    public boolean create(final Principal p, final UsernamePasswordCredential credential) {
+    public boolean create(final Authentication auth, final Principal p, final Credential credential) {
         try {
             final Resources<UserResource> resources = endpoint.query("userName eq \"" + p.getId() + "\"");
-            if (resources.getItemsPerPage() == 0) {
+            if (resources.getTotalResults() <= 0) {
                 LOGGER.debug("User [{}] not found", p.getId());
                 return false;
             }
@@ -64,13 +66,30 @@ public class Scim1Provisioner implements ScimProvisioner {
         return false;
     }
 
-    private boolean createUserResource(final Principal p, final UsernamePasswordCredential credential) throws Exception {
+    /**
+     * Create user resource boolean.
+     *
+     * @param p          the p
+     * @param credential the credential
+     * @return the boolean
+     */
+    @SneakyThrows
+    protected boolean createUserResource(final Principal p, final Credential credential) {
         final UserResource user = new UserResource(CoreSchema.USER_DESCRIPTOR);
         this.mapper.map(user, p, credential);
         return endpoint.create(user) != null;
     }
 
-    private boolean updateUserResource(final UserResource user, final Principal p, final UsernamePasswordCredential credential) throws Exception {
+    /**
+     * Update user resource boolean.
+     *
+     * @param user       the user
+     * @param p          the p
+     * @param credential the credential
+     * @return the boolean
+     */
+    @SneakyThrows
+    protected boolean updateUserResource(final UserResource user, final Principal p, final Credential credential) {
         this.mapper.map(user, p, credential);
         return endpoint.update(user) != null;
     }

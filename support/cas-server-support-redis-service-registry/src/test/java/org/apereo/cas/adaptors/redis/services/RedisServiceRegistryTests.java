@@ -76,7 +76,7 @@ public class RedisServiceRegistryTests {
         r.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
         policy.setConsentPolicy(new DefaultRegisteredServiceConsentPolicy(CollectionUtils.wrapSet("test"),
-                CollectionUtils.wrapSet("test")));
+            CollectionUtils.wrapSet("test")));
         r.setAttributeReleasePolicy(policy);
         final RegisteredService r2 = this.dao.save(r);
         assertEquals(r2, r);
@@ -98,6 +98,6 @@ public class RedisServiceRegistryTests {
             this.dao.delete(r2);
             assertNull(this.dao.findServiceById(r2.getId()));
         });
+        assertEquals(0, this.dao.size());
     }
-
 }
