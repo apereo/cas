@@ -28,6 +28,7 @@ import org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessag
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.security.impl.MetadataCredentialResolver;
@@ -224,7 +225,8 @@ public class SamlIdPObjectSigner {
                 + "\nSignature algorithm: [{}]"
                 + "\nSignature canonicalization algorithm: [{}]"
                 + "\nSignature reference digest methods: [{}]",
-            params.getSignatureAlgorithm(), params.getSignatureCanonicalizationAlgorithm(),
+            params.getSignatureAlgorithm(),
+            params.getSignatureCanonicalizationAlgorithm(),
             params.getSignatureReferenceDigestMethod());
 
         return params;
@@ -275,8 +277,8 @@ public class SamlIdPObjectSigner {
         final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
 
         final MetadataCredentialResolver kekCredentialResolver = new MetadataCredentialResolver();
-        kekCredentialResolver.setRoleDescriptorResolver(SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver,
-            idp.getMetadata().isRequireValidMetadata()));
+        final RoleDescriptorResolver roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, idp.getMetadata().isRequireValidMetadata());
+        kekCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
         kekCredentialResolver.setKeyInfoCredentialResolver(DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
         kekCredentialResolver.initialize();
         final CriteriaSet criteriaSet = new CriteriaSet();
