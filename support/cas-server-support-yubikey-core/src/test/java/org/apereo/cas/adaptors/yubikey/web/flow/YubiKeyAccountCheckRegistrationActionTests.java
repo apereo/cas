@@ -29,12 +29,10 @@ public class YubiKeyAccountCheckRegistrationActionTests {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         final YubiKeyAccountCheckRegistrationAction action =
             new YubiKeyAccountCheckRegistrationAction(new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()));
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context));
-
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
     }
 
     @Test
