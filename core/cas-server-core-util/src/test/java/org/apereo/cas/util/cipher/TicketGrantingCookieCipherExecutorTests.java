@@ -1,9 +1,7 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.cipher;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
-import org.apereo.cas.util.cipher.TicketGrantingCookieCipherExecutor;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -16,6 +14,16 @@ import static org.junit.Assert.*;
  */
 @Slf4j
 public class TicketGrantingCookieCipherExecutorTests {
+
+    @Test
+    public void verifyAction() {
+        final TicketGrantingCookieCipherExecutor cipher = new TicketGrantingCookieCipherExecutor();
+        final String encoded = cipher.encode("ST-1234567890");
+        assertEquals("ST-1234567890", cipher.decode(encoded));
+        assertNotNull(cipher.getName());
+        assertNotNull(cipher.getSigningKeySetting());
+        assertNotNull(cipher.getEncryptionKeySetting());
+    }
 
     @Test
     public void checkEncryptionWithDefaultSettings() {
