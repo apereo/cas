@@ -270,7 +270,7 @@ public final class EncodingUtils {
 
             final boolean verified = jws.verifySignature();
             if (verified) {
-                final String payload = jws.getPayload();
+                final String payload = jws.getEncodedPayload();
                 LOGGER.trace("Successfully decoded value. Result in Base64-encoding is [{}]", payload);
                 return EncodingUtils.decodeBase64(payload);
             }
@@ -345,7 +345,7 @@ public final class EncodingUtils {
         try {
             final String base64 = EncodingUtils.encodeBase64(value);
             final JsonWebSignature jws = new JsonWebSignature();
-            jws.setPayload(base64);
+            jws.setEncodedPayload(base64);
             jws.setAlgorithmHeaderValue(algHeaderValue);
             jws.setKey(key);
             return jws.getCompactSerialization().getBytes(StandardCharsets.UTF_8);
