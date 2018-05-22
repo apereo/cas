@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
@@ -74,6 +75,7 @@ import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.io.InputStreamReader;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -153,16 +155,14 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
         assertResponseWrittenEquals("classpath:expected/end.html", ctx);
     }
 
-    protected void assertResponseWrittenEquals(String response, MockRequestContext context) {
+    @SneakyThrows(IOException.class)
+    protected void assertResponseWrittenEquals(final String response, final MockRequestContext context) {
         final MockHttpServletResponse nativeResponse = (MockHttpServletResponse) context.getExternalContext().getNativeResponse();
-        try {
-            assertEquals(
-                    IOUtils.toString(new InputStreamReader(ResourceUtils.getResourceFrom(response).getInputStream(), StandardCharsets.UTF_8)),
-                    nativeResponse.getContentAsString()
-            );
-        } catch (java.io.IOException e) {
-            throw new RuntimeException(e);
-        }
+
+        assertEquals(
+                IOUtils.toString(new InputStreamReader(ResourceUtils.getResourceFrom(response).getInputStream(), StandardCharsets.UTF_8)),
+                nativeResponse.getContentAsString()
+        );
     }
 
     private MockRequestContext getMockRequestContext() {

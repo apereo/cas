@@ -14,7 +14,6 @@ import org.apereo.cas.web.flow.configurer.DefaultLoginWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.DefaultLogoutWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.GroovyWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.plan.DefaultCasWebflowExecutionPlan;
-import org.apereo.cas.web.flow.executor.CasFlowExecutionListener;
 import org.apereo.cas.web.flow.executor.WebflowExecutorFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -204,12 +203,6 @@ public class CasWebflowContextConfiguration {
         final WebflowExecutorFactory factory = new WebflowExecutorFactory(casProperties.getWebflow(),
             logoutFlowRegistry(), this.webflowCipherExecutor, new FlowExecutionListener[0]);
         return factory.build();
-    }
-
-    @ConditionalOnMissingBean(name = "casFlowExecutionListener")
-    @Bean
-    public FlowExecutionListener casFlowExecutionListener() {
-        return new CasFlowExecutionListener(casProperties);
     }
 
     @RefreshScope

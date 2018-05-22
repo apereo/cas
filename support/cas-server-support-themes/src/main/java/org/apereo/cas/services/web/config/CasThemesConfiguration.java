@@ -39,7 +39,6 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -196,7 +195,7 @@ public class CasThemesConfiguration {
 
         thymeleafViewResolverConfigurers.stream()
             .sorted(OrderComparator.INSTANCE)
-            .forEach((configurer) -> configurer.configureThymeleafViewResolver(r));
+            .forEach(configurer -> configurer.configureThymeleafViewResolver(r));
 
         // return this ViewResolver
         return r;
