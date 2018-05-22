@@ -7,14 +7,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
-import org.jose4j.keys.RsaKeyUtil;
-import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.security.PublicKey;
 
 /**
  * The {@link BaseStringCipherExecutor} is the default
@@ -130,26 +128,32 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             LOGGER.debug("Located encryption key to use for [{}]", getName());
         }
         try {
-            if (ResourceUtils.isFile(secretKeyToUse) && ResourceUtils.doesResourceExist(secretKeyToUse)) {
-                final Resource resource = ResourceUtils.getResourceFrom(secretKeyToUse);
-                LOGGER.debug("Located encryption key resource [{}]. Attempting to extract public key...", resource);
-                final PublicKeyFactoryBean factory = new PublicKeyFactoryBean();
-                factory.setAlgorithm(RsaKeyUtil.RSA);
-                factory.setResource(resource);
-                factory.setSingleton(false);
-                setSecretKeyEncryptionKey(factory.getObject());
-                setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+            if (ResourceUtils.doesResourceExist(secretKeyToUse)) {
+                configureEncryptionKeyFromPublicKeyResource(secretKeyToUse);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
             if (this.secretKeyEncryptionKey == null) {
                 LOGGER.debug("Creating encryption key instance based on provided secret key");
-                this.secretKeyEncryptionKey = EncodingUtils.generateJsonWebKey(secretKeyToUse);
+                setSecretKeyEncryptionKey(EncodingUtils.generateJsonWebKey(secretKeyToUse));
             }
-            this.contentEncryptionAlgorithmIdentifier = contentEncryptionAlgorithmIdentifier;
+            setContentEncryptionAlgorithmIdentifier(contentEncryptionAlgorithmIdentifier);
             LOGGER.debug("Initialized cipher encryption sequence via content encryption [{}] and algorithm [{}]", this.contentEncryptionAlgorithmIdentifier, this.encryptionAlgorithm);
         }
+    }
+
+    /**
+     * Configure encryption key from public key resource.
+     *
+     * @param secretKeyToUse the secret key to use
+     * @throws Exception the exception
+     */
+    protected void configureEncryptionKeyFromPublicKeyResource(final String secretKeyToUse) throws Exception {
+        final PublicKey object = extractPublicKeyFromResource(secretKeyToUse);
+        LOGGER.debug("Located encryption key resource [{}]", secretKeyToUse);
+        setSecretKeyEncryptionKey(object);
+        setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
     }
 
     @Override
@@ -190,12 +194,16 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      *
      * @return the encryption key setting
      */
-    protected abstract String getEncryptionKeySetting();
+    protected String getEncryptionKeySetting() {
+        return "N/A";
+    };
 
     /**
      * Gets signing key setting.
      *
      * @return the signing key setting
      */
-    protected abstract String getSigningKeySetting();
+    protected String getSigningKeySetting() {
+        return "N/A";
+    };
 }
