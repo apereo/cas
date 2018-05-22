@@ -23,7 +23,6 @@ import org.apereo.cas.util.HttpUtils;
 
 import javax.security.auth.login.FailedLoginException;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,7 +38,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
+    private final ObjectMapper objectMapper = new IgnoringJaxbModuleJacksonObjectMapper().findAndRegisterModules();
     private final String syncopeUrl;
     private final String syncopeDomain;
 
@@ -53,8 +52,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     @Override
     @SneakyThrows
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c,
-                                                                                        final String originalPassword) throws GeneralSecurityException {
-
+                                                                                        final String originalPassword) {
         final String syncopeUrl = StringUtils.appendIfMissing(this.syncopeUrl, "/rest/users/self");
         final HttpResponse response = HttpUtils.executeGet(syncopeUrl, c.getUsername(), c.getPassword(),
             new HashMap<>(), CollectionUtils.wrap("X-Syncope-Domain", this.syncopeDomain));
