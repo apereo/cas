@@ -32,6 +32,5 @@ public class YubiKeyAccountSaveRegistrationActionTests {
         final YubiKeyAccountSaveRegistrationAction action =
             new YubiKeyAccountSaveRegistrationAction(new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
-
     }
 }
