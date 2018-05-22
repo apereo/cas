@@ -1,10 +1,9 @@
-package org.apereo.cas.util;
-
-import static org.junit.Assert.*;
+package org.apereo.cas.util.gen;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.gen.DefaultLongNumericGenerator;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia

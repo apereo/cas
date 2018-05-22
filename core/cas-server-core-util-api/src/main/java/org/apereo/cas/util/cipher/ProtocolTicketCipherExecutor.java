@@ -20,6 +20,10 @@ public class ProtocolTicketCipherExecutor extends BaseStringCipherExecutor {
         super(secretKeyEncryption, secretKeySigning, contentEncryptionAlgorithmIdentifier);
     }
 
+    public ProtocolTicketCipherExecutor(final String secretKeyEncryption, final String secretKeySigning) {
+        super(secretKeyEncryption, secretKeySigning, DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
+    }
+
     @Override
     public String getName() {
         return "CAS Protocol Tickets";

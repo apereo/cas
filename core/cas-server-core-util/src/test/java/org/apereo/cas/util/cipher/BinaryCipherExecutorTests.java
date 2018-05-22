@@ -1,8 +1,7 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.cipher;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.util.cipher.BaseBinaryCipherExecutor;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

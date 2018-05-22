@@ -169,16 +169,6 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
         setSigningKey(key.getPrivateKey());
     }
 
-    @Override
-    protected String getEncryptionKeySetting() {
-        return "N/A";
-    }
-
-    @Override
-    protected String getSigningKeySetting() {
-        return "N/A";
-    }
-
     private Optional<RsaJsonWebKey> findRsaJsonWebKeyByProvidedKeyId(final List<JsonWebKey> keys) {
         final Predicate<JsonWebKey> predicate = this.keyIdToUse.isPresent()
             ? jsonWebKey -> jsonWebKey.getKeyId().equalsIgnoreCase(this.keyIdToUse.get())
