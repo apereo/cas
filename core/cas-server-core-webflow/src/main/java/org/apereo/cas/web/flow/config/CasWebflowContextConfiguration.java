@@ -15,12 +15,12 @@ import org.apereo.cas.web.flow.configurer.DefaultLogoutWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.GroovyWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.plan.DefaultCasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.executor.WebflowExecutorFactory;
+import org.apereo.cas.web.support.AuthenticationThrottlingExecutionPlan;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -30,9 +30,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.web.servlet.HandlerAdapter;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
@@ -62,7 +62,6 @@ import java.util.List;
  */
 @Configuration("casWebflowContextConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
 public class CasWebflowContextConfiguration {
 
@@ -72,6 +71,10 @@ public class CasWebflowContextConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("authenticationThrottlingExecutionPlan")
+    private ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan;
 
     @Autowired
     @Qualifier("registeredServiceViewResolver")
@@ -166,8 +169,9 @@ public class CasWebflowContextConfiguration {
     public Object[] loginFlowHandlerMappingInterceptors() {
         final List interceptors = new ArrayList<>();
         interceptors.add(localeChangeInterceptor());
-        if (this.applicationContext.containsBean("authenticationThrottle")) {
-            interceptors.add(this.applicationContext.getBean("authenticationThrottle", HandlerInterceptor.class));
+        final AuthenticationThrottlingExecutionPlan plan = authenticationThrottlingExecutionPlan.getIfAvailable();
+        if (plan != null) {
+            interceptors.addAll(plan.getAuthenticationThrottleInterceptors());
         }
         return interceptors.toArray();
     }
@@ -217,6 +221,7 @@ public class CasWebflowContextConfiguration {
 
     @ConditionalOnMissingBean(name = "defaultWebflowConfigurer")
     @Bean
+    @Order(0)
     public CasWebflowConfigurer defaultWebflowConfigurer() {
         final DefaultLoginWebflowConfigurer c = new DefaultLoginWebflowConfigurer(builder(), loginFlowRegistry(), applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry());
@@ -226,6 +231,7 @@ public class CasWebflowContextConfiguration {
 
     @ConditionalOnMissingBean(name = "defaultLogoutWebflowConfigurer")
     @Bean
+    @Order(0)
     public CasWebflowConfigurer defaultLogoutWebflowConfigurer() {
         final DefaultLogoutWebflowConfigurer c = new DefaultLogoutWebflowConfigurer(builder(), loginFlowRegistry(),
             applicationContext, casProperties);
