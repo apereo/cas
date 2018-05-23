@@ -4,23 +4,16 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.oidc.AbstractOidcTests;
-import org.apereo.cas.services.OidcRegisteredService;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.CollectionUtils;
-import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
-import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -36,30 +29,6 @@ import static org.mockito.Mockito.*;
 public class OidcIdTokenGeneratorServiceTests extends AbstractOidcTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
-
-    @Autowired
-    @Qualifier("oidcIdTokenGenerator")
-    private OidcIdTokenGeneratorService oidcIdTokenGenerator;
-
-    @Before
-    public void setup() {
-        final OidcRegisteredService svc = new OidcRegisteredService();
-        svc.setClientId("clientid");
-        svc.setName("oauth");
-        svc.setDescription("description");
-        svc.setClientSecret("secret");
-        svc.setServiceId("https://oauth\\.example\\.org.*");
-        svc.setSignIdToken(true);
-        svc.setEncryptIdToken(true);
-        svc.setIdTokenEncryptionAlg(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
-        svc.setIdTokenEncryptionEncoding(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
-        svc.setJwks("classpath:keystore.jwks");
-        servicesManager.save(svc);
-    }
 
     @Test
     public void verifyTokenGeneration() {
