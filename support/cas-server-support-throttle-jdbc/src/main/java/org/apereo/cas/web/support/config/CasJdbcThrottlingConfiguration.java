@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.web.support.JdbcThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -28,6 +29,10 @@ import javax.sql.DataSource;
 public class CasJdbcThrottlingConfiguration {
 
     @Autowired
+    @Qualifier("auditTrailExecutionPlan")
+    private ObjectProvider<AuditTrailExecutionPlan> auditTrailManager;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Bean
@@ -35,16 +40,16 @@ public class CasJdbcThrottlingConfiguration {
         return JpaBeans.newDataSource(casProperties.getAuthn().getThrottle().getJdbc());
     }
 
-    @Autowired
+
     @Bean
     @RefreshScope
-    public ThrottledSubmissionHandlerInterceptor authenticationThrottle(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailManager) {
+    public ThrottledSubmissionHandlerInterceptor authenticationThrottle() {
         final ThrottleProperties throttle = casProperties.getAuthn().getThrottle();
         final ThrottleProperties.Failure failure = throttle.getFailure();
         return new JdbcThrottledSubmissionHandlerInterceptorAdapter(failure.getThreshold(),
             failure.getRangeSeconds(),
             throttle.getUsernameParameter(),
-            auditTrailManager,
+            auditTrailManager.getIfAvailable(),
             inspektrAuditTrailDataSource(),
             throttle.getAppcode(),
             throttle.getJdbc().getAuditQuery(),
