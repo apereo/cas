@@ -1,1 +1,3 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasConsentWebflowConfiguration,org.apereo.cas.web.consent.config.CasConsentReviewConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasConsentWebflowConfiguration,\
+  org.apereo.cas.web.consent.config.CasConsentReviewConfiguration,\
+  org.apereo.cas.web.consent.config.CasConsentReviewWebConfiguration

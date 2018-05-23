@@ -35,7 +35,7 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    public Event doExecute(final RequestContext requestContext) {
         final String consentEvent = determineConsentEvent(requestContext);
         if (StringUtils.isBlank(consentEvent)) {
             return null;
@@ -51,7 +51,8 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
      * @return the string
      */
     protected String determineConsentEvent(final RequestContext requestContext) {
-        final Service service = this.authenticationRequestServiceSelectionStrategies.resolveService(WebUtils.getService(requestContext));
+        final Service webService = WebUtils.getService(requestContext);
+        final Service service = this.authenticationRequestServiceSelectionStrategies.resolveService(webService);
         if (service == null) {
             return null;
         }

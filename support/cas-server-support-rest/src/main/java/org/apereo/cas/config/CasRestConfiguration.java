@@ -28,8 +28,9 @@ import org.apereo.cas.support.rest.resources.TicketStatusResource;
 import org.apereo.cas.support.rest.resources.UserAuthenticationResource;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
+import org.apereo.cas.web.support.AuthenticationThrottlingExecutionPlan;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -167,16 +168,17 @@ public class CasRestConfiguration implements RestHttpRequestCredentialFactoryCon
     @Slf4j
     public static class CasRestThrottlingConfiguration extends WebMvcConfigurerAdapter {
 
-        @Autowired(required = false)
-        @Qualifier("authenticationThrottle")
-        private ThrottledSubmissionHandlerInterceptor handlerInterceptor;
+        @Autowired
+        @Qualifier("authenticationThrottlingExecutionPlan")
+        private ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan;
 
         @Override
         public void addInterceptors(final InterceptorRegistry registry) {
-            if (handlerInterceptor != null) {
-                LOGGER.debug("Activating authentication throttling for REST endpoints...");
-                registry.addInterceptor(handlerInterceptor).addPathPatterns("/v1/**");
-            }
+            final AuthenticationThrottlingExecutionPlan plan = authenticationThrottlingExecutionPlan.getIfAvailable();
+            LOGGER.debug("Activating authentication throttling for REST endpoints...");
+            plan.getAuthenticationThrottleInterceptors().forEach(handler -> {
+                registry.addInterceptor(handler).addPathPatterns("/v1/**");
+            });
         }
     }
 }

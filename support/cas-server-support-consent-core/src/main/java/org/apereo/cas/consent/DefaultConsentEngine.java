@@ -6,6 +6,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.inspektr.audit.annotation.Audit;
 
 import java.time.LocalDateTime;
@@ -115,8 +116,9 @@ public class DefaultConsentEngine implements ConsentEngine {
                                                                 final Service service,
                                                                 final RegisteredService registeredService) {
         LOGGER.debug("Retrieving consentable attributes for [{}]", registeredService);
-        if (registeredService.getAttributeReleasePolicy() != null) {
-            return registeredService.getAttributeReleasePolicy().getConsentableAttributes(authentication.getPrincipal(), service, registeredService);
+        final RegisteredServiceAttributeReleasePolicy policy = registeredService.getAttributeReleasePolicy();
+        if (policy != null) {
+            return policy.getConsentableAttributes(authentication.getPrincipal(), service, registeredService);
         }
         return new LinkedHashMap<>();
     }

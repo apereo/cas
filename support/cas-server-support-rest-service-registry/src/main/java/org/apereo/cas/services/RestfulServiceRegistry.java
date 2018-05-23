@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -56,7 +57,8 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        final ResponseEntity<RegisteredService> responseEntity = restTemplate.exchange(this.url, HttpMethod.GET,
+        final String url = StringUtils.appendIfMissing(this.url, "/").concat(String.valueOf(id));
+        final ResponseEntity<RegisteredService> responseEntity = restTemplate.exchange(url, HttpMethod.GET,
             new HttpEntity<>(id, this.headers), RegisteredService.class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             return responseEntity.getBody();
@@ -66,7 +68,8 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceById(final String id) {
-        final ResponseEntity<RegisteredService> responseEntity = restTemplate.exchange(this.url, HttpMethod.GET,
+        final String url = StringUtils.appendIfMissing(this.url, "/").concat(String.valueOf(id));
+        final ResponseEntity<RegisteredService> responseEntity = restTemplate.exchange(url, HttpMethod.GET,
             new HttpEntity<>(id, this.headers), RegisteredService.class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             return responseEntity.getBody();

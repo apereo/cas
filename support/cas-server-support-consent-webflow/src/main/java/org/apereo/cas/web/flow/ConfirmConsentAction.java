@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentReminderOptions;
@@ -34,9 +35,10 @@ public class ConfirmConsentAction extends AbstractConsentAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    public Event doExecute(final RequestContext requestContext) {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        final Service service = this.authenticationRequestServiceSelectionStrategies.resolveService(WebUtils.getService(requestContext));
+        final WebApplicationService webService = WebUtils.getService(requestContext);
+        final Service service = this.authenticationRequestServiceSelectionStrategies.resolveService(webService);
         final RegisteredService registeredService = getRegisteredServiceForConsent(requestContext, service);
         final Authentication authentication = WebUtils.getAuthentication(requestContext);
         final int optionValue = Integer.parseInt(request.getParameter("option"));
