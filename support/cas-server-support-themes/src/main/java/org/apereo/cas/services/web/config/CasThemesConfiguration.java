@@ -5,7 +5,9 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.CasPropertiesThymeleafViewResolverConfigurer;
 import org.apereo.cas.services.web.CasThymeleafOutputTemplateHandler;
+import org.apereo.cas.services.web.CasThymeleafViewResolverConfigurer;
 import org.apereo.cas.services.web.ChainingThemeResolver;
 import org.apereo.cas.services.web.RequestHeaderThemeResolver;
 import org.apereo.cas.services.web.RegisteredServiceThemeResolver;
@@ -23,6 +25,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.OrderComparator;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.ViewResolver;
@@ -37,6 +40,7 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -75,6 +79,15 @@ public class CasThemesConfiguration {
     @Autowired
     @Qualifier("thymeleafViewResolver")
     private ThymeleafViewResolver thymeleafViewResolver;
+
+    @Autowired
+    private List<CasThymeleafViewResolverConfigurer> thymeleafViewResolverConfigurers;
+
+    @ConditionalOnMissingBean(name = "casPropertiesThymeleafViewResolverConfigurer")
+    @Bean
+    public CasThymeleafViewResolverConfigurer casPropertiesThymeleafViewResolverConfigurer() {
+        return new CasPropertiesThymeleafViewResolverConfigurer(casProperties);
+    }
 
     @Bean
     public ViewResolver registeredServiceViewResolver() {
@@ -179,6 +192,10 @@ public class CasThemesConfiguration {
         
         // disable the cache
         r.setCache(false);
+
+        thymeleafViewResolverConfigurers.stream()
+            .sorted(OrderComparator.INSTANCE)
+            .forEach(configurer -> configurer.configureThymeleafViewResolver(r));
 
         // return this ViewResolver
         return r;
