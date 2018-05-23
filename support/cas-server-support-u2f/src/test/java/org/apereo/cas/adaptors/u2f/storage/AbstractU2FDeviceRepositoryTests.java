@@ -1,13 +1,14 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
 import com.yubico.u2f.data.DeviceRegistration;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.security.cert.X509Certificate;
 import java.util.Collection;
+import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
 
@@ -18,6 +19,7 @@ import static org.junit.Assert.*;
  * @since 5.2.0
  */
 @Slf4j
+@DirtiesContext
 public abstract class AbstractU2FDeviceRepositoryTests {
 
     @Test
