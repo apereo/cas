@@ -2,8 +2,6 @@ package org.apereo.cas.oidc.discovery;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import static org.junit.Assert.*;
 
