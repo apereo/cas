@@ -28,8 +28,6 @@ public class MockWebServer implements AutoCloseable {
      */
     private final Worker worker;
 
-    private final Object lock = new Object();
-
     /**
      * Controls the worker thread.
      */

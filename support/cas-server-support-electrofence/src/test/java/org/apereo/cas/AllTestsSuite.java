@@ -5,6 +5,8 @@ import org.apereo.cas.impl.calcs.DateTimeAuthenticationRequestRiskCalculatorTest
 import org.apereo.cas.impl.calcs.GeoLocationAuthenticationRequestRiskCalculatorTests;
 import org.apereo.cas.impl.calcs.IpAddressAuthenticationRequestRiskCalculatorTests;
 import org.apereo.cas.impl.calcs.UserAgentAuthenticationRequestRiskCalculatorTests;
+import org.apereo.cas.impl.notify.AuthenticationRiskEmailNotifierTests;
+import org.apereo.cas.impl.notify.AuthenticationRiskSmsNotifierTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -19,7 +21,9 @@ import org.junit.runners.Suite;
     DateTimeAuthenticationRequestRiskCalculatorTests.class,
     GeoLocationAuthenticationRequestRiskCalculatorTests.class,
     IpAddressAuthenticationRequestRiskCalculatorTests.class,
-    UserAgentAuthenticationRequestRiskCalculatorTests.class
+    UserAgentAuthenticationRequestRiskCalculatorTests.class,
+    AuthenticationRiskEmailNotifierTests.class,
+    AuthenticationRiskSmsNotifierTests.class
 })
 @Slf4j
 public class AllTestsSuite {
