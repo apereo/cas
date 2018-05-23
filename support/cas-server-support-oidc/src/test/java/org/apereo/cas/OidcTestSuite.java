@@ -1,7 +1,12 @@
 package org.apereo.cas;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactoryTests;
+import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoaderTests;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorServiceTests;
+import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheLoaderTests;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorServiceTests;
+import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionServiceTests;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIActionTests;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupportTests;
 import org.junit.runner.RunWith;
@@ -16,8 +21,14 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     OidcIdTokenGeneratorServiceTests.class,
+    OidcIdTokenSigningAndEncryptionServiceTests.class,
+    OidcJsonWebKeystoreGeneratorServiceTests.class,
+    OidcDefaultJsonWebKeystoreCacheLoaderTests.class,
+    OidcServerDiscoverySettingsFactoryTests.class,
     OidcRegisteredServiceUIActionTests.class,
-    OidcAuthorizationRequestSupportTests.class})
+    OidcServiceJsonWebKeystoreCacheLoaderTests.class,
+    OidcAuthorizationRequestSupportTests.class
+})
 @Slf4j
 public class OidcTestSuite {
 }

@@ -28,7 +28,6 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasFiltersConfiguration;
-import org.apereo.cas.config.CasMetricsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPropertiesConfiguration;
 import org.apereo.cas.config.CasSecurityContextConfiguration;
@@ -90,7 +89,6 @@ import static org.junit.Assert.*;
     classes = {CasApplicationContextConfiguration.class,
         CasThemesConfiguration.class,
         CasFiltersConfiguration.class,
-        CasMetricsConfiguration.class,
         CasPropertiesConfiguration.class,
         CasSecurityContextConfiguration.class,
         CasWebAppConfiguration.class,
