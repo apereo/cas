@@ -5,7 +5,7 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 
 /**
  * Spring beans that implement this interface will be used to configure the base
- * {@link ThymeleafViewResolver} used by the {@link ThemeViewResolverFactory}
+ * {@link ThymeleafViewResolver} used by the {@link ThemeViewResolverFactory}.
  *
  * @since 5.3.0
  * @author sbearcsiro
@@ -13,6 +13,7 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 @FunctionalInterface
 public interface CasThymeleafViewResolverConfigurer extends Ordered {
 
+    /** Order position for the default CAS thymeleaf view resolver configurer. */
     int CAS_PROPERTIES_ORDER = 0;
 
     @Override
