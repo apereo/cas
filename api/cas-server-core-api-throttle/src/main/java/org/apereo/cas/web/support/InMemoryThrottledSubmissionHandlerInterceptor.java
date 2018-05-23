@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public interface InMemoryThrottledSubmissionHandlerInterceptor
-        extends ThrottledSubmissionHandlerInterceptor {
+@FunctionalInterface
+public interface InMemoryThrottledSubmissionHandlerInterceptor extends ThrottledSubmissionHandlerInterceptor {
 
     /**
      * Construct key to be used by the throttling agent to track requests.
@@ -18,5 +18,5 @@ public interface InMemoryThrottledSubmissionHandlerInterceptor
      * @return the string
      */
     String constructKey(HttpServletRequest request);
-    
+
 }
