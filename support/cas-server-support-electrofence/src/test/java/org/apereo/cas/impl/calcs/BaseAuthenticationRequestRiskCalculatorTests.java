@@ -30,6 +30,8 @@ import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.config.CasCoreEventsConfiguration;
 import org.apereo.cas.support.events.config.CasEventsInMemoryRepositoryConfiguration;
 import org.apereo.cas.support.geo.config.GoogleMapsGeoCodingConfiguration;
+import org.apereo.cas.util.MockSmsSender;
+import org.apereo.cas.util.io.SmsSender;
 import org.apereo.cas.util.junit.ConditionalSpringRunner;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -38,7 +40,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -49,7 +54,9 @@ import org.springframework.test.annotation.DirtiesContext;
  * @since 5.3.0
  */
 @RunWith(ConditionalSpringRunner.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class,
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    BaseAuthenticationRequestRiskCalculatorTests.ElectronicFenceTestConfiguration.class,
     ElectronicFenceConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
@@ -81,6 +88,9 @@ import org.springframework.test.annotation.DirtiesContext;
 @Slf4j
 public abstract class BaseAuthenticationRequestRiskCalculatorTests {
     @Autowired
+    protected ConfigurableApplicationContext applicationContext;
+
+    @Autowired
     @Qualifier("casEventRepository")
     protected CasEventRepository casEventRepository;
 
@@ -104,4 +114,12 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
         MockTicketGrantingTicketCreatedEventProducer.createEvents(this.casEventRepository);
     }
 
+    @TestConfiguration
+    public static class ElectronicFenceTestConfiguration {
+
+        @Bean
+        public SmsSender smsSender() {
+            return new MockSmsSender();
+        }
+    }
 }

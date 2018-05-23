@@ -128,6 +128,10 @@ import java.util.stream.Stream;
 public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
+
+    @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
     private AuditableExecution registeredServiceAccessStrategyEnforcer;
 
@@ -360,6 +364,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
             accessTokenGrantRequestExtractors, oauthTokenRequestValidators);
     }
 
+    @ConditionalOnMissingBean(name = "clientRegistrationRequestSerializer")
     @Bean
     public StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer() {
         return new OidcClientRegistrationRequestSerializer();
@@ -390,8 +395,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @Autowired
     @RefreshScope
     @Bean
-    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory")
-                                                                   final OidcServerDiscoverySettings discoverySettings) {
+    public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory") final OidcServerDiscoverySettings discoverySettings) {
         return new OidcWellKnownEndpointController(servicesManager, ticketRegistry,
             defaultAccessTokenFactory,
             oidcPrincipalFactory(), webApplicationServiceFactory,
@@ -436,15 +440,18 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
             registeredServiceAccessStrategyEnforcer);
     }
 
-    @Autowired
     @RefreshScope
     @Bean
-    public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport")
-                                                                                 final AuthenticationSystemSupport authenticationSystemSupport) {
-        final CasWebflowEventResolver r = new OidcAuthenticationContextWebflowEventEventResolver(authenticationSystemSupport,
-            centralAuthenticationService, servicesManager,
-            ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies,
+    public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver() {
+        final CasWebflowEventResolver r = new OidcAuthenticationContextWebflowEventEventResolver(
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService,
+            servicesManager,
+            ticketRegistrySupport,
+            warnCookieGenerator,
+            authenticationRequestServiceSelectionStrategies,
             multifactorAuthenticationProviderSelector);
+
         this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r);
         return r;
     }
