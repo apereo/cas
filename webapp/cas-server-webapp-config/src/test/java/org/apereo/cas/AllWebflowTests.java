@@ -11,9 +11,11 @@ import org.junit.runners.Suite;
  * @since 5.3.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({WiringConfigurationTests.class,
+@Suite.SuiteClasses({
+    WiringConfigurationTests.class,
     CasWebflowServerSessionContextConfigurationTests.class,
-    CasWebflowClientSessionContextConfigurationTests.class})
+    CasWebflowClientSessionContextConfigurationTests.class
+})
 @Slf4j
 public class AllWebflowTests {
 }

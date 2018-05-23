@@ -29,7 +29,7 @@ import java.util.Optional;
 @Slf4j
 public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    
+
     private final List<RadiusServer> servers;
     private final boolean failoverOnException;
     private final boolean failoverOnAuthenticationFailure;
@@ -66,12 +66,11 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
             final String username = principal.getId();
 
             final Pair<Boolean, Optional<Map<String, Object>>> result =
-                    RadiusUtils.authenticate(username, password, this.servers,
-                            this.failoverOnAuthenticationFailure, this.failoverOnException);
+                RadiusUtils.authenticate(username, password, this.servers,
+                    this.failoverOnAuthenticationFailure, this.failoverOnException);
             if (result.getKey()) {
-                return createHandlerResult(credential,
-                        this.principalFactory.createPrincipal(username, result.getValue().get()),
-                        new ArrayList<>());
+                final Principal finalPrincipal = this.principalFactory.createPrincipal(username, result.getValue().get());
+                return createHandlerResult(credential, finalPrincipal, new ArrayList<>());
             }
             throw new FailedLoginException("Radius authentication failed for user " + username);
         } catch (final Exception e) {

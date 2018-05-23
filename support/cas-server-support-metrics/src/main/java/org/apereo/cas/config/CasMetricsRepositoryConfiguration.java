@@ -1,17 +1,16 @@
 package org.apereo.cas.config;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.ToString;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.metrics.MetricsProperties;
 import org.apereo.cas.influxdb.InfluxDbConnectionFactory;
+import org.apereo.cas.metrics.MongoDbMetric;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.influxdb.dto.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.ExportMetricWriter;
-import org.springframework.boot.actuate.metrics.Metric;
 import org.springframework.boot.actuate.metrics.opentsdb.OpenTsdbGaugeWriter;
 import org.springframework.boot.actuate.metrics.repository.redis.RedisMetricRepository;
 import org.springframework.boot.actuate.metrics.statsd.StatsdMetricWriter;
@@ -23,10 +22,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import java.io.Serializable;
-import java.util.Date;
+
 import java.util.concurrent.TimeUnit;
-import lombok.Getter;
 
 /**
  * This is {@link CasMetricsRepositoryConfiguration}.
@@ -95,25 +92,5 @@ public class CasMetricsRepositoryConfiguration {
             final MongoDbMetric metrics = new MongoDbMetric(metric);
             mongoTemplate.save(metrics, prop.getCollection());
         };
-    }
-
-    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
-    @Getter
-    @ToString
-    private static class MongoDbMetric implements Serializable {
-
-        private static final long serialVersionUID = 8587687286389110789L;
-
-        private final String name;
-
-        private final Number value;
-
-        private final Date timestamp;
-
-        MongoDbMetric(final Metric metric) {
-            this.name = metric.getName();
-            this.value = metric.getValue();
-            this.timestamp = metric.getTimestamp();
-        }
     }
 }

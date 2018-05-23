@@ -300,4 +300,13 @@
     <suppress>
         <cve>CVE-2016-3956</cve>
     </suppress>
+    <suppress>
+        <cve>CVE-2018-1270</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-1271</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-1272</cve>
+    </suppress>
 </suppressions>
