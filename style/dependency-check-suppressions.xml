@@ -309,4 +309,13 @@
     <suppress>
         <cve>CVE-2018-1272</cve>
     </suppress>
+    <suppress>
+        <cve>CVE-2016-2173</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-9494</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-9494</cve>
+    </suppress>
 </suppressions>
