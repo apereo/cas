@@ -22,8 +22,8 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 | Save              | `POST`          | `RegisteredService` object | `RegisteredService` object
 | Delete            | `DELETE`        | `RegisteredService` object | None
 | Load              | `GET`           | None                       | Collection of `RegisteredService` objects
-| FindById          | `GET`           | Service numeric id appended to the endpoint as a path variable   | `RegisteredService` object
-| FindById          | `GET`           | Service url appended to the endpoint as a path variable    | `RegisteredService` object
+| FindById          | `GET`           | Service numeric id appended to the endpoint url as a path variable   | `RegisteredService` object
+| FindById          | `GET`           | Service url appended to the endpoint url as a path variable    | `RegisteredService` object
 
 All operations are expected to return a `200` status code. All other response status codes will force CAS to consider the requested operation nullified.
 
@@ -34,7 +34,7 @@ default JSON service definitions available to CAS. See [this guide](AutoInitiali
 
 ## Implementation
 
-The following code snippet demonstrate an *example* implementation of the REST API expected by CAS via Spring Boot:
+The following code snippet demonstrates an *example* implementation of the REST API expected by CAS via Spring Boot:
 
 ```java
 @RestController
