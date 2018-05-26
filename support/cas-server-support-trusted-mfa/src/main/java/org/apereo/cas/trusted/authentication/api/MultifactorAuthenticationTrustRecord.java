@@ -18,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 /**
  * This is {@link MultifactorAuthenticationTrustRecord}.
@@ -71,7 +72,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
      */
     public static MultifactorAuthenticationTrustRecord newInstance(final String principal, final String geography, final String fingerprint) {
         final MultifactorAuthenticationTrustRecord r = new MultifactorAuthenticationTrustRecord();
-        r.setRecordDate(LocalDateTime.now());
+        r.setRecordDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         r.setPrincipal(principal);
         r.setDeviceFingerprint(fingerprint);
         r.setName(principal.concat("-").concat(LocalDate.now().toString()).concat("-").concat(geography));
