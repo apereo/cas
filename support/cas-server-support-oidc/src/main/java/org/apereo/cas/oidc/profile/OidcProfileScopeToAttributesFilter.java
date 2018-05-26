@@ -13,7 +13,6 @@ import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -32,7 +31,7 @@ import org.reflections.util.FilterBuilder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,7 +47,6 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     private final Map<String, BaseOidcScopeAttributeReleasePolicy> filters;
     private final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes;
 
-    private final OidcAttributeToScopeClaimMapper attributeToScopeClaimMapper;
     private final PrincipalFactory principalFactory;
     private final ServicesManager servicesManager;
     private final CasConfigurationProperties casProperties;
@@ -56,9 +54,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     public OidcProfileScopeToAttributesFilter(final PrincipalFactory principalFactory,
                                               final ServicesManager servicesManager,
                                               final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes,
-                                              final OidcAttributeToScopeClaimMapper attributeToScopeClaimMapper,
                                               final CasConfigurationProperties casProperties) {
-        this.attributeToScopeClaimMapper = attributeToScopeClaimMapper;
         this.casProperties = casProperties;
         this.filters = new HashMap<>();
         this.principalFactory = principalFactory;
@@ -103,7 +99,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         final Principal principal = super.filter(service, profile, registeredService, context, accessToken);
 
         if (registeredService instanceof OidcRegisteredService) {
-            final Collection<String> scopes = new HashSet<>(accessToken.getScopes());
+            final Collection<String> scopes = new LinkedHashSet<>(accessToken.getScopes());
             if (!scopes.contains(OidcConstants.StandardScopes.OPENID.getScope())) {
                 LOGGER.warn("Request does not indicate a scope [{}] that can identify an OpenID Connect request. "
                     + "This is a REQUIRED scope that MUST be present in the request. Given its absence, "
