@@ -7,6 +7,15 @@
         <cve>CVE-2017-17485</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2013-4366</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-3577</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-5262</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2018-5968</cve>
     </suppress>
     <suppress>
