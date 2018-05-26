@@ -100,7 +100,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                                                          final Map<String, Object> attributesToRelease, final Matcher matcherFile, final String key) {
         try {
             LOGGER.debug("Found groovy script to execute for attribute mapping [{}]", key);
-            final String script = FileUtils.readFileToString(new File(matcherFile.group(1)), StandardCharsets.UTF_8);
+            final File file = new File(matcherFile.group(2));
+            final String script = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
             final Object result = getGroovyAttributeValue(script, resolvedAttributes);
             if (result != null) {
                 LOGGER.debug("Mapped attribute [{}] to [{}] from script", key, result);

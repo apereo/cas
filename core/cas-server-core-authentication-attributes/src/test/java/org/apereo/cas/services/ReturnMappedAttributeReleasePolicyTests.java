@@ -14,6 +14,7 @@ import org.junit.runners.JUnit4;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -86,6 +87,26 @@ public class ReturnMappedAttributeReleasePolicyTests {
         assertTrue(result.containsKey("attr1"));
         assertTrue(result.containsValue("DOMAIN\\" + CoreAttributesTestUtils.CONST_USERNAME));
     }
+
+    @Test
+    public void verifyExternalGroovyAttributes() throws Exception {
+        final File file = new File(FileUtils.getTempDirectoryPath(), "script.groovy");
+        FileUtils.write(file, "logger.debug('Running script...'); return 'DOMAIN\\\\' + attributes['uid']", StandardCharsets.UTF_8);
+        final Multimap<String, Object> allowedAttributes = ArrayListMultimap.create();
+        allowedAttributes.put("attr1", "file:" + file.getCanonicalPath());
+        final Map<String, Object> wrap = CollectionUtils.wrap(allowedAttributes);
+        final ReturnMappedAttributeReleasePolicy policyWritten = new ReturnMappedAttributeReleasePolicy(wrap);
+        final RegisteredService registeredService = CoreAttributesTestUtils.getRegisteredService();
+        when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
+        final Map<String, Object> principalAttributes = new HashMap<>();
+        principalAttributes.put("uid", CoreAttributesTestUtils.CONST_USERNAME);
+        final Map<String, Object> result = policyWritten.getAttributes(
+            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes),
+            CoreAttributesTestUtils.getService(), registeredService);
+        assertTrue(result.containsKey("attr1"));
+        assertTrue(result.containsValue("DOMAIN\\" + CoreAttributesTestUtils.CONST_USERNAME));
+    }
+
 
     @Test
     public void verifyMappingWithoutAttributeValue() {
