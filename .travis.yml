@@ -60,6 +60,8 @@ before_install:
 - ./ci/run-dynamodb-server.sh
 - chmod -R 777 ./ci/run-couchbase-server.sh
 - ./ci/run-couchbase-server.sh
+- chmod -R 777 ./ci/run-couchdb-server.sh
+- ./ci/run-couchdb-server.sh
 - chmod -R 777 ./ci/run-cassandra-server.sh
 - ./ci/run-cassandra-server.sh
 - chmod -R 777 ./ci/init-travis-build.sh
