@@ -725,6 +725,11 @@ ext.libraries = [
         ],
         zxingbarcode            : [
                 dependencies.create("com.google.zxing:core:$googleZxingVersion") {
+                    exclude(group: "com.google.zxing", module: "android-core")
+                    exclude(group: "com.google.zxing", module: "android-integration")
+                    exclude(group: "junit", module: "junit")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     force = true
                 }
         ],
