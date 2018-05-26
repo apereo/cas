@@ -27,6 +27,7 @@ echo "**************************************************************************
 echo "Building CAS version $cas_version tagged as $DOCKER_TAG for image $IMAGE_NAME"
 echo "******************************************************************************"
 
+cd docker
 echo "Current directory: `pwd`"
 ls
 docker build --build-arg CASVERSION=$cas_version -t $IMAGE_NAME .
