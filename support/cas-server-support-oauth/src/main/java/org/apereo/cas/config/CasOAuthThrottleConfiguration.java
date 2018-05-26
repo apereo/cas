@@ -17,14 +17,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
 
 /**
  * This is {@link CasOAuthThrottleConfiguration}.
@@ -35,11 +31,7 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
 @Slf4j
 @Configuration("oauthThrottleConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasOAuthThrottleConfiguration extends WebMvcConfigurerAdapter implements AuthenticationThrottlingExecutionPlanConfigurer {
-
-    @Autowired
-    @Qualifier("authenticationThrottlingExecutionPlan")
-    private ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan;
+public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("oauthSecConfig")
@@ -78,10 +70,4 @@ public class CasOAuthThrottleConfiguration extends WebMvcConfigurerAdapter imple
         plan.registerAuthenticationThrottleInterceptor(oauthHandlerInterceptorAdapter());
     }
 
-    @Override
-    public void addInterceptors(final InterceptorRegistry registry) {
-        final AuthenticationThrottlingExecutionPlan plan = authenticationThrottlingExecutionPlan.getIfAvailable();
-        plan.getAuthenticationThrottleInterceptors().forEach(handler ->
-            registry.addInterceptor(handler).addPathPatterns(BASE_OAUTH20_URL.concat("/").concat("*")));
-    }
 }
