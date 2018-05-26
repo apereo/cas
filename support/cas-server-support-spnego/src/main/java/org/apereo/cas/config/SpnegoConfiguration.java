@@ -51,12 +51,14 @@ public class SpnegoConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "spnegoAuthentication")
     public Authentication spnegoAuthentication() {
         return new Authentication();
     }
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "jcifsConfig")
     public JcifsConfig jcifsConfig() {
         final JcifsConfig c = new JcifsConfig();
         final SpnegoProperties spnego = casProperties.getAuthn().getSpnego();
@@ -81,6 +83,7 @@ public class SpnegoConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "spnegoHandler")
     public AuthenticationHandler spnegoHandler() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
         final JcifsSpnegoAuthenticationHandler h = new JcifsSpnegoAuthenticationHandler(spnegoProperties.getName(), servicesManager, spnegoPrincipalFactory(),
@@ -108,6 +111,7 @@ public class SpnegoConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "spnegoPrincipalResolver")
     public PrincipalResolver spnegoPrincipalResolver() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
         return new SpnegoPrincipalResolver(attributeRepository, spnegoPrincipalFactory(),
