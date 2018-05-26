@@ -45,7 +45,7 @@ public class CasCoreHttpConfiguration {
     @ConditionalOnMissingBean(name = "trustStoreSslSocketFactory")
     @Bean
     public SSLConnectionSocketFactory trustStoreSslSocketFactory() {
-        return new SSLConnectionSocketFactory(sslContext());
+        return new SSLConnectionSocketFactory(sslContext(), hostnameVerifier());
     }
 
     @ConditionalOnMissingBean(name = "sslContext")
