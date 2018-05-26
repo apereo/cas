@@ -42,4 +42,13 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
     public void addPolicy(final RegisteredServiceAttributeReleasePolicy policy) {
         this.policies.add(policy);
     }
+
+    /**
+     * Size.
+     *
+     * @return the int
+     */
+    public int size() {
+        return policies.size();
+    }
 }

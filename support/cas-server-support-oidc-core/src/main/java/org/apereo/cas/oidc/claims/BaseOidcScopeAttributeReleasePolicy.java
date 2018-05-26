@@ -17,7 +17,7 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -60,13 +60,15 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         LOGGER.debug("Attempting to map and filter claims based on resolved attributes [{}]", resolvedAttributes);
         final CasConfigurationProperties properties = applicationContext.getBean(CasConfigurationProperties.class);
         final List<String> supportedClaims = properties.getAuthn().getOidc().getClaims();
-        final Set<String> allowedClaims = new HashSet<>(getAllowedAttributes());
+        final Set<String> allowedClaims = new LinkedHashSet<>(getAllowedAttributes());
         allowedClaims.retainAll(supportedClaims);
         LOGGER.debug("[{}] is designed to allow claims [{}] for scope [{}]. After cross-checking with "
             + "supported claims [{}], the final collection of allowed attributes is [{}]", getClass().getSimpleName(),
             getAllowedAttributes(), getScopeName(), supportedClaims, allowedClaims);
-        allowedClaims.stream().map(claim -> mapClaimToAttribute(claim, resolvedAttributes))
-            .filter(p -> p.getValue() != null).forEach(p -> attributesToRelease.put(p.getKey(), p.getValue()));
+        allowedClaims.stream()
+            .map(claim -> mapClaimToAttribute(claim, resolvedAttributes))
+            .filter(p -> p.getValue() != null)
+            .forEach(p -> attributesToRelease.put(p.getKey(), p.getValue()));
         return attributesToRelease;
     }
 

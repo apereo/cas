@@ -22,6 +22,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasOAuthAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasOAuthConfiguration;
+import org.apereo.cas.config.CasOAuthThrottleConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -34,6 +35,7 @@ import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
@@ -88,12 +90,17 @@ import java.util.Optional;
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasOAuthConfiguration.class,
+    CasOAuthThrottleConfiguration.class,
     CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
     OidcConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class})
 @Slf4j
 @DirtiesContext
 public abstract class AbstractOidcTests {
+    @Autowired
+    @Qualifier("profileScopeToAttributesFilter")
+    protected OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter;
+
     @Autowired
     @Qualifier("oidcDefaultJsonWebKeystoreCache")
     protected LoadingCache<String, Optional<RsaJsonWebKey>> oidcDefaultJsonWebKeystoreCache;
