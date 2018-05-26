@@ -1099,12 +1099,6 @@ ext.libraries = [
                 }
         ],
         activemq                : [
-                dependencies.create("org.apache.activemq:activemq-core:$activemqVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.jasypt", module: "jasypt")
-                    exclude(group: "org.fusesource.hawtbuf", module: "hawtbuf")
-                    force = true
-                },
                 dependencies.create("org.springframework.boot:spring-boot-starter-activemq:$springBootVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.apache.activemq", module: "activemq-client")
