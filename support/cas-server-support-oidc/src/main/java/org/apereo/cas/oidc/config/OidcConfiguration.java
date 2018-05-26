@@ -327,7 +327,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @Bean
     public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter() {
         return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory(), servicesManager,
-            userDefinedScopeBasedAttributeReleasePolicies(), oidcAttributeToScopeClaimMapper(), casProperties);
+            userDefinedScopeBasedAttributeReleasePolicies(), casProperties);
     }
 
     @RefreshScope

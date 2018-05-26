@@ -66,7 +66,7 @@ public class OidcProperties implements Serializable {
     private List<String> claims = Stream.of("sub", "name", "preferred_username", "family_name",
         "given_name", "middle_name", "given_name", "profile", "picture", "nickname", "website",
         "zoneinfo", "locale", "updated_at", "birthdate", "email", "email_verified", "phone_number",
-        "phone_number_verified", "address").collect(Collectors.toList());
+        "phone_number_verified", "address", "gender").collect(Collectors.toList());
 
     /**
      * List of supported subject types.
