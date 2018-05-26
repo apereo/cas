@@ -7,6 +7,7 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 import org.apereo.cas.trusted.config.JdbcMultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
+import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -89,6 +90,21 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
         mfaTrustEngine.expire(LocalDateTime.now().minusDays(1));
         assertThat(mfaTrustEngine.get(LocalDateTime.now().minusDays(30)), hasSize(2));
         assertThat(mfaTrustEngine.get(LocalDateTime.now().minusSeconds(1)), hasSize(2));
+
+        emptyTrustEngine();
+    }
+
+    @Test
+    public void verifyStoreAndRetrieve() {
+        // create record
+        final MultifactorAuthenticationTrustRecord original =
+                MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT);
+        mfaTrustEngine.set(original);
+        final Set<MultifactorAuthenticationTrustRecord> records = mfaTrustEngine.get(PRINCIPAL);
+        assertEquals(1, records.size());
+        final MultifactorAuthenticationTrustRecord record = records.stream().findFirst().get();
+
+        assertEquals(MultifactorAuthenticationTrustUtils.generateKey(original), MultifactorAuthenticationTrustUtils.generateKey(record));
 
         emptyTrustEngine();
     }
