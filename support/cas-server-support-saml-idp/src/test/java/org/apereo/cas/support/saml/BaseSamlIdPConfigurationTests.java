@@ -155,7 +155,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     @TestConfiguration
     public static class SamlIdPMetadataTestConfiguration {
         @Bean
-        public SamlIdPMetadataLocator samlIdPTestClasspathMetadataLocator() {
+        public SamlIdPMetadataLocator samlMetadataLocator() {
             final FileSystemResource resource = new FileSystemResource("src/test/resources/metadata");
             return new DefaultSamlIdPMetadataLocator(resource);
         }

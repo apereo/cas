@@ -21,6 +21,7 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -51,7 +52,7 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
                                                                        final Collection<String> requestMfaMethod) {
         final Optional<MultifactorAuthenticationProvider> providerFound = providers.values()
                 .stream()           
-                .filter(p -> requestMfaMethod.stream().anyMatch(p::matches))
+                .filter(p -> requestMfaMethod.stream().filter(Objects::nonNull).anyMatch(p::matches))
                 .findFirst();
         if (providerFound.isPresent()) {
             final MultifactorAuthenticationProvider provider = providerFound.get();

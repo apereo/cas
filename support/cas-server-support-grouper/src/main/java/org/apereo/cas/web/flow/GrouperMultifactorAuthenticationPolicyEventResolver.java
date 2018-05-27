@@ -42,20 +42,22 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-
-    
     private final String grouperField;
+    private final GrouperFacade grouperFacade;
 
     public GrouperMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                                final CentralAuthenticationService centralAuthenticationService,
-                                                               final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
+                                                               final ServicesManager servicesManager,
+                                                               final TicketRegistrySupport ticketRegistrySupport,
                                                                final CookieGenerator warnCookieGenerator,
                                                                final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                                final MultifactorAuthenticationProviderSelector selector,
-                                                               final CasConfigurationProperties casProperties) {
+                                                               final CasConfigurationProperties casProperties,
+                                                               final GrouperFacade grouperFacade) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
-                authenticationSelectionStrategies, selector);
+            authenticationSelectionStrategies, selector);
         grouperField = casProperties.getAuthn().getMfa().getGrouperGroupField().toUpperCase();
+        this.grouperFacade = grouperFacade;
     }
 
     @Override
@@ -73,14 +75,14 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
         }
 
         final Principal principal = authentication.getPrincipal();
-        final Collection<WsGetGroupsResult> results = GrouperFacade.getGroupsForSubjectId(principal.getId());
+        final Collection<WsGetGroupsResult> results = grouperFacade.getGroupsForSubjectId(principal.getId());
         if (results.isEmpty()) {
             LOGGER.debug("No groups could be found for [{}] to resolve events for MFA", principal);
             return null;
         }
 
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
@@ -89,10 +91,10 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
         final GrouperGroupField groupField = GrouperGroupField.valueOf(grouperField);
 
         final Set<String> values = results.stream()
-                .map(wsGetGroupsResult -> Stream.of(wsGetGroupsResult.getWsGroups()))
-                .flatMap(Function.identity())
-                .map(g -> GrouperFacade.getGrouperGroupAttribute(groupField, g))
-                .collect(Collectors.toSet());
+            .map(wsGetGroupsResult -> Stream.of(wsGetGroupsResult.getWsGroups()))
+            .flatMap(Function.identity())
+            .map(g -> GrouperFacade.getGrouperGroupAttribute(groupField, g))
+            .collect(Collectors.toSet());
 
         final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, values);
 
@@ -100,9 +102,9 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
             final MultifactorAuthenticationProvider provider = providerFound.get();
             if (provider.isAvailable(service)) {
                 LOGGER.debug("Attempting to build event based on the authentication provider [{}] and service [{}]",
-                        provider, service.getName());
+                    provider, service.getName());
                 final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
-                        buildEventAttributeMap(authentication.getPrincipal(), service, provider));
+                    buildEventAttributeMap(authentication.getPrincipal(), service, provider));
                 return CollectionUtils.wrapSet(event);
             }
             LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", providerFound.get());
@@ -112,8 +114,9 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
         return null;
     }
 
-    @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
-            resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
+    @Audit(action = "AUTHENTICATION_EVENT",
+        actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
+        resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event resolveSingle(final RequestContext context) {
         return super.resolveSingle(context);
