@@ -10,8 +10,8 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
-import org.apereo.cas.config.SamlConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.support.wsfederation.config.WsFederationAuthenticationConfiguration;
 import org.apereo.cas.support.wsfederation.config.support.authentication.WsFedAuthenticationEventExecutionPlanConfiguration;
@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.execution.Action;
 
@@ -41,6 +42,7 @@ import org.springframework.webflow.execution.Action;
     CasCoreWebConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreConfiguration.class,
+    CasRegisteredServicesTestConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreUtilConfiguration.class,
     CoreSamlConfiguration.class,
@@ -53,6 +55,7 @@ import org.springframework.webflow.execution.Action;
     WsFederationAuthenticationWebflowConfiguration.class,
     WsFederationAuthenticationConfiguration.class
 })
+@TestPropertySource(locations = "classpath:wsfedauthn.properties")
 public abstract class BaseWsFederationWebflowTests {
     @Autowired
     @Qualifier("wsFederationAction")
