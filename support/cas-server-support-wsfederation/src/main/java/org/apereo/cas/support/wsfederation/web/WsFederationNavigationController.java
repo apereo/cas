@@ -1,10 +1,8 @@
 package org.apereo.cas.support.wsfederation.web;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
@@ -78,29 +76,6 @@ public class WsFederationNavigationController {
         }
         throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
     }
-
-    /**
-     * Gets redirect url for.
-     *
-     * @param config  the config
-     * @param service the service
-     * @param request the request
-     * @return the redirect url for
-     */
-    @SneakyThrows
-    public static String getRelativeRedirectUrlFor(final WsFederationConfiguration config, final Service service, final HttpServletRequest request) {
-        final URIBuilder builder = new URIBuilder(ENDPOINT_REDIRECT);
-        builder.addParameter(PARAMETER_NAME, config.getId());
-        if (service != null) {
-            builder.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
-        }
-        final String method = request.getParameter(CasProtocolConstants.PARAMETER_METHOD);
-        if (StringUtils.isNotBlank(method)) {
-            builder.addParameter(CasProtocolConstants.PARAMETER_METHOD, method);
-        }
-        return builder.toString();
-    }
-
 
     private Service determineService(final HttpServletRequest request) {
         final String serviceParameter = StringUtils.defaultIfBlank(request.getParameter(CasProtocolConstants.PARAMETER_SERVICE), casLoginEndpoint);

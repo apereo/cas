@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.wsfederation.WsFederationAttributeMutatorTests;
 import org.apereo.cas.support.wsfederation.WsFederationHelperTests;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredentialTests;
+import org.apereo.cas.support.wsfederation.web.WsFederationCookieManagerTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -15,9 +16,10 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     WsFederationHelperTests.class,
+    WsFederationCookieManagerTests.class,
     WsFederationAttributeMutatorTests.class,
     WsFederationCredentialTests.class
 })
 @Slf4j
-public class AllTestsSuite {
+public class AllWsFederationTestsSuite {
 }
