@@ -16,6 +16,7 @@ dependencies {
     api project(":api:cas-server-core-api")
     
     testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":core:cas-server-core-audit-api")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(path: ":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout-api")
