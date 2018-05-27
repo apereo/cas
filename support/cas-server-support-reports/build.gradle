@@ -5,6 +5,8 @@ dependencies {
     implementation libraries.metrics
 
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-audit-api")
     implementation project(":core:cas-server-core-monitor")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-validation")
@@ -16,8 +18,6 @@ dependencies {
     compileOnly project(":core:cas-server-core-events")
     compileOnly project(":support:cas-server-support-discovery-profile")
     
-    provided project(":core:cas-server-core-audit")
-
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-logout")
