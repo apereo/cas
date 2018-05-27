@@ -1,11 +1,9 @@
 package org.apereo.cas.web.flow.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
@@ -45,10 +43,6 @@ import java.util.Collection;
 public class WsFederationAuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
-    @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
-
-    @Autowired
     private ApplicationContext applicationContext;
 
     @Autowired
@@ -64,10 +58,6 @@ public class WsFederationAuthenticationWebflowConfiguration implements CasWebflo
     @Autowired
     @Qualifier("wsFederationCookieManager")
     private WsFederationCookieManager wsFederationCookieManager;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
