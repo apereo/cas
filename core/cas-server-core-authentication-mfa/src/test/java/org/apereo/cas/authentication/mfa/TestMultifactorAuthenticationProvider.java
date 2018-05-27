@@ -12,7 +12,13 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @since 5.3.0
  */
 public class TestMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
+    /**
+     * Provider id.
+     */
+    public static final String ID = "mfa-dummy";
+
     private static final long serialVersionUID = -9184556172646207560L;
+
 
     @Override
     public String getFriendlyName() {
@@ -21,7 +27,7 @@ public class TestMultifactorAuthenticationProvider extends AbstractMultifactorAu
 
     @Override
     public String getId() {
-        return "mfa-dummy";
+        return ID;
     }
 
     /**
