@@ -1,18 +1,18 @@
 package org.apereo.cas.services;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.utils.URIBuilder;
-import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
-import org.apereo.cas.util.http.HttpMessage;
+import org.apache.http.HttpResponse;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpUtils;
 import org.springframework.util.StringUtils;
-import java.net.URL;
+
 import java.util.Map;
-import lombok.Getter;
+import java.util.Set;
 
 /**
  * This is {@link RemoteEndpointServiceAccessStrategy} that reaches out
@@ -41,13 +41,9 @@ public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServic
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         try {
             if (super.doPrincipalAttributesAllowServiceAccess(principal, principalAttributes)) {
-                final HttpClient client = ApplicationContextProvider.getApplicationContext().getBean("noRedirectHttpClient", HttpClient.class);
-                final URIBuilder builder = new URIBuilder(this.endpointUrl);
-                builder.addParameter("username", principal);
-                final URL url = builder.build().toURL();
-                final HttpMessage message = client.sendMessageToEndPoint(url);
-                LOGGER.debug("Message received from [{}] is [{}]", url, message);
-                return message != null && StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes).contains(String.valueOf(message.getResponseCode()));
+                final HttpResponse response = HttpUtils.executeGet(this.endpointUrl, CollectionUtils.wrap("username", principal));
+                final Set<String> currentCodes = StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes);
+                return response != null && currentCodes.contains(String.valueOf(response.getStatusLine().getStatusCode()));
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

@@ -1,6 +1,8 @@
 package org.apereo.cas;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -28,7 +30,6 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasFiltersConfiguration;
-import org.apereo.cas.config.CasMetricsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPropertiesConfiguration;
 import org.apereo.cas.config.CasSecurityContextConfiguration;
@@ -38,6 +39,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logging.config.CasLoggingConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
@@ -71,6 +73,9 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -90,7 +95,6 @@ import static org.junit.Assert.*;
     classes = {CasApplicationContextConfiguration.class,
         CasThemesConfiguration.class,
         CasFiltersConfiguration.class,
-        CasMetricsConfiguration.class,
         CasPropertiesConfiguration.class,
         CasSecurityContextConfiguration.class,
         CasWebAppConfiguration.class,
@@ -141,7 +145,25 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
         getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());
     }
 
-    private RequestContext getMockRequestContext() {
+    @Test
+    public void verifyCasPropertiesAreAvailableInView() {
+        final MockRequestContext ctx = getMockRequestContext();
+        final LocalAttributeMap map = new LocalAttributeMap<>();
+        getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());
+        assertResponseWrittenEquals("classpath:expected/end.html", ctx);
+    }
+
+    @SneakyThrows(IOException.class)
+    protected void assertResponseWrittenEquals(final String response, final MockRequestContext context) {
+        final MockHttpServletResponse nativeResponse = (MockHttpServletResponse) context.getExternalContext().getNativeResponse();
+
+        assertEquals(
+                IOUtils.toString(new InputStreamReader(ResourceUtils.getResourceFrom(response).getInputStream(), StandardCharsets.UTF_8)),
+                nativeResponse.getContentAsString()
+        );
+    }
+
+    private MockRequestContext getMockRequestContext() {
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
@@ -170,6 +192,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
                 @Override
                 protected Event doExecute(final RequestContext requestContext) {
                     final MutableAttributeMap<Object> flowScope = requestContext.getFlowScope();
+                    flowScope.put("test", TEST);
                     flowScope.put("test0", Collections.singleton(TEST));
                     flowScope.put("test1", Collections.singletonList(TEST));
                     flowScope.put("test2", Collections.singletonMap(TEST, TEST));

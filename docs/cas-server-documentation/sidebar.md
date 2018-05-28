@@ -124,6 +124,7 @@ layout: null
         *   [JPA](/$version/installation/JPA-Ticket-Registry.html)
         *   [Ignite](/$version/installation/Ignite-Ticket-Registry.html)
         *   [Couchbase](/$version/installation/Couchbase-Ticket-Registry.html)
+        *   [CouchDb](/$version/installation/CouchDB-Ticket-Registry.html)
         *   [Infinispan](/$version/installation/Infinispan-Ticket-Registry.html)
         *   [Redis](/$version/installation/Redis-Ticket-Registry.html)
         *   [MongoDb](/$version/installation/MongoDb-Ticket-Registry.html)
@@ -152,6 +153,7 @@ layout: null
         *   [DynamoDb](/$version/installation/DynamoDb-Service-Management.html)
         *   [CosmosDb](/$version/installation/CosmosDb-Service-Management.html)
         *   [Couchbase](/$version/installation/Couchbase-Service-Management.html)
+        *   [CouchDb](/$version/installation/CouchDb-Service-Management.html)
         *   [REST](/$version/installation/REST-Service-Management.html)
         *   [Custom](/$version/installation/Custom-Service-Management.html)
 

@@ -26,7 +26,10 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class WsFederationCookieManager {
-    private static final String WCTX = "wctx";
+    /**
+     * ws-fed {@code wctx} parameter.
+     */
+    public static final String WCTX = "wctx";
 
     private final Collection<WsFederationConfiguration> configurations;
     private final String themeParamName;
@@ -50,7 +53,10 @@ public class WsFederationCookieManager {
             throw new IllegalArgumentException("No " + WCTX + " parameter is found");
         }
 
-        final WsFederationConfiguration configuration = configurations.stream().filter(c -> c.getId().equals(wCtx)).findFirst().orElse(null);
+        final WsFederationConfiguration configuration = configurations.stream()
+            .filter(c -> c.getId().equalsIgnoreCase(wCtx))
+            .findFirst()
+            .orElse(null);
         final CookieRetrievingCookieGenerator cookieGen = configuration.getCookieGenerator();
         final String value = cookieGen.retrieveCookieValue(request);
         if (StringUtils.isBlank(value)) {
@@ -66,7 +72,7 @@ public class WsFederationCookieManager {
         final String serviceKey = CasProtocolConstants.PARAMETER_SERVICE + "-" + wCtx;
         final Service service = (Service) session.get(serviceKey);
         LOGGER.debug("Located service [{}] from session cookie", service);
-        context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
+        WebUtils.putService(context, service);
         return service;
     }
 

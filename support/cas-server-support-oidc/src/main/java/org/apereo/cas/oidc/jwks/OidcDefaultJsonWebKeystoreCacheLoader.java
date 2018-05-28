@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.jwks;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +20,7 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String, Optional<RsaJsonWebKey>> {
     private final Resource jwksFile;
 
@@ -36,7 +36,7 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
         }
         return Optional.of(key);
     }
-    
+
     private static RsaJsonWebKey getJsonSigningWebKeyFromJwks(final JsonWebKeySet jwks) {
         if (jwks.getJsonWebKeys().isEmpty()) {
             LOGGER.warn("No JSON web keys are available in the keystore");
@@ -91,9 +91,9 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
                     return Optional.empty();
                 }
                 final long badKeysCount = jsonWebKeySet.getJsonWebKeys().stream().filter(k ->
-                        StringUtils.isBlank(k.getAlgorithm())
-                                && StringUtils.isBlank(k.getKeyId())
-                                && StringUtils.isBlank(k.getKeyType())).count();
+                    StringUtils.isBlank(k.getAlgorithm())
+                        && StringUtils.isBlank(k.getKeyId())
+                        && StringUtils.isBlank(k.getKeyType())).count();
 
                 if (badKeysCount == jsonWebKeySet.getJsonWebKeys().size()) {
                     LOGGER.warn("No valid JSON web keys could be found");

@@ -122,9 +122,9 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      */
     public Status newStatus(final String codeValue, final String statusMessage) {
         final Status status = newSamlObject(Status.class);
-        final StatusCode code = newSamlObject(StatusCode.class);
-        code.setValue(codeValue);
-        status.setStatusCode(code);
+        final StatusCode statusCode = newSamlObject(StatusCode.class);
+        statusCode.setValue(codeValue);
+        status.setStatusCode(statusCode);
         if (StringUtils.isNotBlank(statusMessage)) {
             final StatusMessage message = newSamlObject(StatusMessage.class);
             message.setMessage(statusMessage);

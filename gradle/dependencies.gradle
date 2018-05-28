@@ -725,6 +725,11 @@ ext.libraries = [
         ],
         zxingbarcode            : [
                 dependencies.create("com.google.zxing:core:$googleZxingVersion") {
+                    exclude(group: "com.google.zxing", module: "android-core")
+                    exclude(group: "com.google.zxing", module: "android-integration")
+                    exclude(group: "junit", module: "junit")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     force = true
                 }
         ],
@@ -1099,12 +1104,6 @@ ext.libraries = [
                 }
         ],
         activemq                : [
-                dependencies.create("org.apache.activemq:activemq-core:$activemqVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.jasypt", module: "jasypt")
-                    exclude(group: "org.fusesource.hawtbuf", module: "hawtbuf")
-                    force = true
-                },
                 dependencies.create("org.springframework.boot:spring-boot-starter-activemq:$springBootVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.apache.activemq", module: "activemq-client")
@@ -1209,6 +1208,7 @@ ext.libraries = [
                 }
         ],
         couchbase               : dependencies.create("com.couchbase.client:java-client:$couchbaseVersion"),
+        ektorp                 : dependencies.create("org.ektorp:org.ektorp:$ektorpVersion"),
         jcifs                   : [
                 dependencies.create("jcifs:jcifs:$jcifsVersion") {
                     exclude(group: "javax.servlet", module: "servlet-api")

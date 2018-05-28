@@ -95,7 +95,7 @@ public class CoreAuthenticationTestUtils {
         when(svc.getOriginalUrl()).thenReturn(id);
         return svc;
     }
-    
+
     public static StubPersonAttributeDao getAttributeRepository() {
         final Map<String, List<Object>> attributes = new HashMap<>();
         attributes.put("uid", CollectionUtils.wrap(CONST_USERNAME));
@@ -103,6 +103,10 @@ public class CoreAuthenticationTestUtils {
         attributes.put("givenName", CollectionUtils.wrap(CONST_USERNAME));
         attributes.put("memberOf", CollectionUtils.wrapList("system", "admin", "cas", "staff"));
         return new StubPersonAttributeDao(attributes);
+    }
+
+    public static Map getAttributes() {
+        return getAttributeRepository().getBackingMap();
     }
 
     public static Principal getPrincipal() {

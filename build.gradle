@@ -290,7 +290,11 @@ subprojects {
     }
 
     dependencyCheck {
-        failBuildOnCVSS = 8
+        /*
+         * Specifies if the build should be failed if a CVSS score equal
+         * to or above a specified level is identified.
+         */
+        failBuildOnCVSS = 7
         skipTestGroups = true
         suppressionFile = file("$rootProject.projectDir/style/dependency-check-suppressions.xml")
         analyzers {
