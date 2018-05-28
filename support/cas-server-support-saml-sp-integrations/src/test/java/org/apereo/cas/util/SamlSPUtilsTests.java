@@ -1,15 +1,20 @@
 package org.apereo.cas.util;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderProperties;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.io.File;
+import java.util.Collection;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -42,7 +47,7 @@ public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifyNewSamlServiceProviderViaMetadata() throws Exception {
+    public void verifyNewSamlServiceProviderViaMetadata() {
         final SamlServiceProviderProperties.TestShib sp = new SamlServiceProviderProperties.TestShib();
         sp.setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
         final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(sp, defaultSamlRegisteredServiceCachingMetadataResolver);
@@ -57,5 +62,11 @@ public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
         SamlSPUtils.saveService(service, servicesManager);
         SamlSPUtils.saveService(service, servicesManager);
         assertEquals(2, servicesManager.count());
+    }
+
+    @AfterClass
+    public static void shutdown() {
+        final Collection<File> cols = FileUtils.listFiles(METADATA_DIRECTORY.getFile(), new String[] {"crt", "key", "xml"}, false);
+        cols.forEach(FileUtils::deleteQuietly);
     }
 }

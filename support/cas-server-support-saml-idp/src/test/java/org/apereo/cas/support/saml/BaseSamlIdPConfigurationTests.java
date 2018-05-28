@@ -53,7 +53,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.mockito.Mockito.*;
@@ -99,9 +98,10 @@ import static org.mockito.Mockito.*;
     CoreSamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreUtilConfiguration.class})
-@TestPropertySource(properties = "cas.authn.samlIdp.metadata.location=classpath:/metadata")
 @Slf4j
 public abstract class BaseSamlIdPConfigurationTests {
+    protected static final FileSystemResource METADATA_DIRECTORY = new FileSystemResource("src/test/resources/metadata");
+
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
     protected OpenSamlConfigBean openSamlConfigBean;
@@ -156,8 +156,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     public static class SamlIdPMetadataTestConfiguration {
         @Bean
         public SamlIdPMetadataLocator samlMetadataLocator() {
-            final FileSystemResource resource = new FileSystemResource("src/test/resources/metadata");
-            return new DefaultSamlIdPMetadataLocator(resource);
+            return new DefaultSamlIdPMetadataLocator(METADATA_DIRECTORY);
         }
     }
 }
