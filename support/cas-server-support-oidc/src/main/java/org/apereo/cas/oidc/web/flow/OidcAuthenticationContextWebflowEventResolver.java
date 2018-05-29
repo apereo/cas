@@ -29,25 +29,25 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * This is {@link OidcAuthenticationContextWebflowEventEventResolver}.
+ * This is {@link OidcAuthenticationContextWebflowEventResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
-public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
+public class OidcAuthenticationContextWebflowEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
 
-    
-    public OidcAuthenticationContextWebflowEventEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
-                                                              final CentralAuthenticationService centralAuthenticationService,
-                                                              final ServicesManager servicesManager,
-                                                              final TicketRegistrySupport ticketRegistrySupport,
-                                                              final CookieGenerator warnCookieGenerator,
-                                                              final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                                              final MultifactorAuthenticationProviderSelector selector) {
+
+    public OidcAuthenticationContextWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
+                                                         final CentralAuthenticationService centralAuthenticationService,
+                                                         final ServicesManager servicesManager,
+                                                         final TicketRegistrySupport ticketRegistrySupport,
+                                                         final CookieGenerator warnCookieGenerator,
+                                                         final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
+                                                         final MultifactorAuthenticationProviderSelector selector) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-                ticketRegistrySupport, warnCookieGenerator,
-                authenticationSelectionStrategies, selector);
+            ticketRegistrySupport, warnCookieGenerator,
+            authenticationSelectionStrategies, selector);
     }
 
     @Override
@@ -65,8 +65,9 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
         if (StringUtils.isBlank(acr)) {
             final URIBuilder builderContext = new URIBuilder(StringUtils.trimToEmpty(context.getFlowExecutionUrl()));
             final Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
-                    .stream().filter(p -> p.getName().equals(OAuth20Constants.ACR_VALUES))
-                    .findFirst();
+                .stream()
+                .filter(p -> p.getName().equals(OAuth20Constants.ACR_VALUES))
+                .findFirst();
             if (parameter.isPresent()) {
                 acr = parameter.get().getValue();
             }
@@ -82,7 +83,7 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
         }
 
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context to handle [{}]", values);
             throw new AuthenticationException();
@@ -90,9 +91,9 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
 
         final Collection<MultifactorAuthenticationProvider> flattenedProviders = flattenProviders(providerMap.values());
         final Optional<MultifactorAuthenticationProvider> provider = flattenedProviders
-                .stream()
-                .filter(v -> values.contains(v.getId()))
-                .findAny();
+            .stream()
+            .filter(v -> values.contains(v.getId()))
+            .findAny();
 
         if (provider.isPresent()) {
             return CollectionUtils.wrapSet(new Event(this, provider.get().getId()));
