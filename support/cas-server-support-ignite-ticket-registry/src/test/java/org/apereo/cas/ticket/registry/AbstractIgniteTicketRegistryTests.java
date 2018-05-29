@@ -20,13 +20,13 @@ import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
 import org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.util.junit.ConditionalSpringRunner;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * This is {@link AbstractIgniteTicketRegistryTests}.
@@ -34,7 +34,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
+@RunWith(ConditionalSpringRunner.class)
 @SpringBootTest(classes = {
     IgniteTicketRegistryConfiguration.class,
     CasCoreTicketsConfiguration.class,

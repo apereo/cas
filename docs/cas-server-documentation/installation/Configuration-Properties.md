@@ -721,7 +721,7 @@ import java.util.*
 
 def Map<String, List<Object>> run(final Object... args) {
     def uid = args[0]
-    def logger = args[1];
+    def logger = args[1]
     def casProperties = args[2]
     def casApplicationContext = args[3]
 
@@ -838,6 +838,7 @@ Retrieve attributes from a JDBC source. Database settings for this feature are a
 # cas.authn.attributeRepository.jdbc[0].columnMappings.columnAttrName3=columnAttrValue3
 
 # cas.authn.attributeRepository.jdbc[0].sql=SELECT * FROM table WHERE {0}
+# cas.authn.attributeRepository.jdbc[0].username=uid
 ```
 
 ### Grouper
@@ -1199,6 +1200,7 @@ Send text messaging using TextMagic.
 ```properties
 # cas.smsProviders.textMagic.username=
 # cas.smsProviders.textMagic.token=
+# cas.smsProviders.textMagic.url=
 ```
 
 ### Clickatell
@@ -1591,6 +1593,8 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas[0].name=
 # cas.authn.jaas[0].order=
 # cas.authn.jaas[0].credentialCriteria=
+# cas.authn.jaas[0].loginConfigType=JavaLoginConfig
+# cas.authn.jaas[0].loginConfigurationFile=/path/to/jaas.conf
 ```
 
 Principal resolution and Person Directory settings for this feature 
@@ -1634,6 +1638,7 @@ or [this guide](../protocol/REST-Protocol.html) for more info.
 
 ```properties
 # cas.authn.token.crypto.encryptionEnabled=true
+# cas.authn.token.crypto.signingEnabled=true
 ```
 
 The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.token`.
@@ -2382,49 +2387,53 @@ Configuration settings for all SAML2 service providers are [available here](Conf
 
 | Service Provider                       | Configuration Key | Attributes
 |---------------------------|----------------------------------------------------------
-| Gitlab               | `cas.samlSp.gitlab` | `last_name`,`first_name`,`name`
+| Gitlab                | `cas.samlSp.gitlab` | `last_name`,`first_name`,`name`
 | Hipchat               | `cas.samlSp.hipchat` | `last_name`,`first_name`,`title`
 | Dropbox               | `cas.samlSp.dropbox` | `mail`
-| TestShib               | `cas.samlSp.testShib` | `eduPersonPrincipalName`
-| OpenAthens               | `cas.samlSp.openAthens` | `email`, `eduPersonPrincipalName`
-| Egnyte               | `cas.samlSp.egnyte` | N/A
-| EverBridge               | `cas.samlSp.everBridge` | N/A
-| Simplicity               | `cas.samlSp.simplicity` | N/A
-| App Dynamics               | `cas.samlSp.appDynamics` | `User.OpenIDName`, `User.email`, `User.fullName`, `AccessControl`, `Groups-Membership`
-| Yuja               | `cas.samlSp.yuja` | N/A
-| Simplicity               | `cas.samlSp.simplicity` | N/A
-| New Relic               | `cas.samlSp.newRelic` | N/A
+| TestShib              | `cas.samlSp.testShib` | `eduPersonPrincipalName`
+| OpenAthens            | `cas.samlSp.openAthens` | `email`, `eduPersonPrincipalName`
+| Egnyte                | `cas.samlSp.egnyte` | N/A
+| EverBridge            | `cas.samlSp.everBridge` | N/A
+| Simplicity            | `cas.samlSp.simplicity` | N/A
+| App Dynamics          | `cas.samlSp.appDynamics` | `User.OpenIDName`, `User.email`, `User.fullName`, `AccessControl`, `Groups-Membership`
+| Yuja                  | `cas.samlSp.yuja` | N/A
+| Simplicity            | `cas.samlSp.simplicity` | N/A
+| New Relic             | `cas.samlSp.newRelic` | N/A
 | Sunshine State Education and Research Computing Alliance               | `cas.samlSp.sserca` | N/A
 | CherWell               | `cas.samlSp.cherWell` | N/A
-| FAMIS               | `cas.samlSp.famis` | N/A
-| Bynder               | `cas.samlSp.bynder` | N/A
-| Web Advisor               | `cas.samlSp.webAdvisor` | `uid`
-| Adobe Creative Cloud               | `cas.samlSp.adobeCloud` | `firstName`, `lastName`, `email`
-| Securing The Human               | `cas.samlSp.sansSth` | `firstName`, `lastName`, `scopedUserId`, `department`, `reference`, `email`
-| Easy IEP               | `cas.samlSp.easyIep` | `employeeId`
-| Infinite Campus               | `cas.samlSp.infiniteCampus` | `employeeId`
-| Slack               | `cas.samlSp.slack` | `User.Email`, `User.Username`, `first_name`, `last_name`, `employeeId`
+| FAMIS                 | `cas.samlSp.famis` | N/A
+| Bynder                | `cas.samlSp.bynder` | N/A
+| Web Advisor           | `cas.samlSp.webAdvisor` | `uid`
+| Adobe Creative Cloud  | `cas.samlSp.adobeCloud` | `firstName`, `lastName`, `email`
+| Securing The Human    | `cas.samlSp.sansSth` | `firstName`, `lastName`, `scopedUserId`, `department`, `reference`, `email`
+| Easy IEP              | `cas.samlSp.easyIep` | `employeeId`
+| Infinite Campus       | `cas.samlSp.infiniteCampus` | `employeeId`
+| Slack                 | `cas.samlSp.slack` | `User.Email`, `User.Username`, `first_name`, `last_name`, `employeeId`
 | Zendesk               | `cas.samlSp.zendesk` | `organization`, `tags`, `phone`, `role`, `email`
 | Gartner               | `cas.samlSp.gartner` | `urn:oid:2.5.4.42`, `urn:oid:2.5.4.4`, `urn:oid:0.9.2342.19200300.100.1.3`
 | Arc GIS               | `cas.samlSp.arcGIS` | `arcNameId`, `mail`, `givenName`
-| Benefit Focus               | `cas.samlSp.benefitFocus` | `benefitFocusUniqueId`
-| Office365               | `cas.samlSp.office365` | `IDPEmail`, `ImmutableID`, `scopedImmutableID`
-| SAManage               | `cas.samlSp.saManage` | `mail`
-| Salesforce               | `cas.samlSp.salesforce` | `eduPersonPrincipalName`
+| Benefit Focus         | `cas.samlSp.benefitFocus` | `benefitFocusUniqueId`
+| Office365             | `cas.samlSp.office365` | `IDPEmail`, `ImmutableID`, `scopedImmutableID`
+| SAManage              | `cas.samlSp.saManage` | `mail`
+| Salesforce            | `cas.samlSp.salesforce` | `eduPersonPrincipalName`
 | Workday               | `cas.samlSp.workday` | N/A
-| Academic Works               | `cas.samlSp.academicWorks` | `displayName`
-| ZOOM               | `cas.samlSp.zoom` | `mail`, `sn`, `givenName`
-| Evernote               | `cas.samlSp.evernote` | `email`
-| Tableau               | `cas.samlSp.tableau` | `username`
-| Asana               | `cas.samlSp.asana` | `email`
-| Box               | `cas.samlSp.box` | `email`, `firstName`, `lastName`
+| Academic Works            | `cas.samlSp.academicWorks` | `displayName`
+| ZOOM                      | `cas.samlSp.zoom` | `mail`, `sn`, `givenName`
+| Evernote                  | `cas.samlSp.evernote` | `email`
+| Tableau                   | `cas.samlSp.tableau` | `username`
+| Asana                     | `cas.samlSp.asana` | `email`
+| Box                       | `cas.samlSp.box` | `email`, `firstName`, `lastName`
 | Service Now               | `cas.samlSp.serviceNow` | `eduPersonPrincipalName`
 | Net Partner               | `cas.samlSp.netPartner` | `studentId`
-| Webex               | `cas.samlSp.webex` | `firstName`, `lastName`
-| InCommon        |  `cas.samlSp.inCommon` | `eduPersonPrincipalName`
-| Amazon        |  `cas.samlSp.amazon` | `awsRoles`, `awsRoleSessionName`
-| Concur Solutions               | `cas.samlSp.concurSolutions` | `email`
-| PollEverywhere               | `cas.samlSp.pollEverywhere` | `email`
+| Webex                     | `cas.samlSp.webex` | `firstName`, `lastName`
+| InCommon                  |  `cas.samlSp.inCommon` | `eduPersonPrincipalName`
+| Amazon                    |  `cas.samlSp.amazon` | `awsRoles`, `awsRoleSessionName`
+| Concur Solutions          | `cas.samlSp.concurSolutions` | `email`
+| PollEverywhere            | `cas.samlSp.pollEverywhere` | `email`
+| BlackBaud                 | `cas.samlSp.blackBaud` | `email`, `eduPersonPrincipalName`
+| GiveCampus                | `cas.samlSp.giveCampus` | `email`, `givenName`, `surname`, `displayName`
+| WarpWire                  | `cas.samlSp.warpWire` | `email`, `givenName`, `eduPersonPrincipalName`, `surname`, `eduPersonScopedAffiliation`, `employeeNumber`
+| WarpWire                  | `cas.samlSp.rocketChat` | `email`, `cn`, `username`
 
 **Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds can be regular expression patterns and are mapped to CAS' `serviceId` field in the registry. The signature location MUST BE the public key used to sign the metadata.
 
@@ -2470,6 +2479,7 @@ To learn more about this topic, [please review this guide](../integration/Delega
 
 ```properties
 # cas.authn.pac4j.typedIdUsed=false
+# cas.authn.pac4j.principalAttributeId=
 # cas.authn.pac4j.name=
 ```
 
@@ -2593,6 +2603,12 @@ Delegate authentication to LinkedIn. Common settings for this identity provider 
 # cas.authn.pac4j.linkedIn.scope=
 ```
 
+### Twitter
+Delegate authentication to Twitter.  Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.twitter`.
+
+```properties
+# cas.authn.pac4j.twitter.includeEmail=false
+```
 
 ## WS Federation
 
@@ -2970,7 +2986,7 @@ a local truststore is provided by CAS to improve portability of configuration ac
 # cas.httpClient.connectionTimeout=5000
 # cas.httpClient.asyncTimeout=5000
 # cas.httpClient.readTimeout=5000
-# cas.httpClient.hostnameVerifier=NONE|DEFAULT
+# cas.httpClient.hostNameVerifier=NONE|DEFAULT
 # cas.httpClient.allowLocalLogoutUrls=false
 # cas.httpClient.authorityValidationRegEx=
 # cas.httpClient.authorityValidationRegExCaseSensitive=true
@@ -3434,18 +3450,6 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 # cas.ticket.tgt.hardTimeout.timeToKillInSeconds=28800
 ```
 
-### Attributes
-
-Attribute configuration and customizations that are processed and accepted by the management web application are defined via the following settings:
-
-```properties
-# cas.authn.attributeRepository.stub.attributes.uid=uid
-# cas.authn.attributeRepository.stub.attributes.givenName=givenName
-# cas.authn.attributeRepository.stub.attributes.eppn=eppn
-```
-
-Use LDAP to enforce access into the management web application either by group or attribute.
-
 ## Google reCAPTCHA Integration
 
 Display Google's reCAPTCHA widget on the CAS login page.
@@ -3783,6 +3787,7 @@ Configure settings relevant to the Java CAS client configured to handle inbound 
 
 ```properties
 # cas.client.prefix=https://sso.example.org/cas
+# cas.client.validatorType=CAS10|CAS20|CAS30
 ```
 
 ## Password Management

@@ -19,7 +19,7 @@ public class TokenTicketCipherExecutorTests {
     @Test
     public void verifyCipheredToken() {
         final var c = new TokenTicketCipherExecutor(null,
-                "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", true);
+            "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", true);
         final var token = c.encode(ST);
         assertEquals(ST, c.decode(token));
     }
@@ -27,8 +27,14 @@ public class TokenTicketCipherExecutorTests {
     @Test
     public void verifyCipheredTokenWithoutEncryption() {
         final var c = new TokenTicketCipherExecutor(null,
-                "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", false);
+            "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", false);
         final var token = c.encode(ST);
+        assertEquals(ST, c.decode(token));
+    }
+
+    @Test
+    public void verifyCipheredTokenWithoutEncryptionAndSigning() {
+        final var c = new TokenTicketCipherExecutor();
         assertEquals(ST, c.decode(token));
     }
 }

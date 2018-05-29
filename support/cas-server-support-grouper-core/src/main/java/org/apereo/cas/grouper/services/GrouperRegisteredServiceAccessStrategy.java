@@ -7,12 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import lombok.Setter;
 
 /**
@@ -39,19 +41,23 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         final Map<String, Object> allAttributes = new HashMap<>(principalAttributes);
         final List<String> grouperGroups = new ArrayList<>();
-        final var results = GrouperFacade.getGroupsForSubjectId(principal);
+        final var facade = new GrouperFacade();
+        final var results = facade.getGroupsForSubjectId(principal);
         if (results.isEmpty()) {
             LOGGER.warn("Subject id [{}] could not be located. Access denied", principal);
             return false;
         }
-        final var denied = results.stream().anyMatch(groupsResult -> {
-            if (groupsResult.getWsGroups() == null || groupsResult.getWsGroups().length == 0) {
-                LOGGER.warn("No groups could be found for subject [{}]. Access denied", groupsResult.getWsSubject().getName());
-                return true;
-            }
-            Arrays.stream(groupsResult.getWsGroups()).forEach(group -> grouperGroups.add(GrouperFacade.getGrouperGroupAttribute(this.groupField, group)));
-            return false;
-        });
+        final var denied = results
+            .stream()
+            .anyMatch(groupsResult -> {
+                if (groupsResult.getWsGroups() == null || groupsResult.getWsGroups().length == 0) {
+                    LOGGER.warn("No groups could be found for subject [{}]. Access denied", groupsResult.getWsSubject().getName());
+                    return true;
+                }
+                Arrays.stream(groupsResult.getWsGroups())
+                    .forEach(group -> grouperGroups.add(GrouperFacade.getGrouperGroupAttribute(this.groupField, group)));
+                return false;
+            });
         if (denied) {
             return false;
         }

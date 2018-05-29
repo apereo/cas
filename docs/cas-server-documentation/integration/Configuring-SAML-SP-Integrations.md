@@ -30,10 +30,10 @@ The following SAML SP integrations, as samples, are provided by CAS:
 
 <div class="img-cloud">
 <a href="http://www.incommon.org/federation/metadata.html">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052578/47d6f570-dd60-11e6-8f03-02cb99d6106d.gif" height="48" width="140"></a> 
+<img src="https://cloud.githubusercontent.com/assets/1205228/22052578/47d6f570-dd60-11e6-8f03-02cb99d6106d.gif" height="48" width="110"></a> 
 
 <a href="https://support.zoom.us/hc/en-us/articles/201363003-Getting-Started-with-SSO">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052568/475f36d4-dd60-11e6-84f4-a88eb33f3f0a.jpg" height="30" width="130"></a> 
+<img src="https://cloud.githubusercontent.com/assets/1205228/22052568/475f36d4-dd60-11e6-84f4-a88eb33f3f0a.jpg" height="30" width="110"></a> 
 
 <a href="https://www.dropbox.com/guide/admin/security/configure-single-sign-on">
 <img src="https://cloud.githubusercontent.com/assets/1205228/22052575/47ba8930-dd60-11e6-8cb1-9334066d5f0f.png" height="48" width="140"></a> 
@@ -42,37 +42,37 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <img src="https://cloud.githubusercontent.com/assets/1205228/22052581/47e7bcfc-dd60-11e6-85e9-c09926736e5e.png" height="48" width="140"></a> 
 
 <a href="https://help.salesforce.com/HTViewHelpDoc?id=sso_saml.htm">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052579/47da9d74-dd60-11e6-8eac-d66b67e2ebf7.png" height="60" width="140"></a>
+<img src="https://cloud.githubusercontent.com/assets/1205228/22052579/47da9d74-dd60-11e6-8eac-d66b67e2ebf7.png" height="60" width="100"></a>
 
 <a href="https://community.box.com/t5/For-Admins/Single-Sign-On-SSO-with-Box-For-Administrators/ta-p/1263">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052572/47ace302-dd60-11e6-9842-4eda5a9ab5cf.png" height="48" width="140"></a> 
+<img src="https://cloud.githubusercontent.com/assets/1205228/22052572/47ace302-dd60-11e6-9842-4eda5a9ab5cf.png" height="48" width="90"></a> 
 
 <a href="http://wiki.servicenow.com/index.php?title=SAML_2.0_Web_Browser_SSO_Profile">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052583/4805e2c2-dd60-11e6-8150-80aaa4bbab0e.png" height="20" width="140"></a> 
+<img src="https://cloud.githubusercontent.com/assets/1205228/22052583/4805e2c2-dd60-11e6-8150-80aaa4bbab0e.png" height="20" width="100"></a> 
 
 <a href="http://www.workday.com/">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052587/4816e04a-dd60-11e6-9ceb-6ccec1290e19.png" height="48" width="140"></a> 
+<img src="https://cloud.githubusercontent.com/assets/1205228/22052587/4816e04a-dd60-11e6-9ceb-6ccec1290e19.png" height="48" width="100"></a> 
 
 <a href="http://www.testshib.org">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052582/4805064a-dd60-11e6-87aa-746deacca597.jpg" height="48" width="140"></a> 
+<img src="https://cloud.githubusercontent.com/assets/1205228/22052582/4805064a-dd60-11e6-87aa-746deacca597.jpg" height="48" width="100"></a> 
 
 <a href="https://help.webex.com/docs/DOC-1067">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052574/47af8206-dd60-11e6-95d0-5827e0d88d73.jpg" height="48" width="140"></a>
+<img src="https://cloud.githubusercontent.com/assets/1205228/22052574/47af8206-dd60-11e6-95d0-5827e0d88d73.jpg" height="48" width="100"></a>
 
 <a href="https://www.collegeboard.org/powerfaids/net-partner">
 <img src="https://cloud.githubusercontent.com/assets/1205228/22052570/47abea6a-dd60-11e6-85a0-387c3c2ce8e7.png" height="48" width="140"></a> 
 
 <a href="https://msdn.microsoft.com/en-us/library/azure/dn641269.aspx">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22053102/d64da904-dd63-11e6-8a68-977526634b9d.png" height="48" width="140"></a> 
+<img src="https://cloud.githubusercontent.com/assets/1205228/22053102/d64da904-dd63-11e6-8a68-977526634b9d.png" height="48" width="110"></a> 
 
 <a href="https://asana.com/guide/help/premium/authentication#gl-saml">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052569/478b8c16-dd60-11e6-82f4-e292243ff076.png" height="48" width="140"></a> 
+<img src="https://cloud.githubusercontent.com/assets/1205228/22052569/478b8c16-dd60-11e6-82f4-e292243ff076.png" height="48" width="100"></a> 
 
 <a href="https://onlinehelp.tableau.com/current/server/en-us/saml_requ.htm">
 <img src="https://cloud.githubusercontent.com/assets/1205228/22052586/480cffc6-dd60-11e6-939c-1ceb34f3186d.png" height="48" width="140"></a> 
 
 <a href="https://help.evernote.com/hc/en-us/articles/209005217-How-to-configure-SSO-for-your-business">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052577/47d6b6e6-dd60-11e6-810e-dd875bf25d17.png" height="48" width="140"></a> 
+<img src="https://cloud.githubusercontent.com/assets/1205228/22052577/47d6b6e6-dd60-11e6-810e-dd875bf25d17.png" height="48" width="110"></a> 
 
 <a href="http://www.ellucian.com/Software/Colleague-WebAdvisor/">
 <img src="https://cloud.githubusercontent.com/assets/1205228/23185912/5c3f2f50-f89a-11e6-8450-6da44a1a9d9d.png" height="48" width="140"></a>
@@ -87,7 +87,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <img src="https://cloud.githubusercontent.com/assets/1205228/24562072/ac5964ec-165e-11e7-9986-92108c30eb9b.png" height="48" width="90"></a>
 
 <a href="https://www.academicworks.com/why-academicworks/user-authentication/">
-<img src="https://cloud.githubusercontent.com/assets/1205228/24624808/3c5909b6-18c2-11e7-9922-52ee604aff55.png" height="48" width="240"></a>
+<img src="https://cloud.githubusercontent.com/assets/1205228/24624808/3c5909b6-18c2-11e7-9922-52ee604aff55.png" height="48" width="200"></a>
 
 <a href="https://www.infinitecampus.com/">
 <img src="https://cloud.githubusercontent.com/assets/1205228/24698286/4c4d8740-1a05-11e7-844e-54d328e64e2f.png" height="48" width="120"></a>
@@ -102,7 +102,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <img src="https://cloud.githubusercontent.com/assets/1205228/24858342/34441006-1e01-11e7-9209-9b78081de4db.png" height="48" width="120"></a>
 
 <a href="https://www.gartner.com/">
-<img src="https://cloud.githubusercontent.com/assets/1205228/25349422/a29a98f6-28d6-11e7-9d10-e286d0080cbe.png" height="48" width="120"></a>
+<img src="https://cloud.githubusercontent.com/assets/1205228/25349422/a29a98f6-28d6-11e7-9d10-e286d0080cbe.png" height="48" width="100"></a>
 
 <a href="https://www.cherwell.com/">
 <img src="https://user-images.githubusercontent.com/1205228/30205883-84174ebc-949f-11e7-9afc-a66c2ab19f59.png" height="48" width="120"></a>
@@ -114,7 +114,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <img src="https://user-images.githubusercontent.com/1205228/30205910-a560ec90-949f-11e7-8485-e3a833f8109b.png" height="48" width="120"></a>
 
 <a href="https://sserca.fau.edu/">
-<img src="https://user-images.githubusercontent.com/1205228/30221936-5e90af04-94da-11e7-8046-483fc26a1c01.png" height="48" width="220"></a>
+<img src="https://user-images.githubusercontent.com/1205228/30221936-5e90af04-94da-11e7-8046-483fc26a1c01.png" height="48" width="170"></a>
 
 <a href="https://newrelic.com/new">
 <img src="https://user-images.githubusercontent.com/1205228/30247067-541cef96-9620-11e7-88d7-c3749ba55ecf.png" height="48" width="90"></a>
@@ -138,7 +138,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <img src="https://user-images.githubusercontent.com/1205228/33747990-4d8da06e-db83-11e7-9551-f52630f7d4f0.png" height="38" width="120"></a>
 
 <a href="https://www.hipchat.com/">
-<img src="https://user-images.githubusercontent.com/1205228/33751445-2b45394e-db98-11e7-9526-1eda07a70d99.png" height="58" width="140"></a>
+<img src="https://user-images.githubusercontent.com/1205228/33751445-2b45394e-db98-11e7-9526-1eda07a70d99.png" height="58" width="100"></a>
 
 <a href="https://www.appdynamics.com/">
 <img src="https://user-images.githubusercontent.com/1205228/33800340-3c2c072e-dcfb-11e7-9f10-7a7b2488c9b2.png" height="58" width="120"></a>
@@ -147,10 +147,22 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <img src="https://user-images.githubusercontent.com/1205228/34523704-d33a2054-f0ad-11e7-9fd7-444c30772a2a.png" height="58" width="120"></a>
 
 <a href="https://www.concursolutions.com/">
-<img src="https://user-images.githubusercontent.com/1205228/36302734-ca3327ae-12c6-11e8-836f-e9a1550253d2.png" height="58" width="220"></a>
+<img src="https://user-images.githubusercontent.com/1205228/36302734-ca3327ae-12c6-11e8-836f-e9a1550253d2.png" height="58" width="180"></a>
 
 <a href="https://www.polleverywhere.com/">
-<img src="https://user-images.githubusercontent.com/1205228/36302795-026f57d2-12c7-11e8-931e-0f8700df1864.png" height="58" width="220"></a>
+<img src="https://user-images.githubusercontent.com/1205228/36302795-026f57d2-12c7-11e8-931e-0f8700df1864.png" height="58" width="180"></a>
+
+<a href="https://www.blackbaud.com/files/support/helpfiles/auth/content/auth-saml.html">
+<img src="https://user-images.githubusercontent.com/1205228/39860502-c72d1614-5452-11e8-956d-28a4b3a7a757.png" height="58" width="160"></a>
+
+<a href="https://www.givecampus.com/">
+<img src="https://user-images.githubusercontent.com/1205228/39876988-eb009f5c-5489-11e8-8b74-940f75997f41.png" height="58" width="170"></a>
+
+<a href="https://www.warpwire.com/">
+<img src="https://user-images.githubusercontent.com/1205228/39861404-b73f4bca-5455-11e8-9035-e0ecf1f8dcd0.png" height="58" width="170"></a>
+
+<a href="https://rocket.chat/docs/administrator-guides/authentication/saml/">
+<img src="https://user-images.githubusercontent.com/1205228/39877039-1128c7ae-548a-11e8-8735-1abf90883df6.png" height="58" width="170"></a>
 
 </div>
 

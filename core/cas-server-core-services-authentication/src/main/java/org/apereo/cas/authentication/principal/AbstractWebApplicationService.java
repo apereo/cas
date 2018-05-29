@@ -40,17 +40,11 @@ import java.util.Map;
 public abstract class AbstractWebApplicationService implements WebApplicationService {
     private static final long serialVersionUID = 610105280927740076L;
 
-    /**
-     * The id of the service.
-     */
     @Id
     @JsonProperty
     @Column
     private String id;
-
-    /**
-     * The original url provided, used to reconstruct the redirect url.
-     */
+    
     @JsonProperty
     @Column(nullable = false)
     private String originalUrl;
@@ -61,6 +55,10 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     @JsonProperty
     @Column
     private String principal;
+
+    @JsonProperty
+    @Column
+    private String source;
 
     @Column
     private boolean loggedOutAlready;

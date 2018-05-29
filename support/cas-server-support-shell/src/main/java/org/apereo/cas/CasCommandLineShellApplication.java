@@ -32,11 +32,10 @@ import lombok.NoArgsConstructor;
  * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
-@SpringBootApplication(exclude = {
+@SpringBootApplication(exclude = {HibernateJpaAutoConfiguration.class, JerseyAutoConfiguration.class, GroovyTemplateAutoConfiguration.class,
     HibernateJpaAutoConfiguration.class,
     JerseyAutoConfiguration.class,
-    GroovyTemplateAutoConfiguration.class,
-    JmxAutoConfiguration.class,
+    MetricsDropwizardAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class})
     DataSourceAutoConfiguration.class,
     RedisAutoConfiguration.class,
     MongoAutoConfiguration.class,

@@ -162,6 +162,12 @@ public class CasRegisteredServicesTestConfiguration {
         svc.setEvaluationOrder(100);
         l.add(svc);
 
+        svc = RegisteredServiceTestUtils.getRegisteredService("https://github.com/apereo/cas");
+        svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
+        svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
+        svc.setEvaluationOrder(98);
+        l.add(svc);
+
         svc = RegisteredServiceTestUtils.getRegisteredService("https://carmenwiki.osu.edu.*");
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());

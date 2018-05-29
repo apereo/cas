@@ -56,34 +56,35 @@ import static org.junit.Assert.*;
  * @since 4.1
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(
-    classes = {AbstractOpenSamlTests.SamlTestConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
-        CoreSamlConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreValidationConfiguration.class,
-        CasProtocolViewsConfiguration.class,
-        CasValidationConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreConfiguration.class})
+@SpringBootTest(classes = {
+    AbstractOpenSamlTests.SamlTestConfiguration.class,
+    CasRegisteredServicesTestConfiguration.class,
+    CoreSamlConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreValidationConfiguration.class,
+    CasProtocolViewsConfiguration.class,
+    CasValidationConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreConfiguration.class
+})
 @Slf4j
 public abstract class AbstractOpenSamlTests {
     protected static final String SAML_REQUEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"

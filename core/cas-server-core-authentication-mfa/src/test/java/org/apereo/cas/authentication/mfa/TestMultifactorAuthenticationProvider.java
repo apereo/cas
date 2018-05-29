@@ -2,7 +2,7 @@ package org.apereo.cas.authentication.mfa;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -12,7 +12,13 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @since 5.3.0
  */
 public class TestMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
+    /**
+     * Provider id.
+     */
+    public static final String ID = "mfa-dummy";
+
     private static final long serialVersionUID = -9184556172646207560L;
+
 
     @Override
     public String getFriendlyName() {
@@ -21,7 +27,7 @@ public class TestMultifactorAuthenticationProvider extends AbstractMultifactorAu
 
     @Override
     public String getId() {
-        return "mfa-dummy";
+        return ID;
     }
 
     /**
@@ -31,11 +37,7 @@ public class TestMultifactorAuthenticationProvider extends AbstractMultifactorAu
      * @return the multifactor authentication provider
      */
     public static MultifactorAuthenticationProvider registerProviderIntoApplicationContext(final ConfigurableApplicationContext applicationContext) {
-        final var beanFactory = applicationContext.getBeanFactory();
-        final var provider = beanFactory.createBean(TestMultifactorAuthenticationProvider.class);
-        beanFactory.initializeBean(provider, "provider" + System.currentTimeMillis());
-        beanFactory.autowireBean(provider);
-        beanFactory.registerSingleton("provider" + System.currentTimeMillis(), provider);
-        return provider;
+        return ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            TestMultifactorAuthenticationProvider.class, "provider" + System.currentTimeMillis());
     }
 }
