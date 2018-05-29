@@ -26,7 +26,10 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class WsFederationCookieManager {
-    private static final String WCTX = "wctx";
+    /**
+     * ws-fed {@code wctx} parameter.
+     */
+    public static final String WCTX = "wctx";
 
     private final Collection<WsFederationConfiguration> configurations;
     private final String themeParamName;
@@ -50,9 +53,10 @@ public class WsFederationCookieManager {
             throw new IllegalArgumentException("No " + WCTX + " parameter is found");
         }
 
-        final var configuration = configurations.stream().filter(c -> c.getId().equals(wCtx)).findFirst().orElse(null);
-        final var cookieGen = configuration.getCookieGenerator();
-        final var value = cookieGen.retrieveCookieValue(request);
+        final var configuration = configurations.stream()
+            .filter(c -> c.getId().equalsIgnoreCase(wCtx))
+            .findFirst()
+            .orElse(null);
         if (StringUtils.isBlank(value)) {
             LOGGER.error("No cookie value could be retrieved to determine the state of the delegated authentication session");
             throw new IllegalArgumentException("No cookie could be found to determine session state");
@@ -66,7 +70,7 @@ public class WsFederationCookieManager {
         final var serviceKey = CasProtocolConstants.PARAMETER_SERVICE + "-" + wCtx;
         final var service = (Service) session.get(serviceKey);
         LOGGER.debug("Located service [{}] from session cookie", service);
-        context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
+        WebUtils.putService(context, service);
         return service;
     }
 

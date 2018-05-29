@@ -4,6 +4,7 @@ package org.apereo.cas.otp.repository.token;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.OneTimeToken;
 
 import java.util.ArrayList;
 import java.util.Collection;

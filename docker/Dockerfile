@@ -8,12 +8,12 @@ ARG CASVERSION
 
 RUN yum -y install wget tar unzip git \
     && yum -y clean all
-
+    
 # Download Azul Java, verify the hash, and install \
 RUN set -x; \
-    java_version=8.0.112; \
-    zulu_version=8.19.0.1; \
-    java_hash=3f95d82bf8ece272497ae2d3c5b56c3b; \
+    java_version=8.0.172; \
+    zulu_version=8.30.0.1; \
+    java_hash=0a101a592a177c1c7bc63738d7bc2930; \
     
     cd / \
     && wget http://cdn.azul.com/zulu/bin/zulu$zulu_version-jdk$java_version-linux_x64.tar.gz \

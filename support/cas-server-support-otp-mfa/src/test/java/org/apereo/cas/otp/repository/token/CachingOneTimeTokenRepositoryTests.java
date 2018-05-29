@@ -1,5 +1,6 @@
 package org.apereo.cas.otp.repository.token;
 
+import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;

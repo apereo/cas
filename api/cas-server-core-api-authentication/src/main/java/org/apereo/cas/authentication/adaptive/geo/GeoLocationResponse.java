@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import lombok.ToString;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This is {@link GeoLocationResponse} that represents a particular geo location
@@ -33,7 +34,9 @@ public class GeoLocationResponse {
      * @param address the address
      */
     public void addAddress(final String address) {
-        this.addresses.add(address);
+        if (StringUtils.isNotBlank(address)) {
+            this.addresses.add(address);
+        }
     }
 
     /**

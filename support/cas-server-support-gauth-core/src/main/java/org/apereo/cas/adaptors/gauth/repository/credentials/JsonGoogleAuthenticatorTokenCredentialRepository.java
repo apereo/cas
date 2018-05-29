@@ -5,7 +5,7 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.otp.repository.credentials.BaseJsonOneTimeTokenCredentialRepository;
-import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.springframework.core.io.Resource;
 
 /**

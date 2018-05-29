@@ -1,7 +1,5 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;

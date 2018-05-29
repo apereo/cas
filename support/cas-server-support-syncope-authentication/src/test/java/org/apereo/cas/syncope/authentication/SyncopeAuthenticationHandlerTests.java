@@ -47,7 +47,7 @@ import java.nio.charset.StandardCharsets;
 @TestPropertySource(locations = "classpath:syncope.properties")
 @Slf4j
 public class SyncopeAuthenticationHandlerTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = new IgnoringJaxbModuleJacksonObjectMapper().findAndRegisterModules();
 
     @Autowired
     @Qualifier("syncopeAuthenticationHandler")
@@ -86,7 +86,7 @@ public class SyncopeAuthenticationHandlerTests {
             this.webServer.stop();
         }
     }
-    
+
     @Test
     public void verifyHandlerSuspended() {
         try {

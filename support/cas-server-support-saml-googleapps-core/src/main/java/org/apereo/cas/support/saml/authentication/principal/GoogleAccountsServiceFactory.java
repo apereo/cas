@@ -41,10 +41,11 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
         }
 
         final var root = document.getRootElement();
-        final var assertionConsumerServiceUrl = root.getAttributeValue("AssertionConsumerServiceURL");
+        final var assertionConsumerServiceUrl = root.getAttributeValue(SamlProtocolConstants.PARAMETER_SAML_ACS_URL);
         final var requestId = root.getAttributeValue("ID");
         final var s = new GoogleAccountsService(assertionConsumerServiceUrl, relayState, requestId);
         s.setLoggedOutAlready(true);
+        s.setSource(SamlProtocolConstants.PARAMETER_SAML_ACS_URL);
         return s;
     }
 

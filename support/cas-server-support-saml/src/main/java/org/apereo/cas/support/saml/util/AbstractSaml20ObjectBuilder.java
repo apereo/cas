@@ -122,9 +122,9 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      */
     public Status newStatus(final String codeValue, final String statusMessage) {
         final var status = newSamlObject(Status.class);
-        final var code = newSamlObject(StatusCode.class);
-        code.setValue(codeValue);
-        status.setStatusCode(code);
+        final var statusCode = newSamlObject(StatusCode.class);
+        statusCode.setValue(codeValue);
+        status.setStatusCode(statusCode);
         if (StringUtils.isNotBlank(statusMessage)) {
             final var message = newSamlObject(StatusMessage.class);
             message.setMessage(statusMessage);

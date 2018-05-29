@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.config;
 
+import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +49,7 @@ import org.apereo.cas.oidc.web.controllers.OidcJwksEndpointController;
 import org.apereo.cas.oidc.web.controllers.OidcRevocationEndpointController;
 import org.apereo.cas.oidc.web.controllers.OidcUserProfileEndpointController;
 import org.apereo.cas.oidc.web.controllers.OidcWellKnownEndpointController;
-import org.apereo.cas.oidc.web.flow.OidcAuthenticationContextWebflowEventEventResolver;
+import org.apereo.cas.oidc.web.flow.OidcAuthenticationContextWebflowEventResolver;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIAction;
 import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurer;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
@@ -87,6 +88,7 @@ import org.jose4j.jwk.RsaJsonWebKey;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.springframework.web.SecurityInterceptor;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -124,6 +126,10 @@ import java.util.stream.Stream;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWebflowExecutionPlanConfigurer {
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
@@ -197,7 +203,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
 
     @Autowired
     private ResourceLoader resourceLoader;
-    
+
     @Autowired
     @Qualifier("oauthSecConfig")
     private Config oauthSecConfig;
@@ -320,7 +326,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @Bean
     public OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter() {
         return new OidcProfileScopeToAttributesFilter(oidcPrincipalFactory(), servicesManager,
-            userDefinedScopeBasedAttributeReleasePolicies(), oidcAttributeToScopeClaimMapper(), casProperties);
+            userDefinedScopeBasedAttributeReleasePolicies(), casProperties);
     }
 
     @RefreshScope
@@ -357,6 +363,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
             accessTokenGrantRequestExtractors, oauthTokenRequestValidators);
     }
 
+    @ConditionalOnMissingBean(name = "clientRegistrationRequestSerializer")
     @Bean
     public StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer() {
         return new OidcClientRegistrationRequestSerializer();
@@ -432,15 +439,17 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
             registeredServiceAccessStrategyEnforcer);
     }
 
-    @Autowired
     @RefreshScope
     @Bean
-    public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport")
-                                                                                 final AuthenticationSystemSupport authenticationSystemSupport) {
-        final CasWebflowEventResolver r = new OidcAuthenticationContextWebflowEventEventResolver(authenticationSystemSupport,
-            centralAuthenticationService, servicesManager,
-            ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies,
-            multifactorAuthenticationProviderSelector.getIfAvailable(RankedMultifactorAuthenticationProviderSelector::new));
+    public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver() {
+        final CasWebflowEventResolver r = new OidcAuthenticationContextWebflowEventResolver(
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService,
+            servicesManager,
+            ticketRegistrySupport,
+            warnCookieGenerator,
+            authenticationRequestServiceSelectionStrategies,
+
         this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r);
         return r;
     }
@@ -495,16 +504,19 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     }
 
     @Bean
-    public OidcServiceJsonWebKeystoreCacheLoader oidcServiceJsonWebKeystoreCacheLoader() {
+    public CacheLoader<OidcRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCacheLoader() {
         return new OidcServiceJsonWebKeystoreCacheLoader(resourceLoader);
     }
 
     @Bean
-    public OidcServerDiscoverySettingsFactory oidcServerDiscoverySettingsFactory() {
+    @ConditionalOnMissingBean(name = "oidcServerDiscoverySettingsFactory")
+    public FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory() {
         return new OidcServerDiscoverySettingsFactory(casProperties);
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreGeneratorService")
     public OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService() {
         final var s = new OidcJsonWebKeystoreGeneratorService(casProperties.getAuthn().getOidc());
         s.generate();
