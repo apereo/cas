@@ -63,16 +63,17 @@ public class SamlResponseArtifactEncoder extends BaseSamlResponseEncoder {
     }
 
     @Override
-    protected void finalizeEncode(final BaseSAML2MessageEncoder e,
+    protected void finalizeEncode(final RequestAbstractType authnRequest,
+                                  final BaseSAML2MessageEncoder e,
                                   final Response samlResponse,
                                   final String relayState) throws Exception {
         final HTTPArtifactEncoder encoder = (HTTPArtifactEncoder) e;
         encoder.setArtifactMap(this.samlArtifactMap);
 
-        final MessageContext ctx = getEncoderMessageContext(samlResponse, relayState);
+        final MessageContext ctx = getEncoderMessageContext(authnRequest, samlResponse, relayState);
         prepareArtifactContext(samlResponse, ctx);
         encoder.setMessageContext(ctx);
-        super.finalizeEncode(encoder, samlResponse, relayState);
+        super.finalizeEncode(authnRequest, encoder, samlResponse, relayState);
     }
 
 
