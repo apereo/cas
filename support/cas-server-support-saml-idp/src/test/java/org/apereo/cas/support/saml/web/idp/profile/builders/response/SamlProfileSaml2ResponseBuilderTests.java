@@ -42,6 +42,26 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
     }
 
     @Test
+    public void verifySamlResponseAllSignedEncrypted() {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+
+        final SamlRegisteredService service = getSamlRegisteredServiceForTestShib(true, true, true);
+        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
+            SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+                service, service.getServiceId()).get();
+
+        final AuthnRequest authnRequest = getAuthnRequestFor(service);
+        final Assertion assertion = getAssertion();
+
+        final Response samlResponse = samlProfileSamlResponseBuilder.build(authnRequest, request, response,
+            assertion, service, adaptor,
+            SAMLConstants.SAML2_POST_BINDING_URI,
+            new MessageContext());
+        assertNotNull(samlResponse);
+    }
+
+    @Test
     public void verifySamlResponseAssertionSigned() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();

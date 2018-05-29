@@ -38,8 +38,6 @@ import java.util.Set;
  */
 @Slf4j
 public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-
-    
     private final GeoLocationService geoLocationService;
     private final Map<String, String> multifactorMap;
 
@@ -96,7 +94,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
         final String clientIp = clientInfo.getClientIpAddress();
         LOGGER.debug("Located client IP address as [{}]", clientIp);
 
-        final String agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext();
+        final String agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext(context);
         final Map<String, MultifactorAuthenticationProvider> providerMap =
                 MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         final Set<Map.Entry<String, String>> entries = multifactorMap.entrySet();
@@ -116,16 +114,16 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
                 return buildEvent(context, service, authentication, providerFound.get());
             }
 
-            if (checkRequestGeoLocation(clientIp, mfaMethod, pattern)) {
+            if (checkRequestGeoLocation(context, clientIp, mfaMethod, pattern)) {
                 return buildEvent(context, service, authentication, providerFound.get());
             }
         }
         return null;
     }
 
-    private boolean checkRequestGeoLocation(final String clientIp, final String mfaMethod, final String pattern) {
+    private boolean checkRequestGeoLocation(final RequestContext context, final String clientIp, final String mfaMethod, final String pattern) {
         if (this.geoLocationService != null) {
-            final GeoLocationRequest location = WebUtils.getHttpServletRequestGeoLocationFromRequestContext();
+            final GeoLocationRequest location = WebUtils.getHttpServletRequestGeoLocationFromRequestContext(context);
             final GeoLocationResponse loc = this.geoLocationService.locate(clientIp, location);
             if (loc != null) {
                 final String address = loc.build();
@@ -145,7 +143,6 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
             LOGGER.debug("Current user agent [{}] at [{}] matches the provided pattern [{}] for "
                          + "adaptive authentication and is required to use [{}]",
                         agent, clientIp, pattern, mfaMethod);
-
             return true;
         }
         return false;

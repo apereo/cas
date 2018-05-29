@@ -126,13 +126,21 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Qualifier("samlObjectSignatureValidator")
     protected SamlObjectSignatureValidator samlObjectSignatureValidator;
 
-    protected SamlRegisteredService getSamlRegisteredServiceForTestShib(final boolean signAssertion, final boolean signResponses) {
+    protected SamlRegisteredService getSamlRegisteredServiceForTestShib(final boolean signAssertion,
+                                                                        final boolean signResponses) {
+        return getSamlRegisteredServiceForTestShib(signAssertion, signResponses, false);
+    }
+
+    protected SamlRegisteredService getSamlRegisteredServiceForTestShib(final boolean signAssertion,
+                                                                        final boolean signResponses,
+                                                                        final boolean encryptAssertions) {
         final SamlRegisteredService service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setServiceId("https://sp.testshib.org/shibboleth-sp");
         service.setId(100);
         service.setSignAssertions(signAssertion);
         service.setSignResponses(signResponses);
+        service.setEncryptAssertions(encryptAssertions);
         service.setDescription("SAML Service");
         service.setMetadataLocation("classpath:metadata/testshib-providers.xml");
         return service;

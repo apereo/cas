@@ -35,7 +35,6 @@ public interface GeoLocationService {
      */
     GeoLocationResponse locate(Double latitude, Double longitude);
 
-
     /**
      * Locate geo location response.
      *

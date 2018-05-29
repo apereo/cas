@@ -1,8 +1,12 @@
 package org.apereo.cas.support.geo.config;
 
+import com.maxmind.db.CHMCache;
+import com.maxmind.geoip2.DatabaseReader;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
 import org.apereo.cas.support.geo.maxmind.MaxmindDatabaseGeoLocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,7 +30,29 @@ public class CasGeoLocationConfiguration {
 
     @Bean
     @RefreshScope
+    @SneakyThrows
     public GeoLocationService geoLocationService() {
-        return new MaxmindDatabaseGeoLocationService(casProperties.getMaxmind());
+        final MaxmindProperties properties = casProperties.getMaxmind();
+
+        final DatabaseReader cityDatabase;
+        final DatabaseReader countryDatabase;
+
+        if (properties.getCityDatabase().exists()) {
+            cityDatabase = new DatabaseReader.Builder(properties.getCityDatabase().getFile()).withCache(new CHMCache()).build();
+        } else {
+            cityDatabase = null;
+        }
+
+        if (properties.getCountryDatabase().exists()) {
+            countryDatabase = new DatabaseReader.Builder(properties.getCountryDatabase().getFile()).withCache(new CHMCache()).build();
+        } else {
+            countryDatabase = null;
+        }
+
+        if (cityDatabase == null && countryDatabase == null) {
+            throw new IllegalArgumentException("No geolocation services have been defined for Maxmind");
+        }
+
+        return new MaxmindDatabaseGeoLocationService(cityDatabase, countryDatabase);
     }
 }
