@@ -12,11 +12,14 @@ import org.junit.runners.Suite;
  * @since 4.2.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({DefaultCentralAuthenticationServiceTests.class,
-        DefaultCentralAuthenticationServiceMockitoTests.class,
-        DefaultCasAttributeEncoderTests.class,
-        DefaultPrincipalAttributesRepositoryTests.class,
-        MultifactorAuthenticationTests.class})
+@Suite.SuiteClasses({
+    DefaultCentralAuthenticationServiceTests.class,
+    DefaultCentralAuthenticationServiceMockitoTests.class,
+    DefaultCasAttributeEncoderTests.class,
+    AdaptiveMultifactorAuthenticationPolicyEventResolverTests.class,
+    DefaultPrincipalAttributesRepositoryTests.class,
+    MultifactorAuthenticationTests.class
+})
 @Slf4j
 public class AllCoreTestsSuite {
 }

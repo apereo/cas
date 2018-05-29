@@ -1,14 +1,13 @@
 package org.apereo.cas.support.geo.maxmind;
 
-import com.maxmind.db.CHMCache;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.AddressNotFoundException;
 import com.maxmind.geoip2.model.CityResponse;
 import com.maxmind.geoip2.model.CountryResponse;
-import lombok.SneakyThrows;
+import com.maxmind.geoip2.record.Location;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
-import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
 import org.apereo.cas.support.geo.AbstractGeoLocationService;
 
 import java.net.InetAddress;
@@ -22,31 +21,10 @@ import java.net.InetAddress;
  * @since 5.0.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationService {
     private final DatabaseReader cityDatabaseReader;
     private final DatabaseReader countryDatabaseReader;
-
-    @SneakyThrows
-    public MaxmindDatabaseGeoLocationService(final MaxmindProperties properties) {
-
-        if (properties.getCityDatabase().exists()) {
-            this.cityDatabaseReader = new DatabaseReader.Builder(properties.getCityDatabase().getFile())
-                .withCache(new CHMCache()).build();
-        } else {
-            this.cityDatabaseReader = null;
-        }
-
-        if (properties.getCountryDatabase().exists()) {
-            this.countryDatabaseReader = new DatabaseReader.Builder(properties.getCountryDatabase().getFile())
-                .withCache(new CHMCache()).build();
-        } else {
-            this.countryDatabaseReader = null;
-        }
-
-        if (this.cityDatabaseReader == null && this.countryDatabaseReader == null) {
-            throw new IllegalArgumentException("No geolocation services have been defined for Maxmind");
-        }
-    }
 
     @Override
     public GeoLocationResponse locate(final InetAddress address) {
@@ -55,8 +33,15 @@ public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationServic
             if (this.cityDatabaseReader != null) {
                 final CityResponse response = this.cityDatabaseReader.city(address);
                 location.addAddress(response.getCity().getName());
-                location.setLatitude(response.getLocation().getLatitude());
-                location.setLongitude(response.getLocation().getLongitude());
+                final Location loc = response.getLocation();
+                if (loc != null) {
+                    if (loc.getLatitude() != null) {
+                        location.setLatitude(loc.getLatitude());
+                    }
+                    if (loc.getLongitude() != null) {
+                        location.setLongitude(loc.getLongitude());
+                    }
+                }
             }
             if (this.countryDatabaseReader != null) {
                 final CountryResponse response = this.countryDatabaseReader.country(address);
@@ -84,7 +69,7 @@ public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationServic
 
     @Override
     public GeoLocationResponse locate(final Double latitude, final Double longitude) {
-        LOGGER.warn("Geolocating an address by latitude/longitude [{}]/[{}] is not supported", latitude, longitude);
+        LOGGER.warn("Geo-locating an address by latitude/longitude [{}]/[{}] is not supported", latitude, longitude);
         return null;
     }
 }
