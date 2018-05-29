@@ -29,8 +29,6 @@ import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
 import org.pac4j.jwt.profile.JwtGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -38,9 +36,6 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -54,7 +49,7 @@ import static org.junit.Assert.*;
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     TokenAuthenticationConfiguration.class,
-    TokenAuthenticationWebflowConfiguration.class,
+    TokenAuthenticationWebflowConfiguration.class
 })
 @Slf4j
 public class TokenAuthenticationActionTests extends AbstractCentralAuthenticationServiceTests {
@@ -82,7 +77,7 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
         svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION.getPropertyName(), prop);
         this.servicesManager.save(svc);
     }
-    
+
     @Test
     public void verifyAction() throws Exception {
         final JwtGenerator<CommonProfile> g = new JwtGenerator<>();

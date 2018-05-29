@@ -167,7 +167,8 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         LOGGER.debug("Invoking authentication pre processors for authentication transaction");
         final var pops = authenticationEventExecutionPlan.getAuthenticationPreProcessors(transaction);
 
-        final Collection<AuthenticationPreProcessor> supported = pops.stream().filter(processor -> transaction.getCredentials()
+        final Collection<AuthenticationPreProcessor> supported = pops.stream()
+            .filter(processor -> transaction.getCredentials()
             .stream()
             .filter(processor::supports)
             .findFirst()

@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
+import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.context.ApplicationEventPublisher;
@@ -50,10 +51,13 @@ public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
      * @param enableWatcher                        the enable watcher
      * @param eventPublisher                       the event publisher
      * @param registeredServiceReplicationStrategy the registered service replication strategy
+     * @param resourceNamingStrategy               the registered service naming strategy
      */
     public YamlServiceRegistry(final Path configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
-                               final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) {
-        super(configDirectory, new RegisteredServiceYamlSerializer(), enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
+                               final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
+                               final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
+        super(configDirectory, new RegisteredServiceYamlSerializer(), enableWatcher, eventPublisher,
+                registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
     /**
@@ -65,12 +69,14 @@ public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
      * @param enableWatcher                        the enable watcher
      * @param eventPublisher                       the event publisher
      * @param registeredServiceReplicationStrategy the registered service replication strategy
+     * @param resourceNamingStrategy               the registered service naming strategy
      * @throws Exception the IO exception
      */
     public YamlServiceRegistry(final Resource configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
-                               final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) throws Exception {
+                               final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
+                               final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) throws Exception {
         super(configDirectory, CollectionUtils.wrapList(new RegisteredServiceYamlSerializer()), enableWatcher,
-            eventPublisher, registeredServiceReplicationStrategy);
+            eventPublisher, registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
     @Override

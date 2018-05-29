@@ -1,14 +1,15 @@
 package org.apereo.cas.configuration.model.support.jaas;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.io.Serializable;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link JaasAuthenticationProperties}.
@@ -75,6 +76,19 @@ public class JaasAuthenticationProperties implements Serializable {
     private String credentialCriteria;
 
     /**
+     * Typically set to {@code JavaLoginConfig} which is the default Configuration implementation
+     * from the SUN provider. This type accepts a URI/path to a configuration file as a valid parameter type specified via {@link #loginConfigurationFile}.
+     * If this parameter is not specified, then the configuration information is loaded from the sources described
+     * in the ConfigFile class specification. If this parameter is specified, the configuration information is loaded solely from the specified URI.
+     */
+    private String loginConfigType;
+
+    /**
+     * Path to the location of configuration file (i.e. jaas.conf) that contains the realms and login modules.
+     */
+    private String loginConfigurationFile;
+
+    /**
      * Principal transformation settings.
      */
     @NestedConfigurationProperty
@@ -97,7 +111,7 @@ public class JaasAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private PersonDirectoryPrincipalResolverProperties principal = new PersonDirectoryPrincipalResolverProperties();
-    
+
     /**
      * Name of the authentication handler.
      */

@@ -22,6 +22,8 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 @RequiredArgsConstructor
 public class OidcJsonWebKeystoreGeneratorService {
+    private static final int DEFAULT_KEYSTORE_BITS = 2048;
+
     private final OidcProperties oidcProperties;
 
     /**
@@ -30,8 +32,28 @@ public class OidcJsonWebKeystoreGeneratorService {
     @SneakyThrows
     public void generate() {
         final var file = oidcProperties.getJwksFile().getFile();
+        generate(file, DEFAULT_KEYSTORE_BITS);
+    }
+
+    /**
+     * Generate.
+     *
+     * @param file the file
+     */
+    public void generate(final File file) {
+        generate(file, DEFAULT_KEYSTORE_BITS);
+    }
+
+    /**
+     * Generate.
+     *
+     * @param file the file
+     * @param bits the bits
+     */
+    @SneakyThrows
+    protected void generate(final File file, final int bits) {
         if (!file.exists()) {
-            final var rsaJsonWebKey = RsaJwkGenerator.generateJwk(2048);
+            final var rsaJsonWebKey = RsaJwkGenerator.generateJwk(bits);
             final var jsonWebKeySet = new JsonWebKeySet(rsaJsonWebKey);
             final var data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
             FileUtils.write(file, data, StandardCharsets.UTF_8);

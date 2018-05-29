@@ -203,7 +203,6 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
                 throw new FailedLoginException("Certificate keyUsage constraint forbids SSL client authentication.");
             }
         } else {
-            // Check pathLength for CA cert
             if (pathLength == Integer.MAX_VALUE && !this.maxPathLengthAllowUnspecified) {
                 throw new FailedLoginException("Unlimited certificate path length not allowed by configuration.");
             }

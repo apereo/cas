@@ -163,7 +163,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                          final Pair<RequestAbstractType, String> authenticationContext) {
         request.setAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR, authenticationContext.getValue());
         samlEcpFaultResponseBuilder.build(authenticationContext.getKey(), request, response,
-            null, null, null, SAMLConstants.SAML2_PAOS_BINDING_URI);
+            null, null, null, SAMLConstants.SAML2_PAOS_BINDING_URI, null);
 
     }
 

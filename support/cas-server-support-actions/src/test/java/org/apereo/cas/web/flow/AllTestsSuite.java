@@ -18,6 +18,7 @@ import org.junit.runners.Suite;
     GenericSuccessViewActionTests.class,
     InitialFlowSetupActionTests.class,
     LogoutActionTests.class,
+    FlowExecutionExceptionResolverTests.class,
     InitialFlowSetupActionSsoTests.class,
     InitialFlowSetupActionCookieTests.class,
     SendTicketGrantingTicketActionTests.class,

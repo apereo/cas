@@ -224,7 +224,7 @@ public class DelegatedClientFactory {
     protected void configureTwitterClient(final Collection<BaseClient> properties) {
         final var twitter = pac4jProperties.getTwitter();
         if (StringUtils.isNotBlank(twitter.getId()) && StringUtils.isNotBlank(twitter.getSecret())) {
-            final var client = new TwitterClient(twitter.getId(), twitter.getSecret());
+            final var client = new TwitterClient(twitter.getId(), twitter.getSecret(), twitter.isIncludeEmail());
             configureClient(client, twitter);
 
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());

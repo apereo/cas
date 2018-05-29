@@ -82,6 +82,7 @@ public class WsFederationConfiguration implements Serializable {
     private transient List<Credential> signingWallet;
 
     private String name;
+
     private String id = UUID.randomUUID().toString();
 
     private CookieRetrievingCookieGenerator cookieGenerator;

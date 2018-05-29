@@ -151,8 +151,11 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     public CasWebflowConfigurer duoMultifactorWebflowConfigurer() {
         final var deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
         return new DuoMultifactorWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, deviceRegistrationEnabled,
-            duoMultifactorAuthenticationProvider(), applicationContext, casProperties);
+            loginFlowDefinitionRegistry,
+            deviceRegistrationEnabled,
+            duoMultifactorAuthenticationProvider(),
+            applicationContext,
+            casProperties);
     }
 
     @ConditionalOnMissingBean(name = "duoSecurityAuthenticationEventExecutionPlanConfigurer")

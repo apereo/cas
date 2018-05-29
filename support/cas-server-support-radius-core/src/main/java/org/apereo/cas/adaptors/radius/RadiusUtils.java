@@ -56,6 +56,6 @@ public class RadiusUtils {
                 LOGGER.warn("failoverOnException enabled -- trying next server.", e);
             }
         }
-        return Pair.of(Boolean.TRUE, Optional.empty());
+        return Pair.of(Boolean.FALSE, Optional.empty());
     }
 }

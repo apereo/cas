@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.util.RandomUtils;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnStatement;
@@ -35,7 +36,7 @@ import java.util.List;
 @Slf4j
 public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Assertion> {
     private static final long serialVersionUID = -3945938960014421135L;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -64,17 +65,21 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
     }
 
     @Override
-    public Assertion build(final RequestAbstractType authnRequest, final HttpServletRequest request, final HttpServletResponse response,
-                           final Object casAssertion, final SamlRegisteredService service,
+    public Assertion build(final RequestAbstractType authnRequest,
+                           final HttpServletRequest request,
+                           final HttpServletResponse response,
+                           final Object casAssertion,
+                           final SamlRegisteredService service,
                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                           final String binding) throws SamlException {
+                           final String binding,
+                           final MessageContext messageContext) throws SamlException {
 
         final List<Statement> statements = new ArrayList<>();
         final var authnStatement = this.samlProfileSamlAuthNStatementBuilder.build(authnRequest, request, response,
-            casAssertion, service, adaptor, binding);
+            casAssertion, service, adaptor, binding, messageContext);
         statements.add(authnStatement);
         final var attrStatement = this.samlProfileSamlAttributeStatementBuilder.build(authnRequest, request,
-            response, casAssertion, service, adaptor, binding);
+            response, casAssertion, service, adaptor, binding, messageContext);
 
         if (!attrStatement.getAttributes().isEmpty() || !attrStatement.getEncryptedAttributes().isEmpty()) {
             statements.add(attrStatement);
@@ -84,37 +89,38 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
         final var assertion = newAssertion(statements, casProperties.getAuthn().getSamlIdp().getEntityId(),
             ZonedDateTime.now(ZoneOffset.UTC), id);
         assertion.setSubject(this.samlProfileSamlSubjectBuilder.build(authnRequest, request, response,
-            casAssertion, service, adaptor, binding));
+            casAssertion, service, adaptor, binding, messageContext));
         assertion.setConditions(this.samlProfileSamlConditionsBuilder.build(authnRequest,
-            request, response, casAssertion, service, adaptor, binding));
-        signAssertion(assertion, request, response, service, adaptor, binding);
+            request, response, casAssertion, service, adaptor, binding, messageContext));
+        signAssertion(assertion, request, response, service, adaptor, binding, authnRequest);
         return assertion;
     }
 
     /**
      * Sign assertion.
      *
-     * @param assertion the assertion
-     * @param request   the request
-     * @param response  the response
-     * @param service   the service
-     * @param adaptor   the adaptor
-     * @param binding   the binding
+     * @param assertion    the assertion
+     * @param request      the request
+     * @param response     the response
+     * @param service      the service
+     * @param adaptor      the adaptor
+     * @param binding      the binding
+     * @param authnRequest the authn request
      * @throws SamlException the saml exception
      */
     protected void signAssertion(final Assertion assertion,
-                                 final HttpServletRequest request, final HttpServletResponse response,
+                                 final HttpServletRequest request,
+                                 final HttpServletResponse response,
                                  final SamlRegisteredService service,
                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                 final String binding) throws SamlException {
+                                 final String binding,
+                                 final RequestAbstractType authnRequest) throws SamlException {
 
         if (service.isSignAssertions()) {
             LOGGER.debug("SAML registered service [{}] requires assertions to be signed", adaptor.getEntityId());
-            this.samlObjectSigner.encode(assertion, service, adaptor,
-                response, request, binding);
+            samlObjectSigner.encode(assertion, service, adaptor, response, request, binding, authnRequest);
         } else {
             LOGGER.debug("SAML registered service [{}] does not require assertions to be signed", adaptor.getEntityId());
         }
-
     }
 }

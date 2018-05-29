@@ -11,6 +11,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11ResponseBuilder;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -47,13 +48,13 @@ public class SamlProfileAttributeQueryResponseBuilder extends SamlProfileSamlSoa
     @Override
     public Envelope build(final RequestAbstractType authnRequest, final HttpServletRequest request,
                           final HttpServletResponse response, final Object casAssertion, final SamlRegisteredService service,
-                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor, final String binding) throws SamlException {
-        final var query = (AttributeQuery) authnRequest;
+                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                          final String binding, final MessageContext messageContext) throws SamlException {
         final var header = newSoapObject(Header.class);
 
         final var body = newSoapObject(Body.class);
         final var saml2Response = buildSaml2Response(casAssertion, query, service,
-            adaptor, request, SAMLConstants.SAML2_POST_BINDING_URI);
+            adaptor, request, SAMLConstants.SAML2_POST_BINDING_URI, messageContext);
         body.getUnknownXMLObjects().add(saml2Response);
 
         final var envelope = newSoapObject(Envelope.class);

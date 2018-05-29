@@ -21,8 +21,10 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
     
     private final FlowDefinitionRegistry yubikeyFlowRegistry;
 
-    public YubiKeyMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                               final FlowDefinitionRegistry flowDefinitionRegistry, final ApplicationContext applicationContext,
+    public YubiKeyMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                               final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                               final FlowDefinitionRegistry flowDefinitionRegistry,
+                                               final ApplicationContext applicationContext,
                                                final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         this.yubikeyFlowRegistry = flowDefinitionRegistry;

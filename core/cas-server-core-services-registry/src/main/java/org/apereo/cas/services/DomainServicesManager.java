@@ -36,7 +36,7 @@ public class DomainServicesManager extends AbstractServicesManager {
      * This regular expression is used to strip the domain form the serviceId that is set in
      * the Service and also passed as the service parameter to the login endpoint.
      */
-    private final Pattern domainExtractor = RegexUtils.createPattern("^\\^?https?://([^:/]+)");
+    private final Pattern domainExtractor = RegexUtils.createPattern("^\\^?https?\\??://(.*?)(?:[(]?[:/]|$)");
     private final Pattern domainPattern = RegexUtils.createPattern("^[a-z0-9-.]*$");
 
     public DomainServicesManager(final ServiceRegistry serviceRegistry, final ApplicationEventPublisher eventPublisher) {

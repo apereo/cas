@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -45,6 +46,7 @@ public class ServiceWarningAction extends AbstractAction {
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final TicketRegistrySupport ticketRegistrySupport;
     private final CookieGenerator warnCookieGenerator;
+    private final PrincipalElectionStrategy principalElectionStrategy;
 
     @Override
     protected Event doExecute(final RequestContext context) {
@@ -65,7 +67,7 @@ public class ServiceWarningAction extends AbstractAction {
         final var credential = WebUtils.getCredential(context);
         final var authenticationResultBuilder =
             authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
-        final var authenticationResult = authenticationResultBuilder.build(service);
+        final var authenticationResult = authenticationResultBuilder.build(principalElectionStrategy, service);
 
         final var serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
         WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);

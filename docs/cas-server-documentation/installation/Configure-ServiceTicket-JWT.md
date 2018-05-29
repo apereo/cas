@@ -76,3 +76,74 @@ Signal the relevant application in CAS service registry to produce JWTs for serv
   }
 }
 ```
+
+### Configure Keys Per Service
+
+By default, the signing and encryption keys used to encode the JWT are global to the CAS server and can be defined via CAS settings. It is also possible
+to override the global keys on a per-service basis, allowing each application to use its own set of signing and encryption keys. To do so, configure
+the service definition in the registry to match the following:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://.*",
+  "name" : "Sample",
+  "id" : 10,
+  "properties" : {
+    "@class" : "java.util.HashMap",
+    "jwtAsServiceTicket" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "true" ] ]
+    },
+    "jwtAsServiceTicketSigningKey" : {
+       "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+       "values" : [ "java.util.HashSet", [ "..." ] ]
+    },
+    "jwtAsServiceTicketEncryptionKey" : {
+         "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+         "values" : [ "java.util.HashSet", [ "..." ] ]
+    }
+  }
+}
+```
+
+## JWT Validation - AES
+
+The following *example* code snippet demonstrates how one might go about validating and parsing the CAS-produced JWT
+that is created using shared secrets via `AES`:
+
+```java
+import org.apache.commons.codec.binary.Base64;
+import org.jose4j.jwe.JsonWebEncryption;
+import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jws.JsonWebSignature;
+import org.jose4j.keys.AesKey;
+
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+
+...
+
+final String signingKey = "...";
+final String encryptionKey = "...";
+
+final Key key = new AesKey(signingKey.getBytes(StandardCharsets.UTF_8));
+
+final JsonWebSignature jws = new JsonWebSignature();
+jws.setCompactSerialization(secureJwt);
+jws.setKey(key);
+if (!jws.verifySignature()) {
+    throw new Exception("JWT verification failed");
+}
+
+final byte[] decodedBytes = Base64.decodeBase64(jws.getEncodedPayload().getBytes(StandardCharsets.UTF_8));
+final String decodedPayload = new String(decodedBytes, StandardCharsets.UTF_8);
+
+final JsonWebEncryption jwe = new JsonWebEncryption();
+final JsonWebKey jsonWebKey = JsonWebKey.Factory
+    .newJwk("\n" + "{\"kty\":\"oct\",\n" + " \"k\":\"" + encryptionKey + "\"\n" + "}");
+
+jwe.setCompactSerialization(decodedPayload);
+jwe.setKey(new AesKey(jsonWebKey.getKey().getEncoded()));
+System.out.println(jwe.getPlaintextString());
+```

@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasMetricsRepositoryConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasMetricsRepositoryConfiguration,\
+  org.apereo.cas.config.CasMetricsConfiguration

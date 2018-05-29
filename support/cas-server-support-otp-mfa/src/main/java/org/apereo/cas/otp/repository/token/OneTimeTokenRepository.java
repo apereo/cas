@@ -1,5 +1,7 @@
 package org.apereo.cas.otp.repository.token;
 
+import org.apereo.cas.authentication.OneTimeToken;
+
 /**
  * This is {@link OneTimeTokenRepository}.
  *

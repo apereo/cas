@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc;
 
-import org.apache.commons.text.WordUtils;
 import lombok.Getter;
+import org.apache.commons.text.WordUtils;
 
 /**
  * This is {@link OidcConstants}.
@@ -49,22 +49,28 @@ public interface OidcConstants {
         /**
          * OpenId scope.
          */
-        OPENID("openid"), /**
+        OPENID("openid"),
+        /**
          * Custom scope.
          */
-        CUSTOM("custom"), /**
+        CUSTOM("custom"),
+        /**
          * address scope.
          */
-        ADDRESS("address"), /**
+        ADDRESS("address"),
+        /**
          * email scope.
          */
-        EMAIL("email"), /**
+        EMAIL("email"),
+        /**
          * profile scope.
          */
-        PROFILE("profile"), /**
+        PROFILE("profile"),
+        /**
          * phone scope.
          */
-        PHONE("phone"), /**
+        PHONE("phone"),
+        /**
          * offline_access scope.
          */
         OFFLINE_ACCESS("offline_access");

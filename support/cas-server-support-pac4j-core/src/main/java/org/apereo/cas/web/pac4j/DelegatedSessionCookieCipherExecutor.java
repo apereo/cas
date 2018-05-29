@@ -9,9 +9,13 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
  * @since 5.3.0
  */
 public class DelegatedSessionCookieCipherExecutor extends BaseStringCipherExecutor {
+    public DelegatedSessionCookieCipherExecutor(final String secretKeyEncryption, final String secretKeySigning) {
+        super(secretKeyEncryption, secretKeySigning);
+    }
+
     public DelegatedSessionCookieCipherExecutor(final String secretKeyEncryption,
-                                                             final String secretKeySigning,
-                                                             final String alg) {
+                                                final String secretKeySigning,
+                                                final String alg) {
         super(secretKeyEncryption, secretKeySigning, alg);
     }
 

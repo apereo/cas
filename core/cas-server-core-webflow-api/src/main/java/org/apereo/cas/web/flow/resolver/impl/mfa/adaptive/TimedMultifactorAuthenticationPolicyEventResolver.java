@@ -41,8 +41,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-
-
     private final List<TimeBasedAuthenticationProperties> timedMultifactor;
 
     public TimedMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,

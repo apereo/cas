@@ -21,17 +21,15 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 public class MongoDbAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
-
-
     private static final long serialVersionUID = 1600024683199961892L;
 
     private final transient MongoTemplate mongoTemplate;
     private final String collection;
 
     public MongoDbAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
-                                               final String aupAttributeName,
-                                               final MongoTemplate mongoTemplate,
-                                               final String collection) {
+                                                  final String aupAttributeName,
+                                                  final MongoTemplate mongoTemplate,
+                                                  final String collection) {
         super(ticketRegistrySupport, aupAttributeName);
         this.collection = collection;
         this.mongoTemplate = mongoTemplate;

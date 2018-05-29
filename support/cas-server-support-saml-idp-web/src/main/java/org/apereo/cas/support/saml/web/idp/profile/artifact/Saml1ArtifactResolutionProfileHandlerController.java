@@ -97,12 +97,12 @@ public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSam
                     issuerService, service,
                     CollectionUtils.wrap("artifact", ticket));
             this.responseBuilder.build(artifactMsg, request, response, casAssertion,
-                    service, facade, SAMLConstants.SAML2_ARTIFACT_BINDING_URI);
+                    service, facade, SAMLConstants.SAML2_ARTIFACT_BINDING_URI, ctx);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             request.setAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR, e.getMessage());
             samlFaultResponseBuilder.build(artifactMsg, request, response,
-                    null, null, null, SAMLConstants.SAML2_ARTIFACT_BINDING_URI);
+                    null, null, null, SAMLConstants.SAML2_ARTIFACT_BINDING_URI, ctx);
         }
     }
 }

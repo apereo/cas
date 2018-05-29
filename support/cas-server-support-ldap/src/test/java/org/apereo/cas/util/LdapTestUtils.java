@@ -91,7 +91,7 @@ public class LdapTestUtils {
                 connection.add(ad);
             }
         } catch (final LDAPException e) {
-            if (e.getResultCode() == ResultCode.ENTRY_ALREADY_EXISTS) {
+            if (e.getResultCode().equals(ResultCode.ENTRY_ALREADY_EXISTS)) {
                 modifyLdapEntries(connection, entries);
             } else {
                 LOGGER.error(e.getMessage(), e);

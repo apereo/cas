@@ -43,7 +43,6 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20PasswordGrantTypeToke
 import org.apereo.cas.support.oauth.validator.token.OAuth20RefreshTokenGrantTypeTokenRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
-import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.audit.AccessTokenGrantRequestAuditResourceResolver;
 import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourceResolver;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
@@ -97,7 +96,6 @@ import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.http.url.UrlResolver;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
-import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -107,7 +105,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -115,8 +112,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
 import static org.apereo.cas.support.oauth.OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
@@ -212,11 +207,6 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         return config;
     }
 
-    @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
-    @Bean
-    public SecurityInterceptor requiresAuthenticationAuthorizeInterceptor() {
-        return new SecurityInterceptor(oauthSecConfig(), Authenticators.CAS_OAUTH_CLIENT);
-    }
 
     @ConditionalOnMissingBean(name = "consentApprovalViewResolver")
     @Bean
@@ -231,14 +221,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         };
     }
 
-    @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
-    @Bean
-    public SecurityInterceptor requiresAuthenticationAccessTokenInterceptor() {
-        final var clients = Stream.of(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
-            Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
-            Authenticators.CAS_OAUTH_CLIENT_USER_FORM).collect(Collectors.joining(","));
-        return new SecurityInterceptor(oauthSecConfig(), clients);
-    }
+
 
     @Bean
     public OAuth20CasClientRedirectActionBuilder defaultOAuthCasClientRedirectActionBuilder() {
@@ -581,15 +564,6 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @RefreshScope
     public UniqueTicketIdGenerator accessTokenIdGenerator() {
         return new DefaultUniqueTicketIdGenerator();
-    }
-
-    @ConditionalOnMissingBean(name = "oauthHandlerInterceptorAdapter")
-    @Bean
-    public HandlerInterceptorAdapter oauthHandlerInterceptorAdapter() {
-        return new OAuth20HandlerInterceptorAdapter(
-            requiresAuthenticationAccessTokenInterceptor(),
-            requiresAuthenticationAuthorizeInterceptor(),
-            accessTokenGrantRequestExtractors());
     }
 
     @Override

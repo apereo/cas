@@ -654,7 +654,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        awss3                  : [
+        awss3                   : [
                 dependencies.create("com.amazonaws:aws-java-sdk-s3:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
@@ -725,6 +725,11 @@ ext.libraries = [
         ],
         zxingbarcode            : [
                 dependencies.create("com.google.zxing:core:$googleZxingVersion") {
+                    exclude(group: "com.google.zxing", module: "android-core")
+                    exclude(group: "com.google.zxing", module: "android-integration")
+                    exclude(group: "junit", module: "junit")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     force = true
                 }
         ],
@@ -1099,12 +1104,6 @@ ext.libraries = [
                 }
         ],
         activemq                : [
-                dependencies.create("org.apache.activemq:activemq-core:$activemqVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.jasypt", module: "jasypt")
-                    exclude(group: "org.fusesource.hawtbuf", module: "hawtbuf")
-                    force = true
-                },
                 dependencies.create("org.springframework.boot:spring-boot-starter-activemq:$springBootVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.apache.activemq", module: "activemq-client")
@@ -1141,7 +1140,9 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "com.fasterxml.jackson.jaxrs", module: "jackson-jaxrs-json-provider")
-
+                    exclude(group: "org.apache.wink", module: "wink-client")
+                    exclude(group: "org.apache.wink", module: "wink-common")
+                    exclude(group: "org.apache.geronimo.specs", module: "geronimo-jaxrs_1.1_spec")
                     force = true
                 },
                 dependencies.create("com.unboundid.product.scim:scim-sdk:$unboundidScim1Version") {
@@ -1153,11 +1154,22 @@ ext.libraries = [
                     exclude(group: "javax.xml.bind", module: "jaxb-api")
                     exclude(group: "com.sun.xml.bind", module: "jaxb-impl")
                     exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "org.apache.wink", module: "wink-client")
+                    exclude(group: "org.apache.wink", module: "wink-common")
+                    exclude(group: "org.apache.geronimo.specs", module: "geronimo-jaxrs_1.1_spec")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     force = true
                 },
-                dependencies.create("org.glassfish.jersey.security:oauth2-client:$jerseyOauth2ClientVersion") {
+                dependencies.create("org.glassfish.jersey.security:oauth2-client:$jerseyVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.google.guava", module: "guava")
+                    force = true
+                },
+                dependencies.create("org.glassfish.jersey.inject:jersey-hk2:$jerseyVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
@@ -1179,6 +1191,9 @@ ext.libraries = [
                 dependencies.create("com.fasterxml.jackson.core:jackson-annotations:$jacksonDatabindVersion") {
                     force = true
                 },
+                dependencies.create("com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:$jacksonDatabindVersion") {
+                    force = true
+                },
                 dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonDatabindVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     force = true
@@ -1193,6 +1208,7 @@ ext.libraries = [
                 }
         ],
         couchbase               : dependencies.create("com.couchbase.client:java-client:$couchbaseVersion"),
+        ektorp                 : dependencies.create("org.ektorp:org.ektorp:$ektorpVersion"),
         jcifs                   : [
                 dependencies.create("jcifs:jcifs:$jcifsVersion") {
                     exclude(group: "javax.servlet", module: "servlet-api")
@@ -1833,13 +1849,23 @@ ext.libraries = [
             exclude(group: "org.apache.httpcomponents", module: "httpclient")
             force = true
         },
-        textmagic               : dependencies.create("com.textmagic.sdk:textmagic-java-sdk:$textMagicVersion") {
-            exclude(group: "org.slf4j", module: "slf4j-api")
-            exclude(group: "org.apache.httpcomponents", module: "httpclient")
-            exclude(group: "org.codehaus.jackson", module: "jackson-mapper-asl")
-            exclude(group: "commons-lang", module: "commons-lang")
-            force = true
-        },
+        textmagic               : [
+                dependencies.create("com.textmagic.sdk:textmagic-java-sdk:$textMagicVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.codehaus.jackson", module: "jackson-mapper-asl")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    force = true
+                },
+                dependencies.create("org.codehaus.jackson:jackson-mapper-asl:1.9.13") {
+                    transitive = false
+                    force = true
+                },
+                dependencies.create("org.codehaus.jackson:jackson-core-asl:1.9.13") {
+                    transitive = false
+                    force = true
+                }
+        ],
         springcomponentindexer: [
                 dependencies.create("org.springframework:spring-context-indexer:$springVersion") {
                     exclude(group: "org.springframework", module: "spring-web")

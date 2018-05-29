@@ -20,7 +20,7 @@ import org.apereo.cas.impl.calcs.UserAgentAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.engine.DefaultAuthenticationRiskEvaluator;
 import org.apereo.cas.impl.engine.DefaultAuthenticationRiskMitigator;
 import org.apereo.cas.impl.notify.AuthenticationRiskEmailNotifier;
-import org.apereo.cas.impl.notify.AuthenticationRiskTwilioSmsNotifier;
+import org.apereo.cas.impl.notify.AuthenticationRiskSmsNotifier;
 import org.apereo.cas.impl.plans.BaseAuthenticationRiskContingencyPlan;
 import org.apereo.cas.impl.plans.BlockAuthenticationContingencyPlan;
 import org.apereo.cas.impl.plans.MultifactorAuthenticationContingencyPlan;
@@ -78,7 +78,7 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     @Bean
     @RefreshScope
     public AuthenticationRiskNotifier authenticationRiskSmsNotifier() {
-        return new AuthenticationRiskTwilioSmsNotifier(communicationsManager);
+        return new AuthenticationRiskSmsNotifier(communicationsManager);
     }
 
     @ConditionalOnMissingBean(name = "blockAuthenticationContingencyPlan")
