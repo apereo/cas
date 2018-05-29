@@ -1,17 +1,21 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.category.CouchDbCategory;
 import org.apereo.cas.config.CouchDbServiceRegistryConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.services.RegisteredServiceRepository;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,10 +36,16 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {RefreshAutoConfiguration.class, CouchDbServiceRegistryConfiguration.class},
     properties = {"org.ektorp.support.AutoUpdateViewOnChange=true", "cas.serviceRegistry.couchDb.username=", "cas.serviceRegistry.couchDb.password="})
 @Slf4j
-@RunWith(SpringRunner.class)
+@Category(CouchDbCategory.class)
 public class CouchDbServiceRegistryTests {
 
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
     private static final int LOAD_SIZE = 1;
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("couchDbServiceRegistry")
