@@ -35,7 +35,7 @@ public class StandaloneConfigurationProperties implements Serializable {
      * or system/environment variables as properties are bootstrapped and fetched.
      * They are placed here to allow CAS to recognize their validity when passed.
      */
-    private StandaloneConfigurationSecurityProperties security = new StandaloneConfigurationSecurityProperties();
+    private StandaloneConfigurationSecurityProperties configurationSecurity = new StandaloneConfigurationSecurityProperties();
 
     @Getter
     @Setter
