@@ -78,7 +78,7 @@ public abstract class BaseSamlResponseEncoder {
         final MessageContext ctx = new MessageContext<>();
         ctx.setMessage(samlResponse);
         SAMLBindingSupport.setRelayState(ctx, relayState);
-        SamlIdPUtils.preparePeerEntitySamlEndpointContext(ctx, adaptor, getBinding());
+        SamlIdPUtils.preparePeerEntitySamlEndpointContext(authnRequest, ctx, adaptor, getBinding());
         final SAMLSelfEntityContext self = ctx.getSubcontext(SAMLSelfEntityContext.class, true);
         self.setEntityId(samlResponse.getIssuer().getValue());
         return ctx;
