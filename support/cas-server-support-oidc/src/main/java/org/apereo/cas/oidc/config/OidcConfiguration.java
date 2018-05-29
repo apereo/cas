@@ -511,7 +511,6 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     }
 
     @Bean
-    @RefreshScope
     @ConditionalOnMissingBean(name = "oidcServerDiscoverySettingsFactory")
     public FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory() {
         return new OidcServerDiscoverySettingsFactory(casProperties);
