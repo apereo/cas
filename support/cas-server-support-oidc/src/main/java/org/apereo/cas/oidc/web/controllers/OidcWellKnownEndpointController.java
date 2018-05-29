@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
+import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
@@ -51,7 +52,10 @@ public class OidcWellKnownEndpointController extends BaseOAuth20Controller {
      */
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OidcServerDiscoverySettings> getWellKnownDiscoveryConfiguration() {
-        return new ResponseEntity(this.discovery, HttpStatus.OK);
+    	//This is a quick hack. Jackson cannot serialize this.discovery (a cglib proxy that forgot about annotations) because 
+    	//it has CGLIB fields which pull in the whole beanFactory.
+    	//FIXME by, e.g., implementing #clone() in OidcServerDiscoverySettings and using it here.
+        return new ResponseEntity(new OidcServerDiscoverySettingsFactory(this.discovery.getCasProperties()).getObject(), HttpStatus.OK);
     }
 
     /**
