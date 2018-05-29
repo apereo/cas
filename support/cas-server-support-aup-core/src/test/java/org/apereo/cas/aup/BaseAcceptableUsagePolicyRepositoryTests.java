@@ -5,15 +5,14 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -22,30 +21,36 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link DefaultAcceptableUsagePolicyRepositoryTests}.
+ * This is {@link BaseAcceptableUsagePolicyRepositoryTests}.
  *
- * @author Misagh Moayyed
- * @since 5.3.0
+ * @author Timur Duehr
+ * @since 6.0.0
  */
-public class DefaultAcceptableUsagePolicyRepositoryTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+@Getter
+@Setter
+public abstract class BaseAcceptableUsagePolicyRepositoryTests {
 
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+    protected TicketRegistrySupport mockSupport;
+    protected MockRequestContext context;
+    protected MockHttpServletRequest request;
+
+    protected abstract AcceptableUsagePolicyRepository getRepository();
+
+    @Before
+    public final void initializeTest() {
+        context = new MockRequestContext();
+        request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+
+        mockSupport = mock(TicketRegistrySupport.class);
+        when(mockSupport.getAuthenticatedPrincipalFrom(anyString()))
+            .thenReturn(CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("carLicense", "false")));
+    }
 
     @Test
     public void verifyAction() {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        val repo = getRepository();
 
-        val support = mock(TicketRegistrySupport.class);
-        when(support.getAuthenticatedPrincipalFrom(anyString()))
-            .thenReturn(CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("carLicense", "false")));
-        val repo = new DefaultAcceptableUsagePolicyRepository(support);
-
-        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         WebUtils.putTicketGrantingTicketInScopes(context, "TGT-12345");
 
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casaup");

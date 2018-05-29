@@ -52,7 +52,7 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
             }
             if (success) {
                 LOGGER.debug("Successfully deleted service [{}].", service.getName());
-                return false;
+                return true;
             }
         }
         if (exception != null) {
