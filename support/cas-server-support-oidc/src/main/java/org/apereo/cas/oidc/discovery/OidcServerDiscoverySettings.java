@@ -49,7 +49,7 @@ public class OidcServerDiscoverySettings {
     @JsonIgnore
     private final CasConfigurationProperties casProperties;
 
-    @JsonIgnore
+    @JsonProperty
     private final String issuer;
 
     @JsonIgnore
