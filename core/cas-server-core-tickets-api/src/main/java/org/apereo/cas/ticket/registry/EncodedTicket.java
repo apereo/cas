@@ -70,6 +70,7 @@ public class EncodedTicket implements Ticket {
         return null;
     }
 
+    @JsonIgnore
     @Override
     public String getPrefix() {
         return StringUtils.EMPTY;

@@ -41,13 +41,12 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void verifyAuthenticationTypeNotFound() {
+    public void verifyAuthenticationTypeFoundByDefault() {
         final var credentials = new CustomCredential();
         final var builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         this.populator.populateAttributes(builder, DefaultAuthenticationTransaction.of(credentials));
         final var auth = builder.build();
-
-        assertNull(auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
+        assertNotNull(auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
     }
 
     @Test

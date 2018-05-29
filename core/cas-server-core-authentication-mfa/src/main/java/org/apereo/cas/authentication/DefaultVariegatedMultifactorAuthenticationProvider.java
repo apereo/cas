@@ -64,7 +64,10 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
 
     @Override
     public MultifactorAuthenticationProvider findProvider(final String identifier) {
-        return this.providers.stream().filter(p -> p.matches(identifier)).findFirst().orElse(null);
+        return this.providers.stream()
+            .filter(p -> p.matches(identifier))
+            .findFirst()
+            .orElse(null);
     }
 
     @Override

@@ -79,6 +79,15 @@ public class AuditableExecutionResult {
     }
 
     /**
+     * Add property.
+     *
+     * @param name  the name
+     * @param value the value
+     */
+    public void addProperty(final String name, final Object value) {
+        this.properties.put(name, value);
+    }
+    /**
      * Factory method to create a result.
      *
      * @param e                 the exception

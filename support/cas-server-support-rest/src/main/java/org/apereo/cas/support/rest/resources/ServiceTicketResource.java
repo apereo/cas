@@ -62,7 +62,7 @@ public class ServiceTicketResource {
             if (authn == null) {
                 throw new InvalidTicketException(tgtId);
             }
-            final AuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder(this.authenticationSystemSupport.getPrincipalElectionStrategy());
+            final AuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder();
             final Service service = this.argumentExtractor.extractService(httpServletRequest);
             if (service == null) {
                 throw new IllegalArgumentException("Target service/application is unspecified or unrecognized in the request");

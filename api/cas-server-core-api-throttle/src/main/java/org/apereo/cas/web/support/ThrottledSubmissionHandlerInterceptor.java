@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@FunctionalInterface
 public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInterceptor {
 
     /**
@@ -39,13 +38,14 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
      * @return the name
      */
     default String getName() {
-        return this.getClass().getSimpleName();
+        return getClass().getSimpleName();
     }
 
     /**
      * Decrement the the throttle so authentication can resume.
      */
-    void decrement();
+    default void decrement() {
+    }
 
     @Override
     default boolean preHandle(final HttpServletRequest request,

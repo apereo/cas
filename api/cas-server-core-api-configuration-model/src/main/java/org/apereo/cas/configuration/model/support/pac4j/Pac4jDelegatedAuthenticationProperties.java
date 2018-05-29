@@ -31,6 +31,11 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     private boolean typedIdUsed;
 
     /**
+     * The attribute to use as the principal identifier built during and upon a successful authentication attempt.
+     */
+    private String principalAttributeId;
+    
+    /**
      * Settings that deal with having Facebook as an external delegated-to authentication provider.
      */
     private Facebook facebook = new Facebook();
@@ -212,6 +217,12 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     public static class Twitter extends Pac4jIdentifiableClientProperties {
 
         private static final long serialVersionUID = 6906343970517008092L;
+
+        /**
+         * Set to true to request the user's email address from the Twitter API.
+         * For this to have an effect it must first be enabled in the Twitter developer console.
+         */
+        private boolean includeEmail;
 
         public Twitter() {
             setClientName("Twitter");

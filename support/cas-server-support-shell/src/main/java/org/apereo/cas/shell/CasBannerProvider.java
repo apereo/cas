@@ -26,8 +26,6 @@ import java.nio.charset.StandardCharsets;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
 public class CasBannerProvider extends DefaultBannerProvider {
-
-    
     @Autowired
     private Environment environment;
     

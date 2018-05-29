@@ -135,6 +135,7 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-metadata-repository")
 
     implementation project(":support:cas-server-support-throttle")
+    implementation project(":support:cas-server-support-metrics")
     implementation project(":support:cas-server-support-person-directory")
     implementation project(":support:cas-server-support-configuration")
     implementation project(":support:cas-server-support-geolocation")

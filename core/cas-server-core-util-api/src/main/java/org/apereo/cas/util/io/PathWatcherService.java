@@ -6,6 +6,7 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.Closeable;
 import java.io.File;
+import java.nio.file.ClosedWatchServiceException;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
@@ -76,6 +77,10 @@ public class PathWatcherService implements Runnable, Closeable {
                 }
             }
         } catch (final InterruptedException e) {
+            LOGGER.trace(e.getMessage(), e);
+            return;
+        } catch (final ClosedWatchServiceException e) {
+            LOGGER.trace(e.getMessage(), e);
             return;
         }
     }

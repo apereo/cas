@@ -518,8 +518,19 @@ public class WebUtils {
      * @return the http servlet request user agent
      */
     public static String getHttpServletRequestUserAgentFromRequestContext() {
-        final var httpServletRequestFromExternalWebflowContext = getHttpServletRequestFromExternalWebflowContext();
-        return HttpRequestUtils.getHttpServletRequestUserAgent(httpServletRequestFromExternalWebflowContext);
+        final var request = getHttpServletRequestFromExternalWebflowContext();
+        return HttpRequestUtils.getHttpServletRequestUserAgent(request);
+    }
+
+    /**
+     * Gets http servlet request user agent from request context.
+     *
+     * @param context the context
+     * @return the http servlet request user agent from request context
+     */
+    public static String getHttpServletRequestUserAgentFromRequestContext(final RequestContext context) {
+        final var request = getHttpServletRequestFromExternalWebflowContext(context);
+        return HttpRequestUtils.getHttpServletRequestUserAgent(request);
     }
 
     /**
@@ -529,6 +540,17 @@ public class WebUtils {
      */
     public static GeoLocationRequest getHttpServletRequestGeoLocationFromRequestContext() {
         final var servletRequest = getHttpServletRequestFromExternalWebflowContext();
+        return getHttpServletRequestGeoLocation(servletRequest);
+    }
+
+    /**
+     * Gets http servlet request geo location from request context.
+     *
+     * @param context the context
+     * @return the http servlet request geo location from request context
+     */
+    public static GeoLocationRequest getHttpServletRequestGeoLocationFromRequestContext(final RequestContext context) {
+        final var servletRequest = getHttpServletRequestFromExternalWebflowContext(context);
         return getHttpServletRequestGeoLocation(servletRequest);
     }
 
@@ -865,4 +887,55 @@ public class WebUtils {
     public static List<String> getSurrogateAuthenticationAccounts(final RequestContext requestContext) {
         return requestContext.getFlowScope().get("surrogates", List.class);
     }
+
+    /**
+     * Put graphical user authentication enabled.
+     *
+     * @param requestContext the request context
+     * @param value          the value
+     */
+    public static void putGraphicalUserAuthenticationEnabled(final RequestContext requestContext, final Boolean value) {
+        requestContext.getFlowScope().put("guaEnabled", value);
+    }
+
+    /**
+     * Put graphical user authentication username.
+     *
+     * @param requestContext the request context
+     * @param username       the username
+     */
+    public static void putGraphicalUserAuthenticationUsername(final RequestContext requestContext, final String username) {
+        requestContext.getFlowScope().put("guaUsername", username);
+    }
+
+    /**
+     * Contains graphical user authentication username.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static boolean containsGraphicalUserAuthenticationUsername(final RequestContext requestContext) {
+        return requestContext.getFlowScope().contains("guaUsername");
+    }
+
+    /**
+     * Put graphical user authentication image.
+     *
+     * @param requestContext the request context
+     * @param image          the image
+     */
+    public static void putGraphicalUserAuthenticationImage(final RequestContext requestContext, final String image) {
+        requestContext.getFlowScope().put("guaUserImage", image);
+    }
+
+    /**
+     * Contains graphical user authentication image boolean.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static boolean containsGraphicalUserAuthenticationImage(final RequestContext requestContext) {
+        return requestContext.getFlowScope().contains("guaUserImage");
+    }
+
 }

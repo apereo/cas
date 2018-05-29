@@ -33,6 +33,7 @@ public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> 
         final var artifactId = request.getParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE);
         final var s = new OpenIdService(id, service, artifactId, openIdIdentity);
         s.setLoggedOutAlready(true);
+        s.setSource(OpenIdProtocolConstants.OPENID_RETURNTO);
         return s;
     }
 

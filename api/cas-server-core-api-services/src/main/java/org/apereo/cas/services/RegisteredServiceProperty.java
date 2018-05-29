@@ -30,7 +30,6 @@ public interface RegisteredServiceProperty extends Serializable {
     @Getter
     @RequiredArgsConstructor
     enum RegisteredServiceProperties {
-
         /**
          * using when delegating authentication to ADFS to indicate the relying party identifier.
          */
@@ -46,6 +45,14 @@ public interface RegisteredServiceProperty extends Serializable {
          * Produce a JWT as a response when generating service tickets.
          **/
         TOKEN_AS_SERVICE_TICKET("jwtAsServiceTicket", "false"),
+        /**
+         * Produce a signed JWT as a response when generating service tickets using the provided signing key.
+         **/
+        TOKEN_AS_SERVICE_TICKET_SIGNING_KEY("jwtAsServiceTicketSigningKey", StringUtils.EMPTY),
+        /**
+         * Produce an encrypted JWT as a response when generating service tickets using the provided encryption key.
+         **/
+        TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY("jwtAsServiceTicketEncryptionKey", StringUtils.EMPTY),
         /**
          * Jwt signing secret defined for a given service.
          **/
