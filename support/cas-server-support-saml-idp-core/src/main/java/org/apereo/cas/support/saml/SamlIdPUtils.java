@@ -49,12 +49,14 @@ public class SamlIdPUtils {
     /**
      * Prepare peer entity saml endpoint.
      *
+     * @param authnRequest    the authn request
      * @param outboundContext the outbound context
      * @param adaptor         the adaptor
      * @param binding         the binding
      * @throws SamlException the saml exception
      */
-    public static void preparePeerEntitySamlEndpointContext(final MessageContext outboundContext,
+    public static void preparePeerEntitySamlEndpointContext(final RequestAbstractType authnRequest,
+                                                            final MessageContext outboundContext,
                                                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                             final String binding) throws SamlException {
         final String entityId = adaptor.getEntityId();

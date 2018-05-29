@@ -147,7 +147,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
 
         if (facade.isAuthnRequestsSigned()) {
             samlObjectSigner.encode(authnRequest, registeredService,
-                    facade, response, request, SAMLConstants.SAML2_POST_BINDING_URI);
+                    facade, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest);
         }
         ctx.setMessage(authnRequest);
         ctx.getSubcontext(SAMLBindingContext.class, true).setHasBindingSignature(false);
