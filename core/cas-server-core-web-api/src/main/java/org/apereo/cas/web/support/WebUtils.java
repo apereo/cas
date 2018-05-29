@@ -518,8 +518,19 @@ public class WebUtils {
      * @return the http servlet request user agent
      */
     public static String getHttpServletRequestUserAgentFromRequestContext() {
-        final HttpServletRequest httpServletRequestFromExternalWebflowContext = getHttpServletRequestFromExternalWebflowContext();
-        return HttpRequestUtils.getHttpServletRequestUserAgent(httpServletRequestFromExternalWebflowContext);
+        final HttpServletRequest request = getHttpServletRequestFromExternalWebflowContext();
+        return HttpRequestUtils.getHttpServletRequestUserAgent(request);
+    }
+
+    /**
+     * Gets http servlet request user agent from request context.
+     *
+     * @param context the context
+     * @return the http servlet request user agent from request context
+     */
+    public static String getHttpServletRequestUserAgentFromRequestContext(final RequestContext context) {
+        final HttpServletRequest request = getHttpServletRequestFromExternalWebflowContext(context);
+        return HttpRequestUtils.getHttpServletRequestUserAgent(request);
     }
 
     /**
@@ -529,6 +540,17 @@ public class WebUtils {
      */
     public static GeoLocationRequest getHttpServletRequestGeoLocationFromRequestContext() {
         final HttpServletRequest servletRequest = getHttpServletRequestFromExternalWebflowContext();
+        return getHttpServletRequestGeoLocation(servletRequest);
+    }
+
+    /**
+     * Gets http servlet request geo location from request context.
+     *
+     * @param context the context
+     * @return the http servlet request geo location from request context
+     */
+    public static GeoLocationRequest getHttpServletRequestGeoLocationFromRequestContext(final RequestContext context) {
+        final HttpServletRequest servletRequest = getHttpServletRequestFromExternalWebflowContext(context);
         return getHttpServletRequestGeoLocation(servletRequest);
     }
 
