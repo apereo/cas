@@ -11,6 +11,7 @@ dependencies {
     implementation project(":core:cas-server-core-validation")
     implementation project(":core:cas-server-core-validation-api")
     implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-configuration-api")
     
     implementation libraries.metrics
