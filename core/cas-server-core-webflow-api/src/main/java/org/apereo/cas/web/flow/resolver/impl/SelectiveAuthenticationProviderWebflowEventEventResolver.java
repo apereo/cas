@@ -21,7 +21,6 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -43,7 +42,7 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
                                                                     final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                                     final MultifactorAuthenticationProviderSelector selector) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
-                authenticationSelectionStrategies, selector);
+            authenticationSelectionStrategies, selector);
     }
 
     @Override
@@ -75,7 +74,7 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
         } else {
             LOGGER.debug("No events could be resolved for this authentication transaction [{}] and service [{}]", authentication, registeredService);
         }
-                filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request);
+        final var pair = filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request);
         WebUtils.putResolvedMultifactorAuthenticationProviders(context, pair.getValue());
         return pair.getKey();
     }
@@ -90,12 +89,12 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
      * @return the set of events
      */
     protected Pair<Set<Event>, Collection<MultifactorAuthenticationProvider>> filterEventsByMultifactorAuthenticationProvider(
-            final Set<Event> resolveEvents, final Authentication authentication, 
-            final RegisteredService registeredService,
-            final HttpServletRequest request) {
+        final Set<Event> resolveEvents, final Authentication authentication,
+        final RegisteredService registeredService,
+        final HttpServletRequest request) {
         LOGGER.debug("Locating multifactor providers to determine support for this authentication sequence");
         final var providers =
-                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
+            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
 
         if (providers == null || providers.isEmpty()) {
             LOGGER.debug("No providers are available to honor this request. Moving on...");
@@ -106,13 +105,13 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
 
         // remove providers that don't support the event
         flattenedProviders.removeIf(p -> resolveEvents.stream()
-                .filter(e -> p.supports(e, authentication, registeredService, request))
-                .count() == 0);
+            .filter(e -> p.supports(e, authentication, registeredService, request))
+            .count() == 0);
 
         // remove events that are not supported by providers.
         resolveEvents.removeIf(e -> flattenedProviders.stream()
-                .filter(p -> p.supports(e, authentication, registeredService, request))
-                .count() == 0);
+            .filter(p -> p.supports(e, authentication, registeredService, request))
+            .count() == 0);
 
         LOGGER.debug("Finalized set of resolved events are [{}]", resolveEvents);
         return Pair.of(resolveEvents, flattenedProviders);

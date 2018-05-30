@@ -59,7 +59,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
         }
         LOGGER.debug("Service [{}] supports single logout and is found in the registry as [{}]. Proceeding...", selectedService, registeredService);
 
-        final var logoutUrl = this.singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, selectedService);
+        final var logoutUrls = this.singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, selectedService);
         LOGGER.debug("Prepared logout url [{}] for service [{}]", logoutUrls, selectedService);
         if (logoutUrls == null || logoutUrls.isEmpty()) {
             LOGGER.debug("Service [{}] does not support logout operations given no logout url could be determined.", selectedService);
@@ -67,7 +67,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
         }
 
         LOGGER.debug("Creating logout request for [{}] and ticket id [{}]", selectedService, ticketId);
-        final var logoutRequest = new DefaultLogoutRequest(ticketId, selectedService, logoutUrl);
+        return createLogoutRequests(ticketId, selectedService, registeredService, logoutUrls);
     }
 
     private Collection<LogoutRequest> createLogoutRequests(final String ticketId,
@@ -85,6 +85,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
                                               final WebApplicationService selectedService,
                                               final RegisteredService registeredService,
                                               final URL logoutUrl) {
+        final var logoutRequest = new DefaultLogoutRequest(ticketId, selectedService, logoutUrl);
         LOGGER.debug("Logout request [{}] created for [{}] and ticket id [{}]", logoutRequest, selectedService, ticketId);
         final var type = registeredService.getLogoutType() == null
             ? RegisteredService.LogoutType.BACK_CHANNEL : registeredService.getLogoutType();

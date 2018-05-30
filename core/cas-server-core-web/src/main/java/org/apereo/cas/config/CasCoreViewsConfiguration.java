@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
 import org.apereo.cas.web.view.ChainingTemplateViewResolver;
 import org.apereo.cas.web.view.RestfulUrlTemplateResolver;
 import org.apereo.cas.web.view.ThemeFileTemplateResolver;
@@ -17,8 +16,6 @@ import org.springframework.util.ResourceUtils;
 import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
 import org.thymeleaf.templateresolver.AbstractTemplateResolver;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
-
-import java.util.List;
 
 /**
  * This is {@link CasCoreViewsConfiguration}.
@@ -43,6 +40,7 @@ public class CasCoreViewsConfiguration {
 
         final var templatePrefixes = casProperties.getView().getTemplatePrefixes();
         templatePrefixes.forEach(Unchecked.consumer(prefix -> {
+            final String prefixPath = ResourceUtils.getFile(prefix).getCanonicalPath();
             final var viewPath = StringUtils.appendIfMissing(prefixPath, "/");
 
             final var rest = casProperties.getView().getRest();
@@ -52,6 +50,7 @@ public class CasCoreViewsConfiguration {
                 chain.addResolver(url);
             }
 
+            final var theme = new ThemeFileTemplateResolver(casProperties);
             configureTemplateViewResolver(theme);
             theme.setPrefix(viewPath + "themes/%s/");
             chain.addResolver(theme);

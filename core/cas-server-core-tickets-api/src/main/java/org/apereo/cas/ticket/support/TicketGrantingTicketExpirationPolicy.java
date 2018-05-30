@@ -60,6 +60,9 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
             "maxTimeToLiveInSeconds must be greater than or equal to timeToKillInSeconds.");
 
         // Ticket has been used, check maxTimeToLive (hard window)
+        final ZonedDateTime currentSystemTime = getCurrentSystemTime();
+        final ZonedDateTime creationTime = ticketState.getCreationTime();
+        final ZonedDateTime lastTimeUsed = ticketState.getLastTimeUsed();
         var expirationTime = creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
         if (currentSystemTime.isAfter(expirationTime)) {
             LOGGER.debug("Ticket is expired because the time since creation [{}] is greater than current system time [{}]", expirationTime, currentSystemTime);

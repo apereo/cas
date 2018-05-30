@@ -48,6 +48,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
             return null;
         }
 
+        final var result = decodeTicket(found);
         if (result != null && result.isExpired()) {
             LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
             getMapInstance().remove(encTicketId);

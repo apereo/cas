@@ -57,7 +57,7 @@ public class JsonConsentRepository extends BaseConsentRepository {
     private Set<ConsentDecision> readDecisionsFromJsonResource() {
         if (ResourceUtils.doesResourceExist(jsonResource)) {
             try (Reader reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
-                final TypeReference<Set<ConsentDecision>> personList = new TypeReference<Set<ConsentDecision>>() {
+                final TypeReference<Set<ConsentDecision>> personList = new TypeReference<>() {
                 };
                 return MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
             }

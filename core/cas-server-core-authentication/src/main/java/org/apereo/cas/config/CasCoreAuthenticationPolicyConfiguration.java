@@ -16,7 +16,6 @@ import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicyF
 import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +92,7 @@ public class CasCoreAuthenticationPolicyConfiguration {
     @Bean
     @RefreshScope
     public AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy() {
-        return new DefaultAdaptiveAuthenticationPolicy(this.geoLocationService, casProperties.getAuthn().getAdaptive());
+        return new DefaultAdaptiveAuthenticationPolicy(this.geoLocationService.getIfAvailable(), casProperties.getAuthn().getAdaptive());
     }
 
     @ConditionalOnMissingBean(name = "requiredHandlerAuthenticationPolicyFactory")

@@ -1,7 +1,7 @@
 package org.apereo.cas.services.web.view;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -13,7 +13,6 @@ import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.Assertion;
@@ -23,9 +22,7 @@ import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -36,7 +33,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class AbstractCasView extends AbstractView {
 
     /**
@@ -64,7 +61,7 @@ public abstract class AbstractCasView extends AbstractView {
      * Authentication attribute release policy.
      */
     protected final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
-    
+
 
     /**
      * Gets the assertion from the model.

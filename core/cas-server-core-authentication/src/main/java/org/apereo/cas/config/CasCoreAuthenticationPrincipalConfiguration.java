@@ -68,12 +68,13 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @ConditionalOnMissingBean(name = "personDirectoryPrincipalResolver")
     public PrincipalResolver personDirectoryPrincipalResolver() {
         final var personDirectory = casProperties.getPersonDirectory();
+        final var bean = new PersonDirectoryPrincipalResolver(
             attributeRepository,
             principalFactory(),
             personDirectory.isReturnNull(),
             personDirectory.getPrincipalAttribute()
         );
-
+        
         final var resolver = new ChainingPrincipalResolver();
         if (!attributeRepositories.isEmpty()) {
             LOGGER.debug("Attribute repository sources are defined and available for the principal resolution chain. "

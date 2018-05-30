@@ -5,7 +5,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.webapp.WebflowProperties;
-import org.apereo.cas.configuration.model.webapp.WebflowSessionManagementProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.spring.webflow.plugin.ClientFlowExecutionRepository;
 import org.apereo.spring.webflow.plugin.EncryptedTranscoder;
@@ -55,6 +54,7 @@ public class WebflowExecutorFactory {
         final var executionFactory = new FlowExecutionImplFactory();
         executionFactory.setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(executionListeners));
 
+        final var flowExecutionSnapshotFactory =
             new SerializedFlowExecutionSnapshotFactory(executionFactory, this.flowDefinitionRegistry);
         flowExecutionSnapshotFactory.setCompress(session.isCompress());
 
