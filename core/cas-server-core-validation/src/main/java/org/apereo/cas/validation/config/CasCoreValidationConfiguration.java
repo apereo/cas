@@ -33,9 +33,6 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreValidationConfiguration implements ServiceTicketValidationAuthorizerConfigurer {
-
-
-
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
