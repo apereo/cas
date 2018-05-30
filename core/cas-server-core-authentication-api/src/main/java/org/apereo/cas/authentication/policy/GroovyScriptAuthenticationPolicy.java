@@ -31,6 +31,7 @@ public class GroovyScriptAuthenticationPolicy implements AuthenticationPolicy {
         final Optional<Exception> ex;
         final var matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(script);
         if (matcherInline.find()) {
+            final Map<String, Object> args = CollectionUtils.wrap("principal", auth.getPrincipal(), "logger", LOGGER);
             final var inlineScript = matcherInline.group(1);
             ex = ScriptingUtils.executeGroovyShellScript(inlineScript, args, Optional.class);
         } else {
