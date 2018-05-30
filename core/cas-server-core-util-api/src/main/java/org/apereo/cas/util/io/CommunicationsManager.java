@@ -8,7 +8,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
-import javax.mail.internet.MimeMessage;
 import java.util.Optional;
 
 /**
@@ -50,8 +49,8 @@ public class CommunicationsManager {
                          final String cc, final String bcc) {
         if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isMailSenderDefined()) {
             final var to = getFirstAttributeByName(principal, attribute);
-            if (attributeValue.isPresent()) {
-                return email(text, from, subject, attributeValue.get().toString(), cc, bcc);
+            if (to.isPresent()) {
+                return email(text, from, subject, to.get().toString(), cc, bcc);
             }
         }
         return false;
@@ -129,8 +128,8 @@ public class CommunicationsManager {
                        final String text, final String from) {
         if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isSmsSenderDefined()) {
             final var to = getFirstAttributeByName(principal, attribute);
-            if (attributeValue.isPresent()) {
-                return sms(from, attributeValue.get().toString(), text);
+            if (to.isPresent()) {
+                return sms(from, to.get().toString(), text);
             }
         }
         return false;

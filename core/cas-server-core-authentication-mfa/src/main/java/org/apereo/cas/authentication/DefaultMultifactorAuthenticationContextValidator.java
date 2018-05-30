@@ -47,9 +47,10 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
      */
     @Override
     public Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validate(final Authentication authentication,
-                                                                               final String requestedContext, final RegisteredService service) {
-        final var attrs = authentication.getAttributes();
-        final var ctxAttr = attrs.get(this.authenticationContextAttribute);
+                                                                               final String requestedContext,
+                                                                               final RegisteredService service) {
+        final var attributes = authentication.getAttributes();
+        final var ctxAttr = attributes.get(this.authenticationContextAttribute);
         final Collection<Object> contexts = CollectionUtils.toCollection(ctxAttr);
         LOGGER.debug("Attempting to match requested authentication context [{}] against [{}]", requestedContext, contexts);
         final var providerMap =
@@ -74,7 +75,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
         if (attributes.containsKey(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA)
             && attributes.containsKey(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER)) {
             final boolean isBypass = Boolean.class.cast(attributes.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA));
-            final var bypassedId = attrs.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER).toString();
+            final var bypassedId = attributes.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER).toString();
             LOGGER.debug("Found multifactor authentication bypass attributes for provider [{}]", bypassedId);
             if (isBypass && StringUtils.equals(bypassedId, requestedContext)) {
                 LOGGER.debug("Requested authentication context [{}] is satisfied given mfa was bypassed for the authentication attempt", requestedContext);

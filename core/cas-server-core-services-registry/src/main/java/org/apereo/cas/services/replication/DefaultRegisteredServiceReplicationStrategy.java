@@ -58,8 +58,8 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
                                                                       final ServiceRegistry serviceRegistry) {
         final var result = this.distributedCacheManager.find(predicate);
         if (result.isPresent()) {
-            final var item = result.get();
-            final var cachedService = item.getValue();
+            final DistributedCacheObject<RegisteredService> item = result.get();
+            final RegisteredService value = item.getValue();
             final RegisteredService cachedService = value;
             LOGGER.debug("Located cache entry [{}] in service registry cache [{}]", item, this.distributedCacheManager.getName());
             if (isRegisteredServiceMarkedAsDeletedInCache(item)) {

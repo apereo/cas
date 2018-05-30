@@ -97,11 +97,13 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     }
 
     private static void processFileBasedGroovyAttributes(final Map<String, Object> resolvedAttributes,
-                                                         final Map<String, Object> attributesToRelease, final Matcher matcherFile, final String key) {
+                                                         final Map<String, Object> attributesToRelease,
+                                                         final Matcher matcherFile, final String key) {
         try {
             LOGGER.debug("Found groovy script to execute for attribute mapping [{}]", key);
             final var file = new File(matcherFile.group(2));
             final var script = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+            final var result = getGroovyAttributeValue(script, resolvedAttributes);
             if (result != null) {
                 LOGGER.debug("Mapped attribute [{}] to [{}] from script", key, result);
                 attributesToRelease.put(key, result);
@@ -114,7 +116,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     }
 
     private static void processInlineGroovyAttribute(final Map<String, Object> resolvedAttributes,
-                                                     final Map<String, Object> attributesToRelease, final Matcher matcherInline, final String attributeName) {
+                                                     final Map<String, Object> attributesToRelease,
+                                                     final Matcher matcherInline, final String attributeName) {
         LOGGER.debug("Found inline groovy script to execute for attribute mapping [{}]", attributeName);
         final var result = getGroovyAttributeValue(matcherInline.group(1), resolvedAttributes);
         if (result != null) {
