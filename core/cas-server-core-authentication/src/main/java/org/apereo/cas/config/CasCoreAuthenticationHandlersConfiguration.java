@@ -17,8 +17,6 @@ import org.apereo.cas.authentication.principal.resolvers.ProxyingPrincipalResolv
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
-import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -186,7 +184,8 @@ public class CasCoreAuthenticationHandlersConfiguration {
                     if (StringUtils.isNotBlank(jaas.getLoginConfigurationFile())) {
                         h.setLoginConfigurationFile(new File(jaas.getLoginConfigurationFile()));
                     }
-                    h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(jaas.getPasswordPolicy()));
+                    final var passwordPolicy = jaas.getPasswordPolicy();
+                    h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(passwordPolicy));
                     if (passwordPolicy.isEnabled()) {
                         LOGGER.debug("Password policy is enabled for JAAS. Constructing password policy configuration for [{}]", jaas.getRealm());
                         final var cfg = new PasswordPolicyConfiguration(passwordPolicy);
@@ -196,6 +195,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
                             LOGGER.debug("Handling account states is disabled via CAS configuration");
                         }
                         h.setPasswordPolicyConfiguration(cfg);
+                    }
                     h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(jaas.getPrincipalTransformation()));
                     h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(jaas.getCredentialCriteria()));
                     return h;
