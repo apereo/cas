@@ -27,6 +27,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
 
         final var registeredService = context.getRegisteredService();
         if (context.getServiceTicket().isPresent() && context.getAuthenticationResult().isPresent() && registeredService.isPresent()) {
+            final AuditableExecutionResult result = AuditableExecutionResult.of(context);
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getServiceTicket().get(),
                     context.getAuthenticationResult().get(), registeredService.get());
@@ -85,7 +86,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             }
             return result;
         }
-        
+
         throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized");
     }
 }

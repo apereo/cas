@@ -243,16 +243,17 @@ subprojects {
         it.options.fork = true
 
         def casCompilerArgs = ["-parameters"]
+        
         if (!rootProject.skipErrorProneCompiler) {
             it.options.errorprone.allErrorsAsWarnings = false
             it.options.errorprone.disableWarningsInGeneratedCode = true
-            it.options.errorprone.errorproneArgs += [ '-Xep:ParameterName:OFF' ]
+            it.options.errorprone.errorproneArgs += [ '-Xep:ParameterName:OFF', '-Xep:MissingOverride:OFF' ]
+
+            casCompilerArgs.add("-XDcompilePolicy=byfile")
         }
 
-        if (JavaVersion.toVersion(sourceCompatibility).isJava9Compatible()) {
-            casCompilerArgs.add("--add-modules")
-            casCompilerArgs.add("java.xml.ws")
-        }
+        casCompilerArgs.add("--add-modules")
+        casCompilerArgs.add("java.se.ee")
 
         it.options.compilerArgs += casCompilerArgs
     }
