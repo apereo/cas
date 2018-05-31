@@ -3,6 +3,8 @@ description = "Apereo CAS WS-Federation Webflow Support"
 dependencies {
     api project(":api:cas-server-core-api-webflow")
 
+    implementation libraries.caffein
+    
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")

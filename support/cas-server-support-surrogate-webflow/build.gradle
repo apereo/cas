@@ -1,6 +1,8 @@
 description = "Apereo CAS Surrogate Authentication Webflow"
 dependencies {
     api project(":api:cas-server-core-api-webflow")
+
+    implementation libraries.caffein
     
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-webflow")

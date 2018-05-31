@@ -9,6 +9,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-services")
     implementation project(":support:cas-server-support-generic")
+    implementation project(":core:cas-server-core-services-registry")
 
     api project(":api:cas-server-core-api-webflow")
 
@@ -18,7 +19,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-configuration")
-
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-api")
