@@ -6,11 +6,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONObject;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
@@ -20,7 +17,6 @@ import org.apereo.cas.token.cipher.RegisteredServiceTokenTicketCipherExecutor;
 import org.apereo.cas.util.DateTimeUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
-import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.TicketValidator;
 
 import java.time.ZonedDateTime;
@@ -39,7 +35,6 @@ import java.util.Optional;
 @Getter
 @RequiredArgsConstructor
 public class JWTTokenTicketBuilder implements TokenTicketBuilder {
-
     private final TicketValidator ticketValidator;
     private final String casSeverPrefix;
     private final CipherExecutor<String, String> defaultTokenCipherExecutor;
@@ -87,12 +82,14 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
                             final String subject,
                             final Date validUntilDate,
                             final Map<String, Object> attributes) {
+        final var claims =
             new JWTClaimsSet.Builder()
                 .audience(serviceAudience)
                 .issuer(casSeverPrefix)
                 .jwtID(jwtId)
                 .issueTime(issueDate)
                 .subject(subject);
+
 
         attributes.forEach(claims::claim);
         claims.expirationTime(validUntilDate);
@@ -122,5 +119,4 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
         LOGGER.trace("Generating plain JWT as the ticket: [{}]", token);
         return token;
     }
-
 }

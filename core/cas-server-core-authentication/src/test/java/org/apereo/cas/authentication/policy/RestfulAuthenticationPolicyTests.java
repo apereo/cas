@@ -101,7 +101,7 @@ public class RestfulAuthenticationPolicyTests {
 
 
     private void verifyPolicyFails(final Class exceptionClass, final HttpStatus status) throws Exception {
-        thrown.expectCause(new CustomMatcher<Throwable>("policy") {
+        thrown.expectCause(new CustomMatcher<>("policy") {
             @Override
             public boolean matches(final Object o) {
                 return o.getClass().equals(exceptionClass);

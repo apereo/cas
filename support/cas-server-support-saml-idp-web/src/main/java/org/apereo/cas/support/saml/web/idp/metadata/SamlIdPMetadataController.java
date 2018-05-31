@@ -6,14 +6,12 @@ import org.apache.commons.io.IOUtils;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -26,19 +24,15 @@ import java.nio.charset.StandardCharsets;
 @Controller("samlIdPMetadataController")
 @Slf4j
 @AllArgsConstructor
-public class SamlIdPMetadataController {
+public class SamlIdPMetadataController implements InitializingBean {
     private static final String CONTENT_TYPE = "text/xml;charset=UTF-8";
 
     private final SamlIdPMetadataGenerator metadataAndCertificatesGenerationService;
     private final SamlIdPMetadataLocator samlIdPMetadataLocator;
 
-    /**
-     * Post constructor placeholder for additional
-     * extensions. This method is called after
-     * the object has completely initialized itself.
-     */
-    @PostConstruct
-    public void postConstruct() {
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
         this.metadataAndCertificatesGenerationService.generate();
     }
 

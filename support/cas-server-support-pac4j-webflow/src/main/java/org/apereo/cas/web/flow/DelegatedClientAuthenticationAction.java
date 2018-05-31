@@ -1,20 +1,21 @@
 package org.apereo.cas.web.flow;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.CollectionUtils;
@@ -44,19 +45,13 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class represents an action to put at the beginning of the webflow.
@@ -160,7 +155,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     }
 
     private void establishDelegatedAuthenticationSession(final RequestContext context, final Service service,
-                                                          final Credentials credentials, final BaseClient client) {
+                                                         final Credentials credentials, final BaseClient client) {
         final var clientCredential = new ClientCredential(credentials, client.getName());
         final var authenticationResult =
             this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
@@ -192,7 +187,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         final Service currentService = WebUtils.getService(context);
         final var service = authenticationRequestServiceSelectionStrategies.resolveService(currentService, WebApplicationService.class);
 
-        final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
+        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+        final var webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
 
         final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();
         this.clients.findAllClients()
@@ -217,9 +214,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
     private Optional<ProviderLoginPageConfiguration> buildProviderConfiguration(final IndirectClient client, final WebContext webContext,
                                                                                 final WebApplicationService service) {
+        final var name = client.getName();
         final var matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
         final var type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
-        final var redirectUrl = DelegatedClientNavigationController.ENDPOINT_REDIRECT
         final var uriBuilder = UriComponentsBuilder
             .fromUriString(DelegatedClientNavigationController.ENDPOINT_REDIRECT)
             .queryParam(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, name);

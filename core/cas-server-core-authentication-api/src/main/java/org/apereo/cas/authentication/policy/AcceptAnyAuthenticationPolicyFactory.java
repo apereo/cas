@@ -17,7 +17,7 @@ public class AcceptAnyAuthenticationPolicyFactory implements ContextualAuthentic
 
     @Override
     public ContextualAuthenticationPolicy<ServiceContext> createPolicy(final ServiceContext context) {
-        return new ContextualAuthenticationPolicy<ServiceContext>() {
+        return new ContextualAuthenticationPolicy<>() {
 
             @Override
             public ServiceContext getContext() {

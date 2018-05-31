@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.jdbc;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -22,8 +21,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.Statement;
 
 import static org.junit.Assert.*;
 

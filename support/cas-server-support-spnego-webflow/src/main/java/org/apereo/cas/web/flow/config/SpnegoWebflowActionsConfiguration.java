@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow.config;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -15,8 +14,6 @@ import org.apereo.cas.web.flow.client.LdapSpnegoKnownClientSystemsFilterAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.ldaptive.ConnectionFactory;
-import org.ldaptive.SearchFilter;
-import org.ldaptive.SearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -27,7 +24,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.webflow.execution.Action;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

@@ -5,7 +5,6 @@ import org.apereo.cas.adaptors.ldap.services.DefaultLdapRegisteredServiceMapper;
 import org.apereo.cas.adaptors.ldap.services.LdapRegisteredServiceMapper;
 import org.apereo.cas.adaptors.ldap.services.LdapServiceRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;

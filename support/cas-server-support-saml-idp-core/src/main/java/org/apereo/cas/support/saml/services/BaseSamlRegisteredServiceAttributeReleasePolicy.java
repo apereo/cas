@@ -17,9 +17,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link BaseSamlRegisteredServiceAttributeReleasePolicy}.
@@ -62,11 +60,12 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
                 }
             }
 
-            final var ctx = ApplicationContextProvider.getApplicationContext();
+            if (StringUtils.isBlank(entityId)) {
                 LOGGER.warn("Could not locate the entity id for SAML attribute release policy processing");
                 return super.getAttributesInternal(principal, attributes, service);
             }
 
+            final var ctx = ApplicationContextProvider.getApplicationContext();
             if (ctx == null) {
                 LOGGER.warn("Could not locate the application context to process attributes");
                 return super.getAttributesInternal(principal, attributes, service);

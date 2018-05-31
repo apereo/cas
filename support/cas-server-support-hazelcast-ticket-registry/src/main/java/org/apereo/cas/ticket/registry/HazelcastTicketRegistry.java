@@ -8,9 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.springframework.beans.factory.DisposableBean;
 
-import javax.annotation.PreDestroy;
-import java.io.Closeable;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -29,7 +28,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @AllArgsConstructor
-public class HazelcastTicketRegistry extends AbstractTicketRegistry implements Closeable {
+public class HazelcastTicketRegistry extends AbstractTicketRegistry implements AutoCloseable, DisposableBean {
     private final HazelcastInstance hazelcastInstance;
     private final TicketCatalog ticketCatalog;
     private final long pageSize;
@@ -125,7 +124,6 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     /**
      * Make sure we shutdown HazelCast when the context is destroyed.
      */
-    @PreDestroy
     public void shutdown() {
         try {
             LOGGER.info("Shutting down Hazelcast instance [{}]", this.hazelcastInstance.getConfig().getInstanceName());
@@ -133,6 +131,11 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage());
         }
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        close();
     }
 
     @Override

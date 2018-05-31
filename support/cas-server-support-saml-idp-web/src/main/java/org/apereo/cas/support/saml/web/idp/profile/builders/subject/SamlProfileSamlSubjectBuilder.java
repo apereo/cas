@@ -14,7 +14,6 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Subject;
-import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

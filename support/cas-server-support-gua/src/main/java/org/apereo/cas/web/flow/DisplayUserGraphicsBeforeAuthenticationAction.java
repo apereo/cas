@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import com.google.common.io.ByteSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

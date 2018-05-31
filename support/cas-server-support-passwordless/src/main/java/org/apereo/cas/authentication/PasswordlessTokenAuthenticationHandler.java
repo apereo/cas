@@ -3,14 +3,12 @@ package org.apereo.cas.authentication;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Optional;
 
 /**
  * This is {@link PasswordlessTokenAuthenticationHandler}.

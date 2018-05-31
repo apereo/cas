@@ -48,7 +48,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
@@ -69,6 +68,7 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.junit.runner.RunWith;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.springframework.web.SecurityInterceptor;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -88,12 +88,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -200,13 +198,17 @@ public abstract class AbstractOAuth20Tests {
     protected TicketRegistry ticketRegistry;
 
     @TestConfiguration
-    public static class OAuthTestConfiguration implements ComponentSerializationPlanConfigurator {
+    public static class OAuthTestConfiguration implements ComponentSerializationPlanConfigurator, InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;
 
-        @PostConstruct
         public void init() {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+        }
+
+        @Override
+        public void afterPropertiesSet() throws Exception {
+            init();
         }
 
         @Bean

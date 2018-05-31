@@ -9,14 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.naming.Context;
-import javax.naming.NamingEnumeration;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
-import javax.naming.directory.SearchResult;
 import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.Set;
 
 /**
  * This is {@link ValidateLdapConnectionCommand}.

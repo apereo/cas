@@ -2,11 +2,8 @@ package org.apereo.cas.support.saml.web.view;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
@@ -14,14 +11,9 @@ import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.opensaml.saml.saml1.core.Assertion;
-import org.opensaml.saml.saml1.core.AuthenticationStatement;
-import org.opensaml.saml.saml1.core.Conditions;
 import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml1.core.StatusCode;
-import org.opensaml.saml.saml1.core.Subject;
 
-import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;

@@ -18,7 +18,6 @@ import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 /**

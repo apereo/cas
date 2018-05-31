@@ -6,8 +6,6 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
 
-import java.util.Map;
-
 /**
  * Delegates to different expiration policies depending on whether surrogate
  * is true or not.

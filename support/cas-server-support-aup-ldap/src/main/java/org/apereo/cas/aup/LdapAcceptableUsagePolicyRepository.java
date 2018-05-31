@@ -8,7 +8,6 @@ import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
 import org.springframework.webflow.execution.RequestContext;
 

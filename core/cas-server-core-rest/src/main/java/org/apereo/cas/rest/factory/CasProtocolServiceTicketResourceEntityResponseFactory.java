@@ -6,7 +6,6 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.apereo.cas.ticket.ServiceTicket;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.configuration.model.core.audit.AuditRestProperties;
 import org.apereo.cas.util.CollectionUtils;
@@ -69,7 +68,7 @@ public class RestAuditTrailManager implements AuditTrailManager {
                 properties.getBasicAuthPassword(), CollectionUtils.wrap("date", String.valueOf(localDate.toEpochDay())));
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 final var result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                final TypeReference<Set<AuditActionContext>> values = new TypeReference<Set<AuditActionContext>>() {
+                final TypeReference<Set<AuditActionContext>> values = new TypeReference<>() {
                 };
                 return MAPPER.readValue(result, values);
             }

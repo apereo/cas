@@ -14,7 +14,6 @@ import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Map;
 
 /**
  * Generates PersistentIds based on the Shibboleth algorithm.

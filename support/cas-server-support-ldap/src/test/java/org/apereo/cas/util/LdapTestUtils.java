@@ -9,7 +9,6 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
-import org.ldaptive.Connection;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;

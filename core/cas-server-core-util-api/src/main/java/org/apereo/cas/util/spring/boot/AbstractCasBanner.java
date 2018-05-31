@@ -11,8 +11,6 @@ import org.springframework.core.env.Environment;
 import java.io.PrintStream;
 import java.util.Collections;
 import java.util.Formatter;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * This is {@link AbstractCasBanner}.

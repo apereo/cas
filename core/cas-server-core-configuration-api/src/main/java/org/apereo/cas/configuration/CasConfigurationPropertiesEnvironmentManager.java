@@ -16,7 +16,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
 import java.io.File;
-import java.util.Map;
 
 /**
  * This is {@link CasConfigurationPropertiesEnvironmentManager}.

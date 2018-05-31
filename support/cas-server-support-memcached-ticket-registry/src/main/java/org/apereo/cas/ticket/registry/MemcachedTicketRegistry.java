@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
 import org.apereo.cas.ticket.Ticket;
+import org.springframework.beans.factory.DisposableBean;
 
-import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -21,7 +21,7 @@ import java.util.Collection;
 @SuppressWarnings("FutureReturnValueIgnored")
 @Slf4j
 @AllArgsConstructor
-public class MemcachedTicketRegistry extends AbstractTicketRegistry {
+public class MemcachedTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
 
     /**
      * Memcached client.
@@ -109,7 +109,7 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry {
     /**
      * Destroy the client and shut down.
      */
-    @PreDestroy
+    @Override
     public void destroy() {
         this.connectionPool.close();
     }

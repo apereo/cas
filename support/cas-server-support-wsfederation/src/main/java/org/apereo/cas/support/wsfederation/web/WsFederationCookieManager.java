@@ -7,7 +7,6 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -57,6 +56,8 @@ public class WsFederationCookieManager {
             .filter(c -> c.getId().equalsIgnoreCase(wCtx))
             .findFirst()
             .orElse(null);
+        final var cookieGen = configuration.getCookieGenerator();
+        final var value = cookieGen.retrieveCookieValue(request);
         if (StringUtils.isBlank(value)) {
             LOGGER.error("No cookie value could be retrieved to determine the state of the delegated authentication session");
             throw new IllegalArgumentException("No cookie could be found to determine session state");
@@ -86,10 +87,10 @@ public class WsFederationCookieManager {
     public void store(final HttpServletRequest request, final HttpServletResponse response,
                       final String wctx, final Service service, final WsFederationConfiguration configuration) {
         final Map<String, Object> session = new LinkedHashMap<>();
-        session.put(CasProtocolConstants.PARAMETER_SERVICE + "-" + wctx, service);
+        session.put(CasProtocolConstants.PARAMETER_SERVICE + '-' + wctx, service);
         final var methods = request.getParameter(CasProtocolConstants.PARAMETER_METHOD);
         if (StringUtils.isNotBlank(methods)) {
-            session.put(CasProtocolConstants.PARAMETER_METHOD + "-" + wctx, methods);
+            session.put(CasProtocolConstants.PARAMETER_METHOD + '-' + wctx, methods);
         }
         final var locale = request.getAttribute(this.localParamName);
         if (locale != null) {

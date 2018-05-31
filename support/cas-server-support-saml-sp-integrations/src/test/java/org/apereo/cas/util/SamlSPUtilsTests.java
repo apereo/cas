@@ -13,9 +13,6 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.io.File;
-import java.util.Collection;
-
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 

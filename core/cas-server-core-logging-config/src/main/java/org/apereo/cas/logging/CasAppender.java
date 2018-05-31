@@ -1,7 +1,6 @@
 package org.apereo.cas.logging;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.AppenderRef;

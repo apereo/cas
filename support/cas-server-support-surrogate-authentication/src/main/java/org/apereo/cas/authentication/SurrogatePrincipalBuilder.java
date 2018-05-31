@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributes;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

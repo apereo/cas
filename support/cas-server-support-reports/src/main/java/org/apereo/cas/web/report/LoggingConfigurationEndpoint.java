@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.FileAppender;
@@ -13,7 +12,6 @@ import org.apache.logging.log4j.core.appender.MemoryMappedFileAppender;
 import org.apache.logging.log4j.core.appender.RandomAccessFileAppender;
 import org.apache.logging.log4j.core.appender.RollingFileAppender;
 import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
-import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.slf4j.Log4jLoggerFactory;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
@@ -24,7 +22,11 @@ import org.apereo.inspektr.audit.AuditActionContext;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -34,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
@@ -42,7 +43,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -52,7 +52,8 @@ import java.util.Set;
  * @since 4.2
  */
 @Slf4j
-public class LoggingConfigController extends BaseCasMvcEndpoint {
+@Endpoint(id = "loggingConfiguration")
+public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements InitializingBean {
     private static final String VIEW_CONFIG = "monitoring/viewLoggingConfig";
     private static final String LOGGER_NAME_ROOT = "root";
     private static final String FILE_PARAM = "file";
@@ -71,9 +72,14 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
 
     private Resource logConfigurationFile;
 
-    public LoggingConfigController(final AuditTrailExecutionPlan auditTrailManager, final CasConfigurationProperties casProperties) {
-        super("casloggingconfig", "/logging", casProperties.getMonitor().getEndpoints().getLoggingConfig(), casProperties);
+    public LoggingConfigurationEndpoint(final AuditTrailExecutionPlan auditTrailManager, final CasConfigurationProperties casProperties) {
+        super(casProperties.getMonitor().getEndpoints().getLoggingConfig(), casProperties);
         this.auditTrailManager = auditTrailManager;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        initialize();
     }
 
     /**
@@ -81,9 +87,8 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      * The log configuration location is pulled directly from the environment
      * given there is not an explicit property mapping for it provided by Boot, etc.
      */
-    @PostConstruct
     public void initialize() {
-        final Optional<Pair<Resource, LoggerContext>> pair = ControllerUtils.buildLoggerContext(environment, resourceLoader);
+        final var pair = ControllerUtils.buildLoggerContext(environment, resourceLoader);
         pair.ifPresent(it -> {
             this.logConfigurationFile = it.getKey();
             this.loggerContext = it.getValue();
@@ -99,9 +104,9 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      * @throws Exception the exception
      */
     @GetMapping
-    public ModelAndView getDefaultView(final HttpServletRequest request,
-                                       final HttpServletResponse response) throws Exception {
-        ensureEndpointAccessIsAuthorized(request, response);
+    @ReadOperation
+    public ModelAndView getDefaultView(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
 
         final Map<String, Object> model = new HashMap<>();
         model.put("logConfigurationFile", logConfigurationFile.getURI().toString());
@@ -117,9 +122,8 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      */
     @GetMapping(value = "/getActiveLoggers")
     @ResponseBody
+    @ReadOperation
     public Map<String, Object> getActiveLoggers(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
-
         final Map<String, Object> responseMap = new HashMap<>();
         final var loggers = getActiveLoggersInFactory();
         responseMap.put("activeLoggers", loggers.values());
@@ -134,11 +138,13 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the configuration
+     * @throws Exception the exception
      */
     @GetMapping(value = "/getConfiguration")
     @ResponseBody
-    public Map<String, Object> getConfiguration(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+    @ReadOperation
+    public Map<String, Object> getConfiguration(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
 
         final Collection<Map<String, Object>> configuredLoggers = new HashSet<>();
         getLoggerConfigurations().forEach(config -> {
@@ -225,12 +231,13 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      */
     @PostMapping(value = "/updateLoggerLevel")
     @ResponseBody
+    @WriteOperation
     public void updateLoggerLevel(@RequestParam final String loggerName,
                                   @RequestParam final String loggerLevel,
                                   @RequestParam(defaultValue = "false") final boolean additive,
                                   final HttpServletRequest request,
                                   final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
 
         final Collection<LoggerConfig> loggerConfigs = getLoggerConfigurations();
         loggerConfigs.stream().
@@ -251,9 +258,10 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      */
     @GetMapping(value = "/getAuditLog")
     @ResponseBody
+    @ReadOperation
     public Set<AuditActionContext> getAuditLog(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
-        final var sinceDate = LocalDate.now().minusDays(casProperties.getAudit().getNumberOfDaysInHistory());
+
+        final var sinceDate = LocalDate.now().minusDays(getCasProperties().getAudit().getNumberOfDaysInHistory());
         return this.auditTrailManager.getAuditRecordsSince(sinceDate);
     }
 }

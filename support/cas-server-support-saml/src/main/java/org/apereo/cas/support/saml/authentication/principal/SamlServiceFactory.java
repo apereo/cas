@@ -7,15 +7,11 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.apereo.cas.authentication.principal.AbstractServiceFactory;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
-import org.jdom.Attribute;
-import org.jdom.Document;
-import org.jdom.Element;
 import org.jdom.Namespace;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
 import java.util.stream.Collectors;
 
 /**

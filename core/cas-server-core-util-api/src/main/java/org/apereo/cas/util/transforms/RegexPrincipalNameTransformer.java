@@ -3,7 +3,7 @@ package org.apereo.cas.util.transforms;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.util.RegexUtils;
-import java.util.regex.Matcher;
+
 import java.util.regex.Pattern;
 import lombok.Setter;
 

@@ -5,7 +5,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
@@ -26,7 +25,6 @@ import java.security.GeneralSecurityException;
 import java.security.URIParameter;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 /**
  * JAAS Authentication Handler for CAAS. This is a simple bridge from CAS'

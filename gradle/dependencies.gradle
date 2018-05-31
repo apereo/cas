@@ -1277,6 +1277,7 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.objenesis:objenesis:$objenesisVersion") {
+                    exclude(group: "org.mockito", module: "mockito-all")
                     force = true
                 },
                 dependencies.create("org.junit.jupiter:junit-jupiter-api:$junitVersion") {
@@ -1327,6 +1328,8 @@ ext.libraries = [
                     exclude(group: "org.skyscreamer", module: "jsonassert")
                     exclude(group: "org.ow2.asm", module: "asm")
                     exclude(group: "junit", module: "junit")
+                    exclude(group: "org.mockito", module: "mockito-all")
+                    exclude(group: "org.mockito", module: "mockito-core")
                     force = true
                 },
                 dependencies.create("org.hsqldb:hsqldb:$hsqlVersion"),
@@ -1363,6 +1366,7 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.objenesis:objenesis:$objenesisVersion") {
+                    exclude(group: "org.mockito", module: "mockito-all")
                     force = true
                 }
         ],

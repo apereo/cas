@@ -11,6 +11,7 @@ import org.apereo.cas.support.events.config.CasConfigurationDeletedEvent;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.function.ComposableFunction;
 import org.apereo.cas.util.io.PathWatcherService;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -19,7 +20,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.function.Consumer;
 
@@ -48,7 +48,7 @@ public class CasConfigurationSupportUtilitiesConfiguration {
     @Configuration("casCoreConfigurationWatchConfiguration")
     @Profile("standalone")
     @ConditionalOnProperty(value = "spring.cloud.config.enabled", havingValue = "false")
-    public class CasCoreConfigurationWatchConfiguration {
+    public class CasCoreConfigurationWatchConfiguration implements InitializingBean {
         @Autowired
         private ApplicationEventPublisher eventPublisher;
 
@@ -58,9 +58,13 @@ public class CasConfigurationSupportUtilitiesConfiguration {
 
         private final Consumer<AbstractCasEvent> publish = event -> eventPublisher.publishEvent(event);
 
-        @PostConstruct
         public void init() {
             runNativeConfigurationDirectoryPathWatchService();
+        }
+
+        @Override
+        public void afterPropertiesSet() throws Exception {
+            init();
         }
 
         @SneakyThrows

@@ -3,7 +3,6 @@ package org.apereo.cas;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributes;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

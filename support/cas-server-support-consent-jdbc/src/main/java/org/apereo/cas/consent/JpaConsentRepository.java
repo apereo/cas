@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -92,25 +91,12 @@ public class JpaConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public boolean deleteConsentDecision(final long decisionId) {
+    public boolean deleteConsentDecision(final long decisionId, final String principal) {
         try {
             final var decision = this.entityManager.createQuery(SELECT_QUERY.concat("where r.id = :id"), ConsentDecision.class)
                 .setParameter("id", decisionId).getSingleResult();
             this.entityManager.remove(decision);
             return true;
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean deleteConsentDecisions(final String principal) {
-        try {
-            final var query = this.entityManager.createQuery(
-                DELETE_QUERY.concat("where r.principal = :principal"), ConsentDecision.class)
-                .setParameter(principal, principal);
-            return query.executeUpdate() > 0;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

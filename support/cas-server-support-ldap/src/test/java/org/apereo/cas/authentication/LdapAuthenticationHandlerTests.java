@@ -32,7 +32,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.util.Collection;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 

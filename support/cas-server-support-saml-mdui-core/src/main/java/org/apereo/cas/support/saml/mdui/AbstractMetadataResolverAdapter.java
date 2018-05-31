@@ -14,7 +14,6 @@ import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import lombok.Setter;
 

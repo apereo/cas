@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
@@ -14,8 +13,6 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.pac4j.core.context.J2EContext;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator}.
@@ -33,7 +30,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
     @Override
     public boolean validate(final J2EContext context) {
         final var request = context.getRequest();
-        final var checkParameterExist = validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
+        final var checkParameterExist = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CLIENT_ID)
             && HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REDIRECT_URI)
             && HttpRequestUtils.doesParameterExist(request, OAuth20Constants.RESPONSE_TYPE);
 
