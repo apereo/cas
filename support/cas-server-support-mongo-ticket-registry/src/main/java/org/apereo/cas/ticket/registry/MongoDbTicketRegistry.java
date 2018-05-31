@@ -141,7 +141,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
                 if (result != null && result.isExpired()) {
                     LOGGER.debug("Ticket [{}] has expired and is now removed from the collection", result.getId());
-                    deleteSingleTicket(encTicketId);
+                    deleteSingleTicket(result.getId());
                     return null;
                 }
                 return result;
