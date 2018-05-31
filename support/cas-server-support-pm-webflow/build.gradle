@@ -11,6 +11,7 @@ dependencies {
     implementation project(":support:cas-server-support-pm")
     
     implementation libraries.pac4j
+    implementation libraries.caffein
     
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")

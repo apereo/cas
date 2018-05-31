@@ -17,7 +17,8 @@ dependencies {
     implementation project(":support:cas-server-support-ldap-core")
 
     implementation libraries.jcifs
-
+    implementation libraries.caffein
+    
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-spnego", configuration: "tests")
