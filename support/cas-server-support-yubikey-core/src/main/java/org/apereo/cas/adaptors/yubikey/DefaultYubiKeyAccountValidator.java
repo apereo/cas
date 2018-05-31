@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
 import com.yubico.client.v2.ResponseStatus;
-import com.yubico.client.v2.VerificationResponse;
 import com.yubico.client.v2.YubicoClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

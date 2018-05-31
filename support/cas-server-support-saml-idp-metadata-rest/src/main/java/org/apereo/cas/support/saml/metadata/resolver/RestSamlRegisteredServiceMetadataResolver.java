@@ -2,10 +2,8 @@ package org.apereo.cas.support.saml.metadata.resolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
-import org.apereo.cas.configuration.model.support.saml.idp.metadata.RestSamlMetadataProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;

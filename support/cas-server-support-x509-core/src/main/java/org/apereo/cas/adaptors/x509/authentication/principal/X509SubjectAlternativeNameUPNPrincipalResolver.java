@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
-import java.util.Collection;
 import java.util.List;
 
 /**

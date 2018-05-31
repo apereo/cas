@@ -17,7 +17,6 @@ import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
-import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

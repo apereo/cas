@@ -2,9 +2,6 @@ package org.apereo.cas.support.geo.maxmind;
 
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.AddressNotFoundException;
-import com.maxmind.geoip2.model.CityResponse;
-import com.maxmind.geoip2.model.CountryResponse;
-import com.maxmind.geoip2.record.Location;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;

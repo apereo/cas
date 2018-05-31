@@ -6,13 +6,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpResponse;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link RemoteEndpointServiceAccessStrategy} that reaches out

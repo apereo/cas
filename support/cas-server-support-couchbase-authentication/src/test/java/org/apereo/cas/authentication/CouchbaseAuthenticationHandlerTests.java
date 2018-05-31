@@ -27,8 +27,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
-import java.util.Map;
-
 import static org.junit.Assert.*;
 
 /**

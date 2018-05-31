@@ -2,8 +2,6 @@ package org.apereo.cas.impl.notify;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.util.io.CommunicationsManager;
 
 /**

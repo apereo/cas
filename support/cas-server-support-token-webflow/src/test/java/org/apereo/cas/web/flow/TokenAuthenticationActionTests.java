@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.TokenAuthenticationConfiguration;
-import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;

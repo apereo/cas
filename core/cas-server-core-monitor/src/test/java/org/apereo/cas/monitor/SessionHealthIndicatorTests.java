@@ -14,7 +14,6 @@ import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.mock.web.MockHttpServletRequest;
 

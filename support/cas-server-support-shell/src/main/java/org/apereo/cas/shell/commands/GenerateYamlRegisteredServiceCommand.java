@@ -2,7 +2,6 @@ package org.apereo.cas.shell.commands;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.springframework.shell.core.CommandMarker;

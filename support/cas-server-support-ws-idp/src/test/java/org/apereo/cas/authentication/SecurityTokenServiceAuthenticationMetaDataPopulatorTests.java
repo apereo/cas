@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;

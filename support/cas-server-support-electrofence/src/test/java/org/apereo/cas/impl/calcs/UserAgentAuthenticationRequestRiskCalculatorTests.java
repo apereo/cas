@@ -1,7 +1,5 @@
 package org.apereo.cas.impl.calcs;
 
-import org.apereo.cas.api.AuthenticationRiskScore;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;

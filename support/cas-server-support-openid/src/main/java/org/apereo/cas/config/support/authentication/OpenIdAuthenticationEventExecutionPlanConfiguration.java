@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.openid.OpenIdProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;

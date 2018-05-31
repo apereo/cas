@@ -1,13 +1,11 @@
 package org.apereo.cas.adaptors.duo.authn;
 
-import com.duosecurity.client.Http;
 import com.duosecurity.duoweb.DuoWeb;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.util.http.HttpClient;
 import org.json.JSONObject;

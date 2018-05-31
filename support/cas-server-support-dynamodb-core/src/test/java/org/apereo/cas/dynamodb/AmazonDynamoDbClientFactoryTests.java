@@ -1,6 +1,5 @@
 package org.apereo.cas.dynamodb;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
 import org.junit.Test;
 

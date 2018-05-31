@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.principal;
 
-import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.junit.Test;
 

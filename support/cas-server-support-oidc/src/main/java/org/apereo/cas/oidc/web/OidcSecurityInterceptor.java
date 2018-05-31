@@ -5,16 +5,10 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
 import org.apereo.cas.util.Pac4jUtils;
 import org.pac4j.core.config.Config;
-import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
 import org.pac4j.springframework.web.SecurityInterceptor;
-import org.apereo.cas.authentication.Authentication;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link OidcSecurityInterceptor}.

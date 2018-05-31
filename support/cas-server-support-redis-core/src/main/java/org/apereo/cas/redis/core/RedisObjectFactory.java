@@ -3,7 +3,6 @@ package org.apereo.cas.redis.core;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
-import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisNode;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
@@ -90,7 +89,7 @@ public class RedisObjectFactory {
     }
 
     private List<RedisNode> createRedisNodesForProperties(final BaseRedisProperties redis) {
-        final List<RedisNode> redisNodes = new ArrayList<RedisNode>();
+        final List<RedisNode> redisNodes = new ArrayList<>();
         if (redis.getSentinel().getNode() != null) {
             final var nodes = redis.getSentinel().getNode();
             for (final var hostAndPort : nodes) {

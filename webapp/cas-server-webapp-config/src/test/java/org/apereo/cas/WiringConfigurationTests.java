@@ -58,7 +58,6 @@ import static org.junit.Assert.*;
     CasApplicationContextConfiguration.class,
     CasFiltersConfiguration.class,
     CasPropertiesConfiguration.class,
-    CasSecurityContextConfiguration.class,
     CasWebAppConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
@@ -95,12 +94,13 @@ import static org.junit.Assert.*;
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 @Slf4j
 public class WiringConfigurationTests {
+    
     @Autowired
     private ApplicationContext applicationContext;
 
     @Test
     public void verifyConfigurationClasses() {
-        assertNotNull(this.applicationContext);
-        assertTrue(this.applicationContext.getBeanDefinitionCount() > 0);
+        assertNotNull(applicationContext);
+        assertTrue(applicationContext.getBeanDefinitionCount() > 0);
     }
 }

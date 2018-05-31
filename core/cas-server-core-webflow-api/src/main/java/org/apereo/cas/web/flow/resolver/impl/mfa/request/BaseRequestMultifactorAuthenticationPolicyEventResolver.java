@@ -2,15 +2,12 @@ package org.apereo.cas.web.flow.resolver.impl.mfa.request;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
@@ -23,8 +20,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 /**

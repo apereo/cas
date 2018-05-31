@@ -28,7 +28,6 @@ import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPMongoDbMetadataConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.saml.idp.metadata.MongoDbSamlMetadataProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
@@ -39,7 +38,6 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -52,7 +50,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 
 import static org.junit.Assert.*;
 /**

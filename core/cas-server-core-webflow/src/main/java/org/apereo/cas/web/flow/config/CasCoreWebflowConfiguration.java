@@ -17,9 +17,6 @@ import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.sso.SsoProperties;
-import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.model.webapp.WebflowProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
@@ -63,7 +60,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Action;
 

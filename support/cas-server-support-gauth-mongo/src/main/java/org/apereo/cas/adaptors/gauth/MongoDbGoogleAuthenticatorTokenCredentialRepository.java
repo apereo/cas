@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.gauth;
 
-import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;

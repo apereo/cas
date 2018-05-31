@@ -1,12 +1,9 @@
 package org.apereo.cas.shell.cli;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.cli.CommandLine;
 import org.apereo.cas.shell.commands.FindPropertiesCommand;
 import org.apereo.cas.shell.commands.GenerateCryptoKeysCommand;
 import org.apereo.cas.shell.commands.GenerateJwtCommand;
-
-import java.util.regex.Pattern;
 
 /**
  * This is {@link CasCommandLineEngine}.

@@ -1,9 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ServiceTicket;

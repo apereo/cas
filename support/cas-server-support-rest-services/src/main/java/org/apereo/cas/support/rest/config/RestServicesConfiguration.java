@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.rest.RestProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.support.rest.RegisteredServiceResource;

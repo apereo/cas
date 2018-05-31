@@ -34,6 +34,7 @@ import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallerFactory;
 import org.opensaml.core.xml.io.UnmarshallerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
@@ -44,8 +45,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.thymeleaf.spring5.SpringTemplateEngine;
-
-import javax.annotation.PostConstruct;
 
 import static org.junit.Assert.*;
 
@@ -116,7 +115,7 @@ public abstract class AbstractOpenSamlTests {
     protected UnmarshallerFactory unmarshallerFactory;
 
     @TestConfiguration
-    public static class SamlTestConfiguration {
+    public static class SamlTestConfiguration implements InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;
 
@@ -130,9 +129,8 @@ public abstract class AbstractOpenSamlTests {
             return new ThymeleafProperties();
         }
 
-        @PostConstruct
-        public void init() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+        @Override
+        public void afterPropertiesSet() { SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
 

@@ -2,10 +2,6 @@ package org.apereo.cas.config;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.ListObjectsV2Result;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
@@ -18,7 +14,6 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.InputStreamResource;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 

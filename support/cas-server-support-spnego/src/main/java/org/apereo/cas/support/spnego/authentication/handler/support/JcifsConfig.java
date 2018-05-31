@@ -4,12 +4,9 @@ import jcifs.Config;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-
-import javax.annotation.PostConstruct;
-import java.net.URL;
 
 /**
  * Configuration helper for JCIFS and the Spring framework.
@@ -20,7 +17,7 @@ import java.net.URL;
  * @since 4.2.0
  */
 @Slf4j
-public class JcifsConfig {
+public class JcifsConfig implements InitializingBean {
 
     private static final String DEFAULT_LOGIN_CONFIG = "/login.conf";
 
@@ -79,9 +76,13 @@ public class JcifsConfig {
     /**
      * Init.
      */
-    @PostConstruct
     public void init() {
         configureJaasLoginConfig();
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        init();
     }
 
     /**

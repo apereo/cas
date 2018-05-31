@@ -18,6 +18,7 @@ import org.apereo.cas.web.flow.action.SurrogateInitialAuthenticationAction;
 import org.apereo.cas.web.flow.action.SurrogateSelectionAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -30,7 +31,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
-import javax.annotation.PostConstruct;
 import java.util.Set;
 
 /**
@@ -44,7 +44,7 @@ import java.util.Set;
 @Configuration("surrogateAuthenticationWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class SurrogateAuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class SurrogateAuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer, InitializingBean {
 
     @Autowired
     @Qualifier("surrogatePrincipalBuilder")
@@ -124,8 +124,8 @@ public class SurrogateAuthenticationWebflowConfiguration implements CasWebflowEx
         return new LoadSurrogatesListAction(surrogateAuthenticationService, surrogatePrincipalBuilder);
     }
 
-    @PostConstruct
-    public void init() {
+    @Override
+    public void afterPropertiesSet() {
         this.handledAuthenticationExceptions.add(SurrogateAuthenticationException.class);
     }
 

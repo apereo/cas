@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.digest.DigestProperties;
 import org.apereo.cas.digest.DigestAuthenticationHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;

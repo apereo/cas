@@ -3,7 +3,6 @@ package org.apereo.cas.web.support;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.web.util.CookieGenerator;
@@ -12,8 +11,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.Setter;
-
-import java.util.Map;
 
 /**
  * Extends CookieGenerator to allow you to retrieve a value from a request.

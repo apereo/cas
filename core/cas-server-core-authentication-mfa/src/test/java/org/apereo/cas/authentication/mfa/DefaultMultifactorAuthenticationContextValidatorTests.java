@@ -1,11 +1,8 @@
 package org.apereo.cas.authentication.mfa;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,8 +12,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.Optional;
 
 import static org.junit.Assert.*;
 

@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.time.ZonedDateTime;
 
 /**
  * This is {@link SamlProfileSamlAuthNStatementBuilder}.

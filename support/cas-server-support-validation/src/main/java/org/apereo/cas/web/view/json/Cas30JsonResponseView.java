@@ -5,11 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.apereo.cas.web.view.Cas30ResponseView;
@@ -18,9 +16,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 

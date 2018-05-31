@@ -71,6 +71,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                                final SamlRegisteredService service,
                                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                final MessageContext messageContext) throws SamlException {
+        final var supportedNameFormats = getSupportedNameIdFormats(service, adaptor);
         final var requiredNameFormat = getRequiredNameIdFormatIfAny(authnRequest);
         validateRequiredNameIdFormatIfAny(authnRequest, adaptor, supportedNameFormats, requiredNameFormat);
         final var nameid = determineNameId(authnRequest, assertion, supportedNameFormats, service, adaptor);

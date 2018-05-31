@@ -12,7 +12,6 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
@@ -20,7 +19,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.context.HttpConstants;
-import org.pac4j.core.context.J2EContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +27,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * This controller returns a profile for the authenticated user

@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.code.OAuthCode;

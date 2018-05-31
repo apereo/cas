@@ -10,8 +10,6 @@ import org.apereo.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * A webflow action that attempts to grab the remote address from the request,
  * and construct a {@link RemoteAddressCredential} object.

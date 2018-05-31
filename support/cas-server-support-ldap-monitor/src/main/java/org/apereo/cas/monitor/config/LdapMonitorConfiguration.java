@@ -2,11 +2,9 @@ package org.apereo.cas.monitor.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.monitor.PooledLdapConnectionFactoryHealthIndicator;
 import org.apereo.cas.util.LdapUtils;
-import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.SearchValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

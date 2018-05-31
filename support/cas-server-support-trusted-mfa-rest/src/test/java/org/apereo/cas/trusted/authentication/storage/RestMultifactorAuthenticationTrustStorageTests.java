@@ -26,7 +26,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 import static org.junit.Assert.*;
 

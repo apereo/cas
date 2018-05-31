@@ -5,19 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
-import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.opensaml.saml.saml1.core.Assertion;
-import org.opensaml.soap.wsfed.RequestedSecurityToken;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 
 /**

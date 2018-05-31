@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.YubiKeyMultifactorProperties;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.http.HttpMessage;
 
 import java.net.URL;
 

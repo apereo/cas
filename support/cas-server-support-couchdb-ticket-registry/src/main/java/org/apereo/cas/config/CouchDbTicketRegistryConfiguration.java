@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.couchdb.CouchDbTicketRegistryProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.tickets.TicketRepository;
 import org.apereo.cas.ticket.TicketCatalog;

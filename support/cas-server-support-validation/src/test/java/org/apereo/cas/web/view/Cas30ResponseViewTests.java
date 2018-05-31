@@ -12,7 +12,6 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrate
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -36,7 +35,6 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.support.GenericWebApplicationContext;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.support.RequestContext;
 
@@ -44,7 +42,6 @@ import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
-import java.security.PrivateKey;
 import java.util.Map;
 
 import static org.junit.Assert.*;

@@ -2,8 +2,6 @@ package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.ticket.BaseOAuthExpirationPolicyTests;
 import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
 

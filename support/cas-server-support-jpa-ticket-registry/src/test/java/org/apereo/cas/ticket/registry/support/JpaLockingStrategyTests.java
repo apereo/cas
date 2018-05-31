@@ -24,6 +24,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.SchedulingUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -39,7 +40,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
@@ -49,7 +49,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -97,7 +96,6 @@ public class JpaLockingStrategyTests {
     private static final int CONCURRENT_SIZE = 13;
 
 
-
     @Autowired
     @Qualifier("ticketTransactionManager")
     private PlatformTransactionManager txManager;
@@ -111,12 +109,12 @@ public class JpaLockingStrategyTests {
     private DataSource dataSource;
 
     @TestConfiguration
-    public static class JpaTestConfiguration {
+    public static class JpaTestConfiguration implements InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;
 
-        @PostConstruct
-        public void init() {
+        @Override
+        public void afterPropertiesSet() {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }

@@ -5,21 +5,14 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.context.ApplicationContext;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 /**
  * The {@link DelegatedAuthenticationWebflowConfigurer} is responsible for

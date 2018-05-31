@@ -10,12 +10,11 @@ import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
-import org.springframework.context.ApplicationContext;
+
 import java.io.Closeable;
 import java.util.HashMap;
 import java.util.List;

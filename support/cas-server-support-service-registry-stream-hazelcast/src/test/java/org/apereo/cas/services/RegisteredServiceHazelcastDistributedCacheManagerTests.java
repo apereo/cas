@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apereo.cas.DistributedCacheObject;

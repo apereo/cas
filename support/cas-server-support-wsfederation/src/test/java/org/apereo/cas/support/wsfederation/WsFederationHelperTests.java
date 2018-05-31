@@ -1,10 +1,8 @@
 package org.apereo.cas.support.wsfederation;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 import org.junit.Test;
-import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.security.credential.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -28,9 +26,6 @@ import lombok.Setter;
 public class WsFederationHelperTests extends AbstractWsFederationTests {
 
     private static final String GOOD_TOKEN = "goodToken";
-
-    @Autowired
-    private Collection<WsFederationConfiguration> wsFederationConfigurations;
 
     @Autowired
     private HashMap<String, String> testTokens;

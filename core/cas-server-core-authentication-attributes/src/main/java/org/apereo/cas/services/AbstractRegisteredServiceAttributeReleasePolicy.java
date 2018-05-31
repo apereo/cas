@@ -14,12 +14,10 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-import org.springframework.context.ApplicationContext;
 
 import javax.persistence.PostLoad;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 /**

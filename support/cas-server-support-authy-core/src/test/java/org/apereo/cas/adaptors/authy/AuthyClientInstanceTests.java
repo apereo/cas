@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.authy;
 
 import com.authy.api.Error;
-import com.authy.api.User;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;

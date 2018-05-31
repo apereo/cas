@@ -20,11 +20,11 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.LockedOutputStream;
 import org.apereo.cas.util.io.PathWatcherService;
 import org.apereo.cas.util.serialization.StringSerializer;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
-import javax.annotation.PreDestroy;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @ToString
-public abstract class AbstractResourceBasedServiceRegistry extends AbstractServiceRegistry implements ResourceBasedServiceRegistry {
+public abstract class AbstractResourceBasedServiceRegistry extends AbstractServiceRegistry implements ResourceBasedServiceRegistry, DisposableBean {
 
     private static final String PATTERN_REGISTERED_SERVICE_FILE_NAME = "(\\w+)-(\\d+)\\.";
 
@@ -146,7 +146,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                                                 final ApplicationEventPublisher eventPublisher,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                                 final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) throws Exception {
-        final Resource servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, getExtension());
+        final var servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, getExtension());
         if (servicesDirectory == null) {
             throw new IllegalArgumentException("Could not determine the services configuration directory from " + configDirectory);
         }
@@ -187,7 +187,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     /**
      * Destroy the watch service thread.
      */
-    @PreDestroy
+    @Override
     public void destroy() {
         if (this.serviceRegistryConfigWatcher != null) {
             this.serviceRegistryConfigWatcher.close();

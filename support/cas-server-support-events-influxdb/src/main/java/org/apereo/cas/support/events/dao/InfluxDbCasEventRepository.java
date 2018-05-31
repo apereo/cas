@@ -7,13 +7,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.influxdb.InfluxDbConnectionFactory;
 import org.influxdb.dto.Point;
 import org.influxdb.dto.QueryResult;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.util.ReflectionUtils;
 
-import javax.annotation.PreDestroy;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class InfluxDbCasEventRepository extends AbstractCasEventRepository {
+public class InfluxDbCasEventRepository extends AbstractCasEventRepository implements DisposableBean {
     private static final String MEASUREMENT = "InfluxDbCasEventRepositoryCasEvents";
 
     private final InfluxDbConnectionFactory influxDbConnectionFactory;
@@ -45,7 +44,7 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository {
             }
         });
 
-
+        final var point = builder.time(System.currentTimeMillis(), TimeUnit.MILLISECONDS).build();
         influxDbConnectionFactory.writeBatch(point);
     }
 
@@ -102,11 +101,12 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository {
         return events;
     }
 
+
     /**
      * Stops the database client.
      */
-    @PreDestroy
     @SneakyThrows
+    @Override
     public void destroy() {
         this.influxDbConnectionFactory.close();
     }

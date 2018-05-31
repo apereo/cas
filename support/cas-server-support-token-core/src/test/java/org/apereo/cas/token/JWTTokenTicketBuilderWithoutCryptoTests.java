@@ -1,6 +1,5 @@
 package org.apereo.cas.token;
 
-import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.junit.Test;

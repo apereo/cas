@@ -2,8 +2,6 @@ package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
-import org.apereo.cas.configuration.model.support.saml.idp.metadata.MongoDbSamlMetadataProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.metadata.resolver.MongoDbSamlRegisteredServiceMetadataResolver;

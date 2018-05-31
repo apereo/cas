@@ -34,8 +34,6 @@ import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.soap.soap11.ActorBearing;
 
-import java.net.InetAddress;
-import java.security.SecureRandom;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;

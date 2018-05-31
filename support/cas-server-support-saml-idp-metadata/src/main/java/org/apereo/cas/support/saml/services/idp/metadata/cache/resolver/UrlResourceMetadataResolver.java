@@ -14,7 +14,6 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
-import org.apereo.cas.configuration.model.support.saml.idp.metadata.SamlIdPMetadataProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -198,7 +197,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
     public boolean supports(final SamlRegisteredService service) {
         try {
             final var metadataLocation = getMetadataLocationForService(service);
-            final var metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
+            return StringUtils.isNotBlank(metadataLocation) && StringUtils.startsWith(metadataLocation, "http");
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

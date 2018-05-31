@@ -4,8 +4,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
-import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegistryProperties;
 import org.apereo.cas.services.CasServiceRegistryInitializerConfigurationEventListener;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryInitializer;

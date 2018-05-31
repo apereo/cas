@@ -2,10 +2,7 @@ package org.apereo.cas.support.saml;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.sts.token.realm.SAMLRealmCodec;
-import org.apache.wss4j.common.saml.SAMLKeyInfo;
 import org.apache.wss4j.common.saml.SamlAssertionWrapper;
-
-import java.security.cert.X509Certificate;
 
 /**
  * This is {@link SamlAssertionRealmCodec}.

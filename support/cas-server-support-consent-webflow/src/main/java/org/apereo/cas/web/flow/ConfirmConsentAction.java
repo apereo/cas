@@ -1,21 +1,16 @@
 package org.apereo.cas.web.flow;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentReminderOptions;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.temporal.ChronoUnit;
 
 /**
@@ -39,9 +34,10 @@ public class ConfirmConsentAction extends AbstractConsentAction {
         final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         final var webService = WebUtils.getService(requestContext);
         final var service = this.authenticationRequestServiceSelectionStrategies.resolveService(webService);
+        final var registeredService = getRegisteredServiceForConsent(requestContext, service);
         final var authentication = WebUtils.getAuthentication(requestContext);
         final var optionValue = Integer.parseInt(request.getParameter("option"));
-        final var option = ConsentOptions.valueOf(optionValue);
+        final var option = ConsentReminderOptions.valueOf(optionValue);
 
         final var reminder = Long.parseLong(request.getParameter("reminder"));
         final var reminderTimeUnit = request.getParameter("reminderTimeUnit");

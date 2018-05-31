@@ -6,13 +6,11 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 
 import javax.persistence.NoResultException;
 import java.io.Serializable;
-import java.util.Optional;
 
 /**
  * This is {@link BaseYubiKeyAccountRegistry}.

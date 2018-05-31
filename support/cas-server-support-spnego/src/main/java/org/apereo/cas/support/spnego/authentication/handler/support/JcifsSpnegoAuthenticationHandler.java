@@ -17,7 +17,6 @@ import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import lombok.Setter;

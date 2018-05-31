@@ -3,11 +3,9 @@ package org.apereo.cas.support.oauth.validator.token;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.ticket.code.OAuthCode;
@@ -16,8 +14,6 @@ import org.apereo.cas.util.HttpRequestUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link OAuth20AuthorizationCodeGrantTypeTokenRequestValidator}.
@@ -48,10 +44,10 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
         final var request = context.getRequest();
         final var clientId = uProfile.getId();
         final var redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
-        final var registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+        final var clientRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
 
         LOGGER.debug("Received grant type [{}] with client id [{}] and redirect URI [{}]", grantType, clientId, redirectUri);
-        final var valid = this.validator.checkParameterExist(request, OAuth20Constants.REDIRECT_URI)
+        final var valid = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REDIRECT_URI)
             && HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CODE)
             && OAuth20Utils.checkCallbackValid(clientRegisteredService, redirectUri);
 

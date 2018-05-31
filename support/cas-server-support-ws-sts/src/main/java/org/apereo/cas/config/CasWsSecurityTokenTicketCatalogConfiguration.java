@@ -6,7 +6,6 @@ import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
 import org.apereo.cas.ticket.DefaultSecurityTokenTicket;
 import org.apereo.cas.ticket.SecurityTokenTicket;
 import org.apereo.cas.ticket.TicketCatalog;
-import org.apereo.cas.ticket.TicketDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

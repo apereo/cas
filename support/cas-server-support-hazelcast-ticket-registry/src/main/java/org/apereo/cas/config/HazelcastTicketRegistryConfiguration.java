@@ -6,10 +6,8 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.ticket.TicketCatalog;
-import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -21,7 +19,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 

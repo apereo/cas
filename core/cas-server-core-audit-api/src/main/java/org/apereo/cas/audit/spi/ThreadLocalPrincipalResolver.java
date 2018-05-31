@@ -3,7 +3,6 @@ package org.apereo.cas.audit.spi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
