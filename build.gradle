@@ -53,6 +53,7 @@ buildscript {
         classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2"
         classpath "org.owasp:dependency-check-gradle:3.1.2"
+        classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:1.6.2"
     }
 }
 
@@ -134,7 +135,7 @@ subprojects {
     apply plugin: "checkstyle"
     apply plugin: "io.franzbecker.gradle-lombok"
     if (!Boolean.getBoolean("skipFindbugs")) {
-        apply plugin: "findbugs"
+        apply plugin: "com.github.spotbugs"
     }
     apply plugin: "propdeps"
     apply plugin: "propdeps-maven"
@@ -330,7 +331,7 @@ subprojects {
     }
 
     if (!Boolean.getBoolean("skipFindbugs")) {
-        findbugs {
+        spotbugs {
             toolVersion = "${findbugsVersion}"
             sourceSets = [sourceSets.main]
             ignoreFailures = false
@@ -341,8 +342,8 @@ subprojects {
             excludeFilter = file("$rootProject.projectDir/style/findbugs-excludes.xml")
         }
 
-        findbugsMain {
-            reports {
+        [spotbugsMain, spotbugsTest].each {
+            it.reports {
                 xml.enabled = false
                 html.enabled = true
             }
@@ -372,17 +373,17 @@ subprojects {
         provided libraries.javax
 
         if (!Boolean.getBoolean("skipFindbugs")) {
-            findbugs libraries.findbugs
-            findbugs configurations.findbugsPlugins.dependencies
-            findbugsPlugins libraries.findbugscontrib
-            findbugsPlugins libraries.findbugssec
+            spotbugs libraries.findbugs
+            spotbugs configurations.spotbugsPlugins.dependencies
+            
+            spotbugsPlugins libraries.findbugscontrib
+            spotbugsPlugins libraries.findbugssec
         }
 
         if (!Boolean.getBoolean("skipErrorProneCompiler")) {
             errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
         }
         testImplementation libraries.tests
-
         compileOnly libraries.findbugsannotations
     }
 }
