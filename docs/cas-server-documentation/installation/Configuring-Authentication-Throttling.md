@@ -50,7 +50,7 @@ Enable the following module in your configuration overlay:
 ```
 
 For additional instructions on how to configure auditing via Inspektr,
-please [review the following guide](Logging.html).
+please [review the following guide](Audits.html).
 
 ## Configuration
 
