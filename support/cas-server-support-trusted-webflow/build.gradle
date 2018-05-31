@@ -1,12 +1,14 @@
-
 description = "Apereo CAS Trusted Authentication Webflow Support"
+
 dependencies {
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":support:cas-server-support-trusted")
     implementation project(":core:cas-server-core-authentication-mfa")
-    
+
+    implementation libraries.caffein
+
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-web")
 }
