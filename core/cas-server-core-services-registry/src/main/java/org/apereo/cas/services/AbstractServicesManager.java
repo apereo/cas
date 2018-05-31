@@ -189,7 +189,7 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
     @Scheduled(initialDelayString = "${cas.serviceRegistry.schedule.startDelay:20000}",
         fixedDelayString = "${cas.serviceRegistry.schedule.repeatInterval:60000}")
     @Override
-    public void load() {
+    public Collection<RegisteredService> load() {
         LOGGER.debug("Loading services from [{}]", this.serviceRegistry);
         this.services = this.serviceRegistry.load()
             .stream()
@@ -201,6 +201,7 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
         publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices()));
         evaluateExpiredServiceDefinitions();
         LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistry.getName());
+        return services.values();
     }
 
     private void evaluateExpiredServiceDefinitions() {
