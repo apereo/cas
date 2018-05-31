@@ -14,7 +14,6 @@ import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.validation.Assertion;
 import org.openid4java.association.Association;
 import org.openid4java.message.AuthRequest;
-import org.openid4java.message.Message;
 import org.openid4java.message.MessageException;
 import org.openid4java.message.ParameterList;
 import org.openid4java.server.ServerManager;

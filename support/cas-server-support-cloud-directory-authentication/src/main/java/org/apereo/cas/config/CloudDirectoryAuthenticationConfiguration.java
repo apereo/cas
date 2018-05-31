@@ -16,7 +16,6 @@ import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.clouddirectory.CloudDirectoryRepository;
 import org.apereo.cas.clouddirectory.DefaultCloudDirectoryRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

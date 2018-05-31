@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn;
 
 import com.duosecurity.client.Http;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -12,7 +11,6 @@ import org.apereo.cas.adaptors.duo.DuoUserAccount;
 import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.http.HttpMessage;
 import org.springframework.http.HttpMethod;
 
 import java.net.URL;

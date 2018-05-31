@@ -4,7 +4,6 @@ import org.apereo.cas.adaptors.yubikey.AcceptAllYubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.DenyAllYubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.registry.ClosedYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.registry.OpenYubiKeyAccountRegistry;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;

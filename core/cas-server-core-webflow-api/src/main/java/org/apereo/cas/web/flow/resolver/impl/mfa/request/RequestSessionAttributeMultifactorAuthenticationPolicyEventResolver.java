@@ -12,9 +12,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.springframework.web.util.CookieGenerator;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**

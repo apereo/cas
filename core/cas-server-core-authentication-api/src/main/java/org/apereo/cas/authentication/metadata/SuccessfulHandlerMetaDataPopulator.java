@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.util.CollectionUtils;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Sets an authentication attribute containing the collection of authentication handlers (by name) that successfully

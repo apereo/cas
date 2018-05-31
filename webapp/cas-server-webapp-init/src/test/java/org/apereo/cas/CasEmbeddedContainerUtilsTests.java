@@ -1,7 +1,6 @@
 package org.apereo.cas;
 
 import org.junit.Test;
-import org.springframework.boot.Banner;
 import org.springframework.mock.env.MockEnvironment;
 
 import java.io.ByteArrayOutputStream;

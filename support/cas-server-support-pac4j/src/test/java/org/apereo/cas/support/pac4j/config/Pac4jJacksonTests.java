@@ -1,7 +1,6 @@
 package org.apereo.cas.support.pac4j.config;
 
 import com.github.scribejava.core.model.OAuth1RequestToken;
-import org.apereo.cas.util.serialization.StringSerializer;
 import org.junit.Test;
 
 import java.util.HashMap;

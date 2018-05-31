@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.CollectionUtils;
-import org.hjson.JsonObject;
 import org.hjson.JsonValue;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

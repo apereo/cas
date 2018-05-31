@@ -3,7 +3,6 @@ package org.apereo.cas.impl.calcs;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
-import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.dao.CasEvent;

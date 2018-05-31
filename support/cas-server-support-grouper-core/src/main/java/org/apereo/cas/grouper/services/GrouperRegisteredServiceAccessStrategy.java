@@ -1,6 +1,5 @@
 package org.apereo.cas.grouper.services;
 
-import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +9,6 @@ import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

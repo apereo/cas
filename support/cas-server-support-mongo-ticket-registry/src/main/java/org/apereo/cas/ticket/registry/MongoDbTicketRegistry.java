@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.result.DeleteResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;

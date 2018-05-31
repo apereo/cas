@@ -2,7 +2,6 @@ package org.apereo.cas.impl.token;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
 import org.apereo.cas.util.HttpUtils;

@@ -7,10 +7,10 @@ import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
 import org.apereo.cas.util.CollectionUtils;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.security.auth.x500.X500Principal;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
  * @since 3.4.7
  */
 @Slf4j
-public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
+public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker implements InitializingBean, DisposableBean {
 
     private static final int DEFAULT_REFRESH_INTERVAL = 3600;
 
@@ -119,17 +119,21 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
         this(false, null, null, refreshInterval, fetcher, crls);
     }
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        init();
+    }
+
     /**
      * Initializes the process that periodically fetches CRL data.
      */
-    @PostConstruct
     @SneakyThrows
     @SuppressWarnings("FutureReturnValueIgnored")
     public void init() {
         if (!validateConfiguration()) {
             return;
         }
-        
+
         // Fetch CRL data synchronously and throw exception to abort if any fail
         final var results = this.fetcher.fetch(getResources());
         ResourceCRLRevocationChecker.this.addCrls(results);
@@ -212,10 +216,14 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
         return new ArrayList<>(0);
     }
 
+    @Override
+    public void destroy() throws Exception {
+        shutdown();
+    }
+
     /**
      * Shutdown scheduler.
      */
-    @PreDestroy
     public void shutdown() {
         this.scheduler.shutdown();
     }

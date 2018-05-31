@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -14,9 +13,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.TestPropertySource;
-
-import java.util.List;
-import java.util.Set;
 
 import static org.junit.Assert.*;
 

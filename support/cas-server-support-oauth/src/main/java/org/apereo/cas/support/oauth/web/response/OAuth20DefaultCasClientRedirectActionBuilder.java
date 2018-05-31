@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.jasig.cas.client.util.CommonUtils;
 import org.pac4j.cas.client.CasClient;
-import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.redirect.RedirectAction;
 

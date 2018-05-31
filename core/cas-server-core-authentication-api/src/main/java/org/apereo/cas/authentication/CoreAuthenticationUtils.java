@@ -17,7 +17,6 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 import java.nio.charset.StandardCharsets;

@@ -7,12 +7,10 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.ParserContext;
 import org.springframework.binding.expression.spel.SpringELExpressionParser;
 import org.springframework.binding.expression.support.FluentParserContext;
@@ -65,12 +63,10 @@ import org.springframework.webflow.expression.spel.MapAdaptablePropertyAccessor;
 import org.springframework.webflow.expression.spel.MessageSourcePropertyAccessor;
 import org.springframework.webflow.expression.spel.ScopeSearchingPropertyAccessor;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * The {@link AbstractCasWebflowConfigurer} is responsible for

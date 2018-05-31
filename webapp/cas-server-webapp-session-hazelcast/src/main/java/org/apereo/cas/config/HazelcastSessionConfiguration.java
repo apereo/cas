@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
@@ -11,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 import org.springframework.session.hazelcast.config.annotation.web.http.EnableHazelcastHttpSession;
-
-import java.net.URL;
 
 /**
  * This is {@link HazelcastSessionConfiguration}.

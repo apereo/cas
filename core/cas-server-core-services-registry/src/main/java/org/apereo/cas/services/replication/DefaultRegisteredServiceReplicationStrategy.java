@@ -9,11 +9,9 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.support.events.service.BaseCasRegisteredServiceEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
+import org.springframework.beans.factory.DisposableBean;
 
-import javax.annotation.PreDestroy;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
@@ -24,16 +22,16 @@ import java.util.function.Predicate;
  */
 @Slf4j
 @AllArgsConstructor
-public class DefaultRegisteredServiceReplicationStrategy implements RegisteredServiceReplicationStrategy {
+public class DefaultRegisteredServiceReplicationStrategy implements RegisteredServiceReplicationStrategy, DisposableBean {
     private final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> distributedCacheManager;
     private final StreamingServiceRegistryProperties properties;
-    
+
     /**
      * Destroy the watch service thread.
      *
      * @throws Exception the exception
      */
-    @PreDestroy
+    @Override
     public void destroy() throws Exception {
         if (this.distributedCacheManager != null) {
             this.distributedCacheManager.close();
@@ -58,9 +56,9 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
                                                                       final ServiceRegistry serviceRegistry) {
         final var result = this.distributedCacheManager.find(predicate);
         if (result.isPresent()) {
-            final DistributedCacheObject<RegisteredService> item = result.get();
-            final RegisteredService value = item.getValue();
-            final RegisteredService cachedService = value;
+            final var item = result.get();
+            final var value = item.getValue();
+            final var cachedService = value;
             LOGGER.debug("Located cache entry [{}] in service registry cache [{}]", item, this.distributedCacheManager.getName());
             if (isRegisteredServiceMarkedAsDeletedInCache(item)) {
                 LOGGER.debug("Service found in the cache [{}] is marked as a deleted service. CAS will update the service registry "
@@ -89,7 +87,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
             if (properties.getReplicationMode() == StreamingServiceRegistryProperties.ReplicationModes.ACTIVE_ACTIVE) {
                 serviceRegistry.save(value);
             }
-            
+
             return value;
         }
         LOGGER.debug("Requested service definition is not found in the replication cache");

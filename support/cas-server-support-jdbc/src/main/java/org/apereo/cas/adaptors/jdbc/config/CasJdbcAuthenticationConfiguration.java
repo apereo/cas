@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.jdbc.config;
 
-import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandler;
@@ -18,7 +17,6 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.BindJdbcAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.QueryEncodeJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.SearchJdbcAuthenticationProperties;

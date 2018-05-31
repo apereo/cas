@@ -2,10 +2,8 @@ package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.transcoders.Transcoder;
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
 import org.apereo.cas.memcached.MemcachedPooledClientConnectionFactory;
 import org.apereo.cas.memcached.MemcachedUtils;
 import org.apereo.cas.ticket.registry.MemcachedTicketRegistry;

@@ -2,14 +2,12 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.InputStreamSource;
 
-import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.Optional;
 

@@ -2,10 +2,8 @@ package org.apereo.cas.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.jms.JmsTicketRegistryProperties;
 import org.apereo.cas.ticket.registry.JmsTicketRegistry;
 import org.apereo.cas.ticket.registry.JmsTicketRegistryReceiver;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -75,7 +73,7 @@ public class JmsTicketRegistryConfiguration {
         converter.setTargetType(MessageType.TEXT);
         converter.setTypeIdPropertyName("_type");
 
-        new AbstractJacksonBackedStringSerializer<Object>() {
+        new AbstractJacksonBackedStringSerializer<>() {
             private static final long serialVersionUID = 1466569521275630254L;
 
             @Override

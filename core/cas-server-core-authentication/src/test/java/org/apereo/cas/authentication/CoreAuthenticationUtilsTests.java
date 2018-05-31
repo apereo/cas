@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.util.CollectionUtils;
@@ -8,7 +7,6 @@ import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;

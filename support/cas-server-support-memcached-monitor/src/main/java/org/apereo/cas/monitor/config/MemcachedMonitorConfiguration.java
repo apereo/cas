@@ -7,7 +7,6 @@ import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.memcached.MemcachedPooledClientConnectionFactory;
 import org.apereo.cas.memcached.MemcachedUtils;
 import org.apereo.cas.monitor.MemcachedHealthIndicator;
@@ -44,13 +43,16 @@ public class MemcachedMonitorConfiguration {
 
     @Bean
     public HealthIndicator memcachedHealthIndicator() {
-        return new MemcachedHealthIndicator(memcachedHealthClientPool(), casProperties);
+        final var warn = casProperties.getMonitor().getWarn();
+        return new MemcachedHealthIndicator(memcachedHealthClientPool(),
+            warn.getEvictionThreshold(),
+            warn.getThreshold());
     }
 
     @Bean
     public ObjectPool<MemcachedClientIF> memcachedHealthClientPool() {
+        final var memcached = casProperties.getMonitor().getMemcached();
+        final var factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedMonitorTranscoder());
         return new GenericObjectPool<>(factory);
-            casProperties.getMonitor().getWarn().getEvictionThreshold(),
-            casProperties.getMonitor().getWarn().getThreshold());
     }
 }

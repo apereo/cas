@@ -2,15 +2,12 @@ package org.apereo.cas.adaptors.radius;
 
 import net.jradius.dictionary.Attr_ClientId;
 import net.jradius.packet.attribute.RadiusAttribute;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import javax.security.auth.login.FailedLoginException;
-import java.util.Map;
-import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;

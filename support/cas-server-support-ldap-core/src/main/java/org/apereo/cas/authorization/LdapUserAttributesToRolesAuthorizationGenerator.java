@@ -2,7 +2,6 @@ package org.apereo.cas.authorization;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ldaptive.ConnectionFactory;
-import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchExecutor;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;

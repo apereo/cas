@@ -2,12 +2,9 @@ package org.apereo.cas.interrupt.webflow.actions;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.interrupt.InterruptInquirer;
-import org.apereo.cas.interrupt.InterruptResponse;
 import org.apereo.cas.interrupt.webflow.InterruptUtils;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;

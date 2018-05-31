@@ -3,8 +3,6 @@ package org.apereo.cas.util.spring;
 import com.google.common.base.Predicates;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.type.StandardMethodMetadata;
 

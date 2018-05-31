@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.gauth.repository.credentials;
 
-import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;

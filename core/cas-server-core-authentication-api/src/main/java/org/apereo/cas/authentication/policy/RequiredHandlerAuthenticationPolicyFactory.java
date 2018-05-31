@@ -20,7 +20,7 @@ public class RequiredHandlerAuthenticationPolicyFactory implements ContextualAut
 
     @Override
     public ContextualAuthenticationPolicy<ServiceContext> createPolicy(final ServiceContext context) {
-        return new ContextualAuthenticationPolicy<ServiceContext>() {
+        return new ContextualAuthenticationPolicy<>() {
 
             @Override
             public ServiceContext getContext() {
@@ -30,7 +30,7 @@ public class RequiredHandlerAuthenticationPolicyFactory implements ContextualAut
             @Override
             public boolean isSatisfiedBy(final Authentication authentication) {
                 return context.getRegisteredService().getRequiredHandlers().stream()
-                        .allMatch(required -> authentication.getSuccesses().containsKey(required));
+                    .allMatch(required -> authentication.getSuccesses().containsKey(required));
             }
         };
     }

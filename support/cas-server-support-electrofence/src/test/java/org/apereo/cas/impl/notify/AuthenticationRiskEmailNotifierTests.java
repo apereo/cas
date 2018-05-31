@@ -1,9 +1,7 @@
 package org.apereo.cas.impl.notify;
 
 import org.apereo.cas.api.AuthenticationRiskScore;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.impl.calcs.BaseAuthenticationRequestRiskCalculatorTests;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.ConditionalIgnore;

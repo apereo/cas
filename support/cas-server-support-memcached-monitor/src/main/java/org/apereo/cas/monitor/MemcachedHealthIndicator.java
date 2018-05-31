@@ -7,9 +7,7 @@ import org.apache.commons.pool2.ObjectPool;
 import org.springframework.boot.actuate.health.Health;
 
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**

@@ -11,8 +11,6 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 
-import java.util.Map;
-
 /**
  * This is {@link ScimV2PrincipalAttributeMapper}.
  *

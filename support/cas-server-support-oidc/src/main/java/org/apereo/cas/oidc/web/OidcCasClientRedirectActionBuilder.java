@@ -2,14 +2,11 @@ package org.apereo.cas.oidc.web;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
 import org.apereo.cas.support.oauth.web.response.OAuth20DefaultCasClientRedirectActionBuilder;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.redirect.RedirectAction;
-
-import java.util.Optional;
 
 /**
  * This is {@link OidcCasClientRedirectActionBuilder}.

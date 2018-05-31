@@ -12,7 +12,6 @@ import org.springframework.web.util.CookieGenerator;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 
 /**

@@ -12,8 +12,6 @@ import com.amazonaws.services.dynamodbv2.model.KeyType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
-import com.amazonaws.services.dynamodbv2.model.ScanResult;
-import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
@@ -92,8 +90,7 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
 
     @SneakyThrows
     private static void createSettingsTable(final AmazonDynamoDB amazonDynamoDBClient, final boolean deleteTables) {
-        final var name = ColumnNames.ID.getColumnName();
-        final var request = new CreateTableRequest().withAttributeDefinitions(new AttributeDefinition(name, ScalarAttributeType.S))
+        final var request = createCreateTableRequest();
         if (deleteTables) {
             final var delete = new DeleteTableRequest(request.getTableName());
             LOGGER.debug("Sending delete request [{}] to remove table if necessary", delete);

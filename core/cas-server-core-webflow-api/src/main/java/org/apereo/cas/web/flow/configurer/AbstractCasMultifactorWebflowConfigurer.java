@@ -4,16 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.springframework.binding.mapping.Mapper;
 import org.springframework.binding.mapping.impl.DefaultMapping;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
-import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.SubflowAttributeMapper;
-import org.springframework.webflow.engine.SubflowState;
-import org.springframework.webflow.engine.TransitionSet;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 

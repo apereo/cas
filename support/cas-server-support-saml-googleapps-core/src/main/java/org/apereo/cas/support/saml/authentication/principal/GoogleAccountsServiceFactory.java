@@ -7,8 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.AbstractServiceFactory;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
-import org.jdom.Document;
-import org.jdom.Element;
 
 import javax.servlet.http.HttpServletRequest;
 

@@ -31,6 +31,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,53 +49,50 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 import org.springframework.webflow.test.MockRequestContext;
 
-import javax.annotation.PostConstruct;
-
 /**
  * @author Scott Battaglia
  * @since 3.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(
-    classes = {
-        InitialFlowSetupActionSsoTests.CasTestConfiguration.class,
-        CasSupportActionsConfiguration.class,
-        CasCoreWebflowConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCookieConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreServicesConfiguration.class})
+@SpringBootTest(classes = {
+    InitialFlowSetupActionSsoTests.CasTestConfiguration.class,
+    CasSupportActionsConfiguration.class,
+    CasCoreWebflowConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasRegisteredServicesTestConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCookieConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreServicesConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @TestPropertySource(properties = "cas.sso.allowMissingServiceParameter=false")
 @Slf4j
 public class InitialFlowSetupActionSsoTests {
 
     @TestConfiguration
-    public static class CasTestConfiguration {
+    public static class CasTestConfiguration implements InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;
 
-        @PostConstruct
-        public void init() {
+        @Override
+        public void afterPropertiesSet() {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
@@ -111,10 +109,7 @@ public class InitialFlowSetupActionSsoTests {
         final var context = new MockRequestContext();
         final var request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-
         this.thrown.expect(NoSuchFlowExecutionException.class);
-
-
         this.action.execute(context);
     }
 }

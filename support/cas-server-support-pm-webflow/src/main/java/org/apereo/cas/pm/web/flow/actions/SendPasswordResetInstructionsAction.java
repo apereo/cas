@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.email.EmailProperties;
-import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -13,8 +11,6 @@ import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link SendPasswordResetInstructionsAction}.
@@ -43,6 +39,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         final var pm = casProperties.getAuthn().getPm();
         final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         final var username = request.getParameter("username");
+        
         if (StringUtils.isBlank(username)) {
             LOGGER.warn("No username is provided");
             return error();
@@ -75,6 +72,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      */
     public static String buildPasswordResetUrl(final String username,
                                                final PasswordManagementService passwordManagementService,
+                                               final CasConfigurationProperties casProperties) {
         final var token = passwordManagementService.createToken(username);
         return casProperties.getServer().getPrefix()
             .concat('/' + CasWebflowConfigurer.FLOW_ID_LOGIN + '?' + PARAMETER_NAME_TOKEN + '=').concat(token);

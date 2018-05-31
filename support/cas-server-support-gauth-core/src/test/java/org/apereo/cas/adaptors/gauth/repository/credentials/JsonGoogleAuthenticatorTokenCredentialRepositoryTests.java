@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

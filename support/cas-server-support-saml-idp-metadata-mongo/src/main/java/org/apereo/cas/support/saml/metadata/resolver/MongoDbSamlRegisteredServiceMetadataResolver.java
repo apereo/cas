@@ -10,7 +10,6 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 

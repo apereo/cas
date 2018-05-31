@@ -11,7 +11,7 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.http.HttpStatus;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -24,6 +24,7 @@ import java.util.Set;
 @Endpoint(id = "multifactor-trusted-devices", enableByDefault = false)
 public class MultifactorTrustedDevicesReportEndpoint {
     private final MultifactorAuthenticationTrustStorage mfaTrustEngine;
+
     private final TrustedDevicesMultifactorProperties properties;
 
     /**
@@ -33,8 +34,8 @@ public class MultifactorTrustedDevicesReportEndpoint {
      */
     @ReadOperation
     public Set<MultifactorAuthenticationTrustRecord> devices() {
-        final var onOrAfter = LocalDate.now().minus(properties.getExpiration(),
-            DateTimeUtils.toChronoUnit(properties.getTimeUnit()));
+        final var unit = DateTimeUtils.toChronoUnit(properties.getTimeUnit());
+        final var onOrAfter = LocalDateTime.now().minus(properties.getExpiration(), unit);
         this.mfaTrustEngine.expire(onOrAfter);
         return this.mfaTrustEngine.get(onOrAfter);
     }

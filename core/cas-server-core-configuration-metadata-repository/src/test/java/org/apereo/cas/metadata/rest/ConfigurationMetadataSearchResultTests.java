@@ -2,9 +2,6 @@ package org.apereo.cas.metadata.rest;
 
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.junit.Test;
-import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
-
-import java.util.Map;
 
 import static org.junit.Assert.*;
 

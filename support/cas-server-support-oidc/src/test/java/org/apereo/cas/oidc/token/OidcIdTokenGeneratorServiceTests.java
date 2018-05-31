@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;

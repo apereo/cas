@@ -11,13 +11,12 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
-import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.ZoneOffset;
@@ -35,7 +34,8 @@ import java.util.List;
 @ToString
 @Getter
 @RequiredArgsConstructor
-public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter implements ThrottledSubmissionHandlerInterceptor {
+public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter
+    implements ThrottledSubmissionHandlerInterceptor, InitializingBean {
     /**
      * Throttled login attempt action code used to tag the attempt in audit records.
      */
@@ -63,7 +63,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     /**
      * Configure the threshold rate.
      */
-    @PostConstruct
+    @Override
     public void afterPropertiesSet() {
         this.thresholdRate = this.failureThreshold / this.failureRangeInSeconds;
         LOGGER.debug("Calculated threshold rate as [{}]", this.thresholdRate);
@@ -119,6 +119,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     /**
      * Calculate threshold rate and compare boolean.
      * Compute rate in submissions/sec between last two authn failures and compare with threshold.
+     *
      * @param failures the failures
      * @return the boolean
      */

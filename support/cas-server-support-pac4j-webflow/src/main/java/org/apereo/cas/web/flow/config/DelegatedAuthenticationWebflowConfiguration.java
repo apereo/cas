@@ -162,8 +162,12 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer delegatedAuthenticationWebflowConfigurer() {
-        return new DelegatedAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-            logoutFlowDefinitionRegistry, saml2ClientLogoutAction, applicationContext, casProperties);
+        return new DelegatedAuthenticationWebflowConfigurer(flowBuilderServices,
+            loginFlowDefinitionRegistry,
+            logoutFlowDefinitionRegistry,
+            saml2ClientLogoutAction,
+            applicationContext,
+            casProperties);
     }
 
     @RefreshScope

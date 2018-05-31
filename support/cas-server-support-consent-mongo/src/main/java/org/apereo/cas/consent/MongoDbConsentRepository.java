@@ -1,6 +1,5 @@
 package org.apereo.cas.consent;
 
-import com.mongodb.WriteResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
@@ -54,7 +53,7 @@ public class MongoDbConsentRepository implements ConsentRepository {
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
         final var query = new Query(Criteria.where("id").is(decisionId).and("principal").is(principal));
-        final WriteResult result = this.mongoTemplate.remove(query, ConsentDecision.class, this.collectionName);
-        return result.getN() > 0;
+        final var result = this.mongoTemplate.remove(query, ConsentDecision.class, this.collectionName);
+        return result.getDeletedCount() > 0;
     }
 }

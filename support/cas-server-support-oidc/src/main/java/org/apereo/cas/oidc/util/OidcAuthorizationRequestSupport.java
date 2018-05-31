@@ -15,7 +15,6 @@ import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 
 import java.time.ZonedDateTime;

@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.gauth;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.gauth.token.GoogleAuthenticatorToken;
+import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -23,11 +24,11 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.util.SchedulingUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -42,8 +43,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.annotation.PostConstruct;
-
 import static org.junit.Assert.*;
 
 /**
@@ -54,30 +53,30 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-        classes = {
-                MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests.MongoTestConfiguration.class,
-                GoogleAuthenticatorMongoDbConfiguration.class,
-                CasCoreTicketsConfiguration.class,
-                CasCoreTicketCatalogConfiguration.class,
-                CasCoreLogoutConfiguration.class,
-                CasCoreHttpConfiguration.class,
-                CasCoreServicesConfiguration.class,
-                CasWebApplicationServiceFactoryConfiguration.class,
-                CasCoreAuthenticationConfiguration.class,
-                CasCoreServicesAuthenticationConfiguration.class,
-                CasCoreAuthenticationMetadataConfiguration.class,
-                CasCoreAuthenticationPolicyConfiguration.class,
-                CasCoreAuthenticationPrincipalConfiguration.class,
-                CasCoreAuthenticationHandlersConfiguration.class,
-                CasCoreAuthenticationSupportConfiguration.class,
-                CasPersonDirectoryConfiguration.class,
-                GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
-                AopAutoConfiguration.class,
-                CasCoreConfiguration.class,
-                CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-                CasCoreUtilConfiguration.class,
-                RefreshAutoConfiguration.class,
-                CasCoreWebConfiguration.class})
+    classes = {
+        MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests.MongoTestConfiguration.class,
+        GoogleAuthenticatorMongoDbConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
+        AopAutoConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        RefreshAutoConfiguration.class,
+        CasCoreWebConfiguration.class})
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(locations = {"classpath:/mongogauth.properties"})
@@ -109,22 +108,22 @@ public class GoogleAuthenticatorMongoDbTokenRepositoryTests {
 
         final var t1 = repository.get("casuser", 1111);
         final var t2 = repository.get("casuser", 5678);
-        
+
         assertTrue(t1.getId() > 0);
         assertTrue(t2.getId() > 0);
         assertNotEquals(token.getId(), token2.getId());
         assertTrue(t1.getToken() == 1111);
     }
-    
+
     @TestConfiguration
-    public static class MongoTestConfiguration {
+    public static class MongoTestConfiguration implements InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;
 
-        @PostConstruct
-        public void init() {
+        @Override
+        public void afterPropertiesSet() {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
-    
+
 }

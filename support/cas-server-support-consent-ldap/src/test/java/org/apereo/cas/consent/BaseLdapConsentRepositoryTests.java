@@ -5,7 +5,6 @@ import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.Modification;
 import com.unboundid.ldap.sdk.ModificationType;
 import com.unboundid.ldap.sdk.ResultCode;
-import com.unboundid.ldap.sdk.SearchResult;
 import com.unboundid.ldap.sdk.SearchScope;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -24,7 +23,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -183,15 +181,11 @@ public abstract class BaseLdapConsentRepositoryTests {
         final var mod3 = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision3));
         assertEquals(ResultCode.SUCCESS, getConnection().modify(USER2_DN, mod3).getResultCode());
 
-        assertTrue(this.repository.deleteConsentDecision(decision2.getId()));
+        assertTrue(this.repository.deleteConsentDecision(decision2.getId(), USER_CN));
 
-        var r = getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
+        final var r = getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
         assertTrue(r.getEntryCount() > 0);
         assertEquals(1, r.getSearchEntry(USER_DN).getAttributeValues(ATTR_NAME).length);
-
-        this.repository.deleteConsentDecisions(USER_CN);
-        r = getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
-        assertEquals(0, r.getSearchEntry(USER_DN).getAttributes().size());
     }
 
     public abstract LDAPConnection getConnection();

@@ -1,6 +1,5 @@
 package org.apereo.cas.aws;
 
-import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import org.junit.Test;
 import org.junit.runner.RunWith;

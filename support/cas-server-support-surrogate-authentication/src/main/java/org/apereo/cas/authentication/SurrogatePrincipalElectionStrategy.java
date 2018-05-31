@@ -4,7 +4,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apereo.cas.authentication.principal.Principal;
 
 import java.util.Collection;
-import java.util.Optional;
 
 /**
  * This is {@link SurrogatePrincipalElectionStrategy}.

@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
 import org.opensaml.saml.saml2.binding.encoding.impl.BaseSAML2MessageEncoder;
@@ -75,7 +76,7 @@ public abstract class BaseSamlResponseEncoder {
      * @return the message context
      */
     protected MessageContext getEncoderMessageContext(final RequestAbstractType authnRequest, final Response samlResponse, final String relayState) {
-        final var ctx = new MessageContext<>();
+        final var ctx = new MessageContext<SAMLObject>();
         ctx.setMessage(samlResponse);
         SAMLBindingSupport.setRelayState(ctx, relayState);
         SamlIdPUtils.preparePeerEntitySamlEndpointContext(authnRequest, ctx, adaptor, getBinding());
@@ -90,7 +91,7 @@ public abstract class BaseSamlResponseEncoder {
      * @param authnRequest the authn request
      * @param encoder      the encoder
      * @param samlResponse the saml response
-     * @param relayState   the relay state
+     * @param relayState   the relay stateSurrogateAuthenticationPostProcessor.java
      * @throws Exception the saml exception
      */
     protected void finalizeEncode(final RequestAbstractType authnRequest,

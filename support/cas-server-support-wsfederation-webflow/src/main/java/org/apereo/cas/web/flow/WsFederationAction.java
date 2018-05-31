@@ -13,8 +13,6 @@ import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * This class represents an action in the webflow to retrieve WsFederation information on the callback url which is
  * the webflow url (/login).

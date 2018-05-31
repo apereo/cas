@@ -6,7 +6,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.inspektr.audit.annotation.Audit;
 
 import java.time.LocalDateTime;

@@ -2,16 +2,13 @@ package org.apereo.cas.web.support;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
-import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
-import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Date;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**

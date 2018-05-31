@@ -2,7 +2,6 @@ package org.apereo.cas.authentication;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

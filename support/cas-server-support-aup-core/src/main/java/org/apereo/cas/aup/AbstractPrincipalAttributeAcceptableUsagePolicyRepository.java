@@ -11,7 +11,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Map;
 import java.util.Set;
 
 /**

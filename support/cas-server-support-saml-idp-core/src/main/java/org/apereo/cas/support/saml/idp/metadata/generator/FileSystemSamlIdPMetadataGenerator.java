@@ -8,11 +8,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
-import org.springframework.core.io.Resource;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.ResourceLoader;
 
-import javax.annotation.PostConstruct;
-import java.io.File;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -25,7 +23,7 @@ import java.nio.file.Files;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class FileSystemSamlIdPMetadataGenerator implements SamlIdPMetadataGenerator {
+public class FileSystemSamlIdPMetadataGenerator implements SamlIdPMetadataGenerator, InitializingBean {
     private static final String BEGIN_CERTIFICATE = "-----BEGIN CERTIFICATE-----";
     private static final String END_CERTIFICATE = "-----END CERTIFICATE-----";
 
@@ -39,11 +37,15 @@ public class FileSystemSamlIdPMetadataGenerator implements SamlIdPMetadataGenera
     /**
      * Initializes a new Generate saml metadata.
      */
-    @PostConstruct
     @SneakyThrows
     public void initialize() {
         samlIdPMetadataLocator.initialize();
         generate();
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        initialize();
     }
 
     @Override

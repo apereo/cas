@@ -1,7 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import com.couchbase.client.java.Bucket;
-import com.couchbase.client.java.document.JsonDocument;
 import com.couchbase.client.java.document.SerializableDocument;
 import com.couchbase.client.java.view.DefaultView;
 import com.couchbase.client.java.view.View;
@@ -18,8 +16,8 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
+import org.springframework.beans.factory.DisposableBean;
 
-import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -39,7 +37,7 @@ import java.util.function.Consumer;
  */
 @Slf4j
 @AllArgsConstructor
-public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
+public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
     /**
      * The all tickets view name.
      */
@@ -122,8 +120,8 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     /**
      * Stops the couchbase client.
      */
-    @PreDestroy
     @SneakyThrows
+    @Override
     public void destroy() {
         LOGGER.debug("Shutting down Couchbase");
         this.couchbase.shutdown();

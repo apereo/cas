@@ -1,16 +1,15 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.util.HttpUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
@@ -26,15 +25,10 @@ import java.util.stream.Stream;
  * @since 5.0.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
-
     private final RestTemplate restTemplate;
     private final CasConfigurationProperties properties;
-
-    public RestMultifactorAuthenticationTrustStorage(final CasConfigurationProperties properties) {
-        this.properties = properties;
-        this.restTemplate = prepareRestTemplate();
-    }
 
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
@@ -71,13 +65,11 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     private Set<MultifactorAuthenticationTrustRecord> getResults(final String url) {
         final var entity = getHttpEntity(null);
-
-            restTemplate.exchange(url, HttpMethod.GET, entity, MultifactorAuthenticationTrustRecord[].class);
+        final var responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, MultifactorAuthenticationTrustRecord[].class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             final var results = responseEntity.getBody();
             return Stream.of(results).collect(Collectors.toSet());
         }
-
         return new HashSet<>(0);
     }
 
@@ -89,10 +81,5 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     private String getEndpointUrl(final String path) {
         final var endpoint = properties.getAuthn().getMfa().getTrusted().getRest().getUrl();
         return (!endpoint.endsWith("/") ? endpoint.concat("/") : endpoint).concat(StringUtils.defaultString(path));
-    }
-
-    @SneakyThrows
-    private RestTemplate prepareRestTemplate() {
-        return new RestTemplate();
     }
 }

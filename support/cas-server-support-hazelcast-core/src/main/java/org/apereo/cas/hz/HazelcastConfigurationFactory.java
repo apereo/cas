@@ -19,10 +19,8 @@ import org.apereo.cas.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.Set;
 
 /**
  * This is {@link HazelcastConfigurationFactory}.

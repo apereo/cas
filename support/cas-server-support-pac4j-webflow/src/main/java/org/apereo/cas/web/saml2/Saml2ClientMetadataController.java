@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
-import org.opensaml.core.xml.XMLObject;
 import org.pac4j.core.client.Clients;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.http.HttpHeaders;

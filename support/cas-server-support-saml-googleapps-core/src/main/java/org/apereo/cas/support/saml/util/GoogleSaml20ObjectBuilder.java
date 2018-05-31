@@ -10,7 +10,6 @@ import org.opensaml.saml.saml2.core.StatusCode;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
-import java.lang.reflect.Field;
 
 /**
  * This is {@link GoogleSaml20ObjectBuilder} that

@@ -2,8 +2,6 @@ package org.apereo.cas.monitor;
 
 import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.Cache;
-import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.statistics.StatisticsGateway;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Formatter;

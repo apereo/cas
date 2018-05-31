@@ -3,7 +3,6 @@ package org.apereo.cas.logging.web;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.slf4j.MDC;
@@ -18,9 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Map;
 import java.util.TimeZone;
-import java.util.Enumeration;
 
 /**
  * This is {@link ThreadContextMDCServletFilter}.

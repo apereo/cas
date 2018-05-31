@@ -11,11 +11,11 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,7 +35,7 @@ import java.util.stream.Stream;
  * @since 5.2.0
  */
 @Slf4j
-public abstract class AbstractServicesManager implements ServicesManager {
+public abstract class AbstractServicesManager implements ServicesManager, InitializingBean {
 
     private static final long serialVersionUID = -8581398063126547772L;
 
@@ -178,13 +178,17 @@ public abstract class AbstractServicesManager implements ServicesManager {
         return r;
     }
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        load();
+    }
+
     /**
      * Load services that are provided by the DAO.
      */
     @Scheduled(initialDelayString = "${cas.serviceRegistry.schedule.startDelay:20000}",
         fixedDelayString = "${cas.serviceRegistry.schedule.repeatInterval:60000}")
     @Override
-    @PostConstruct
     public void load() {
         LOGGER.debug("Loading services from [{}]", this.serviceRegistry);
         this.services = this.serviceRegistry.load()

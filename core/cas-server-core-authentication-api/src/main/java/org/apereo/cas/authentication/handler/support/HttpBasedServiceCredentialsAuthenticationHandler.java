@@ -11,7 +11,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 
 import javax.security.auth.login.FailedLoginException;
-import java.net.URL;
 import java.security.GeneralSecurityException;
 
 /**

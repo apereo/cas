@@ -2,13 +2,11 @@ package org.apereo.cas.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CoreAttributesTestUtils;
-import org.apereo.cas.authentication.principal.Principal;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.Collections;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 

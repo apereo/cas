@@ -11,11 +11,6 @@ import org.apereo.cas.configuration.model.support.pm.PasswordManagementPropertie
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.ConnectionFactory;
-import org.ldaptive.LdapAttribute;
-import org.ldaptive.LdapEntry;
-import org.ldaptive.Response;
-import org.ldaptive.SearchFilter;
-import org.ldaptive.SearchResult;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;

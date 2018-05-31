@@ -1,10 +1,8 @@
 package org.apereo.cas.trusted.web.flow;
 
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
-import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.support.WebUtils;

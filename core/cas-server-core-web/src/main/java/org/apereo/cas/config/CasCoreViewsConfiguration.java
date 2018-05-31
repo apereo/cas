@@ -40,7 +40,7 @@ public class CasCoreViewsConfiguration {
 
         final var templatePrefixes = casProperties.getView().getTemplatePrefixes();
         templatePrefixes.forEach(Unchecked.consumer(prefix -> {
-            final String prefixPath = ResourceUtils.getFile(prefix).getCanonicalPath();
+            final var prefixPath = ResourceUtils.getFile(prefix).getCanonicalPath();
             final var viewPath = StringUtils.appendIfMissing(prefixPath, "/");
 
             final var rest = casProperties.getView().getRest();

@@ -14,10 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.util.LdapTestUtils;
 import org.ldaptive.LdapEntry;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.ClassPathResource;
 
-import javax.annotation.PreDestroy;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -30,8 +29,7 @@ import java.util.Properties;
  * @since 4.1.0
  */
 @Slf4j
-public class InMemoryTestLdapDirectoryServer implements Closeable {
-
+public class InMemoryTestLdapDirectoryServer implements AutoCloseable, DisposableBean {
 
     private final InMemoryDirectoryServer directoryServer;
 
@@ -152,12 +150,16 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
     }
 
     @Override
-    @PreDestroy
     public void close() {
         LOGGER.debug("Shutting down LDAP server...");
         this.directoryServer.closeAllConnections(true);
         this.directoryServer.shutDown(true);
         LOGGER.debug("Shut down LDAP server.");
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        close();
     }
 
     public boolean isAlive() {

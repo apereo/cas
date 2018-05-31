@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.auth.DigestScheme;
 import org.apereo.cas.util.RandomUtils;
 
-import java.security.SecureRandom;
 import java.time.ZonedDateTime;
 
 /**

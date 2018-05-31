@@ -6,8 +6,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 
-import java.util.Map;
-
 /**
  * This is {@link SurrogateAuditPrincipalIdProvider}.
  *

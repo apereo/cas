@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.stream.Stream;
 
 /**
  * Class designed to read data from a file in the format of USERNAME SEPARATOR

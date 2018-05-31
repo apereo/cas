@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.sms.TextMagicProperties;
 import org.apereo.cas.support.sms.TextMagicSmsSender;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.io.SmsSender;

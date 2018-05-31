@@ -9,7 +9,6 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
 import java.util.concurrent.TimeUnit;

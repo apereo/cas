@@ -2,9 +2,7 @@ package org.apereo.cas.token;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.token.cipher.RegisteredServiceTokenTicketCipherExecutor;
 import org.junit.Test;
 

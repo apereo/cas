@@ -7,9 +7,6 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.CommonProfile;
 
-import java.util.Optional;
-import java.util.Set;
-
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 

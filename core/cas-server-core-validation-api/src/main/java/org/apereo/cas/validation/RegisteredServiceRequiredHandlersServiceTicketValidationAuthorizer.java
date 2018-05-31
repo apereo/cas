@@ -5,15 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link RegisteredServiceRequiredHandlersServiceTicketValidationAuthorizer}.

@@ -16,11 +16,10 @@ import net.jradius.packet.AccessRequest;
 import net.jradius.packet.RadiusPacket;
 import net.jradius.packet.attribute.AttributeFactory;
 import net.jradius.packet.attribute.AttributeList;
-import net.jradius.packet.attribute.RadiusAttribute;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import java.security.Security;
-import java.util.List;
+
 import lombok.ToString;
 import lombok.Setter;
 

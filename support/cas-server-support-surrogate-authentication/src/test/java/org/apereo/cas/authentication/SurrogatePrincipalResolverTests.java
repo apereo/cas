@@ -2,7 +2,6 @@ package org.apereo.cas.authentication;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.junit.Rule;
 import org.junit.Test;

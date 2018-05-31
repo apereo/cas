@@ -1,7 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
-import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

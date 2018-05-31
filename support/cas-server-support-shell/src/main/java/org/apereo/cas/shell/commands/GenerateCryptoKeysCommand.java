@@ -9,7 +9,6 @@ import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.jooq.lambda.Unchecked;
-import org.springframework.boot.configurationmetadata.ConfigurationMetadataGroup;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;

@@ -344,7 +344,7 @@ subprojects {
             }
         }
     }
-
+    
     dependencies {
         optional libraries.springcomponentindexer
 

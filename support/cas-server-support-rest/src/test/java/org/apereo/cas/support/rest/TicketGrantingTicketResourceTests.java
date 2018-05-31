@@ -69,11 +69,12 @@ public class TicketGrantingTicketResourceTests {
     @Before
     public void setUp() {
         final var publisher = mock(ApplicationEventPublisher.class);
-        when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        final var manager = mock(AuthenticationManager.class);
+        when(manager.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
         this.ticketGrantingTicketResourceUnderTest = new TicketGrantingTicketResource(
-            new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(publisher, mgmr),
+            new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(publisher, manager),
                 new DefaultPrincipalElectionStrategy()), new UsernamePasswordRestHttpRequestCredentialFactory(),
             casMock, new WebApplicationServiceFactory(), new DefaultTicketGrantingTicketResourceEntityResponseFactory());
 

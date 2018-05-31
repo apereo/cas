@@ -1,7 +1,6 @@
 package org.apereo.cas.persondir.support;
 
 import com.couchbase.client.java.document.json.JsonObject;
-import com.couchbase.client.java.query.N1qlQueryResult;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

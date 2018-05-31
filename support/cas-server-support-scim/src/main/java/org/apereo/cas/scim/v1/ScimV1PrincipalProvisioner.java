@@ -3,7 +3,6 @@ package org.apereo.cas.scim.v1;
 import com.unboundid.scim.data.UserResource;
 import com.unboundid.scim.schema.CoreSchema;
 import com.unboundid.scim.sdk.OAuthToken;
-import com.unboundid.scim.sdk.Resources;
 import com.unboundid.scim.sdk.SCIMEndpoint;
 import com.unboundid.scim.sdk.SCIMService;
 import lombok.SneakyThrows;
@@ -75,6 +74,7 @@ public class ScimV1PrincipalProvisioner implements PrincipalProvisioner {
      */
     @SneakyThrows
     protected boolean createUserResource(final Principal p, final Credential credential) {
+        final var user = new UserResource(CoreSchema.USER_DESCRIPTOR);
         this.mapper.map(user, p, credential);
         return endpoint.create(user) != null;
     }

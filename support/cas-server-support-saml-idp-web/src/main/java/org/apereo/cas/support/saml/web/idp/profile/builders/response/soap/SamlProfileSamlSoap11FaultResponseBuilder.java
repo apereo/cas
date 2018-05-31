@@ -76,6 +76,7 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
         body.getUnknownXMLObjects().add(fault);
 
         final var envelope = newSoapObject(Envelope.class);
+        final var header = newSoapObject(Header.class);
         envelope.setHeader(header);
         envelope.setBody(body);
         encodeFinalResponse(request, response, service, adaptor, envelope, binding, authnRequest, casAssertion);

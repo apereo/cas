@@ -6,9 +6,6 @@ import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 

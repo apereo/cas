@@ -12,7 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -103,29 +102,13 @@ public class RestConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public boolean deleteConsentDecision(final long decisionId) {
+    public boolean deleteConsentDecision(final long decisionId, final String principal) {
         try {
             final var headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
             final HttpEntity<Map> entity = new HttpEntity<>(headers);
             final var deleteEndpoint = this.endpoint.concat("/" + Long.toString(decisionId));
-            final var result = restTemplate.exchange(deleteEndpoint,
-                HttpMethod.DELETE, entity, Boolean.class);
-            return result.getStatusCodeValue() == HttpStatus.OK.value();
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean deleteConsentDecisions(final String principal) {
-        try {
-            final var headers = new HttpHeaders();
-            headers.add("principal", principal);
-            headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            final HttpEntity<Map> entity = new HttpEntity<>(headers);
-            final var result = restTemplate.exchange(this.endpoint, HttpMethod.DELETE, entity, Boolean.class);
+            final var result = restTemplate.exchange(deleteEndpoint, HttpMethod.DELETE, entity, Boolean.class);
             return result.getStatusCodeValue() == HttpStatus.OK.value();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

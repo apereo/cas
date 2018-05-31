@@ -14,7 +14,6 @@ import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;

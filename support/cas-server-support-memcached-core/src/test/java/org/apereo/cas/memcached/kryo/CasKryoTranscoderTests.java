@@ -2,7 +2,6 @@ package org.apereo.cas.memcached.kryo;
 
 import com.esotericsoftware.kryo.KryoException;
 import lombok.extern.slf4j.Slf4j;
-import net.spy.memcached.CachedData;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.BasicCredentialMetaData;

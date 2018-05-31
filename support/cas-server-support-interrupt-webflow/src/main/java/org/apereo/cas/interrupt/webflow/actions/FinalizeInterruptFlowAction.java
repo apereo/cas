@@ -1,17 +1,12 @@
 package org.apereo.cas.interrupt.webflow.actions;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.interrupt.InterruptResponse;
 import org.apereo.cas.interrupt.webflow.InterruptUtils;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.net.URI;
 
 /**
  * This is {@link FinalizeInterruptFlowAction}.

@@ -11,7 +11,6 @@ import com.maxmind.geoip2.record.MaxMind;
 import com.maxmind.geoip2.record.Postal;
 import com.maxmind.geoip2.record.RepresentedCountry;
 import com.maxmind.geoip2.record.Traits;
-import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.junit.Test;
 
 import java.net.InetAddress;

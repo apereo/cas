@@ -18,7 +18,6 @@ import org.reflections.util.FilterBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Capture SAML authentication metadata.

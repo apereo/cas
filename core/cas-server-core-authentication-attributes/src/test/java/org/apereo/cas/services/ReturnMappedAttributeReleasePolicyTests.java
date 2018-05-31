@@ -6,7 +6,6 @@ import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.CoreAttributesTestUtils;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;

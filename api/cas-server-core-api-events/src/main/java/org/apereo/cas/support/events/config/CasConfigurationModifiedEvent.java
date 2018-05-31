@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.AbstractCasEvent;
-import java.io.File;
+
 import java.nio.file.Path;
 import java.util.regex.Pattern;
 

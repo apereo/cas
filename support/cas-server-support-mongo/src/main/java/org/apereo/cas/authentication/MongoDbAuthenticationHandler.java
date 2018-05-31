@@ -5,22 +5,25 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.integration.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.pac4j.mongo.profile.service.MongoProfileService;
-
-import javax.annotation.PreDestroy;
-import java.io.Closeable;
+import org.springframework.beans.factory.DisposableBean;
 
 /**
  * An authentication handler to verify credentials against a MongoDb instance.
+ *
  * @author Misagh Moayyed
  * @since 4.2.0
  */
 @Slf4j
-public class MongoDbAuthenticationHandler extends UsernamePasswordWrapperAuthenticationHandler implements Closeable {
+public class MongoDbAuthenticationHandler extends UsernamePasswordWrapperAuthenticationHandler implements AutoCloseable, DisposableBean {
     public MongoDbAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory) {
         super(name, servicesManager, principalFactory, null);
     }
 
-    @PreDestroy
+    @Override
+    public void destroy() throws Exception {
+        close();
+    }
+
     @Override
     public void close() {
         try {

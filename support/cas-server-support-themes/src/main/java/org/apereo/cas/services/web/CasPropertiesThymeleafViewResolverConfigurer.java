@@ -3,7 +3,7 @@ package org.apereo.cas.services.web;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
 /**
  * This is a {@link CasThymeleafViewResolverConfigurer} that places the {@link CasConfigurationProperties}

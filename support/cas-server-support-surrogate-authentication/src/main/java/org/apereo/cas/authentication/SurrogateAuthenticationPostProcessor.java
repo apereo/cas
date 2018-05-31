@@ -6,10 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationFailureEvent;
@@ -44,10 +42,10 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
         final var primaryPrincipal = authentication.getPrincipal();
 
         @NonNull
+        final var surrogateCredentials = (SurrogateUsernamePasswordCredential) transaction.getPrimaryCredential().get();
         final var targetUserId = surrogateCredentials.getSurrogateUsername();
 
         try {
-
             if (StringUtils.isBlank(targetUserId)) {
                 LOGGER.error("No surrogate username was specified as part of the credential");
                 throw new CredentialNotFoundException("Missing surrogate username in credential");

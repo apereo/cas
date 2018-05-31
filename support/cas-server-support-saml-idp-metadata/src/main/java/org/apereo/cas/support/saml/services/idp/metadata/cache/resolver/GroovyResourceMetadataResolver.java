@@ -8,7 +8,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.springframework.core.io.AbstractResource;
 
 import java.util.ArrayList;
 import java.util.Collection;

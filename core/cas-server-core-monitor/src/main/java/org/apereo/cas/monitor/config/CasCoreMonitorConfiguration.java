@@ -2,7 +2,6 @@ package org.apereo.cas.monitor.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.monitor.MonitorWarningProperties;
 import org.apereo.cas.monitor.MemoryMonitor;
 import org.apereo.cas.monitor.SessionMonitor;
 import org.apereo.cas.ticket.registry.TicketRegistry;

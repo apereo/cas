@@ -9,9 +9,9 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
@@ -30,8 +30,8 @@ import java.util.Map;
  * @since 3.0.0
  */
 @Slf4j
-public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    
+public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
+
 
     /**
      * Default mapping of special usernames to exceptions raised when that user attempts authentication.
@@ -55,16 +55,16 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
         super("", null, null, null);
     }
 
-    @PostConstruct
-    private void init() {
+    @Override
+    public void afterPropertiesSet() {
         LOGGER.warn("[{}] is only to be used in a testing environment. NEVER enable this in a production environment.",
-                this.getClass().getName());
+            this.getClass().getName());
     }
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                                         final String originalPassword)
-            throws GeneralSecurityException, PreventedException {
+        throws GeneralSecurityException, PreventedException {
 
         final var username = credential.getUsername();
         final var password = credential.getPassword();
@@ -81,14 +81,14 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
         }
         if (exception != null) {
             LOGGER.debug("Cannot throw checked exception [{}] since it is not declared by method signature.",
-                    exception.getClass().getName(),
-                    exception);
+                exception.getClass().getName(),
+                exception);
         }
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password) && username.equals(password)) {
             LOGGER.debug("User [{}] was successfully authenticated.", username);
             return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential),
-                    this.principalFactory.createPrincipal(username));
+                this.principalFactory.createPrincipal(username));
         }
         LOGGER.debug("User [{}] failed authentication", username);
         throw new FailedLoginException();

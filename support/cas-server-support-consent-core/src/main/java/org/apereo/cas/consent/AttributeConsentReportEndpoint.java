@@ -47,29 +47,18 @@ public class AttributeConsentReportEndpoint {
         return result;
     }
 
+
     /**
-     * Revoke consent boolean.
+     * Revoke consents.
      *
      * @param principal  the principal
      * @param decisionId the decision id
      * @return the boolean
      */
     @DeleteOperation
-    public boolean revokeConsent(@Selector final long decisionId) {
-        LOGGER.debug("Deleting consent decision with id [{}]", decisionId);
-        return this.consentRepository.deleteConsentDecision(decisionId);
-    }
-
-    /**
-     * Revoke consents.
-     *
-     * @param principal the principal
-     * @return the boolean
-     */
-    @DeleteOperation
-    public boolean revokeConsents(@Selector final String principal) {
+    public boolean revokeConsents(@Selector final String principal, @Selector final long decisionId) {
         LOGGER.debug("Deleting consent decisions for principal [{}].", principal);
-        return this.consentRepository.deleteConsentDecisions(principal);
+        return this.consentRepository.deleteConsentDecision(decisionId, principal);
     }
 
 }

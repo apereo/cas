@@ -1,11 +1,8 @@
 package org.apereo.cas.adaptors.authy.web.flow;
 
-import com.authy.api.Hash;
-import com.authy.api.User;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.authy.AuthyClientInstance;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;

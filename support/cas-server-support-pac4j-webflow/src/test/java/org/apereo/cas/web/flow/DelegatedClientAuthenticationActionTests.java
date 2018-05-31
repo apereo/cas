@@ -19,13 +19,11 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrate
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
@@ -101,6 +99,8 @@ public class DelegatedClientAuthenticationActionTests {
     }
 
     private void verifyStartAuthentication(final Service service) throws Exception {
+        final var mockResponse = new MockHttpServletResponse();
+        final var mockRequest = new MockHttpServletRequest();
         final var locale = Locale.getDefault().getCountry();
         mockRequest.setParameter(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, MY_THEME);
         mockRequest.setParameter(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, locale);
@@ -232,6 +232,7 @@ public class DelegatedClientAuthenticationActionTests {
         when(authnResult.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         when(authnResult.getService()).thenReturn(service);
 
+        final var support = mock(AuthenticationSystemSupport.class);
         when(support.getAuthenticationTransactionManager()).thenReturn(transManager);
         when(support.handleAndFinalizeSingleAuthenticationTransaction(any(), (Credential[]) any())).thenReturn(authnResult);
 

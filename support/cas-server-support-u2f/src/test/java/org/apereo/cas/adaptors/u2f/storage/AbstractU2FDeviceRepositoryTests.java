@@ -6,9 +6,6 @@ import org.apereo.cas.util.crypto.CertUtils;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
-import java.security.cert.X509Certificate;
-import java.util.Collection;
-
 import static org.junit.Assert.*;
 
 /**

@@ -5,10 +5,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-
-import java.net.URI;
 
 /**
  * This is {@link RestResponseEntityAuditResourceResolver}.

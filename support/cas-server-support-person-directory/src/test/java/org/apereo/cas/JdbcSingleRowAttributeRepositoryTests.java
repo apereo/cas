@@ -1,7 +1,6 @@
 package org.apereo.cas;
 
 import lombok.SneakyThrows;
-import org.apereo.services.persondir.IPersonAttributes;
 import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
 

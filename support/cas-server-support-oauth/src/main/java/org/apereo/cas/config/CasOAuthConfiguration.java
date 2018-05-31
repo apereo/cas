@@ -11,9 +11,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.oauth.OAuthAccessTokenProperties;
-import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
-import org.apereo.cas.configuration.model.support.oauth.OAuthRefreshTokenProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -110,7 +107,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;

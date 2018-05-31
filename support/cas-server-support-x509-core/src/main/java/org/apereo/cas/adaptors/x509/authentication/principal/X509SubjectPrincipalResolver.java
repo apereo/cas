@@ -6,10 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.cryptacular.x509.dn.Attribute;
 import org.cryptacular.x509.dn.AttributeType;
 import org.cryptacular.x509.dn.NameReader;
-import org.cryptacular.x509.dn.RDN;
 import org.cryptacular.x509.dn.RDNSequence;
 import org.cryptacular.x509.dn.StandardAttributeType;
 import java.security.cert.X509Certificate;
@@ -17,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**

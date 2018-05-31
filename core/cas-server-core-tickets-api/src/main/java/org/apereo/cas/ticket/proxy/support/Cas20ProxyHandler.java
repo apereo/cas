@@ -11,8 +11,6 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.util.http.HttpClient;
 
-import java.net.URL;
-
 /**
  * Proxy Handler to handle the default callback functionality of CAS 2.0.
  * <p>

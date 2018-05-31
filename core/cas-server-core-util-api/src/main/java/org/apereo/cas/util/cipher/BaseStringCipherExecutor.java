@@ -12,7 +12,6 @@ import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.security.PublicKey;
 
 /**
  * The {@link BaseStringCipherExecutor} is the default

@@ -1,12 +1,8 @@
 package org.apereo.cas.authentication;
 
-import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.json.JsonObject;
-import com.couchbase.client.java.query.N1qlQueryResult;
-import com.couchbase.client.java.query.N1qlQueryRow;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
@@ -16,7 +12,6 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * This is {@link CouchbaseAuthenticationHandler}.

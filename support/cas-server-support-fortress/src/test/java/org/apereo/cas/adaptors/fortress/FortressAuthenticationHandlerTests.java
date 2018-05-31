@@ -7,7 +7,6 @@ import org.apache.directory.fortress.core.PasswordException;
 import org.apache.directory.fortress.core.model.Session;
 import org.apache.directory.fortress.core.model.User;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -20,7 +19,6 @@ import org.mockito.MockitoAnnotations;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.util.UUID;
 

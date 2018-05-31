@@ -7,10 +7,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.SamlSPUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import javax.annotation.PostConstruct;
 
 /**
  * This is {@link BaseCasSamlSPConfiguration}.
@@ -19,7 +18,7 @@ import javax.annotation.PostConstruct;
  * @since 5.1.0
  */
 @Slf4j
-public abstract class BaseCasSamlSPConfiguration {
+public abstract class BaseCasSamlSPConfiguration implements InitializingBean {
     /**
      * CAS properties.
      */
@@ -34,7 +33,11 @@ public abstract class BaseCasSamlSPConfiguration {
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     private SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
-    @PostConstruct
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        init();
+    }
+
     public void init() {
         final var service = SamlSPUtils.newSamlServiceProviderService(getServiceProvider(),
             samlRegisteredServiceCachingMetadataResolver);

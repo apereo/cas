@@ -12,7 +12,6 @@ import org.apache.wss4j.common.util.DOM2Writer;
 import org.apache.xml.security.stax.impl.util.IDGenerator;
 import org.apache.xml.security.utils.Base64;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.support.util.CryptoUtils;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
@@ -21,9 +20,7 @@ import org.w3c.dom.Document;
 
 import javax.xml.stream.XMLStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import java.util.Properties;
 
 import static org.apache.cxf.fediz.core.FedizConstants.SAML2_METADATA_NS;
 import static org.apache.cxf.fediz.core.FedizConstants.SCHEMA_INSTANCE_NS;

@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.thymeleaf.IEngineConfiguration;
-import org.thymeleaf.templateresolver.TemplateResolution;
 
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;

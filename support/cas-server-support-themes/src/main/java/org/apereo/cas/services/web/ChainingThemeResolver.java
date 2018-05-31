@@ -6,7 +6,6 @@ import org.springframework.web.servlet.theme.AbstractThemeResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 

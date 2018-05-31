@@ -8,7 +8,6 @@ import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
 
 import java.util.Arrays;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**

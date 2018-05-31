@@ -15,7 +15,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
@@ -80,7 +79,6 @@ import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
-import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
@@ -109,7 +107,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -333,9 +330,13 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @Bean
     public OidcIntrospectionEndpointController oidcIntrospectionEndpointController() {
         return new OidcIntrospectionEndpointController(
-            servicesManager, ticketRegistry, defaultAccessTokenFactory,
-            oidcPrincipalFactory(), webApplicationServiceFactory,
-            profileScopeToAttributesFilter(), casProperties,
+            servicesManager,
+            ticketRegistry,
+            defaultAccessTokenFactory,
+            oidcPrincipalFactory(),
+            webApplicationServiceFactory,
+            profileScopeToAttributesFilter(),
+            casProperties,
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
             centralAuthenticationService,
             registeredServiceAccessStrategyEnforcer);
@@ -345,9 +346,13 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @Bean
     public OidcRevocationEndpointController oidcRevocationEndpointController() {
         return new OidcRevocationEndpointController(
-            servicesManager, ticketRegistry, defaultAccessTokenFactory,
-            oidcPrincipalFactory(), webApplicationServiceFactory,
-            profileScopeToAttributesFilter(), casProperties,
+            servicesManager,
+            ticketRegistry,
+            defaultAccessTokenFactory,
+            oidcPrincipalFactory(),
+            webApplicationServiceFactory,
+            profileScopeToAttributesFilter(),
+            casProperties,
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
             registeredServiceAccessStrategyEnforcer);
     }
@@ -373,20 +378,27 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @Bean
     public OidcDynamicClientRegistrationEndpointController oidcDynamicClientRegistrationEndpointController() {
         return new OidcDynamicClientRegistrationEndpointController(
-            servicesManager, ticketRegistry, defaultAccessTokenFactory,
-            oidcPrincipalFactory(), webApplicationServiceFactory, clientRegistrationRequestSerializer(),
+            servicesManager,
+            ticketRegistry,
+            defaultAccessTokenFactory,
+            oidcPrincipalFactory(),
+            webApplicationServiceFactory,
+            clientRegistrationRequestSerializer(),
             new DefaultRandomStringGenerator(),
             new DefaultRandomStringGenerator(),
             profileScopeToAttributesFilter(),
-            casProperties, ticketGrantingTicketCookieGenerator.getIfAvailable());
+            casProperties,
+            ticketGrantingTicketCookieGenerator.getIfAvailable());
     }
 
     @RefreshScope
     @Bean
     public OidcJwksEndpointController oidcJwksController() {
-        return new OidcJwksEndpointController(servicesManager, ticketRegistry,
+        return new OidcJwksEndpointController(servicesManager,
+            ticketRegistry,
             defaultAccessTokenFactory,
-            oidcPrincipalFactory(), webApplicationServiceFactory,
+            oidcPrincipalFactory(),
+            webApplicationServiceFactory,
             profileScopeToAttributesFilter(), casProperties,
             ticketGrantingTicketCookieGenerator.getIfAvailable());
     }
@@ -395,10 +407,13 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @RefreshScope
     @Bean
     public OidcWellKnownEndpointController oidcWellKnownController(@Qualifier("oidcServerDiscoverySettingsFactory") final OidcServerDiscoverySettings discoverySettings) {
-        return new OidcWellKnownEndpointController(servicesManager, ticketRegistry,
+        return new OidcWellKnownEndpointController(servicesManager,
+            ticketRegistry,
             defaultAccessTokenFactory,
-            oidcPrincipalFactory(), webApplicationServiceFactory,
-            discoverySettings, profileScopeToAttributesFilter(),
+            oidcPrincipalFactory(),
+            webApplicationServiceFactory,
+            discoverySettings,
+            profileScopeToAttributesFilter(),
             casProperties,
             ticketGrantingTicketCookieGenerator.getIfAvailable());
     }
@@ -442,13 +457,14 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @RefreshScope
     @Bean
     public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver() {
-        final CasWebflowEventResolver r = new OidcAuthenticationContextWebflowEventResolver(
+        final var r = new OidcAuthenticationContextWebflowEventResolver(
             authenticationSystemSupport.getIfAvailable(),
             centralAuthenticationService,
             servicesManager,
             ticketRegistrySupport,
             warnCookieGenerator,
             authenticationRequestServiceSelectionStrategies,
+            multifactorAuthenticationProviderSelector.getIfAvailable());
 
         this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r);
         return r;

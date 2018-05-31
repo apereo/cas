@@ -1,7 +1,6 @@
 package org.apereo.cas.couchdb.services;
 
 import org.ektorp.CouchDbConnector;
-import org.ektorp.ViewResult;
 import org.ektorp.support.CouchDbRepositorySupport;
 import org.ektorp.support.View;
 

@@ -22,6 +22,8 @@ public class WebApplicationServiceFactoryTests {
     public void verifyServiceCreationSuccessfullyById() {
         final var request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+        final var factory = new WebApplicationServiceFactory();
+        final var service = factory.createService("testservice");
         assertNotNull(service);
     }
 

@@ -40,8 +40,6 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.Statement;
 
 import static org.junit.Assert.*;
 

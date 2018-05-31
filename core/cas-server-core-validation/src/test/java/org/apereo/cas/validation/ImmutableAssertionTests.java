@@ -2,7 +2,6 @@ package org.apereo.cas.validation;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.junit.Test;

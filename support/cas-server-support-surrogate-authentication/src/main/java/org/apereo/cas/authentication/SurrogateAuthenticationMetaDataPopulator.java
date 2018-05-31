@@ -4,8 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.metadata.BaseAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 
-import java.util.Optional;
-
 /**
  * This is {@link SurrogateAuthenticationMetaDataPopulator}.
  *

@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
-import org.jose4j.jwt.JwtClaims;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

@@ -5,8 +5,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;

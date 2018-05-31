@@ -11,7 +11,6 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * This is {@link CloudDirectoryAuthenticationHandler}.

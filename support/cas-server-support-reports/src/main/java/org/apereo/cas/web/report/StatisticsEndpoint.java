@@ -1,29 +1,22 @@
 package org.apereo.cas.web.report;
 
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.health.HealthCheckRegistry;
-import com.codahale.metrics.servlets.HealthCheckServlet;
-import com.codahale.metrics.servlets.MetricsServlet;
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.context.request.async.WebAsyncTask;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
@@ -35,7 +28,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -46,27 +38,21 @@ import java.util.stream.Collectors;
  * @since 3.3.5
  */
 @Slf4j
-public class StatisticsController extends BaseCasMvcEndpoint implements ServletContextAware {
+@Endpoint(id = "statistics")
+public class StatisticsEndpoint extends BaseCasMvcEndpoint {
     private static final int NUMBER_OF_BYTES_IN_A_KILOBYTE = 1024;
-    private static final String MONITORING_VIEW_STATISTICS = "monitoring/viewStatistics";
 
     private final ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
 
     private final AuditTrailExecutionPlan auditTrailManager;
     private final CentralAuthenticationService centralAuthenticationService;
-    private final MetricRegistry metricsRegistry;
-    private final HealthCheckRegistry healthCheckRegistry;
 
-    public StatisticsController(final AuditTrailExecutionPlan auditTrailManager,
-                                final CentralAuthenticationService centralAuthenticationService,
-                                final MetricRegistry metricsRegistry,
-                                final HealthCheckRegistry healthCheckRegistry,
-                                final CasConfigurationProperties casProperties) {
-        super("casstats", "/stats", casProperties.getMonitor().getEndpoints().getStatistics(), casProperties);
+    public StatisticsEndpoint(final AuditTrailExecutionPlan auditTrailManager,
+                              final CentralAuthenticationService centralAuthenticationService,
+                              final CasConfigurationProperties casProperties) {
+        super(casProperties.getMonitor().getEndpoints().getStatistics(), casProperties);
         this.auditTrailManager = auditTrailManager;
         this.centralAuthenticationService = centralAuthenticationService;
-        this.metricsRegistry = metricsRegistry;
-        this.healthCheckRegistry = healthCheckRegistry;
     }
 
     /**
@@ -78,9 +64,10 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
      */
     @GetMapping(value = "/getAvailability")
     @ResponseBody
+    @ReadOperation
     public Map<String, Object> getAvailability(final HttpServletRequest request,
                                                final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
 
         final Map<String, Object> model = new HashMap<>();
         final var diff = Duration.between(this.upTimeStartDate, ZonedDateTime.now(ZoneOffset.UTC));
@@ -97,8 +84,9 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
      */
     @GetMapping(value = "/getMemStats")
     @ResponseBody
+    @ReadOperation
     public Map<String, Object> getMemoryStats(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
 
         final Map<String, Object> model = new HashMap<>();
         final var runtime = Runtime.getRuntime();
@@ -118,9 +106,9 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
      */
     @GetMapping(value = "/getAuthnAudit")
     @ResponseBody
+    @ReadOperation
     public Set<AuditActionContext> getAuthnAudit(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
-        final var sinceDate = LocalDate.now().minusDays(casProperties.getAudit().getNumberOfDaysInHistory());
+        final var sinceDate = LocalDate.now().minusDays(getCasProperties().getAudit().getNumberOfDaysInHistory());
         return this.auditTrailManager.getAuditRecordsSince(sinceDate);
     }
 
@@ -136,12 +124,13 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
      */
     @GetMapping(value = "/getAuthnAudit/summary")
     @ResponseBody
+    @ReadOperation
     public WebAsyncTask<Collection<AuthenticationAuditSummary>> getAuthnAuditSummary(final HttpServletRequest request,
                                                                                      final HttpServletResponse response,
                                                                                      @RequestParam final long start,
                                                                                      @RequestParam final String range,
                                                                                      @RequestParam final String scale) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         final Callable<Collection<AuthenticationAuditSummary>> asyncTask = () -> {
@@ -160,7 +149,7 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
                 .collect(Collectors.toList());
 
             final var steps = Duration.parse(scale);
-            final Map<Integer, LocalDateTime> buckets = Maps.newLinkedHashMapWithExpectedSize(authnEvents.size());
+            final Map<Integer, LocalDateTime> buckets = new LinkedHashMap<>();
 
             var dt = startDate;
             Integer index = 0;
@@ -211,7 +200,7 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
             final var values = summary.values();
             return values;
         };
-        final var timeout = Beans.newDuration(casProperties.getHttpClient().getAsyncTimeout()).toMillis();
+        final var timeout = Beans.newDuration(getCasProperties().getHttpClient().getAsyncTimeout()).toMillis();
         return new WebAsyncTask<>(timeout, asyncTask);
     }
 
@@ -257,10 +246,10 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
      * @param response the http servlet response
      * @return the ticket stats
      */
-    @GetMapping(value = "/getTicketStats")
     @ResponseBody
+    @ReadOperation
     public Map<String, Object> getTicketStats(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
         final Map<String, Object> model = new HashMap<>();
 
         var unexpiredTgts = 0;
@@ -297,29 +286,6 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
     }
 
     /**
-     * Handles the request.
-     *
-     * @param httpServletRequest  the http servlet request
-     * @param httpServletResponse the http servlet response
-     * @return the model and view
-     */
-    @GetMapping
-    protected ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest,
-                                                 final HttpServletResponse httpServletResponse) {
-        ensureEndpointAccessIsAuthorized(httpServletRequest, httpServletResponse);
-
-        final var modelAndView = new ModelAndView(MONITORING_VIEW_STATISTICS);
-        modelAndView.addObject("pageTitle", modelAndView.getViewName());
-        modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());
-        modelAndView.addObject("casTicketSuffix", casProperties.getHost().getName());
-        modelAndView.getModel().putAll(getAvailability(httpServletRequest, httpServletResponse));
-        modelAndView.addObject("startTime", this.upTimeStartDate.toLocalDateTime());
-
-        modelAndView.getModel().putAll(getMemoryStats(httpServletRequest, httpServletResponse));
-        return modelAndView;
-    }
-
-    /**
      * Convert to megabytes from bytes.
      *
      * @param bytes the total number of bytes
@@ -329,10 +295,4 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
         return bytes / NUMBER_OF_BYTES_IN_A_KILOBYTE / NUMBER_OF_BYTES_IN_A_KILOBYTE;
     }
 
-    @Override
-    public void setServletContext(final ServletContext servletContext) {
-        servletContext.setAttribute(MetricsServlet.METRICS_REGISTRY, this.metricsRegistry);
-        servletContext.setAttribute(MetricsServlet.SHOW_SAMPLES, Boolean.TRUE);
-        servletContext.setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, this.healthCheckRegistry);
-    }
 }

@@ -3,15 +3,13 @@ package org.apereo.cas.config;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.SamlSPUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.PostConstruct;
 
 /**
  * This is {@link CasSamlSPInCommonConfiguration}.
@@ -22,7 +20,7 @@ import javax.annotation.PostConstruct;
 @Configuration("casSamlSPInCommonConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CasSamlSPInCommonConfiguration {
+public class CasSamlSPInCommonConfiguration implements InitializingBean {
 
 
     @Autowired
@@ -36,11 +34,11 @@ public class CasSamlSPInCommonConfiguration {
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     private SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
-    @PostConstruct
-    public void init() {
+    @Override
+    public void afterPropertiesSet() {
         final var service = SamlSPUtils.newSamlServiceProviderService(
-                casProperties.getSamlSp().getInCommon(),
-                samlRegisteredServiceCachingMetadataResolver);
+            casProperties.getSamlSp().getInCommon(),
+            samlRegisteredServiceCachingMetadataResolver);
         if (service != null) {
             SamlSPUtils.saveService(service, servicesManager);
 

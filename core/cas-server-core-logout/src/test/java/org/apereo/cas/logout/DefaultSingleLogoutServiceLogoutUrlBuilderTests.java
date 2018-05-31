@@ -9,14 +9,12 @@ import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
-import org.apereo.cas.web.UrlValidator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.net.URL;
-import java.util.Collection;
 
 import static org.junit.Assert.*;
 

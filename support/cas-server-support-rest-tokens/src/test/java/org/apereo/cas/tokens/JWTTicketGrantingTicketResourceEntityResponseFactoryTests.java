@@ -2,13 +2,10 @@ package org.apereo.cas.tokens;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.token.TokenConstants;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.Assert.*;

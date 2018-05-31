@@ -1,9 +1,7 @@
 package org.apereo.cas.audit.spi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.util.AopUtils;
 import org.apereo.cas.validation.Assertion;
 import org.aspectj.lang.JoinPoint;

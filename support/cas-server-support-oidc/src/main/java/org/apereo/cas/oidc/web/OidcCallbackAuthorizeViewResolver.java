@@ -14,7 +14,6 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link OidcCallbackAuthorizeViewResolver}.

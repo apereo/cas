@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -7,12 +9,9 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.util.RegexUtils;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link PatternMatchingEntityIdAttributeReleasePolicy}.
@@ -33,12 +32,13 @@ public class PatternMatchingEntityIdAttributeReleasePolicy extends BaseSamlRegis
 
     @Override
     protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes,
-                                                                        final SamlRegisteredService service, final ApplicationContext applicationContext,
+                                                                        final SamlRegisteredService service,
+                                                                        final ApplicationContext applicationContext,
                                                                         final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                         final SamlRegisteredServiceServiceProviderMetadataFacade facade,
                                                                         final EntityDescriptor entityDescriptor) {
         final var pattern = RegexUtils.createPattern(this.entityIds);
-        final var matcher = pattern.matcher(entityDescriptor.getEntityID());
+        final var entityID = entityDescriptor.getEntityID();
         final var matcher = pattern.matcher(entityID);
         final var matched = fullMatch ? matcher.matches() : matcher.find();
         LOGGER.debug("Pattern [{}] matched against [{}]? [{}]", pattern.pattern(), entityID, BooleanUtils.toStringYesNo(matched));

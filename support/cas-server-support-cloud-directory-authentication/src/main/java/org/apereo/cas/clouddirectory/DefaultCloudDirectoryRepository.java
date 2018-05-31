@@ -1,13 +1,7 @@
 package org.apereo.cas.clouddirectory;
 
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectory;
-import com.amazonaws.services.clouddirectory.model.IndexAttachment;
-import com.amazonaws.services.clouddirectory.model.ListIndexRequest;
 import com.amazonaws.services.clouddirectory.model.ListIndexResult;
-import com.amazonaws.services.clouddirectory.model.ListObjectAttributesRequest;
-import com.amazonaws.services.clouddirectory.model.ListObjectAttributesResult;
-import com.amazonaws.services.clouddirectory.model.ObjectReference;
-import com.amazonaws.services.clouddirectory.model.TypedAttributeValue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -64,13 +58,13 @@ public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository
      * @return the user info from index result
      */
     protected Map<String, Object> getUserInfoFromIndexResult(final ListIndexResult indexResult) {
-
+        final var attachment = indexResult.getIndexAttachments().stream().findFirst().orElse(null);
         if (attachment == null) {
             LOGGER.warn("Index result has no attachments");
             return null;
         }
 
-        final String identifier = attachment.getObjectIdentifier();
+        final var identifier = attachment.getObjectIdentifier();
         final var listObjectAttributesRequest = CloudDirectoryUtils.getListObjectAttributesRequest(properties.getDirectoryArn(), identifier);
         if (listObjectAttributesRequest == null) {
             LOGGER.warn("No object attribute request is available for identifier [{}]", identifier);

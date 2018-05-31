@@ -15,7 +15,7 @@ import org.apereo.cas.web.support.WebUtils;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
+
 import lombok.Setter;
 
 /**

@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow.resolver.impl.mfa;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
@@ -22,7 +21,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 
 import static org.springframework.util.StringUtils.commaDelimitedListToSet;

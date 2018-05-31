@@ -220,6 +220,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
 
     private Optional<String> findLocale(final String locale, final List<?> items) {
         LOGGER.trace("Looking for locale [{}]", locale);
+        for (var i = 0; i < items.size(); i++) {
             if (items.get(i) instanceof LocalizedName) {
                 final var p = Pattern.compile(locale, Pattern.CASE_INSENSITIVE);
                 final var value = (LocalizedName) items.get(i);

@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.microsoft.azure.documentdb.Document;
-import com.microsoft.azure.documentdb.DocumentClient;
 import com.microsoft.azure.documentdb.DocumentClientException;
 import com.microsoft.azure.documentdb.FeedOptions;
 import com.microsoft.azure.documentdb.FeedResponse;
@@ -18,7 +17,6 @@ import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**

@@ -11,10 +11,8 @@ import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.LocalDynamicMetadataResolver;
-import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.FileSystemResource;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 

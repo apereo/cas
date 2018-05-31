@@ -35,6 +35,7 @@ public class TokenTicketCipherExecutorTests {
     @Test
     public void verifyCipheredTokenWithoutEncryptionAndSigning() {
         final var c = new TokenTicketCipherExecutor();
+        final var token = c.encode(ST);
         assertEquals(ST, c.decode(token));
     }
 }

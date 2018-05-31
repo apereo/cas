@@ -3,7 +3,6 @@ package org.apereo.cas.digest.config;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.digest.DigestProperties;
 import org.apereo.cas.digest.DefaultDigestHashedCredentialRetriever;
 import org.apereo.cas.digest.DigestHashedCredentialRetriever;
 import org.apereo.cas.digest.web.flow.DigestAuthenticationAction;

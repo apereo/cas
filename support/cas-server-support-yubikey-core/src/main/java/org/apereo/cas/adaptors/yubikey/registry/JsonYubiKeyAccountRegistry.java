@@ -7,7 +7,6 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.util.ResourceUtils;
 import org.springframework.core.io.Resource;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 

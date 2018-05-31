@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
-import org.springframework.context.ApplicationContext;
 
 import javax.persistence.PostLoad;
 import java.util.Locale;

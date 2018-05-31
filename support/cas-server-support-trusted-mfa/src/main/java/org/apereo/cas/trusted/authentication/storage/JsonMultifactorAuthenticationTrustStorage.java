@@ -9,7 +9,6 @@ import org.apereo.cas.util.ResourceUtils;
 import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
 
-import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
@@ -100,7 +99,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         if (ResourceUtils.doesResourceExist(location)) {
             try (Reader reader = new InputStreamReader(location.getInputStream(), StandardCharsets.UTF_8)) {
                 final TypeReference<Map<String, MultifactorAuthenticationTrustRecord>> personList =
-                    new TypeReference<Map<String, MultifactorAuthenticationTrustRecord>>() {
+                    new TypeReference<>() {
                     };
                 this.storage = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
             }

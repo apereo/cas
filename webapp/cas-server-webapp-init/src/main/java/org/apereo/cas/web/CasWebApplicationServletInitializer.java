@@ -4,8 +4,6 @@ import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
-import java.util.Map;
-
 /**
  * This is {@link CasWebApplicationServletInitializer}.
  *
