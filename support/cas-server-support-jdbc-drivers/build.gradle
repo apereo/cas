@@ -5,4 +5,5 @@ dependencies {
     runtime "mysql:mysql-connector-java:$mysqlVersion"
     runtime "org.mariadb.jdbc:mariadb-java-client:$mariaDbVersion"
     runtime "net.sourceforge.jtds:jtds:$jtdsVersion"
+    runtime "com.microsoft.sqlserver:mssql-jdbc:$mssqlServerVersion"
 }

@@ -51,6 +51,8 @@ before_install:
 - ./ci/run-docker.sh
 - chmod -R 777 ./ci/run-ldap-server.sh
 - ./ci/run-ldap-server.sh
+- chmod -R 777 ./ci/run-mssql-server.sh
+- ./ci/run-mssql-server.sh
 - chmod -R 777 ./ci/run-mail-server.sh
 - ./ci/run-mail-server.sh
 - chmod -R 777 ./ci/run-influxdb-server.sh
