@@ -115,14 +115,14 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     @ElementCollection
     @CollectionTable(name = "SamlRegisteredService_AttributeNameFormats")
-    @MapKeyColumn(name = "key")
-    @Column(name = "value")
+    @MapKeyColumn(name = "attribute_name")
+    @Column(name = "attribute_value")
     private Map<String, String> attributeNameFormats = new TreeMap<>();
 
     @ElementCollection
     @CollectionTable(name = "SamlRegisteredService_AttributeFriendlyNames")
-    @MapKeyColumn(name = "key")
-    @Column(name = "value")
+    @MapKeyColumn(name = "attribute_name")
+    @Column(name = "attribute_value")
     private Map<String, String> attributeFriendlyNames = new TreeMap<>();
 
     @Override

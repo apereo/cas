@@ -97,8 +97,7 @@ public interface CentralAuthenticationService {
      * @throws InvalidTicketException the invalid ticket exception
      * @since 4.1.0
      */
-    <T extends Ticket> T getTicket(String ticketId, Class<T> clazz)
-        throws InvalidTicketException;
+    <T extends Ticket> T getTicket(String ticketId, Class<T> clazz) throws InvalidTicketException;
 
     /**
      * Attempts to delete a ticket from the underlying store
@@ -145,8 +144,7 @@ public interface CentralAuthenticationService {
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws AbstractTicketException if the ticket could not be created.
      */
-    ServiceTicket grantServiceTicket(
-        String ticketGrantingTicketId, Service service, AuthenticationResult authenticationResult)
+    ServiceTicket grantServiceTicket(String ticketGrantingTicketId, Service service, AuthenticationResult authenticationResult)
         throws AuthenticationException, AbstractTicketException;
 
     /**
@@ -165,9 +163,7 @@ public interface CentralAuthenticationService {
      * @return Non -null service ticket identifier.
      * @throws AbstractTicketException if the ticket could not be created.
      */
-    ProxyTicket grantProxyTicket(
-        String proxyGrantingTicket, Service service)
-        throws AbstractTicketException;
+    ProxyTicket grantProxyTicket(String proxyGrantingTicket, Service service) throws AbstractTicketException;
 
     /**
      * Validate a ServiceTicket for a particular Service.

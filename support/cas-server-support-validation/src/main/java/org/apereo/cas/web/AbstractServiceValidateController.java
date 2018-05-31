@@ -81,7 +81,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private final ServicesManager servicesManager;
 
     private final CentralAuthenticationService centralAuthenticationService;
-    
+
     private ProxyHandler proxyHandler;
 
     private final View successView;
@@ -99,7 +99,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private final String authnContextAttribute;
 
     private boolean renewEnabled = true;
-    
+
     /**
      * Overrideable method to determine which credentials to use to grant a
      * proxy granting ticket. Default is to use the pgtUrl.
@@ -230,7 +230,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 return generateErrorView(e.getCode(), new Object[]{serviceCredential.getId()}, request, service);
             }
         }
-        final Assertion assertion = this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
+        final Assertion assertion = validateServiceTicket(service, serviceTicketId);
         if (!validateAssertion(request, serviceTicketId, assertion, service)) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET, new Object[]{serviceTicketId}, request, service);
         }
@@ -250,6 +250,17 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         onSuccessfulValidation(serviceTicketId, assertion);
         LOGGER.debug("Successfully validated service ticket [{}] for service [{}]", serviceTicketId, service.getId());
         return generateSuccessView(assertion, proxyIou, service, request, ctxResult.getValue(), proxyGrantingTicketId);
+    }
+
+    /**
+     * Validate service ticket assertion.
+     *
+     * @param service         the service
+     * @param serviceTicketId the service ticket id
+     * @return the assertion
+     */
+    protected Assertion validateServiceTicket(final WebApplicationService service, final String serviceTicketId) {
+        return this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
     }
 
     private String handleProxyIouDelivery(final Credential serviceCredential, final TicketGrantingTicket proxyGrantingTicketId) {

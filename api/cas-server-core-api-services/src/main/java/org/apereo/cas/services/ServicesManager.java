@@ -129,8 +129,10 @@ public interface ServicesManager {
      * Inform the ServicesManager to reload its list of services if its cached
      * them. Note that this is a suggestion and that ServicesManagers are free
      * to reload whenever they want.
+     *
+     * @return the collection
      */
-    void load();
+    Collection<RegisteredService> load();
 
     /**
      * Return a count of loaded services by this manager.
