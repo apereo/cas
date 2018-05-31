@@ -35,7 +35,7 @@ import java.util.stream.StreamSupport;
  * @since 5.1.0
  */
 @Slf4j
-@Endpoint(id = "springWebflow")
+@Endpoint(id = "spring-webflow")
 public class SpringWebflowEndpoint extends BaseCasMvcEndpoint {
 
     private final ApplicationContext applicationContext;

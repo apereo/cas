@@ -7,6 +7,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":support:cas-server-support-validation")
