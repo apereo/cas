@@ -112,6 +112,10 @@ allprojects {
         jcenter()
         maven { url "https://repo.spring.io/libs-milestone" }
     }
+
+    javadoc {
+        options.addBooleanOption('html5', true)
+    }
 }
 
 subprojects {
