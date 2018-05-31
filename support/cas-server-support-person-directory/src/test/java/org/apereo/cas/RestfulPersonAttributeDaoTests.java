@@ -3,7 +3,6 @@ package org.apereo.cas;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributes;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

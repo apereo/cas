@@ -23,7 +23,6 @@ import org.pac4j.oauth.client.OAuth10Client;
 import org.pac4j.oauth.client.OAuth20Client;
 import org.pac4j.oauth.config.OAuth20Configuration;
 import org.pac4j.oidc.client.OidcClient;
-import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.webflow.execution.RequestContext;

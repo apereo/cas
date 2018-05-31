@@ -39,7 +39,6 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.nio.charset.StandardCharsets;

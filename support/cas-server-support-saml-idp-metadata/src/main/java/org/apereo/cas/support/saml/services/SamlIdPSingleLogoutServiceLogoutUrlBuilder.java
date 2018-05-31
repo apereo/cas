@@ -12,7 +12,6 @@ import org.apereo.cas.web.UrlValidator;
 
 import java.net.URL;
 import java.util.Collection;
-import java.util.Optional;
 
 /**
  * This is {@link SamlIdPSingleLogoutServiceLogoutUrlBuilder}.

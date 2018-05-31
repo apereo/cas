@@ -5,18 +5,14 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.cxf.rt.security.SecurityConstants;
-import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.metadata.BaseAuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import org.springframework.core.Ordered;
-
-import java.util.Map;
 
 /**
  * This is {@link SecurityTokenServiceAuthenticationMetaDataPopulator}.
@@ -46,6 +42,8 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
             try {
                 final var properties = sts.getProperties();
                 properties.put(SecurityConstants.USERNAME, up.getUsername());
+
+                final var uid = credentialCipherExecutor.encode(up.getUsername());
                 properties.put(SecurityConstants.PASSWORD, uid);
                 final var token = sts.requestSecurityToken(rp.getAppliesTo());
                 final var tokenStr = EncodingUtils.encodeBase64(SerializationUtils.serialize(token));

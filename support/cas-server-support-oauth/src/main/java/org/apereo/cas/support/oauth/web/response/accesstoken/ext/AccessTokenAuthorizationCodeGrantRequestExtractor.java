@@ -18,7 +18,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Set;
 
 /**
  * This is {@link AccessTokenAuthorizationCodeGrantRequestExtractor}.

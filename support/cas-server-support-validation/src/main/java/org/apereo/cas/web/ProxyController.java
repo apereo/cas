@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.AbstractTicketException;
-import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.StringUtils;

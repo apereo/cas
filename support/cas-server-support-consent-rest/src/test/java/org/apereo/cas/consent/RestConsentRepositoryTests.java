@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Before;
@@ -14,8 +12,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Collection;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.client.ExpectedCount.manyTimes;
@@ -127,7 +123,7 @@ public class RestConsentRepositoryTests {
             .andRespond(withSuccess());
 
         final var repo = new RestConsentRepository(this.restTemplate, "/consent");
-        final var b = repo.deleteConsentDecision(1);
+        final var b = repo.deleteConsentDecision(1, "CasUser");
         assertTrue(b);
         server.verify();
     }

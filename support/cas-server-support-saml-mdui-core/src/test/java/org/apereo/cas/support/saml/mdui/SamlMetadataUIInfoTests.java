@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.mdui;
 
-import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.ConditionalSpringRunner;

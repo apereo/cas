@@ -8,12 +8,10 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.springframework.webflow.execution.Event;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 /**
  * This is {@link MultifactorAuthenticationContingencyPlan}.

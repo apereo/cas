@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.support.password;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.AuthenticationAccountStateHandler;
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.MessageDescriptor;
 

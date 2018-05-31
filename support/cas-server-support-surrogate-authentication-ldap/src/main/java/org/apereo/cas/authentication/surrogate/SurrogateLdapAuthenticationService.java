@@ -9,16 +9,10 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.ldaptive.ConnectionFactory;
-import org.ldaptive.LdapAttribute;
-import org.ldaptive.LdapEntry;
-import org.ldaptive.Response;
-import org.ldaptive.SearchFilter;
-import org.ldaptive.SearchResult;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**

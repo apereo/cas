@@ -4,13 +4,9 @@ import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -27,7 +23,6 @@ import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -100,7 +94,7 @@ public class OidcIdTokenGeneratorService {
         }
 
         LOGGER.debug("Attempting to produce claims for the id token [{}]", accessTokenId);
-        final var claims = produceIdTokenClaims(request, accessTokenId, timeout,
+        final var claims = produceIdTokenClaims(request, accessTokenId, timeoutInSeconds,
             oidcRegisteredService, profile.get(), context, responseType);
         LOGGER.debug("Produce claims for the id token [{}] as [{}]", accessTokenId, claims);
 
@@ -175,7 +169,8 @@ public class OidcIdTokenGeneratorService {
             tgt.getProxyGrantingTickets().entrySet().stream())
             .filter(e -> servicesManager.findServiceBy(e.getValue()).getServiceId().equals(oAuthCallbackUrl))
             .findFirst();
-        Preconditions.checkState(oAuthServiceTicket.isPresent(), "Cannot find service ticket issues to " + oAuthCallbackUrl + " as part of the authentication context");
+        Preconditions.checkState(oAuthServiceTicket.isPresent(), "Cannot find service ticket issues to "
+            + oAuthCallbackUrl + " as part of the authentication context");
         return oAuthServiceTicket.get();
     }
 

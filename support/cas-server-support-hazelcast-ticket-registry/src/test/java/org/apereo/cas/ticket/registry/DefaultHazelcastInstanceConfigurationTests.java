@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import com.hazelcast.config.Config;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -28,6 +27,7 @@ import org.apereo.cas.util.SchedulingUtils;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,7 +38,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.PostConstruct;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
@@ -49,30 +48,30 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-        DefaultHazelcastInstanceConfigurationTests.HazelcastTestConfiguration.class,
-        HazelcastTicketRegistryConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        HazelcastTicketRegistryTicketCatalogConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, 
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class})
+    DefaultHazelcastInstanceConfigurationTests.HazelcastTestConfiguration.class,
+    HazelcastTicketRegistryConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    HazelcastTicketRegistryTicketCatalogConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @DirtiesContext
 @Slf4j
@@ -86,12 +85,12 @@ public class DefaultHazelcastInstanceConfigurationTests {
     }
 
     @TestConfiguration
-    public static class HazelcastTestConfiguration {
+    public static class HazelcastTestConfiguration implements InitializingBean {
         @Autowired
         protected ApplicationContext applicationContext;
 
-        @PostConstruct
-        public void init() {
+        @Override
+        public void afterPropertiesSet() {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }

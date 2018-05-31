@@ -2,14 +2,11 @@ package org.apereo.cas.ws.idp.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.junit.Test;
-
-import java.util.Map;
 
 import static org.junit.Assert.*;
 

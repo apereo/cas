@@ -8,20 +8,14 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.discovery.CasServerProfileRegistrar;
-import org.apereo.cas.reports.CasReleaseAttributesReportEndpoint;
-import org.apereo.cas.reports.CasResolveAttributesReportEndpoint;
-import org.apereo.cas.reports.CasStatisticsReportEndpoint;
-import org.apereo.cas.reports.ConfigurationDiscoveryProfileReportEndpoint;
-import org.apereo.cas.reports.RegisteredServicesReportEndpoint;
-import org.apereo.cas.reports.SingleSignOnSessionsReportEndpoint;
-import org.apereo.cas.reports.SpringWebflowReportEndpoint;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.report.RegisteredServicesEndpoint;
+import org.apereo.cas.web.report.SpringWebflowEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.View;
@@ -38,6 +32,9 @@ import org.springframework.web.servlet.View;
 @Slf4j
 public class CasReportsConfiguration {
 
+    @Autowired
+    private ApplicationContext applicationContext;
+    
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
@@ -83,35 +80,21 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnEnabledEndpoint
-    public SpringWebflowReportEndpoint springWebflowEndpoint() {
-        return new SpringWebflowReportEndpoint();
+    public SpringWebflowEndpoint springWebflowEndpoint() {
+        return new SpringWebflowEndpoint(casProperties, applicationContext);
     }
 
     @Bean
     @ConditionalOnEnabledEndpoint
-    public RegisteredServicesReportEndpoint registeredServicesReportEndpoint() {
-        return new RegisteredServicesReportEndpoint(servicesManager);
+    public RegisteredServicesEndpoint registeredServicesReportEndpoint() {
+        return new RegisteredServicesEndpoint(casProperties, servicesManager);
     }
 
-    /**
-     * The Cas server discovery profile configuration.
-     */
-    @ConditionalOnClass(value = CasServerProfileRegistrar.class)
-    @Configuration("casServerDiscoveryProfileConfiguration")
-    public static class CasServerDiscoveryProfileConfiguration {
-        @Autowired
-        @Bean
-        @ConditionalOnEnabledEndpoint
-        public ConfigurationDiscoveryProfileReportEndpoint configurationDiscoveryProfileReportEndpoint(
-            @Qualifier("casServerProfileRegistrar") final CasServerProfileRegistrar casServerProfileRegistrar) {
-            return new ConfigurationDiscoveryProfileReportEndpoint(casServerProfileRegistrar);
-        }
-    }
-
+    /*
     @Bean
     @ConditionalOnEnabledEndpoint
-    public CasStatisticsReportEndpoint statisticsReportEndpoint() {
-        return new CasStatisticsReportEndpoint(centralAuthenticationService, casProperties.getHost().getName());
+    public StatisticsEndpoint statisticsReportEndpoint() {
+        return new StatisticsEndpoint(centralAuthenticationService, casProperties.getHost().getName());
     }
 
     @Bean
@@ -122,7 +105,7 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnEnabledEndpoint
-    public SingleSignOnSessionsReportEndpoint singleSignOnSessionsReportEndpoint() {
+    public SingleSignOnSessionsEndpoint singleSignOnSessionsReportEndpoint() {
         return new SingleSignOnSessionsReportEndpoint(centralAuthenticationService);
     }
 
@@ -138,5 +121,5 @@ public class CasReportsConfiguration {
             cas1ServiceSuccessView,
             casProperties.getView().getCas2().isV3ForwardCompatible());
     }
-
+    */
 }

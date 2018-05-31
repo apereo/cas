@@ -7,8 +7,8 @@ import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.TokenTicketBuilder;
@@ -41,7 +41,7 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
 
         if (!tokenAsResponse) {
             LOGGER.debug("Registered service [{}] is not configured to issue JWTs for service tickets. "
-                    + "Make sure the service property [{}] is defined and set to true", registeredService,
+                    + "Make sure the service property [{}] is defined and is set to true", registeredService,
                 RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.getPropertyName());
             return super.buildInternal(service, parameters);
         }

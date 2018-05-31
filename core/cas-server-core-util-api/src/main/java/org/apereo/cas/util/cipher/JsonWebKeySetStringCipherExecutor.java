@@ -13,8 +13,8 @@ import org.jose4j.jwk.HttpsJwks;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.RsaJsonWebKey;
+import org.springframework.beans.factory.DisposableBean;
 
-import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -30,7 +30,7 @@ import java.util.function.Predicate;
  */
 @Slf4j
 @Setter
-public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor implements AutoCloseable {
+public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor implements AutoCloseable, DisposableBean {
     private final FileWatcherService keystorePatchWatcherService;
     private final Optional<String> keyIdToUse;
     private final Optional<HttpsJwks> httpsJkws;
@@ -75,12 +75,16 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
     /**
      * Close.
      */
-    @PreDestroy
     @Override
     public void close() {
         if (this.keystorePatchWatcherService != null) {
             this.keystorePatchWatcherService.close();
         }
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        close();
     }
 
     @Override

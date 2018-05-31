@@ -13,8 +13,8 @@ import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.springframework.beans.factory.DisposableBean;
 
-import javax.annotation.PreDestroy;
 import javax.cache.Cache;
 import javax.cache.expiry.Duration;
 import javax.cache.expiry.ExpiryPolicy;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @ToString(callSuper = true)
-public class IgniteTicketRegistry extends AbstractTicketRegistry {
+public class IgniteTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
 
     private final IgniteConfiguration igniteConfiguration;
 
@@ -133,10 +133,14 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     /**
      * Make sure we shutdown Ignite when the context is destroyed.
      */
-    @PreDestroy
     public void shutdown() {
         this.ignite.close();
         Ignition.stopAll(true);
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        shutdown();
     }
 
     /**

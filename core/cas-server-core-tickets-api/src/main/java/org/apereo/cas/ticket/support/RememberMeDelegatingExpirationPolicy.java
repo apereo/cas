@@ -8,8 +8,6 @@ import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
 
-import java.util.Map;
-
 /**
  * Delegates to different expiration policies depending on whether remember me
  * is true or not.

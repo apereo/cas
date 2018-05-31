@@ -14,9 +14,7 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.client.oauth2.OAuth2ClientSupport;
 
-import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
 
 /**
  * This is {@link ScimV2PrincipalProvisioner}.
@@ -36,6 +34,7 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
         final var config = new ClientConfig();
         final var connectorProvider = new ApacheConnectorProvider();
         config.connectorProvider(connectorProvider);
+        
         final var client = ClientBuilder.newClient(config);
 
         if (StringUtils.isNotBlank(oauthToken)) {
@@ -88,6 +87,7 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
      */
     @SneakyThrows
     protected boolean createUserResource(final Principal p, final Credential credential) {
+        final UserResource user = new UserResource();
         this.mapper.map(user, p, credential);
         return scimService.create("Users", user) != null;
     }

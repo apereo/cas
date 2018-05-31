@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;

@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.BasicCredentialMetaData;

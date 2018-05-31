@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.handler.support;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.junit.Before;

@@ -20,8 +20,6 @@ import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticati
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
-import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;

@@ -200,7 +200,7 @@ public class ValidateEndpointCommand implements CommandMarker {
         }
 
         LOGGER.info("Detected Truststore: {}", trustManagerFactory.getProvider().getName());
-        final List<X509TrustManager> x509TrustManagers = new ArrayList<X509TrustManager>();
+        final List<X509TrustManager> x509TrustManagers = new ArrayList<>();
 
         for (final var trustManager : trustManagerFactory.getTrustManagers()) {
             if (trustManager instanceof X509TrustManager) {

@@ -7,7 +7,6 @@ import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 import org.influxdb.dto.Point;
-import org.influxdb.dto.QueryResult;
 import org.influxdb.impl.InfluxDBResultMapper;
 import org.junit.After;
 import org.junit.Before;
@@ -17,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;

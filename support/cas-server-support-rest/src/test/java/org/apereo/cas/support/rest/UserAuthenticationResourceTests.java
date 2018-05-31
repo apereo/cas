@@ -2,7 +2,6 @@ package org.apereo.cas.support.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;

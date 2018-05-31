@@ -51,7 +51,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     @SneakyThrows
     private void readAccountsFromJsonResource() {
         try (Reader reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
-            final TypeReference<Map<String, JsonBackedAccount>> personList = new TypeReference<Map<String, JsonBackedAccount>>() {
+            final TypeReference<Map<String, JsonBackedAccount>> personList = new TypeReference<>() {
             };
             this.jsonBackedAccounts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
         }

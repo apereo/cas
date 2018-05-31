@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.context.ApplicationContext;
 import java.util.LinkedHashMap;
 import java.util.Map;

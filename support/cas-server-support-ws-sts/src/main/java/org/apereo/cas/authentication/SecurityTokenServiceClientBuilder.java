@@ -3,7 +3,6 @@ package org.apereo.cas.authentication;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.wss4j.dom.WSConstants;

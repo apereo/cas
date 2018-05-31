@@ -2,9 +2,7 @@ package org.apereo.cas.support.saml.web.idp.audit;
 
 import org.apereo.cas.audit.spi.DefaultAuditPrincipalIdProvider;
 import org.apereo.cas.authentication.Authentication;
-import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Response;
-import org.opensaml.saml.saml2.core.Subject;
 
 /**
  * This is {@link SamlResponseAuditPrincipalIdProvider}.

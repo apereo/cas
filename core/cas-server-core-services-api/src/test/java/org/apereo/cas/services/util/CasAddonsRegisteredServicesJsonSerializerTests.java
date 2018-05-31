@@ -1,7 +1,6 @@
 package org.apereo.cas.services.util;
 
 import lombok.SneakyThrows;
-import org.apereo.cas.services.RegisteredService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -9,7 +8,6 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Collection;
 
 import static org.junit.Assert.*;
 

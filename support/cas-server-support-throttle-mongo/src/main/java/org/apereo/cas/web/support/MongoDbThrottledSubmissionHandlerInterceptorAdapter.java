@@ -3,7 +3,6 @@ package org.apereo.cas.web.support;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.inspektr.audit.AuditActionContext;
-import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -11,8 +10,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**

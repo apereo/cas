@@ -7,10 +7,7 @@ import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LdapTestUtils;
 import org.ldaptive.LdapAttribute;
-import org.ldaptive.LdapEntry;
 import org.springframework.core.io.ClassPathResource;
-
-import java.util.Collection;
 
 /**
  * Parent class to help with testing x509 operations that deal with LDAP.

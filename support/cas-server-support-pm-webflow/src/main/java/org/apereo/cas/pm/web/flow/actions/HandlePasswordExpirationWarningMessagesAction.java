@@ -10,7 +10,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Optional;
 
 /**
  * This is {@link HandlePasswordExpirationWarningMessagesAction}.

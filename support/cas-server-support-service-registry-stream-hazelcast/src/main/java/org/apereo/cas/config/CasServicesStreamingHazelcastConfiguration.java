@@ -1,16 +1,11 @@
 package org.apereo.cas.config;
 
-import com.hazelcast.config.Config;
-import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
-import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
-import org.apereo.cas.configuration.model.support.services.stream.hazelcast.StreamServicesHazelcastProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.services.RegisteredServiceHazelcastDistributedCacheManager;

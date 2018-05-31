@@ -15,8 +15,6 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
 import org.apereo.cas.impl.account.GroovyPasswordlessUserAccountStore;
 import org.apereo.cas.impl.account.RestfulPasswordlessUserAccountStore;
 import org.apereo.cas.impl.account.SimplePasswordlessUserAccountStore;

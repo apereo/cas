@@ -3,7 +3,6 @@ package org.apereo.cas.gua.config;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.gua.GraphicalUserAuthenticationProperties;
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
 import org.apereo.cas.gua.impl.LdapUserGraphicalAuthenticationRepository;
 import org.apereo.cas.gua.impl.StaticUserGraphicalAuthenticationRepository;

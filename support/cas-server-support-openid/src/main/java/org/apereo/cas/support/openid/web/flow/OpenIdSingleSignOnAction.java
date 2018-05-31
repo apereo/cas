@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdCredential;

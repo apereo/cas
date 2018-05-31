@@ -5,15 +5,14 @@ import com.couchbase.client.java.view.DefaultView;
 import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
-import com.couchbase.client.java.view.ViewRow;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
+import org.springframework.beans.factory.DisposableBean;
 
-import javax.annotation.PreDestroy;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ import java.util.List;
  * @since 4.2.0
  */
 @Slf4j
-public class CouchbaseServiceRegistry extends AbstractServiceRegistry {
+public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements DisposableBean {
 
     /**
      * The utils document.
@@ -136,8 +135,8 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry {
     /**
      * Stops the couchbase client and cancels the initialization task if uncompleted.
      */
-    @PreDestroy
     @SneakyThrows
+    @Override
     public void destroy() {
         this.couchbase.shutdown();
     }

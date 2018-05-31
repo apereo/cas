@@ -2,8 +2,6 @@ package org.apereo.cas.web.flow.action;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.AuthenticationResultBuilder;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
 import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -13,9 +11,6 @@ import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link LoadSurrogatesListAction}.

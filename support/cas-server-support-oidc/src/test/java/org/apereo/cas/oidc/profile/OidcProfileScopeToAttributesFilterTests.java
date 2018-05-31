@@ -1,12 +1,9 @@
 package org.apereo.cas.oidc.profile;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
-import org.apereo.cas.services.OidcRegisteredService;
-import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;

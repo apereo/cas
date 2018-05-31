@@ -2,11 +2,8 @@ package org.apereo.cas.config;
 
 import com.microsoft.azure.documentdb.ConsistencyLevel;
 import com.microsoft.azure.documentdb.RequestOptions;
-import com.microsoft.azure.spring.data.documentdb.DocumentDbFactory;
-import com.microsoft.azure.spring.data.documentdb.core.DocumentDbTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
 import org.apereo.cas.services.CosmosDbServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;

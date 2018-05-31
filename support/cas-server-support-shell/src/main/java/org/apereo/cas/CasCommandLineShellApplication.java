@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.shell.CasCommandLineShellBootstrapper;
@@ -23,7 +24,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link CasCommandLineShellApplication}.
@@ -32,17 +32,19 @@ import lombok.NoArgsConstructor;
  * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
-@SpringBootApplication(exclude = {HibernateJpaAutoConfiguration.class, JerseyAutoConfiguration.class, GroovyTemplateAutoConfiguration.class,
+@SpringBootApplication(exclude = {
     HibernateJpaAutoConfiguration.class,
     JerseyAutoConfiguration.class,
-    MetricsDropwizardAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class})
+    GroovyTemplateAutoConfiguration.class,
+    JmxAutoConfiguration.class,
     DataSourceAutoConfiguration.class,
     RedisAutoConfiguration.class,
     MongoAutoConfiguration.class,
     MongoDataAutoConfiguration.class,
     CassandraAutoConfiguration.class,
     DataSourceTransactionManagerAutoConfiguration.class,
-    RedisRepositoriesAutoConfiguration.class})
+    RedisRepositoriesAutoConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync
 @Slf4j

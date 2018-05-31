@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoTicketRegistryProperties;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.TicketCatalog;

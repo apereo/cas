@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.MongoDbAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.springframework.beans.factory.annotation.Autowired;

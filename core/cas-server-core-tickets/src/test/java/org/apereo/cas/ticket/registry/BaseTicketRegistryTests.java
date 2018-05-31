@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;

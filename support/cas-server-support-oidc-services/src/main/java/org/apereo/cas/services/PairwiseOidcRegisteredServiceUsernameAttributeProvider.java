@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 import lombok.NoArgsConstructor;
 

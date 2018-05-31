@@ -14,8 +14,6 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.opensaml.saml.common.SAMLObject;
 
-import java.io.StringWriter;
-
 
 /**
  * Factory to create OAuth access tokens.

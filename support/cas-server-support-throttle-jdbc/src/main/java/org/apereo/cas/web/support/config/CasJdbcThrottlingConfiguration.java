@@ -3,7 +3,6 @@ package org.apereo.cas.web.support.config;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.web.support.JdbcThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;

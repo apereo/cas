@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.JdbcAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.springframework.beans.factory.BeanCreationException;

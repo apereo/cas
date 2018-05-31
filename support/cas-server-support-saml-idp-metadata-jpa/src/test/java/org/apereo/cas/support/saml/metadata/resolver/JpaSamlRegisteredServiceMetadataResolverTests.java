@@ -37,7 +37,6 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -49,7 +48,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 
 import static org.junit.Assert.*;
 

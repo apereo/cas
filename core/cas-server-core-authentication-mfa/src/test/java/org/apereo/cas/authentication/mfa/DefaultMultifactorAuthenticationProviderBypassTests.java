@@ -1,16 +1,12 @@
 package org.apereo.cas.authentication.mfa;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;

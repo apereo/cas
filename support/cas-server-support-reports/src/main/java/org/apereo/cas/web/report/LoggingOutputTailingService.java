@@ -5,8 +5,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.Tailer;
 import org.apache.commons.io.input.TailerListenerAdapter;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.FileAppender;
 import org.apache.logging.log4j.core.appender.MemoryMappedFileAppender;
@@ -14,20 +12,18 @@ import org.apache.logging.log4j.core.appender.RandomAccessFileAppender;
 import org.apache.logging.log4j.core.appender.RollingFileAppender;
 import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
 import org.apereo.cas.web.report.util.ControllerUtils;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Log files tailing service which acts as apache.common.io {@code Tailer} listener
@@ -39,7 +35,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class LoggingOutputTailingService extends TailerListenerAdapter implements AutoCloseable {
+public class LoggingOutputTailingService extends TailerListenerAdapter implements AutoCloseable, InitializingBean, DisposableBean {
 
     private static final String LOG_OUTPUT_STOMP_DESTINATION = "/topic/logs";
 
@@ -67,17 +63,15 @@ public class LoggingOutputTailingService extends TailerListenerAdapter implement
      * The log configuration location is pulled directly from the environment
      * given there is not an explicit property mapping for it provided by Boot, etc.
      */
-    @PostConstruct
     @SneakyThrows
     public void initialize() {
-        final Optional<Pair<Resource, LoggerContext>> pair = ControllerUtils.buildLoggerContext(environment, resourceLoader);
+        final var pair = ControllerUtils.buildLoggerContext(environment, resourceLoader);
         pair.ifPresent(it -> registerLogFileTailersForExecution(it.getValue()));
     }
 
     /**
      * Clean up.
      */
-    @PreDestroy
     public void cleanUp() {
         this.tailers.forEach(Tailer::stop);
     }
@@ -85,6 +79,16 @@ public class LoggingOutputTailingService extends TailerListenerAdapter implement
     @Override
     public void close() {
         cleanUp();
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        cleanUp();
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        initialize();
     }
 
     private void registerLogFileTailersForExecution(final LoggerContext loggerContext) {

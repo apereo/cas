@@ -7,7 +7,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.InetAddressUtils;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**

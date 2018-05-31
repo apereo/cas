@@ -10,11 +10,9 @@ import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
-import org.springframework.boot.configurationmetadata.ValueHint;
 import org.springframework.core.Ordered;
-import java.util.List;
+
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.Getter;
 import lombok.Setter;

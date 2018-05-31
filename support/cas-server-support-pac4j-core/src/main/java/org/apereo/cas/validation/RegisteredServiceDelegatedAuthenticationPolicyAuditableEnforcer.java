@@ -5,8 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.audit.BaseAuditableExecution;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.pac4j.core.client.Client;

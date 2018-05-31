@@ -3,7 +3,6 @@ package org.apereo.cas.services;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 import org.apereo.cas.authentication.RegisteredServiceAuthenticationHandlerResolver;
@@ -63,7 +62,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
     public void checkAuthenticationHandlerResolutionDefault() {
         final var resolver =
             new RegisteredServiceAuthenticationHandlerResolver(this.defaultServicesManager);
-        final var transaction = AuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid1"),
+        final var transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid1"),
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
         final var handlers = resolver.resolve(this.handlers, transaction);
@@ -74,7 +73,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
     public void checkAuthenticationHandlerResolution() {
         final var resolver =
             new DefaultAuthenticationHandlerResolver();
-        final var transaction = AuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid2"),
+        final var transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid2"),
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         final var handlers = resolver.resolve(this.handlers, transaction);
         assertEquals(handlers.size(), this.handlers.size());

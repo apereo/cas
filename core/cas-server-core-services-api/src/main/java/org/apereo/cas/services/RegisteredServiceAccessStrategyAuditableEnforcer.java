@@ -3,13 +3,8 @@ package org.apereo.cas.services;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.audit.BaseAuditableExecution;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.inspektr.audit.annotation.Audit;
-
-import java.util.Optional;
 
 /**
  * This is {@link RegisteredServiceAccessStrategyAuditableEnforcer}.
@@ -27,7 +22,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
 
         final var registeredService = context.getRegisteredService();
         if (context.getServiceTicket().isPresent() && context.getAuthenticationResult().isPresent() && registeredService.isPresent()) {
-            final AuditableExecutionResult result = AuditableExecutionResult.of(context);
+            final var result = AuditableExecutionResult.of(context);
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getServiceTicket().get(),
                     context.getAuthenticationResult().get(), registeredService.get());

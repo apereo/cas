@@ -15,7 +15,6 @@ import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.saml2.core.ArtifactResponse;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.StatusCode;
@@ -47,10 +46,16 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
     }
 
     @Override
-    protected Envelope buildResponse(final Assertion assertion, final Object casAssertion, final RequestAbstractType authnRequest, 
-                                     final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor, 
-                                     final HttpServletRequest request, final HttpServletResponse response,
-                                     final String binding, final MessageContext messageContext) throws SamlException {
+    protected Envelope buildResponse(final Assertion assertion,
+                                     final Object casAssertion,
+                                     final RequestAbstractType authnRequest,
+                                     final SamlRegisteredService service,
+                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                     final HttpServletRequest request,
+                                     final HttpServletResponse response,
+                                     final String binding,
+                                     final MessageContext messageContext) throws SamlException {
+        final var castedAssertion = org.jasig.cas.client.validation.Assertion.class.cast(casAssertion);
         final var ticket = (SamlArtifactTicket) castedAssertion.getAttributes().get("artifact");
         final var artifactResponse = new ArtifactResponseBuilder().buildObject();
         artifactResponse.setIssueInstant(DateTime.now());

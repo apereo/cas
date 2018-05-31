@@ -3,7 +3,6 @@ package org.apereo.cas.web.view;
 import org.junit.Test;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
-import org.thymeleaf.templateresolver.TemplateResolution;
 
 import java.util.LinkedHashMap;
 

@@ -11,7 +11,6 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.TokenCoreConfiguration;
-import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -22,6 +21,7 @@ import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,7 +30,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.PostConstruct;
 import java.net.URL;
 import java.util.List;
 
@@ -70,13 +69,13 @@ public abstract class BaseJWTTokenTicketBuilderTests {
     protected ServicesManager servicesManager;
 
     @TestConfiguration
-    public static class TokenTicketBuilderTestConfiguration {
+    public static class TokenTicketBuilderTestConfiguration implements InitializingBean {
         @Autowired
         @Qualifier("inMemoryRegisteredServices")
         private List inMemoryRegisteredServices;
 
-        @PostConstruct
-        public void init() {
+        @Override
+        public void afterPropertiesSet() {
             inMemoryRegisteredServices.add(RegisteredServiceTestUtils.getRegisteredService("https://cas.example.org.+"));
             final var registeredService = RegisteredServiceTestUtils.getRegisteredService("https://jwt.example.org/cas.*");
 

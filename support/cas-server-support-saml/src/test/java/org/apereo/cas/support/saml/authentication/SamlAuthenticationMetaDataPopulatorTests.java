@@ -1,8 +1,6 @@
 package org.apereo.cas.support.saml.authentication;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationTransaction;

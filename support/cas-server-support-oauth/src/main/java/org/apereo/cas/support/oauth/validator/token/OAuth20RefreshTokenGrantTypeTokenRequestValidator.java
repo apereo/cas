@@ -4,15 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link OAuth20RefreshTokenGrantTypeTokenRequestValidator}.

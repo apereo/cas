@@ -18,7 +18,6 @@ import javax.security.auth.spi.LoginModule;
 import java.security.Principal;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link AccountsPreDefinedLoginModule}.

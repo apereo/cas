@@ -9,7 +9,6 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.context.J2EContext;
 
 import javax.servlet.http.HttpSession;
-import java.util.Enumeration;
 import java.util.Map;
 
 /**

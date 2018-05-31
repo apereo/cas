@@ -10,11 +10,8 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.Optional;
 
 /**
  * This is {@link DisplayBeforePasswordlessAuthenticationAction}.

@@ -8,8 +8,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.authentication.GrouperPrincipalAttributesProperties;
-import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.persondir.DefaultPersonDirectoryAttributeRepositoryPlan;
@@ -43,14 +41,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.OrderComparator;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 
 import javax.naming.directory.SearchControls;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**

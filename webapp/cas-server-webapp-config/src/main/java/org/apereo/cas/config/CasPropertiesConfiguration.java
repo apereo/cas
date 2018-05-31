@@ -3,13 +3,13 @@ package org.apereo.cas.config;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CasVersion;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertiesPropertySource;
 
-import javax.annotation.PostConstruct;
 import java.util.Properties;
 
 /**
@@ -21,15 +21,15 @@ import java.util.Properties;
 @Configuration("casPropertiesConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CasPropertiesConfiguration {
+public class CasPropertiesConfiguration implements InitializingBean {
     @Autowired
     private ConfigurableEnvironment environment;
 
     /**
      * Init.
      */
-    @PostConstruct
-    public void init() {
+    @Override
+    public void afterPropertiesSet() {
         final var sysProps = System.getProperties();
         final var properties = new Properties();
         if (CasVersion.getVersion() != null) {

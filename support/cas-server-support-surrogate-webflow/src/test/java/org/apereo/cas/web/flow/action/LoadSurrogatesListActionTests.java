@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;

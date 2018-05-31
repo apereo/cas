@@ -7,7 +7,6 @@ import org.apache.commons.io.FileUtils;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
-import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwk.RsaJwkGenerator;
 
 import java.io.File;

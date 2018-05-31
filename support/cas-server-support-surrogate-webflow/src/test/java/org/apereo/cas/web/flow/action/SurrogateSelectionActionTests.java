@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow.action;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
