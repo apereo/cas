@@ -87,7 +87,7 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
      */
     @SneakyThrows
     protected boolean createUserResource(final Principal p, final Credential credential) {
-        final UserResource user = new UserResource();
+        final var user = new UserResource();
         this.mapper.map(user, p, credential);
         return scimService.create("Users", user) != null;
     }
