@@ -7,6 +7,7 @@ dependencies {
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":support:cas-server-support-validation")
+    implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation libraries.openid4java
