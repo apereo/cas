@@ -45,7 +45,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Slf4j
-@Endpoint(id="personDirectory")
+@Endpoint(id="person-directory")
 public class PersonDirectoryEndpoint extends BaseCasMvcEndpoint {
     private final ServicesManager servicesManager;
     private final AuthenticationSystemSupport authenticationSystemSupport;
