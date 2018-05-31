@@ -41,7 +41,7 @@ import java.util.concurrent.Callable;
 @Slf4j
 @ToString
 @Getter
-@Endpoint(id = "ssoSessions")
+@Endpoint(id = "sso-sessions")
 public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
     private static final String VIEW_SSO_SESSIONS = "monitoring/viewSsoSessions";
 

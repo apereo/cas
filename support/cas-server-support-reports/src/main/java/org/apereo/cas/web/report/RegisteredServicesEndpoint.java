@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @Slf4j
-@Endpoint(id = "registeredServices")
+@Endpoint(id = "registered-services")
 public class RegisteredServicesEndpoint extends BaseCasMvcEndpoint {
     private final ServicesManager servicesManager;
 
