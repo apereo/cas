@@ -8,6 +8,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
  */
 def webappResources = new File(project(":webapp").getProjectDir(), "resources")
 def externalizedTemplates = new File("/etc/cas/templates")
+
 sourceSets {
     bootRun {
         resources {
@@ -19,6 +20,7 @@ sourceSets {
 
 springBoot {
     mainClassName = project.ext.mainClassName
+
 }
 
 if (plugins.hasPlugin("war")) {
@@ -31,7 +33,7 @@ if (plugins.hasPlugin("war")) {
     bootWar {
         mainClassName = project.ext.mainClassName
         enabled = !rootProject.publishingRelease
-
+        
         def currentTime = java.time.ZonedDateTime.now()
 
         manifest {
@@ -55,7 +57,6 @@ if (plugins.hasPlugin("war")) {
 }
 
 bootRun {
-
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         dependsOn pathingJar
         doFirst {
@@ -66,7 +67,7 @@ bootRun {
     sourceResources sourceSets.bootRun
     systemProperties = System.properties
     
-    def list = []
+    def list = ["--add-modules", "java.se.ee" ]
     if (rootProject.enableRemoteDebugging) {
         list.add("-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n")
     }
