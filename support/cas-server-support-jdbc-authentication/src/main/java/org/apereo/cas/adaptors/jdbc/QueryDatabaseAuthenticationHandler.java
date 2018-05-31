@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.jdbc;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -85,13 +86,18 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                 }
             } else {
                 LOGGER.debug("Password field is not found in the query results. Checking for result count...");
-                if (dbFields.containsKey("total")) {
-                    final long count = (long) dbFields.get("total");
-                    if (count != 1) {
-                        throw new FailedLoginException("No records found for user " + username);
-                    }
-                } else {
+                if (!dbFields.containsKey("total")) {
                     throw new FailedLoginException("Missing field 'total' from the query results for " + username);
+                }
+
+                final Object count = dbFields.get("total");
+                if (count == null || !NumberUtils.isCreatable(count.toString())) {
+                    throw new FailedLoginException("Missing field value 'total' from the query results for " + username + " or value not parseable as a number");
+                }
+
+                final Number number = NumberUtils.createNumber(count.toString());
+                if (number.longValue() != 1) {
+                    throw new FailedLoginException("No records found for user " + username);
                 }
             }
 

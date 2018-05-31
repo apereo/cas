@@ -3,6 +3,8 @@ package org.apereo.cas;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.SamlAttributeEncoderTests;
 import org.apereo.cas.support.saml.SamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlRegisteredServiceJpaMicrosoftSqlServerTests;
+import org.apereo.cas.support.saml.SamlRegisteredServiceJpaTests;
 import org.apereo.cas.support.saml.SamlRegisteredServiceTests;
 import org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicyTests;
@@ -20,6 +22,8 @@ import org.junit.runners.Suite;
     SamlRegisteredServiceTests.class,
     SamlIdPConfigurationTests.class,
     SamlAttributeEncoderTests.class,
+    SamlRegisteredServiceJpaTests.class,
+    SamlRegisteredServiceJpaMicrosoftSqlServerTests.class,
     PatternMatchingEntityIdAttributeReleasePolicyTests.class,
     GroovySamlRegisteredServiceAttributeReleasePolicyTests.class
 })
