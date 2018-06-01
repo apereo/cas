@@ -5,7 +5,6 @@ import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
@@ -13,7 +12,6 @@ import org.junit.Test;
 import org.springframework.context.annotation.Import;
 
 import java.util.Arrays;
-import java.util.Collection;
 
 import static org.junit.Assert.*;
 
@@ -29,12 +27,12 @@ public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests
 
     @Test
     public void verifySavingSamlService() {
-        final SamlRegisteredService service = new SamlRegisteredService();
+        final var service = new SamlRegisteredService();
         service.setName("SAML");
         service.setServiceId("http://mmoayyed.example.net");
         service.setMetadataLocation("classpath:/metadata/idp-metadata.xml");
-        final InCommonRSAttributeReleasePolicy policy = new InCommonRSAttributeReleasePolicy();
-        final ChainingAttributeReleasePolicy chain = new ChainingAttributeReleasePolicy();
+        final var policy = new InCommonRSAttributeReleasePolicy();
+        final var chain = new ChainingAttributeReleasePolicy();
         chain.setPolicies(Arrays.asList(policy, new DenyAllAttributeReleasePolicy()));
         service.setAttributeReleasePolicy(chain);
         service.setDescription("Description");
@@ -43,7 +41,7 @@ public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests
         service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, true));
         servicesManager.save(service);
         servicesManager.load();
-        final Collection<RegisteredService> services = servicesManager.getAllServices();
+        final var services = servicesManager.getAllServices();
         assertEquals(2, services.size());
         services.forEach(s -> servicesManager.delete(s.getId()));
         assertEquals(0, servicesManager.count());

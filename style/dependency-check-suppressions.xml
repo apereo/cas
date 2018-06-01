@@ -4,6 +4,18 @@
         <cve>CVE-2011-4644</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2012-1856</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-1762</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2007-5090</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-1763</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2017-17485</cve>
     </suppress>
     <suppress>

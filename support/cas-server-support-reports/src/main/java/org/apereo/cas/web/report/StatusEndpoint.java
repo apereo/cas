@@ -1,7 +1,6 @@
 package org.apereo.cas.web.report;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CasVersion;
@@ -12,15 +11,9 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 /**
@@ -42,37 +35,30 @@ public class StatusEndpoint extends BaseCasMvcEndpoint {
     /**
      * Handle request.
      *
-     * @param request  the request
-     * @param response the response
+     * @return the map
      * @throws Exception the exception
      */
-    @GetMapping
-    @ResponseBody
     @ReadOperation
-    protected void handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public Map<String, Object> handle() throws Exception {
 
-        final var sb = new StringBuilder();
+        final var model = new LinkedHashMap<String, Object>();
         final var health = this.healthEndpoint.health();
         final var status = health.getStatus();
 
         if (status.equals(Status.DOWN) || status.equals(Status.OUT_OF_SERVICE)) {
-            response.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value());
+            model.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());
+            model.put("description", HttpStatus.SERVICE_UNAVAILABLE.name());
+        } else {
+            model.put("status", HttpStatus.OK.value());
+            model.put("description", HttpStatus.OK.name());
         }
+        model.put("health", status.getCode());
+        model.put("host", StringUtils.isBlank(getCasProperties().getHost().getName())
+            ? InetAddressUtils.getCasServerHostName()
+            : getCasProperties().getHost().getName());
+        model.put("server", getCasProperties().getServer().getName());
+        model.put("version", CasVersion.asString());
 
-        sb.append("Health: ").append(status.getCode());
-        sb.append("\n\nHost:\t\t").append(
-            StringUtils.isBlank(getCasProperties().getHost().getName())
-                ? InetAddressUtils.getCasServerHostName()
-                : getCasProperties().getHost().getName()
-        );
-        sb.append("\nServer:\t\t").append(getCasProperties().getServer().getName());
-        sb.append("\nVersion:\t").append(CasVersion.getVersion());
-        response.setContentType(MediaType.TEXT_PLAIN_VALUE);
-        try (Writer writer = response.getWriter()) {
-            IOUtils.copy(new ByteArrayInputStream(sb.toString().getBytes(response.getCharacterEncoding())),
-                writer,
-                StandardCharsets.UTF_8);
-            writer.flush();
-        }
+        return model;
     }
 }
