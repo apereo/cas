@@ -130,7 +130,8 @@ public abstract class AbstractOpenSamlTests {
         }
 
         @Override
-        public void afterPropertiesSet() { SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+        public void afterPropertiesSet() {
+            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
 

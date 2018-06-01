@@ -1,5 +1,6 @@
 package org.apereo.cas.metadata.rest;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
@@ -26,14 +27,10 @@ import java.util.stream.StreamSupport;
  */
 @Slf4j
 @Endpoint(id = "configuration-metadata", enableByDefault = false)
+@RequiredArgsConstructor
 public class CasConfigurationMetadataServerEndpoint {
     private final CasConfigurationMetadataRepository repository;
 
-    public CasConfigurationMetadataServerEndpoint(final CasConfigurationMetadataRepository repository) {
-        this.repository = repository;
-    }
-    
-    
     /**
      * Find all properties.
      *

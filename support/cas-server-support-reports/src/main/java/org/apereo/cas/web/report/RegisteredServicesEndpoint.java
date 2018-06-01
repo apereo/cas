@@ -8,12 +8,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.WebAsyncTask;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
@@ -26,7 +22,7 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @Slf4j
-@Endpoint(id = "registered-services")
+@Endpoint(id = "registered-services", enableByDefault = false)
 public class RegisteredServicesEndpoint extends BaseCasMvcEndpoint {
     private final ServicesManager servicesManager;
 
@@ -45,14 +41,10 @@ public class RegisteredServicesEndpoint extends BaseCasMvcEndpoint {
     /**
      * Handle and produce a list of services from registry.
      *
-     * @param request  the request
-     * @param response the response
      * @return the web async task
      */
-    @GetMapping
-    @ResponseBody
     @ReadOperation
-    public WebAsyncTask<Map<String, Object>> handle(final HttpServletRequest request, final HttpServletResponse response) {
+    public WebAsyncTask<Map<String, Object>> handle() {
 
         final Callable<Map<String, Object>> asyncTask = () -> this.servicesManager.getAllServices()
             .stream()

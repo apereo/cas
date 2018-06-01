@@ -9,10 +9,7 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.MediaType;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
@@ -35,7 +32,7 @@ import java.util.stream.StreamSupport;
  * @since 5.1.0
  */
 @Slf4j
-@Endpoint(id = "spring-webflow")
+@Endpoint(id = "spring-webflow", enableByDefault = false)
 public class SpringWebflowEndpoint extends BaseCasMvcEndpoint {
 
     private final ApplicationContext applicationContext;
@@ -56,8 +53,6 @@ public class SpringWebflowEndpoint extends BaseCasMvcEndpoint {
      *
      * @return JSON representing the current state of SWF.
      */
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
     @ReadOperation
     public Map<?, ?> getReport() {
         final Map<String, Object> jsonMap = new HashMap<>();

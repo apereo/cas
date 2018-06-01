@@ -65,7 +65,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
-import org.apereo.cas.web.support.config.CasThrottlingConfiguration;
 import org.junit.runner.RunWith;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.springframework.web.SecurityInterceptor;

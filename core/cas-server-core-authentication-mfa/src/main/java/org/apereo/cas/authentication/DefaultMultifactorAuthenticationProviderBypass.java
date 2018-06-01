@@ -242,7 +242,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
         final var values = names
             .stream()
             .filter(e -> {
-                    final var valuesCol = CollectionUtils.toCollection(e.getValue());
+                final var valuesCol = CollectionUtils.toCollection(e.getValue());
                 LOGGER.debug("Matching attribute [{}] with values [{}] against [{}]", e.getKey(), valuesCol, attrValue);
                 return valuesCol
                     .stream()
