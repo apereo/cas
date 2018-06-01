@@ -114,7 +114,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
                 final var attributes = auth.getAttributes();
                 LOGGER.debug("Located authentication attributes [{}]", attributes);
                 if (attributes.containsKey(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME)) {
-                    final var rememberMeValue = attributes.getOrDefault(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, false);
+                    final var rememberMeValue = attributes.getOrDefault(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.FALSE);
                     LOGGER.debug("Located remember-me authentication attribute [{}]", rememberMeValue);
                     isRememberMe = CollectionUtils.wrapSet(rememberMeValue).contains(Boolean.TRUE);
                 }
