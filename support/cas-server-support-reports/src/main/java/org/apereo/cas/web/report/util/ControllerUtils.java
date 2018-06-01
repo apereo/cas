@@ -11,7 +11,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -25,17 +24,6 @@ import java.util.Optional;
 public class ControllerUtils {
 
     /**
-     * Configure model map for config server cloud bus endpoints.
-     *
-     * @param path  the path
-     * @param model the model
-     */
-    public static void configureModelMapForConfigServerCloudBusEndpoints(final String path, final Map model) {
-        model.put("refreshEndpoint", path + "/status/refresh");
-        model.put("refreshMethod", "POST");
-    }
-
-    /**
      * Build logger context logger context.
      *
      * @param environment    the environment
@@ -44,7 +32,7 @@ public class ControllerUtils {
      */
     @SneakyThrows
     public static Optional<Pair<Resource, LoggerContext>> buildLoggerContext(final Environment environment, final ResourceLoader
-            resourceLoader) {
+        resourceLoader) {
         final var logFile = environment.getProperty("logging.config", "classpath:/log4j2.xml");
         LOGGER.debug("Located logging configuration reference in the environment as [{}]", logFile);
 

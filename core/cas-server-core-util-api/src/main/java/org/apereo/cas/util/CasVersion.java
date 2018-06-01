@@ -21,6 +21,15 @@ import java.time.ZonedDateTime;
 public class CasVersion {
 
     /**
+     * To string.
+     *
+     * @return the string
+     */
+    public static String asString() {
+        return getVersion() + " - " + getSpecificationVersion() + " - " + getDateTime().toString();
+    }
+
+    /**
      * @return Return the full CAS version string.
      * @see java.lang.Package#getImplementationVersion
      */

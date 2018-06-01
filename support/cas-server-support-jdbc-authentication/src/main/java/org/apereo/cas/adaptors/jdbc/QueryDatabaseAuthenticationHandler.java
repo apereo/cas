@@ -89,12 +89,12 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                     throw new FailedLoginException("Missing field 'total' from the query results for " + username);
                 }
 
-                final Object count = dbFields.get("total");
+                final var count = dbFields.get("total");
                 if (count == null || !NumberUtils.isCreatable(count.toString())) {
                     throw new FailedLoginException("Missing field value 'total' from the query results for " + username + " or value not parseable as a number");
                 }
 
-                final Number number = NumberUtils.createNumber(count.toString());
+                final var number = NumberUtils.createNumber(count.toString());
                 if (number.longValue() != 1) {
                     throw new FailedLoginException("No records found for user " + username);
                 }
