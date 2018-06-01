@@ -116,6 +116,7 @@ allprojects {
 
     javadoc {
         options.addBooleanOption('html5', true)
+        failOnError = Boolean.getBoolean("ignoreJavadocFailures")
     }
 }
 
@@ -397,6 +398,7 @@ task javadoc(type: Javadoc, description: "Aggregate all Javadocs into a single d
     destinationDir = new File(buildDir, "javadoc")
     classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
     options.addBooleanOption('html5', true)
+    failOnError = Boolean.getBoolean("ignoreJavadocFailures")
 }
 
 task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc, description: "Aggregate all Javadocs into a single directory") {
