@@ -17,7 +17,6 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.ResourceLoader;
 
 import java.io.File;
-import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -69,7 +68,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     private PropertySource<?> loadSettingsFromStandaloneConfigFile(final File configFile) {
         final var props = new Properties();
 
-        try (Reader r = Files.newBufferedReader(configFile.toPath(), StandardCharsets.UTF_8)) {
+        try (var r = Files.newBufferedReader(configFile.toPath(), StandardCharsets.UTF_8)) {
             LOGGER.debug("Located CAS standalone configuration file at [{}]", configFile);
             props.load(r);
             LOGGER.debug("Found settings [{}] in file [{}]", props.keySet(), configFile);
@@ -97,7 +96,9 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
                 props.putAll(decryptProperties(pp));
             } else {
                 final var pp = new Properties();
-                pp.load(Files.newBufferedReader(f.toPath(), StandardCharsets.UTF_8));
+                try (var reader = Files.newBufferedReader(f.toPath(), StandardCharsets.UTF_8)) {
+                    pp.load(reader);
+                }
                 LOGGER.debug("Found settings [{}] in file [{}]", pp.keySet(), f);
                 props.putAll(decryptProperties(pp));
             }
@@ -129,7 +130,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     }
 
     private Map<String, Object> decryptProperties(final Map properties) {
-        return this.configurationCipherExecutor.decode(properties, new Object[] {});
+        return this.configurationCipherExecutor.decode(properties, new Object[]{});
     }
 
     private static String buildPatternForConfigurationFileDiscovery(final File config, final List<String> profiles) {
