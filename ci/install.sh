@@ -44,7 +44,7 @@ elif [ "$MATRIX_JOB_TYPE" == "JAVADOC" ]; then
      -DskipGradleLint=true -DskipSass=true -DenableIncremental=true -DskipNestedConfigMetadataGen=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
-    gradleBuild="$gradleBuild test coveralls -x javadoc -x check \
+    gradleBuild="$gradleBuild test coveralls -x javadoc -x check --parallel \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 elif [ "$MATRIX_JOB_TYPE" == "DEPANALYZE" ]; then
