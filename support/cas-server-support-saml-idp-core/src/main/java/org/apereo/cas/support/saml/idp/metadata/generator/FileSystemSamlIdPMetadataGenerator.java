@@ -86,9 +86,10 @@ public class FileSystemSamlIdPMetadataGenerator implements SamlIdPMetadataGenera
             FileUtils.forceDelete(encKey);
         }
 
-        this.samlIdPCertificateAndKeyWriter.writeCertificateAndKey(
-            Files.newBufferedWriter(encKey.toPath(), StandardCharsets.UTF_8),
-            Files.newBufferedWriter(encCert.toPath(), StandardCharsets.UTF_8));
+        try (var keyWriter = Files.newBufferedWriter(encKey.toPath(), StandardCharsets.UTF_8);
+             var certWriter = Files.newBufferedWriter(encCert.toPath(), StandardCharsets.UTF_8)) {
+            this.samlIdPCertificateAndKeyWriter.writeCertificateAndKey(keyWriter, certWriter);
+        }
     }
 
     /**
@@ -104,9 +105,11 @@ public class FileSystemSamlIdPMetadataGenerator implements SamlIdPMetadataGenera
         if (signingKey.exists()) {
             FileUtils.forceDelete(signingKey);
         }
-        this.samlIdPCertificateAndKeyWriter.writeCertificateAndKey(
-            Files.newBufferedWriter(signingKey.toPath(), StandardCharsets.UTF_8),
-            Files.newBufferedWriter(signingCert.toPath(), StandardCharsets.UTF_8));
+        try (var keyWriter = Files.newBufferedWriter(signingKey.toPath(), StandardCharsets.UTF_8);
+             var certWriter = Files.newBufferedWriter(signingCert.toPath(), StandardCharsets.UTF_8)) {
+            this.samlIdPCertificateAndKeyWriter.writeCertificateAndKey(keyWriter, certWriter);
+        }
+
     }
 
     /**

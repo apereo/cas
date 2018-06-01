@@ -238,9 +238,10 @@ public class ScriptingUtils {
             if (theScriptFile.exists()) {
                 LOGGER.debug("Created object instance from class [{}]", theScriptFile.getCanonicalPath());
 
-                engine.eval(Files.newBufferedReader(theScriptFile.toPath(), StandardCharsets.UTF_8));
+                try (var reader = Files.newBufferedReader(theScriptFile.toPath(), StandardCharsets.UTF_8)) {
+                    engine.eval(reader);
+                }
                 final var invocable = (Invocable) engine;
-
                 LOGGER.debug("Executing script's run method, with parameters [{}]", args);
                 final var result = invocable.invokeFunction("run", args);
                 LOGGER.debug("Groovy script result is [{}]", result);
@@ -326,7 +327,7 @@ public class ScriptingUtils {
             }
 
             final var script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-            
+
             final var clazz = AccessController.doPrivileged((PrivilegedAction<Class<T>>) () -> {
                 final var classLoader = new GroovyClassLoader(ScriptingUtils.class.getClassLoader(),
                     new CompilerConfiguration(), true);

@@ -11,7 +11,10 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-if [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
+if [ "$MATRIX_JOB_TYPE" == "BUILD" ]; then
+    gradleBuild="$gradleBuild build -x test -x javadoc -x check -DskipNpmLint=true --parallel \
+    -DenableIncremental=true -DskipNestedConfigMetadataGen=true "
+elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
     if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ]; then
         if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip snapshots]"* ]]; then
             echo -e "The build will skip deploying SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"

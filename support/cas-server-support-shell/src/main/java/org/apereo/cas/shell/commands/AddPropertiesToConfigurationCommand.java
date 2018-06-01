@@ -17,8 +17,6 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Collections;
@@ -95,7 +93,7 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
         options.setPrettyFlow(true);
         options.setAllowUnicode(true);
         final var yaml = new Yaml(options);
-        try (Writer writer = Files.newBufferedWriter(filePath.toPath(), StandardCharsets.UTF_8)) {
+        try (var writer = Files.newBufferedWriter(filePath.toPath(), StandardCharsets.UTF_8)) {
             putResultsIntoProperties(results, yamlProps);
             yaml.dump(yamlProps, writer);
         }
@@ -137,7 +135,7 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
 
     private Properties loadPropertiesFromConfigurationFile(final File filePath) throws IOException {
         final var p = new Properties();
-        try (Reader f = Files.newBufferedReader(filePath.toPath(), StandardCharsets.UTF_8)) {
+        try (var f = Files.newBufferedReader(filePath.toPath(), StandardCharsets.UTF_8)) {
             p.load(f);
         }
         return p;

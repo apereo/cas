@@ -21,7 +21,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Enumeration;
@@ -197,7 +196,7 @@ public class ResourceUtils {
                             copyDestination = new File(destination, entryFileName.getName());
                         }
 
-                        try (Writer writer = Files.newBufferedWriter(copyDestination.toPath(), StandardCharsets.UTF_8)) {
+                        try (var writer = Files.newBufferedWriter(copyDestination.toPath(), StandardCharsets.UTF_8)) {
                             IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
                         }
                     }
