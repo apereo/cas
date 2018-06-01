@@ -48,4 +48,19 @@ public class InetAddressUtils {
         }
         return hostName;
     }
+
+    /**
+     * Gets cas server host address.
+     *
+     * @param name the name
+     * @return the cas server host address
+     */
+    @SneakyThrows
+    public static String getCasServerHostAddress(final String name) {
+        final InetAddress host = getByName(name);
+        if (host != null) {
+            return host.getHostAddress();
+        }
+        return null;
+    }
 }

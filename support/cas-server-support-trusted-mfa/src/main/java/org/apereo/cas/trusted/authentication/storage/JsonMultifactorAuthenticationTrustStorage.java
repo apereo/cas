@@ -9,10 +9,11 @@ import org.apereo.cas.util.ResourceUtils;
 import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
 
+import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -45,7 +46,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     @Override
-    public void expire(final LocalDate onOrBefore) {
+    public void expire(final LocalDateTime onOrBefore) {
         final Set<MultifactorAuthenticationTrustRecord> results = storage
             .values()
             .stream()
@@ -63,7 +64,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
+    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
         expire(onOrAfterDate);
         return storage
             .values()
@@ -108,7 +109,12 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     @SneakyThrows
     private void writeTrustedRecordsToResource() {
-        MAPPER.writerWithDefaultPrettyPrinter().writeValue(this.location.getFile(), this.storage);
+        final File file = this.location.getFile();
+        final boolean res = file.createNewFile();
+        if (res) {
+            LOGGER.debug("Created JSON resource @ [{}]", this.location);
+        }
+        MAPPER.writerWithDefaultPrettyPrinter().writeValue(file, this.storage);
         readTrustedRecordsFromResource();
     }
 }

@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.services.stream;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.services.stream.hazelcast.StreamServicesHazelcastProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -15,7 +14,7 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-service-registry-stream")
-@Slf4j
+
 @Getter
 @Setter
 public class StreamingServiceRegistryProperties implements Serializable {

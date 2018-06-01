@@ -6,10 +6,12 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.inspektr.audit.annotation.Audit;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -75,7 +77,7 @@ public class DefaultConsentEngine implements ConsentEngine {
                                                 final Authentication authentication,
                                                 final long reminder,
                                                 final ChronoUnit reminderTimeUnit,
-                                                final ConsentOptions options) {
+                                                final ConsentReminderOptions options) {
         final Map<String, Object> attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
         final String principalId = authentication.getPrincipal().getId();
 
@@ -114,6 +116,10 @@ public class DefaultConsentEngine implements ConsentEngine {
                                                                 final Service service,
                                                                 final RegisteredService registeredService) {
         LOGGER.debug("Retrieving consentable attributes for [{}]", registeredService);
-        return registeredService.getAttributeReleasePolicy().getConsentableAttributes(authentication.getPrincipal(), service, registeredService);
+        final RegisteredServiceAttributeReleasePolicy policy = registeredService.getAttributeReleasePolicy();
+        if (policy != null) {
+            return policy.getConsentableAttributes(authentication.getPrincipal(), service, registeredService);
+        }
+        return new LinkedHashMap<>();
     }
 }

@@ -18,7 +18,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Collection;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link UrlResourceMetadataResolverTests}.
@@ -46,8 +45,7 @@ public class UrlResourceMetadataResolverTests {
     @Test
     public void verifyResolverSupports() {
         final SamlIdPProperties props = new SamlIdPProperties();
-        final UrlResourceMetadataResolver resolver = new UrlResourceMetadataResolver(props,
-            openSamlConfigBean, this.httpClient);
+        final UrlResourceMetadataResolver resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
         final SamlRegisteredService service = new SamlRegisteredService();
         service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
         assertTrue(resolver.supports(service));
@@ -58,7 +56,7 @@ public class UrlResourceMetadataResolverTests {
     @Test
     public void verifyResolverResolves() {
         final SamlIdPProperties props = new SamlIdPProperties();
-        final UrlResourceMetadataResolver resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean, this.httpClient);
+        final UrlResourceMetadataResolver resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
         final SamlRegisteredService service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);

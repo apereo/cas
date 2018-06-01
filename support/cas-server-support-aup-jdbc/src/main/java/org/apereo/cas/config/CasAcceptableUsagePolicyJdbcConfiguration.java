@@ -16,6 +16,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.sql.DataSource;
+
 /**
  * This is {@link CasAcceptableUsagePolicyJdbcConfiguration} that stores AUP decisions in a mongo database.
  *
@@ -33,19 +35,25 @@ public class CasAcceptableUsagePolicyJdbcConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
+    @Bean
+    public DataSource acceptableUsagePolicyDataSource() {
+        final AcceptableUsagePolicyProperties.Jdbc jdbc = casProperties.getAcceptableUsagePolicy().getJdbc();
+        return JpaBeans.newDataSource(jdbc);
+    }
+
     @RefreshScope
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
         final AcceptableUsagePolicyProperties.Jdbc jdbc = casProperties.getAcceptableUsagePolicy().getJdbc();
-        
+
         if (StringUtils.isBlank(jdbc.getTableName())) {
             throw new BeanCreationException("Database table for acceptable usage policy must be specified.");
         }
-        
-        return new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport, 
-                casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
-                JpaBeans.newDataSource(jdbc),
-                jdbc.getTableName());
+
+        return new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport,
+            casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
+            acceptableUsagePolicyDataSource(),
+            jdbc.getTableName());
     }
 }

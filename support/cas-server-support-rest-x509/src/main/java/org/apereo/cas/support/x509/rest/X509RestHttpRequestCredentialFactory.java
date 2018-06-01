@@ -39,11 +39,15 @@ public class X509RestHttpRequestCredentialFactory implements RestHttpRequestCred
         if (StringUtils.isBlank(cert)) {
             return new ArrayList<>(0);
         }
-        final InputStream is = new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8));
-        final InputStreamSource iso = new InputStreamResource(is);
-        final X509Certificate certificate = CertUtils.readCertificate(iso);
-        final X509CertificateCredential credential = new X509CertificateCredential(new X509Certificate[]{certificate});
-        credential.setCertificate(certificate);
-        return CollectionUtils.wrap(credential);
+        try (InputStream is = new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8))) {
+            final InputStreamSource iso = new InputStreamResource(is);
+            final X509Certificate certificate = CertUtils.readCertificate(iso);
+            final X509CertificateCredential credential = new X509CertificateCredential(new X509Certificate[]{certificate});
+            credential.setCertificate(certificate);
+            return CollectionUtils.wrap(credential);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return new ArrayList<>(0);
     }
 }

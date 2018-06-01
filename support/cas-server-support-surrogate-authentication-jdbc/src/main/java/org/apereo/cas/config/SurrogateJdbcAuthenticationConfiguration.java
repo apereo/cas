@@ -14,6 +14,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.sql.DataSource;
+
 /**
  * This is {@link SurrogateJdbcAuthenticationConfiguration}.
  *
@@ -24,13 +26,10 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SurrogateJdbcAuthenticationConfiguration {
-
-
-
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -39,8 +38,14 @@ public class SurrogateJdbcAuthenticationConfiguration {
     public SurrogateAuthenticationService surrogateAuthenticationService() {
         final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
         return new SurrogateJdbcAuthenticationService(su.getJdbc().getSurrogateSearchQuery(),
-                JpaBeans.newDataSource(su.getJdbc()),
-                su.getJdbc().getSurrogateAccountQuery(), 
-                servicesManager);
+            surrogateAuthenticationJdbcDataSource(),
+            su.getJdbc().getSurrogateAccountQuery(),
+            servicesManager);
+    }
+
+    @Bean
+    public DataSource surrogateAuthenticationJdbcDataSource() {
+        final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
+        return JpaBeans.newDataSource(su.getJdbc());
     }
 }

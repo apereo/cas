@@ -1,5 +1,0 @@
-description = "Apereo CAS Core Configuration - AWS Secrets Manager"
-dependencies {
-    implementation libraries.awssecretsmanager
-    compileOnly project(":core:cas-server-core-configuration")
-}

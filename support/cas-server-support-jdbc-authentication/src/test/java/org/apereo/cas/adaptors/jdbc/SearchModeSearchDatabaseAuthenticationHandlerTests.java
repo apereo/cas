@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.Entity;
@@ -34,9 +34,12 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class})
-@ContextConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"})
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    DatabaseAuthenticationTestConfiguration.class
+})
 @Slf4j
+@DirtiesContext
 public class SearchModeSearchDatabaseAuthenticationHandlerTests {
 
     @Rule

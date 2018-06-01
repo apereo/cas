@@ -1,9 +1,10 @@
 package org.apereo.cas.monitor;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import java.util.Formatter;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Formatter;
 
 /**
  * Simple implementation of cache statistics.
@@ -31,26 +32,27 @@ public class SimpleCacheStatistics implements CacheStatistics {
     public SimpleCacheStatistics(final long size, final long capacity, final long evictions) {
         this(size, capacity, evictions, "N/A");
     }
-    
+
 
     @Override
-    public int getPercentFree() {
+    public long getPercentFree() {
         if (this.capacity == 0) {
             return 0;
         }
-        return (int) ((this.capacity - this.size) * PERCENTAGE_VALUE / this.capacity);
+        return (this.capacity - this.size) * PERCENTAGE_VALUE / this.capacity;
     }
 
     @Override
-    public void toString(final StringBuilder builder) {
+    public String toString(final StringBuilder builder) {
         if (this.name != null) {
             builder.append(this.name).append(':');
         }
         try (Formatter formatter = new Formatter(builder)) {
             formatter.format("%.2f", this.size / BYTES_PER_MB);
-            builder.append("MB used, ");
-            builder.append(getPercentFree()).append("% free, ");
-            builder.append(this.evictions).append(" evictions");
         }
+        builder.append("MB used, ");
+        builder.append(getPercentFree()).append(" percent free, ");
+        builder.append(this.evictions).append(" evictions");
+        return builder.toString();
     }
 }

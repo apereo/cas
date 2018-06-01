@@ -50,27 +50,27 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-        CasCoreServicesConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, 
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreUtilConfiguration.class})
+    CasCoreServicesConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasRegisteredServicesTestConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
+    CasRegisteredServicesTestConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasCoreConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreUtilConfiguration.class})
 @EnableScheduling
 @Slf4j
 public class DefaultCasAttributeEncoderTests {
@@ -112,7 +112,7 @@ public class DefaultCasAttributeEncoderTests {
 
     private void checkEncryptedValues(final String name, final Map<String, Object> encoded) {
         final String v1 = ((Collection<?>) this.attributes.get(
-                name)).iterator().next().toString();
+            name)).iterator().next().toString();
         final String v2 = (String) encoded.get(name);
         assertNotEquals(v1, v2);
     }

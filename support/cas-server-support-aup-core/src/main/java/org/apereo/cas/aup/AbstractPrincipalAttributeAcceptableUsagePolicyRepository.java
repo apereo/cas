@@ -1,6 +1,7 @@
 package org.apereo.cas.aup;
 
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Credential;
@@ -37,6 +38,7 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
 
     @Override
     public Pair<Boolean, Principal> verify(final RequestContext requestContext, final Credential credential) {
+        @NonNull
         final Principal principal = WebUtils.getPrincipalFromRequestContext(requestContext, this.ticketRegistrySupport);
 
         if (isUsagePolicyAcceptedBy(principal)) {

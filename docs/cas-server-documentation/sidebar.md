@@ -124,6 +124,7 @@ layout: null
         *   [JPA](/$version/installation/JPA-Ticket-Registry.html)
         *   [Ignite](/$version/installation/Ignite-Ticket-Registry.html)
         *   [Couchbase](/$version/installation/Couchbase-Ticket-Registry.html)
+        *   [CouchDb](/$version/installation/CouchDB-Ticket-Registry.html)
         *   [Infinispan](/$version/installation/Infinispan-Ticket-Registry.html)
         *   [Redis](/$version/installation/Redis-Ticket-Registry.html)
         *   [MongoDb](/$version/installation/MongoDb-Ticket-Registry.html)
@@ -135,6 +136,7 @@ layout: null
     *   [Access Strategy](/$version/installation/Configuring-Service-Access-Strategy.html)
     *   [Proxy Policy](/$version/installation/Configuring-Service-Proxy-Policy.html)
     *   [Custom Properties](/$version/installation/Configuring-Service-Custom-Properties.html)
+    *   [Response Type](/$version/installation/Configuring-Service-Response-Type.html)
     *   [HTTP Security Headers](/$version/installation/Configuring-Service-Http-Security-Headers.html)
     *   [Contacts & Owners](/$version/installation/Configuring-Service-Contacts.html)
     *   [Expiration Policy](/$version/installation/Configuring-Service-Expiration-Policy.html)
@@ -151,6 +153,7 @@ layout: null
         *   [DynamoDb](/$version/installation/DynamoDb-Service-Management.html)
         *   [CosmosDb](/$version/installation/CosmosDb-Service-Management.html)
         *   [Couchbase](/$version/installation/Couchbase-Service-Management.html)
+        *   [CouchDb](/$version/installation/CouchDb-Service-Management.html)
         *   [REST](/$version/installation/REST-Service-Management.html)
         *   [Custom](/$version/installation/Custom-Service-Management.html)
 

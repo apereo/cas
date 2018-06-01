@@ -3,6 +3,7 @@ package org.apereo.cas.util;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +22,6 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.security.PrivateKey;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +41,12 @@ public class EncodingUtils {
      * JSON web key parameter that identifies the key..
      */
     public static final String JSON_WEB_KEY = "k";
+
+    private static final Base32 BASE32_CHUNKED_ENCODER = new Base32(76, new byte[]{10});
+    private static final Base32 BASE32_UNCHUNKED_ENCODER = new Base32(0, new byte[]{10});
+
+    private static final Base64 BASE64_CHUNKED_ENCODER = new Base64(76, new byte[]{10});
+    private static final Base64 BASE64_UNCHUNKED_ENCODER = new Base64(0, new byte[]{10});
 
     /**
      * Hex decode string.
@@ -131,6 +137,20 @@ public class EncodingUtils {
     }
 
     /**
+     * Base64-encode the given byte[] as a string.
+     *
+     * @param data    the byte array to encode
+     * @param chunked the chunked
+     * @return the encoded string
+     */
+    public static String encodeBase64(final byte[] data, final boolean chunked) {
+        if (chunked) {
+            return BASE64_CHUNKED_ENCODER.encodeToString(data).trim();
+        }
+        return BASE64_UNCHUNKED_ENCODER.encodeToString(data).trim();
+    }
+
+    /**
      * Base64-encode the given string as a string.
      *
      * @param data the String to encode
@@ -180,6 +200,19 @@ public class EncodingUtils {
         return Base64.encodeBase64(data);
     }
 
+    /**
+     * Base32-encode the given byte[] as a string.
+     *
+     * @param data    the byte array to encode
+     * @param chunked the chunked
+     * @return the encoded string
+     */
+    public static String encodeBase32(final byte[] data, final boolean chunked) {
+        if (chunked) {
+            return BASE32_CHUNKED_ENCODER.encodeToString(data).trim();
+        }
+        return BASE32_UNCHUNKED_ENCODER.encodeToString(data).trim();
+    }
 
     /**
      * Url encode a value via UTF-8.
@@ -241,7 +274,7 @@ public class EncodingUtils {
 
         final boolean verified = jws.verifySignature();
         if (verified) {
-            final String payload = jws.getPayload();
+            final String payload = jws.getEncodedPayload();
             LOGGER.trace("Successfully decoded value. Result in Base64-encoding is [{}]", payload);
             return EncodingUtils.decodeBase64(payload);
         }
@@ -294,7 +327,7 @@ public class EncodingUtils {
      * @param value the value
      * @return the byte []
      */
-    public static byte[] signJwsRSASha512(final PrivateKey key, final byte[] value) {
+    public static byte[] signJwsRSASha512(final Key key, final byte[] value) {
         return signJws(key, value, AlgorithmIdentifiers.RSA_USING_SHA512);
     }
 
@@ -310,7 +343,7 @@ public class EncodingUtils {
     public static byte[] signJws(final Key key, final byte[] value, final String algHeaderValue) {
         final String base64 = EncodingUtils.encodeBase64(value);
         final JsonWebSignature jws = new JsonWebSignature();
-        jws.setPayload(base64);
+        jws.setEncodedPayload(base64);
         jws.setAlgorithmHeaderValue(algHeaderValue);
         jws.setKey(key);
         return jws.getCompactSerialization().getBytes(StandardCharsets.UTF_8);

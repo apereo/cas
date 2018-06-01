@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -7,7 +8,6 @@ import org.apereo.cas.configuration.model.support.pm.PasswordManagementPropertie
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -23,17 +23,10 @@ import java.util.List;
  * @since 5.0.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class VerifyPasswordResetRequestAction extends AbstractAction {
-
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
+    private final CasConfigurationProperties casProperties;
     private final PasswordManagementService passwordManagementService;
-
-    public VerifyPasswordResetRequestAction(final PasswordManagementService passwordManagementService) {
-        this.passwordManagementService = passwordManagementService;
-    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
@@ -56,7 +49,7 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
 
         if (pm.getReset().isSecurityQuestionsEnabled()) {
             final List<String> questions = BasePasswordManagementService
-                    .canonicalizeSecurityQuestions(passwordManagementService.getSecurityQuestions(username));
+                .canonicalizeSecurityQuestions(passwordManagementService.getSecurityQuestions(username));
             if (questions.isEmpty()) {
                 LOGGER.warn("No security questions could be found for [{}]", username);
                 return error();

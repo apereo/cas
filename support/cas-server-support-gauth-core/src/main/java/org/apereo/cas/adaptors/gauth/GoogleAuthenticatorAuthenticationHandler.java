@@ -11,7 +11,7 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.services.ServicesManager;
@@ -64,16 +64,18 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         final Authentication authentication = WebUtils.getInProgressAuthentication();
         final String uid = authentication.getPrincipal().getId();
 
-        LOGGER.debug("Received principal id [{}]", uid);
+        LOGGER.debug("Received principal id [{}]. Attempting to locate account in credential repository...", uid);
         final OneTimeTokenAccount acct = this.credentialRepository.get(uid);
         if (acct == null || StringUtils.isBlank(acct.getSecretKey())) {
             throw new AccountNotFoundException(uid + " cannot be found in the registry");
         }
 
+        LOGGER.debug("Attempting to locate OTP token [{}] in token repository for [{}]...", otp, uid);
         if (this.tokenRepository.exists(uid, otp)) {
             throw new AccountExpiredException(uid + " cannot reuse OTP " + otp + " as it may be expired/invalid");
         }
 
+        LOGGER.debug("Attempting to authorize OTP token [{}]...", otp);
         boolean isCodeValid = this.googleAuthenticatorInstance.authorize(acct.getSecretKey(), otp);
 
         if (!isCodeValid && acct.getScratchCodes().contains(otp)) {
@@ -84,10 +86,13 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         }
 
         if (isCodeValid) {
+            LOGGER.debug("Validated OTP token [{}] successfully for [{}]", otp, uid);
             this.tokenRepository.store(new GoogleAuthenticatorToken(otp, uid));
+            LOGGER.debug("Creating authentication result and building principal for [{}]", uid);
             return createHandlerResult(tokenCredential, this.principalFactory.createPrincipal(uid));
         }
 
+        LOGGER.warn("Authorization of OTP token [{}] has failed", otp);
         throw new FailedLoginException("Failed to authenticate code " + otp);
     }
 

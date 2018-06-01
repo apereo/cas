@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatAjpProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatBasicAuthenticationProperties;
@@ -26,7 +25,7 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core", automated = true)
-@Slf4j
+
 @Getter
 @Setter
 public class CasServerProperties implements Serializable {

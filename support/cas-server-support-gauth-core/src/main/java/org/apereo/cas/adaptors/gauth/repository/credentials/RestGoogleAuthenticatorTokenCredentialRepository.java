@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
 import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
-import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -82,7 +82,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
         headers.put("scratchCodes", account.getScratchCodes().stream().map(String::valueOf).collect(Collectors.toList()));
 
         final HttpEntity<String> entity = new HttpEntity<>(headers);
-        final ResponseEntity<Boolean> result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.POST, entity, Boolean.class);
+        final ResponseEntity<Object> result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.POST, entity, Object.class);
         if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
             LOGGER.debug("Posted google authenticator account successfully");
             return account;

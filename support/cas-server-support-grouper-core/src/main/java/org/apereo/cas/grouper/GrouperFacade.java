@@ -5,9 +5,9 @@ import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.CollectionUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link GrouperFacade} that acts as a wrapper
@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
  * @since 5.1.0
  */
 @Slf4j
-@NoArgsConstructor
 public class GrouperFacade {
 
     /**
@@ -30,7 +29,7 @@ public class GrouperFacade {
      * @return the final attribute name
      */
     public static String getGrouperGroupAttribute(final GrouperGroupField groupField, final WsGroup group) {
-        switch(groupField) {
+        switch (groupField) {
             case DISPLAY_EXTENSION:
                 return group.getDisplayExtension();
             case DISPLAY_NAME:
@@ -49,7 +48,7 @@ public class GrouperFacade {
      * @param subjectId the principal
      * @return the groups for subject id
      */
-    public static Collection<WsGetGroupsResult> getGroupsForSubjectId(final String subjectId) {
+    public Collection<WsGetGroupsResult> getGroupsForSubjectId(final String subjectId) {
         try {
             final GcGetGroups groupsClient = new GcGetGroups().addSubjectId(subjectId);
             final WsGetGroupsResult[] results = groupsClient.execute().getResults();

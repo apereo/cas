@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.TicketGrantingTicketImplTests;
 import org.apereo.cas.ticket.UnrecognizableServiceForServiceTicketValidationExceptionTests;
 import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandlerTests;
 import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandlerTests;
+import org.apereo.cas.ticket.registry.CachingTicketRegistryTests;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryTests;
 import org.apereo.cas.ticket.registry.DistributedTicketRegistryTests;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicyTests;
@@ -24,13 +25,21 @@ import org.junit.runners.Suite;
  * @since 5.0.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({InvalidTicketExceptionTests.class, ServiceTicketImplTests.class,
-        TicketGrantingTicketImplTests.class, UnrecognizableServiceForServiceTicketValidationExceptionTests.class,
-        MultiTimeUseOrTimeoutExpirationPolicyTests.class, RememberMeDelegatingExpirationPolicyTests.class,
-        ThrottledUseAndTimeoutExpirationPolicyTests.class, TicketGrantingTicketExpirationPolicyTests.class,
-        TimeoutExpirationPolicyTests.class, DefaultTicketRegistryTests.class,
-        DistributedTicketRegistryTests.class, Cas10ProxyHandlerTests.class,
-        Cas20ProxyHandlerTests.class})
+@Suite.SuiteClasses({
+    InvalidTicketExceptionTests.class,
+    ServiceTicketImplTests.class,
+    TicketGrantingTicketImplTests.class,
+    UnrecognizableServiceForServiceTicketValidationExceptionTests.class,
+    MultiTimeUseOrTimeoutExpirationPolicyTests.class,
+    RememberMeDelegatingExpirationPolicyTests.class,
+    ThrottledUseAndTimeoutExpirationPolicyTests.class,
+    TicketGrantingTicketExpirationPolicyTests.class,
+    TimeoutExpirationPolicyTests.class,
+    DefaultTicketRegistryTests.class,
+    CachingTicketRegistryTests.class,
+    DistributedTicketRegistryTests.class,
+    Cas10ProxyHandlerTests.class,
+    Cas20ProxyHandlerTests.class})
 @Slf4j
 public class AllTestsSuite {
 }

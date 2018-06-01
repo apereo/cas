@@ -4,10 +4,61 @@
         <cve>CVE-2011-4644</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2017-17485</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-1762</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2007-5090</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-1763</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2012-1856</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2013-4366</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-3577</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-5262</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-5968</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-1196</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-2156</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2017-17485</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-5968</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-3488</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2016-4970</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2017-8046</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2013-6771</cve>
     </suppress>
     <suppress>
         <cve>CVE-2013-7394</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-1199</cve>
     </suppress>
     <suppress>
         <cve>CVE-2016-9878</cve>
@@ -284,5 +335,100 @@
     </suppress>
     <suppress>
         <cve>CVE-2016-5388</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-7683</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2016-3956</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2016-3956</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2016-3956</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-1270</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-1271</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-1272</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2016-2173</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-9494</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[ file name: jackson-databind and jetty embedded in ehcache ]]></notes>
+        <filePath regex="true" >.*/ehcache-2.10.5.jar/rest-management-private-classpath/.*</filePath>
+        <cve>CVE-2017-15095</cve>
+        <cve>CVE-2017-7525</cve>
+        <cve>CVE-2018-7489</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: openstack-neutron-2.1.0.jar
+   ]]></notes>
+        <gav regex="true">^org\.apache\.jclouds\.api:openstack-neutron:.*$</gav>
+        <cve>CVE-2013-6433</cve>
+        <cve>CVE-2014-3632</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   ignite-log4j2-2.4.0.jar identified as log4j 2.4
+   ]]></notes>
+        <gav regex="true">^org\.apache\.ignite:ignite-log4j2:.*$</gav>
+        <cve>CVE-2017-5645</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: activemq-core-5.7.0.jar
+   ]]></notes>
+        <gav regex="true">^org\.apache\.activemq:activemq.*:.*$</gav>
+        <cve>CVE-2012-5784</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: elasticache-java-cluster-client-1.1.1.jar
+   ]]></notes>
+        <gav regex="true">^com\.amazonaws:elasticache-java-cluster-client:.*$</gav>
+        <cpe>cpe:/a:memcached:memcached</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: cas-server-support-openid-5.3.0-RC4-SNAPSHOT.jar
+   ]]></notes>
+        <gav regex="true">^org\.apereo\.cas:cas-server-support-openid:.*$</gav>
+        <cpe>cpe:/a:openid:openid</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: servlet-api-3.0.20100224.jar
+   ]]></notes>
+        <gav regex="true">^org\.mortbay\.jetty:servlet-api:.*$</gav>
+        <cpe>cpe:/a:mortbay_jetty:jetty</cpe>
+        <cpe>cpe:/a:mortbay:jetty</cpe>
+        <cpe>cpe:/a:jetty:jetty</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[ Drupal vulnerability ]]></notes>
+        <cpe>cpe:/a:restful_web_services_project:restful_web_services</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[ jradius dependency - no replacement for jradius, can't override dependency ]]></notes>
+        <gav regex="true">^commons-beanutils:commons-beanutils-core:1.7.0$</gav>
+        <cpe>cpe:/a:apache:commons_beanutils</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   Identifies various current activemq packages as old versions of activemq.
+   ]]></notes>
+        <gav regex="true">^org\.apache\.activemq:activemq-.*:.*$</gav>
+        <cpe>cpe:/a:apache:activemq</cpe>
     </suppress>
 </suppressions>

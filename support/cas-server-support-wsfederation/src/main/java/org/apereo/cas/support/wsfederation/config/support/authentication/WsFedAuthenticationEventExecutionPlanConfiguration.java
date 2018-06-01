@@ -5,8 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegatedCookieProperties;
@@ -99,12 +99,12 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                 + "delegated authentication cookie.");
             cipher = CipherExecutor.noOp();
         }
-        config.setCookieGenerator(new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher),
+        final WsFederationCookieGenerator cookieGen = new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher),
             cookie.getName(), cookie.getPath(), cookie.getMaxAge(),
-            cookie.isSecure(), cookie.getDomain(), cookie.isHttpOnly()));
+            cookie.isSecure(), cookie.getDomain(), cookie.isHttpOnly());
+        config.setCookieGenerator(cookieGen);
 
         config.initialize();
-
         return config;
     }
 
@@ -124,7 +124,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public PrincipalFactory adfsPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "wsfedAuthenticationEventExecutionPlanConfigurer")

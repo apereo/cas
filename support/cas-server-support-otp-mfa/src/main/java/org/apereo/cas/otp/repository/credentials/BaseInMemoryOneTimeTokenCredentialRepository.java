@@ -2,6 +2,7 @@ package org.apereo.cas.otp.repository.credentials;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,8 @@ public abstract class BaseInMemoryOneTimeTokenCredentialRepository extends BaseO
     @Override
     public OneTimeTokenAccount get(final String userName) {
         if (contains(userName)) {
-            return decode(this.accounts.get(userName));
+            final OneTimeTokenAccount account = this.accounts.get(userName);
+            return decode(account);
         }
         return null;
     }

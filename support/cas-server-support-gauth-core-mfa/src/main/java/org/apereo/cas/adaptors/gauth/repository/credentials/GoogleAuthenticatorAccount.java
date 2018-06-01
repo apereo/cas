@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;

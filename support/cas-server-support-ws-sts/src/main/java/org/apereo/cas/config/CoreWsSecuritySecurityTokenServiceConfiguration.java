@@ -152,7 +152,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         op.setEventListener(loggerListener());
         op.setDelegationHandlers(delegationHandlers());
         op.setEncryptIssuedToken(wsfed.isEncryptTokens());
-
         return op;
     }
 

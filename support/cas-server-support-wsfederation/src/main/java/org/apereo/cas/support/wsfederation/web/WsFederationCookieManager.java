@@ -7,6 +7,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -25,7 +26,10 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class WsFederationCookieManager {
-    private static final String WCTX = "wctx";
+    /**
+     * ws-fed {@code wctx} parameter.
+     */
+    public static final String WCTX = "wctx";
 
     private final Collection<WsFederationConfiguration> configurations;
     private final String themeParamName;
@@ -49,8 +53,12 @@ public class WsFederationCookieManager {
             throw new IllegalArgumentException("No " + WCTX + " parameter is found");
         }
 
-        final WsFederationConfiguration configuration = configurations.stream().filter(c -> c.getId().equals(wCtx)).findFirst().orElse(null);
-        final String value = configuration.getCookieGenerator().retrieveCookieValue(request);
+        final WsFederationConfiguration configuration = configurations.stream()
+            .filter(c -> c.getId().equalsIgnoreCase(wCtx))
+            .findFirst()
+            .orElse(null);
+        final CookieRetrievingCookieGenerator cookieGen = configuration.getCookieGenerator();
+        final String value = cookieGen.retrieveCookieValue(request);
         if (StringUtils.isBlank(value)) {
             LOGGER.error("No cookie value could be retrieved to determine the state of the delegated authentication session");
             throw new IllegalArgumentException("No cookie could be found to determine session state");
@@ -64,7 +72,7 @@ public class WsFederationCookieManager {
         final String serviceKey = CasProtocolConstants.PARAMETER_SERVICE + "-" + wCtx;
         final Service service = (Service) session.get(serviceKey);
         LOGGER.debug("Located service [{}] from session cookie", service);
-        context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
+        WebUtils.putService(context, service);
         return service;
     }
 
@@ -95,7 +103,8 @@ public class WsFederationCookieManager {
         }
 
         final String cookieValue = serializeSessionValues(session);
-        configuration.getCookieGenerator().addCookie(request, response, cookieValue);
+        final CookieRetrievingCookieGenerator cookieGen = configuration.getCookieGenerator();
+        cookieGen.addCookie(request, response, cookieValue);
     }
 
     private String serializeSessionValues(final Map<String, Object> attributes) {

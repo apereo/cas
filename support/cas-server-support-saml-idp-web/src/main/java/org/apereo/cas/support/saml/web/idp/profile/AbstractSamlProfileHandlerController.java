@@ -485,7 +485,8 @@ public abstract class AbstractSamlProfileHandlerController {
 
         final String entityId = pair.getValue().getEntityId();
         LOGGER.debug("Preparing SAML response for [{}]", entityId);
-        this.responseBuilder.build(authnRequest, request, response, casAssertion, pair.getKey(), pair.getValue(), binding);
+        this.responseBuilder.build(authnRequest, request, response, casAssertion,
+            pair.getKey(), pair.getValue(), binding, authenticationContext.getValue());
         LOGGER.info("Built the SAML response for [{}]", entityId);
     }
 
