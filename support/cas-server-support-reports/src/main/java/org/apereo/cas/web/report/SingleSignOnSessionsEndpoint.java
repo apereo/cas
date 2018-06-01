@@ -5,7 +5,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DateTimeUtils;
@@ -13,15 +12,9 @@ import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.async.WebAsyncTask;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,7 +22,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 /**
  * SSO Report web controller that produces JSON data for the view.
@@ -41,9 +33,8 @@ import java.util.concurrent.Callable;
 @Slf4j
 @ToString
 @Getter
-@Endpoint(id = "sso-sessions")
+@Endpoint(id = "sso-sessions", enableByDefault = false)
 public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
-    private static final String VIEW_SSO_SESSIONS = "monitoring/viewSsoSessions";
 
     private static final String STATUS = "status";
 
@@ -147,67 +138,52 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
     /**
      * Endpoint for getting SSO Sessions in JSON format.
      *
-     * @param type     the type
-     * @param request  the request
-     * @param response the response
+     * @param type the type
      * @return the sso sessions
      */
-    @GetMapping(value = "/getSsoSessions")
-    @ResponseBody
     @ReadOperation
-    public WebAsyncTask<Map<String, Object>> getSsoSessions(@RequestParam(defaultValue = "ALL") final String type,
-                                                            final HttpServletRequest request, final HttpServletResponse response) {
-
-        final Callable<Map<String, Object>> asyncTask = () -> {
-            final Map<String, Object> sessionsMap = new HashMap<>(1);
-            final var option = SsoSessionReportOptions.valueOf(type);
-            final var activeSsoSessions = getActiveSsoSessions(option);
-            sessionsMap.put("activeSsoSessions", activeSsoSessions);
-            long totalTicketGrantingTickets = 0;
-            long totalProxyGrantingTickets = 0;
-            long totalUsageCount = 0;
-            final Set<String> uniquePrincipals = new HashSet<>();
-            for (final var activeSsoSession : activeSsoSessions) {
-                if (activeSsoSession.containsKey(SsoSessionAttributeKeys.IS_PROXIED.toString())) {
-                    final var isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.toString()).toString());
-                    if (isProxied) {
-                        totalProxyGrantingTickets++;
-                    } else {
-                        totalTicketGrantingTickets++;
-                        final var principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
-                        uniquePrincipals.add(principal);
-                    }
+    public Map<String, Object> getSsoSessions(final String type) {
+        final Map<String, Object> sessionsMap = new HashMap<>(1);
+        final var option = SsoSessionReportOptions.valueOf(type);
+        final var activeSsoSessions = getActiveSsoSessions(option);
+        sessionsMap.put("activeSsoSessions", activeSsoSessions);
+        long totalTicketGrantingTickets = 0;
+        long totalProxyGrantingTickets = 0;
+        long totalUsageCount = 0;
+        final Set<String> uniquePrincipals = new HashSet<>();
+        for (final var activeSsoSession : activeSsoSessions) {
+            if (activeSsoSession.containsKey(SsoSessionAttributeKeys.IS_PROXIED.toString())) {
+                final var isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.toString()).toString());
+                if (isProxied) {
+                    totalProxyGrantingTickets++;
                 } else {
                     totalTicketGrantingTickets++;
                     final var principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
                     uniquePrincipals.add(principal);
                 }
-                totalUsageCount += Long.parseLong(activeSsoSession.get(SsoSessionAttributeKeys.NUMBER_OF_USES.toString()).toString());
+            } else {
+                totalTicketGrantingTickets++;
+                final var principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
+                uniquePrincipals.add(principal);
             }
-            sessionsMap.put("totalProxyGrantingTickets", totalProxyGrantingTickets);
-            sessionsMap.put("totalTicketGrantingTickets", totalTicketGrantingTickets);
-            sessionsMap.put("totalTickets", totalTicketGrantingTickets + totalProxyGrantingTickets);
-            sessionsMap.put("totalPrincipals", uniquePrincipals.size());
-            sessionsMap.put("totalUsageCount", totalUsageCount);
-            return sessionsMap;
-        };
-        final var timeout = Beans.newDuration(getCasProperties().getHttpClient().getAsyncTimeout()).toMillis();
-        return new WebAsyncTask<>(timeout, asyncTask);
+            totalUsageCount += Long.parseLong(activeSsoSession.get(SsoSessionAttributeKeys.NUMBER_OF_USES.toString()).toString());
+        }
+        sessionsMap.put("totalProxyGrantingTickets", totalProxyGrantingTickets);
+        sessionsMap.put("totalTicketGrantingTickets", totalTicketGrantingTickets);
+        sessionsMap.put("totalTickets", totalTicketGrantingTickets + totalProxyGrantingTickets);
+        sessionsMap.put("totalPrincipals", uniquePrincipals.size());
+        sessionsMap.put("totalUsageCount", totalUsageCount);
+        return sessionsMap;
     }
 
     /**
      * Endpoint for destroying a single SSO Session.
      *
      * @param ticketGrantingTicket the ticket granting ticket
-     * @param request              the request
-     * @param response             the response
      * @return result map
      */
-    @PostMapping(value = "/destroySsoSession")
-    @ResponseBody
     @WriteOperation
-    public Map<String, Object> destroySsoSession(@RequestParam final String ticketGrantingTicket,
-                                                 final HttpServletRequest request, final HttpServletResponse response) {
+    public Map<String, Object> destroySsoSession(@Selector final String ticketGrantingTicket) {
 
         final Map<String, Object> sessionsMap = new HashMap<>(1);
         try {
@@ -224,31 +200,29 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
     }
 
     /**
-     * Endpoint for destroying SSO Sessions.
+     * Destroy sso sessions map.
      *
-     * @param type     the type
-     * @param request  the request
-     * @param response the response
-     * @return result map
+     * @param type the type
+     * @return the map
      */
-    @PostMapping(value = "/destroySsoSessions")
-    @ResponseBody
     @WriteOperation
-    public Map<String, Object> destroySsoSessions(@RequestParam(defaultValue = "ALL") final String type,
-                                                  final HttpServletRequest request, final HttpServletResponse response) {
+    public Map<String, Object> destroySsoSessions(final String type) {
 
         final Map<String, Object> sessionsMap = new HashMap<>();
         final Map<String, String> failedTickets = new HashMap<>();
         final var option = SsoSessionReportOptions.valueOf(type);
         final var collection = getActiveSsoSessions(option);
-        collection.stream().map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString()).toString()).forEach(ticketGrantingTicket -> {
-            try {
-                this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
-            } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
-                failedTickets.put(ticketGrantingTicket, e.getMessage());
-            }
-        });
+        collection
+            .stream()
+            .map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString()).toString())
+            .forEach(ticketGrantingTicket -> {
+                try {
+                    this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
+                } catch (final Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                    failedTickets.put(ticketGrantingTicket, e.getMessage());
+                }
+            });
         if (failedTickets.isEmpty()) {
             sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
         } else {
@@ -256,19 +230,5 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
             sessionsMap.put("failedTicketGrantingTickets", failedTickets);
         }
         return sessionsMap;
-    }
-
-    /**
-     * Show sso sessions.
-     *
-     * @param request  the request
-     * @param response the response
-     * @return the model and view where json data will be rendered
-     */
-    @GetMapping
-    @ReadOperation
-    public ModelAndView showSsoSessions(final HttpServletRequest request, final HttpServletResponse response) {
-
-        return new ModelAndView(VIEW_SSO_SESSIONS);
     }
 }

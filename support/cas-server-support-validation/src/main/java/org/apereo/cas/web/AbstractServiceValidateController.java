@@ -226,7 +226,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 return generateErrorView(e.getCode(), new Object[]{serviceCredential.getId()}, request, service);
             }
         }
-        final Assertion assertion = validateServiceTicket(service, serviceTicketId);
+        final var assertion = validateServiceTicket(service, serviceTicketId);
         if (!validateAssertion(request, serviceTicketId, assertion, service)) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET, new Object[]{serviceTicketId}, request, service);
         }

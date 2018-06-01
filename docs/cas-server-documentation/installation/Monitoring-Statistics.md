@@ -24,7 +24,6 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `mappings`                | Describes how requests are mapped and handled by CAS.
 | `scheduledtasks`          | Displays the scheduled tasks in CAS.
 | `mappings`                | Describes how requests are mapped and handled by CAS.
-| `mappings`                | Describes how requests are mapped and handled by CAS.
 | `shutdown`                | Shut down the application via a `POST`. Disabled by default.
 | `restart`                 | Restart the application via a `POST`. Disabled by default.
 | `refresh`                 | Refresh the application configuration via a `POST` to let components reload and recognize new values.
@@ -32,13 +31,18 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `jolokia`                 | Exposes JMX beans over HTTP when Jolokia is configured and included in CAS.
 | `logfile`                 | Returns the contents of the log file if `logging.file` or `logging.path` properties are set with support for HTTP `Range` header.
 | `prometheus`              | Exposes metrics in a format that can be scraped by a Prometheus server.
+
+ The following endpoints are provided by CAS:
+ 
+| URL                       | Description
+|---------------------------|-------------------------------------------------------------------------------------
 | `spring-webflow`          | Provides a JSON representation of the CAS authentication webflows.
 | `events`                  | Provides a JSON representation of all CAS recorded events.
 | `discovery-profile`       | Provides a JSON representation of the [CAS configuration and capabilities](Configuration-Discovery.html).
 | `registered-services`     | Provides a JSON representation of the [CAS service registry](Service-Management.html).
 | `configuration-metadata`  | Exposes [CAS configuration metadata](Configuration-Metadata-Repository.html) that can be used to query settings.
 | `statistics`              | Exposes statistics data on tickets, memory, server availability and uptime, etc.
-| `sso-sessions`            | Review the current single signon sessions establishes with CAS and manage each session remotely.
+| `sso-sessions`            | Review the current single sign-on sessions establishes with CAS and manage each session remotely.
 | `resolve-attributes/{name}`    | Invoke the CAS [attribute resolution](../integration/Attribute-Resolution.html) engine to locate attributes for `{name}`.
 | `release-attributes`           | Invoke the CAS [attribute release](../integration/Attribute-Release.html) engine to release attributes to an application.
 | `multifactor-trusted-devices`  | Expose devices currently [registered and trusted](Multifactor-TrustedDevice-Authentication.html) by the CAS multifactor authentication engine.
@@ -71,14 +75,13 @@ in the URL as a placeholder/selector will attempt to destroy the session control
 ### Multifactor Trusted Devices
 
 A `GET` operation produces a list of all trusted devices. A `DELETE` operation with a 
-a decision id will attempt to remove the consent decision (i.e. `attribute-consent/{/{id}`).
+a decision id will attempt to remove the consent decision (i.e. `multifactor-trusted-devices/{/{id}`).
 Specifying the `principal`  in the same manner will revoke all consent decisions for the user.
 
 ### Attribute Release Consent
 
 A `GET` operation produces a list of all consent decisions. A `DELETE` operation with a 
-a record key id will attempt to remove and revoke the registered device (i.e. `multifactor-trusted-devices/{key}`).
-
+a record key id will attempt to remove and revoke the registered device (i.e. `attribute-consent/{principal}/{id}`).
 
 ## Security
 

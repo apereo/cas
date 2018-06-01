@@ -14,31 +14,21 @@ import org.apache.logging.log4j.core.appender.RollingFileAppender;
 import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.slf4j.Log4jLoggerFactory;
-import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.apereo.cas.web.report.util.ControllerUtils;
-import org.apereo.inspektr.audit.AuditActionContext;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,9 +42,9 @@ import java.util.Set;
  * @since 4.2
  */
 @Slf4j
-@Endpoint(id = "loggingConfiguration")
+@Endpoint(id = "logging-config", enableByDefault = false)
 public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements InitializingBean {
-    private static final String VIEW_CONFIG = "monitoring/viewLoggingConfig";
+
     private static final String LOGGER_NAME_ROOT = "root";
     private static final String FILE_PARAM = "file";
     private static final String FILE_PATTERN_PARAM = "filePattern";
@@ -62,23 +52,22 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
     @NonNull
     private LoggerContext loggerContext;
 
-    private final AuditTrailExecutionPlan auditTrailManager;
+    private final Environment environment;
 
-    @Autowired
-    private Environment environment;
-
-    @Autowired
-    private ResourceLoader resourceLoader;
+    private final ResourceLoader resourceLoader;
 
     private Resource logConfigurationFile;
 
-    public LoggingConfigurationEndpoint(final AuditTrailExecutionPlan auditTrailManager, final CasConfigurationProperties casProperties) {
+    public LoggingConfigurationEndpoint(final CasConfigurationProperties casProperties,
+                                        final ResourceLoader resourceLoader,
+                                        final Environment environment) {
         super(casProperties.getMonitor().getEndpoints().getLoggingConfig(), casProperties);
-        this.auditTrailManager = auditTrailManager;
+        this.environment = environment;
+        this.resourceLoader = resourceLoader;
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         initialize();
     }
 
@@ -96,63 +85,20 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
     }
 
     /**
-     * Gets default view.
+     * Configuration map.
      *
-     * @param request  the request
-     * @param response the response
-     * @return the default view
+     * @return the map
      * @throws Exception the exception
      */
-    @GetMapping
     @ReadOperation
-    public ModelAndView getDefaultView(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-
-
-        final Map<String, Object> model = new HashMap<>();
-        model.put("logConfigurationFile", logConfigurationFile.getURI().toString());
-        return new ModelAndView(VIEW_CONFIG, model);
-    }
-
-    /**
-     * Gets active loggers.
-     *
-     * @param request  the request
-     * @param response the response
-     * @return the active loggers
-     */
-    @GetMapping(value = "/getActiveLoggers")
-    @ResponseBody
-    @ReadOperation
-    public Map<String, Object> getActiveLoggers(final HttpServletRequest request, final HttpServletResponse response) {
-        final Map<String, Object> responseMap = new HashMap<>();
-        final var loggers = getActiveLoggersInFactory();
-        responseMap.put("activeLoggers", loggers.values());
-        return responseMap;
-    }
-
-
-    /**
-     * Gets configuration as JSON.
-     * Depends on the log4j core API.
-     *
-     * @param request  the request
-     * @param response the response
-     * @return the configuration
-     * @throws Exception the exception
-     */
-    @GetMapping(value = "/getConfiguration")
-    @ResponseBody
-    @ReadOperation
-    public Map<String, Object> getConfiguration(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-
-
+    public Map<String, Object> configuration() throws Exception {
         final Collection<Map<String, Object>> configuredLoggers = new HashSet<>();
         getLoggerConfigurations().forEach(config -> {
             final Map<String, Object> loggerMap = new HashMap<>();
             loggerMap.put("name", StringUtils.defaultIfBlank(config.getName(), LOGGER_NAME_ROOT));
             loggerMap.put("state", config.getState());
-            if (config.getProperties() != null) {
-                loggerMap.put("properties", config.getProperties());
+            if (config.getPropertyList() != null) {
+                loggerMap.put("properties", config.getPropertyList());
             }
             loggerMap.put("additive", config.isAdditive());
             loggerMap.put("level", config.getLevel().name());
@@ -190,6 +136,10 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
         });
         final Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("loggers", configuredLoggers);
+
+        final var loggers = getActiveLoggersInFactory();
+        responseMap.put("activeLoggers", loggers.values());
+
         return responseMap;
     }
 
@@ -226,17 +176,11 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
      * @param loggerName  the logger name
      * @param loggerLevel the logger level
      * @param additive    the additive nature of the logger
-     * @param request     the request
-     * @param response    the response
      */
-    @PostMapping(value = "/updateLoggerLevel")
-    @ResponseBody
     @WriteOperation
-    public void updateLoggerLevel(@RequestParam final String loggerName,
-                                  @RequestParam final String loggerLevel,
-                                  @RequestParam(defaultValue = "false") final boolean additive,
-                                  final HttpServletRequest request,
-                                  final HttpServletResponse response) {
+    public void updateLoggerLevel(@Selector final String loggerName,
+                                  final String loggerLevel,
+                                  final boolean additive) {
 
 
         final Collection<LoggerConfig> loggerConfigs = getLoggerConfigurations();
@@ -247,21 +191,5 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
                 cfg.setAdditive(additive);
             });
         this.loggerContext.updateLoggers();
-    }
-
-    /**
-     * Gets audit log.
-     *
-     * @param request  the request
-     * @param response the response
-     * @return the audit log
-     */
-    @GetMapping(value = "/getAuditLog")
-    @ResponseBody
-    @ReadOperation
-    public Set<AuditActionContext> getAuditLog(final HttpServletRequest request, final HttpServletResponse response) {
-
-        final var sinceDate = LocalDate.now().minusDays(getCasProperties().getAudit().getNumberOfDaysInHistory());
-        return this.auditTrailManager.getAuditRecordsSince(sinceDate);
     }
 }
