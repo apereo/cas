@@ -13,7 +13,6 @@ import org.junit.rules.ExpectedException;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
-import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -36,7 +35,7 @@ public class JaasAuthenticationHandlerTests {
     public void setUp() throws Exception {
         final var resource = new ClassPathResource("jaas.conf");
         this.fileName = new File(System.getProperty("java.io.tmpdir"), "jaas-custom.conf");
-        try (Writer writer = Files.newBufferedWriter(fileName.toPath(), StandardCharsets.UTF_8)) {
+        try (var writer = Files.newBufferedWriter(fileName.toPath(), StandardCharsets.UTF_8)) {
             IOUtils.copy(resource.getInputStream(), writer, Charset.defaultCharset());
             writer.flush();
         }

@@ -49,9 +49,10 @@ public class TicketIdSanitizationUtils {
             while (matcher.find()) {
                 final var match = matcher.group();
                 final var group = matcher.group(1);
-                var replaceLength = group.length() - VISIBLE_TAIL_LENGTH - (HOST_NAME_LENGTH + 1);
+                final int length = group.length();
+                var replaceLength = length - VISIBLE_TAIL_LENGTH - (HOST_NAME_LENGTH + 1);
                 if (replaceLength <= 0) {
-                    replaceLength = group.length();
+                    replaceLength = length;
                 }
                 final var newId = match.replace(group.substring(0, replaceLength), StringUtils.repeat("*", replaceLength));
                 modifiedMessage = modifiedMessage.replaceAll(match, newId);
