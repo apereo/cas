@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 import org.junit.Test;
@@ -7,12 +8,13 @@ import org.opensaml.security.credential.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
+
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import static org.junit.Assert.*;
-import lombok.Setter;
 
 /**
  * Test cases for {@link WsFederationHelper}.
@@ -93,16 +95,15 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
     @Test
     @DirtiesContext
     public void verifyValidateSignatureBadKey() {
-        final List<Credential> signingWallet = new ArrayList<>();
         final var cfg = new WsFederationConfiguration();
         cfg.setSigningCertificateResources(ctx.getResource("classpath:bad-signing.crt"));
-        signingWallet.addAll(cfg.getSigningWallet());
-        final var wresult = testTokens.get(GOOD_TOKEN);
-        final var assertion =
-            wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult),
-                wsFederationConfigurations);
-        assertion.getValue().getSigningWallet().clear();
-        assertion.getValue().getSigningWallet().addAll(signingWallet);
+        final List<Credential> signingWallet = new ArrayList<>(cfg.getSigningWallet());
+        final var wResult = testTokens.get(GOOD_TOKEN);
+        final var requestSecurityTokenFromResult = wsFederationHelper.getRequestSecurityTokenFromResult(wResult);
+        final var assertion = wsFederationHelper.buildAndVerifyAssertion(requestSecurityTokenFromResult, wsFederationConfigurations);
+        final var wallet = assertion.getValue().getSigningWallet();
+        wallet.clear();
+        wallet.addAll(signingWallet);
         final var result = wsFederationHelper.validateSignature(assertion);
         assertFalse("testValidateSignatureModifiedKey() - False", result);
     }

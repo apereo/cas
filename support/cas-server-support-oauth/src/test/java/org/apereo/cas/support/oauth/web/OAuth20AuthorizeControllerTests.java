@@ -433,7 +433,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         clearAllServices();
 
         final var mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT
-                + OAuth20Constants.AUTHORIZE_URL);
+            + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase());
@@ -469,8 +469,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         registeredServiceImpl.setName(name);
         registeredServiceImpl.setServiceId(serviceId);
         registeredServiceImpl.setClientId(CLIENT_ID);
-        registeredServiceImpl.setAttributeReleasePolicy(
-                new ReturnAllowedAttributeReleasePolicy(Arrays.asList(new String[]{FIRST_NAME_ATTRIBUTE})));
+        registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(Arrays.asList(FIRST_NAME_ATTRIBUTE)));
         return registeredServiceImpl;
     }
 

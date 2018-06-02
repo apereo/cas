@@ -145,9 +145,12 @@ public class CouchbaseClientFactory {
         LOGGER.debug("Running query [{}] on bucket [{}]", statement.toString(), bucket.name());
 
         final var query = N1qlQuery.simple(statement);
-        final var result = getBucket().query(query, timeout, TimeUnit.MILLISECONDS);
+        final var result = bucket.query(query, timeout, TimeUnit.MILLISECONDS);
         if (!result.finalSuccess()) {
-            LOGGER.error("Couchbase query failed with [{}]", result.errors().stream().map(JsonObject::toString).collect(Collectors.joining(",")));
+            LOGGER.error("Couchbase query failed with [{}]", result.errors()
+                .stream()
+                .map(JsonObject::toString)
+                .collect(Collectors.joining(",")));
             throw new GeneralSecurityException("Could not locate account for user " + usernameValue);
         }
         return result;
@@ -161,7 +164,8 @@ public class CouchbaseClientFactory {
      * @return the map
      */
     public Map<String, Object> collectAttributesFromEntity(final JsonObject couchbaseEntity, final Predicate<String> filter) {
-        return couchbaseEntity.getNames().stream()
+        return couchbaseEntity.getNames()
+            .stream()
             .filter(filter)
             .map(name -> Pair.of(name, couchbaseEntity.get(name)))
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));

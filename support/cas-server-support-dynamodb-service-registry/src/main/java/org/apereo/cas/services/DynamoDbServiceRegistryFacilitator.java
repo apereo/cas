@@ -26,7 +26,6 @@ import org.apereo.cas.util.serialization.StringSerializer;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,15 +102,15 @@ public class DynamoDbServiceRegistryFacilitator {
      * @return the all
      */
     public List<RegisteredService> getAll() {
-        final List<RegisteredService> services = new ArrayList<>();
         final var scan = new ScanRequest(dynamoDbProperties.getTableName());
         LOGGER.debug("Scanning table with request [{}]", scan);
         final var result = this.amazonDynamoDBClient.scan(scan);
         LOGGER.debug("Scanned table with result [{}]", scan);
-        services.addAll(result.getItems().stream().map(this::deserializeServiceFromBinaryBlob)
+        return result.getItems()
+            .stream()
+            .map(this::deserializeServiceFromBinaryBlob)
             .sorted((o1, o2) -> Integer.valueOf(o1.getEvaluationOrder()).compareTo(o2.getEvaluationOrder()))
-            .collect(Collectors.toList()));
-        return services;
+            .collect(Collectors.toList());
     }
 
     /**

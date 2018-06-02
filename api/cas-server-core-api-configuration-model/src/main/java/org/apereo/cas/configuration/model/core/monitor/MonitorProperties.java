@@ -22,7 +22,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class MonitorProperties implements Serializable {
-
     private static final long serialVersionUID = -7047060071480971606L;
 
     /**
@@ -169,12 +168,6 @@ public class MonitorProperties implements Serializable {
     @Setter
     @Getter
     public abstract static class BaseEndpoint {
-
-        /**
-         * Disable access to the endpoint completely.
-         */
-        private Boolean enabled;
-
         /**
          * Marking the endpoint as sensitive will force it to require authentication.
          * The authentication scheme usually is done via the presence of spring security
@@ -286,7 +279,6 @@ public class MonitorProperties implements Serializable {
 
         public Endpoints() {
             setSensitive(Boolean.TRUE);
-            setEnabled(Boolean.FALSE);
         }
 
         @RequiresModule(name = "cas-server-support-reports", automated = true)

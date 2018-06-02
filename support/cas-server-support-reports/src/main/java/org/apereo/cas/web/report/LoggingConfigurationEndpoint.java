@@ -61,7 +61,7 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
     public LoggingConfigurationEndpoint(final CasConfigurationProperties casProperties,
                                         final ResourceLoader resourceLoader,
                                         final Environment environment) {
-        super(casProperties.getMonitor().getEndpoints().getLoggingConfig(), casProperties);
+        super(casProperties);
         this.environment = environment;
         this.resourceLoader = resourceLoader;
     }

@@ -28,7 +28,7 @@ public class StatusEndpoint extends BaseCasMvcEndpoint {
     private final HealthEndpoint healthEndpoint;
 
     public StatusEndpoint(final CasConfigurationProperties casProperties, final HealthEndpoint healthEndpoint) {
-        super(casProperties.getMonitor().getEndpoints().getStatus(), casProperties);
+        super(casProperties);
         this.healthEndpoint = healthEndpoint;
     }
 
@@ -39,7 +39,7 @@ public class StatusEndpoint extends BaseCasMvcEndpoint {
      * @throws Exception the exception
      */
     @ReadOperation
-    public Map<String, Object> handle() throws Exception {
+    public Map<String, Object> handle() {
 
         final var model = new LinkedHashMap<String, Object>();
         final var health = this.healthEndpoint.health();

@@ -43,8 +43,8 @@ public class SmartOpenIdController extends AbstractDelegateController implements
         final var parameters = new ParameterList(request.getParameterMap());
 
         final var mode = parameters.hasParameter(OpenIdProtocolConstants.OPENID_MODE)
-                ? parameters.getParameterValue(OpenIdProtocolConstants.OPENID_MODE)
-                : null;
+            ? parameters.getParameterValue(OpenIdProtocolConstants.OPENID_MODE)
+            : null;
 
         Message response = null;
 
@@ -62,8 +62,7 @@ public class SmartOpenIdController extends AbstractDelegateController implements
 
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
-        final Map<String, String> parameters = new HashMap<>();
-        parameters.putAll(getAssociationResponse(request));
+        final Map<String, String> parameters = new HashMap<>(getAssociationResponse(request));
         return new ModelAndView(this.successView, parameters);
     }
 

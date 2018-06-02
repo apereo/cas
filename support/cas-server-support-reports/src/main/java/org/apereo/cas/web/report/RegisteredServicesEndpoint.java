@@ -34,7 +34,7 @@ public class RegisteredServicesEndpoint extends BaseCasMvcEndpoint {
      * @param servicesManager the services manager
      */
     public RegisteredServicesEndpoint(final CasConfigurationProperties casProperties, final ServicesManager servicesManager) {
-        super(casProperties.getMonitor().getEndpoints().getRegisteredServicesReport(), casProperties);
+        super(casProperties);
         this.servicesManager = servicesManager;
     }
 
