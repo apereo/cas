@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
-import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -75,7 +74,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         c.close();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         final var c = this.dataSource.getConnection();
         final var s = c.createStatement();
