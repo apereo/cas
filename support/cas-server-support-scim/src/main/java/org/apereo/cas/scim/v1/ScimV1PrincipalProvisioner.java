@@ -48,7 +48,7 @@ public class ScimV1PrincipalProvisioner implements PrincipalProvisioner {
     @Override
     public boolean create(final Authentication auth, final Principal p, final Credential credential) {
         try {
-            final var resources = endpoint.query("userName eq \"" + p.getId() + "\"");
+            final var resources = endpoint.query("userName eq \"" + p.getId() + '"');
             if (resources.getTotalResults() <= 0) {
                 LOGGER.debug("User [{}] not found", p.getId());
                 return false;

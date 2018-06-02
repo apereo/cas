@@ -65,6 +65,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.support.config.CasThrottlingConfiguration;
 import org.junit.runner.RunWith;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.springframework.web.SecurityInterceptor;
@@ -342,7 +343,7 @@ public abstract class AbstractOAuth20Tests {
                 assertTrue(body.contains(OAuth20Constants.REFRESH_TOKEN + "=RT-"));
                 refreshTokenId = Arrays.stream(body.split("&"))
                     .filter(f -> f.startsWith(OAuth20Constants.REFRESH_TOKEN))
-                    .map(f -> StringUtils.remove(f, OAuth20Constants.REFRESH_TOKEN + "="))
+                    .map(f -> StringUtils.remove(f, OAuth20Constants.REFRESH_TOKEN + '='))
                     .findFirst()
                     .get();
             }

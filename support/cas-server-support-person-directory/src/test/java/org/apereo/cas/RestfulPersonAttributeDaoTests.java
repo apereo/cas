@@ -40,11 +40,11 @@ public class RestfulPersonAttributeDaoTests {
 
     @Before
     public void setup() {
-        final var data = "{"
+        final var data = '{'
             + "   \"name\" :\"casuser\","
             + "\"age\" : 29,"
             + "\"messages\": [\"msg 1\", \"msg 2\", \"msg 3\"]      "
-            + "}";
+            + '}';
         this.webServer = new MockWebServer(8085,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);

@@ -157,7 +157,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             if (StringUtils.isBlank(hex)) {
                 throw new IllegalArgumentException("Could not generate a secure random id based on " + random.getAlgorithm());
             }
-            return "_" + hex;
+            return '_' + hex;
         } catch (final Exception e) {
             throw new IllegalStateException("Cannot create secure random ID generator for SAML message IDs.", e);
         }

@@ -31,6 +31,6 @@ public interface SamlAttributeQueryTicketFactory extends TicketFactory {
      * @return the string
      */
     default String createTicketIdFor(final String id) {
-        return SamlAttributeQueryTicket.PREFIX + "-" + id;
+        return SamlAttributeQueryTicket.PREFIX + '-' + id;
     }
 }

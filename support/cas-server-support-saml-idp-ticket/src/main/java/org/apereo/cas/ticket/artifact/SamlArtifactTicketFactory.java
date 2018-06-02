@@ -37,6 +37,6 @@ public interface SamlArtifactTicketFactory extends TicketFactory {
      * @return the string
      */
     default String createTicketIdFor(final String artifactId) {
-        return SamlArtifactTicket.PREFIX + "-" + artifactId;
+        return SamlArtifactTicket.PREFIX + '-' + artifactId;
     }
 }
