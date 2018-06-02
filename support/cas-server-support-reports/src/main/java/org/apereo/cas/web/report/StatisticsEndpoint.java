@@ -32,8 +32,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Endpoint(id = "statistics", enableByDefault = false)
 public class StatisticsEndpoint extends BaseCasMvcEndpoint {
-    private static final int NUMBER_OF_BYTES_IN_A_KILOBYTE = 1024;
-
     private final ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
 
     private final AuditTrailExecutionPlan auditTrailManager;
@@ -42,7 +40,7 @@ public class StatisticsEndpoint extends BaseCasMvcEndpoint {
     public StatisticsEndpoint(final AuditTrailExecutionPlan auditTrailManager,
                               final CentralAuthenticationService centralAuthenticationService,
                               final CasConfigurationProperties casProperties) {
-        super(casProperties.getMonitor().getEndpoints().getStatistics(), casProperties);
+        super(casProperties);
         this.auditTrailManager = auditTrailManager;
         this.centralAuthenticationService = centralAuthenticationService;
     }

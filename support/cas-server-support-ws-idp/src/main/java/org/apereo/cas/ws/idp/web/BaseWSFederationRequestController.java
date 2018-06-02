@@ -220,9 +220,7 @@ public abstract class BaseWSFederationRequestController {
             if (createdDate != null) {
                 final var expiryDate = new Date();
                 expiryDate.setTime(createdDate.toEpochMilli() + ttlMs);
-                if (expiryDate.before(new Date())) {
-                    return true;
-                }
+                return expiryDate.before(new Date());
             }
         }
         return false;

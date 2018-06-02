@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.fortress;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.directory.fortress.core.AccessMgr;
 import org.apache.directory.fortress.core.model.Session;
@@ -19,8 +20,6 @@ import java.io.StringWriter;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
-
-import lombok.Setter;
 
 /**
  * Fortress authentication handler, this class will delegate the authentication to call fortress rest authentication.
@@ -71,9 +70,8 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
                 final Map<String, Object> attributes = new HashMap<>();
                 attributes.put(FORTRESS_SESSION_KEY, fortressXmlSession);
                 return createHandlerResult(c, principalFactory.createPrincipal(username, attributes));
-            } else {
-                LOGGER.warn("Could not establish a fortress session or session cannot authenticate");
             }
+            LOGGER.warn("Could not establish a fortress session or session cannot authenticate");
         } catch (final org.apache.directory.fortress.core.SecurityException e) {
             final var errorMessage = String.format("Fortress authentication failed for [%s]", username);
             LOGGER.error(errorMessage, e);

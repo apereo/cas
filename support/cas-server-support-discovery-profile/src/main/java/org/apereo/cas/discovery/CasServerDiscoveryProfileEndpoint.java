@@ -38,7 +38,7 @@ public class CasServerDiscoveryProfileEndpoint extends BaseCasMvcEndpoint {
     public CasServerDiscoveryProfileEndpoint(final CasConfigurationProperties casProperties,
                                              final ServicesManager servicesManager,
                                              final CasServerProfileRegistrar casServerProfileRegistrar) {
-        super(casProperties.getMonitor().getEndpoints().getDiscovery(), casProperties);
+        super(casProperties);
         this.servicesManager = servicesManager;
         this.casServerProfileRegistrar = casServerProfileRegistrar;
     }
