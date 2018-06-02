@@ -98,6 +98,6 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
     }
 
     private static String getPatternRegisteredServiceRedisKey() {
-        return CAS_SERVICE_PREFIX + "*";
+        return CAS_SERVICE_PREFIX + '*';
     }
 }

@@ -49,7 +49,7 @@ public class X509SerialNumberPrincipalResolver extends AbstractX509PrincipalReso
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
         final var principal = certificate.getSerialNumber().toString(radix);
         if (zeroPadding && principal.length() % 2 != 0) {
-            return "0" + principal;
+            return '0' + principal;
         }
         return principal;
     }

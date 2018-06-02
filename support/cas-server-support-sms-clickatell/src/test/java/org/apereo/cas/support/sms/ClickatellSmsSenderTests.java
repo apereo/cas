@@ -57,7 +57,7 @@ public class ClickatellSmsSenderTests {
             + "}\n"
             + "],\n"
             + "\"error\": null\n"
-            + "}";
+            + '}';
         this.webServer = new MockWebServer(8099,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);

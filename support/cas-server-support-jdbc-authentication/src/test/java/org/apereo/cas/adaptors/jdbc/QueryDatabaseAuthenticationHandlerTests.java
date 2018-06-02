@@ -188,7 +188,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     @Test
     public void verifyBCryptFail() throws Exception {
         final var encoder = new BCryptPasswordEncoder(8, RandomUtils.getNativeInstance());
-        final var sql = SQL.replace("*", "'" + encoder.encode("pswbc1") + "' password");
+        final var sql = SQL.replace("*", '\'' + encoder.encode("pswbc1") + "' password");
         final var q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, sql, PASSWORD_FIELD,
             null, null, new HashMap<>(0));
         q.setPasswordEncoder(encoder);
@@ -203,7 +203,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     @Test
     public void verifyBCryptSuccess() throws Exception {
         final var encoder = new BCryptPasswordEncoder(6, RandomUtils.getNativeInstance());
-        final var sql = SQL.replace("*", "'" + encoder.encode("pswbc2") + "' password");
+        final var sql = SQL.replace("*", '\'' + encoder.encode("pswbc2") + "' password");
         final var q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, sql, PASSWORD_FIELD,
             null, null, new HashMap<>(0));
 

@@ -38,7 +38,7 @@ public class GroovyScriptAuthenticationPolicyTests {
         final var script = "groovy {"
             + " logger.info(principal.id)\n"
             + " return Optional.empty()\n"
-            + "}";
+            + '}';
         final var p = new GroovyScriptAuthenticationPolicy(resourceLoader, script);
         assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication()));
     }
@@ -49,7 +49,7 @@ public class GroovyScriptAuthenticationPolicyTests {
             + " import org.apereo.cas.authentication.*\n"
             + " logger.info(principal.id)\n"
             + " return Optional.of(new AuthenticationException())\n"
-            + "}";
+            + '}';
         final var p = new GroovyScriptAuthenticationPolicy(resourceLoader, script);
         thrown.expect(GeneralSecurityException.class);
         p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication());
@@ -62,7 +62,7 @@ public class GroovyScriptAuthenticationPolicyTests {
             + " def principal = args[0]\n"
             + " def logger = args[1]\n"
             + " return Optional.of(new AuthenticationException())\n"
-            + "}";
+            + '}';
 
         final var scriptFile = new File(FileUtils.getTempDirectoryPath(), "script.groovy");
         FileUtils.write(scriptFile, script, StandardCharsets.UTF_8);

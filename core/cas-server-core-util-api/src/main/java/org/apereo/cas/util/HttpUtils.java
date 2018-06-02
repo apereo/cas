@@ -309,7 +309,7 @@ public class HttpUtils {
     private static void prepareHttpRequest(final HttpUriRequest request, final String basicAuthUsername,
                                            final String basicAuthPassword, final Map<String, Object> parameters) {
         if (StringUtils.isNotBlank(basicAuthUsername) && StringUtils.isNotBlank(basicAuthPassword)) {
-            final var auth = EncodingUtils.encodeBase64(basicAuthUsername + ":" + basicAuthPassword);
+            final var auth = EncodingUtils.encodeBase64(basicAuthUsername + ':' + basicAuthPassword);
             request.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + auth);
         }
     }

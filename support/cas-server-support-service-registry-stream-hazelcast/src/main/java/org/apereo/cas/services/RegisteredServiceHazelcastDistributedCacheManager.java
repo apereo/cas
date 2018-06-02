@@ -87,6 +87,6 @@ public class RegisteredServiceHazelcastDistributedCacheManager extends
      * @return the key
      */
     public static String buildKey(final RegisteredService service) {
-        return service.getId() + ";" + service.getName() + ";" + service.getServiceId();
+        return service.getId() + ";" + service.getName() + ';' + service.getServiceId();
     }
 }

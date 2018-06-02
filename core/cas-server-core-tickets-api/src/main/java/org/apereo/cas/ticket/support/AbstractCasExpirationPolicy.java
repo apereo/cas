@@ -29,7 +29,7 @@ public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
     private String name;
 
     public AbstractCasExpirationPolicy() {
-        this.name = this.getClass().getSimpleName() + "-" + UUID.randomUUID().toString();
+        this.name = this.getClass().getSimpleName() + '-' + UUID.randomUUID().toString();
     }
 
     @Override

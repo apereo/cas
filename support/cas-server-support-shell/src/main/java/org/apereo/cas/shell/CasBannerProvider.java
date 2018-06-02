@@ -57,7 +57,7 @@ public class CasBannerProvider extends DefaultBannerProvider {
         if (StringUtils.isBlank(CasVersion.getVersion())) {
             return StringUtils.EMPTY;
         }
-        return CasVersion.getVersion() + "#" + CasVersion.getSpecificationVersion();
+        return CasVersion.getVersion() + '#' + CasVersion.getSpecificationVersion();
     }
 
     @Override

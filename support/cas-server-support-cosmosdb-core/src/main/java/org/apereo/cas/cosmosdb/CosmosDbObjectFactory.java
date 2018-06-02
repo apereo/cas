@@ -40,9 +40,9 @@ public class CosmosDbObjectFactory {
         final var policy = ConnectionPolicy.GetDefault();
         var userAgent = (policy.getUserAgentSuffix() == null
             ? StringUtils.EMPTY
-            : ";" + policy.getUserAgentSuffix()) + ";" + USER_AGENT_SUFFIX;
+            : ';' + policy.getUserAgentSuffix()) + ';' + USER_AGENT_SUFFIX;
         if (properties.isAllowTelemetry() && GetHashMac.getHashMac() != null) {
-            userAgent += ";" + GetHashMac.getHashMac();
+            userAgent += ';' + GetHashMac.getHashMac();
         }
         policy.setUserAgentSuffix(userAgent);
         return new DocumentClient(properties.getUri(), properties.getKey(), policy,

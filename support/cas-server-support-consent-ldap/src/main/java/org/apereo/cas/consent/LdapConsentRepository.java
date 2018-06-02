@@ -15,7 +15,6 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -202,7 +201,7 @@ public class LdapConsentRepository implements ConsentRepository {
      */
     private LdapEntry readConsentEntry(final String principal) {
         try {
-            final var filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter, CollectionUtils.wrap(Arrays.asList(principal)));
+            final var filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter, CollectionUtils.wrapList(principal));
             LOGGER.debug("Locating consent LDAP entry via filter [{}] based on attribute [{}]", filter, this.ldap.getConsentAttributeName());
             final var response =
                 LdapUtils.executeSearchOperation(this.connectionFactory, this.ldap.getBaseDn(), filter, this.ldap.getConsentAttributeName());

@@ -218,7 +218,7 @@ public class ConfigurationMetadataGenerator {
             final var name = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(variable.getNameAsString()).spliterator(), false)
                 .map(Object::toString)
                 .findFirst()
-                .orElse(variable.getNameAsString());
+                .orElseGet(variable::getNameAsString);
 
             final var indexedGroup = arg.getName().concat(indexNameWithBrackets ? "[]" : StringUtils.EMPTY);
             final var indexedName = indexedGroup.concat(".").concat(name);
@@ -276,21 +276,21 @@ public class ConfigurationMetadataGenerator {
 
         private boolean shouldTypeBeExcluded(final ClassOrInterfaceType type) {
             return type.getNameAsString().matches(
-                String.class.getSimpleName() + "|"
-                    + Integer.class.getSimpleName() + "|"
-                    + Double.class.getSimpleName() + "|"
-                    + Long.class.getSimpleName() + "|"
-                    + Float.class.getSimpleName() + "|"
-                    + Boolean.class.getSimpleName() + "|"
-                    + PrincipalTransformationProperties.CaseConversion.class.getSimpleName() + "|"
-                    + QueryType.class.getSimpleName() + "|"
-                    + AbstractLdapProperties.LdapType.class.getSimpleName() + "|"
-                    + CaseCanonicalizationMode.class.getSimpleName() + "|"
-                    + PasswordPolicyProperties.PasswordPolicyHandlingOptions.class.getSimpleName() + "|"
-                    + LdapSearchEntryHandlersProperties.SearchEntryHandlerTypes.class.getSimpleName() + "|"
-                    + Map.class.getSimpleName() + "|"
-                    + Resource.class.getSimpleName() + "|"
-                    + List.class.getSimpleName() + "|"
+                String.class.getSimpleName() + '|'
+                    + Integer.class.getSimpleName() + '|'
+                    + Double.class.getSimpleName() + '|'
+                    + Long.class.getSimpleName() + '|'
+                    + Float.class.getSimpleName() + '|'
+                    + Boolean.class.getSimpleName() + '|'
+                    + PrincipalTransformationProperties.CaseConversion.class.getSimpleName() + '|'
+                    + QueryType.class.getSimpleName() + '|'
+                    + AbstractLdapProperties.LdapType.class.getSimpleName() + '|'
+                    + CaseCanonicalizationMode.class.getSimpleName() + '|'
+                    + PasswordPolicyProperties.PasswordPolicyHandlingOptions.class.getSimpleName() + '|'
+                    + LdapSearchEntryHandlersProperties.SearchEntryHandlerTypes.class.getSimpleName() + '|'
+                    + Map.class.getSimpleName() + '|'
+                    + Resource.class.getSimpleName() + '|'
+                    + List.class.getSimpleName() + '|'
                     + Set.class.getSimpleName());
         }
 

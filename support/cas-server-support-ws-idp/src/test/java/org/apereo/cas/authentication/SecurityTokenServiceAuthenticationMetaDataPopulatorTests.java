@@ -96,8 +96,8 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulatorTests {
 
         final var builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         final var service = CoreAuthenticationTestUtils.getService("http://example.org?"
-            + WSFederationConstants.WREPLY + "=" + registeredService.getServiceId() + "&"
-            + WSFederationConstants.WTREALM + "=" + realm);
+            + WSFederationConstants.WREPLY + '=' + registeredService.getServiceId() + '&'
+            + WSFederationConstants.WTREALM + '=' + realm);
         final AuthenticationTransaction transaction =
             DefaultAuthenticationTransaction.of(service, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 

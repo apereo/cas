@@ -107,7 +107,7 @@ public class RestConsentRepository implements ConsentRepository {
             final var headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
             final HttpEntity<Map> entity = new HttpEntity<>(headers);
-            final var deleteEndpoint = this.endpoint.concat("/" + Long.toString(decisionId));
+            final var deleteEndpoint = this.endpoint.concat('/' + Long.toString(decisionId));
             final var result = restTemplate.exchange(deleteEndpoint, HttpMethod.DELETE, entity, Boolean.class);
             return result.getStatusCodeValue() == HttpStatus.OK.value();
         } catch (final Exception e) {

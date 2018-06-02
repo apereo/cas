@@ -20,7 +20,7 @@ public class CommaSeparatedStringToThrowablesConverterTests {
     @Test
     public void verifyConverters() {
         final var c = new CommaSeparatedStringToThrowablesConverter();
-        final List list = c.convert(Exception.class.getName() + "," + RuntimeException.class.getName());
+        final List list = c.convert(Exception.class.getName() + ',' + RuntimeException.class.getName());
         assertEquals(2, list.size());
     }
 

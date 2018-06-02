@@ -68,7 +68,7 @@ public class WsFederationCookieManager {
         request.setAttribute(this.localParamName, session.get(this.localParamName));
         request.setAttribute(CasProtocolConstants.PARAMETER_METHOD, session.get(CasProtocolConstants.PARAMETER_METHOD));
 
-        final var serviceKey = CasProtocolConstants.PARAMETER_SERVICE + "-" + wCtx;
+        final var serviceKey = CasProtocolConstants.PARAMETER_SERVICE + '-' + wCtx;
         final var service = (Service) session.get(serviceKey);
         LOGGER.debug("Located service [{}] from session cookie", service);
         WebUtils.putService(context, service);
@@ -94,11 +94,11 @@ public class WsFederationCookieManager {
         }
         final var locale = request.getAttribute(this.localParamName);
         if (locale != null) {
-            session.put(this.localParamName + "-" + wctx, locale);
+            session.put(this.localParamName + '-' + wctx, locale);
         }
         final var theme = request.getAttribute(this.themeParamName);
         if (theme != null) {
-            session.put(this.themeParamName + "-" + wctx, theme);
+            session.put(this.themeParamName + '-' + wctx, theme);
         }
 
         final var cookieValue = serializeSessionValues(session);
