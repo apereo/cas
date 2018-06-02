@@ -5,7 +5,6 @@ import static org.mockito.Mockito.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
-import org.junit.Before;
 import org.springframework.context.ApplicationEventPublisher;
 
 /**
@@ -17,7 +16,7 @@ import org.springframework.context.ApplicationEventPublisher;
 @Slf4j
 public class YamlServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
 
-    @Before
+    @BeforeEach
     public void setup() {
         try {
             this.dao = new YamlServiceRegistry(RESOURCE, false,

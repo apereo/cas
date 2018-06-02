@@ -16,7 +16,6 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.refreshtoken.DefaultRefreshTokenFactory;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -39,7 +38,7 @@ import static org.junit.Assert.*;
 @Slf4j
 public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
-    @Before
+    @BeforeEach
     public void setUp() {
         clearAllServices();
     }

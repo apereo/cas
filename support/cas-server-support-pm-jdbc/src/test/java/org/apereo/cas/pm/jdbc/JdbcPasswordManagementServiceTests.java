@@ -23,7 +23,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.pm.PasswordChangeBean;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +78,7 @@ public class JdbcPasswordManagementServiceTests {
 
     private JdbcTemplate jdbcTemplate;
 
-    @Before
+    @BeforeEach
     public void before() {
         jdbcTemplate = new JdbcTemplate(this.jdbcPasswordManagementDataSource);
 

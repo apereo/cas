@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -38,7 +37,7 @@ public class RememberMeDelegatingExpirationPolicyTests {
 
     private RememberMeDelegatingExpirationPolicy p;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         final var rememberMe = new MultiTimeUseOrTimeoutExpirationPolicy(1, 20000);
         p = new RememberMeDelegatingExpirationPolicy(rememberMe);

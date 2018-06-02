@@ -3,9 +3,9 @@ package org.apereo.cas.adaptors.jdbc;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
     @Qualifier("dataSource")
     private DataSource dataSource;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         this.handler = new SearchModeSearchDatabaseAuthenticationHandler("", null, null, null, this.dataSource, "username", "password", "cassearchusers");
 

@@ -16,7 +16,6 @@ import org.apereo.cas.rest.factory.DefaultTicketGrantingTicketResourceEntityResp
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -66,7 +65,7 @@ public class TicketGrantingTicketResourceTests {
 
     private MockMvc mockMvc;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         final var publisher = mock(ApplicationEventPublisher.class);
         final var manager = mock(AuthenticationManager.class);

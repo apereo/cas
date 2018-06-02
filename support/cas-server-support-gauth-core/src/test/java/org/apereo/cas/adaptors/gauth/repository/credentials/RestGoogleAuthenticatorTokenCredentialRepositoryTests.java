@@ -9,7 +9,6 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
 import org.apereo.cas.util.MockWebServer;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -42,7 +41,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     private IGoogleAuthenticator google;
 
-    @Before
+    @BeforeEach
     public void setup() {
         final var bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
         this.google = new GoogleAuthenticator(bldr.build());

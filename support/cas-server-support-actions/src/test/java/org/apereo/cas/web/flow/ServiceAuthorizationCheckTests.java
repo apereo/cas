@@ -9,7 +9,6 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -43,7 +42,7 @@ public class ServiceAuthorizationCheckTests {
 
     private final ServicesManager servicesManager = mock(ServicesManager.class);
 
-    @Before
+    @BeforeEach
     public void setUpMocks() {
         final var authorizedRegisteredService = new RegexRegisteredService();
         final var unauthorizedRegisteredService = new RegexRegisteredService();

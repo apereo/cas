@@ -4,7 +4,6 @@ package org.apereo.cas.services;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.MongoDbServiceRegistryConfiguration;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,7 @@ public class MongoServiceRegistryCloudTests {
     private ServiceRegistry serviceRegistry;
 
 
-    @Before
+    @BeforeEach
     public void clean() {
         final var services = this.serviceRegistry.load();
         services.forEach(service -> this.serviceRegistry.delete(service));

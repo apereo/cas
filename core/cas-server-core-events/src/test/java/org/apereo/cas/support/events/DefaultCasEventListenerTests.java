@@ -14,7 +14,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +53,7 @@ public class DefaultCasEventListenerTests {
     @Qualifier("casEventRepository")
     private CasEventRepository casEventRepository;
 
-    @Before
+    @BeforeEach
     public void setup() {
         final var request = new MockHttpServletRequest();
         request.setRemoteAddr("123.456.789.000");

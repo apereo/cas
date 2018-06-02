@@ -8,8 +8,8 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.WebUtils;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -41,7 +41,7 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
 
     private TicketGrantingTicket ticketGrantingTicket;
 
-    @Before
+    @BeforeEach
     public void onSetUp() {
         final var authnResult = getAuthenticationSystemSupport()
                         .handleAndFinalizeSingleAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),

@@ -24,7 +24,7 @@ import org.apereo.cas.config.MongoDbTicketRegistryConfiguration;
 import org.apereo.cas.config.MongoDbTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +85,7 @@ public class MongoDbTicketRegistryTests extends BaseSpringRunnableTicketRegistry
         return Arrays.asList(true, false);
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         ticketRegistry.deleteAll();
     }

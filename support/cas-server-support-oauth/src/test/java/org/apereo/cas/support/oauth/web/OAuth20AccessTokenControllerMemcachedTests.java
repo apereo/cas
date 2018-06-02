@@ -5,7 +5,6 @@ import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.registry.MemcachedTicketRegistry;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
@@ -22,7 +21,7 @@ import static org.junit.Assert.*;
 @TestPropertySource(locations = {"classpath:/memcached-oauth.properties"})
 @Slf4j
 public class OAuth20AccessTokenControllerMemcachedTests extends AbstractOAuth20Tests {
-    @Before
+    @BeforeEach
     public void setUp() {
         clearAllServices();
     }

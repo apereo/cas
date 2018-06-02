@@ -7,8 +7,8 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +30,7 @@ public class TimeoutExpirationPolicyTests {
 
     private Ticket ticket;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.expirationPolicy = new TimeoutExpirationPolicy(TIMEOUT);
 

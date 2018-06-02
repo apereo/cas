@@ -9,7 +9,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.flow.login.ServiceWarningAction;
 import org.apereo.cas.web.support.WebUtils;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,7 +40,7 @@ public class ServiceWarningActionTests extends AbstractCentralAuthenticationServ
 
     private MockRequestContext context;
 
-    @Before
+    @BeforeEach
     public void onSetUp() {
         this.context = new MockRequestContext();
     }

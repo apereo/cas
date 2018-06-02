@@ -18,7 +18,6 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.SurrogateJdbcAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +73,7 @@ public class SurrogateJdbcAuthenticationServiceTests {
 
     private JdbcTemplate jdbcTemplate;
 
-    @Before
+    @BeforeEach
     public void before() {
         jdbcTemplate = new JdbcTemplate(this.surrogateAuthenticationJdbcDataSource);
         jdbcTemplate.execute("drop table surrogate_accounts if exists;");

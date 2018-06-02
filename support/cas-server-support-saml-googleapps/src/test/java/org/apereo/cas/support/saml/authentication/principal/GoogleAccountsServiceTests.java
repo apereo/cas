@@ -16,7 +16,6 @@ import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.util.CompressionUtils;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +78,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
         return (GoogleAccountsService) factory.createService(request);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.googleAccountsService = getGoogleAccountsService();
     }

@@ -18,8 +18,8 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -52,7 +52,7 @@ public class BaseLdapServiceRegistryTests {
     @Qualifier("ldapServiceRegistry")
     private ServiceRegistry dao;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         this.dao.load().forEach(service -> this.dao.delete(service));
     }

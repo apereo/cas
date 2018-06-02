@@ -24,8 +24,8 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -84,7 +84,7 @@ public class JdbcAcceptableUsagePolicyRepositoryTests {
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         final var c = this.acceptableUsagePolicyDataSource.getConnection();
         final var s = c.createStatement();

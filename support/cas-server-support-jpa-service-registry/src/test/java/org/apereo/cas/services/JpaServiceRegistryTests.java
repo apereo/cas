@@ -8,8 +8,8 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.joda.time.DateTimeUtils;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -58,7 +58,7 @@ public class JpaServiceRegistryTests {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         final var services = this.serviceRegistry.load();
         services.forEach(service -> this.serviceRegistry.delete(service));
