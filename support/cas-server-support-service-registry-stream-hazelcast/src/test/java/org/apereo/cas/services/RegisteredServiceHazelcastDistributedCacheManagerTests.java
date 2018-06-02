@@ -10,7 +10,6 @@ import org.apereo.cas.services.publisher.CasRegisteredServiceHazelcastStreamPubl
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
-import org.junit.After;
 import org.junit.Test;
 
 import java.util.Collection;
@@ -37,7 +36,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
         mgr = new RegisteredServiceHazelcastDistributedCacheManager(this.hz);
     }
 
-    @After
+    @AfterEach
     public void shutdown() {
         this.hz.shutdown();
     }

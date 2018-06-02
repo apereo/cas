@@ -10,6 +10,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
 import org.apereo.cas.util.MockWebServer;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;

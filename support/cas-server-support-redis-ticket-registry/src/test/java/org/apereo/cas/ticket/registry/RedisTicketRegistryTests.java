@@ -61,7 +61,7 @@ public class RedisTicketRegistryTests extends BaseSpringRunnableTicketRegistryTe
         REDIS_SERVER.start();
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopRedis() {
         REDIS_SERVER.stop();
     }

@@ -3,8 +3,9 @@ package org.apereo.cas.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.MongoDbServiceRegistryConfiguration;
-import org.junit.After;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -61,7 +62,7 @@ public class MongoServiceRegistryCloudTests {
         assertTrue(this.serviceRegistry.load().isEmpty());
     }
 
-    @After
+    @AfterEach
     public void after() {
         clean();
     }

@@ -5,9 +5,10 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.util.CollectionUtils;
-import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
         c.close();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         final var c = this.dataSource.getConnection();
         final var s = c.createStatement();

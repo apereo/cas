@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.DefaultCasSslContext;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.core.io.ClassPathResource;
 
 import java.security.KeyStore;

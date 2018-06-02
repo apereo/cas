@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 public class JsonConsentRepositoryTests {
     private static final FileSystemResource JSON_FILE = new FileSystemResource("ConsentRepository.json");
 
-    @AfterClass
+    @AfterAll
     public static void shutdown() {
         JSON_FILE.getFile().delete();
     }

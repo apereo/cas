@@ -3,8 +3,9 @@ package org.apereo.cas.services;
 import org.apereo.cas.config.CouchDbServiceRegistryConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.services.RegisteredServiceRepository;
-import org.junit.After;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,7 +55,7 @@ public class CouchDbServiceRegistryTests {
         registeredServiceRepository.initStandardDesignDocument();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
     }

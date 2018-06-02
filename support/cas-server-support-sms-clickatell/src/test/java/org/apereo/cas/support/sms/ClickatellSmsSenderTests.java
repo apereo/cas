@@ -4,8 +4,9 @@ import org.apereo.cas.config.ClickatellSmsConfiguration;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.io.SmsSender;
 import org.apereo.cas.util.junit.ConditionalSpringRunner;
-import org.junit.After;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -63,7 +64,7 @@ public class ClickatellSmsSenderTests {
         this.webServer.start();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         this.webServer.stop();
     }

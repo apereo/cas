@@ -7,8 +7,9 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.web.support.config.CasThrottlingConfiguration;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.After;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,7 +57,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         ClientInfoHolder.setClientInfo(null);
     }

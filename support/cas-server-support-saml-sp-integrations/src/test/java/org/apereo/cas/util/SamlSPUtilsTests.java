@@ -61,7 +61,7 @@ public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
         assertEquals(2, servicesManager.count());
     }
 
-    @AfterClass
+    @AfterAll
     public static void shutdown() {
         final var cols = FileUtils.listFiles(METADATA_DIRECTORY.getFile(), new String[] {"crt", "key", "xml"}, false);
         cols.forEach(FileUtils::deleteQuietly);

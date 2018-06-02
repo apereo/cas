@@ -5,6 +5,7 @@ import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrat
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
