@@ -9,8 +9,8 @@ import org.influxdb.annotation.Measurement;
 import org.influxdb.dto.Point;
 import org.influxdb.impl.InfluxDBResultMapper;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -34,7 +34,7 @@ public class InfluxDbConnectionFactoryTests {
     private static final String CAS_EVENTS_DATABASE = "casEventsDatabase";
     private InfluxDbConnectionFactory factory;
 
-    @Before
+    @BeforeEach
     public void init() {
         this.factory = new InfluxDbConnectionFactory("http://localhost:8086", "root",
             "root", CAS_EVENTS_DATABASE, true);

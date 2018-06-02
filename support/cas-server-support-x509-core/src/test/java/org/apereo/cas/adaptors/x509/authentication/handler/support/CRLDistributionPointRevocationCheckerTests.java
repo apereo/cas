@@ -13,7 +13,6 @@ import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdEx
 import org.apereo.cas.util.MockWebServer;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -188,7 +187,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
      *
      * @throws Exception On setup errors.
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         this.webServer.start();
         Thread.sleep(500);

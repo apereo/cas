@@ -11,8 +11,6 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,13 +48,13 @@ public class RedisServiceRegistryTests {
     @Qualifier("redisServiceRegistry")
     private ServiceRegistry dao;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         final var services = this.dao.load();
         services.forEach(service -> this.dao.delete(service));
     }
 
-    @BeforeClass
+    @BeforeEachClass
     public static void startRedis() throws Exception {
         REDIS_SERVER = new RedisServer(6380);
         REDIS_SERVER.start();

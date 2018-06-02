@@ -9,7 +9,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -47,7 +46,7 @@ public class OidcAuthenticationContextWebflowEventResolverTests extends Abstract
 
     private MockRequestContext context;
 
-    @Before
+    @BeforeEach
     @Override
     public void setup() {
         super.setup();

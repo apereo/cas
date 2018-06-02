@@ -7,8 +7,8 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -33,7 +33,7 @@ public class Cas20ProxyHandlerTests {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         final var factory = new SimpleHttpClientFactoryBean();
         factory.setConnectionTimeout(10000);

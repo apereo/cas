@@ -11,8 +11,8 @@ import org.apereo.cas.rest.factory.DefaultUserAuthenticationResourceEntityRespon
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.support.rest.resources.UserAuthenticationResource;
 import org.apereo.cas.util.CollectionUtils;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -49,7 +49,7 @@ public class UserAuthenticationResourceTests {
 
     private MockMvc mockMvc;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.userAuthenticationResource = new UserAuthenticationResource(authenticationSupport,
             new UsernamePasswordRestHttpRequestCredentialFactory(),
