@@ -44,7 +44,7 @@ public class SpringWebflowEndpoint extends BaseCasMvcEndpoint {
      * @param applicationContext the application context
      */
     public SpringWebflowEndpoint(final CasConfigurationProperties casProperties, final ApplicationContext applicationContext) {
-        super(casProperties.getMonitor().getEndpoints().getSpringWebflowReport(), casProperties);
+        super(casProperties);
         this.applicationContext = applicationContext;
     }
 

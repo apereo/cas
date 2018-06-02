@@ -30,7 +30,7 @@ public class CasDefaultFlowUrlHandlerTests {
     @Test
     public void verifyCreateFlowExecutionUrlWithMultiValuedAttributes() {
         setupRequest("/cas", "/app", "/foo");
-        request.setParameter("bar", new String[]{"baz1", "baz2"});
+        request.setParameter("bar", "baz1", "baz2");
         request.setParameter("qux", "quux");
         final var url = urlHandler.createFlowExecutionUrl("foo", "12345", request);
 

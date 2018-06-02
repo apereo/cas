@@ -28,23 +28,23 @@ import java.util.Map;
 /**
  * An Openid controller that delegates to its own views on service validates.
  * This controller is part of the {@link org.apereo.cas.web.DelegatingController}.
- * 
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
 @Slf4j
 public class OpenIdValidateController extends AbstractServiceValidateController {
-    
+
     private final ServerManager serverManager;
 
-    public OpenIdValidateController(final CasProtocolValidationSpecification validationSpecification, 
-                                    final AuthenticationSystemSupport authenticationSystemSupport, 
-                                    final ServicesManager servicesManager, final CentralAuthenticationService centralAuthenticationService, 
-                                    final ProxyHandler proxyHandler, final ArgumentExtractor argumentExtractor, 
-                                    final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy, 
-                                    final AuthenticationContextValidator authenticationContextValidator, 
-                                    final View jsonView, final View successView, 
-                                    final View failureView, final String authnContextAttribute, 
+    public OpenIdValidateController(final CasProtocolValidationSpecification validationSpecification,
+                                    final AuthenticationSystemSupport authenticationSystemSupport,
+                                    final ServicesManager servicesManager, final CentralAuthenticationService centralAuthenticationService,
+                                    final ProxyHandler proxyHandler, final ArgumentExtractor argumentExtractor,
+                                    final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
+                                    final AuthenticationContextValidator authenticationContextValidator,
+                                    final View jsonView, final View successView,
+                                    final View failureView, final String authnContextAttribute,
                                     final ServerManager serverManager,
                                     final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers,
                                     final boolean renewEnabled) {
@@ -57,16 +57,13 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
 
     @Override
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+        throws Exception {
         final var openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
         if (StringUtils.equals(openIdMode, OpenIdProtocolConstants.CHECK_AUTHENTICATION)) {
 
-            final var message = (VerifyResponse)
-                    this.serverManager.verify(new ParameterList(request.getParameterMap()));
+            final var message = (VerifyResponse) this.serverManager.verify(new ParameterList(request.getParameterMap()));
 
-            final Map<String, String> parameters = new HashMap<>();
-            parameters.putAll(message.getParameterMap());
-
+            final Map<String, String> parameters = new HashMap<>(message.getParameterMap());
             if (message.isSignatureVerified()) {
                 LOGGER.debug("Signature verification request successful.");
                 return new ModelAndView(getSuccessView(), parameters);
@@ -78,7 +75,7 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
         // since we only deal OpenId signature verification
         return super.handleRequestInternal(request, response);
     }
-    
+
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         final var openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
