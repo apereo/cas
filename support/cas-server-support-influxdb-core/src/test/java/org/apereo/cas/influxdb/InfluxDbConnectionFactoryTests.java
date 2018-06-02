@@ -8,7 +8,6 @@ import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 import org.influxdb.dto.Point;
 import org.influxdb.impl.InfluxDBResultMapper;
-import org.junit.After;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
@@ -40,7 +39,7 @@ public class InfluxDbConnectionFactoryTests {
             "root", CAS_EVENTS_DATABASE, true);
     }
 
-    @After
+    @AfterEach
     public void shutdown() {
         this.factory.close();
     }

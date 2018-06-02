@@ -103,7 +103,7 @@ public class LdapAcceptableUsagePolicyRepositoryTests {
         assertTrue(acceptableUsagePolicyRepository.submit(context, c));
     }
 
-    @BeforeEachClass
+    @BeforeClass
     @SneakyThrows
     public static void bootstrap() {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));

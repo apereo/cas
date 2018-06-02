@@ -3,6 +3,7 @@ package org.apereo.cas.support.wsfederation.authentication.principal;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;

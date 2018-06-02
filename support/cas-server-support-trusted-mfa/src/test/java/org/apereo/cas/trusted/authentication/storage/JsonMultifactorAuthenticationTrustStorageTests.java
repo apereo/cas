@@ -18,13 +18,13 @@ import java.io.IOException;
  */
 @TestPropertySource(properties = "cas.authn.mfa.trusted.json.location=file:/etc/cas/trusted-device.json")
 public class JsonMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
-    @BeforeEachClass
+    @BeforeClass
     @SneakyThrows
     public static void beforeClass() {
         deleteJsonFile();
     }
 
-    @AfterClass
+    @AfterAll
     @SneakyThrows
     public static void afterClass() {
         deleteJsonFile();

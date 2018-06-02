@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.jdbc;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,7 +63,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
         c.close();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         final var c = this.dataSource.getConnection();
         final var s = c.createStatement();

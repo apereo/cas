@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,7 +47,7 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
         .findAndRegisterModules();
-    
+
     private static MockWebServer WEB_SERVER;
 
     @Autowired
@@ -58,7 +59,7 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
         return this.u2fDeviceRepository;
     }
 
-    @BeforeEachClass
+    @BeforeClass
     public static void beforeClass() throws Exception {
         final Map<String, List<U2FDeviceRegistration>> devices = new HashMap<>();
 
@@ -72,7 +73,7 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
         WEB_SERVER.start();
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() throws Exception {
         WEB_SERVER.close();
     }

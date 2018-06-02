@@ -14,7 +14,6 @@ import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.ConditionalSpringRunner;
-import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +54,7 @@ public abstract class BaseLdapConsentRepositoryTests {
     @Qualifier("consentRepository")
     private ConsentRepository repository;
 
-    @After
+    @AfterEach
     public void cleanDecisions() throws Exception {
         final var conn = getConnection();
         final var res = conn.search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);

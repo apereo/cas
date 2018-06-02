@@ -3,7 +3,6 @@ package org.apereo.cas;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.junit.After;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
@@ -51,7 +50,7 @@ public class RestfulPersonAttributeDaoTests {
         this.webServer.start();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         this.webServer.stop();
     }
