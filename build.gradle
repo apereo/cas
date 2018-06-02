@@ -169,7 +169,7 @@ subprojects {
         include "**/*Tests.*"
         exclude "**/Abstract*.*", "**/Base*.*"
         maxParallelForks = 1
-        jvmArgs "-Xmx1024m"
+        jvmArgs "-Xms512m -Xmx2048m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
         classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
         testLogging {
             events = ["FAILED", "STANDARD_OUT"]
