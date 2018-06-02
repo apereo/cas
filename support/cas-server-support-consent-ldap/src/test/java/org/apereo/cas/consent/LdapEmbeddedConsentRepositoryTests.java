@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningStandaloneCondition;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
@@ -28,7 +28,7 @@ public class LdapEmbeddedConsentRepositoryTests extends BaseLdapConsentRepositor
         return LdapIntegrationTestsOperations.getLdapDirectory(LDAP_PORT).getConnection();
     }
     
-    @BeforeClass
+    @BeforeAll
     public static void bootstrap() throws Exception {
         LdapIntegrationTestsOperations.initDirectoryServer(LDAP_PORT);
         LdapIntegrationTestsOperations.getLdapDirectory(LDAP_PORT).populateEntries(

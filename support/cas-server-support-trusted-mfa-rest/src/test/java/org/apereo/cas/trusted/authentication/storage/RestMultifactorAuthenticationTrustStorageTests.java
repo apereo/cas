@@ -50,7 +50,7 @@ public class RestMultifactorAuthenticationTrustStorageTests {
     @Qualifier("mfaTrustEngine")
     private MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         MAPPER.configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
         MAPPER.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
