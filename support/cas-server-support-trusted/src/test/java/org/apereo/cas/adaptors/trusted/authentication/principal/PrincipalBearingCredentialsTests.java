@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +25,7 @@ public class PrincipalBearingCredentialsTests {
 
     private PrincipalBearingCredential principalBearingCredentials;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.principalBearingCredentials = new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("test"));
     }

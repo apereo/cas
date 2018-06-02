@@ -35,7 +35,6 @@ import org.apereo.cas.util.io.SmsSender;
 import org.apereo.cas.util.junit.ConditionalSpringRunner;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -109,7 +108,7 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
     @Qualifier("authenticationRiskSmsNotifier")
     protected AuthenticationRiskNotifier authenticationRiskSmsNotifier;
 
-    @Before
+    @BeforeEach
     public void prepTest() {
         MockTicketGrantingTicketCreatedEventProducer.createEvents(this.casEventRepository);
     }

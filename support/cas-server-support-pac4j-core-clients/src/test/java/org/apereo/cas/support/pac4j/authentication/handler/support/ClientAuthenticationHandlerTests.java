@@ -4,9 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.services.ServicesManager;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.rules.ExpectedException;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.credentials.Credentials;
@@ -47,7 +47,7 @@ public class ClientAuthenticationHandlerTests {
     private ClientAuthenticationHandler handler;
     private ClientCredential clientCredential;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.fbClient = new FacebookClient();
         final var clients = new Clients(CALLBACK_URL, fbClient);

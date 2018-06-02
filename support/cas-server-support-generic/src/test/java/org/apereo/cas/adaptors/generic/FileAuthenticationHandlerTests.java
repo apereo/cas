@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -32,7 +31,7 @@ public class FileAuthenticationHandlerTests {
 
     private FileAuthenticationHandler authenticationHandler;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("authentication.txt"),
                 FileAuthenticationHandler.DEFAULT_SEPARATOR);

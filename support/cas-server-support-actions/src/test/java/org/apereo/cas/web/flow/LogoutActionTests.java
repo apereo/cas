@@ -13,8 +13,8 @@ import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.web.flow.logout.LogoutAction;
 import org.apereo.cas.web.support.WebUtils;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -46,7 +46,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
 
     private RequestContext requestContext;
 
-    @Before
+    @BeforeEach
     public void onSetUp() {
         this.request = new MockHttpServletRequest();
         this.requestContext = mock(RequestContext.class);

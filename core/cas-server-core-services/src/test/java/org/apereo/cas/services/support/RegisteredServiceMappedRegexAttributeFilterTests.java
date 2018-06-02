@@ -7,7 +7,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -64,7 +63,7 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
         this.givenAttributesMap.put("mapAttribute", mapAttributes);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         when(this.registeredService.getName()).thenReturn("sample test service");

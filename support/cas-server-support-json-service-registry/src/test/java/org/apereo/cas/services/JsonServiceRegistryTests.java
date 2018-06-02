@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
@@ -24,7 +23,7 @@ import static org.mockito.Mockito.*;
 @Slf4j
 public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
 
-    @Before
+    @BeforeEach
     public void setUp() {
         try {
             this.dao = new JsonServiceRegistry(RESOURCE, true,

@@ -32,7 +32,6 @@ import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +103,7 @@ public class LdapAcceptableUsagePolicyRepositoryTests {
         assertTrue(acceptableUsagePolicyRepository.submit(context, c));
     }
 
-    @BeforeClass
+    @BeforeEachClass
     @SneakyThrows
     public static void bootstrap() {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
