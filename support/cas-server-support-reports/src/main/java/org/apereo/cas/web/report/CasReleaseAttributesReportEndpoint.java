@@ -39,7 +39,7 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasMvcEndpoint {
                                               final AuthenticationSystemSupport authenticationSystemSupport,
                                               final ServiceFactory<WebApplicationService> serviceFactory,
                                               final PrincipalFactory principalFactory) {
-        super(casProperties.getMonitor().getEndpoints().getAttributeResolution(), casProperties);
+        super(casProperties);
         this.servicesManager = servicesManager;
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.serviceFactory = serviceFactory;

@@ -25,7 +25,7 @@ public class CasResolveAttributesReportEndpoint extends BaseCasMvcEndpoint {
 
     public CasResolveAttributesReportEndpoint(final CasConfigurationProperties casProperties,
                                               final PrincipalResolver personDirectoryPrincipalResolver) {
-        super(casProperties.getMonitor().getEndpoints().getAttributeResolution(), casProperties);
+        super(casProperties);
         this.personDirectoryPrincipalResolver = personDirectoryPrincipalResolver;
     }
 

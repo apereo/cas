@@ -25,7 +25,7 @@ public class AuditLogEndpoint extends BaseCasMvcEndpoint {
 
     public AuditLogEndpoint(final AuditTrailExecutionPlan auditTrailManager,
                             final CasConfigurationProperties casProperties) {
-        super(casProperties.getMonitor().getEndpoints().getLoggingConfig(), casProperties);
+        super(casProperties);
         this.auditTrailManager = auditTrailManager;
     }
 
