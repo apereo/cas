@@ -24,7 +24,6 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalParameterizedRunner;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
-import org.junit.After;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +82,7 @@ public class CouchDbTicketRegistryTests extends BaseSpringRunnableTicketRegistry
         super(useEncryption);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
     }

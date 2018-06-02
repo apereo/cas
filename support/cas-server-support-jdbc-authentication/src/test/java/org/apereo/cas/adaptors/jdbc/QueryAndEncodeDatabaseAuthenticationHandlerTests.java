@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
-import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -86,7 +85,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
             "user" + i, psw, "salt" + i, NUM_ITERATIONS, expired, disabled);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         final var c = this.dataSource.getConnection();
         final var s = c.createStatement();

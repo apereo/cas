@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.registry.MemcachedTicketRegistry;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 

@@ -34,7 +34,7 @@ public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapCon
             casProperties.getConsent().getLdap().getBindCredential());
     }
 
-    @BeforeEachClass
+    @BeforeClass
     @SneakyThrows
     public static void bootstrap() {
         final var localhost = new LDAPConnection("localhost", LDAP_PORT,
