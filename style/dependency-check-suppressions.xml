@@ -10,6 +10,9 @@
         <cve>CVE-2014-0050</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2007-6465</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2002-1394</cve>
     </suppress>
     <suppress>
