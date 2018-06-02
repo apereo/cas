@@ -3,7 +3,8 @@ package org.apereo.cas.trusted.authentication.storage;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
-import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
