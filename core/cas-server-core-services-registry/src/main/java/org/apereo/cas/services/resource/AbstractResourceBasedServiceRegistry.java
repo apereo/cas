@@ -17,7 +17,6 @@ import org.apereo.cas.support.events.service.CasRegisteredServicePreDeleteEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.io.LockedOutputStream;
 import org.apereo.cas.util.io.PathWatcherService;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.springframework.beans.factory.DisposableBean;
@@ -25,11 +24,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -126,8 +123,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                                                 final ApplicationEventPublisher eventPublisher,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                                 final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
-        initializeRegistry(configDirectory, serializers, enableWatcher, eventPublisher, registeredServiceReplicationStrategy,
-            resourceNamingStrategy);
+        initializeRegistry(configDirectory, serializers, enableWatcher,
+            eventPublisher, registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
     /**
@@ -167,8 +164,9 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         this.registeredServiceSerializers = serializers;
         this.serviceFileNamePattern = RegexUtils.createPattern(PATTERN_REGISTERED_SERVICE_FILE_NAME + getExtension());
         this.serviceRegistryDirectory = configDirectory;
-        Assert.isTrue(this.serviceRegistryDirectory.toFile().exists(), this.serviceRegistryDirectory + " does not exist");
-        Assert.isTrue(this.serviceRegistryDirectory.toFile().isDirectory(), this.serviceRegistryDirectory + " is not a directory");
+        final var file = this.serviceRegistryDirectory.toFile();
+        Assert.isTrue(file.exists(), this.serviceRegistryDirectory + " does not exist");
+        Assert.isTrue(file.isDirectory(), this.serviceRegistryDirectory + " is not a directory");
         if (enableWatcher) {
             enableServicesDirectoryPathWatcher();
         }
@@ -279,9 +277,13 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                     + "Future CAS versions may try to strictly force the naming syntax, refusing to load the file.",
                 fileName, this.serviceFileNamePattern.pattern());
         }
-        try (var in = new BufferedInputStream(new FileInputStream(file))) {
-            return this.registeredServiceSerializers.stream().filter(s -> s.supports(file)).map(s -> s.load(in))
-                .filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toList());
+        try (var in = Files.newBufferedReader(file.toPath())) {
+            return this.registeredServiceSerializers.stream()
+                .filter(s -> s.supports(file))
+                .map(s -> s.load(in))
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
         } catch (final Exception e) {
             LOGGER.error("Error reading configuration file [{}]", fileName, e);
         }
@@ -295,7 +297,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             service.setId(System.currentTimeMillis());
         }
         final var f = getRegisteredServiceFileName(service);
-        try (var out = new LockedOutputStream(new FileOutputStream(f))) {
+        try (var out = Files.newOutputStream(f.toPath())) {
             final var result = this.registeredServiceSerializers.stream().anyMatch(s -> {
                 try {
                     s.to(out, service);
