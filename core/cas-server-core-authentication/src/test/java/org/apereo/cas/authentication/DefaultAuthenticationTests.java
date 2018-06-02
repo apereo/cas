@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.File;
@@ -26,7 +26,7 @@ public class DefaultAuthenticationTests {
 
     private ObjectMapper mapper;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         mapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)

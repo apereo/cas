@@ -5,8 +5,8 @@ import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationP
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
@@ -57,7 +57,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     private MultifactorAuthenticationProperties mfaConfiguration;
     private DefaultMultifactorTriggerSelectionStrategy strategy;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         mfaConfiguration = new MultifactorAuthenticationProperties();
         mfaConfiguration.setRequestParameter(REQUEST_PARAM);

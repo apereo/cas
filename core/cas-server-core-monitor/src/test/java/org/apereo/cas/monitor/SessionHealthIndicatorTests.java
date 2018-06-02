@@ -12,7 +12,6 @@ import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -35,7 +34,7 @@ public class SessionHealthIndicatorTests {
 
     private DefaultTicketRegistry defaultRegistry;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.defaultRegistry = new DefaultTicketRegistry();
     }

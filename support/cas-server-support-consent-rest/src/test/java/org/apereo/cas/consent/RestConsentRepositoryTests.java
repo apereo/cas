@@ -6,8 +6,8 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -33,7 +33,7 @@ public class RestConsentRepositoryTests {
     private RestTemplate restTemplate;
     private MockRestServiceServer server;
 
-    @Before
+    @BeforeEach
     public void before() {
         restTemplate = new RestTemplate();
         server = MockRestServiceServer.bindTo(restTemplate).build();

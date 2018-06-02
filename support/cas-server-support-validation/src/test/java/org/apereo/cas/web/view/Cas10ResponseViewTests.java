@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -28,7 +28,7 @@ public class Cas10ResponseViewTests {
 
     private Map<String, Object> model;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.model = new HashMap<>();
         final List<Authentication> list = new ArrayList<>();

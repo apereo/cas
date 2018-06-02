@@ -10,7 +10,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.junit.Before;
 import org.junit.Test;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,7 +33,7 @@ public class DistributedTicketRegistryTests {
 
     private boolean wasTicketUpdated;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.ticketRegistry = new TestDistributedTicketRegistry(this);
         this.wasTicketUpdated = false;

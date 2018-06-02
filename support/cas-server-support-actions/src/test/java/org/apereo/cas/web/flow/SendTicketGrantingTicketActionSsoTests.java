@@ -10,7 +10,6 @@ import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -49,7 +48,7 @@ public class SendTicketGrantingTicketActionSsoTests extends AbstractCentralAuthe
     
     private MockRequestContext context;
 
-    @Before
+    @BeforeEach
     public void onSetUp() {
         this.context = new MockRequestContext();
     }

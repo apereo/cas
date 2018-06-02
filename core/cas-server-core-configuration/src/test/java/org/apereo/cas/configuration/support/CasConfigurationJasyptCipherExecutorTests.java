@@ -1,8 +1,8 @@
 package org.apereo.cas.configuration.support;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -28,7 +28,7 @@ public class CasConfigurationJasyptCipherExecutorTests {
 
     private CasConfigurationJasyptCipherExecutor jasypt;
 
-    @Before
+    @BeforeEach
     public void setup() {
         this.jasypt = new CasConfigurationJasyptCipherExecutor(this.environment);
     }

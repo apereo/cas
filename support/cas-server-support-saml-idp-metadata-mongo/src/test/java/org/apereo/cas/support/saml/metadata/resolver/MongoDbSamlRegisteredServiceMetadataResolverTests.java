@@ -35,7 +35,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegi
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,7 +108,7 @@ public class MongoDbSamlRegisteredServiceMetadataResolverTests {
     @Qualifier("mongoDbSamlRegisteredServiceMetadataResolver")
     private SamlRegisteredServiceMetadataResolver resolver;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         final var mongo = casProperties.getAuthn().getSamlIdp().getMetadata().getMongo();
         final var res = new ClassPathResource("sp-metadata.xml");

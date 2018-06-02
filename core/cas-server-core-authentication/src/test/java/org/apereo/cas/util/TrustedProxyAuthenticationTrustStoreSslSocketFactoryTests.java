@@ -5,7 +5,6 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apereo.cas.authentication.DefaultCasSslContext;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -24,7 +23,7 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
 
     private HttpClient client;
 
-    @Before
+    @BeforeEach
     public void prepareHttpClient() {
         final var clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(new SSLConnectionSocketFactory(
