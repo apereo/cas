@@ -19,8 +19,8 @@ import java.util.regex.Pattern;
 @Slf4j
 @UtilityClass
 public class TicketIdSanitizationUtils {
-    private static final Pattern TICKET_ID_PATTERN = Pattern.compile("(?:(?:" + TicketGrantingTicket.PREFIX + "|"
-        + ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + "|" + ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
+    private static final Pattern TICKET_ID_PATTERN = Pattern.compile("(?:(?:" + TicketGrantingTicket.PREFIX + '|'
+        + ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + '|' + ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
         + ")-\\d+-)([\\w.-]+)");
 
     /**

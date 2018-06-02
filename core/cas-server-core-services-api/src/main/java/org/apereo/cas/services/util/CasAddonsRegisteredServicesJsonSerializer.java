@@ -54,7 +54,7 @@ public class CasAddonsRegisteredServicesJsonSerializer extends DefaultRegistered
                     + "Future CAS versions may decide to entirely ignore the legacy syntax altogether.",
                     results.size());
             results.forEach(Unchecked.consumer(s -> {
-                final var fileName = new File(FileUtils.getTempDirectory(), s.getName() + "-" + s.getId() + ".json");
+                final var fileName = new File(FileUtils.getTempDirectory(), s.getName() + '-' + s.getId() + ".json");
                 to(fileName, s);
                 LOGGER.warn("Converted legacy service definition for [{}] may be reviewed at [{}]", s.getServiceId(), fileName);
             }));

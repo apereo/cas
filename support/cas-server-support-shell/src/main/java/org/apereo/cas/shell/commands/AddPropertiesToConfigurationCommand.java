@@ -112,7 +112,7 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
                                                     final Properties p) throws Exception {
         LOGGER.info("Located [{}] properties in configuration file [{}]", results.size(), filePath.getCanonicalPath());
         putResultsIntoProperties(results, p);
-        final var lines = p.stringPropertyNames().stream().map(s -> s + "=" + p.get(s)).collect(Collectors.toList());
+        final var lines = p.stringPropertyNames().stream().map(s -> s + '=' + p.get(s)).collect(Collectors.toList());
         Collections.sort(lines, Comparator.naturalOrder());
         FileUtils.writeLines(filePath, lines);
     }

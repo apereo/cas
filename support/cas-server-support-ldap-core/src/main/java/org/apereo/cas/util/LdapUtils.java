@@ -557,7 +557,7 @@ public class LdapUtils {
                     filter.setParameter(i, value);
                 }
                 final var name = paramName.get(i);
-                if (filter.getFilter().contains("{" + name + '}')) {
+                if (filter.getFilter().contains('{' + name + '}')) {
                     filter.setParameter(name, value);
                 }
             });

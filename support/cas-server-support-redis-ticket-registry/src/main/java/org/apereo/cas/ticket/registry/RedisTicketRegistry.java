@@ -128,6 +128,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     // pattern all ticket redisKey
     private static String getPatternTicketRedisKey() {
-        return CAS_TICKET_PREFIX + "*";
+        return CAS_TICKET_PREFIX + '*';
     }
 }

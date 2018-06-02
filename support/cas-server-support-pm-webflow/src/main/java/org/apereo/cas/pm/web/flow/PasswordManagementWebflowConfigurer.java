@@ -139,7 +139,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
                 getTransitionableState(pswdFlow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS),
                 CasWebflowConstants.TRANSITION_ID_PROCEED,
                 CasWebflowConstants.STATE_ID_PASSWORD_RESET_FLOW_COMPLETE);
-            createEndState(flow, CasWebflowConstants.STATE_ID_REDIRECT_TO_LOGIN, "'" + CasWebflowConfigurer.FLOW_ID_LOGIN + "'", true);
+            createEndState(flow, CasWebflowConstants.STATE_ID_REDIRECT_TO_LOGIN, '\'' + CasWebflowConfigurer.FLOW_ID_LOGIN + '\'', true);
 
             createTransitionForState(
                 pswdResetSubFlowState,
