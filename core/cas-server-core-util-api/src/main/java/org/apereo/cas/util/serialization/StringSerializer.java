@@ -14,8 +14,8 @@ import java.util.Collection;
 /**
  * Interface to define operations needed to map objects from/to  clobs.
  *
- * @author Misagh Moayyed
  * @param <T> the type parameter
+ * @author Misagh Moayyed
  * @since 4.1.0
  */
 public interface StringSerializer<T> extends Serializable {
@@ -82,14 +82,15 @@ public interface StringSerializer<T> extends Serializable {
      * @param object the object to serialize
      */
     void to(File out, T object);
-    
+
     /**
      * Return the object as a string in memory.
+     *
      * @param object the object
      * @return string representation of the object.
      */
     String toString(T object);
-    
+
     /**
      * Load a collection of specified objects from the stream.
      *
@@ -105,10 +106,24 @@ public interface StringSerializer<T> extends Serializable {
     }
 
     /**
+     * Load collection.
+     *
+     * @param stream the stream
+     * @return the collection
+     */
+    default Collection<T> load(final Reader stream) {
+        final var result = from(stream);
+        if (result != null) {
+            return CollectionUtils.wrapList(result);
+        }
+        return new ArrayList<>(0);
+    }
+
+    /**
      * Supports the input stream for serialization?
      *
      * @param file the file
-     * @return true/false
+     * @return true /false
      */
     default boolean supports(final File file) {
         return true;
