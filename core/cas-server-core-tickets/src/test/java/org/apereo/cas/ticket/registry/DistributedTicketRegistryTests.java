@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import static org.junit.Assert.*;
 import lombok.Setter;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * @author Scott Battaglia
