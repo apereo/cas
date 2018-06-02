@@ -11,6 +11,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.util.Collection;
 
