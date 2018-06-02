@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.report.AuditLogEndpoint;
+import org.apereo.cas.web.report.AuthenticationAuditLogEndpoint;
 import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
@@ -134,7 +135,13 @@ public class CasReportsConfiguration {
     @Bean
     @ConditionalOnEnabledEndpoint
     public StatisticsEndpoint statisticsReportEndpoint() {
-        return new StatisticsEndpoint(auditTrailExecutionPlan.getIfAvailable(), centralAuthenticationService, casProperties);
+        return new StatisticsEndpoint(centralAuthenticationService, casProperties);
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public AuthenticationAuditLogEndpoint authenticationAuditLogEndpoint() {
+        return new AuthenticationAuditLogEndpoint(auditTrailExecutionPlan.getIfAvailable(), casProperties);
     }
 
     @Bean
