@@ -29,7 +29,7 @@ public class DelegatedAuthenticationAuditResourceResolver extends ReturnValueAsS
             builder.append("client", result.getProperties().get(Client.class.getSimpleName()));
         }
         result.getRegisteredService().ifPresent(service ->
-            builder.append("registeredService", service.getName() + ":" + service.getServiceId()));
+            builder.append("registeredService", service.getName() + ':' + service.getServiceId()));
 
         return new String[]{builder.toString()};
     }

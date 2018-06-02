@@ -29,7 +29,7 @@ public class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
         final var context = new MockRequestContext();
         final var request = new MockHttpServletRequest();
         request.addHeader(SpnegoConstants.HEADER_AUTHORIZATION, SpnegoConstants.NEGOTIATE
-            + " " + EncodingUtils.encodeBase64("credential"));
+            + ' ' + EncodingUtils.encodeBase64("credential"));
         final var response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         spnegoAction.execute(context);

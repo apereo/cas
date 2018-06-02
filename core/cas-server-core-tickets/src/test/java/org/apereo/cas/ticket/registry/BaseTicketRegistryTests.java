@@ -283,9 +283,9 @@ public abstract class BaseTicketRegistryTests {
     @Test
     public void verifyDeleteTicketWithChildren() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + "1", CoreAuthenticationTestUtils.getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + '1', CoreAuthenticationTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy()));
-            final var tgt = this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX + "1", TicketGrantingTicket.class);
+            final var tgt = this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX + '1', TicketGrantingTicket.class);
 
             final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
@@ -300,7 +300,7 @@ public abstract class BaseTicketRegistryTests {
             this.ticketRegistry.addTicket(st2);
             this.ticketRegistry.addTicket(st3);
 
-            assertNotNull(this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX + "1", TicketGrantingTicket.class));
+            assertNotNull(this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX + '1', TicketGrantingTicket.class));
             assertNotNull(this.ticketRegistry.getTicket("ST11", ServiceTicket.class));
             assertNotNull(this.ticketRegistry.getTicket("ST21", ServiceTicket.class));
             assertNotNull(this.ticketRegistry.getTicket("ST31", ServiceTicket.class));
@@ -308,7 +308,7 @@ public abstract class BaseTicketRegistryTests {
             this.ticketRegistry.updateTicket(tgt);
             assertSame(4, this.ticketRegistry.deleteTicket(tgt.getId()));
 
-            assertNull(this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX + "1", TicketGrantingTicket.class));
+            assertNull(this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX + '1', TicketGrantingTicket.class));
             assertNull(this.ticketRegistry.getTicket("ST11", ServiceTicket.class));
             assertNull(this.ticketRegistry.getTicket("ST21", ServiceTicket.class));
             assertNull(this.ticketRegistry.getTicket("ST31", ServiceTicket.class));
@@ -378,12 +378,12 @@ public abstract class BaseTicketRegistryTests {
 
         final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
         IntStream.range(1, 5).forEach(i -> {
-            final var st = tgt.grantServiceTicket(ST_1_ID + "-" + i, service,
+            final var st = tgt.grantServiceTicket(ST_1_ID + '-' + i, service,
                 new NeverExpiresExpirationPolicy(), false, true);
             this.ticketRegistry.addTicket(st);
             this.ticketRegistry.updateTicket(tgt);
 
-            final var pgt = st.grantProxyGrantingTicket(PGT_1_ID + "-" + i, a, new NeverExpiresExpirationPolicy());
+            final var pgt = st.grantProxyGrantingTicket(PGT_1_ID + '-' + i, a, new NeverExpiresExpirationPolicy());
             this.ticketRegistry.addTicket(pgt);
             this.ticketRegistry.updateTicket(tgt);
             this.ticketRegistry.updateTicket(st);

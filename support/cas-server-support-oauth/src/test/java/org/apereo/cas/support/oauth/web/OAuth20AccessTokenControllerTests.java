@@ -326,12 +326,12 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
         final var refreshToken = Arrays.stream(response.split("&"))
             .filter(f -> f.startsWith(OAuth20Constants.REFRESH_TOKEN))
-            .map(f -> StringUtils.remove(f, OAuth20Constants.REFRESH_TOKEN + "="))
+            .map(f -> StringUtils.remove(f, OAuth20Constants.REFRESH_TOKEN + '='))
             .findFirst()
             .get();
         final var accessToken = Arrays.stream(response.split("&"))
             .filter(f -> f.startsWith(OAuth20Constants.ACCESS_TOKEN))
-            .map(f -> StringUtils.remove(f, OAuth20Constants.ACCESS_TOKEN + "="))
+            .map(f -> StringUtils.remove(f, OAuth20Constants.ACCESS_TOKEN + '='))
             .findFirst()
             .get();
 
