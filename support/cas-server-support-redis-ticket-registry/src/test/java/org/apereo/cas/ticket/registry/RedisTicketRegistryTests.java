@@ -7,7 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.RedisTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class RedisTicketRegistryTests extends BaseSpringRunnableTicketRegistryTe
     }
 
 
-    @BeforeClass
+    @BeforeAll
     public static void startRedis() throws Exception {
         REDIS_SERVER = new RedisServer(6379);
         REDIS_SERVER.start();

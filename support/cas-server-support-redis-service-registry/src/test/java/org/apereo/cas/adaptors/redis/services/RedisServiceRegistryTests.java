@@ -10,8 +10,8 @@ import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +55,7 @@ public class RedisServiceRegistryTests {
         services.forEach(service -> this.dao.delete(service));
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startRedis() throws Exception {
         REDIS_SERVER = new RedisServer(6380);
         REDIS_SERVER.start();
