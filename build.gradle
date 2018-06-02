@@ -377,7 +377,7 @@ subprojects {
             spotbugs libraries.findbugs
             spotbugs configurations.spotbugsPlugins.dependencies
             
-            spotbugsPlugins libraries.findbugscontrib
+            //spotbugsPlugins libraries.findbugscontrib
             spotbugsPlugins libraries.findbugssec
         }
 
