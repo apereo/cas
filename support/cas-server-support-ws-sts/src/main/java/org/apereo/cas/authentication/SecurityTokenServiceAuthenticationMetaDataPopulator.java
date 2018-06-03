@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -31,13 +32,10 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
     private final SecurityTokenServiceClientBuilder clientBuilder;
 
     private void invokeSecurityTokenServiceForToken(final AuthenticationTransaction transaction,
-                                                    final AuthenticationBuilder builder, final WSFederationRegisteredService rp,
+                                                    final AuthenticationBuilder builder,
+                                                    final WSFederationRegisteredService rp,
                                                     final SecurityTokenServiceClient sts) {
-        final var up = transaction.getCredentials()
-            .stream().filter(UsernamePasswordCredential.class::isInstance)
-            .map(UsernamePasswordCredential.class::cast)
-            .findFirst()
-            .orElse(null);
+        final var up = getCredential(transaction);
         if (up != null) {
             try {
                 final var properties = sts.getProperties();
@@ -53,6 +51,15 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
                 throw new AuthenticationException(e.getMessage());
             }
         }
+    }
+
+    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
+    private UsernamePasswordCredential getCredential(final AuthenticationTransaction transaction) {
+        return transaction.getCredentials()
+            .stream().filter(UsernamePasswordCredential.class::isInstance)
+            .map(UsernamePasswordCredential.class::cast)
+            .findFirst()
+            .orElse(null);
     }
 
     @Override
