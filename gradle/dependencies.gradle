@@ -4,6 +4,10 @@ ext.libraries = [
                     force = true
                     transitive = false
                 },
+                dependencies.create("javax.xml.ws:jaxws-api:$jaxbVersion") {
+                    force = true
+                    transitive = false
+                },
                 dependencies.create("org.glassfish.jaxb:jaxb-runtime:$jaxbVersion") {
                     force = true
                     transitive = false
