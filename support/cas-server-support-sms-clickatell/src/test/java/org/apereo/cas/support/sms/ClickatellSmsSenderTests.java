@@ -40,7 +40,7 @@ public class ClickatellSmsSenderTests {
     private MockWebServer webServer;
 
     @BeforeEach
-    public void setup() {
+    public void initialize() {
         final var data = "{\n"
             + "\"messages\": [\n"
             + "{\n"

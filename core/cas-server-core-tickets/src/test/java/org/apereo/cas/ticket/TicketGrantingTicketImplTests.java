@@ -43,7 +43,7 @@ public class TicketGrantingTicketImplTests {
     private ObjectMapper mapper;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         // needed in order to serialize ZonedDateTime class
         mapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)

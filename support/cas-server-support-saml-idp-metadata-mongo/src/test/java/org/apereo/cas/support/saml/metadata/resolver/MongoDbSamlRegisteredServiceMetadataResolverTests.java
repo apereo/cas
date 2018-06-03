@@ -111,7 +111,7 @@ public class MongoDbSamlRegisteredServiceMetadataResolverTests {
     private SamlRegisteredServiceMetadataResolver resolver;
 
     @BeforeEach
-    public void setup() throws Exception {
+    public void initialize() throws Exception {
         final var mongo = casProperties.getAuthn().getSamlIdp().getMetadata().getMongo();
         final var res = new ClassPathResource("sp-metadata.xml");
         final var md = new SamlMetadataDocument();

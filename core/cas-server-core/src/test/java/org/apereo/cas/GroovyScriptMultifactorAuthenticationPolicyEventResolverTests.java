@@ -87,7 +87,7 @@ public class GroovyScriptMultifactorAuthenticationPolicyEventResolverTests {
     private MockRequestContext context;
 
     @BeforeEach
-    public void setup() {
+    public void initialize() {
         this.context = new MockRequestContext();
 
         final var request = new MockHttpServletRequest();

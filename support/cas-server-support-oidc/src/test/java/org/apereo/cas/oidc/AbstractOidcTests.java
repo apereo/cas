@@ -134,7 +134,7 @@ public abstract class AbstractOidcTests {
     protected OidcIdTokenGeneratorService oidcIdTokenGenerator;
 
     @BeforeEach
-    public void setup() {
+    public void initialize() {
         servicesManager.save(getOidcRegisteredService());
     }
 

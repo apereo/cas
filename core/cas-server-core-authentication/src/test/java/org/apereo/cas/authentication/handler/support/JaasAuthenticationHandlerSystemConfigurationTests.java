@@ -33,7 +33,7 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
     private JaasAuthenticationHandler handler;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void initialize() throws Exception {
         final var resource = new ClassPathResource("jaas-system.conf");
         final var fileName = new File(System.getProperty("java.io.tmpdir"), "jaas-system.conf");
         try (var writer = Files.newBufferedWriter(fileName.toPath(), StandardCharsets.UTF_8)) {

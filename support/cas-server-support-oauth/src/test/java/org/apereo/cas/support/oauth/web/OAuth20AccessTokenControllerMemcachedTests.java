@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 @Slf4j
 public class OAuth20AccessTokenControllerMemcachedTests extends AbstractOAuth20Tests {
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         clearAllServices();
     }
 

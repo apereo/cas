@@ -65,7 +65,7 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
     }
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         MockitoAnnotations.initMocks(this);
         when(this.registeredService.getName()).thenReturn("sample test service");
         when(this.registeredService.getServiceId()).thenReturn("https://www.jasig.org");
