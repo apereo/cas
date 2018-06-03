@@ -51,7 +51,7 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `attribute-consent`  | Manage and control [attribute consent decisions](../integration/Attribute-Release-Consent.html).
 
 <div class="alert alert-info"><strong>Exposed Endpoints</strong><p>
-Note that by default the only endpoints exposed over the web are <code>info</code>, <code>health</code> and <code>configuration-metadata</code>.
+Note that by default the only endpoints exposed over the web are <code>info</code>, <code>status</code>, <code>health</code> and <code>configuration-metadata</code>.
 Other endpoints need to be explicitly enabled and then exposed over the web in CAS settings in order to allow access.
 </p></div>
 
