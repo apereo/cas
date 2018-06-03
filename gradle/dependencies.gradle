@@ -1,4 +1,18 @@
 ext.libraries = [
+        jaxb                 : [
+                dependencies.create("javax.xml.bind:jaxb-api:$jaxbVersion") {
+                    force = true
+                    transitive = false
+                },
+                dependencies.create("org.glassfish.jaxb:jaxb-runtime:$jaxbVersion") {
+                    force = true
+                    transitive = false
+                },
+                dependencies.create("org.glassfish.jaxb:jaxb-core:$jaxbVersion") {
+                    force = true
+                    transitive = false
+                }
+        ],
         aspectj                 : [
                 dependencies.create("org.aspectj:aspectjrt:$aspectjVersion") {
                     force = true
