@@ -1474,6 +1474,9 @@ ext.libraries = [
                 dependencies.create("io.micrometer:micrometer-registry-ganglia:$micrometerVersion") {
                     force = true
                 },
+                dependencies.create("io.micrometer:micrometer-registry-jmx:$micrometerVersion") {
+                    force = true
+                },
                 dependencies.create("io.micrometer:micrometer-registry-influx:$micrometerVersion") {
                     force = true
                 },
@@ -1481,6 +1484,18 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("io.micrometer:micrometer-registry-atlas:$micrometerVersion") {
+                    force = true
+                },
+                dependencies.create("io.micrometer:micrometer-registry-signalfx:$micrometerVersion") {
+                    force = true
+                },
+                dependencies.create("io.micrometer:micrometer-registry-wavefront:$micrometerVersion") {
+                    force = true
+                },
+                dependencies.create("io.micrometer:micrometer-registry-new-relic:$micrometerVersion") {
+                    force = true
+                },
+                dependencies.create("io.micrometer:micrometer-registry-cloudwatch:$micrometerVersion") {
                     force = true
                 }
         ],
