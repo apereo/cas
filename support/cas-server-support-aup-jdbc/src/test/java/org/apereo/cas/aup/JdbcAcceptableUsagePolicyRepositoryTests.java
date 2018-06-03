@@ -85,7 +85,7 @@ public class JdbcAcceptableUsagePolicyRepositoryTests {
     private TicketRegistry ticketRegistry;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void initialize() throws Exception {
         final var c = this.acceptableUsagePolicyDataSource.getConnection();
         final var s = c.createStatement();
         c.setAutoCommit(true);

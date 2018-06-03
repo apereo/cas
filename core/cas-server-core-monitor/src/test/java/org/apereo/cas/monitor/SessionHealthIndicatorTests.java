@@ -36,7 +36,7 @@ public class SessionHealthIndicatorTests {
     private DefaultTicketRegistry defaultRegistry;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         this.defaultRegistry = new DefaultTicketRegistry();
     }
 

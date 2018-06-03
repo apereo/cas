@@ -66,7 +66,7 @@ public class DefaultLogoutManagerTests {
     }
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         when(client.isValidEndPoint(any(String.class))).thenReturn(true);
         when(client.isValidEndPoint(any(URL.class))).thenReturn(true);
         when(client.sendMessageToEndPoint(any(HttpMessage.class))).thenReturn(true);

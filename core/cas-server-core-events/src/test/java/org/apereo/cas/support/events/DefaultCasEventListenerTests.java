@@ -55,7 +55,7 @@ public class DefaultCasEventListenerTests {
     private CasEventRepository casEventRepository;
 
     @BeforeEach
-    public void setup() {
+    public void initialize() {
         final var request = new MockHttpServletRequest();
         request.setRemoteAddr("123.456.789.000");
         request.setLocalAddr("123.456.789.000");

@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
 public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         clearAllServices();
     }
 

@@ -50,7 +50,7 @@ public class UserAuthenticationResourceTests {
     private MockMvc mockMvc;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         this.userAuthenticationResource = new UserAuthenticationResource(authenticationSupport,
             new UsernamePasswordRestHttpRequestCredentialFactory(),
             new WebApplicationServiceFactory(), new DefaultUserAuthenticationResourceEntityResponseFactory());

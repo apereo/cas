@@ -99,7 +99,7 @@ public class SwivelAuthenticationHandlerTests {
     private MockWebServer webServer;
 
     @BeforeEach
-    public void setup() {
+    public void initialize() {
         final var data = "<?xml version=\"1.0\" ?>"
             + "<SASResponse secret=\"MyAdminAgent\" version=\"3.4\">"
             + "<Version>3.6</Version>\n"

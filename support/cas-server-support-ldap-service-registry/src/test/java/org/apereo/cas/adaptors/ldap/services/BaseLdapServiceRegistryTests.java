@@ -53,7 +53,7 @@ public class BaseLdapServiceRegistryTests {
     private ServiceRegistry dao;
     
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         this.dao.load().forEach(service -> this.dao.delete(service));
     }
 

@@ -35,7 +35,7 @@ public class DistributedTicketRegistryTests {
     private boolean wasTicketUpdated;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         this.ticketRegistry = new TestDistributedTicketRegistry(this);
         this.wasTicketUpdated = false;
     }

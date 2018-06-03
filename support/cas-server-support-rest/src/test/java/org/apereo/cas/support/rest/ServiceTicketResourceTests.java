@@ -60,7 +60,7 @@ public class ServiceTicketResourceTests {
     private MockMvc mockMvc;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         final var mgmr = mock(AuthenticationManager.class);
         when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());

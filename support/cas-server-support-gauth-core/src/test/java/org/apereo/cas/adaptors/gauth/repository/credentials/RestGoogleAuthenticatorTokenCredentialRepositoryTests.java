@@ -43,7 +43,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     private IGoogleAuthenticator google;
 
     @BeforeEach
-    public void setup() {
+    public void initialize() {
         final var bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
         this.google = new GoogleAuthenticator(bldr.build());
     }

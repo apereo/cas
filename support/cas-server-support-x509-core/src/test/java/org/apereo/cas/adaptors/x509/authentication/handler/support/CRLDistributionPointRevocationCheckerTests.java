@@ -11,6 +11,8 @@ import org.apereo.cas.adaptors.x509.authentication.revocation.checker.Revocation
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.AllowRevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import org.apereo.cas.util.MockWebServer;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -187,7 +189,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
      * @throws Exception On setup errors.
      */
     @BeforeEach
-    public void setUp() throws Exception {
+    public void initialize() throws Exception {
         this.webServer.start();
         Thread.sleep(500);
     }
@@ -197,7 +199,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
      *
      */
     @AfterEach
-    public void tearDown() {
+    public void afterEachTest() {
         LOGGER.debug("Stopping web server...");
         this.webServer.stop();
         LOGGER.debug("Web server stopped [{}]", !this.webServer.isRunning());

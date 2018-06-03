@@ -28,7 +28,7 @@ public class RestEndpointInterruptInquirerTests {
 
     @BeforeEach
     @SneakyThrows
-    public void setup() {
+    public void initialize() {
         final var response = new InterruptResponse();
         response.setSsoEnabled(true);
         response.setInterrupt(true);

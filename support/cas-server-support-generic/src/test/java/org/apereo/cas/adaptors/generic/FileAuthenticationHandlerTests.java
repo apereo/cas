@@ -33,7 +33,7 @@ public class FileAuthenticationHandlerTests {
     private FileAuthenticationHandler authenticationHandler;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("authentication.txt"),
                 FileAuthenticationHandler.DEFAULT_SEPARATOR);
         final var p = new PasswordEncoderProperties();

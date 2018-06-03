@@ -61,7 +61,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     private DataSource dataSource;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void initialize() throws Exception {
         final var c = this.dataSource.getConnection();
         final var s = c.createStatement();
         c.setAutoCommit(true);
@@ -77,7 +77,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void afterEachTest() throws Exception {
         final var c = this.dataSource.getConnection();
         final var s = c.createStatement();
         c.setAutoCommit(true);

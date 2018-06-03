@@ -29,7 +29,7 @@ public class Cas10ResponseViewTests {
     private Map<String, Object> model;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         this.model = new HashMap<>();
         final List<Authentication> list = new ArrayList<>();
         list.add(CoreAuthenticationTestUtils.getAuthentication("someothername"));

@@ -24,7 +24,7 @@ public class SpnegoCredentialsToPrincipalResolverTests {
     private SpnegoCredential spnegoCredentials;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         this.resolver = new SpnegoPrincipalResolver();
         this.spnegoCredentials = new SpnegoCredential(new byte[]{0, 1, 2});
     }

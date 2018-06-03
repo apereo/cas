@@ -36,7 +36,7 @@ public abstract class AbstractServicesManagerTests {
     }
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         this.serviceRegistry = getServiceRegistryInstance();
         this.servicesManager = getServicesManagerInstance();
         this.servicesManager.load();

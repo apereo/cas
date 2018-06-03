@@ -74,7 +74,7 @@ public class RestfulAuthenticationPolicyTests {
     private RestfulAuthenticationPolicy policy;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         MockitoAnnotations.initMocks(this);
         mockServer = MockRestServiceServer.createServer(restTemplate);
         policy = new RestfulAuthenticationPolicy(this.restTemplate, URI);

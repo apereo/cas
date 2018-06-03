@@ -67,7 +67,7 @@ public class TicketGrantingTicketResourceTests {
     private MockMvc mockMvc;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         final var publisher = mock(ApplicationEventPublisher.class);
         final var manager = mock(AuthenticationManager.class);
         when(manager.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());

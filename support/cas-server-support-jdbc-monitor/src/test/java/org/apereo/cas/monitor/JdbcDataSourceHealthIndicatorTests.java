@@ -41,7 +41,7 @@ public class JdbcDataSourceHealthIndicatorTests {
     private DataSource dataSource;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         final var ctx = new ClassPathXmlApplicationContext("classpath:/jpaTestApplicationContext.xml");
         this.dataSource = ctx.getBean("dataSource", DataSource.class);
     }

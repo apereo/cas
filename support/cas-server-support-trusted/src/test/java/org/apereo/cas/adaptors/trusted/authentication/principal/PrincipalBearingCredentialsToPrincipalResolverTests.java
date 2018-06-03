@@ -21,7 +21,7 @@ public class PrincipalBearingCredentialsToPrincipalResolverTests {
     private PrincipalBearingPrincipalResolver resolver;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         this.resolver = new PrincipalBearingPrincipalResolver();
     }
 

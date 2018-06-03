@@ -51,7 +51,7 @@ public class RedisServiceRegistryTests {
     private ServiceRegistry dao;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         final var services = this.dao.load();
         services.forEach(service -> this.dao.delete(service));
     }

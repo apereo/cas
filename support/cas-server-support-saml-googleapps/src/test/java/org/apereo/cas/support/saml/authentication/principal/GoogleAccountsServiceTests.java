@@ -80,7 +80,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     }
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         this.googleAccountsService = getGoogleAccountsService();
     }
 

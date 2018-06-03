@@ -39,7 +39,7 @@ public class TicketStatusResourceTests {
     private MockMvc mockMvc;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         this.ticketStatusResource = new TicketStatusResource(casMock);
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketStatusResource)

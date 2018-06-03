@@ -39,7 +39,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
     private Association association;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void initialize() throws Exception {
         request.addParameter(OpenIdProtocolConstants.OPENID_IDENTITY, OPEN_ID_PREFIX_URL);
         request.addParameter(OpenIdProtocolConstants.OPENID_RETURNTO, RETURN_TO_URL);
         request.addParameter(OpenIdProtocolConstants.OPENID_MODE, "checkid_setup");

@@ -58,7 +58,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     private DefaultMultifactorTriggerSelectionStrategy strategy;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         mfaConfiguration = new MultifactorAuthenticationProperties();
         mfaConfiguration.setRequestParameter(REQUEST_PARAM);
         mfaConfiguration.setGlobalPrincipalAttributeNameTriggers(P_ATTRS_12);

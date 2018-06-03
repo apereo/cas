@@ -40,7 +40,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     private Principal principal;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         attributes = new HashMap<>();
         attributes.put("a1", Arrays.asList("v1", "v2", "v3"));
 

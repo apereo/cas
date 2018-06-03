@@ -38,7 +38,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
     private TicketGrantingTicket ticket;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         this.expirationPolicy = new MultiTimeUseOrTimeoutExpirationPolicy(NUMBER_OF_USES, TIMEOUT_SECONDS);
         this.ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils.getAuthentication(), this.expirationPolicy);
     }

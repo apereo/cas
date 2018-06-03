@@ -39,7 +39,7 @@ public class RestfulPersonAttributeDaoTests {
     private MockWebServer webServer;
 
     @BeforeEach
-    public void setup() {
+    public void initialize() {
         final var data = '{'
             + "   \"name\" :\"casuser\","
             + "\"age\" : 29,"

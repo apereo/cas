@@ -27,7 +27,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
     private HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler("", null, null, null, new SimpleHttpClientFactoryBean().getObject());
     }
 
@@ -63,8 +63,6 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
     @Test
     public void verifyNoAcceptableStatusCode() throws Exception {
         this.thrown.expect(FailedLoginException.class);
-
-
         this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu"));
     }
 
@@ -74,10 +72,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
         clientFactory.setAcceptableCodes(CollectionUtils.wrapList(900));
         final HttpClient httpClient = clientFactory.getObject();
         this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler("", null, null, null, httpClient);
-
         this.thrown.expect(FailedLoginException.class);
-
-
         this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://www.ja-sig.org"));
     }
 }

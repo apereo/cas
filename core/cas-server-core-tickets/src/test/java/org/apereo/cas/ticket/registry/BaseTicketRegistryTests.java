@@ -50,7 +50,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         this.ticketRegistry = this.getNewTicketRegistry();
         if (ticketRegistry != null) {
             this.ticketRegistry.deleteAll();

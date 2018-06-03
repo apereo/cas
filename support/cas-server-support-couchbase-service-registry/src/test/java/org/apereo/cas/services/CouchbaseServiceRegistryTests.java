@@ -42,7 +42,7 @@ public class CouchbaseServiceRegistryTests {
     private ServiceRegistry serviceRegistry;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         final var services = this.serviceRegistry.load();
         services.forEach(service -> this.serviceRegistry.delete(service));
     }

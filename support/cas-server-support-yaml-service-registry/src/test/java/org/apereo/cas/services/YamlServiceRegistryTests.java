@@ -18,7 +18,7 @@ import org.springframework.context.ApplicationEventPublisher;
 public class YamlServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
 
     @BeforeEach
-    public void setup() {
+    public void initialize() {
         try {
             this.dao = new YamlServiceRegistry(RESOURCE, false,
                     mock(ApplicationEventPublisher.class),

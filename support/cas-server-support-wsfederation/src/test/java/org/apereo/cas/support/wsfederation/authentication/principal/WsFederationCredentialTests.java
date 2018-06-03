@@ -24,7 +24,7 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
     private WsFederationCredential standardCred;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         standardCred = new WsFederationCredential();
         standardCred.setNotBefore(ZonedDateTime.now(ZoneOffset.UTC));
         standardCred.setNotOnOrAfter(ZonedDateTime.now(ZoneOffset.UTC).plusHours(1));

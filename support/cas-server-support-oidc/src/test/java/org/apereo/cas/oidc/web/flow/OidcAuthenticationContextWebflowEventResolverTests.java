@@ -49,7 +49,7 @@ public class OidcAuthenticationContextWebflowEventResolverTests extends Abstract
 
     @BeforeEach
     @Override
-    public void setup() {
+    public void initialize() {
         super.setup();
 
         this.context = new MockRequestContext();

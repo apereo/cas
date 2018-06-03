@@ -25,7 +25,7 @@ public class RegisteredServiceScriptedAttributeFilterTests {
     private Map<String, Object> givenAttributesMap;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         this.givenAttributesMap = new HashMap<>();
         this.givenAttributesMap.put("employeeId", "E1234");
         this.givenAttributesMap.put("memberOf", Arrays.asList("math101", "science", "chemistry", "marathon101"));

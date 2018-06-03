@@ -59,7 +59,7 @@ public class JpaServiceRegistryTests {
     private ServicesManager servicesManager;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         final var services = this.serviceRegistry.load();
         services.forEach(service -> this.serviceRegistry.delete(service));
     }

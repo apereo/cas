@@ -36,7 +36,7 @@ public class DefaultCasCookieValueManagerTests {
     private Cookie cookie;
 
     @BeforeEach
-    public void setup() {
+    public void initialize() {
         MockitoAnnotations.initMocks(this);
 
         ClientInfoHolder.setClientInfo(clientInfo);

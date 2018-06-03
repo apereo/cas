@@ -50,13 +50,13 @@ public class CouchDbServiceRegistryTests {
     private RegisteredServiceRepository registeredServiceRepository;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         registeredServiceRepository.initStandardDesignDocument();
     }
 
     @AfterEach
-    public void tearDown() {
+    public void afterEachTest() {
         couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
     }
 
