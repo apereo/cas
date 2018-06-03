@@ -81,7 +81,7 @@ public class JcifsConfig implements InitializingBean {
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         init();
     }
 
@@ -109,8 +109,9 @@ public class JcifsConfig implements InitializingBean {
             } else {
                 final var url = getClass().getResource("/jcifs/http/login.conf");
                 if (url != null) {
-                    LOGGER.debug("Falling back unto default login config [{}] under [{}]", url.toExternalForm(), SYS_PROP_LOGIN_CONF);
-                    System.setProperty(SYS_PROP_LOGIN_CONF, url.toExternalForm());
+                    final var fullUrl = url.toExternalForm();
+                    LOGGER.debug("Falling back unto default login config [{}] under [{}]", fullUrl, SYS_PROP_LOGIN_CONF);
+                    System.setProperty(SYS_PROP_LOGIN_CONF, fullUrl);
                 }
             }
             LOGGER.debug("configured login configuration path : [{}]", propValue);
@@ -125,7 +126,7 @@ public class JcifsConfig implements InitializingBean {
      */
     public void setJcifsServicePassword(final String jcifsServicePassword) {
         if (StringUtils.isNotBlank(jcifsServicePassword)) {
-            LOGGER.debug("jcifsServicePassword is set to *****");
+            LOGGER.debug("jcifsServicePassword is set");
             Config.setProperty(JCIFS_PROP_SERVICE_PASSWORD, jcifsServicePassword);
         }
     }
@@ -149,7 +150,6 @@ public class JcifsConfig implements InitializingBean {
      */
     public void setKerberosConf(final String kerberosConf) {
         if (StringUtils.isNotBlank(kerberosConf)) {
-
             LOGGER.debug("kerberosConf is set to :[{}]", kerberosConf);
             System.setProperty(SYS_PROP_KERBEROS_CONF, kerberosConf);
         }
