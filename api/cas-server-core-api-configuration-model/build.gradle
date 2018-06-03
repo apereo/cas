@@ -25,7 +25,6 @@ task generateConfigurationMetadata(type: JavaExec) {
     }
     main = "org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator"
     classpath = sourceSets.main.runtimeClasspath
-    jvmArgs = ['--add-modules', 'java.se.ee']
     args buildDir, projectDir.canonicalPath
 }
 

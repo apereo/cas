@@ -257,10 +257,6 @@ subprojects {
 
             casCompilerArgs.add("-XDcompilePolicy=byfile")
         }
-
-        casCompilerArgs.add("--add-modules")
-        casCompilerArgs.add("java.se.ee")
-
         it.options.compilerArgs += casCompilerArgs
     }
 
@@ -357,6 +353,7 @@ subprojects {
         implementation libraries.aspectj
         implementation libraries.validationapi
 
+        api libraries.jaxb
         api libraries.log4j
         api libraries.guava
         api libraries.commons
