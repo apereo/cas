@@ -159,8 +159,11 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param serviceTicketId the service ticket id
      * @param credential      the service credential
      * @return the ticket granting ticket
+     * @throws AuthenticationException the authentication exception
+     * @throws AbstractTicketException the abstract ticket exception
      */
-    private TicketGrantingTicket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential credential) throws AuthenticationException, AbstractTicketException {
+    public TicketGrantingTicket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential credential)
+        throws AuthenticationException, AbstractTicketException {
         final var serviceTicket = this.centralAuthenticationService.getTicket(serviceTicketId, ServiceTicket.class);
         final var authenticationResult = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceTicket.getService(), credential);
         final TicketGrantingTicket proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId, authenticationResult);
@@ -209,6 +212,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param serviceTicketId the service ticket id
      * @return the model and view
      */
+
     protected ModelAndView handleTicketValidation(final HttpServletRequest request, final WebApplicationService service, final String serviceTicketId) {
         TicketGrantingTicket proxyGrantingTicketId = null;
         final var serviceCredential = getServiceCredentialsFromRequest(service, request);
