@@ -36,7 +36,6 @@ public class StatusEndpoint extends BaseCasMvcEndpoint {
      * Handle request.
      *
      * @return the map
-     * @throws Exception the exception
      */
     @ReadOperation
     public Map<String, Object> handle() {
@@ -53,13 +52,11 @@ public class StatusEndpoint extends BaseCasMvcEndpoint {
             model.put("description", HttpStatus.OK.name());
         }
         model.put("health", status.getCode());
-        model.put("health1", status.getDescription());
         model.put("host", StringUtils.isBlank(getCasProperties().getHost().getName())
             ? InetAddressUtils.getCasServerHostName()
             : getCasProperties().getHost().getName());
-        model.put("server", getCasProperties().getServer().getPrefix());
+        model.put("server", getCasProperties().getServer().getName());
         model.put("version", CasVersion.asString());
-
         return model;
     }
 }
