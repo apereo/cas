@@ -85,6 +85,20 @@ Specifying the `principal`  in the same manner will revoke all consent decisions
 A `GET` operation produces a list of all consent decisions. A `DELETE` operation with a 
 a record key id will attempt to remove and revoke the registered device (i.e. `attribute-consent/{principal}/{id}`).
 
+### Metrics
+
+Navigating to `/actuator/metrics` displays a list of available meter names. You can drill down to view information about a 
+particular meter by providing its name as a selector, e.g. `/actuator/metrics/jvm.memory.max`.  The name you use here should match 
+the name used in the code, not the name after it has been naming-convention normalized for a monitoring system it is shipped to.
+
+You can also add any number of `tag=KEY:VALUE` query parameters to the end of the URL to dimensionally drill 
+down on a meter, e.g. `/actuator/metrics/jvm.memory.max?tag=area:nonheap`
+
+The reported measurements are the sum of the statistics of all meters matching the meter name and any tags that have been applied. 
+So in the example above, the returned "Value" statistic is the sum of the maximum memory footprints of "Code Cache", 
+"Compressed Class Space", and "Metaspace" areas of the heap. If you just wanted to see the maximum size for the "Metaspace", 
+you could add an additional `tag=id:Metaspace`, i.e. `/actuator/metrics/jvm.memory.max?tag=area:nonheap&tag=id:Metaspace`.
+
 ## Security
 
 TODO:
