@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -86,15 +87,20 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
      */
     protected TicketGrantingTicket createOrUpdateTicketGrantingTicket(final AuthenticationResult authenticationResult,
                                                                       final Authentication authentication, final String ticketGrantingTicket) {
-        final TicketGrantingTicket tgt;
-        if (shouldIssueTicketGrantingTicket(authentication, ticketGrantingTicket)) {
-            tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
-        } else {
-            tgt = this.centralAuthenticationService.getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
-            tgt.getAuthentication().update(authentication);
-            this.centralAuthenticationService.updateTicket(tgt);
+        try {
+            final TicketGrantingTicket tgt;
+            if (shouldIssueTicketGrantingTicket(authentication, ticketGrantingTicket)) {
+                tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
+            } else {
+                tgt = this.centralAuthenticationService.getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
+                tgt.getAuthentication().update(authentication);
+                this.centralAuthenticationService.updateTicket(tgt);
+            }
+            return tgt;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new InvalidTicketException(ticketGrantingTicket);
         }
-        return tgt;
     }
 
     private boolean shouldIssueTicketGrantingTicket(final Authentication authentication, final String ticketGrantingTicket) {
