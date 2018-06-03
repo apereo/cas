@@ -48,7 +48,7 @@ public class ClientAuthenticationHandlerTests {
     private ClientCredential clientCredential;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         this.fbClient = new FacebookClient();
         final var clients = new Clients(CALLBACK_URL, fbClient);
         this.handler = new ClientAuthenticationHandler("", mock(ServicesManager.class), null, clients);

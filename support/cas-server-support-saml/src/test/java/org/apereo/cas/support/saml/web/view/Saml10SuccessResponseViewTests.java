@@ -53,7 +53,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
     private Saml10SuccessResponseView response;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         final List<RegisteredService> list = new ArrayList<>();
         list.add(RegisteredServiceTestUtils.getRegisteredService("https://.+"));
         final var dao = new InMemoryServiceRegistry();

@@ -34,7 +34,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
     private Set<AuthenticationHandler> handlers;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         final var dao = new InMemoryServiceRegistry();
         final List<RegisteredService> list = new ArrayList<>();
 

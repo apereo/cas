@@ -50,7 +50,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
     protected ThrottledSubmissionHandlerInterceptor throttle;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         final var request = new MockHttpServletRequest();
         request.setRemoteAddr(IP_ADDRESS);
         request.setLocalAddr(IP_ADDRESS);
@@ -58,7 +58,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
     }
 
     @AfterEach
-    public void tearDown() {
+    public void afterEachTest() {
         ClientInfoHolder.setClientInfo(null);
     }
 

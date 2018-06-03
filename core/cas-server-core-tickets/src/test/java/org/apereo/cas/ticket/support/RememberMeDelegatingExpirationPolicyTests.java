@@ -39,7 +39,7 @@ public class RememberMeDelegatingExpirationPolicyTests {
     private RememberMeDelegatingExpirationPolicy p;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         final var rememberMe = new MultiTimeUseOrTimeoutExpirationPolicy(1, 20000);
         p = new RememberMeDelegatingExpirationPolicy(rememberMe);
         p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.REMEMBER_ME, rememberMe);

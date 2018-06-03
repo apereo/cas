@@ -33,7 +33,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
     private TicketGrantingTicket ticket;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         this.expirationPolicy = new ThrottledUseAndTimeoutExpirationPolicy();
         this.expirationPolicy.setTimeToKillInSeconds(TIMEOUT);
         this.expirationPolicy.setTimeInBetweenUsesInSeconds(TIMEOUT / 5);
