@@ -31,7 +31,7 @@ public class TimeoutExpirationPolicyTests {
     private Ticket ticket;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         this.expirationPolicy = new TimeoutExpirationPolicy(TIMEOUT);
 
         this.ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils

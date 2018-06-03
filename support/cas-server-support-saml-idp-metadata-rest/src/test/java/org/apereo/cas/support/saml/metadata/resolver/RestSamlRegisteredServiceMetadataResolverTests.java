@@ -116,7 +116,7 @@ public class RestSamlRegisteredServiceMetadataResolverTests {
 
     @BeforeEach
     @SneakyThrows
-    public void setup() {
+    public void initialize() {
         final var doc = new SamlMetadataDocument();
         doc.setId(1);
         doc.setName("SAML Document");

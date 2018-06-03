@@ -56,7 +56,7 @@ public class InitialFlowSetupActionCookieTests extends AbstractCentralAuthentica
     private CookieRetrievingCookieGenerator tgtCookieGenerator;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void initialize() throws Exception {
         this.warnCookieGenerator = new CookieRetrievingCookieGenerator("warn", "", 2,
                 false, null, false);
         this.warnCookieGenerator.setCookiePath(StringUtils.EMPTY);

@@ -93,7 +93,7 @@ public class TimedMultifactorAuthenticationPolicyEventResolverTests {
     private MockHttpServletRequest request;
 
     @BeforeEach
-    public void setup() {
+    public void initialize() {
         this.context = new MockRequestContext();
 
         request = new MockHttpServletRequest();

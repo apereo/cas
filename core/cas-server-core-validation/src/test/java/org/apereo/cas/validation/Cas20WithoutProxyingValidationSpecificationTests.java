@@ -17,7 +17,7 @@ public class Cas20WithoutProxyingValidationSpecificationTests {
     private Cas20WithoutProxyingValidationSpecification validationSpecification;
 
     @BeforeEach
-    public void setUp() {
+    public void initialize() {
         this.validationSpecification = new Cas20WithoutProxyingValidationSpecification();
     }
 
