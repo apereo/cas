@@ -23,5 +23,4 @@ public class CasFlowHandlerAdapter extends FlowHandlerAdapter {
     public boolean supports(final Object handler) {
         return super.supports(handler) && ((FlowHandler) handler).getFlowId().equals(supportedFlowId);
     }
-
 }

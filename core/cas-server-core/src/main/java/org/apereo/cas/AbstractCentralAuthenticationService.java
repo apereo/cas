@@ -1,6 +1,5 @@
 package org.apereo.cas;
 
-import io.micrometer.core.annotation.Timed;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
@@ -116,7 +115,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     }
 
     @Transactional(transactionManager = "ticketTransactionManager", noRollbackFor = InvalidTicketException.class)
-    @Timed("GET_TICKET_TIMER")
     @Override
     public Ticket getTicket(@NonNull final String ticketId) throws InvalidTicketException {
         final var ticket = this.ticketRegistry.getTicket(ticketId);
@@ -133,7 +131,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * builds new object, most likely for each pull. Is this synchronization needed here?
      */
     @Transactional(transactionManager = "ticketTransactionManager", noRollbackFor = InvalidTicketException.class)
-    @Timed("GET_TICKET_TIMER")
     @Override
     public <T extends Ticket> T getTicket(@NonNull final String ticketId, final Class<T> clazz) throws InvalidTicketException {
         final Ticket ticket = this.ticketRegistry.getTicket(ticketId, clazz);
@@ -142,14 +139,12 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     }
 
     @Transactional(transactionManager = "ticketTransactionManager")
-    @Timed("GET_TICKETS_TIMER")
     @Override
     public Collection<Ticket> getTickets(final Predicate<Ticket> predicate) {
         return this.ticketRegistry.getTickets().stream().filter(predicate).collect(Collectors.toSet());
     }
 
     @Transactional(transactionManager = "ticketTransactionManager")
-    @Timed("DELETE_TICKET_TIMER")
     @Override
     public void deleteTicket(final String ticketId) {
         this.ticketRegistry.deleteTicket(ticketId);

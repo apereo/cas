@@ -61,7 +61,8 @@ public class GenerateServiceTicketAction extends AbstractAction {
         try {
             final var authentication = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
             if (authentication == null) {
-                throw new InvalidTicketException(new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket), ticketGrantingTicket);
+                final var authn = new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket);
+                throw new InvalidTicketException(authn, ticketGrantingTicket);
             }
 
             final var selectedService = authenticationRequestServiceSelectionStrategies.resolveService(service);
@@ -112,10 +113,9 @@ public class GenerateServiceTicketAction extends AbstractAction {
      * @param context the context
      * @return true, if gateway present
      */
-
     protected boolean isGatewayPresent(final RequestContext context) {
-        return StringUtils.hasText(context.getExternalContext()
-            .getRequestParameterMap().get(CasProtocolConstants.PARAMETER_GATEWAY));
+        final var requestParameterMap = context.getExternalContext().getRequestParameterMap();
+        return StringUtils.hasText(requestParameterMap.get(CasProtocolConstants.PARAMETER_GATEWAY));
     }
 
     /**

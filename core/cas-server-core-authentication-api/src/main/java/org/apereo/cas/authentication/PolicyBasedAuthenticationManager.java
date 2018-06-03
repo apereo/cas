@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import io.micrometer.core.annotation.Timed;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -128,7 +127,6 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         action = "AUTHENTICATION",
         actionResolverName = "AUTHENTICATION_RESOLVER",
         resourceResolverName = "AUTHENTICATION_RESOURCE_RESOLVER")
-    @Timed("AUTHENTICATE_TIMER")
     public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
         final var result = invokeAuthenticationPreProcessors(transaction);
         if (!result) {
