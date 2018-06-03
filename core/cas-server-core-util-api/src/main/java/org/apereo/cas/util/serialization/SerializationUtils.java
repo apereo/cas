@@ -101,7 +101,8 @@ public class SerializationUtils {
     public static byte[] serializeAndEncodeObject(final CipherExecutor cipher,
                                                   final Serializable object,
                                                   final Object[] parameters) {
-        return (byte[]) cipher.encode(object, parameters);
+        final var outBytes = serialize(object);
+        return (byte[]) cipher.encode(outBytes, parameters);
     }
 
     /**
