@@ -25,7 +25,9 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
+import org.springframework.boot.actuate.autoconfigure.health.HealthEndpointAutoConfiguration;
 import org.springframework.boot.actuate.health.HealthEndpoint;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -98,9 +100,18 @@ public class CasReportsConfiguration {
         return new AuditLogEndpoint(auditTrailExecutionPlan.getIfAvailable(), casProperties);
     }
 
+
+    /**
+     * This this {@link StatusEndpointConfiguration}.
+     *
+     * @author Misagh Moayyed
+     * @since 6.0.0
+     */
     @Configuration("statusEndpointConfiguration")
-    @ConditionalOnBean(HealthEndpoint.class)
-    class StatusEndpointConfiguration {
+    public static class StatusEndpointConfiguration {
+        @Autowired
+        private CasConfigurationProperties casProperties;
+
         @Autowired
         @Bean
         @ConditionalOnEnabledEndpoint
