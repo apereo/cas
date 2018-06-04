@@ -99,7 +99,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -122,7 +122,7 @@ import java.util.stream.Stream;
 @Configuration("oidcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWebflowExecutionPlanConfigurer {
+public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")

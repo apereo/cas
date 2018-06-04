@@ -24,7 +24,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * This is {@link CasConsentReviewWebConfiguration}.
@@ -34,7 +34,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 @Configuration("casConsentReviewWebConfiguration")
 @Slf4j
-public class CasConsentReviewWebConfiguration extends WebMvcConfigurerAdapter implements ServiceRegistryExecutionPlanConfigurer {
+public class CasConsentReviewWebConfiguration implements WebMvcConfigurer, ServiceRegistryExecutionPlanConfigurer {
     private static final String CAS_CONSENT_CLIENT = "CasConsentClient";
 
     @Autowired

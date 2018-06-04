@@ -38,7 +38,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
@@ -172,7 +172,7 @@ public class CasRestConfiguration implements RestHttpRequestCredentialFactoryCon
     @Configuration("casRestThrottlingConfiguration")
     @ConditionalOnMissingBean(name = "restAuthenticationThrottle")
     @Slf4j
-    public static class CasRestThrottlingConfiguration extends WebMvcConfigurerAdapter {
+    public static class CasRestThrottlingConfiguration implements WebMvcConfigurer {
 
         @Autowired
         @Qualifier("authenticationThrottlingExecutionPlan")

@@ -45,4 +45,8 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 
     compileOnly libraries.bouncycastle
+
+    implementation libraries.springsecurity
+    implementation libraries.springsecurityweb
+    implementation libraries.springsecurityconfig
 }

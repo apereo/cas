@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -38,7 +38,7 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
 public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingExecutionPlanConfigurer {
 
     @Configuration("oauthThrottleWebMvcConfigurer")
-    static class CasOAuthThrottleWebMvcConfigurer extends WebMvcConfigurerAdapter {
+    static class CasOAuthThrottleWebMvcConfigurer implements WebMvcConfigurer {
 
         @Autowired
         @Qualifier("authenticationThrottlingExecutionPlan")
