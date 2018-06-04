@@ -2917,6 +2917,37 @@ ext.libraries = [
                 },
                 dependencies.create("org.springframework.security:spring-security-rsa:$springSecurityRsaVersion") {
                     force = true
+                },
+                dependencies.create("org.springframework.security:spring-security-cas:$springSecurityVersion") {
+                    exclude(group: "net.sf.ehcache", module: "ehcache")
+                    exclude(group: "org.jasig.cas.client", module: "cas-client-core")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.springframework", module: "spring-jdbc")
+                    exclude(group: "org.springframework", module: "spring-test")
+                    exclude(group: "org.springframework", module: "spring-tx")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "junit", module: "junit")
+                    exclude(group: "org.mockito", module: "mockito-core")
+                    force = true
+                },
+                dependencies.create("org.springframework.security:spring-security-openid:$springSecurityVersion") {
+                    exclude(group: "org.jasig.cas.client", module: "cas-client-core")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.springframework", module: "spring-jdbc")
+                    exclude(group: "org.springframework", module: "spring-test")
+                    exclude(group: "org.springframework", module: "spring-tx")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "junit", module: "junit")
+                    exclude(group: "org.mockito", module: "mockito-core")
+                    force = true
                 }
         ],
 

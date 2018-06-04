@@ -9,8 +9,11 @@ import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedPropert
 import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Configuration properties class for cas.monitor.
@@ -66,6 +69,11 @@ public class MonitorProperties implements Serializable {
      * Options for monitoring MongoDb resources.
      */
     private MongoDb mongo = new MongoDb();
+
+    /**
+     * Properties relevant to endpoint security, etc.
+     */
+    private Endpoints endpoints = new Endpoints();
 
     @RequiresModule(name = "cas-server-core-monitor", automated = true)
     @Getter
@@ -148,5 +156,65 @@ public class MonitorProperties implements Serializable {
          * before it times outs and considers the pool in bad shape.
          */
         private String maxWait = "PT5S";
+    }
+
+    @RequiresModule(name = "cas-server-support-reports", automated = true)
+    @Getter
+    @Setter
+    public static class Endpoints implements Serializable {
+        private static final long serialVersionUID = -3375777593395683691L;
+
+        /**
+         * Options for monitoring sensitive CAS endpoints and resources.
+         * Acts as a parent class for all endpoints and settings
+         * and exposes shortcuts so security and capability of endpoints
+         * can be globally controlled from one spot and then overridden elsewhere.
+         */
+        private Map<String, ActuatorEndpointProperties> endpoint = new HashMap<>();
+
+        /**
+         * Allow CAS to auto-configure the security of the endpoints
+         * via properties, versus letting Spring Security handle the security
+         * or other custom configuration that might be designed and injected
+         * into the context.
+         */
+        private boolean enableEndpointSecurity = true;
+
+        /**
+         * Enable Spring Security's JAAS authentication provider
+         * for admin status authorization and access control.
+         */
+        private JaasSecurity jaas = new JaasSecurity();
+
+        @Getter
+        @Setter
+        public static class JaasSecurity implements Serializable {
+
+            private static final long serialVersionUID = -3024678577827371641L;
+
+            /**
+             * JAAS login resource file.
+             */
+            private transient Resource loginConfig;
+
+            /**
+             * If set, a call to {@code Configuration#refresh()}
+             * will be made by {@code #configureJaas(Resource)} method.
+             */
+            private boolean refreshConfigurationOnStartup = true;
+
+            /**
+             * The login context name should coincide with a given index in the login config specified.
+             * This name is used as the index to the configuration specified in the login config property.
+             *
+             * <pre>
+             * JAASTest {
+             * org.springframework.security.authentication.jaas.TestLoginModule required;
+             * };
+             * </pre>
+             * In the above example, {@code JAASTest} should be set as the context name.
+             */
+            private String loginContextName;
+        }
     }
 }
