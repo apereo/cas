@@ -4,6 +4,9 @@
         <cve>CVE-2016-1000031</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2007-1652</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2015-0225</cve>
     </suppress>
     <suppress>
