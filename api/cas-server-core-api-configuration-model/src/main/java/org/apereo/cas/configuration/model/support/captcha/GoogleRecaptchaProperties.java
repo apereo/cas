@@ -38,4 +38,14 @@ public class GoogleRecaptchaProperties implements Serializable {
      * The google reCAPTCHA site secret.
      */
     private String secret;
+
+    /**
+     * Whether google reCAPTCHA invisible should be enabled.
+     */
+    private boolean invisible = false;
+
+    /**
+     * The google reCAPTCHA position (only if invisible is enabled).
+     */
+    private String position;
 }
