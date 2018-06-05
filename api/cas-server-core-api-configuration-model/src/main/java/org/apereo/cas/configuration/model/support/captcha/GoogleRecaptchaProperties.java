@@ -42,7 +42,7 @@ public class GoogleRecaptchaProperties implements Serializable {
     /**
      * Whether google reCAPTCHA invisible should be enabled.
      */
-    private boolean invisible = false;
+    private boolean invisible;
 
     /**
      * The google reCAPTCHA position (only if invisible is enabled).
