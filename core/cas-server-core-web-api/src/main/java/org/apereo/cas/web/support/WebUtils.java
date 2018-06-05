@@ -30,6 +30,7 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -42,6 +43,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Common utilities for the web tier.
@@ -423,13 +425,13 @@ public class WebUtils {
      */
     public static void putWarnCookieIfRequestParameterPresent(final CookieGenerator warnCookieGenerator, final RequestContext context) {
         if (warnCookieGenerator != null) {
-            LOGGER.debug("Evaluating request to determine if warning cookie should be generated");
+            LOGGER.trace("Evaluating request to determine if warning cookie should be generated");
             final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
             if (StringUtils.isNotBlank(context.getExternalContext().getRequestParameterMap().get("warn"))) {
                 warnCookieGenerator.addCookie(response, "true");
             }
         } else {
-            LOGGER.debug("No warning cookie generator is defined");
+            LOGGER.trace("No warning cookie generator is defined");
         }
     }
 
@@ -516,8 +518,19 @@ public class WebUtils {
      * @return the http servlet request user agent
      */
     public static String getHttpServletRequestUserAgentFromRequestContext() {
-        final HttpServletRequest httpServletRequestFromExternalWebflowContext = getHttpServletRequestFromExternalWebflowContext();
-        return HttpRequestUtils.getHttpServletRequestUserAgent(httpServletRequestFromExternalWebflowContext);
+        final HttpServletRequest request = getHttpServletRequestFromExternalWebflowContext();
+        return HttpRequestUtils.getHttpServletRequestUserAgent(request);
+    }
+
+    /**
+     * Gets http servlet request user agent from request context.
+     *
+     * @param context the context
+     * @return the http servlet request user agent from request context
+     */
+    public static String getHttpServletRequestUserAgentFromRequestContext(final RequestContext context) {
+        final HttpServletRequest request = getHttpServletRequestFromExternalWebflowContext(context);
+        return HttpRequestUtils.getHttpServletRequestUserAgent(request);
     }
 
     /**
@@ -527,6 +540,17 @@ public class WebUtils {
      */
     public static GeoLocationRequest getHttpServletRequestGeoLocationFromRequestContext() {
         final HttpServletRequest servletRequest = getHttpServletRequestFromExternalWebflowContext();
+        return getHttpServletRequestGeoLocation(servletRequest);
+    }
+
+    /**
+     * Gets http servlet request geo location from request context.
+     *
+     * @param context the context
+     * @return the http servlet request geo location from request context
+     */
+    public static GeoLocationRequest getHttpServletRequestGeoLocationFromRequestContext(final RequestContext context) {
+        final HttpServletRequest servletRequest = getHttpServletRequestFromExternalWebflowContext(context);
         return getHttpServletRequestGeoLocation(servletRequest);
     }
 
@@ -661,7 +685,8 @@ public class WebUtils {
      */
     public static void putResolvedMultifactorAuthenticationProviders(final RequestContext context,
                                                                      final Collection<MultifactorAuthenticationProvider> value) {
-        context.getConversationScope().put("resolvedMultifactorAuthenticationProviders", value);
+        final Collection<String> providerIds = value.stream().map(MultifactorAuthenticationProvider::getId).collect(Collectors.toSet());
+        context.getConversationScope().put("resolvedMultifactorAuthenticationProviders", providerIds);
     }
 
     /**
@@ -670,7 +695,7 @@ public class WebUtils {
      * @param context the context
      * @return the resolved multifactor authentication providers
      */
-    public static Collection<MultifactorAuthenticationProvider> getResolvedMultifactorAuthenticationProviders(final RequestContext context) {
+    public static Collection<String> getResolvedMultifactorAuthenticationProviders(final RequestContext context) {
         return context.getConversationScope().get("resolvedMultifactorAuthenticationProviders", Collection.class);
     }
 
@@ -759,4 +784,158 @@ public class WebUtils {
         }
         return authentication;
     }
+
+    /**
+     * Put passwordless authentication enabled.
+     *
+     * @param requestContext the request context
+     * @param value          the value
+     */
+    public static void putPasswordlessAuthenticationEnabled(final RequestContext requestContext, final Boolean value) {
+        requestContext.getFlowScope().put("passwordlessAuthenticationEnabled", value);
+    }
+
+    /**
+     * Put passwordless authentication account.
+     *
+     * @param requestContext the request context
+     * @param account        the account
+     */
+    public static void putPasswordlessAuthenticationAccount(final RequestContext requestContext, final Object account) {
+        requestContext.getFlowScope().put("passwordlessAccount", account);
+    }
+
+    /**
+     * Gets passwordless authentication account.
+     *
+     * @param <T>   the type parameter
+     * @param event the event
+     * @param clazz the clazz
+     * @return the passwordless authentication account
+     */
+    public static <T> T getPasswordlessAuthenticationAccount(final Event event, final Class<T> clazz) {
+        return event.getAttributes().get("passwordlessAccount", clazz);
+    }
+
+    /**
+     * Gets passwordless authentication account.
+     *
+     * @param <T>   the type parameter
+     * @param event the event
+     * @param clazz the clazz
+     * @return the passwordless authentication account
+     */
+    public static <T> T getPasswordlessAuthenticationAccount(final RequestContext event, final Class<T> clazz) {
+        return getPasswordlessAuthenticationAccount(event.getCurrentEvent(), clazz);
+    }
+
+    /**
+     * Has passwordless authentication account.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static boolean hasPasswordlessAuthenticationAccount(final RequestContext requestContext) {
+        return requestContext.getFlowScope().contains("passwordlessAccount");
+    }
+
+    /**
+     * Put request surrogate authentication.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putRequestSurrogateAuthentication(final RequestContext context, final Boolean value) {
+        context.getFlowScope().put("requestSurrogateAccount", value);
+    }
+
+    /**
+     * Has request surrogate authentication request.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static boolean hasRequestSurrogateAuthenticationRequest(final RequestContext requestContext) {
+        return requestContext.getFlowScope().getBoolean("requestSurrogateAccount", Boolean.FALSE);
+    }
+
+    /**
+     * Has request surrogate authentication request.
+     *
+     * @param requestContext the request context
+     */
+    public static void removeRequestSurrogateAuthenticationRequest(final RequestContext requestContext) {
+        requestContext.getFlowScope().remove("requestSurrogateAccount");
+    }
+
+    /**
+     * Put surrogate authentication accounts.
+     *
+     * @param requestContext the request context
+     * @param surrogates     the surrogates
+     */
+    public static void putSurrogateAuthenticationAccounts(final RequestContext requestContext, final List<String> surrogates) {
+        requestContext.getFlowScope().put("surrogates", surrogates);
+    }
+
+    /**
+     * Gets surrogate authentication accounts.
+     *
+     * @param requestContext the request context
+     * @return the surrogate authentication accounts
+     */
+    public static List<String> getSurrogateAuthenticationAccounts(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("surrogates", List.class);
+    }
+
+    /**
+     * Put graphical user authentication enabled.
+     *
+     * @param requestContext the request context
+     * @param value          the value
+     */
+    public static void putGraphicalUserAuthenticationEnabled(final RequestContext requestContext, final Boolean value) {
+        requestContext.getFlowScope().put("guaEnabled", value);
+    }
+
+    /**
+     * Put graphical user authentication username.
+     *
+     * @param requestContext the request context
+     * @param username       the username
+     */
+    public static void putGraphicalUserAuthenticationUsername(final RequestContext requestContext, final String username) {
+        requestContext.getFlowScope().put("guaUsername", username);
+    }
+
+    /**
+     * Contains graphical user authentication username.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static boolean containsGraphicalUserAuthenticationUsername(final RequestContext requestContext) {
+        return requestContext.getFlowScope().contains("guaUsername");
+    }
+
+    /**
+     * Put graphical user authentication image.
+     *
+     * @param requestContext the request context
+     * @param image          the image
+     */
+    public static void putGraphicalUserAuthenticationImage(final RequestContext requestContext, final String image) {
+        requestContext.getFlowScope().put("guaUserImage", image);
+    }
+
+    /**
+     * Contains graphical user authentication image boolean.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
+    public static boolean containsGraphicalUserAuthenticationImage(final RequestContext requestContext) {
+        return requestContext.getFlowScope().contains("guaUserImage");
+    }
+
 }

@@ -11,8 +11,8 @@ import org.apereo.cas.authentication.ByCredentialTypeAuthenticationHandlerResolv
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -67,7 +67,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "u2fPrincipalFactory")
     @Bean
     public PrincipalFactory u2fPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @Bean

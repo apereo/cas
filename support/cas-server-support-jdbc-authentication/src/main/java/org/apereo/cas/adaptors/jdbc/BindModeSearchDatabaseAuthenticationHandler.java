@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -38,24 +39,20 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                                         final String originalPassword)
         throws GeneralSecurityException, PreventedException {
-
-        if (getDataSource() == null) {
-            throw new GeneralSecurityException("Authentication handler is not configured correctly");
-        }
-
         Connection connection = null;
         try {
             final String username = credential.getUsername();
             final String password = credential.getPassword();
-            connection = this.getDataSource().getConnection(username, password);
-            return createHandlerResult(credential, this.principalFactory.createPrincipal(username), new ArrayList<>(0));
+            connection = getDataSource().getConnection(username, password);
+            final Principal principal = this.principalFactory.createPrincipal(username);
+            return createHandlerResult(credential, principal, new ArrayList<>(0));
         } catch (final SQLException e) {
             throw new FailedLoginException(e.getMessage());
         } catch (final Exception e) {
             throw new PreventedException("Unexpected SQL connection error", e);
         } finally {
             if (connection != null) {
-                DataSourceUtils.releaseConnection(connection, this.getDataSource());
+                DataSourceUtils.releaseConnection(connection, getDataSource());
             }
         }
     }

@@ -45,7 +45,7 @@ public class RequestSessionAttributeMultifactorAuthenticationPolicyEventResolver
 
     @Override
     protected List<String> resolveEventFromHttpRequest(final HttpServletRequest request) {
-        final HttpSession session = request.getSession();
+        final HttpSession session = request.getSession(false);
         Object attributeValue = session != null ? session.getAttribute(attributeName) : null;
         if (attributeValue == null) {
             LOGGER.debug("No value could be found for session attribute [{}]. Checking request attributes...", this.attributeName);

@@ -66,6 +66,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.support.config.CasThrottlingConfiguration;
 import org.junit.runner.RunWith;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.springframework.web.SecurityInterceptor;
@@ -107,41 +108,41 @@ import static org.junit.Assert.*;
  * @since 5.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(
-    classes = {
-        AopAutoConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasOAuth20TestAuthenticationEventExecutionPlanConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasOAuthConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCookieConfiguration.class,
-        CasOAuthComponentSerializationConfiguration.class,
-        CasOAuthThrottleConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreComponentSerializationConfiguration.class,
-        CasOAuth20TestAuthenticationEventExecutionPlanConfiguration.class,
-        CasCoreUtilSerializationConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        AbstractOAuth20Tests.OAuthTestConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreWebConfiguration.class})
+@SpringBootTest(classes = {
+    AopAutoConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasOAuth20TestAuthenticationEventExecutionPlanConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasOAuthConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCookieConfiguration.class,
+    CasOAuthComponentSerializationConfiguration.class,
+    CasOAuthThrottleConfiguration.class,
+    CasThrottlingConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreComponentSerializationConfiguration.class,
+    CasOAuth20TestAuthenticationEventExecutionPlanConfiguration.class,
+    CasCoreUtilSerializationConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    AbstractOAuth20Tests.OAuthTestConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreWebConfiguration.class})
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)

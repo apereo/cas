@@ -18,8 +18,8 @@ public class TokenTicketCipherExecutorTests {
 
     @Test
     public void verifyCipheredToken() {
-        final TokenTicketCipherExecutor c = new TokenTicketCipherExecutor(null, 
-                "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", true);
+        final TokenTicketCipherExecutor c = new TokenTicketCipherExecutor(null,
+            "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", true);
         final String token = c.encode(ST);
         assertEquals(ST, c.decode(token));
     }
@@ -27,7 +27,14 @@ public class TokenTicketCipherExecutorTests {
     @Test
     public void verifyCipheredTokenWithoutEncryption() {
         final TokenTicketCipherExecutor c = new TokenTicketCipherExecutor(null,
-                "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", false);
+            "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", false);
+        final String token = c.encode(ST);
+        assertEquals(ST, c.decode(token));
+    }
+
+    @Test
+    public void verifyCipheredTokenWithoutEncryptionAndSigning() {
+        final TokenTicketCipherExecutor c = new TokenTicketCipherExecutor();
         final String token = c.encode(ST);
         assertEquals(ST, c.decode(token));
     }

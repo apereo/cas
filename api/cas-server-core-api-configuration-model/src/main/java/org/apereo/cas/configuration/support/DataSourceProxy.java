@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.support;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.datasource.AbstractDataSource;
 
 import javax.sql.DataSource;
@@ -24,7 +23,7 @@ import java.sql.SQLException;
  * @author Hal Deadman
  * @since 5.1
  */
-@Slf4j
+
 @AllArgsConstructor
 public class DataSourceProxy extends AbstractDataSource {
 

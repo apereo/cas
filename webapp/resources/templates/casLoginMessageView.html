@@ -15,7 +15,7 @@
         <div class="alert alert-warning">
             <h2 th:text="#{screen.authentication.warning}">Authentication Succeeded with Warnings</h2>
             <div th:each="message : ${messages}">
-                <p class="message" th:utext="${message.text}">message.text</p>
+                <p class="message" th:utext="${message.text}">Message Text</p>
             </div>
             <section class="row">
                 <div class="col-sm-3">
@@ -27,7 +27,7 @@
                     </form>
                 </div>
                 <div class="col-sm-3" th:if="${passwordManagementEnabled}">
-                    <form method="post" id="changePasswordForm" class="fm-v clearfix" th:action="@{/login}">
+                    <form th:if="${passwordExpirationWarningFound}" method="post" id="changePasswordForm" class="fm-v clearfix" th:action="@{/login}">
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                         <input type="hidden" name="_eventId" value="changePassword"/>
                         <input class="btn btn-info" name="changePassword" accesskey="l"

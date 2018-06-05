@@ -52,14 +52,14 @@ public class CasConfigurationJasyptCipherExecutorTests {
     @Test
     public void verifyDecryptionEncryptionPairFails() {
         final String encVal = CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "keyValue";
-        final String result = jasypt.decode(encVal);
+        final String result = jasypt.decode(encVal, new Object[]{});
         assertNull(result);
     }
 
     @Test
     public void verifyDecryptionEncryptionPairSuccess() {
         final String value = jasypt.encryptValue("Testing");
-        final String result = jasypt.decode(value);
+        final String result = jasypt.decode(value, new Object[]{});
         assertNotNull(result);
         assertEquals("Testing", result);
     }

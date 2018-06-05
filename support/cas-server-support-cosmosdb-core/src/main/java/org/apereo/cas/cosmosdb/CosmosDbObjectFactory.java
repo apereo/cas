@@ -8,7 +8,7 @@ import com.microsoft.azure.spring.data.documentdb.common.GetHashMac;
 import com.microsoft.azure.spring.data.documentdb.core.DocumentDbTemplate;
 import com.microsoft.azure.spring.data.documentdb.core.convert.MappingDocumentDbConverter;
 import com.microsoft.azure.spring.data.documentdb.core.mapping.DocumentDbMappingContext;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +24,7 @@ import org.springframework.data.annotation.Persistent;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CosmosDbObjectFactory {
     private static final String USER_AGENT_SUFFIX = "spring-boot-starter/0.2.0";
 
@@ -58,19 +58,6 @@ public class CosmosDbObjectFactory {
     public DocumentDbFactory createDocumentDbFactory(final BaseCosmosDbProperties properties) {
         final DocumentClient documentClient = createDocumentClient(properties);
         return new DocumentDbFactory(documentClient);
-    }
-
-    /**
-     * Document db template.
-     *
-     * @param properties the properties
-     * @return the document db template
-     */
-    public DocumentDbTemplate createDocumentDbTemplate(final BaseCosmosDbProperties properties) {
-        final DocumentDbFactory documentDbFactory = createDocumentDbFactory(properties);
-        final DocumentDbMappingContext documentDbMappingContext = createDocumentDbMappingContext();
-        final MappingDocumentDbConverter mappingDocumentDbConverter = createMappingDocumentDbConverter(documentDbMappingContext);
-        return new DocumentDbTemplate(documentDbFactory, mappingDocumentDbConverter, properties.getDatabase());
     }
 
     /**

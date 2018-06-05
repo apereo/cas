@@ -8,11 +8,12 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.util.DefaultRegisteredServiceCipherExecutor;
+import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -41,7 +42,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
      */
     public DefaultCasProtocolAttributeEncoder(final ServicesManager servicesManager,
                                               final CipherExecutor<String, String> cacheCredentialCipherExecutor) {
-        this(servicesManager, new DefaultRegisteredServiceCipherExecutor(), cacheCredentialCipherExecutor);
+        this(servicesManager, new RegisteredServicePublicKeyCipherExecutor(), cacheCredentialCipherExecutor);
     }
 
     /**
@@ -76,7 +77,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
 
         if (cachedAttributesToEncode.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL)) {
             final String value = cachedAttributesToEncode.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
-            final String decodedValue = this.cacheCredentialCipherExecutor.decode(value);
+            final String decodedValue = this.cacheCredentialCipherExecutor.decode(value, new Object[] {});
             cachedAttributesToEncode.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
             if (StringUtils.isNotBlank(decodedValue)) {
                 cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, decodedValue);
@@ -121,7 +122,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
         final String cachedAttribute = cachedAttributesToEncode.remove(cachedAttributeName);
         if (StringUtils.isNotBlank(cachedAttribute)) {
             LOGGER.debug("Retrieved [{}] as a cached model attribute...", cachedAttributeName);
-            final String encodedValue = cipher.encode(cachedAttribute, registeredService);
+            final String encodedValue = cipher.encode(cachedAttribute, Optional.of(registeredService));
             if (StringUtils.isNotBlank(encodedValue)) {
                 attributes.put(cachedAttributeName, encodedValue);
                 LOGGER.debug("Encrypted and encoded [{}] as an attribute to [{}].", cachedAttributeName, encodedValue);

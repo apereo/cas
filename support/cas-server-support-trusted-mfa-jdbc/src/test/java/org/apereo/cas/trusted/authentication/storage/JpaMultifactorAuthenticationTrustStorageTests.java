@@ -1,17 +1,13 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.*;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.config.JdbcMultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
+import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -22,13 +18,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Stream;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 /**
  * Test cases for {@link JpaMultifactorAuthenticationTrustStorage}.
@@ -46,7 +44,6 @@ import java.util.stream.Stream;
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
-@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Slf4j
 public class JpaMultifactorAuthenticationTrustStorageTests {
     private static final String PRINCIPAL = "principal";
@@ -78,22 +75,36 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
 
     @Test
     public void verifyRetrieveAndExpireByDate() {
-        // create records
         Stream.of(PRINCIPAL, PRINCIPAL2).forEach(p -> {
             for (int offset = 0; offset < 3; offset++) {
                 final MultifactorAuthenticationTrustRecord record =
                     MultifactorAuthenticationTrustRecord.newInstance(p, GEOGRAPHY, DEVICE_FINGERPRINT);
-                record.setRecordDate(LocalDate.now().minusDays(offset));
+                record.setRecordDate(LocalDateTime.now().minusDays(offset));
                 mfaTrustEngine.set(record);
             }
         });
-        assertThat(mfaTrustEngine.get(LocalDate.now().minusDays(30)), hasSize(6));
-        assertThat(mfaTrustEngine.get(LocalDate.now()), hasSize(2));
+        assertThat(mfaTrustEngine.get(LocalDateTime.now().minusDays(30)), hasSize(6));
+        assertThat(mfaTrustEngine.get(LocalDateTime.now().minusSeconds(1)), hasSize(2));
 
         // expire records older than today
-        mfaTrustEngine.expire(LocalDate.now().minusDays(1));
-        assertThat(mfaTrustEngine.get(LocalDate.now().minusDays(30)), hasSize(2));
-        assertThat(mfaTrustEngine.get(LocalDate.now()), hasSize(2));
+        mfaTrustEngine.expire(LocalDateTime.now().minusDays(1));
+        assertThat(mfaTrustEngine.get(LocalDateTime.now().minusDays(30)), hasSize(2));
+        assertThat(mfaTrustEngine.get(LocalDateTime.now().minusSeconds(1)), hasSize(2));
+
+        emptyTrustEngine();
+    }
+
+    @Test
+    public void verifyStoreAndRetrieve() {
+        // create record
+        final MultifactorAuthenticationTrustRecord original =
+                MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT);
+        mfaTrustEngine.set(original);
+        final Set<MultifactorAuthenticationTrustRecord> records = mfaTrustEngine.get(PRINCIPAL);
+        assertEquals(1, records.size());
+        final MultifactorAuthenticationTrustRecord record = records.stream().findFirst().get();
+
+        assertEquals(MultifactorAuthenticationTrustUtils.generateKey(original), MultifactorAuthenticationTrustUtils.generateKey(record));
 
         emptyTrustEngine();
     }

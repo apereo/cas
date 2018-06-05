@@ -42,11 +42,12 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
      * <li>False : if an interactive view (eg: login page) should be send to user as SPNEGO failure fallback</li>
      * </ul>
      */
-    private boolean send401OnAuthenticationFailure = true;
+    private boolean send401OnAuthenticationFailure;
 
     public SpnegoCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                    final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-                                   final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy, final boolean ntlm,
+                                   final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
+                                   final boolean ntlm,
                                    final boolean send401OnAuthenticationFailure) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
         this.ntlm = ntlm;
@@ -68,7 +69,8 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
             LOGGER.debug("SPNEGO Authorization header found with [{}] bytes",
                     authorizationHeader.length() - this.messageBeginPrefix.length());
 
-            final byte[] token = EncodingUtils.decodeBase64(authorizationHeader.substring(this.messageBeginPrefix.length()));
+            final String base64 = authorizationHeader.substring(this.messageBeginPrefix.length());
+            final byte[] token = EncodingUtils.decodeBase64(base64);
             if (token == null) {
                 LOGGER.warn("Could not decode authorization header in Base64");
                 return null;

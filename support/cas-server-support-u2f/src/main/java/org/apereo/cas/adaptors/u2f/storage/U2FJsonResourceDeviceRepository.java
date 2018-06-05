@@ -58,7 +58,7 @@ public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     @Override
     public void writeDevicesBackToResource(final List<U2FDeviceRegistration> list) throws Exception {
         final Map<String, List<U2FDeviceRegistration>> newDevices = new HashMap<>();
-        newDevices.put(MAP_KEY_SERVICES, list);
+        newDevices.put(MAP_KEY_DEVICES, list);
         mapper.writerWithDefaultPrettyPrinter().writeValue(jsonResource.getFile(), newDevices);
         LOGGER.debug("Saved [{}] device(s) into repository [{}]", list.size(), jsonResource);
     }

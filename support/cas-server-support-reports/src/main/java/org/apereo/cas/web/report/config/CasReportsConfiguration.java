@@ -3,6 +3,7 @@ package org.apereo.cas.web.report.config;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.input.TailerListener;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
@@ -34,6 +35,7 @@ import org.apereo.cas.web.report.StatisticsController;
 import org.apereo.cas.web.report.StatusController;
 import org.apereo.cas.web.report.TrustedDevicesController;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.endpoint.HealthEndpoint;
@@ -41,11 +43,15 @@ import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
 import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -70,9 +76,15 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 @EnableWebSocketMessageBroker
 @Slf4j
 public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfigurer {
-    private static final int LOG_TAILING_CORE_POOL_SIZE =5;
+    private static final int LOG_TAILING_CORE_POOL_SIZE = 5;
     private static final int LOG_TAILING_QUEUE_CAPACITY = 25;
-    
+
+    @Autowired
+    private Environment environment;
+
+    @Autowired
+    private ResourceLoader resourceLoader;
+
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
@@ -111,20 +123,20 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Autowired
     @Qualifier("principalFactory")
-    private PrincipalFactory principalFactory;
+    private ObjectProvider<PrincipalFactory> principalFactory;
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private ObjectProvider<CookieRetrievingCookieGenerator> ticketGrantingTicketCookieGenerator;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ServerProperties serverProperties;
+    private ObjectProvider<ServerProperties> serverProperties;
 
     @Autowired
-    private HealthEndpoint healthEndpoint;
+    private ObjectProvider<HealthEndpoint> healthEndpoint;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -145,9 +157,16 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Bean
     public MvcEndpoint personDirectoryAttributeResolutionController() {
-        return new PersonDirectoryAttributeResolutionController(casProperties, servicesManager,
-            authenticationSystemSupport, personDirectoryPrincipalResolver, webApplicationServiceFactory,
-            principalFactory, cas3ServiceSuccessView, cas3ServiceJsonView, cas2ServiceSuccessView, cas1ServiceSuccessView);
+        return new PersonDirectoryAttributeResolutionController(casProperties,
+            servicesManager,
+            authenticationSystemSupport,
+            personDirectoryPrincipalResolver,
+            webApplicationServiceFactory,
+            principalFactory.getIfAvailable(),
+            cas3ServiceSuccessView,
+            cas3ServiceJsonView,
+            cas2ServiceSuccessView,
+            cas1ServiceSuccessView);
     }
 
     @Profile("standalone")
@@ -159,7 +178,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Bean
     public MvcEndpoint statusController() {
-        return new StatusController(casProperties, healthEndpoint);
+        return new StatusController(casProperties, healthEndpoint.getIfAvailable());
     }
 
     @Bean
@@ -180,7 +199,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Bean
     public MvcEndpoint ssoStatusController() {
-        return new SingleSignOnSessionStatusController(ticketGrantingTicketCookieGenerator, ticketRegistrySupport, casProperties);
+        return new SingleSignOnSessionStatusController(ticketGrantingTicketCookieGenerator.getIfAvailable(), ticketRegistrySupport, casProperties);
     }
 
     @Bean
@@ -214,9 +233,12 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
         return executor;
     }
 
+    @Autowired
     @Bean
-    public LoggingOutputTailingService loggingOutputTailingService(final SimpMessagingTemplate simpMessagingTemplate) {
-        return new LoggingOutputTailingService(logTailingTaskExecutor(), simpMessagingTemplate);
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "loggingOutputTailingService")
+    public TailerListener loggingOutputTailingService(final SimpMessagingTemplate simpMessagingTemplate) {
+        return new LoggingOutputTailingService(logTailingTaskExecutor(), simpMessagingTemplate, this.environment, resourceLoader);
     }
 
     /**
@@ -264,8 +286,9 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @Override
     public void configureMessageBroker(final MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic");
-        if (StringUtils.isNotBlank(serverProperties.getContextPath())) {
-            config.setApplicationDestinationPrefixes(serverProperties.getContextPath());
+        final String contextPath = serverProperties.getIfAvailable().getContextPath();
+        if (StringUtils.isNotBlank(contextPath)) {
+            config.setApplicationDestinationPrefixes(contextPath);
         }
     }
 

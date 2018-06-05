@@ -32,7 +32,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
 
     public LdapAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
                                                final String aupAttributeName,
-                                               final ConnectionFactory connectionFactory, 
+                                               final ConnectionFactory connectionFactory,
                                                final String searchFilter, final String baseDn) {
         super(ticketRegistrySupport, aupAttributeName);
         this.connectionFactory = connectionFactory;
@@ -48,7 +48,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
                 final String currentDn = response.getResult().getEntry().getDn();
                 LOGGER.debug("Updating [{}]", currentDn);
                 return LdapUtils.executeModifyOperation(currentDn, this.connectionFactory,
-                        CollectionUtils.wrap(this.aupAttributeName, CollectionUtils.wrap(Boolean.TRUE.toString())));
+                    CollectionUtils.wrap(this.aupAttributeName, CollectionUtils.wrapSet(Boolean.TRUE.toString())));
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -65,8 +65,8 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
      */
     private Response<SearchResult> searchForId(final String id) throws LdapException {
         final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter,
-                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-                CollectionUtils.wrap(id));
+            LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+            CollectionUtils.wrap(id));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);
     }
 }

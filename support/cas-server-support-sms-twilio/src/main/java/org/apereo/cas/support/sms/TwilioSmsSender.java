@@ -14,8 +14,6 @@ import org.apereo.cas.util.io.SmsSender;
  */
 @Slf4j
 public class TwilioSmsSender implements SmsSender {
-
-    
     public TwilioSmsSender(final String accountId, final String token) {
         Twilio.init(accountId, token);
     }

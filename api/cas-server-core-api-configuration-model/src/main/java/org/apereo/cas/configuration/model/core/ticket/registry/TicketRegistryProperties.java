@@ -1,8 +1,8 @@
 package org.apereo.cas.configuration.model.core.ticket.registry;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.couchdb.CouchDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ehcache.EhcacheProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
@@ -16,6 +16,7 @@ import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +28,7 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
-@Slf4j
+
 @Getter
 @Setter
 public class TicketRegistryProperties implements Serializable {
@@ -104,6 +105,13 @@ public class TicketRegistryProperties implements Serializable {
      * Settings relevant for the default in-memory ticket registry.
      */
     private InMemory inMemory = new InMemory();
+
+
+    /**
+     * CouchDb registry settings.
+     */
+    @NestedConfigurationProperty
+    private CouchDbTicketRegistryProperties couchDb = new CouchDbTicketRegistryProperties();
 
     /**
      * Ticket registry cleaner settings.

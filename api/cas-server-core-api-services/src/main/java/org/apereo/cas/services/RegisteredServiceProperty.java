@@ -30,7 +30,6 @@ public interface RegisteredServiceProperty extends Serializable {
     @Getter
     @RequiredArgsConstructor
     enum RegisteredServiceProperties {
-
         /**
          * using when delegating authentication to ADFS to indicate the relying party identifier.
          */
@@ -46,6 +45,14 @@ public interface RegisteredServiceProperty extends Serializable {
          * Produce a JWT as a response when generating service tickets.
          **/
         TOKEN_AS_SERVICE_TICKET("jwtAsServiceTicket", "false"),
+        /**
+         * Produce a signed JWT as a response when generating service tickets using the provided signing key.
+         **/
+        TOKEN_AS_SERVICE_TICKET_SIGNING_KEY("jwtAsServiceTicketSigningKey", StringUtils.EMPTY),
+        /**
+         * Produce an encrypted JWT as a response when generating service tickets using the provided encryption key.
+         **/
+        TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY("jwtAsServiceTicketEncryptionKey", StringUtils.EMPTY),
         /**
          * Jwt signing secret defined for a given service.
          **/
@@ -70,7 +77,10 @@ public interface RegisteredServiceProperty extends Serializable {
          * Secrets are Base64 encoded.
          **/
         TOKEN_SECRETS_ARE_BASE64_ENCODED("jwtSecretsAreBase64Encoded", "false"),
-
+        /**
+         * Whether interrupt notifications should be skipped.
+         **/
+        SKIP_INTERRUPT_NOTIFICATIONS("skipInterrupt", "false"),
         /**
          * Whether CAS should inject cache control headers into the response when this service is in process.
          */

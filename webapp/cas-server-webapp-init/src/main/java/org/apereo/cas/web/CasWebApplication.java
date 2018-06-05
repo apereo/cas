@@ -1,6 +1,6 @@
 package org.apereo.cas.web;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.NoArgsConstructor;
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.boot.Banner;
@@ -23,8 +23,8 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
 import java.util.Map;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link CasWebApplication}.
@@ -33,15 +33,24 @@ import lombok.NoArgsConstructor;
  * @since 5.0.0
  */
 @EnableDiscoveryClient
-@SpringBootApplication(exclude = { HibernateJpaAutoConfiguration.class, JerseyAutoConfiguration.class,
-    GroovyTemplateAutoConfiguration.class, JmxAutoConfiguration.class, DataSourceAutoConfiguration.class, RedisAutoConfiguration.class,
-    MongoAutoConfiguration.class, MongoDataAutoConfiguration.class, CassandraAutoConfiguration.class,
-    DataSourceTransactionManagerAutoConfiguration.class, MetricsDropwizardAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class })
+@SpringBootApplication(exclude = {
+    HibernateJpaAutoConfiguration.class,
+    JerseyAutoConfiguration.class,
+    GroovyTemplateAutoConfiguration.class,
+    JmxAutoConfiguration.class,
+    DataSourceAutoConfiguration.class,
+    RedisAutoConfiguration.class,
+    MongoAutoConfiguration.class,
+    MongoDataAutoConfiguration.class,
+    CassandraAutoConfiguration.class,
+    DataSourceTransactionManagerAutoConfiguration.class,
+    MetricsDropwizardAutoConfiguration.class,
+    RedisRepositoriesAutoConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableScheduling
-@Slf4j
 @NoArgsConstructor
 public class CasWebApplication {
 
@@ -53,6 +62,12 @@ public class CasWebApplication {
     public static void main(final String[] args) {
         final Map<String, Object> properties = CasEmbeddedContainerUtils.getRuntimeProperties(Boolean.TRUE);
         final Banner banner = CasEmbeddedContainerUtils.getCasBannerInstance();
-        new SpringApplicationBuilder(CasWebApplication.class).banner(banner).web(true).properties(properties).logStartupInfo(true).contextClass(CasWebApplicationContext.class).run(args);
+        new SpringApplicationBuilder(CasWebApplication.class)
+            .banner(banner)
+            .web(true)
+            .properties(properties)
+            .logStartupInfo(true)
+            .contextClass(CasWebApplicationContext.class)
+            .run(args);
     }
 }

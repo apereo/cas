@@ -28,6 +28,8 @@ import org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessag
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.security.impl.MetadataCredentialResolver;
@@ -93,13 +95,14 @@ public class SamlIdPObjectSigner {
     /**
      * Encode a given saml object by invoking a number of outbound security handlers on the context.
      *
-     * @param <T>        the type parameter
-     * @param samlObject the saml object
-     * @param service    the service
-     * @param adaptor    the adaptor
-     * @param response   the response
-     * @param request    the request
-     * @param binding    the binding
+     * @param <T>          the type parameter
+     * @param samlObject   the saml object
+     * @param service      the service
+     * @param adaptor      the adaptor
+     * @param response     the response
+     * @param request      the request
+     * @param binding      the binding
+     * @param authnRequest the authn request
      * @return the t
      * @throws SamlException the saml exception
      */
@@ -109,11 +112,12 @@ public class SamlIdPObjectSigner {
                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                            final HttpServletResponse response,
                                            final HttpServletRequest request,
-                                           final String binding) throws SamlException {
+                                           final String binding,
+                                           final RequestAbstractType authnRequest) throws SamlException {
 
         LOGGER.debug("Attempting to encode [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
         final MessageContext<T> outboundContext = new MessageContext<>();
-        prepareOutboundContext(samlObject, adaptor, outboundContext, binding);
+        prepareOutboundContext(samlObject, adaptor, outboundContext, binding, authnRequest);
         prepareSecurityParametersContext(adaptor, outboundContext, service);
         prepareEndpointURLSchemeSecurityHandler(outboundContext);
         prepareSamlOutboundDestinationHandler(outboundContext);
@@ -190,16 +194,18 @@ public class SamlIdPObjectSigner {
      * @param adaptor         the adaptor
      * @param outboundContext the outbound context
      * @param binding         the binding
+     * @param authnRequest    the authn request
      * @throws SamlException the saml exception
      */
     protected <T extends SAMLObject> void prepareOutboundContext(final T samlObject,
                                                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                                  final MessageContext<T> outboundContext,
-                                                                 final String binding) throws SamlException {
+                                                                 final String binding,
+                                                                 final RequestAbstractType authnRequest) throws SamlException {
 
         LOGGER.debug("Outbound saml object to use is [{}]", samlObject.getClass().getName());
         outboundContext.setMessage(samlObject);
-        SamlIdPUtils.preparePeerEntitySamlEndpointContext(outboundContext, adaptor, binding);
+        SamlIdPUtils.preparePeerEntitySamlEndpointContext(authnRequest, outboundContext, adaptor, binding);
     }
 
     /**
@@ -224,7 +230,8 @@ public class SamlIdPObjectSigner {
                 + "\nSignature algorithm: [{}]"
                 + "\nSignature canonicalization algorithm: [{}]"
                 + "\nSignature reference digest methods: [{}]",
-            params.getSignatureAlgorithm(), params.getSignatureCanonicalizationAlgorithm(),
+            params.getSignatureAlgorithm(),
+            params.getSignatureCanonicalizationAlgorithm(),
             params.getSignatureReferenceDigestMethod());
 
         return params;
@@ -275,8 +282,8 @@ public class SamlIdPObjectSigner {
         final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
 
         final MetadataCredentialResolver kekCredentialResolver = new MetadataCredentialResolver();
-        kekCredentialResolver.setRoleDescriptorResolver(SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver,
-            idp.getMetadata().isRequireValidMetadata()));
+        final RoleDescriptorResolver roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, idp.getMetadata().isRequireValidMetadata());
+        kekCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
         kekCredentialResolver.setKeyInfoCredentialResolver(DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
         kekCredentialResolver.initialize();
         final CriteriaSet criteriaSet = new CriteriaSet();

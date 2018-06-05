@@ -41,14 +41,15 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     }
 
     @Override
-    protected Map<String, List<U2FDeviceRegistration>> readDevicesFromResource() {
+    public Map<String, List<U2FDeviceRegistration>> readDevicesFromResource() {
         try {
             final HttpResponse response = HttpUtils.executeGet(restProperties.getUrl(), 
                     restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
             if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
-                return mapper.readValue(response.getEntity().getContent(),
-                        new TypeReference<Map<String, List<U2FDeviceRegistration>>>() {
-                        });
+                final Map<String, List<U2FDeviceRegistration>> result = mapper.readValue(response.getEntity().getContent(),
+                    new TypeReference<Map<String, List<U2FDeviceRegistration>>>() {
+                    });
+                return result;
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -57,10 +58,10 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     }
 
     @Override
-    protected void writeDevicesBackToResource(final List<U2FDeviceRegistration> list) {
+    public void writeDevicesBackToResource(final List<U2FDeviceRegistration> list) {
         try (StringWriter writer = new StringWriter()) {
             final Map<String, List<U2FDeviceRegistration>> newDevices = new HashMap<>();
-            newDevices.put(MAP_KEY_SERVICES, list);
+            newDevices.put(MAP_KEY_DEVICES, list);
             mapper.writer(new MinimalPrettyPrinter()).writeValue(writer, newDevices);
             HttpUtils.executePost(restProperties.getUrl(),
                     restProperties.getBasicAuthUsername(),

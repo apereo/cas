@@ -8,6 +8,7 @@ import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.io.CommunicationsManager;
+import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -31,11 +32,11 @@ public class DisplayBeforePasswordlessAuthenticationAction extends AbstractActio
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         final AttributeMap<Object> attributes = requestContext.getCurrentEvent().getAttributes();
-        if (attributes.contains("error")) {
-            final Exception e = attributes.get("error", Exception.class);
-            final PasswordlessUserAccount user = attributes.get(PasswordlessAuthenticationWebflowConfigurer.PARAMETER_PASSWORDLESS_USER_ACCOUNT, PasswordlessUserAccount.class);
-            requestContext.getFlowScope().put("error", e);
-            requestContext.getFlowScope().put(PasswordlessAuthenticationWebflowConfigurer.PARAMETER_PASSWORDLESS_USER_ACCOUNT, user);
+        if (attributes.contains(CasWebflowConstants.TRANSITION_ID_ERROR)) {
+            final Exception e = attributes.get(CasWebflowConstants.TRANSITION_ID_ERROR, Exception.class);
+            requestContext.getFlowScope().put(CasWebflowConstants.TRANSITION_ID_ERROR, e);
+            final PasswordlessUserAccount user = WebUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
+            WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
             return success();
         }
         final String username = requestContext.getRequestParameters().get("username");
@@ -43,26 +44,26 @@ public class DisplayBeforePasswordlessAuthenticationAction extends AbstractActio
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
         final Optional<PasswordlessUserAccount> account = passwordlessUserAccountStore.findUser(username);
-        if (account.isPresent()) {
-            final PasswordlessUserAccount user = account.get();
-            requestContext.getFlowScope().put(PasswordlessAuthenticationWebflowConfigurer.PARAMETER_PASSWORDLESS_USER_ACCOUNT, user);
-            final String token = passwordlessTokenRepository.createToken(user.getUsername());
-
-            communicationsManager.validate();
-            if (communicationsManager.isMailSenderDefined() && StringUtils.isNotBlank(user.getEmail())) {
-                communicationsManager.email(token,
-                    passwordlessProperties.getTokens().getMail().getFrom(),
-                    passwordlessProperties.getTokens().getMail().getSubject(),
-                    user.getEmail());
-            }
-            if (communicationsManager.isSmsSenderDefined() && StringUtils.isNotBlank(user.getPhone())) {
-                communicationsManager.sms(passwordlessProperties.getTokens().getMail().getFrom(), user.getPhone(), token);
-            }
-
-            passwordlessTokenRepository.deleteTokens(user.getUsername());
-            passwordlessTokenRepository.saveToken(user.getUsername(), token);
-            return success();
+        if (!account.isPresent()) {
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
-        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        final PasswordlessUserAccount user = account.get();
+        WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
+        final String token = passwordlessTokenRepository.createToken(user.getUsername());
+
+        communicationsManager.validate();
+        if (communicationsManager.isMailSenderDefined() && StringUtils.isNotBlank(user.getEmail())) {
+            communicationsManager.email(token,
+                passwordlessProperties.getTokens().getMail().getFrom(),
+                passwordlessProperties.getTokens().getMail().getSubject(),
+                user.getEmail());
+        }
+        if (communicationsManager.isSmsSenderDefined() && StringUtils.isNotBlank(user.getPhone())) {
+            communicationsManager.sms(passwordlessProperties.getTokens().getMail().getFrom(), user.getPhone(), token);
+        }
+
+        passwordlessTokenRepository.deleteTokens(user.getUsername());
+        passwordlessTokenRepository.saveToken(user.getUsername(), token);
+        return success();
     }
 }

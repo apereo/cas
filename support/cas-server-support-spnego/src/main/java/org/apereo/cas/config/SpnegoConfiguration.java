@@ -4,8 +4,8 @@ import jcifs.spnego.Authentication;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -51,12 +51,14 @@ public class SpnegoConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "spnegoAuthentication")
     public Authentication spnegoAuthentication() {
         return new Authentication();
     }
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "jcifsConfig")
     public JcifsConfig jcifsConfig() {
         final JcifsConfig c = new JcifsConfig();
         final SpnegoProperties spnego = casProperties.getAuthn().getSpnego();
@@ -81,6 +83,7 @@ public class SpnegoConfiguration {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "spnegoHandler")
     public AuthenticationHandler spnegoHandler() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
         final JcifsSpnegoAuthenticationHandler h = new JcifsSpnegoAuthenticationHandler(spnegoProperties.getName(), servicesManager, spnegoPrincipalFactory(),
@@ -103,11 +106,12 @@ public class SpnegoConfiguration {
     @ConditionalOnMissingBean(name = "ntlmPrincipalFactory")
     @Bean
     public PrincipalFactory ntlmPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "spnegoPrincipalResolver")
     public PrincipalResolver spnegoPrincipalResolver() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
         return new SpnegoPrincipalResolver(attributeRepository, spnegoPrincipalFactory(),
@@ -119,7 +123,7 @@ public class SpnegoConfiguration {
     @ConditionalOnMissingBean(name = "spnegoPrincipalFactory")
     @Bean
     public PrincipalFactory spnegoPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "spnegoAuthenticationEventExecutionPlanConfigurer")

@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.jdbc;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
@@ -19,7 +18,7 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-jdbc-authentication")
-@Slf4j
+
 @Getter
 @Setter
 public class QueryJdbcAuthenticationProperties extends AbstractJpaProperties {
@@ -62,7 +61,7 @@ public class QueryJdbcAuthenticationProperties extends AbstractJpaProperties {
     /**
      * List of column names to fetch as user attributes.
      */
-    private List principalAttributeList = new ArrayList();
+    private List<String> principalAttributeList = new ArrayList<>();
 
     /**
      * Principal transformation settings for this authentication.

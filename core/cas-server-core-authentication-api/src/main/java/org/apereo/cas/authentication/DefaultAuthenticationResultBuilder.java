@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
@@ -10,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +24,7 @@ import java.util.Set;
  * @since 4.2.0
  */
 @Slf4j
+@NoArgsConstructor
 public class DefaultAuthenticationResultBuilder implements AuthenticationResultBuilder {
 
     private static final long serialVersionUID = 6180465589526463843L;
@@ -31,17 +32,6 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     private List<Credential> providedCredentials = new ArrayList<>();
 
     private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>());
-
-    private final PrincipalElectionStrategy principalElectionStrategy;
-
-    /**
-     * Instantiates a new default authentication result builder.
-     *
-     * @param principalElectionStrategy the principal election strategy
-     */
-    public DefaultAuthenticationResultBuilder(final PrincipalElectionStrategy principalElectionStrategy) {
-        this.principalElectionStrategy = principalElectionStrategy;
-    }
 
     @Override
     public Optional<Authentication> getInitialAuthentication() {
@@ -69,13 +59,13 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     }
 
     @Override
-    public AuthenticationResult build() {
-        return build(null);
+    public AuthenticationResult build(final PrincipalElectionStrategy principalElectionStrategy) {
+        return build(principalElectionStrategy, null);
     }
 
     @Override
-    public AuthenticationResult build(final Service service) {
-        final Authentication authentication = buildAuthentication();
+    public AuthenticationResult build(final PrincipalElectionStrategy principalElectionStrategy, final Service service) {
+        final Authentication authentication = buildAuthentication(principalElectionStrategy);
         if (authentication == null) {
             LOGGER.info("Authentication result cannot be produced because no authentication is recorded into in the chain. Returning null");
             return null;
@@ -90,7 +80,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         return this.authentications.isEmpty();
     }
 
-    private Authentication buildAuthentication() {
+    private Authentication buildAuthentication(final PrincipalElectionStrategy principalElectionStrategy) {
         if (isEmpty()) {
             LOGGER.warn("No authentication event has been recorded; CAS cannot finalize the authentication result");
             return null;
@@ -100,7 +90,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         final AuthenticationBuilder authenticationBuilder = DefaultAuthenticationBuilder.newInstance();
 
         buildAuthenticationHistory(this.authentications, authenticationAttributes, principalAttributes, authenticationBuilder);
-        final Principal primaryPrincipal = getPrimaryPrincipal(this.authentications, principalAttributes);
+        final Principal primaryPrincipal = getPrimaryPrincipal(principalElectionStrategy, this.authentications, principalAttributes);
         authenticationBuilder.setPrincipal(primaryPrincipal);
         LOGGER.debug("Determined primary authentication principal to be [{}]", primaryPrincipal);
 
@@ -162,7 +152,9 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
      * Based on that restriction, it's safe to simply grab the first principal id in the chain
      * when composing the authentication chain for the caller.
      */
-    private Principal getPrimaryPrincipal(final Set<Authentication> authentications, final Map<String, Object> principalAttributes) {
-        return this.principalElectionStrategy.nominate(new HashSet<>(authentications), principalAttributes);
+    private Principal getPrimaryPrincipal(final PrincipalElectionStrategy principalElectionStrategy,
+                                          final Set<Authentication> authentications,
+                                          final Map<String, Object> principalAttributes) {
+        return principalElectionStrategy.nominate(new LinkedHashSet<>(authentications), principalAttributes);
     }
 }

@@ -2,8 +2,8 @@ package org.apereo.cas.web.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.BasicAuthenticationAction;
 import org.apereo.cas.web.flow.BasicAuthenticationWebflowConfigurer;
@@ -77,7 +77,7 @@ public class CasBasicAuthenticationConfiguration implements CasWebflowExecutionP
     @ConditionalOnMissingBean(name = "basicPrincipalFactory")
     @Bean
     public PrincipalFactory basicPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @Override

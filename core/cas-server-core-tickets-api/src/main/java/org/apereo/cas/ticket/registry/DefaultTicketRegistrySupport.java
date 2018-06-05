@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @Transactional(transactionManager = "ticketTransactionManager")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
 
     private final TicketRegistry ticketRegistry;

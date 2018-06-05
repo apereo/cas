@@ -36,13 +36,13 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer {
     }
 
     @Override
-    public InterruptResponse inquire(final Authentication authentication, final RegisteredService registeredService, final Service service) {
+    public InterruptResponse inquireInternal(final Authentication authentication, final RegisteredService registeredService, final Service service) {
         final String user = authentication.getPrincipal().getId();
         readResourceForInterrupts();
         if (interrupts.containsKey(user)) {
             return interrupts.get(user);
         }
-        return new InterruptResponse(false);
+        return InterruptResponse.none();
     }
 
     @SneakyThrows

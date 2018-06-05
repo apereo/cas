@@ -34,5 +34,9 @@ dependencies {
     implementation libraries.pac4j
     
     testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-mfa", configuration: "tests")
 }

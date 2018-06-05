@@ -1,10 +1,12 @@
 package org.apereo.cas.authentication;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.StringUtils;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -12,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.Setter;
 
 /**
  * Handler that contains a list of valid users and passwords. Useful if there is
@@ -37,6 +38,10 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      */
     private Map<String, String> users;
 
+    public AcceptUsersAuthenticationHandler(final Map<String, String> users) {
+        this(null, null, null, null, users);
+    }
+
     /**
      * Instantiates a new Accept users authentication handler.
      *
@@ -56,7 +61,8 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      * @param users            the users
      */
     public AcceptUsersAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                            final PrincipalFactory principalFactory, final Integer order, final Map<String, String> users) {
+                                            final PrincipalFactory principalFactory, final Integer order,
+                                            final Map<String, String> users) {
         super(name, servicesManager, principalFactory, order);
         this.users = users;
     }

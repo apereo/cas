@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.Tailer;
@@ -13,8 +14,6 @@ import org.apache.logging.log4j.core.appender.RandomAccessFileAppender;
 import org.apache.logging.log4j.core.appender.RollingFileAppender;
 import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
 import org.apereo.cas.web.report.util.ControllerUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -39,7 +38,8 @@ import java.util.Optional;
  * @since 5.3.0
  */
 @Slf4j
-public class LoggingOutputTailingService extends TailerListenerAdapter {
+@RequiredArgsConstructor
+public class LoggingOutputTailingService extends TailerListenerAdapter implements AutoCloseable {
 
     private static final String LOG_OUTPUT_STOMP_DESTINATION = "/topic/logs";
 
@@ -53,23 +53,14 @@ public class LoggingOutputTailingService extends TailerListenerAdapter {
      */
     private final SimpMessagingTemplate stompMessagingTemplate;
 
+    private final Environment environment;
+
+    private final ResourceLoader resourceLoader;
+
     /**
      * This is a list of file tailers.
      */
     private final List<Tailer> tailers = new ArrayList<>();
-
-    @Autowired
-    private Environment environment;
-
-    @Autowired
-    private ResourceLoader resourceLoader;
-
-    public LoggingOutputTailingService(@Qualifier("logTailingTaskExecutor") final TaskExecutor taskExecutor,
-                                       final SimpMessagingTemplate stompMessagingTemplate) {
-
-        this.taskExecutor = taskExecutor;
-        this.stompMessagingTemplate = stompMessagingTemplate;
-    }
 
     /**
      * Init. Attempts to locate the logging configuration to insert listeners.
@@ -78,10 +69,9 @@ public class LoggingOutputTailingService extends TailerListenerAdapter {
      */
     @PostConstruct
     @SneakyThrows
-    public void init() {
+    public void initialize() {
         final Optional<Pair<Resource, LoggerContext>> pair = ControllerUtils.buildLoggerContext(environment, resourceLoader);
         pair.ifPresent(it -> registerLogFileTailersForExecution(it.getValue()));
-
     }
 
     /**
@@ -90,6 +80,11 @@ public class LoggingOutputTailingService extends TailerListenerAdapter {
     @PreDestroy
     public void cleanUp() {
         this.tailers.forEach(Tailer::stop);
+    }
+
+    @Override
+    public void close() {
+        cleanUp();
     }
 
     private void registerLogFileTailersForExecution(final LoggerContext loggerContext) {

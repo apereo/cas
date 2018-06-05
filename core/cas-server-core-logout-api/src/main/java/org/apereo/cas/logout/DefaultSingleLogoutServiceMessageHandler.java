@@ -10,6 +10,10 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultSingleLogoutServiceMessageHandler} which handles the processing of logout messages
@@ -37,10 +41,10 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
      * @return the logout request
      */
     @Override
-    public LogoutRequest handle(final WebApplicationService singleLogoutService, final String ticketId) {
+    public Collection<LogoutRequest> handle(final WebApplicationService singleLogoutService, final String ticketId) {
         if (singleLogoutService.isLoggedOutAlready()) {
             LOGGER.debug("Service [{}] is already logged out.", singleLogoutService);
-            return null;
+            return new ArrayList<>(0);
         }
 
         final WebApplicationService selectedService = WebApplicationService.class.cast(
@@ -51,21 +55,38 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
 
         if (!serviceSupportsSingleLogout(registeredService)) {
             LOGGER.debug("Service [{}] does not support single logout.", selectedService);
-            return null;
+            return new ArrayList<>(0);
         }
         LOGGER.debug("Service [{}] supports single logout and is found in the registry as [{}]. Proceeding...", selectedService, registeredService);
 
-        final URL logoutUrl = this.singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, selectedService);
-        LOGGER.debug("Prepared logout url [{}] for service [{}]", logoutUrl, selectedService);
-        if (logoutUrl == null) {
+        final Collection<URL> logoutUrls = this.singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, selectedService);
+        LOGGER.debug("Prepared logout url [{}] for service [{}]", logoutUrls, selectedService);
+        if (logoutUrls == null || logoutUrls.isEmpty()) {
             LOGGER.debug("Service [{}] does not support logout operations given no logout url could be determined.", selectedService);
-            return null;
+            return new ArrayList<>(0);
         }
 
         LOGGER.debug("Creating logout request for [{}] and ticket id [{}]", selectedService, ticketId);
+        return createLogoutRequests(ticketId, selectedService, registeredService, logoutUrls);
+    }
+
+    private Collection<LogoutRequest> createLogoutRequests(final String ticketId,
+                                                           final WebApplicationService selectedService,
+                                                           final RegisteredService registeredService,
+                                                           final Collection<URL> logoutUrls) {
+        return logoutUrls
+            .stream()
+            .map(url -> createLogoutRequest(ticketId, selectedService, registeredService, url))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+    }
+
+    private LogoutRequest createLogoutRequest(final String ticketId,
+                                              final WebApplicationService selectedService,
+                                              final RegisteredService registeredService,
+                                              final URL logoutUrl) {
         final DefaultLogoutRequest logoutRequest = new DefaultLogoutRequest(ticketId, selectedService, logoutUrl);
         LOGGER.debug("Logout request [{}] created for [{}] and ticket id [{}]", logoutRequest, selectedService, ticketId);
-
         final RegisteredService.LogoutType type = registeredService.getLogoutType() == null
             ? RegisteredService.LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
         LOGGER.debug("Logout type registered for [{}] is [{}]", selectedService, type);
@@ -75,14 +96,13 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
                 logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
             } else {
                 logoutRequest.setStatus(LogoutRequestStatus.FAILURE);
-                LOGGER.warn("Logout message is not sent to [{}]; Continuing processing...", singleLogoutService.getId());
+                LOGGER.warn("Logout message is not sent to [{}]; Continuing processing...", selectedService);
             }
         } else {
             LOGGER.debug("Logout operation is not yet attempted for [{}] given logout type is set to [{}]", selectedService, type);
             logoutRequest.setStatus(LogoutRequestStatus.NOT_ATTEMPTED);
         }
         return logoutRequest;
-
     }
 
     /**

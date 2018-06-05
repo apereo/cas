@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
@@ -20,7 +20,7 @@ import java.util.Map;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class InternalGroovyScriptDao extends BaseGroovyScriptDaoImpl {
     private final ApplicationContext applicationContext;
     private final CasConfigurationProperties casProperties;
@@ -47,12 +47,13 @@ public class InternalGroovyScriptDao extends BaseGroovyScriptDaoImpl {
     @Override
     public Map<String, Object> getAttributesForUser(final String uid) {
         final Map<String, Object> finalAttributes = new HashMap<>();
-        casProperties.getAuthn().getAttributeRepository().getGroovy().forEach(groovy -> {
-            final Object[] args = {uid, LOGGER, casProperties, applicationContext};
-            final Map<String, Object> personAttributesMap =
+        casProperties.getAuthn().getAttributeRepository().getGroovy()
+            .forEach(groovy -> {
+                final Object[] args = {uid, LOGGER, casProperties, applicationContext};
+                final Map<String, Object> personAttributesMap =
                     ScriptingUtils.executeGroovyScript(groovy.getLocation(), args, Map.class);
-            finalAttributes.putAll(personAttributesMap);
-        });
+                finalAttributes.putAll(personAttributesMap);
+            });
 
         return finalAttributes;
     }

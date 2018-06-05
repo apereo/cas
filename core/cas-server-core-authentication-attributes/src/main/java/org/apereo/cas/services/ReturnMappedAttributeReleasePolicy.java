@@ -75,7 +75,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                                                      final Object attributeValue, final Map<String, Object> resolvedAttributes,
                                                      final Map<String, Object> attributesToRelease) {
         final Matcher matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(mappedAttributeName);
-        final Matcher matcherFile = ScriptingUtils.getMatcherForInlineGroovyScript(mappedAttributeName);
+        final Matcher matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(mappedAttributeName);
         if (matcherInline.find()) {
             LOGGER.debug("Mapped attribute [{}] is an inlined groovy script", mappedAttributeName);
             processInlineGroovyAttribute(resolvedAttributes, attributesToRelease, matcherInline, attributeName);
@@ -100,7 +100,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                                                          final Map<String, Object> attributesToRelease, final Matcher matcherFile, final String key) {
         try {
             LOGGER.debug("Found groovy script to execute for attribute mapping [{}]", key);
-            final String script = FileUtils.readFileToString(new File(matcherFile.group(1)), StandardCharsets.UTF_8);
+            final File file = new File(matcherFile.group(2));
+            final String script = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
             final Object result = getGroovyAttributeValue(script, resolvedAttributes);
             if (result != null) {
                 LOGGER.debug("Mapped attribute [{}] to [{}] from script", key, result);

@@ -1,0 +1,5 @@
+description = "Apereo CAS Configuration - Microsoft Azure KeyVault"
+dependencies {
+    implementation libraries.azurekeyvault
+    implementation project(":core:cas-server-core-util-api")
+}

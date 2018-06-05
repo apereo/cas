@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
+import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,9 +27,10 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
     @Before
     public void setUp() {
         try {
-            this.dao = new JsonServiceRegistry(RESOURCE, false,
+            this.dao = new JsonServiceRegistry(RESOURCE, true,
                     mock(ApplicationEventPublisher.class),
-                    new NoOpRegisteredServiceReplicationStrategy());
+                    new NoOpRegisteredServiceReplicationStrategy(),
+                    new DefaultRegisteredServiceResourceNamingStrategy());
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }
