@@ -67,7 +67,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
         final AnonymousRegisteredServiceUsernameAttributeProvider provider = new AnonymousRegisteredServiceUsernameAttributeProvider(gen);
         final String result = provider.resolveUsername(CoreAuthenticationTestUtils.getPrincipal("anyuser",
             CollectionUtils.wrap("employeeId", "T911327")),
-            CoreAuthenticationTestUtils.getService("https://cas.example.org/app"),
+            CoreAuthenticationTestUtils.getService("https://sso.educause.edu/sp"),
             CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals("ujWTRNKPPso8S+4geOvcOZtv778=", result);
     }
