@@ -69,7 +69,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      */
     protected RegisteredService getOAuthRegisteredServiceForToken(final OAuthToken token) {
         final Service codeService = token.getService();
-        return OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, codeService.getId());
+        return OAuth20Utils.getRegisteredOAuthService(this.servicesManager, codeService.getId());
     }
 
     /**
