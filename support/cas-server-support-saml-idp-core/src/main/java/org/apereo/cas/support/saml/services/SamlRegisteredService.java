@@ -50,7 +50,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column
     private long metadataMaxValidity;
 
-    @Column
+    @Column(name = "reqAuthnContextClass")
     private String requiredAuthenticationContextClass;
 
     @Column
@@ -65,7 +65,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column
     private String metadataSignatureLocation;
 
-    @Column
+    @Column(name = "spNameIdQualifier")
     private String serviceProviderNameIdQualifier;
 
     @Column
@@ -77,19 +77,19 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column
     private boolean signAssertions;
 
-    @Column
+    @Column(name = "skipGenAssertionNameId")
     private boolean skipGeneratingAssertionNameId;
 
-    @Column
+    @Column(name = "skipGenSubConfInRespTo")
     private boolean skipGeneratingSubjectConfirmationInResponseTo;
 
-    @Column
+    @Column(name = "skipGenSubConNotOnOrAfter")
     private boolean skipGeneratingSubjectConfirmationNotOnOrAfter;
 
-    @Column
+    @Column(name = "skipGenSubConRecipient")
     private boolean skipGeneratingSubjectConfirmationRecipient;
 
-    @Column
+    @Column(name = "skipGenSubConfNotBefore")
     private boolean skipGeneratingSubjectConfirmationNotBefore = true;
 
     @Column
@@ -101,10 +101,10 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column
     private String metadataCriteriaRoles = SPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME;
 
-    @Column
+    @Column(name="mdCriteriaRmEmptyEntities")
     private boolean metadataCriteriaRemoveEmptyEntitiesDescriptors = true;
 
-    @Column
+    @Column(name="mdCriteriaRmRolelessEntities")
     private boolean metadataCriteriaRemoveRolelessEntityDescriptors = true;
 
     @Column
