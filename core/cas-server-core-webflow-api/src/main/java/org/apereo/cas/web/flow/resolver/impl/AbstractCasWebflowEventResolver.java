@@ -28,6 +28,7 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.AttributeMap;
@@ -36,6 +37,7 @@ import org.springframework.webflow.definition.TransitionDefinition;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -488,6 +490,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the set
      */
     protected Set<Event> handleAuthenticationTransactionAndGrantTicketGrantingTicket(final RequestContext context) {
+        final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         try {
             final Credential credential = getCredentialFromContext(context);
             AuthenticationResultBuilder builder = WebUtils.getAuthenticationResultBuilder(context);
@@ -501,8 +504,11 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             final MessageContext messageContext = context.getMessageContext();
-            messageContext.addMessage(new MessageBuilder().error()
-                .code(DEFAULT_MESSAGE_BUNDLE_PREFIX.concat(e.getClass().getSimpleName())).build());
+            messageContext.addMessage(new MessageBuilder()
+                .error()
+                .code(DEFAULT_MESSAGE_BUNDLE_PREFIX.concat(e.getClass().getSimpleName()))
+                .build());
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return CollectionUtils.wrapSet(new EventFactorySupport().error(this));
         }
     }
