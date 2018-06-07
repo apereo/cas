@@ -28,7 +28,7 @@ public class InetAddressUtils {
             final var url = new URL(urlAddr);
             return InetAddress.getByName(url.getHost());
         } catch (final Exception e) {
-            LOGGER.debug("Host name could not be determined automatically.", e);
+            LOGGER.trace("Host name could not be determined automatically.", e);
         }
         return null;
     }
