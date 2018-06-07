@@ -588,6 +588,26 @@ public class WebUtils {
     }
 
     /**
+     * Put recaptcha invisible into flow scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putRecaptchaInvisibleIntoFlowScope(final RequestContext context, final Object value) {
+        context.getFlowScope().put("recaptchaInvisible", value);
+    }
+
+    /**
+     * Put recaptcha position into flow scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putRecaptchaPositionIntoFlowScope(final RequestContext context, final Object value) {
+        context.getFlowScope().put("recaptchaPosition", value);
+    }
+
+    /**
      * Put static authentication into flow scope.
      *
      * @param context the context
