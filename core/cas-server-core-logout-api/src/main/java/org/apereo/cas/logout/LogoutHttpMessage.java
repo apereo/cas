@@ -22,8 +22,6 @@ public class LogoutHttpMessage extends HttpMessage {
     /** The parameter name that contains the logout request. */
     private static final String LOGOUT_REQUEST_PARAMETER = "logoutRequest";
 
-    private boolean prefixLogoutParameterName = true;
-
     /**
      * Constructs a logout message.
      *
@@ -42,6 +40,6 @@ public class LogoutHttpMessage extends HttpMessage {
      */
     @Override
     protected String formatOutputMessageInternal(final String message) {
-        return (this.prefixLogoutParameterName ? LOGOUT_REQUEST_PARAMETER + '=' : StringUtils.EMPTY) + super.formatOutputMessageInternal(message);
+        return  LOGOUT_REQUEST_PARAMETER + '=' : StringUtils.EMPTY + super.formatOutputMessageInternal(message);
     }
 }
