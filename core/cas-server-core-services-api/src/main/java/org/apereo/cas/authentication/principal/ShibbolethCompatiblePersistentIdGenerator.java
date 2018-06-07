@@ -36,6 +36,8 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
 
     private static final int CONST_DEFAULT_SALT_COUNT = 16;
 
+    private static final int CONST_SALT_ABBREV_LENGTH = 4;
+
     @JsonProperty
     private String salt;
 
@@ -78,7 +80,6 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
                 this.salt = new DefaultRandomStringGenerator(CONST_DEFAULT_SALT_COUNT).getNewString();
             }
             LOGGER.debug("Using principal [{}] to generate anonymous identifier for service [{}]", principal, service);
-
             final MessageDigest md = prepareMessageDigest(principal, service);
             final String result = digestAndEncodeWithSalt(md);
             LOGGER.debug("Generated persistent id for [{}] is [{}]", service, result);
@@ -91,9 +92,15 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     @Override
     public String generate(final Principal principal, final Service service) {
         final Map<String, Object> attributes = principal.getAttributes();
-        final String principalId = StringUtils.isNotBlank(this.attribute) && attributes.containsKey(this.attribute)
-            ? attributes.get(this.attribute).toString()
-            : principal.getId();
+        LOGGER.debug("Found principal attributes [{}] to use when generating persistent identifiers", attributes);
+        final String principalId;
+        if (StringUtils.isNotBlank(this.attribute) && attributes.containsKey(this.attribute)) {
+            principalId = attributes.get(this.attribute).toString();
+            LOGGER.debug("Using attribute [{}] to establish principal id [{}] to generate persistent identifier", this.attribute, principalId);
+        } else {
+            principalId = principal.getId();
+            LOGGER.debug("Using principal id [{}] to generate persistent identifier", principalId);
+        }
         return generate(principalId, service != null ? service.getId() : null);
     }
 
@@ -158,7 +165,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     public String toString() {
         return new ToStringBuilder(this)
             .append("attribute", attribute)
-            .append("salt", StringUtils.abbreviate(salt, 2))
+            .append("salt", StringUtils.abbreviate(salt, CONST_SALT_ABBREV_LENGTH))
             .toString();
     }
 
