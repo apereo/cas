@@ -158,7 +158,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     public String toString() {
         return new ToStringBuilder(this)
             .append("attribute", attribute)
-            .append("salt", StringUtils.abbreviate(salt, 2))
+            .append("salt", StringUtils.abbreviate(salt, 4))
             .toString();
     }
 
