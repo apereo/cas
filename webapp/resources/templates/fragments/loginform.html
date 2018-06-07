@@ -90,7 +90,7 @@
                             </p>
                         </section>
 
-                        <section class="row" th:if="${recaptchaSiteKey}">
+                        <section class="row" th:if="${recaptchaSiteKey AND !recaptchaInvisible}">
                             <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>
                         </section>
 
@@ -98,12 +98,23 @@
                         <input type="hidden" name="_eventId" value="submit"/>
                         <input type="hidden" name="geolocation"/>
                         <input class="btn btn-block btn-submit"
+                               th:unless="${recaptchaSiteKey AND recaptchaInvisible}"
                                name="submit"
                                accesskey="l"
                                th:value="#{screen.welcome.button.login}"
                                tabindex="6"
                                type="submit"
                                value="Login3"
+                        />
+                        <button class="btn btn-block btn-submit g-recaptcha"
+                                th:if="${recaptchaSiteKey AND recaptchaInvisible}"
+                                th:attr="data-sitekey=${recaptchaSiteKey}"
+                                th:attr="data-badge=${recaptchaPosition}"
+                                data-callback="onSubmit"
+                                name="submitBtn"
+                                accesskey="l"
+                                th:text="#{screen.welcome.button.login}"
+                                tabindex="6"
                         />
                     </form>
 

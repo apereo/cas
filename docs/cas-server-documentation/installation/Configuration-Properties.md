@@ -3566,6 +3566,8 @@ Display Google's reCAPTCHA widget on the CAS login page.
 # cas.googleRecaptcha.verifyUrl=https://www.google.com/recaptcha/api/siteverify
 # cas.googleRecaptcha.siteKey=
 # cas.googleRecaptcha.secret=
+# cas.googleRecaptcha.invisible=
+# cas.googleRecaptcha.position=bottomright
 ```
 
 ## Google Analytics Integration
