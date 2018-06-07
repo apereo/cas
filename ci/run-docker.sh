@@ -12,7 +12,8 @@ if [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     docker info
 fi
 
-./run-ldap-server.sh
+pwd
+./ci/run-ldap-server.sh
 ./run-mssql-server.sh
 ./run-mail-server.sh
 ./run-influxdb-server.sh
