@@ -50,11 +50,11 @@ public class RegisteredServicesReportController extends BaseCasMvcEndpoint {
      */
     @GetMapping
     @ResponseBody
-    public WebAsyncTask<Map<String, Object>> handle(final HttpServletRequest request, final HttpServletResponse response) {
+    public WebAsyncTask<Map<Long, Object>> handle(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
-        final Callable<Map<String, Object>> asyncTask = () -> this.servicesManager.getAllServices()
+        final Callable<Map<Long, Object>> asyncTask = () -> this.servicesManager.getAllServices()
                 .stream()
-                .collect(Collectors.toMap(RegisteredService::getName, Function.identity()));
+                .collect(Collectors.toMap(RegisteredService::getId, Function.identity()));
         final long timeout = Beans.newDuration(casProperties.getHttpClient().getAsyncTimeout()).toMillis();
         return new WebAsyncTask<>(timeout, asyncTask);
     }

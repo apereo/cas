@@ -33,7 +33,7 @@ matrix:
   fast_finish: true
 env:
   global:
-  - JAVA_OPTS="-Xms512m -Xmx2048m -Xss128m -XX:ReservedCodeCacheSize=512m"
+  - JAVA_OPTS="-Xms512m -Xmx3048m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
   - SPRING_MAIN_BANNER-MODE="off"
   - COVERALLS_PARALLEL=true
   - secure: "ScUSTo0if5m7ddnwUA7EaYucc6yzEUrKLk0DzCvkMfjn2h5taUFSKHx+S0hd2EzJofv+Em4eI5qncSK5LTxgD7HhHR1e3iZp+SqJenhhOnbuciZfg4QA+tUGw3XUdmREac5cz2l0qhi1q4vsnnZARj2d4vvf2HWuNtEOBu/ZAKI="
@@ -50,22 +50,16 @@ env:
   - MATRIX_JOB_TYPE=CFGMETADATA
   - MATRIX_JOB_TYPE=DEPANALYZE
 before_install:
-- chmod -R 777 ./ci/run-docker.sh
-- ./ci/run-docker.sh
-- chmod -R 777 ./ci/run-service-tests.sh
-- chmod -R 777 ./ci/init-travis-build.sh
-- ./ci/init-travis-build.sh
-- chmod -R 777 ./ci/push-docs-ghpages.sh
+- unset _JAVA_OPTIONS
+- chmod -R 777 ./ci/*.sh
 - ./ci/push-docs-ghpages.sh
-- chmod -R 777 ./ci/
+- ./ci/run-service-tests.sh
+- ./ci/init-travis-build.sh
 install:
-- chmod -R 777 ./ci/install.sh
 - ./ci/install.sh
 script:
-- chmod -R 777 ./ci/script.sh
 - ./ci/script.sh
 after_script:
-- chmod -R 777 ./ci/stop.sh
 - ./ci/stop.sh
 
 
