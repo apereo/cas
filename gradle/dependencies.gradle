@@ -2399,6 +2399,8 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-messaging")
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-context")
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-commons")
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-starter")
                     exclude(group: "org.apache.httpcomponents", module: "httpcore")
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "org.slf4j", module: "slf4j-api")
