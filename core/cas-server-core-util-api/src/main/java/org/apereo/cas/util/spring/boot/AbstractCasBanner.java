@@ -62,7 +62,7 @@ public abstract class AbstractCasBanner implements Banner {
         try (Formatter formatter = new Formatter()) {
             final Map<String, Object> sysInfo = SystemUtils.getSystemInfo();
             sysInfo.forEach((k, v) -> {
-                if (k.equalsIgnoreCase(SEPARATOR_CHAR)) {
+                if (k.startsWith(SEPARATOR_CHAR)) {
                     formatter.format("%s%n", LINE_SEPARATOR);
                 } else {
                     formatter.format("%s: %s%n", k, v);
