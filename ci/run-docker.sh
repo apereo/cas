@@ -12,14 +12,13 @@ if [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     docker info
 fi
 
-pwd
 ./ci/run-ldap-server.sh
-./run-mssql-server.sh
-./run-mail-server.sh
-./run-influxdb-server.sh
-./run-dynamodb-server.sh
-./run-couchbase-server.sh
-./run-couchdb-server.sh
-./run-cassandra-server.sh
+./ci/run-mssql-server.sh
+./ci/run-mail-server.sh
+./ci/run-influxdb-server.sh
+./ci/run-dynamodb-server.sh
+./ci/run-couchbase-server.sh
+./ci/run-couchdb-server.sh
+./ci/run-cassandra-server.sh
 
 
