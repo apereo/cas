@@ -49,27 +49,9 @@ env:
   - MATRIX_JOB_TYPE=DEPANALYZE
 before_install:
 - unset _JAVA_OPTIONS
-- chmod -R 777 ./ci/run-docker.sh
+- chmod -R 777 ./ci/*.sh
 - ./ci/run-docker.sh
-- chmod -R 777 ./ci/run-ldap-server.sh
-- ./ci/run-ldap-server.sh
-- chmod -R 777 ./ci/run-mssql-server.sh
-- ./ci/run-mssql-server.sh
-- chmod -R 777 ./ci/run-mail-server.sh
-- ./ci/run-mail-server.sh
-- chmod -R 777 ./ci/run-influxdb-server.sh
-- ./ci/run-influxdb-server.sh
-- chmod -R 777 ./ci/run-dynamodb-server.sh
-- ./ci/run-dynamodb-server.sh
-- chmod -R 777 ./ci/run-couchbase-server.sh
-- ./ci/run-couchbase-server.sh
-- chmod -R 777 ./ci/run-couchdb-server.sh
-- ./ci/run-couchdb-server.sh
-- chmod -R 777 ./ci/run-cassandra-server.sh
-- ./ci/run-cassandra-server.sh
-- chmod -R 777 ./ci/init-travis-build.sh
 - ./ci/init-travis-build.sh
-- chmod -R 777 ./ci/push-docs-ghpages.sh
 - ./ci/push-docs-ghpages.sh
 install:
 - chmod -R 777 ./ci/install.sh
