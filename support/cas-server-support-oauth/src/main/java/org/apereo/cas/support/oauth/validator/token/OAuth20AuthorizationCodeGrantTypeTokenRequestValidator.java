@@ -30,7 +30,8 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
     private final ServicesManager servicesManager;
     private final TicketRegistry ticketRegistry;
 
-    public OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
+    public OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(final ServicesManager servicesManager,
+                                                                  final TicketRegistry ticketRegistry,
                                                                   final AuditableExecution registeredServiceAccessStrategyEnforcer) {
         super(registeredServiceAccessStrategyEnforcer);
         this.servicesManager = servicesManager;
