@@ -5,10 +5,14 @@ import com.nimbusds.jose.JWSAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jOidcClientProperties;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jSamlClientExtensionsProperties;
+import org.opensaml.core.xml.schema.XSAny;
+import org.opensaml.core.xml.schema.impl.XSAnyBuilder;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
@@ -37,8 +41,12 @@ import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.client.SAML2ClientConfiguration;
 
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -358,6 +366,27 @@ public class DelegatedClientFactory {
                 if (StringUtils.isNotBlank(saml.getNameIdPolicyFormat())) {
                     cfg.setNameIdPolicyFormat(saml.getNameIdPolicyFormat());
                 }
+                if (!CollectionUtils.isEmpty(saml.getBlackListedSignatureSigningAlgorithms())) {
+                    cfg.setBlackListedSignatureSigningAlgorithms(saml.getBlackListedSignatureSigningAlgorithms());
+                }
+                if (!CollectionUtils.isEmpty(saml.getSignatureAlgorithms())) {
+                    cfg.setSignatureAlgorithms(saml.getSignatureAlgorithms());
+                }
+                if (!CollectionUtils.isEmpty(saml.getSignatureReferenceDigestMethods())) {
+                    cfg.setSignatureReferenceDigestMethods(saml.getSignatureReferenceDigestMethods());
+                }
+                if (StringUtils.isNotBlank(saml.getSignatureCanonicalizationAlgorithm())) {
+                    cfg.setSignatureCanonicalizationAlgorithm(saml.getSignatureCanonicalizationAlgorithm());
+                }
+                if (StringUtils.isNotBlank(saml.getProviderName())) {
+                    cfg.setProviderName(saml.getProviderName());
+                }
+                if (saml.getAuthnRequestExtensions() != null) {
+                    cfg.setAuthnRequestExtensions(() -> parseExtensions(saml.getAuthnRequestExtensions()));
+                }
+                if (StringUtils.isNotBlank(saml.getAttributeAsId())) {
+                    cfg.setAttributeAsId(saml.getAttributeAsId());
+                }
                 final SAML2Client client = new SAML2Client(cfg);
 
                 final int count = index.intValue();
@@ -370,6 +399,33 @@ public class DelegatedClientFactory {
                 LOGGER.debug("Created delegated client [{}]", client);
                 properties.add(client);
             });
+    }
+
+    private List<XSAny> parseExtensions(List<Pac4jSamlClientExtensionsProperties> authnRequestExtensions) {
+        return parseExtensions(authnRequestExtensions, new XSAnyBuilder());
+    }
+
+    private List<XSAny> parseExtensions(List<Pac4jSamlClientExtensionsProperties> authnRequestExtensions, XSAnyBuilder xsAnyBuilder) {
+        List<XSAny> ret = new ArrayList<>();
+        for (Pac4jSamlClientExtensionsProperties extension : authnRequestExtensions) {
+            XSAny elem = xsAnyBuilder.buildObject(extension.getNamespaceURL(), extension.getName(), extension.getNamespacePrefix());
+            if (extension.getAttributes() != null) {
+                for (Map.Entry<String, String> entry : extension.getAttributes().entrySet()) {
+                    String name = entry.getKey();
+                    String value = entry.getValue();
+                    elem.getUnknownAttributes().put(QName.valueOf(name), value);
+                }
+            }
+            if (extension.getElements() != null) {
+                elem.getUnknownXMLObjects().addAll(parseExtensions(extension.getElements()));
+            }
+            if (extension.getTextContent() != null) {
+                elem.setTextContent(extension.getTextContent());
+            }
+            ret.add(elem);
+        }
+        return ret;
+
     }
 
     /**
