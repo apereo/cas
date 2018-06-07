@@ -44,38 +44,33 @@ public class SystemUtils {
         final Properties properties = System.getProperties();
 
         final Map<String, Object> info = new LinkedHashMap<>(SYSTEM_INFO_DEFAULT_SIZE);
+
         info.put("CAS Version", StringUtils.defaultString(CasVersion.getVersion(), "Not Available"));
         info.put("CAS Commit Id", StringUtils.defaultString(CasVersion.getSpecificationVersion(), "Not Available"));
         info.put("CAS Build Date/Time", CasVersion.getDateTime());
         info.put("Spring Boot Version", SpringBootVersion.getVersion());
         info.put("Spring Version", SpringVersion.getVersion());
-        info.put(SEPARATOR_CHAR, SEPARATOR_CHAR);
 
         info.put("Java Home", properties.get("java.home"));
         info.put("Java Vendor", properties.get("java.vendor"));
         info.put("Java Version", properties.get("java.version"));
-        info.put(SEPARATOR_CHAR, SEPARATOR_CHAR);
 
         final Runtime runtime = Runtime.getRuntime();
         info.put("JVM Free Memory", FileUtils.byteCountToDisplaySize(runtime.freeMemory()));
         info.put("JVM Maximum Memory", FileUtils.byteCountToDisplaySize(runtime.maxMemory()));
         info.put("JVM Total Memory", FileUtils.byteCountToDisplaySize(runtime.totalMemory()));
-        info.put(SEPARATOR_CHAR, SEPARATOR_CHAR);
 
         info.put("JCE Installed", StringUtils.capitalize(BooleanUtils.toStringYesNo(EncodingUtils.isJceInstalled())));
-        info.put(SEPARATOR_CHAR, SEPARATOR_CHAR);
 
         info.put("Node Version", getNodeVersion());
         info.put("NPM Version", getNpmVersion());
-        info.put(SEPARATOR_CHAR, SEPARATOR_CHAR);
 
         info.put("OS Architecture", properties.get("os.arch"));
         info.put("OS Name", properties.get("os.name"));
         info.put("OS Version", properties.get("os.version"));
         info.put("OS Date/Time", LocalDateTime.now());
         info.put("OS Temp Directory", FileUtils.getTempDirectoryPath());
-        info.put(SEPARATOR_CHAR, SEPARATOR_CHAR);
-        
+
         injectUpdateInfoIntoBannerIfNeeded(info);
 
         return info;
@@ -127,7 +122,7 @@ public class SystemUtils {
     public static String getNodeVersion() {
         final ProcessBuilder pb = new ProcessBuilder("node", "--version");
         Process p = pb.start();
-        return IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8);
+        return IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8).trim();
     }
 
     /**
@@ -139,6 +134,6 @@ public class SystemUtils {
     public static String getNpmVersion() {
         final ProcessBuilder pb = new ProcessBuilder("npm", "--version");
         Process p = pb.start();
-        return IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8);
+        return IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8).trim();
     }
 }
