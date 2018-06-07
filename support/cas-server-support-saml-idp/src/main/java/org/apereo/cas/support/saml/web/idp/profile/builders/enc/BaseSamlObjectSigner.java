@@ -288,6 +288,9 @@ public class BaseSamlObjectSigner {
         LOGGER.debug("Signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
 
         final PrivateKey privateKey = getSigningPrivateKey();
+        if (privateKey == null) {
+            throw new SAMLException("Unable to determine signing private key");
+        }
         final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
 
         final MetadataCredentialResolver kekCredentialResolver = new MetadataCredentialResolver();
