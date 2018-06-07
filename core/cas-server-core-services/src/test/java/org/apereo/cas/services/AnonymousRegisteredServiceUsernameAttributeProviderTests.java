@@ -29,7 +29,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
     public void verifyPrincipalResolution() {
         final AnonymousRegisteredServiceUsernameAttributeProvider provider = new AnonymousRegisteredServiceUsernameAttributeProvider(
                 new ShibbolethCompatiblePersistentIdGenerator(CASROX));
-        
+
         final Service service = mock(Service.class);
         when(service.getId()).thenReturn("id");
         final Principal principal = mock(Principal.class);
