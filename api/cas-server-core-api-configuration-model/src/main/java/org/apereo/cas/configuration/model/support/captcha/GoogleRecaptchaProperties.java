@@ -53,5 +53,5 @@ public class GoogleRecaptchaProperties implements Serializable {
      *     <li>{@code inline}: allows to control the CSS.</li>
      * </ul>
      */
-    private String position = 'bottomright';
+    private String position = "bottomright";
 }
