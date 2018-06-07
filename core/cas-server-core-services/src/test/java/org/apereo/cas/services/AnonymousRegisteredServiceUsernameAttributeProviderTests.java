@@ -69,6 +69,6 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
             CollectionUtils.wrap("employeeId", "T911327")),
             CoreAuthenticationTestUtils.getService("https://sso.educause.edu/sp"),
             CoreAuthenticationTestUtils.getRegisteredService());
-        assertEquals("ujWTRNKPPso8S+4geOvcOZtv778=", result);
+        assertEquals("whItNi7+cGW5X0d9ID/HFJG9bQU=", result);
     }
 }
