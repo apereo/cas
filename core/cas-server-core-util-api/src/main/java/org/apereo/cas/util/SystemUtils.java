@@ -6,12 +6,14 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.SpringBootVersion;
 import org.springframework.core.SpringVersion;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,6 +30,8 @@ import java.util.Properties;
 @UtilityClass
 public class SystemUtils {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final String SEPARATOR_CHAR = "-";
+
     private static final int SYSTEM_INFO_DEFAULT_SIZE = 20;
     private static final String UPDATE_CHECK_MAVEN_URL = "https://search.maven.org/solrsearch/select?q=g:%22org.apereo.cas%22%20AND%20a:%22cas-server%22";
 
@@ -45,23 +49,33 @@ public class SystemUtils {
         info.put("CAS Build Date/Time", CasVersion.getDateTime());
         info.put("Spring Boot Version", SpringBootVersion.getVersion());
         info.put("Spring Version", SpringVersion.getVersion());
+        info.put(SEPARATOR_CHAR, SEPARATOR_CHAR);
 
         info.put("Java Home", properties.get("java.home"));
         info.put("Java Vendor", properties.get("java.vendor"));
         info.put("Java Version", properties.get("java.version"));
+        info.put(SEPARATOR_CHAR, SEPARATOR_CHAR);
 
         final Runtime runtime = Runtime.getRuntime();
         info.put("JVM Free Memory", FileUtils.byteCountToDisplaySize(runtime.freeMemory()));
         info.put("JVM Maximum Memory", FileUtils.byteCountToDisplaySize(runtime.maxMemory()));
         info.put("JVM Total Memory", FileUtils.byteCountToDisplaySize(runtime.totalMemory()));
+        info.put(SEPARATOR_CHAR, SEPARATOR_CHAR);
 
         info.put("JCE Installed", StringUtils.capitalize(BooleanUtils.toStringYesNo(EncodingUtils.isJceInstalled())));
+        info.put(SEPARATOR_CHAR, SEPARATOR_CHAR);
+
+        info.put("Node Version", getNodeVersion());
+        info.put("NPM Version", getNpmVersion());
+        info.put(SEPARATOR_CHAR, SEPARATOR_CHAR);
+
         info.put("OS Architecture", properties.get("os.arch"));
         info.put("OS Name", properties.get("os.name"));
         info.put("OS Version", properties.get("os.version"));
         info.put("OS Date/Time", LocalDateTime.now());
         info.put("OS Temp Directory", FileUtils.getTempDirectoryPath());
-
+        info.put(SEPARATOR_CHAR, SEPARATOR_CHAR);
+        
         injectUpdateInfoIntoBannerIfNeeded(info);
 
         return info;
@@ -104,4 +118,27 @@ public class SystemUtils {
         }
     }
 
+    /**
+     * Gets node version.
+     *
+     * @return the node version
+     */
+    @SneakyThrows
+    public static String getNodeVersion() {
+        final ProcessBuilder pb = new ProcessBuilder("node", "--version");
+        Process p = pb.start();
+        return IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Gets npm version.
+     *
+     * @return the npm version
+     */
+    @SneakyThrows
+    public static String getNpmVersion() {
+        final ProcessBuilder pb = new ProcessBuilder("npm", "--version");
+        Process p = pb.start();
+        return IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8);
+    }
 }
