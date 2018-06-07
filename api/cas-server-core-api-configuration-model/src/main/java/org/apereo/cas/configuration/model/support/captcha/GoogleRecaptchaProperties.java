@@ -45,7 +45,13 @@ public class GoogleRecaptchaProperties implements Serializable {
     private boolean invisible;
 
     /**
-     * The google reCAPTCHA position (only if invisible is enabled).
+     * The google reCAPTCHA badge position (only if invisible is enabled).
+     * Accepted values are:
+     * <ul>
+     *     <li>{@code bottomright}: default value.</li>
+     *     <li>{@code bottomleft}</li>
+     *     <li>{@code inline}: allows to control the CSS.</li>
+     * </ul>
      */
-    private String position;
+    private String position = 'bottomright';
 }
