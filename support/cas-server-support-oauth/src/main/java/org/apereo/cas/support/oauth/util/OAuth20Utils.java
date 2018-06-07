@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -340,7 +341,7 @@ public class OAuth20Utils {
      * @param redirectUri       the callback url
      * @return whether the callback url is valid
      */
-    public static boolean checkCallbackValid(final RegisteredService registeredService, final String redirectUri) {
+    public static boolean checkCallbackValid(@NonNull final RegisteredService registeredService, final String redirectUri) {
         final String registeredServiceId = registeredService.getServiceId();
         LOGGER.debug("Found: [{}] vs redirectUri: [{}]", registeredService, redirectUri);
         if (!redirectUri.matches(registeredServiceId)) {
