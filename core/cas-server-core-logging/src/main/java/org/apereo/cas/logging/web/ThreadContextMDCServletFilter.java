@@ -67,11 +67,14 @@ public class ThreadContextMDCServletFilter implements Filter {
             addContextAttribute("timezone", TimeZone.getDefault().getDisplayName());
 
             final var params = request.getParameterMap();
-            params.keySet().forEach(k -> {
-                final var values = params.get(k);
-                addContextAttribute(k, Arrays.toString(values));
-            });
-            
+            params.keySet()
+                .stream()
+                .filter(k -> !k.equalsIgnoreCase("password"))
+                .forEach(k -> {
+                    final var values = params.get(k);
+                    addContextAttribute(k, Arrays.toString(values));
+                });
+
             Collections.list(request.getAttributeNames()).forEach(a -> addContextAttribute(a, request.getAttribute(a)));
             final var requestHeaderNames = request.getHeaderNames();
             if (requestHeaderNames != null) {

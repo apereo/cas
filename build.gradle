@@ -247,7 +247,6 @@ subprojects {
 
     [compileTestJava, compileJava].each {
         it.options.fork = true
-
         def casCompilerArgs = ["-parameters"]
         
         if (!rootProject.skipErrorProneCompiler) {
