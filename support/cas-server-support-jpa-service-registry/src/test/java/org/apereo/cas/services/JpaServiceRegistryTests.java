@@ -7,6 +7,7 @@ import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.junit.ConditionalSpringRunner;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +20,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  * @author battags
  * @since 3.1.0
  */
-@RunWith(SpringRunner.class)
+@RunWith(ConditionalSpringRunner.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,

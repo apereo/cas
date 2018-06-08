@@ -76,6 +76,9 @@ elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     elif [ "$MATRIX_SERVER" == "MEMCACHED" ]; then
         ./ci/run-memcached-server.sh
         gradleBuild="$gradleBuild testMemcached "
+    elif [ "$MATRIX_SERVER" == "MYSQL" ]; then
+        ./ci/run-mysql-server.sh
+        gradleBuild="$gradleBuild testMySQL "
     elif [ "$MATRIX_SERVER" == "MSSQLSERVER" ]; then
         ./ci/run-mssql-server.sh
         gradleBuild="$gradleBuild testMsSqlServer "
