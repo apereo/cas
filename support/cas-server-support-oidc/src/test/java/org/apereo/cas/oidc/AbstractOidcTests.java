@@ -39,6 +39,7 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
+import org.apereo.cas.web.support.config.CasThrottlingConfiguration;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.RsaJsonWebKey;
@@ -93,6 +94,7 @@ import lombok.extern.slf4j.Slf4j;
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasOAuthConfiguration.class,
+    CasThrottlingConfiguration.class,
     CasOAuthThrottleConfiguration.class,
     CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
     OidcConfiguration.class,
