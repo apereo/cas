@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
@@ -65,6 +66,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.support.config.CasThrottlingConfiguration;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.pac4j.core.context.HttpConstants;
@@ -98,7 +100,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
 
@@ -130,6 +131,7 @@ import static org.junit.Assert.*;
         CasCookieConfiguration.class,
         CasOAuthComponentSerializationConfiguration.class,
         CasOAuthThrottleConfiguration.class,
+        CasThrottlingConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
@@ -150,8 +152,6 @@ import static org.junit.Assert.*;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @Slf4j
 public abstract class AbstractOAuth20Tests {
-
-
     public static final String CONTEXT = "/oauth2.0/";
     public static final String CLIENT_ID = "1";
     public static final String CLIENT_SECRET = "secret";
