@@ -1,9 +1,8 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -40,8 +39,10 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.experimental.categories.Category;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -53,10 +54,13 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
 
@@ -66,7 +70,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
+@Category(FileSystemCategory.class)
 @SpringBootTest(classes = {
     SamlIdPRestMetadataConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
@@ -105,7 +109,14 @@ import static org.junit.Assert.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class RestSamlRegisteredServiceMetadataResolverTests {
+
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     private CasConfigurationProperties casProperties;

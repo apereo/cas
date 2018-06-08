@@ -157,13 +157,128 @@ subprojects {
         }
     }
 
+    task testCassandra(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.CassandraCategory'
+        }
+    }
+
+    task testCosmosDb(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.CosmosDbCategory'
+        }
+    }
+
+    task testCouchbase(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.CouchbaseCategory'
+        }
+    }
+
+    task testCouchDb(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.CouchDbCategory'
+        }
+    }
+
+    task testMySQL(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.MySQLCategory'
+        }
+    }
+
+    task testDynamoDb(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.DynamoDbCategory'
+        }
+    }
+
+    task testFileSystem(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.FileSystemCategory'
+        }
+    }
+
+    task testIgnite(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.IgniteCategory'
+        }
+    }
+
+    task testInfluxDb(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.InfluxDbCategory'
+        }
+    }
+
+    task testLdap(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.LdapCategory'
+        }
+    }
+
+    task testMail(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.MailCategory'
+        }
+    }
+
+    task testMemcached(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.MemcachedCategory'
+        }
+    }
+
+    task testMsSqlServer(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.MsSqlServerCategory'
+        }
+    }
+    
+    task testMongoDb(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.MongoDbCategory'
+        }
+    }
+
+    task testRedis(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.RedisCategory'
+        }
+    }
+
+    task testAll(type: Test) {
+        dependsOn {
+            tasks.findAll {task -> task.name.startsWith('test') && task.name != "testAll"}
+        }
+    }
+
     test {
+        include "**/*Tests.*"
+        useJUnit {
+            excludeCategories 'org.apereo.cas.category.MailCategory'
+            excludeCategories 'org.apereo.cas.category.CassandraCategory'
+            excludeCategories 'org.apereo.cas.category.CosmosDbCategory'
+            excludeCategories 'org.apereo.cas.category.CouchbaseCategory'
+            excludeCategories 'org.apereo.cas.category.DynamoDbCategory'
+            excludeCategories 'org.apereo.cas.category.FileSystemCategory'
+            excludeCategories 'org.apereo.cas.category.IgniteCategory'
+            excludeCategories 'org.apereo.cas.category.InfluxDbCategory'
+            excludeCategories 'org.apereo.cas.category.CouchDbCategory'
+            excludeCategories 'org.apereo.cas.category.LdapCategory'
+            excludeCategories 'org.apereo.cas.category.MailCategory'
+            excludeCategories 'org.apereo.cas.category.MongoDbCategory'
+            excludeCategories 'org.apereo.cas.category.RedisCategory'
+            excludeCategories 'org.apereo.cas.category.MsSqlServerCategory'
+            excludeCategories 'org.apereo.cas.category.MySQLCategory'
+        }
+    }
+
+    tasks.withType(Test) {
+        exclude "**/Abstract*.*", "**/Base*.*"
         enabled = !Boolean.getBoolean("skipTests")
-        useJUnit()
         scanForTestClasses = false
         ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
-        include "**/*Tests.*"
-        exclude "**/Abstract*.*", "**/Base*.*"
         maxParallelForks = 1
         jvmArgs "-Xmx1024m"
         classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
@@ -369,6 +484,12 @@ subprojects {
         testImplementation libraries.tests
 
         compileOnly libraries.findbugsannotations
+    }
+
+    if (project.name != 'cas-server-core-api-test-category') {
+        dependencies {
+            testImplementation project(path: ':api:cas-server-core-api-test-category', configuration: "tests")
+        }
     }
 }
 

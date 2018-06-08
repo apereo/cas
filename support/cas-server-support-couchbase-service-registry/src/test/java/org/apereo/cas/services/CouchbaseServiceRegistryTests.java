@@ -1,17 +1,22 @@
 package org.apereo.cas.services;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.category.CouchbaseCategory;
 import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalSpringRunner;
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,14 +33,29 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@SpringBootTest(classes = {RefreshAutoConfiguration.class, CouchbaseServiceRegistryConfiguration.class},
-        properties = {"cas.serviceRegistry.couchbase.password=password", "cas.serviceRegistry.couchbase.bucket=testbucket"})
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    CouchbaseServiceRegistryConfiguration.class
+},
+    properties = {
+        "cas.serviceRegistry.couchbase.password=password",
+        "cas.serviceRegistry.couchbase.bucket=testbucket"
+    })
 @Slf4j
-@RunWith(ConditionalSpringRunner.class)
+@Category(CouchbaseCategory.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class CouchbaseServiceRegistryTests {
 
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
     private static final int LOAD_SIZE = 1;
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("couchbaseServiceRegistry")
