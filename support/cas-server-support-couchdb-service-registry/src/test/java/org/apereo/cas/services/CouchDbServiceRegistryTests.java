@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.category.CouchDbCategory;
 import org.apereo.cas.config.CouchDbServiceRegistryConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
@@ -23,7 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
 
@@ -33,8 +33,15 @@ import static org.junit.Assert.*;
  * @author Timur Duehr
  * @since 5.3.0
  */
-@SpringBootTest(classes = {RefreshAutoConfiguration.class, CouchDbServiceRegistryConfiguration.class},
-    properties = {"org.ektorp.support.AutoUpdateViewOnChange=true", "cas.serviceRegistry.couchDb.username=", "cas.serviceRegistry.couchDb.password="})
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    CouchDbServiceRegistryConfiguration.class
+},
+    properties = {
+        "org.ektorp.support.AutoUpdateViewOnChange=true",
+        "cas.serviceRegistry.couchDb.username=",
+        "cas.serviceRegistry.couchDb.password="
+    })
 @Slf4j
 @Category(CouchDbCategory.class)
 public class CouchDbServiceRegistryTests {

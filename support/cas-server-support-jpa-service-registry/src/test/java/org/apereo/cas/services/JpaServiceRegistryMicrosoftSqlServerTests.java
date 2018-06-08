@@ -1,22 +1,21 @@
-package org.apereo.cas.support.saml;
+package org.apereo.cas.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.category.MsSqlServerCategory;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 import org.junit.experimental.categories.Category;
 import org.springframework.test.context.TestPropertySource;
 
 /**
- * The {@link SamlRegisteredServiceJpaMicrosoftSqlServerTests} handles test cases for {@link SamlRegisteredService}.
+ * Handles tests for {@link JpaServiceRegistry}
  *
- * @author Misagh Moayyed
- * @since 5.0.0
+ * @author battags
+ * @since 3.1.0
  */
 @Slf4j
-@TestPropertySource(locations = "classpath:samlsqlserver.properties")
+@TestPropertySource(locations = "classpath:svcregsqlserver.properties")
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 1433)
 @Category(MsSqlServerCategory.class)
-public class SamlRegisteredServiceJpaMicrosoftSqlServerTests extends SamlRegisteredServiceJpaTests {
+public class JpaServiceRegistryMicrosoftSqlServerTests extends JpaServiceRegistryTests {
 }

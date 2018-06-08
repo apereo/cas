@@ -181,6 +181,12 @@ subprojects {
         }
     }
 
+    task testMySQL(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.MySQLCategory'
+        }
+    }
+
     task testDynamoDb(type: Test) {
         useJUnit {
             includeCategories 'org.apereo.cas.category.DynamoDbCategory'
@@ -223,6 +229,12 @@ subprojects {
         }
     }
 
+    task testMsSqlServer(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.MsSqlServerCategory'
+        }
+    }
+    
     task testMongoDb(type: Test) {
         useJUnit {
             includeCategories 'org.apereo.cas.category.MongoDbCategory'
@@ -252,10 +264,13 @@ subprojects {
             excludeCategories 'org.apereo.cas.category.FileSystemCategory'
             excludeCategories 'org.apereo.cas.category.IgniteCategory'
             excludeCategories 'org.apereo.cas.category.InfluxDbCategory'
+            excludeCategories 'org.apereo.cas.category.CouchDbCategory'
             excludeCategories 'org.apereo.cas.category.LdapCategory'
             excludeCategories 'org.apereo.cas.category.MailCategory'
             excludeCategories 'org.apereo.cas.category.MongoDbCategory'
             excludeCategories 'org.apereo.cas.category.RedisCategory'
+            excludeCategories 'org.apereo.cas.category.MsSqlServerCategory'
+            excludeCategories 'org.apereo.cas.category.MySQLCategory'
         }
     }
 
