@@ -27,7 +27,7 @@
     "eslint-loader": "^1.9.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^4.0.0",
-    "gulp-sass": "^3.1.0"
+    "gulp-sass": "^4.0.1"
   },
   "devDependencies": {
     "eslint": "^4.4.1"
