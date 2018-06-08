@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,21 @@ public final class CollectionUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(CollectionUtils.class);
 
     private CollectionUtils() {
+    }
+
+    /**
+     * Converts the provided object into a collection
+     * and return the first element, or empty.
+     *
+     * @param obj the obj
+     * @return the optional
+     */
+    public static Optional<Object> firstElement(final Object obj) {
+        final Set<Object> object = CollectionUtils.toCollection(obj);
+        if (object.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(object.iterator().next());
     }
 
     /**

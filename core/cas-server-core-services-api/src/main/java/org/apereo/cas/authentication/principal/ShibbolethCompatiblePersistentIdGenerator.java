@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.slf4j.Logger;
@@ -95,7 +96,8 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         LOGGER.debug("Found principal attributes [{}] to use when generating persistent identifiers", attributes);
         final String principalId;
         if (StringUtils.isNotBlank(this.attribute) && attributes.containsKey(this.attribute)) {
-            principalId = attributes.get(this.attribute).toString();
+            final Object attributeValue = attributes.get(this.attribute);
+            principalId = CollectionUtils.firstElement(attributeValue).get().toString();
             LOGGER.debug("Using attribute [{}] to establish principal id [{}] to generate persistent identifier", this.attribute, principalId);
         } else {
             principalId = principal.getId();
