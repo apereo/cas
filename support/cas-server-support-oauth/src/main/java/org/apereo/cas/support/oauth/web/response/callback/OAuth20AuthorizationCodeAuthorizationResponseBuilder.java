@@ -1,8 +1,9 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
@@ -21,10 +22,8 @@ import org.springframework.web.servlet.view.RedirectView;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAuth20AuthorizationResponseBuilder {
-
-
     /**
      * The Ticket registry.
      */
@@ -34,13 +33,13 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
 
     @Override
     public View build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
-        final OAuthCode code = oAuthCodeFactory.create(holder.getService(), holder.getAuthentication(),
-            holder.getTicketGrantingTicket(), holder.getScopes());
+        final Authentication authentication = holder.getAuthentication();
+        final OAuthCode code = oAuthCodeFactory.create(holder.getService(), authentication, holder.getTicketGrantingTicket(), holder.getScopes());
         LOGGER.debug("Generated OAuth code: [{}]", code);
         this.ticketRegistry.addTicket(code);
 
-        final String state = holder.getAuthentication().getAttributes().get(OAuth20Constants.STATE).toString();
-        final String nonce = holder.getAuthentication().getAttributes().get(OAuth20Constants.NONCE).toString();
+        final String state = authentication.getAttributes().get(OAuth20Constants.STATE).toString();
+        final String nonce = authentication.getAttributes().get(OAuth20Constants.NONCE).toString();
 
         final String redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
         LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
