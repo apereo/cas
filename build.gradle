@@ -181,6 +181,12 @@ subprojects {
         }
     }
 
+    task testMySQL(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.MySQLCategory'
+        }
+    }
+
     task testDynamoDb(type: Test) {
         useJUnit {
             includeCategories 'org.apereo.cas.category.DynamoDbCategory'
@@ -264,6 +270,7 @@ subprojects {
             excludeCategories 'org.apereo.cas.category.MongoDbCategory'
             excludeCategories 'org.apereo.cas.category.RedisCategory'
             excludeCategories 'org.apereo.cas.category.MsSqlServerCategory'
+            excludeCategories 'org.apereo.cas.category.MySQLCategory'
         }
     }
 
