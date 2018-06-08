@@ -24,10 +24,13 @@ import java.util.Properties;
 public abstract class AbstractCasBanner implements Banner {
 
     private static final int SEPARATOR_REPEAT_COUNT = 60;
+
+    private static final String SEPARATOR_CHAR = "-";
+
     /**
      * Line separator string.
      */
-    protected static final String LINE_SEPARATOR = String.join(StringUtils.EMPTY, Collections.nCopies(SEPARATOR_REPEAT_COUNT, "-"));
+    protected static final String LINE_SEPARATOR = String.join(StringUtils.EMPTY, Collections.nCopies(SEPARATOR_REPEAT_COUNT, SEPARATOR_CHAR));
 
     @Override
     public void printBanner(final Environment environment, final Class<?> sourceClass, final PrintStream out) {
@@ -58,7 +61,13 @@ public abstract class AbstractCasBanner implements Banner {
 
         try (Formatter formatter = new Formatter()) {
             final Map<String, Object> sysInfo = SystemUtils.getSystemInfo();
-            sysInfo.forEach((k, v) -> formatter.format("%s: %s%n", k, v));
+            sysInfo.forEach((k, v) -> {
+                if (k.startsWith(SEPARATOR_CHAR)) {
+                    formatter.format("%s%n", LINE_SEPARATOR);
+                } else {
+                    formatter.format("%s: %s%n", k, v);
+                }
+            });
             formatter.format("%s%n", LINE_SEPARATOR);
             injectEnvironmentInfoIntoBanner(formatter, environment, sourceClass);
             return formatter.toString();
