@@ -5,14 +5,14 @@ branchName="master"
 prepCommand="echo 'Running command...'; "
 gradle="sudo ./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon --parallel"
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon --parallel "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 if [ "$MATRIX_JOB_TYPE" == "BUILD" ]; then
-    gradleBuild="$gradleBuild build -x test -x javadoc -x check -DskipNpmLint=true --parallel \
+    gradleBuild="$gradleBuild build -x test -x javadoc -x check -DskipNpmLint=true \
     -DenableIncremental=true -DskipNestedConfigMetadataGen=true "
 elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
     if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ]; then
@@ -23,7 +23,7 @@ elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
             echo -e "The build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
             gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check \
                 -DenableIncremental=true -DskipNpmLint=true -DskipNestedConfigMetadataGen=true  
-                -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} \
+                -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DskipErrorProneCompiler=true \
                 -DsonatypePassword=${SONATYPE_PWD}"
         fi
     else
@@ -33,66 +33,78 @@ elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
     fi
 elif [ "$MATRIX_JOB_TYPE" == "CFGMETADATA" ]; then
      gradleBuild="$gradleBuild :api:cas-server-core-api-configuration-model:build -x check -x test -x javadoc \
-     -DskipGradleLint=true -DskipSass=true \
-     -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
+     -DskipGradleLint=true -DskipSass=true -DskipErrorProneCompiler=true \
+     -DskipNodeModulesCleanUp=true -DskipNpmCache=true  "
 elif [ "$MATRIX_JOB_TYPE" == "STYLE" ]; then
      gradleBuild="$gradleBuild check -x test -x javadoc -DenableIncremental=true \
      -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \
-     -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
+     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipErrorProneCompiler=true "
 elif [ "$MATRIX_JOB_TYPE" == "JAVADOC" ]; then
      gradleBuild="$gradleBuild javadoc -x test -x check -DskipNpmLint=true \
      -DskipGradleLint=true -DskipSass=true -DenableIncremental=true -DskipNestedConfigMetadataGen=true \
-     -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
+     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipErrorProneCompiler=true "
 elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     if [ "$MATRIX_SERVER" == "NONE" ]; then
-        gradleBuild="$gradleBuild test coveralls "
-    elif [ "$MATRIX_SERVER" == "SERVICE" ]; then
-        serviceRun=true
+        gradleBuild="$gradleBuild test "
     elif [ "$MATRIX_SERVER" == "CASSANDRA" ]; then
-        gradleBuild="$gradleBuild testCassandra coveralls "
+        ./ci/run-cassandra-server.sh
+        gradleBuild="$gradleBuild testCassandra  "
     elif [ "$MATRIX_SERVER" == "COUCHBASE" ]; then
-        gradleBuild="$gradleBuild testCouchbase coveralls "
+        ./ci/run-couchbase-server.sh
+        gradleBuild="$gradleBuild testCouchbase  "
     elif [ "$MATRIX_SERVER" == "COSMOSDB" ]; then
-        gradleBuild="$gradleBuild testCosmosDb coveralls "
+        gradleBuild="$gradleBuild testCosmosDb  "
     elif [ "$MATRIX_SERVER" == "DYNAMODB" ]; then
-        gradleBuild="$gradleBuild testDynamoDb coveralls "
+        ./ci/run-dynamodb-server.sh
+        gradleBuild="$gradleBuild testDynamoDb  "
     elif [ "$MATRIX_SERVER" == "FILESYSTEM" ]; then
-        gradleBuild="$gradleBuild testFileSystem coveralls "
+        gradleBuild="$gradleBuild testFileSystem  "
     elif [ "$MATRIX_SERVER" == "IGNITE" ]; then
-        gradleBuild="$gradleBuild testIgnite coveralls "
+        gradleBuild="$gradleBuild testIgnite  "
     elif [ "$MATRIX_SERVER" == "INFLUXDB" ]; then
-        gradleBuild="$gradleBuild testInfluxDb coveralls "
+        ./ci/run-influxdb-server.sh
+        gradleBuild="$gradleBuild testInfluxDb  "
     elif [ "$MATRIX_SERVER" == "LDAP" ]; then
-        gradleBuild="$gradleBuild testLdap coveralls "
+        ./ci/run-ldap-server.sh
+        gradleBuild="$gradleBuild testLdap  "
     elif [ "$MATRIX_SERVER" == "MAIL" ]; then
-        gradleBuild="$gradleBuild testMail coveralls "
+        ./ci/run-mail-server.sh
+        gradleBuild="$gradleBuild testMail  "
+    elif [ "$MATRIX_SERVER" == "COUCHDB" ]; then
+        ./ci/run-couchdb-server.sh
+        gradleBuild="$gradleBuild testCouchDb "
+    elif [ "$MATRIX_SERVER" == "MEMCACHED" ]; then
+        ./ci/run-memcached-server.sh
+        gradleBuild="$gradleBuild testMemcached "
+    elif [ "$MATRIX_SERVER" == "MSSQLSERVER" ]; then
+        ./ci/run-mssql-server.sh
+        gradleBuild="$gradleBuild testMsSqlServer "
     elif [ "$MATRIX_SERVER" == "MONGODB" ]; then
-        gradleBuild="$gradleBuild testMongoDb coveralls "
+        gradleBuild="$gradleBuild testMongoDb  "
     elif [ "$MATRIX_SERVER" == "REDIS" ]; then
-        gradleBuild="$gradleBuild testRedis coveralls "
+        gradleBuild="$gradleBuild testRedis  "
     elif [ "$MATRIX_SERVER" == "ALL" ]; then
-        gradleBuild="$gradleBuild testAll coveralls "
+        gradleBuild="$gradleBuild testAll  "
     fi
-    gradleBuild="$gradleBuild -x javadoc -x check \
+    gradleBuild="$gradleBuild coveralls -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
-    -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true -DskipErrorProneCompiler=true"
+    -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true \
+    -DskipErrorProneCompiler=true "
 elif [ "$MATRIX_JOB_TYPE" == "DEPANALYZE" ]; then
     gradleBuild="$gradleBuild dependencyCheckAnalyze dependencyCheckUpdate -x javadoc -x check \
-    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
+    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true -DskipErrorProneCompiler=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 elif [ "$MATRIX_JOB_TYPE" == "DEPUPDATE" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ]; then
     gradleBuild="$gradleBuild dependencyUpdates -Drevision=release -x javadoc -x check  \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \
-    -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
+    -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipErrorProneCompiler=true "
 fi
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "
 fi
 
-if [ $serviceRun ]; then
-    ci/run-service-tests.sh
-elif [ -z "$gradleBuild" ]; then
+if [ -z "$gradleBuild" ]; then
     echo "Gradle build will be ignored since no commands are specified to run."
 else
     tasks="$gradle $gradleBuildOptions $gradleBuild"
