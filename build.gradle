@@ -223,6 +223,12 @@ subprojects {
         }
     }
 
+    task testMsSqlServer(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.MsSqlServerCategory'
+        }
+    }
+    
     task testMongoDb(type: Test) {
         useJUnit {
             includeCategories 'org.apereo.cas.category.MongoDbCategory'
