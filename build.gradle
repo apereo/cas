@@ -258,10 +258,12 @@ subprojects {
             excludeCategories 'org.apereo.cas.category.FileSystemCategory'
             excludeCategories 'org.apereo.cas.category.IgniteCategory'
             excludeCategories 'org.apereo.cas.category.InfluxDbCategory'
+            excludeCategories 'org.apereo.cas.category.CouchDbCategory'
             excludeCategories 'org.apereo.cas.category.LdapCategory'
             excludeCategories 'org.apereo.cas.category.MailCategory'
             excludeCategories 'org.apereo.cas.category.MongoDbCategory'
             excludeCategories 'org.apereo.cas.category.RedisCategory'
+            excludeCategories 'org.apereo.cas.category.MsSqlServerCategory'
         }
     }
 
