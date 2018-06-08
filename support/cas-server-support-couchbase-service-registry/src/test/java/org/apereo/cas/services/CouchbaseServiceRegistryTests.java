@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.category.CouchbaseCategory;
 import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
@@ -23,7 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
 
@@ -33,8 +33,14 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@SpringBootTest(classes = {RefreshAutoConfiguration.class, CouchbaseServiceRegistryConfiguration.class},
-        properties = {"cas.serviceRegistry.couchbase.password=password", "cas.serviceRegistry.couchbase.bucket=testbucket"})
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    CouchbaseServiceRegistryConfiguration.class
+},
+    properties = {
+        "cas.serviceRegistry.couchbase.password=password",
+        "cas.serviceRegistry.couchbase.bucket=testbucket"
+    })
 @Slf4j
 @Category(CouchbaseCategory.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
