@@ -41,8 +41,9 @@ elif [ "$MATRIX_JOB_TYPE" == "STYLE" ]; then
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 elif [ "$MATRIX_JOB_TYPE" == "JAVADOC" ]; then
      gradleBuild="$gradleBuild javadoc -x test -x check -DskipNpmLint=true \
-     -DskipGradleLint=true -DskipSass=true -DenableIncremental=true -DskipNestedConfigMetadataGen=true \
-     -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
+     -DskipGradleLint=true -DskipSass=true -DenableIncremental=true
+     -DskipNestedConfigMetadataGen=true \
+     -DskipNodeModulesCleanUp=true -DskipNpmCache=true "
 elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     if [ "$MATRIX_SERVER" == "NONE" ]; then
         gradleBuild="$gradleBuild test "
@@ -89,7 +90,7 @@ elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     elif [ "$MATRIX_SERVER" == "ALL" ]; then
         gradleBuild="$gradleBuild testAll  "
     fi
-    gradleBuild="$gradleBuild coveralls -x javadoc -x check --parallel \
+    gradleBuild="$gradleBuild coveralls -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 elif [ "$MATRIX_JOB_TYPE" == "DEPANALYZE" ]; then

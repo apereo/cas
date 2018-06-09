@@ -8,7 +8,8 @@ dependencies {
     implementation project(":support:cas-server-support-saml-idp-core")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
-    
+    implementation project(":core:cas-server-core-web-api")
+
     implementation libraries.casclient
     implementation libraries.shibidp
 
@@ -19,6 +20,7 @@ dependencies {
     testImplementation project(path: ":support:cas-server-support-saml-idp-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
 
     testImplementation project(":core:cas-server-core-util")
