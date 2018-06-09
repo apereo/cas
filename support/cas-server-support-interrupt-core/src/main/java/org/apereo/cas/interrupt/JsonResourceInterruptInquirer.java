@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.ResourceUtils;
@@ -27,7 +28,7 @@ import java.util.Map;
 public class JsonResourceInterruptInquirer extends BaseInterruptInquirer {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-    
+
     private final Resource resource;
     private Map<String, InterruptResponse> interrupts;
 
@@ -36,7 +37,8 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer {
     }
 
     @Override
-    public InterruptResponse inquireInternal(final Authentication authentication, final RegisteredService registeredService, final Service service) {
+    public InterruptResponse inquireInternal(final Authentication authentication, final RegisteredService registeredService,
+                                             final Service service, final Credential credential) {
         final String user = authentication.getPrincipal().getId();
         readResourceForInterrupts();
         if (interrupts.containsKey(user)) {
