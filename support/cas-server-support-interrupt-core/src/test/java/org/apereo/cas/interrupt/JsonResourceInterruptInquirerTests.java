@@ -36,7 +36,7 @@ public class JsonResourceInterruptInquirerTests {
         
         final JsonResourceInterruptInquirer q = new JsonResourceInterruptInquirer(new FileSystemResource(f));
         response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"), CoreAuthenticationTestUtils.getRegisteredService(),
-                CoreAuthenticationTestUtils.getService());
+                CoreAuthenticationTestUtils.getService(), CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertNotNull(response);
         assertFalse(response.isBlock());
         assertTrue(response.isSsoEnabled());
