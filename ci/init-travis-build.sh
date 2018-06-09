@@ -35,7 +35,7 @@ chmod -R 777 ./gradlew
 
 if [ "$MATRIX_JOB_TYPE" == "BUILD" ] || [ "$MATRIX_JOB_TYPE" == "STYLE" ] || [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
     echo -e "Installing NPM...\n"
-    sudo ./gradlew npmInstall --stacktrace -q
+    ./gradlew npmInstall --stacktrace -q
 fi
 
 echo -e "Configured build environment\n"
