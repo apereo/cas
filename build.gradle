@@ -493,7 +493,7 @@ subprojects {
     }
 }
 
-task wrapper(type: Wrapper, description: "Gradle wrapper") {
+wrapper {
     gradleVersion = project.gradleVersion
 }
 
