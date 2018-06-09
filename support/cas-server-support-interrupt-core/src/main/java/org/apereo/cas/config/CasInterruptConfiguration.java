@@ -45,6 +45,6 @@ public class CasInterruptConfiguration {
         if (StringUtils.isNotBlank(ip.getRest().getUrl())) {
             return new RestEndpointInterruptInquirer(ip.getRest());
         }
-        return (authentication, registeredService, service) -> new InterruptResponse();
+        return (authentication, registeredService, service, credential) -> new InterruptResponse();
     }
 }
