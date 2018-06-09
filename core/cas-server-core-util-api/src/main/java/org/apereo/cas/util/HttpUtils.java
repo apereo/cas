@@ -24,6 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -199,6 +200,21 @@ public class HttpUtils {
                                           final Map<String, Object> parameters) {
         try {
             return executeGet(url, null, null, parameters);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
+     * Execute get http response.
+     *
+     * @param url the url
+     * @return the http response
+     */
+    public static HttpResponse executeGet(final String url) {
+        try {
+            return executeGet(url, null, null, new LinkedHashMap<>());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

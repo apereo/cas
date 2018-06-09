@@ -32,11 +32,13 @@ public class GeoLocationResponse {
      * Add address.
      *
      * @param address the address
+     * @return the geo location response
      */
-    public void addAddress(final String address) {
+    public GeoLocationResponse addAddress(final String address) {
         if (StringUtils.isNotBlank(address)) {
             this.addresses.add(address);
         }
+        return this;
     }
 
     /**
