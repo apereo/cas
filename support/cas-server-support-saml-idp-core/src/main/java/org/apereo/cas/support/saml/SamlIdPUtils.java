@@ -49,31 +49,51 @@ public final class SamlIdPUtils {
     /**
      * Prepare peer entity saml endpoint.
      *
+     * @param authnRequest    the authn request
      * @param outboundContext the outbound context
      * @param adaptor         the adaptor
      * @param binding         the binding
      * @throws SamlException the saml exception
      */
-    public static void preparePeerEntitySamlEndpointContext(final MessageContext outboundContext,
+    public static void preparePeerEntitySamlEndpointContext(final RequestAbstractType authnRequest,
+                                                            final MessageContext outboundContext,
                                                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                             final String binding) throws SamlException {
+        final String entityId = adaptor.getEntityId();
         if (!adaptor.containsAssertionConsumerServices()) {
-            throw new SamlException("No assertion consumer service could be found for entity " + adaptor.getEntityId());
+            throw new SamlException("No assertion consumer service could be found for entity " + entityId);
         }
 
         final SAMLPeerEntityContext peerEntityContext = outboundContext.getSubcontext(SAMLPeerEntityContext.class, true);
         if (peerEntityContext == null) {
-            throw new SamlException("SAMLPeerEntityContext could not be defined for entity " + adaptor.getEntityId());
+            throw new SamlException("SAMLPeerEntityContext could not be defined for entity " + entityId);
         }
-        peerEntityContext.setEntityId(adaptor.getEntityId());
-        
+        peerEntityContext.setEntityId(entityId);
+
         final SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
         if (endpointContext == null) {
-            throw new SamlException("SAMLEndpointContext could not be defined for entity " + adaptor.getEntityId());
+            throw new SamlException("SAMLEndpointContext could not be defined for entity " + entityId);
         }
-        final Endpoint endpoint = adaptor.getAssertionConsumerService(binding);
+
+        Endpoint endpoint = null;
+        if (authnRequest instanceof AuthnRequest) {
+            final String acsUrl = AuthnRequest.class.cast(authnRequest).getAssertionConsumerServiceURL();
+            if (StringUtils.isNotBlank(acsUrl)) {
+                LOGGER.debug("Using assertion consumer service url [{}] with binding [{}] provided by the authentication request", acsUrl, binding);
+                final AssertionConsumerServiceBuilder builder = new AssertionConsumerServiceBuilder();
+                endpoint = builder.buildObject(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
+                endpoint.setBinding(binding);
+                endpoint.setResponseLocation(acsUrl);
+                endpoint.setLocation(acsUrl);
+            }
+        }
+
+        if (endpoint == null) {
+            LOGGER.debug("Attempting to locate the assertion consumer service url for binding [{}] from metadata", binding);
+            endpoint = adaptor.getAssertionConsumerService(binding);
+        }
         if (StringUtils.isBlank(endpoint.getBinding()) || StringUtils.isBlank(endpoint.getLocation())) {
-            throw new SamlException("Assertion consumer service does not define a binding or location for " + adaptor.getEntityId());
+            throw new SamlException("Assertion consumer service does not define a binding or location for " + entityId);
         }
         LOGGER.debug("Configured peer entity endpoint to be [{}] with binding [{}]", endpoint.getLocation(), endpoint.getBinding());
         endpointContext.setEndpoint(endpoint);
@@ -96,13 +116,13 @@ public final class SamlIdPUtils {
             final ChainingMetadataResolver chainingMetadataResolver = new ChainingMetadataResolver();
 
             resolvers = registeredServices.stream()
-                    .filter(SamlRegisteredService.class::isInstance)
-                    .map(SamlRegisteredService.class::cast)
-                    .map(s -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, s, entityID))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .map(SamlRegisteredServiceServiceProviderMetadataFacade::getMetadataResolver)
-                    .collect(Collectors.toList());
+                .filter(SamlRegisteredService.class::isInstance)
+                .map(SamlRegisteredService.class::cast)
+                .map(s -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, s, entityID))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(SamlRegisteredServiceServiceProviderMetadataFacade::getMetadataResolver)
+                .collect(Collectors.toList());
 
             LOGGER.debug("Located [{}] metadata resolvers to match against [{}]", resolvers, entityID);
             chainingMetadataResolver.setResolvers(resolvers);
@@ -145,7 +165,7 @@ public final class SamlIdPUtils {
                     final int acsIndex = authnRequest.getAssertionConsumerServiceIndex();
                     if (acsIndex + 1 > acsEndpoints.size()) {
                         throw new IllegalArgumentException("AssertionConsumerService index specified in the request " + acsIndex + " is invalid "
-                                + "since the total endpoints available to " + issuer + " is " + acsEndpoints.size());
+                            + "since the total endpoints available to " + issuer + " is " + acsEndpoints.size());
                     }
                     final AssertionConsumerService foundAcs = acsEndpoints.get(acsIndex);
                     acs.setBinding(foundAcs.getBinding());

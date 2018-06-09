@@ -108,7 +108,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
 
         if (service.isSignResponses()) {
             LOGGER.debug("SAML entity id [{}] indicates that SAML responses should be signed", adaptor.getEntityId());
-            samlResponse = this.samlObjectSigner.encode(samlResponse, service, adaptor, response, request, binding);
+            samlResponse = this.samlObjectSigner.encode(samlResponse, service, adaptor, response, request, binding, authnRequest);
             SamlUtils.logSamlObject(configBean, samlResponse);
         }
 
@@ -133,16 +133,16 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                     adaptor, httpRequest, httpResponse, authnRequest,
                     ticketRegistry, samlArtifactTicketFactory,
                     ticketGrantingTicketCookieGenerator, samlArtifactMap);
-            return encoder.encode(samlResponse, relayState);
+            return encoder.encode(authnRequest, samlResponse, relayState);
         }
         
         if (binding.equalsIgnoreCase(SAMLConstants.SAML2_POST_SIMPLE_SIGN_BINDING_URI)) {
             final BaseSamlResponseEncoder encoder = new SamlResponsePostSimpleSignEncoder(this.velocityEngineFactory, adaptor, httpResponse, httpRequest);
-            return encoder.encode(samlResponse, relayState);
+            return encoder.encode(authnRequest, samlResponse, relayState);
         }
         
         final BaseSamlResponseEncoder encoder = new SamlResponsePostEncoder(this.velocityEngineFactory, adaptor, httpResponse, httpRequest);
-        return encoder.encode(samlResponse, relayState);
+        return encoder.encode(authnRequest, samlResponse, relayState);
     }
 
     private void storeAttributeQueryTicketInRegistry(final Assertion assertion, final HttpServletRequest request,

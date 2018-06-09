@@ -102,38 +102,38 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-        classes = {
-                CasCoreAuthenticationConfiguration.class,
-                CasCoreServicesAuthenticationConfiguration.class,
-                CasCoreAuthenticationPrincipalConfiguration.class,
-                CasCoreAuthenticationPolicyConfiguration.class,
-                CasCoreAuthenticationMetadataConfiguration.class,
-                CasCoreAuthenticationSupportConfiguration.class,
-                CasCoreAuthenticationHandlersConfiguration.class,
-                CasOAuth20TestAuthenticationEventExecutionPlanConfiguration.class,
-                CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-                CasCoreTicketIdGeneratorsConfiguration.class,
-                CasWebApplicationServiceFactoryConfiguration.class,
-                CasCoreHttpConfiguration.class,
-                CasCoreServicesConfiguration.class,
-                CasOAuthConfiguration.class,
-                CasCoreTicketsConfiguration.class,
-                CasCoreConfiguration.class,
-                CasCookieConfiguration.class,
-                CasOAuthComponentSerializationConfiguration.class,
-                CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-                CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-                CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
-                CasCoreTicketCatalogConfiguration.class,
-                CasCoreComponentSerializationConfiguration.class,
-                CasOAuth20TestAuthenticationEventExecutionPlanConfiguration.class,
-                CasCoreUtilSerializationConfiguration.class,
-                CasPersonDirectoryConfiguration.class,
-                AbstractOAuth20Tests.OAuthTestConfiguration.class,
-                RefreshAutoConfiguration.class,
-                CasCoreLogoutConfiguration.class,
-                CasCoreUtilConfiguration.class,
-                CasCoreWebConfiguration.class})
+    classes = {
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasOAuth20TestAuthenticationEventExecutionPlanConfiguration.class,
+        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasOAuthConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCookieConfiguration.class,
+        CasOAuthComponentSerializationConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreComponentSerializationConfiguration.class,
+        CasOAuth20TestAuthenticationEventExecutionPlanConfiguration.class,
+        CasCoreUtilSerializationConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        AbstractOAuth20Tests.OAuthTestConfiguration.class,
+        RefreshAutoConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreWebConfiguration.class})
 @DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
@@ -231,10 +231,10 @@ public abstract class AbstractOAuth20Tests {
         return registeredService;
     }
 
-    protected OAuthCode addCode(final Principal principal, final RegisteredService registeredService) {
+    protected OAuthCode addCode(final Principal principal, final OAuthRegisteredService registeredService) {
         final Authentication authentication = getAuthentication(principal);
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
-        final Service service = factory.createService(registeredService.getServiceId());
+        final Service service = factory.createService(registeredService.getClientId());
         final OAuthCode code = oAuthCodeFactory.create(service, authentication, new MockTicketGrantingTicket("casuser"));
         this.ticketRegistry.addTicket(code);
         return code;
@@ -267,19 +267,19 @@ public abstract class AbstractOAuth20Tests {
 
     protected static Authentication getAuthentication(final Principal principal) {
         final CredentialMetaData metadata = new BasicCredentialMetaData(
-                new BasicIdentifiableCredential(principal.getId()));
+            new BasicIdentifiableCredential(principal.getId()));
         final HandlerResult handlerResult = new DefaultHandlerResult(principal.getClass().getCanonicalName(),
-                metadata, principal, new ArrayList<>());
+            metadata, principal, new ArrayList<>());
 
         return DefaultAuthenticationBuilder.newInstance()
-                .setPrincipal(principal)
-                .setAuthenticationDate(ZonedDateTime.now())
-                .addCredential(metadata)
-                .addSuccess(principal.getClass().getCanonicalName(), handlerResult)
-                .build();
+            .setPrincipal(principal)
+            .setAuthenticationDate(ZonedDateTime.now())
+            .addCredential(metadata)
+            .addSuccess(principal.getClass().getCanonicalName(), handlerResult)
+            .build();
     }
 
-    protected Pair<String, String> internalVerifyClientOK(final RegisteredService service,
+    protected Pair<String, String> internalVerifyClientOK(final OAuthRegisteredService service,
                                                           final boolean refreshToken, final boolean json) throws Exception {
 
         final Principal principal = createPrincipal();
@@ -294,7 +294,7 @@ public abstract class AbstractOAuth20Tests {
 
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
-        
+
         mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
@@ -321,10 +321,10 @@ public abstract class AbstractOAuth20Tests {
             if (refreshToken) {
                 assertTrue(body.contains(OAuth20Constants.REFRESH_TOKEN + "=RT-"));
                 refreshTokenId = Arrays.stream(body.split("&"))
-                        .filter(f -> f.startsWith(OAuth20Constants.REFRESH_TOKEN))
-                        .map(f -> StringUtils.remove(f, OAuth20Constants.REFRESH_TOKEN + "="))
-                        .findFirst()
-                        .get();
+                    .filter(f -> f.startsWith(OAuth20Constants.REFRESH_TOKEN))
+                    .map(f -> StringUtils.remove(f, OAuth20Constants.REFRESH_TOKEN + "="))
+                    .findFirst()
+                    .get();
             }
             assertTrue(body.contains(OAuth20Constants.EXPIRES_IN + '='));
             accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + '=', "&");
@@ -350,7 +350,7 @@ public abstract class AbstractOAuth20Tests {
         } else {
             if (refreshToken) {
                 timeLeft = Integer.parseInt(StringUtils.substringBetween(body, '&' + OAuth20Constants.EXPIRES_IN + '=',
-                        '&' + OAuth20Constants.REFRESH_TOKEN));
+                    '&' + OAuth20Constants.REFRESH_TOKEN));
             } else {
                 timeLeft = Integer.parseInt(StringUtils.substringAfter(body, '&' + OAuth20Constants.EXPIRES_IN + '='));
             }

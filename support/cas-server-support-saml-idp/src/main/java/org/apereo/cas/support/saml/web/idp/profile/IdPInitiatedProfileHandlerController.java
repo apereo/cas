@@ -76,10 +76,10 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
                                                 final CasConfigurationProperties casProperties,
                                                 final SamlObjectSignatureValidator samlObjectSignatureValidator) {
         super(samlObjectSigner, parserPool, authenticationSystemSupport,
-                servicesManager, webApplicationServiceFactory,
-                samlRegisteredServiceCachingMetadataResolver,
-                configBean, responseBuilder, casProperties,
-                samlObjectSignatureValidator);
+            servicesManager, webApplicationServiceFactory,
+            samlRegisteredServiceCachingMetadataResolver,
+            configBean, responseBuilder, casProperties,
+            samlObjectSignatureValidator);
     }
 
     /**
@@ -145,7 +145,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
 
         if (NumberUtils.isCreatable(time)) {
             authnRequest.setIssueInstant(new DateTime(TimeUnit.SECONDS.convert(Long.parseLong(time), TimeUnit.MILLISECONDS),
-                    ISOChronology.getInstanceUTC()));
+                ISOChronology.getInstanceUTC()));
         } else {
             authnRequest.setIssueInstant(new DateTime(DateTime.now(), ISOChronology.getInstanceUTC()));
         }
@@ -158,8 +158,8 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         ctx.setAutoCreateSubcontexts(true);
 
         if (facade.isAuthnRequestsSigned()) {
-            samlObjectSigner.encode(authnRequest, registeredService,
-                    facade, response, request, SAMLConstants.SAML2_POST_BINDING_URI);
+            samlObjectSigner.encode(authnRequest, registeredService, facade, response,
+                request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest);
         }
         ctx.setMessage(authnRequest);
         ctx.getSubcontext(SAMLBindingContext.class, true).setHasBindingSignature(false);
