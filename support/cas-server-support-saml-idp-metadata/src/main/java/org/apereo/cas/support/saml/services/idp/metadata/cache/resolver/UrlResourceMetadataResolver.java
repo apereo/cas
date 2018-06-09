@@ -85,8 +85,6 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
                     return CollectionUtils.wrap(metadataProvider);
                 }
             }
-
-
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
