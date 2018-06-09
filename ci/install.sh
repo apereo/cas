@@ -3,7 +3,7 @@
 branchName="master"
 
 prepCommand="echo 'Running command...'; "
-gradle="sudo ./gradlew $@"
+gradle="./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
 
@@ -13,8 +13,7 @@ echo -e "***********************************************"
 
 if [ "$MATRIX_JOB_TYPE" == "BUILD" ]; then
     gradleBuild="$gradleBuild build -x test -x javadoc -x check -DskipNpmLint=true \
-    -DenableIncremental=true -DskipNestedConfigMetadataGen=true \
-    -DskipNodeModulesCleanUp=true -DskipNpmCache=true "
+    -DenableIncremental=true -DskipNestedConfigMetadataGen=true "
 elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
     if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ]; then
         if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip snapshots]"* ]]; then
