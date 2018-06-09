@@ -19,4 +19,5 @@ import org.springframework.test.context.TestPropertySource;
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 1433)
 @Category(MsSqlServerCategory.class)
 public class SamlRegisteredServiceJpaMicrosoftSqlServerTests extends SamlRegisteredServiceJpaTests {
+    
 }

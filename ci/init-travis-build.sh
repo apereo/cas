@@ -19,6 +19,9 @@ else
   echo -e "Secure environment variables are available...\n"
 fi
 
+echo -e "Stopping current services...\n"
+sudo service mysql stop
+
 echo -e "Setting build environment...\n"
 sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
 

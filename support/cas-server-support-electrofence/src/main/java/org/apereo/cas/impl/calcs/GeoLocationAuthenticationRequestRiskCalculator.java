@@ -55,8 +55,10 @@ public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenti
         LOGGER.debug("Filtering authentication events for location based on ip [{}]", remoteAddr);
         final GeoLocationResponse response = this.geoLocationService.locate(remoteAddr);
         if (response != null) {
-            final long count = events.stream().filter(e -> e.getGeoLocation().equals(
-                    new GeoLocationRequest(response.getLatitude(), response.getLongitude()))).count();
+            final long count = events
+                .stream()
+                .filter(e -> e.getGeoLocation().equals(new GeoLocationRequest(response.getLatitude(), response.getLongitude())))
+                .count();
             LOGGER.debug("Total authentication events found for location of [{}]: [{}]", remoteAddr, count);
             if (count == events.size()) {
                 LOGGER.debug("Principal [{}] has always authenticated from [{}]", authentication.getPrincipal(), loc);

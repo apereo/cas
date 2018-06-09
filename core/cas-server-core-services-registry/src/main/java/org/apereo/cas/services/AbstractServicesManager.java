@@ -8,6 +8,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicePreDeleteEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicePreSaveEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServicesDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
@@ -198,6 +199,13 @@ public abstract class AbstractServicesManager implements ServicesManager {
         evaluateExpiredServiceDefinitions();
         LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistry.getName());
         return services.values();
+    }
+
+    @Override
+    public synchronized void deleteAll() {
+        this.services.forEach((k, v) -> delete(v));
+        this.services.clear();
+        publishEvent(new CasRegisteredServicesDeletedEvent(this));
     }
 
     private void evaluateExpiredServiceDefinitions() {

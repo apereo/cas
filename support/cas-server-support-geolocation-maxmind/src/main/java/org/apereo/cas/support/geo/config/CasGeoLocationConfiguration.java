@@ -53,6 +53,8 @@ public class CasGeoLocationConfiguration {
             throw new IllegalArgumentException("No geolocation services have been defined for Maxmind");
         }
 
-        return new MaxmindDatabaseGeoLocationService(cityDatabase, countryDatabase);
+        final MaxmindDatabaseGeoLocationService svc = new MaxmindDatabaseGeoLocationService(cityDatabase, countryDatabase);
+        svc.setIpStackAccessKey(properties.getIpStackApiAccessKey());
+        return svc;
     }
 }

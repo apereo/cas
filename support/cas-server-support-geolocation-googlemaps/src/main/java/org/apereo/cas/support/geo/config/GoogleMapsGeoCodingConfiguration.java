@@ -48,6 +48,8 @@ public class GoogleMapsGeoCodingConfiguration {
         builder.apiKey(properties.getApiKey())
             .connectTimeout(Beans.newDuration(properties.getConnectTimeout()).toMillis(), TimeUnit.MILLISECONDS);
 
-        return new GoogleMapsGeoLocationService(builder.build());
+        final GoogleMapsGeoLocationService svc = new GoogleMapsGeoLocationService(builder.build());
+        svc.setIpStackAccessKey(properties.getIpStackApiAccessKey());
+        return svc;
     }
 }

@@ -73,4 +73,17 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
             CoreAuthenticationTestUtils.getRegisteredService());
         assertEquals("ujWTRNKPPso8S+4geOvcOZtv778=", result);
     }
+
+    @Test
+    public void verifyGeneratedIdsMatchMultiValuedAttribute() {
+        final String salt = "whydontyoustringmealong";
+        final ShibbolethCompatiblePersistentIdGenerator gen = new ShibbolethCompatiblePersistentIdGenerator(salt);
+        gen.setAttribute("uid");
+        final AnonymousRegisteredServiceUsernameAttributeProvider provider = new AnonymousRegisteredServiceUsernameAttributeProvider(gen);
+        final String result = provider.resolveUsername(CoreAuthenticationTestUtils.getPrincipal("anyuser",
+            CollectionUtils.wrap("uid", CollectionUtils.wrap("obegon"))),
+            CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"),
+            CoreAuthenticationTestUtils.getRegisteredService());
+        assertEquals("lykoGRE9QbbrsEBlHJVEz0U8AJ0=", result);
+    }
 }
