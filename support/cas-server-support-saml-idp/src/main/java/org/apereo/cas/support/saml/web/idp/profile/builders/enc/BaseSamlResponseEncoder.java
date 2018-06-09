@@ -7,6 +7,7 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
 import org.opensaml.saml.saml2.binding.encoding.impl.BaseSAML2MessageEncoder;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.ui.velocity.VelocityEngineFactory;
 
@@ -37,7 +38,7 @@ public abstract class BaseSamlResponseEncoder {
      * The Http request.
      */
     protected final HttpServletRequest httpRequest;
-    
+
     public BaseSamlResponseEncoder(final VelocityEngineFactory velocityEngineFactory,
                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                    final HttpServletResponse httpResponse,
@@ -51,20 +52,21 @@ public abstract class BaseSamlResponseEncoder {
     /**
      * Encode.
      *
+     * @param authnRequest the authn request
      * @param samlResponse the saml response
      * @param relayState   the relay state
      * @return the response
      * @throws SamlException the saml exception
      */
-    public final Response encode(final Response samlResponse, final String relayState) throws SamlException {
+    public final Response encode(final RequestAbstractType authnRequest, final Response samlResponse, final String relayState) throws SamlException {
         try {
             if (httpResponse != null) {
                 final BaseSAML2MessageEncoder encoder = getMessageEncoderInstance();
                 encoder.setHttpServletResponse(httpResponse);
 
-                final MessageContext ctx = getEncoderMessageContext(samlResponse, relayState);
+                final MessageContext ctx = getEncoderMessageContext(authnRequest, samlResponse, relayState);
                 encoder.setMessageContext(ctx);
-                finalizeEncode(encoder, samlResponse, relayState);
+                finalizeEncode(authnRequest, encoder, samlResponse, relayState);
             }
             return samlResponse;
         } catch (final Exception e) {
@@ -75,15 +77,16 @@ public abstract class BaseSamlResponseEncoder {
     /**
      * Build encoder message context.
      *
+     * @param authnRequest the authn request
      * @param samlResponse the saml response
      * @param relayState   the relay state
      * @return the message context
      */
-    protected MessageContext getEncoderMessageContext(final Response samlResponse, final String relayState) {
+    protected MessageContext getEncoderMessageContext(final RequestAbstractType authnRequest, final Response samlResponse, final String relayState) {
         final MessageContext ctx = new MessageContext<>();
         ctx.setMessage(samlResponse);
         SAMLBindingSupport.setRelayState(ctx, relayState);
-        SamlIdPUtils.preparePeerEntitySamlEndpointContext(ctx, adaptor, getBinding());
+        SamlIdPUtils.preparePeerEntitySamlEndpointContext(authnRequest, ctx, adaptor, getBinding());
         final SAMLSelfEntityContext self = ctx.getSubcontext(SAMLSelfEntityContext.class, true);
         self.setEntityId(samlResponse.getIssuer().getValue());
         return ctx;
@@ -92,13 +95,15 @@ public abstract class BaseSamlResponseEncoder {
     /**
      * Finalize encode response.
      *
+     * @param authnRequest the authn request
      * @param encoder      the encoder
      * @param samlResponse the saml response
      * @param relayState   the relay state
      * @throws Exception the saml exception
      */
-    protected void finalizeEncode(final BaseSAML2MessageEncoder encoder,
-                                  final Response samlResponse, 
+    protected void finalizeEncode(final RequestAbstractType authnRequest,
+                                  final BaseSAML2MessageEncoder encoder,
+                                  final Response samlResponse,
                                   final String relayState) throws Exception {
         encoder.initialize();
         encoder.encode();

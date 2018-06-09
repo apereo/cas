@@ -65,7 +65,9 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
     }
 
     @Override
-    public Assertion build(final RequestAbstractType authnRequest, final HttpServletRequest request, final HttpServletResponse response,
+    public Assertion build(final RequestAbstractType authnRequest,
+                           final HttpServletRequest request,
+                           final HttpServletResponse response,
                            final Object casAssertion, final SamlRegisteredService service,
                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                            final String binding) throws SamlException {
@@ -88,22 +90,24 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
                 casAssertion, service, adaptor, binding));
         assertion.setConditions(this.samlProfileSamlConditionsBuilder.build(authnRequest,
                 request, response, casAssertion, service, adaptor, binding));
-        signAssertion(assertion, request, response, service, adaptor, binding);
+        signAssertion(authnRequest, assertion, request, response, service, adaptor, binding);
         return assertion;
     }
 
     /**
      * Sign assertion.
      *
-     * @param assertion the assertion
-     * @param request   the request
-     * @param response  the response
-     * @param service   the service
-     * @param adaptor   the adaptor
-     * @param binding   the binding
+     * @param authnRequest the authn request
+     * @param assertion    the assertion
+     * @param request      the request
+     * @param response     the response
+     * @param service      the service
+     * @param adaptor      the adaptor
+     * @param binding      the binding
      * @throws SamlException the saml exception
      */
-    protected void signAssertion(final Assertion assertion,
+    protected void signAssertion(final RequestAbstractType authnRequest,
+                                 final Assertion assertion,
                                  final HttpServletRequest request, final HttpServletResponse response,
                                  final SamlRegisteredService service,
                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
@@ -111,8 +115,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
         try {
             if (service.isSignAssertions()) {
                 LOGGER.debug("SAML registered service [{}] requires assertions to be signed", adaptor.getEntityId());
-                this.samlObjectSigner.encode(assertion, service, adaptor,
-                        response, request, binding);
+                this.samlObjectSigner.encode(assertion, service, adaptor, response, request, binding, authnRequest);
             } else {
                 LOGGER.debug("SAML registered service [{}] does not require assertions to be signed", adaptor.getEntityId());
             }

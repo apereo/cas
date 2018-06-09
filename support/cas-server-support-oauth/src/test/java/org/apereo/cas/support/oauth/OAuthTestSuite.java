@@ -17,12 +17,14 @@ import org.junit.runners.Suite;
  * @since 4.0.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({OAuth20AccessTokenControllerTests.class,
+@Suite.SuiteClasses({
+    OAuth20AccessTokenControllerTests.class,
     OAuth20AuthorizeControllerTests.class,
     OAuthAccessTokenExpirationPolicyTests.class,
     OAuthRefreshTokenExpirationPolicyTests.class,
     OAuth20AccessTokenControllerMemcachedTests.class,
     OAuth20ProfileControllerTests.class,
-    OAuthWebApplicationServiceTests.class})
+    OAuthWebApplicationServiceTests.class
+})
 public class OAuthTestSuite {
 }
