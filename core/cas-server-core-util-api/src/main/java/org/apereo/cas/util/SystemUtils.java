@@ -120,9 +120,14 @@ public class SystemUtils {
      */
     @SneakyThrows
     public static String getNodeVersion() {
-        final ProcessBuilder pb = new ProcessBuilder("node", "--version");
-        final Process p = pb.start();
-        return IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8).trim();
+        try {
+            final ProcessBuilder pb = new ProcessBuilder("node", "--version");
+            final Process p = pb.start();
+            return IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8).trim();
+        } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
+        }
+        return "N/A";
     }
 
     /**
@@ -132,8 +137,13 @@ public class SystemUtils {
      */
     @SneakyThrows
     public static String getNpmVersion() {
-        final ProcessBuilder pb = new ProcessBuilder("npm", "--version");
-        final Process p = pb.start();
-        return IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8).trim();
+        try {
+            final ProcessBuilder pb = new ProcessBuilder("npm", "--version");
+            final Process p = pb.start();
+            return IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8).trim();
+        } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
+        }
+        return "N/A";
     }
 }
