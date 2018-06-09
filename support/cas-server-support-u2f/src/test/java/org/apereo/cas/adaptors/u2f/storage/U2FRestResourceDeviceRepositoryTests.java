@@ -42,7 +42,7 @@ import java.util.Map;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@TestPropertySource(properties = "cas.authn.mfa.u2f.rest.url=http://localhost:9296")
+@TestPropertySource(properties = "cas.authn.mfa.u2f.rest.url=http://localhost:9196")
 public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
@@ -62,19 +62,18 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
     @BeforeClass
     public static void beforeClass() throws Exception {
         final Map<String, List<U2FDeviceRegistration>> devices = new HashMap<>();
-
         final DeviceRegistration reg = new DeviceRegistration("123456", "bjsdghj3b", "njsdkhjdfjh45", 1, false);
         devices.put(BaseResourceU2FDeviceRepository.MAP_KEY_DEVICES,
             CollectionUtils.wrapList(new U2FDeviceRegistration(2000, "casuser", reg.toJson(), LocalDate.now()),
                 new U2FDeviceRegistration(1000, "casuser", reg.toJson(), LocalDate.now())));
         final String data = MAPPER.writeValueAsString(devices);
-        WEB_SERVER = new MockWebServer(9296,
+        WEB_SERVER = new MockWebServer(9196,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE);
         WEB_SERVER.start();
     }
 
     @AfterClass
-    public static void afterClass() throws Exception {
+    public static void afterClass() {
         WEB_SERVER.close();
     }
 }
