@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -56,9 +57,9 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
+
 /**
  * This is {@link MongoDbSamlRegisteredServiceMetadataResolverTests}.
  *
