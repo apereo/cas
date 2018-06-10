@@ -9,6 +9,9 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+
 import static org.junit.Assert.*;
 
 /**
@@ -22,7 +25,7 @@ public class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthen
 
     @Test
     public void verifyTestWhenNoAuthnEventsFoundForUser() {
-        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("datetimeperson");
+        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("datetimeperson", ZonedDateTime.now(ZoneOffset.UTC));
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);
@@ -31,7 +34,7 @@ public class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthen
 
     @Test
     public void verifyTestWhenAuthnEventsFoundForUser() {
-        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
+        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("casuser", ZonedDateTime.now(ZoneOffset.UTC));
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);

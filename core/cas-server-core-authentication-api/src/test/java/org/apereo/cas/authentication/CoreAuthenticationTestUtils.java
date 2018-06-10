@@ -15,6 +15,7 @@ import org.apereo.services.persondir.support.StubPersonAttributeDao;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -134,15 +135,24 @@ public class CoreAuthenticationTestUtils {
         return getAuthentication(getPrincipal(name));
     }
 
+    public static Authentication getAuthentication(final String name, final ZonedDateTime authnDate) {
+        return getAuthentication(getPrincipal(name), new HashMap<>(0), authnDate);
+    }
+
     public static Authentication getAuthentication(final Principal principal) {
         return getAuthentication(principal, new HashMap<>(0));
     }
 
     public static Authentication getAuthentication(final Principal principal, final Map<String, Object> attributes) {
+        return getAuthentication(principal, attributes, null);
+    }
+
+    public static Authentication getAuthentication(final Principal principal, final Map<String, Object> attributes, final ZonedDateTime authnDate) {
         final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         return new DefaultAuthenticationBuilder(principal)
             .addCredential(meta)
+            .setAuthenticationDate(authnDate)
             .addSuccess("testHandler", new DefaultAuthenticationHandlerExecutionResult(handler, meta))
             .setAttributes(attributes)
             .build();
