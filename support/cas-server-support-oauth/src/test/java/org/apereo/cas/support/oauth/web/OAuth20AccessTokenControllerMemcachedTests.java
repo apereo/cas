@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.category.MemcachedCategory;
 import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
@@ -11,8 +12,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
-import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
 

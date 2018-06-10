@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@TestPropertySource(properties = "cas.authn.adaptive.risk.dateTime.enabled=true")
+@TestPropertySource(properties = {"cas.authn.adaptive.risk.dateTime.enabled=true", "cas.authn.adaptive.risk.dateTime.windowInHours=4"})
 public class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
 
     @Test
