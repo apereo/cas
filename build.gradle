@@ -187,6 +187,12 @@ subprojects {
         }
     }
 
+    task testPostgres(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.PostgresCategory'
+        }
+    }
+    
     task testDynamoDb(type: Test) {
         useJUnit {
             includeCategories 'org.apereo.cas.category.DynamoDbCategory'
