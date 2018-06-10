@@ -83,6 +83,9 @@ elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     elif [ "$MATRIX_SERVER" == "MSSQLSERVER" ]; then
         ./ci/run-mssql-server.sh
         gradleBuild="$gradleBuild testMsSqlServer "
+    elif [ "$MATRIX_SERVER" == "POSTGRES" ]; then
+        ./ci/run-postgres-server.sh
+        gradleBuild="$gradleBuild testPostgres "
     elif [ "$MATRIX_SERVER" == "MONGODB" ]; then
         gradleBuild="$gradleBuild testMongoDb  "
     elif [ "$MATRIX_SERVER" == "REDIS" ]; then
