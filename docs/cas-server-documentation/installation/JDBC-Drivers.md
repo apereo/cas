@@ -114,6 +114,7 @@ Available drivers are:
 | `org.hibernate.dialect.PostgreSQL93Dialect`   
 | `org.hibernate.dialect.PostgreSQL94Dialect`   
 | `org.hibernate.dialect.PostgreSQL95Dialect`   
+| `org.hibernate.dialect.PostgresPlusDialect`
 
 ### MariaDB
 
