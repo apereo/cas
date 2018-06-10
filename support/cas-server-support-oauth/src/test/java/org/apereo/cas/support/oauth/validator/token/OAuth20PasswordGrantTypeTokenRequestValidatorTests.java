@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.validator.token;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -8,8 +9,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.ticket.code.OAuthCode;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,15 +24,13 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests}.
+ * This is {@link OAuth20PasswordGrantTypeTokenRequestValidatorTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
+public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
     private OAuth20TokenRequestValidator validator;
-
-    private TicketRegistry ticketRegistry;
     private OAuthRegisteredService registeredService;
 
     @Before
@@ -47,25 +44,14 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         registeredService.setClientSecret("secret");
         registeredService.setServiceId(service.getId());
 
-
-        final OAuthCode oauthCode = mock(OAuthCode.class);
-        when(oauthCode.getId()).thenReturn("OC-12345678");
-        when(oauthCode.isExpired()).thenReturn(false);
-        when(oauthCode.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
-        when(oauthCode.getService()).thenReturn(RegisteredServiceTestUtils.getService(registeredService.getClientId()));
-
-        this.ticketRegistry = mock(TicketRegistry.class);
-        when(ticketRegistry.getTicket(anyString(), any())).thenReturn(oauthCode);
-
         when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(registeredService));
-        this.validator = new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(serviceManager,
-            ticketRegistry, new RegisteredServiceAccessStrategyAuditableEnforcer());
+
+        this.validator = new OAuth20PasswordGrantTypeTokenRequestValidator(new RegisteredServiceAccessStrategyAuditableEnforcer(),
+            serviceManager, new WebApplicationServiceFactory());
     }
 
     @Test
     public void verifyOperation() {
-        final Service service = RegisteredServiceTestUtils.getService();
-
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
 
@@ -78,9 +64,12 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         final HttpSession session = request.getSession(true);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
 
-        request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
-        request.setParameter(OAuth20Constants.REDIRECT_URI, service.getId());
-        request.setParameter(OAuth20Constants.CODE, "OC-12345678");
+        request.setParameter(OAuth20Constants.GRANT_TYPE, getGrantType().getType());
+        request.setParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         assertTrue(this.validator.validate(new J2EContext(request, response)));
+    }
+
+    protected OAuth20GrantTypes getGrantType() {
+        return OAuth20GrantTypes.PASSWORD;
     }
 }
