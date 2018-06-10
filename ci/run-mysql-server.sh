@@ -4,7 +4,7 @@ if [[ "$MATRIX_SERVER" == "MYSQL" || "$MATRIX_SERVER" == "ALL" ]]; then
     # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
     echo "Running MySQL docker image..."
-    docker run -p 3306:3306 --name mysql-server -e MYSQL_ROOT_PASSWORD=password -d mysql:latest
+    docker run -p 3306:3306 --name mysql-server -e MYSQL_ROOT_PASSWORD=password -d mysql:8.0.11
 
     docker ps | grep "mysql-server"
     retVal=$?

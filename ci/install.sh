@@ -5,7 +5,7 @@ branchName="master"
 prepCommand="echo 'Running command...'; "
 gradle="sudo ./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon --parallel "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
@@ -23,8 +23,8 @@ elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
             echo -e "The build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
             gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check \
                 -DenableIncremental=true -DskipNpmLint=true -DskipNestedConfigMetadataGen=true  
-                -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DskipErrorProneCompiler=true \
-                -DsonatypePassword=${SONATYPE_PWD}"
+                -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} \
+                -DsonatypePassword=${SONATYPE_PWD} "
         fi
     else
         echo -e "*******************************************************************************************************"
@@ -33,16 +33,17 @@ elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
     fi
 elif [ "$MATRIX_JOB_TYPE" == "CFGMETADATA" ]; then
      gradleBuild="$gradleBuild :api:cas-server-core-api-configuration-model:build -x check -x test -x javadoc \
-     -DskipGradleLint=true -DskipSass=true -DskipErrorProneCompiler=true \
+     -DskipGradleLint=true -DskipSass=true --parallel \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true  "
 elif [ "$MATRIX_JOB_TYPE" == "STYLE" ]; then
      gradleBuild="$gradleBuild check -x test -x javadoc -DenableIncremental=true \
      -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \
-     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipErrorProneCompiler=true "
+     -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 elif [ "$MATRIX_JOB_TYPE" == "JAVADOC" ]; then
      gradleBuild="$gradleBuild javadoc -x test -x check -DskipNpmLint=true \
-     -DskipGradleLint=true -DskipSass=true -DenableIncremental=true -DskipNestedConfigMetadataGen=true \
-     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipErrorProneCompiler=true "
+     -DskipGradleLint=true -DskipSass=true -DenableIncremental=true
+     -DskipNestedConfigMetadataGen=true \
+     -DskipNodeModulesCleanUp=true -DskipNpmCache=true "
 elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     if [ "$MATRIX_SERVER" == "NONE" ]; then
         gradleBuild="$gradleBuild test "
@@ -91,16 +92,15 @@ elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     fi
     gradleBuild="$gradleBuild coveralls -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
-    -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true \
-    -DskipErrorProneCompiler=true "
+    -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 elif [ "$MATRIX_JOB_TYPE" == "DEPANALYZE" ]; then
     gradleBuild="$gradleBuild dependencyCheckAnalyze dependencyCheckUpdate -x javadoc -x check \
-    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true -DskipErrorProneCompiler=true \
+    -DskipNpmLint=true -DskipGradleLint=true --parallel -DskipSass=true -DskipNpmLint=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 elif [ "$MATRIX_JOB_TYPE" == "DEPUPDATE" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ]; then
     gradleBuild="$gradleBuild dependencyUpdates -Drevision=release -x javadoc -x check  \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \
-    -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipErrorProneCompiler=true "
+    -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 fi
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
