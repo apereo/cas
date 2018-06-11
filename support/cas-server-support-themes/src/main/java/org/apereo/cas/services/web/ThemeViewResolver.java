@@ -1,7 +1,8 @@
 package org.apereo.cas.services.web;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.boot.autoconfigure.template.TemplateLocation;
@@ -12,8 +13,8 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.AbstractCachingViewResolver;
 import org.thymeleaf.spring4.view.AbstractThymeleafView;
+
 import java.util.Locale;
-import lombok.Setter;
 
 /**
  * {@link ThemeViewResolver} is a theme resolver that checks for a UI view in the specific theme before utilizing the
@@ -24,7 +25,7 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ThemeViewResolver extends AbstractCachingViewResolver {
 
     private final ViewResolver delegate;
@@ -49,6 +50,7 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
         final String baseTemplateName = thymeleafView.getTemplateName();
         final String templateName = theme + "/" + baseTemplateName;
         final String path = thymeleafProperties.getPrefix().concat(templateName).concat(thymeleafProperties.getSuffix());
+        LOGGER.trace("Attempting to locate theme location at [{}]", path);
         final TemplateLocation location = new TemplateLocation(path);
         if (location.exists(getApplicationContext())) {
             thymeleafView.setTemplateName(templateName);

@@ -1037,7 +1037,9 @@ The following types are supported:
 
 ### LDAP Authentication/Search Settings
 
-In addition to common LDAP connection settings above, there are cases where CAS simply need to execute authenticate against an LDAP server to fetch an account or set of attributes or execute a search query in general. The following  options apply  given the provider's *configuration key*:
+In addition to common LDAP connection settings above, there are cases where CAS simply need to execute 
+authenticate against an LDAP server to fetch an account or set of attributes or execute a search query in general. 
+The following  options apply  given the provider's *configuration key*:
 
 **Note:** Failure to specify adequate properties such as `type`, `ldapUrl`, etc will simply deactivate LDAP  altogether silently.
 
