@@ -47,7 +47,7 @@ public class JasyptListProvidersCommand implements CommandMarker {
             final List<String> algorithms = 
                 services.stream()
                         .filter(service -> "Cipher".equals(service.getType()) && service.getAlgorithm().contains("PBE"))
-                        .map(service -> service.getAlgorithm())
+                        .map(Provider.Service::getAlgorithm)
                         .collect(Collectors.toList());
             if (!algorithms.isEmpty()) {
                 LOGGER.info("Provider: Name: [{}] Class: [{}]", provider.getName(), provider.getClass().getName());

@@ -252,17 +252,17 @@ public abstract class AbstractOAuth20Tests {
         return registeredService;
     }
 
-    protected OAuthCode addCode(final Principal principal, final RegisteredService registeredService) {
+    protected OAuthCode addCode(final Principal principal, final OAuthRegisteredService registeredService) {
         final Authentication authentication = getAuthentication(principal);
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
-        final Service service = factory.createService(registeredService.getServiceId());
+        final Service service = factory.createService(registeredService.getClientId());
         final OAuthCode code = oAuthCodeFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"), new ArrayList<>());
         this.ticketRegistry.addTicket(code);
         return code;
     }
 
-    protected RefreshToken addRefreshToken(final Principal principal, final RegisteredService registeredService) {
+    protected RefreshToken addRefreshToken(final Principal principal, final OAuthRegisteredService registeredService) {
         final Authentication authentication = getAuthentication(principal);
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final Service service = factory.createService(registeredService.getServiceId());
@@ -302,7 +302,7 @@ public abstract class AbstractOAuth20Tests {
             .build();
     }
 
-    protected Pair<String, String> internalVerifyClientOK(final RegisteredService service,
+    protected Pair<String, String> internalVerifyClientOK(final OAuthRegisteredService service,
                                                           final boolean refreshToken, final boolean json) throws Exception {
 
         final Principal principal = createPrincipal();

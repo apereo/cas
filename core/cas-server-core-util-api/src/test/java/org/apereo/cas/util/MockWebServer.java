@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 
@@ -44,6 +45,14 @@ public class MockWebServer implements AutoCloseable {
     public MockWebServer(final int port, final Resource resource, final String contentType) {
         try {
             this.worker = new Worker(new ServerSocket(port), resource, contentType);
+        } catch (final IOException e) {
+            throw new IllegalArgumentException("Cannot create Web server", e);
+        }
+    }
+
+    public MockWebServer(final int port, final String data) {
+        try {
+            this.worker = new Worker(new ServerSocket(port), new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8)), MediaType.APPLICATION_JSON_VALUE);
         } catch (final IOException e) {
             throw new IllegalArgumentException("Cannot create Web server", e);
         }
