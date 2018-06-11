@@ -24,6 +24,7 @@ dependencies {
     compile project(":support:cas-server-support-saml-idp-core")
     compile project(":support:cas-server-support-ws-idp-api")
     compile project(":support:cas-server-support-saml-idp-core")
+    
     compile libraries.springbootconfigmetadata
     compile libraries.metrics
     compile libraries.pac4j
@@ -61,3 +62,18 @@ run {
         { it.class.simpleName == "ArchivePublishArtifact" && it.archiveTask == task }
     task.enabled = false
 }
+
+task listUndocumentedProperties(type: JavaExec) {
+    standardOutput = new ByteArrayOutputStream()
+    main = "org.apereo.cas.CasCommandLineShellApplication"
+    classpath = sourceSets.main.runtimeClasspath
+    args "-skb", "-pundoc"
+    doLast {
+        def theOutput = standardOutput.toString()
+        if (theOutput != null && theOutput.length() > 0 && theOutput.contains("Undocumented Property:")) {
+            throw new GradleException("Undocumented properties found:\n" + theOutput)
+        }
+    }
+}
+
+jar.finalizedBy(listUndocumentedProperties)

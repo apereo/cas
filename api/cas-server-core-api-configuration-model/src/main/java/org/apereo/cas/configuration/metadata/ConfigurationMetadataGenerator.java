@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
@@ -102,6 +103,9 @@ public class ConfigurationMetadataGenerator {
      * @throws Exception the exception
      */
     public static void main(final String[] args) throws Exception {
+        if (args.length != 2) {
+            throw new RuntimeException("Invalid build configuration. No command-line arguments specified");
+        }
         final String buildDir = args[0];
         final String projectDir = args[1];
         new ConfigurationMetadataGenerator(buildDir, projectDir).execute();
@@ -151,7 +155,8 @@ public class ConfigurationMetadataGenerator {
 
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         final PrettyPrinter pp = new DefaultPrettyPrinter();
-        mapper.writer(pp).writeValue(jsonFile, jsonMap);
+        final ObjectWriter writer = mapper.writer(pp);
+        writer.writeValue(jsonFile, jsonMap);
     }
 
     private String buildTypeSourcePath(final String type) {
@@ -209,34 +214,37 @@ public class ConfigurationMetadataGenerator {
                 LOGGER.debug("Field [{}] is static and will be ignored for metadata generation", var.getNameAsString());
                 return;
             }
-
-            if (field.getJavadoc().isPresent()) {
-                final ConfigurationMetadataProperty prop = createConfigurationProperty(field, property);
-                processNestedClassOrInterfaceTypeIfNeeded(field, prop);
-            } else {
+            if (!field.getJavadoc().isPresent()) {
                 LOGGER.error("Field [{}] has no Javadoc defined", field);
             }
+            final ConfigurationMetadataProperty prop = createConfigurationProperty(field, property);
+            processNestedClassOrInterfaceTypeIfNeeded(field, prop);
         }
 
-        private ConfigurationMetadataProperty createConfigurationProperty(final FieldDeclaration n,
+        private ConfigurationMetadataProperty createConfigurationProperty(final FieldDeclaration fieldDecl,
                                                                           final ConfigurationMetadataProperty arg) {
-            final VariableDeclarator variable = n.getVariables().get(0);
+            final VariableDeclarator variable = fieldDecl.getVariables().get(0);
             final String name = StreamSupport.stream(RelaxedNames.forCamelCase(variable.getNameAsString()).spliterator(), false)
                 .map(Object::toString)
                 .findFirst()
                 .orElse(variable.getNameAsString());
 
+
             final String indexedGroup = arg.getName().concat(indexNameWithBrackets ? "[]" : StringUtils.EMPTY);
             final String indexedName = indexedGroup.concat(".").concat(name);
 
             final ConfigurationMetadataProperty prop = new ConfigurationMetadataProperty();
-            final String description = n.getJavadoc().get().getDescription().toText();
-            prop.setDescription(description);
-            prop.setShortDescription(StringUtils.substringBefore(description, "."));
+            if (fieldDecl.getJavadoc().isPresent()) {
+                final String description = fieldDecl.getJavadoc().get().getDescription().toText();
+                prop.setDescription(description);
+                prop.setShortDescription(StringUtils.substringBefore(description, "."));
+            } else {
+                LOGGER.error("No Javadoc found for field [{}]", indexedName);
+            }
             prop.setName(indexedName);
             prop.setId(indexedName);
 
-            final String elementType = n.getElementType().asString();
+            final String elementType = fieldDecl.getElementType().asString();
             if (elementType.equals(String.class.getSimpleName())
                 || elementType.equals(Integer.class.getSimpleName())
                 || elementType.equals(Long.class.getSimpleName())
