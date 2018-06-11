@@ -34,7 +34,9 @@ CAS Overlay to be able to resolve dependencies:
 </repositories>
 ```
 
-<div class="alert alert-info"><strong>JCE Requirement</strong><p>It's safe to make sure you have the proper JCE bundle installed in your Java environment that is used by CAS, specially if you need to consume encrypted payloads issued by ADFS. Be sure to pick the right version of the JCE for your Java version. Java versions can be detected via the <code>java -version</code> command.</p></div>
+<div class="alert alert-info"><strong>JCE Requirement</strong><p>It's safe to make sure you have the proper JCE bundle 
+installed in your Java environment that is used by CAS, specially if you need to consume encrypted payloads issued by ADFS. 
+Be sure to pick the right version of the JCE for your Java version. Java versions can be detected via the <code>java -version</code> command.</p></div>
 
 ## WsFed Configuration
 
@@ -97,6 +99,9 @@ An optional step, the `casLogoutView.html` can be modified to place a link to AD
 ```html
 <a href="https://adfs.example.org/adfs/ls/?wa=wsignout1.0">Logout</a>
 ```
+
+Alternatively, you may simply instruct CAS to redirect to the above endpoint after logout operations have executed.
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#logout).
 
 ## Per-Service Relying Party Id
 
