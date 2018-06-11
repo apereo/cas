@@ -2825,6 +2825,7 @@ Control various settings related to CAS logout functionality. To learn more abou
 ```properties
 # cas.logout.followServiceRedirects=false
 # cas.logout.redirectParameter=service
+# cas.logout.redirectUrl=https://www.github.com
 # cas.logout.confirmLogout=false
 # cas.logout.removeDescendantTickets=false
 ```
