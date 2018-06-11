@@ -64,12 +64,6 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         final OAuthCode oauthCode = new DefaultOAuthCodeFactory(expirationPolicy).create(oauthCasAuthenticationBuilderService,
             RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"), new HashSet<>());
 
-//        final OAuthCode oauthCode = mock(OAuthCode.class);
-//        when(oauthCode.getId()).thenReturn("OC-12345678");
-//        when(oauthCode.isExpired()).thenReturn(false);
-//        when(oauthCode.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
-//        when(oauthCode.getService()).thenReturn(RegisteredServiceTestUtils.getService(registeredService.getClientId()));
-
         this.ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.getTicket(anyString(), any())).thenReturn(oauthCode);
 
