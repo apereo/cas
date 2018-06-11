@@ -40,6 +40,9 @@
         <module name="JavadocStyle">
             <property name="severity" value="error"/>
         </module>
+        <module name="EmptyCatchBlock">
+            <property name="severity" value="error"/>
+        </module>
         <module name="ClassFanOutComplexity">
             <property name="max" value="120"/>
             <property name="severity" value="error"/>
