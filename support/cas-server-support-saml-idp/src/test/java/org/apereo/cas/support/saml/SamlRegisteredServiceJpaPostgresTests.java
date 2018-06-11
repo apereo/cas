@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.category.MsSqlServerCategory;
 import org.apereo.cas.category.PostgresCategory;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.junit.ConditionalIgnore;
@@ -20,5 +19,5 @@ import org.springframework.test.context.TestPropertySource;
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 5432)
 @Category(PostgresCategory.class)
 public class SamlRegisteredServiceJpaPostgresTests extends SamlRegisteredServiceJpaTests {
-    
+
 }
