@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
@@ -9,13 +10,13 @@ import org.opensaml.security.credential.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
+
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+
 import static org.junit.Assert.*;
-import lombok.Setter;
 
 /**
  * Test cases for {@link WsFederationHelper}.
@@ -26,11 +27,7 @@ import lombok.Setter;
 @Slf4j
 @Setter
 public class WsFederationHelperTests extends AbstractWsFederationTests {
-
     private static final String GOOD_TOKEN = "goodToken";
-
-    @Autowired
-    private Collection<WsFederationConfiguration> wsFederationConfigurations;
 
     @Autowired
     private HashMap<String, String> testTokens;
