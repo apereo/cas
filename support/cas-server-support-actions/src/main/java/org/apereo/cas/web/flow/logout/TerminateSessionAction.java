@@ -44,7 +44,6 @@ public class TerminateSessionAction extends AbstractAction {
     private final CookieRetrievingCookieGenerator warnCookieGenerator;
     private final LogoutProperties logoutProperties;
 
-
     @Override
     public Event doExecute(final RequestContext requestContext) {
         boolean terminateSession = true;
@@ -83,6 +82,12 @@ public class TerminateSessionAction extends AbstractAction {
 
         destroyApplicationSession(request, response);
         LOGGER.debug("Terminated all CAS sessions successfully.");
+
+        if (StringUtils.isNotBlank(logoutProperties.getRedirectUrl())) {
+            WebUtils.putLogoutRedirectUrl(context, logoutProperties.getRedirectUrl());
+            return this.eventFactorySupport.event(this, CasWebflowConstants.STATE_ID_REDIRECT);
+        }
+
         return this.eventFactorySupport.success(this);
     }
 

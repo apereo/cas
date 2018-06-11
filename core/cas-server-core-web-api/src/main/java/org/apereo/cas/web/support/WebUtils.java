@@ -750,11 +750,21 @@ public class WebUtils {
      * Put service response into request scope.
      *
      * @param requestContext the request context
+     * @param url            the url
+     */
+    public static void putServiceRedirectUrl(final RequestContext requestContext, final String url) {
+        requestContext.getRequestScope().put("url", url);
+    }
+
+    /**
+     * Put service response into request scope.
+     *
+     * @param requestContext the request context
      * @param response       the response
      */
     public static void putServiceResponseIntoRequestScope(final RequestContext requestContext, final Response response) {
         requestContext.getRequestScope().put("parameters", response.getAttributes());
-        requestContext.getRequestScope().put("url", response.getUrl());
+        putServiceRedirectUrl(requestContext, response.getUrl());
     }
 
     /**
