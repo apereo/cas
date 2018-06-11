@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.shell.core.CommandMarker;
@@ -7,6 +8,12 @@ import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.stereotype.Service;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -16,25 +23,15 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateExpiredException;
-import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
 
 /**
  * This is {@link ValidateEndpointCommand}.
@@ -123,8 +120,8 @@ public class ValidateEndpointCommand implements CommandMarker {
 
         while (pointer != null) {
             stringBuilder.append("  Caused by: ")
-                    .append(pointer.toString())
-                    .append(System.getProperty("line.separator"));
+                .append(pointer.toString())
+                .append(System.getProperty("line.separator"));
             pointer = pointer.getCause();
         }
 
@@ -134,7 +131,6 @@ public class ValidateEndpointCommand implements CommandMarker {
     private void testBadTlsConnection(final String url, final String proxy) {
         try {
             final URLConnection urlConnection = createConnection(url, proxy);
-
             if (!(urlConnection instanceof HttpsURLConnection)) {
                 LOGGER.info("Not an TLS connection.");
                 return;
@@ -165,7 +161,7 @@ public class ValidateEndpointCommand implements CommandMarker {
         }
 
         final X509Certificate[] serverCertificates =
-                Arrays.copyOf(certificates, certificates.length, X509Certificate[].class);
+            Arrays.copyOf(certificates, certificates.length, X509Certificate[].class);
 
         LOGGER.info("Server provided certs: ");
         for (final X509Certificate certificate : serverCertificates) {
@@ -174,10 +170,8 @@ public class ValidateEndpointCommand implements CommandMarker {
             try {
                 certificate.checkValidity();
                 validity = "valid";
-            } catch (final CertificateExpiredException e) {
-                validity = "invalid";
-            } catch (final CertificateNotYetValidException e) {
-                validity = "invalid";
+            } catch (final Exception e) {
+                validity = "invalid: " + e.getMessage();
             }
 
             LOGGER.info("  subject: {}", certificate.getSubjectDN().getName());
@@ -193,10 +187,8 @@ public class ValidateEndpointCommand implements CommandMarker {
         try {
             trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init((KeyStore) null);
-        } catch (final NoSuchAlgorithmException e) {
-
-        } catch (final KeyStoreException e) {
-
+        } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
         }
 
         LOGGER.info("Detected Truststore: {}", trustManagerFactory.getProvider().getName());
@@ -205,8 +197,7 @@ public class ValidateEndpointCommand implements CommandMarker {
         for (final TrustManager trustManager : trustManagerFactory.getTrustManagers()) {
             if (trustManager instanceof X509TrustManager) {
                 final X509TrustManager x509TrustManager = (X509TrustManager) trustManager;
-                LOGGER.info("  Trusted issuers found: {}", x509TrustManager.getAcceptedIssuers().length);
-
+                LOGGER.info("Trusted issuers found: {}", x509TrustManager.getAcceptedIssuers().length);
                 x509TrustManagers.add(x509TrustManager);
             }
         }
@@ -220,51 +211,37 @@ public class ValidateEndpointCommand implements CommandMarker {
             for (final X509Certificate trustedCert : trustManager.getAcceptedIssuers()) {
                 try {
                     certificate.verify(trustedCert.getPublicKey());
-                    return "matched found: " + trustedCert.getIssuerDN().getName();
-
-                } catch (final CertificateException e) {
-                    LOGGER.trace("{}: {}", trustedCert.getIssuerDN().getName(), e.getMessage());
-                } catch (final NoSuchAlgorithmException e) {
-                    LOGGER.trace("{}: {}", trustedCert.getIssuerDN().getName(), e.getMessage());
-                } catch (final InvalidKeyException e) {
-                    LOGGER.trace("{}: {}", trustedCert.getIssuerDN().getName(), e.getMessage());
-                } catch (final NoSuchProviderException e) {
-                    LOGGER.trace("{}: {}", trustedCert.getIssuerDN().getName(), e.getMessage());
-                } catch (final SignatureException e) {
+                    return "Matches found: " + trustedCert.getIssuerDN().getName();
+                } catch (final CertificateException | NoSuchAlgorithmException
+                    | InvalidKeyException | NoSuchProviderException | SignatureException e) {
                     LOGGER.trace("{}: {}", trustedCert.getIssuerDN().getName(), e.getMessage());
                 }
             }
         }
 
-        return "not matched in trust store (which is expected of the host certificate that is part of a chain)";
+        return "Not matched in trust store (which is expected of the host certificate that is part of a chain)";
     }
 
+    @SneakyThrows
     private SSLContext getTheAllTrustingSSLContext() {
-        try {
-            final SSLContext sslContext = SSLContext.getInstance("TLS");
+        final SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, new TrustManager[]{new X509TrustManager() {
 
-            sslContext.init(null, new TrustManager[] {new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(final X509Certificate[] xcs, final String string) {
+            }
 
-                @Override
-                public void checkClientTrusted(final X509Certificate[] xcs, final String string) {
-                }
+            @Override
+            public void checkServerTrusted(final X509Certificate[] xcs, final String string) {
+            }
 
-                @Override
-                public void checkServerTrusted(final X509Certificate[] xcs, final String string) {
-                }
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
 
-                @Override
-                public X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-
-            }}, null);
-
-            return sslContext;
-
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        }}, null);
+        return sslContext;
     }
 }
 
