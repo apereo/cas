@@ -40,6 +40,7 @@ public class CasCommandLineParser {
         options.addOption(CommandLineOptions.OPTION_GENERATE_KEY);
         options.addOption(CommandLineOptions.OPTION_GENERATE_JWT);
         options.addOption(CommandLineOptions.OPTION_SUBJECT);
+        options.addOption(CommandLineOptions.OPTION_UNDOCUMENTED_PROPERTIES);
 
         parser = new DefaultParser();
     }
@@ -69,17 +70,17 @@ public class CasCommandLineParser {
     public void printHelp() {
         final HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp(WIDTH, "java -jar [cas-server-support-shell-X-Y-Z.jar]",
-                "\nCAS Command-line Shell\n", options,
-                "\nThe CAS command-line shell provides the ability to query the CAS server "
-                        + "for help on available settings/modules and various other utility functions."
-                        + "The shell engine is presented as both a CLI utility and an interactive shell."
-                        + "\n\nExample use cases include: \n"
-                        + "1) Information on a property, such as description, defaults, hints and deprecation.\n"
-                        + "2) Generating signing/encryption keys for relevant CAS configuration.\n"
-                        + "3) Validating JSON/YAML service definitions for fun and profit.\n"
-                        + "4) Retrieving list of available settings for a given module/group.\n"
-                        + "5) etc.\n",
-                true);
+            "\nCAS Command-line Shell\n", options,
+            "\nThe CAS command-line shell provides the ability to query the CAS server "
+                + "for help on available settings/modules and various other utility functions."
+                + "The shell engine is presented as both a CLI utility and an interactive shell."
+                + "\n\nExample use cases include: \n"
+                + "1) Information on a property, such as description, defaults, hints and deprecation.\n"
+                + "2) Generating signing/encryption keys for relevant CAS configuration.\n"
+                + "3) Validating JSON/YAML service definitions for fun and profit.\n"
+                + "4) Retrieving list of available settings for a given module/group.\n"
+                + "5) etc.\n",
+            true);
     }
 
     /**
@@ -142,6 +143,15 @@ public class CasCommandLineParser {
         return hasOption(line, CommandLineOptions.OPTION_GENERATE_JWT);
     }
 
+    /**
+     * Is scanning undocumented properties boolean.
+     *
+     * @param line the line
+     * @return the boolean
+     */
+    public boolean isScanningUndocumentedProperties(final CommandLine line) {
+        return hasOption(line, CommandLineOptions.OPTION_UNDOCUMENTED_PROPERTIES);
+    }
 
     /**
      * Is summary boolean.
