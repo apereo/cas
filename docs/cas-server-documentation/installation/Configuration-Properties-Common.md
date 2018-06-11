@@ -736,9 +736,12 @@ The following bypass options apply equally to multifactor authentication provide
 
 # ${configurationKey}.bypass.httpRequestRemoteAddress=127.+|example.*
 # ${configurationKey}.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
+
+# ${configurationKey}.groovy.location=file:/etc/cas/config/mfa-bypass.groovy
 ```
 
-In multifactor authentication bypass is determined via REST, RESTful settings are available [here](#restful-integrations) under the configuration key `${configurationKey}.bypass.rest`.
+If multifactor authentication bypass is determined via REST, 
+RESTful settings are available [here](#restful-integrations) under the configuration key `${configurationKey}.bypass.rest`.
 
 ## Couchbase Integration Settings
 
