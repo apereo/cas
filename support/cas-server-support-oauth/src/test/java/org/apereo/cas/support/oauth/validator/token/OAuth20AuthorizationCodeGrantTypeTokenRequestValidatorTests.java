@@ -1,14 +1,23 @@
 package org.apereo.cas.support.oauth.validator.token;
 
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.code.OAuthCode;
+import org.apereo.cas.ticket.code.OAuthCodeExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Before;
@@ -20,6 +29,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.http.HttpSession;
+import java.util.HashSet;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -47,12 +57,18 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         registeredService.setClientSecret("secret");
         registeredService.setServiceId(service.getId());
 
+        final OAuth20CasAuthenticationBuilder builder = new OAuth20CasAuthenticationBuilder(new DefaultPrincipalFactory(),
+            new WebApplicationServiceFactory(), new DefaultOAuth20ProfileScopeToAttributesFilter(), new CasConfigurationProperties());
+        final Service oauthCasAuthenticationBuilderService = builder.buildService(registeredService, null, false);
+        final ExpirationPolicy expirationPolicy = new OAuthCodeExpirationPolicy(1, 60);
+        final OAuthCode oauthCode = new DefaultOAuthCodeFactory(expirationPolicy).create(oauthCasAuthenticationBuilderService,
+            RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"), new HashSet<>());
 
-        final OAuthCode oauthCode = mock(OAuthCode.class);
-        when(oauthCode.getId()).thenReturn("OC-12345678");
-        when(oauthCode.isExpired()).thenReturn(false);
-        when(oauthCode.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
-        when(oauthCode.getService()).thenReturn(RegisteredServiceTestUtils.getService(registeredService.getClientId()));
+//        final OAuthCode oauthCode = mock(OAuthCode.class);
+//        when(oauthCode.getId()).thenReturn("OC-12345678");
+//        when(oauthCode.isExpired()).thenReturn(false);
+//        when(oauthCode.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
+//        when(oauthCode.getService()).thenReturn(RegisteredServiceTestUtils.getService(registeredService.getClientId()));
 
         this.ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.getTicket(anyString(), any())).thenReturn(oauthCode);

@@ -32,7 +32,8 @@ elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
         echo -e "*******************************************************************************************************"
     fi
 elif [ "$MATRIX_JOB_TYPE" == "CFGMETADATA" ]; then
-     gradleBuild="$gradleBuild :api:cas-server-core-api-configuration-model:build -x check -x test -x javadoc \
+     gradleBuild="$gradleBuild :api:cas-server-core-api-configuration-model:build \
+     -x check -x test -x javadoc \
      -DskipGradleLint=true -DskipSass=true --parallel \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true  "
 elif [ "$MATRIX_JOB_TYPE" == "STYLE" ]; then
