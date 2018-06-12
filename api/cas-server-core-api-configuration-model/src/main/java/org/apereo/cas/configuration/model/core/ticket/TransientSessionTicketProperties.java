@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
-
 @Getter
 @Setter
 public class TransientSessionTicketProperties implements Serializable {

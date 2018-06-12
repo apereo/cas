@@ -19,7 +19,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
-
 @Getter
 @Setter
 public class TicketProperties implements Serializable {
