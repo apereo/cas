@@ -57,8 +57,8 @@ public class StatusController extends BaseCasMvcEndpoint {
             response.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value());
         }
 
-        sb.append("Health: ").append(status.getCode());
-        sb.append("\n\n\t").append(Joiner.on("\n\n\t").withKeyValueSeparator(": ").join(health.getDetails()));
+        sb.append("Health: ").append(status.getCode())
+            .append("\n\n\t").append(Joiner.on("\n\n\t").withKeyValueSeparator(": ").join(health.getDetails()));
 
         sb.append("\n\nHost:\t\t").append(
             StringUtils.isBlank(casProperties.getHost().getName())
