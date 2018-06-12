@@ -257,7 +257,9 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder() {
-        return new SamlProfileSamlAssertionBuilder(openSamlConfigBean,
+        return new SamlProfileSamlAssertionBuilder(
+            openSamlConfigBean,
+            casProperties,
             samlProfileSamlAuthNStatementBuilder(),
             samlProfileSamlAttributeStatementBuilder(),
             samlProfileSamlSubjectBuilder(),

@@ -18,7 +18,6 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Statement;
 import org.opensaml.saml.saml2.core.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,8 +36,7 @@ import java.util.List;
 public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Assertion> {
     private static final long serialVersionUID = -3945938960014421135L;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
+    private final CasConfigurationProperties casProperties;
 
     private final SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder;
 
@@ -51,6 +49,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
     private final transient SamlIdPObjectSigner samlObjectSigner;
 
     public SamlProfileSamlAssertionBuilder(final OpenSamlConfigBean configBean,
+                                           final CasConfigurationProperties casProperties,
                                            final SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder,
                                            final SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder,
                                            final SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder,
@@ -62,6 +61,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
         this.samlProfileSamlSubjectBuilder = samlProfileSamlSubjectBuilder;
         this.samlProfileSamlConditionsBuilder = samlProfileSamlConditionsBuilder;
         this.samlObjectSigner = samlObjectSigner;
+        this.casProperties = casProperties;
     }
 
     @Override

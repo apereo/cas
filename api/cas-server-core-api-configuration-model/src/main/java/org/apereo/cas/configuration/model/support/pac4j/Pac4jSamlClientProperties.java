@@ -12,7 +12,6 @@ import org.apereo.cas.configuration.support.RequiresModule;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-pac4j-webflow")
-
 @Getter
 @Setter
 public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
