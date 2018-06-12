@@ -10,7 +10,6 @@ import org.apereo.cas.configuration.support.RestEndpointProperties;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-
 @Getter
 @Setter
 public class AuditRestProperties extends RestEndpointProperties {

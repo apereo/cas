@@ -17,7 +17,6 @@ import java.util.Map;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
-
 @Getter
 @Setter
 public class AdaptiveAuthenticationProperties implements Serializable {
