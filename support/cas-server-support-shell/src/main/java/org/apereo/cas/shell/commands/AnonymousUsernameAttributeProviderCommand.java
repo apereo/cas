@@ -38,8 +38,8 @@ public class AnonymousUsernameAttributeProviderCommand implements CommandMarker 
             help = "Salt used to generate and encode the anonymous identifier",
             optionContext = "Salt used to generate and encode the anonymous identifier") final String salt) {
 
-        final ShibbolethCompatiblePersistentIdGenerator generator = new ShibbolethCompatiblePersistentIdGenerator(salt);
-        final String id = generator.generate(username, service);
+        final var generator = new ShibbolethCompatiblePersistentIdGenerator(salt);
+        final var id = generator.generate(username, service);
         LOGGER.info("Generated identifier:\n[{}]", id);
     }
 }

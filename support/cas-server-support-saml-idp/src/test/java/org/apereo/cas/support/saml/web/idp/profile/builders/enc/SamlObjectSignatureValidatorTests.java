@@ -46,8 +46,8 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
 
     @Before
     public void before() throws Exception {
-        final String idpMetadata = new File("src/test/resources/metadata/idp-metadata.xml").getCanonicalPath();
-        final String keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
+        final var idpMetadata = new File("src/test/resources/metadata/idp-metadata.xml").getCanonicalPath();
+        final var keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
         spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
 
         saml2ClientConfiguration = new SAML2ClientConfiguration(keystorePath, "changeit", "changeit", idpMetadata);
@@ -55,32 +55,32 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
         saml2ClientConfiguration.setServiceProviderMetadataPath(spMetadataPath);
         saml2ClientConfiguration.init();
 
-        final SAML2Client saml2Client = new SAML2Client(saml2ClientConfiguration);
+        final var saml2Client = new SAML2Client(saml2ClientConfiguration);
         saml2Client.setCallbackUrl("http://callback.example.org");
         saml2Client.init();
 
         samlContext = new MessageContext<>();
         saml2MessageContext = new SAML2MessageContext(samlContext);
 
-        final SAMLPeerEntityContext peer = saml2MessageContext.getSubcontext(SAMLPeerEntityContext.class, true);
+        final var peer = saml2MessageContext.getSubcontext(SAMLPeerEntityContext.class, true);
         peer.setEntityId("https://cas.example.org/idp");
-        final SAMLMetadataContext md = peer.getSubcontext(SAMLMetadataContext.class, true);
-        final RoleDescriptorResolver idpResolver = SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, true);
+        final var md = peer.getSubcontext(SAMLMetadataContext.class, true);
+        final var idpResolver = SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, true);
         md.setRoleDescriptor(idpResolver.resolveSingle(new CriteriaSet(
             new EntityIdCriterion(peer.getEntityId()), new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME))));
 
-        final SAMLSelfEntityContext self = saml2MessageContext.getSubcontext(SAMLSelfEntityContext.class, true);
+        final var self = saml2MessageContext.getSubcontext(SAMLSelfEntityContext.class, true);
         self.setEntityId(saml2ClientConfiguration.getServiceProviderEntityId());
 
-        final SAMLMetadataContext sp = self.getSubcontext(SAMLMetadataContext.class, true);
-        final InMemoryResourceMetadataResolver spRes = new InMemoryResourceMetadataResolver(new File(spMetadataPath), openSamlConfigBean);
+        final var sp = self.getSubcontext(SAMLMetadataContext.class, true);
+        final var spRes = new InMemoryResourceMetadataResolver(new File(spMetadataPath), openSamlConfigBean);
         spRes.setId(getClass().getSimpleName());
         spRes.initialize();
-        final RoleDescriptorResolver spResolver = SamlIdPUtils.getRoleDescriptorResolver(spRes, true);
+        final var spResolver = SamlIdPUtils.getRoleDescriptorResolver(spRes, true);
         sp.setRoleDescriptor(spResolver.resolveSingle(new CriteriaSet(
             new EntityIdCriterion(self.getEntityId()), new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME))));
 
-        final SamlRegisteredService service = new SamlRegisteredService();
+        final var service = new SamlRegisteredService();
         service.setName("Sample");
         service.setServiceId(saml2ClientConfiguration.getServiceProviderEntityId());
         service.setId(100);
@@ -92,9 +92,9 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
 
     @Test
     public void verifySamlAuthnRequestNotSigned() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final SAML2AuthnRequestBuilder builder = new SAML2AuthnRequestBuilder(saml2ClientConfiguration);
-        final AuthnRequest authnRequest = builder.build(saml2MessageContext);
+        final var request = new MockHttpServletRequest();
+        final var builder = new SAML2AuthnRequestBuilder(saml2ClientConfiguration);
+        final var authnRequest = builder.build(saml2MessageContext);
         samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(authnRequest, adaptor, request, samlContext);
     }
 }

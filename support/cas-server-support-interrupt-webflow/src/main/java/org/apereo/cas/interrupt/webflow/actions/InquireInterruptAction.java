@@ -27,7 +27,7 @@ public class InquireInterruptAction extends AbstractAction {
         final var authentication = WebUtils.getAuthentication(requestContext);
         final Service service = WebUtils.getService(requestContext);
         final var registeredService = WebUtils.getRegisteredService(requestContext);
-        final Credential credential = WebUtils.getCredential(requestContext);
+        final var credential = WebUtils.getCredential(requestContext);
 
         final var response = this.interruptInquirer.inquire(authentication, registeredService, service, credential);
         if (response == null || !response.isInterrupt()) {
