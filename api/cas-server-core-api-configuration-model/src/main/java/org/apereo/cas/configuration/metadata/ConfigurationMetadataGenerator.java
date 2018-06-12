@@ -147,7 +147,7 @@ public class ConfigurationMetadataGenerator {
 
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         final PrettyPrinter pp = new DefaultPrettyPrinter();
-        final ObjectWriter writer = mapper.writer(pp);
+        final var writer = mapper.writer(pp);
         writer.writeValue(jsonFile, jsonMap);
     }
 
@@ -209,7 +209,7 @@ public class ConfigurationMetadataGenerator {
             if (!field.getJavadoc().isPresent()) {
                 LOGGER.error("Field [{}] has no Javadoc defined", field);
             }
-            final ConfigurationMetadataProperty prop = createConfigurationProperty(field, property);
+            final var prop = createConfigurationProperty(field, property);
             processNestedClassOrInterfaceTypeIfNeeded(field, prop);
         }
 
@@ -226,7 +226,7 @@ public class ConfigurationMetadataGenerator {
 
             final var prop = new ConfigurationMetadataProperty();
             if (fieldDecl.getJavadoc().isPresent()) {
-                final String description = fieldDecl.getJavadoc().get().getDescription().toText();
+                final var description = fieldDecl.getJavadoc().get().getDescription().toText();
                 prop.setDescription(description);
                 prop.setShortDescription(StringUtils.substringBefore(description, "."));
             } else {
@@ -235,7 +235,7 @@ public class ConfigurationMetadataGenerator {
             prop.setName(indexedName);
             prop.setId(indexedName);
 
-            final String elementType = fieldDecl.getElementType().asString();
+            final var elementType = fieldDecl.getElementType().asString();
             if (elementType.equals(String.class.getSimpleName())
                 || elementType.equals(Integer.class.getSimpleName())
                 || elementType.equals(Long.class.getSimpleName())

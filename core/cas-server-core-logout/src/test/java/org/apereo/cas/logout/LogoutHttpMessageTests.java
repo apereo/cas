@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 public class LogoutHttpMessageTests {
     @Test
     public void verifyOperation() throws Exception {
-        final LogoutHttpMessage message = new LogoutHttpMessage(new URL("https://github.com"), "LogoutMessage", false);
+        final var message = new LogoutHttpMessage(new URL("https://github.com"), "LogoutMessage", false);
         assertTrue(message.getMessage().startsWith(LogoutHttpMessage.LOGOUT_REQUEST_PARAMETER));
     }
 }

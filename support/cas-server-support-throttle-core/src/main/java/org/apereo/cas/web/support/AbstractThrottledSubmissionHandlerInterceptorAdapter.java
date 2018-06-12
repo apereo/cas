@@ -110,7 +110,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * @return the boolean
      */
     protected boolean shouldResponseBeRecordedAsFailure(final HttpServletResponse response) {
-        final int status = response.getStatus();
+        final var status = response.getStatus();
         return status != HttpStatus.SC_CREATED && status != HttpStatus.SC_OK && status != HttpStatus.SC_MOVED_TEMPORARILY;
     }
 

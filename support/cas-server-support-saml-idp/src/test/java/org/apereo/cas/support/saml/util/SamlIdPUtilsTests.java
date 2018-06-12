@@ -87,15 +87,15 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
     public void verifyAssertionConsumerServiceWithUrl() {
         final SamlRegisteredService service = SamlIdPTestUtils.getSamlRegisteredService();
         servicesManager.save(service);
-        final AuthnRequest authnRequest = mock(AuthnRequest.class);
-        final Issuer issuer = mock(Issuer.class);
+        final var authnRequest = mock(AuthnRequest.class);
+        final var issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn(service.getServiceId());
         when(authnRequest.getIssuer()).thenReturn(issuer);
         when(authnRequest.getProtocolBinding()).thenReturn(SAMLConstants.SAML2_POST_BINDING_URI);
-        final String acsUrl = "https://some.acs.url";
+        final var acsUrl = "https://some.acs.url";
         when(authnRequest.getAssertionConsumerServiceURL()).thenReturn(acsUrl);
 
-        final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adapter =
+        final var adapter =
             SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
         final AssertionConsumerService acs = SamlIdPUtils.determineAssertionConsumerService(authnRequest, adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(acs);

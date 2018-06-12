@@ -90,10 +90,10 @@ public class SamlIdPUtils {
         AssertionConsumerService endpoint = null;
 
         if (authnRequest instanceof AuthnRequest) {
-            final String acsUrl = AuthnRequest.class.cast(authnRequest).getAssertionConsumerServiceURL();
+            final var acsUrl = AuthnRequest.class.cast(authnRequest).getAssertionConsumerServiceURL();
             if (StringUtils.isNotBlank(acsUrl)) {
                 LOGGER.debug("Using assertion consumer service url [{}] with binding [{}] provided by the authentication request", acsUrl, binding);
-                final AssertionConsumerServiceBuilder builder = new AssertionConsumerServiceBuilder();
+                final var builder = new AssertionConsumerServiceBuilder();
                 endpoint = builder.buildObject(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
                 endpoint.setBinding(binding);
                 endpoint.setResponseLocation(acsUrl);

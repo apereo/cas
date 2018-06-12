@@ -487,7 +487,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the set
      */
     protected Set<Event> handleAuthenticationTransactionAndGrantTicketGrantingTicket(final RequestContext context) {
-        final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+        final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         try {
             final var credential = getCredentialFromContext(context);
             var builder = WebUtils.getAuthenticationResultBuilder(context);
