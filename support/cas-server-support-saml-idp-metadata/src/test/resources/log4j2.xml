@@ -15,10 +15,10 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="info">
+        <Logger name="org.apereo" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.opensaml" level="off">
+        <Logger name="org.opensaml" level="off" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="off">

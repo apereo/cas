@@ -125,6 +125,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      * @return the http response
      */
     protected HttpResponse fetchMetadata(final String metadataLocation) {
+        LOGGER.debug("Fetching metadata from [{}]", metadataLocation);
         return HttpUtils.executeGet(metadataLocation, new LinkedHashMap<>());
     }
 
