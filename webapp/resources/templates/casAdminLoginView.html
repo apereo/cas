@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{cas.login.pagetitle}">CAS Acceptable Use Policy View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+</head>
+
+<body class="login">
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" class="row">
+        <div class="col-md">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h2 th:text="#{cas.login.pagetitle}">Login</h2>
+                    <span class="fa-stack fa-2x hidden-xs">
+                      <i class="fa fa-circle fa-stack-2x"></i>
+                      <i class="fa fa-lock fa-stack-1x fa-inverse"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="cardbody">
+                <form name="fm1" th:action="@{/adminlogin}" method="post">
+                    <div th:if="${param.error}" class="alert alert-error">Invalid credentials.</div>
+
+                    <h3 th:utext="#{screen.welcome.instructions}">Enter your Username and Password</h3>
+
+                    <section class="form-group">
+                        <label for="username" th:utext="#{screen.welcome.label.netid}">Username</label>
+                        <input class="form-control required"
+                               id="username"
+                               name="username"
+                               size="25"
+                               tabindex="1"
+                               type="text"
+                               autocomplete="off"/>
+                    </section>
+
+                    <section class="form-group">
+                        <label for="password" th:utext="#{screen.welcome.label.password}">Password</label>
+                        <input class="form-control required"
+                               type="password"
+                               name="password"
+                               id="password"
+                               size="25"
+                               tabindex="2"
+                               autocomplete="off"/>
+                    </section>
+
+                    <input class="btn btn-block btn-submit"
+                           accesskey="l"
+                           th:value="#{screen.welcome.button.login}"
+                           tabindex="3"
+                           type="submit"
+                           value="Login"/>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
