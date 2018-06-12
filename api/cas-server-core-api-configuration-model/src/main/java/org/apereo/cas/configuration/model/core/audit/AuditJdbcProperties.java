@@ -12,7 +12,6 @@ import org.apereo.cas.configuration.support.RequiresModule;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-audit-jdbc")
-
 @Getter
 @Setter
 public class AuditJdbcProperties extends AbstractJpaProperties {
