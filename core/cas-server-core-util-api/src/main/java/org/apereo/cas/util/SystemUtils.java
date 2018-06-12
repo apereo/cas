@@ -120,8 +120,8 @@ public class SystemUtils {
     @SneakyThrows
     public static String getNodeVersion() {
         try {
-            final ProcessBuilder pb = new ProcessBuilder("node", "--version");
-            final Process p = pb.start();
+            final var pb = new ProcessBuilder("node", "--version");
+            final var p = pb.start();
             return IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8).trim();
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
@@ -137,8 +137,8 @@ public class SystemUtils {
     @SneakyThrows
     public static String getNpmVersion() {
         try {
-            final ProcessBuilder pb = new ProcessBuilder("npm", "--version");
-            final Process p = pb.start();
+            final var pb = new ProcessBuilder("npm", "--version");
+            final var p = pb.start();
             return IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8).trim();
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);

@@ -49,7 +49,7 @@ public class TicketIdSanitizationUtils {
             while (matcher.find()) {
                 final var match = matcher.group();
                 final var group = matcher.group(1);
-                final int length = group.length();
+                final var length = group.length();
                 var replaceLength = length - VISIBLE_TAIL_LENGTH - (HOST_NAME_LENGTH + 1);
                 if (replaceLength <= 0) {
                     replaceLength = length;

@@ -60,8 +60,8 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
     public static void beforeClass() throws Exception {
         final Map<String, List<U2FDeviceRegistration>> devices = new HashMap<>();
         final var reg = new DeviceRegistration("123456", "bjsdghj3b", "njsdkhjdfjh45", 1, false);
-        final U2FDeviceRegistration device1 = new U2FDeviceRegistration(2000, "casuser", reg.toJson(), LocalDate.now());
-        final U2FDeviceRegistration device2 = new U2FDeviceRegistration(1000, "casuser", reg.toJson(), LocalDate.now());
+        final var device1 = new U2FDeviceRegistration(2000, "casuser", reg.toJson(), LocalDate.now());
+        final var device2 = new U2FDeviceRegistration(1000, "casuser", reg.toJson(), LocalDate.now());
         devices.put(BaseResourceU2FDeviceRepository.MAP_KEY_DEVICES, CollectionUtils.wrapList(device1, device2));
         final var data = MAPPER.writeValueAsString(devices);
         WEB_SERVER = new MockWebServer(9196, data);

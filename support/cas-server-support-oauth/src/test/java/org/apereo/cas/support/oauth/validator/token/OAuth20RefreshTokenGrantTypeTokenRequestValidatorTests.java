@@ -33,7 +33,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
 
     @Before
     public void before() {
-        final RefreshToken oauthCode = mock(RefreshToken.class);
+        final var oauthCode = mock(RefreshToken.class);
         when(oauthCode.getId()).thenReturn("RT-12345678");
         when(oauthCode.isExpired()).thenReturn(false);
         when(oauthCode.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
@@ -47,15 +47,15 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
 
     @Test
     public void verifyOperation() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final var request = new MockHttpServletRequest();
 
-        final CommonProfile profile = new CommonProfile();
+        final var profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
         profile.setId("client");
-        final HttpSession session = request.getSession(true);
+        final var session = request.getSession(true);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
         
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final var response = new MockHttpServletResponse();
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.getType());
         request.setParameter(OAuth20Constants.CLIENT_ID, "client");
         request.setParameter(OAuth20Constants.CLIENT_SECRET, "secret");

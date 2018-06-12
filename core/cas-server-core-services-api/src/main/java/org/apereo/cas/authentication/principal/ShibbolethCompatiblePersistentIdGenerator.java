@@ -73,7 +73,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         LOGGER.debug("Found principal attributes [{}] to use when generating persistent identifiers", attributes);
         final String principalId;
         if (StringUtils.isNotBlank(this.attribute) && attributes.containsKey(this.attribute)) {
-            final Object attributeValue = attributes.get(this.attribute);
+            final var attributeValue = attributes.get(this.attribute);
             principalId = CollectionUtils.firstElement(attributeValue).get().toString();
             LOGGER.debug("Using attribute [{}] to establish principal id [{}] to generate persistent identifier", this.attribute, principalId);
         } else {
