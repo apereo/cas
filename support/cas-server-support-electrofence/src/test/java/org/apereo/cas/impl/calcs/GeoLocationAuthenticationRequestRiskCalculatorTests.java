@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@TestPropertySource(properties = "cas.authn.adaptive.risk.geoLocation.enabled=true")
+@TestPropertySource(properties = {"cas.authn.adaptive.risk.geoLocation.enabled=true", "cas.googleMaps.ipStackApiAccessKey=6bde37c76ad15c8a5c828fafad8b0bc4"})
 public class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
 
     @Test
@@ -34,7 +34,7 @@ public class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAut
         final var authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
         final var request = new MockHttpServletRequest();
-        request.setRemoteAddr("107.181.69.221");
+        request.setRemoteAddr("172.217.11.174");
         request.setLocalAddr("127.0.0.1");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
         final var score = authenticationRiskEvaluator.eval(authentication, service, request);

@@ -25,7 +25,6 @@ import static org.junit.Assert.*;
 @Slf4j
 @Setter
 public class WsFederationHelperTests extends AbstractWsFederationTests {
-
     private static final String GOOD_TOKEN = "goodToken";
 
     @Autowired
