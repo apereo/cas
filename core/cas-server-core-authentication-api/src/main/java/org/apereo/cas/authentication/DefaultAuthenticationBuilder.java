@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,7 +61,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * Creates a new instance using the current date for the authentication date.
      */
     public DefaultAuthenticationBuilder() {
-        this.authenticationDate = ZonedDateTime.now();
+        this.authenticationDate = ZonedDateTime.now(ZoneOffset.UTC);
     }
 
     /**
@@ -82,7 +83,9 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      */
     @Override
     public AuthenticationBuilder setAuthenticationDate(final ZonedDateTime d) {
-        this.authenticationDate = d;
+        if (d != null) {
+            this.authenticationDate = d;
+        }
         return this;
     }
 

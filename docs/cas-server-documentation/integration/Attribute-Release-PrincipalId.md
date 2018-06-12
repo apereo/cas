@@ -224,3 +224,13 @@ The generated id may be based off of an existing principal attribute. If left un
   }
 }
 ```
+
+To simulate the behavior, you may also try the following command:
+
+```bash
+perl -e 'use Digest::SHA qw(sha1_base64); \
+    $digest = sha1_base64("$SERVICE!$USER!$SALT"); \
+    $eqn = length($digest) % 4; print $digest; print "=" x (4-$eqn) . "\n"' 
+```
+
+Replace `$SERVICE` (the url of the application under test), `$USER` and `$SALT` with the appropriate values for the test.

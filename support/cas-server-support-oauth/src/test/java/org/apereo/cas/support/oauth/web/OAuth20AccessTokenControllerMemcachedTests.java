@@ -1,12 +1,13 @@
 package org.apereo.cas.support.oauth.web;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.category.MemcachedCategory;
 import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.registry.MemcachedTicketRegistry;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.experimental.categories.Category;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
@@ -21,7 +22,9 @@ import static org.junit.Assert.*;
 @Import(MemcachedTicketRegistryConfiguration.class)
 @TestPropertySource(locations = {"classpath:/memcached-oauth.properties"})
 @Slf4j
+@Category(MemcachedCategory.class)
 public class OAuth20AccessTokenControllerMemcachedTests extends AbstractOAuth20Tests {
+
     @BeforeEach
     public void initialize() {
         clearAllServices();

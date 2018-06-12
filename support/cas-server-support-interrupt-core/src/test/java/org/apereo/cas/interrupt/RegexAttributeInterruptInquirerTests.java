@@ -24,7 +24,8 @@ public class RegexAttributeInterruptInquirerTests {
             new RegexAttributeInterruptInquirer("member..", "CA.|system");
         final var response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             CoreAuthenticationTestUtils.getRegisteredService(),
-            CoreAuthenticationTestUtils.getService());
+            CoreAuthenticationTestUtils.getService(),
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertNotNull(response);
         assertFalse(response.isBlock());
         assertTrue(response.isSsoEnabled());
@@ -44,7 +45,8 @@ public class RegexAttributeInterruptInquirerTests {
         when(registeredService.getProperties()).thenReturn(properties);
         final var response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             registeredService,
-            CoreAuthenticationTestUtils.getService());
+            CoreAuthenticationTestUtils.getService(),
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertNotNull(response);
         assertFalse(response.isInterrupt());
     }

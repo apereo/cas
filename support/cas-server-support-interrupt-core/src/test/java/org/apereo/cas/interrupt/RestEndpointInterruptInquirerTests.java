@@ -56,7 +56,8 @@ public class RestEndpointInterruptInquirerTests {
         final var q = new RestEndpointInterruptInquirer(restProps);
         final var response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             CoreAuthenticationTestUtils.getRegisteredService(),
-            CoreAuthenticationTestUtils.getService());
+            CoreAuthenticationTestUtils.getService(),
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertNotNull(response);
         assertTrue(response.isBlock());
         assertTrue(response.isSsoEnabled());

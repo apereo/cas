@@ -46,7 +46,6 @@ import static org.junit.Assert.*;
 @RunWith(JUnit4.class)
 @Slf4j
 public class CasKryoTranscoderTests {
-
     private static final String ST_ID = "ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK";
     private static final String TGT_ID = "TGT-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK-cas1";
 
@@ -89,23 +88,23 @@ public class CasKryoTranscoderTests {
     public void verifyEncodeDecodeTGTImpl() {
         final Credential userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         final AuthenticationBuilder bldr = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory()
-                .createPrincipal("user", new HashMap<>(this.principalAttributes)));
+            .createPrincipal("user", new HashMap<>(this.principalAttributes)));
         bldr.setAttributes(new HashMap<>(this.principalAttributes));
         bldr.setAuthenticationDate(ZonedDateTime.now());
         bldr.addCredential(new BasicCredentialMetaData(userPassCredential));
         bldr.addFailure("error", new AccountNotFoundException());
         bldr.addSuccess("authn", new DefaultAuthenticationHandlerExecutionResult(
-                new AcceptUsersAuthenticationHandler(""),
-                new BasicCredentialMetaData(userPassCredential)));
+            new AcceptUsersAuthenticationHandler(""),
+            new BasicCredentialMetaData(userPassCredential)));
 
         final TicketGrantingTicket expectedTGT = new TicketGrantingTicketImpl(TGT_ID,
-                RegisteredServiceTestUtils.getService(),
-                null, bldr.build(),
-                new NeverExpiresExpirationPolicy());
+            RegisteredServiceTestUtils.getService(),
+            null, bldr.build(),
+            new NeverExpiresExpirationPolicy());
 
         final var ticket = expectedTGT.grantServiceTicket(ST_ID,
-                RegisteredServiceTestUtils.getService(),
-                new NeverExpiresExpirationPolicy(), false, true);
+            RegisteredServiceTestUtils.getService(),
+            new NeverExpiresExpirationPolicy(), false, true);
         var result = transcoder.encode(expectedTGT);
         final var resultTicket = (TicketGrantingTicket) transcoder.decode(result);
 
@@ -145,7 +144,7 @@ public class CasKryoTranscoderTests {
     public void verifyEncodeDecodeTGTWithUnmodifiableMap() {
         final Credential userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         final TicketGrantingTicket expectedTGT =
-                new MockTicketGrantingTicket(TGT_ID, userPassCredential, new HashMap<>(this.principalAttributes));
+            new MockTicketGrantingTicket(TGT_ID, userPassCredential, new HashMap<>(this.principalAttributes));
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
         final var result = transcoder.encode(expectedTGT);
         assertEquals(expectedTGT, transcoder.decode(result));
@@ -170,7 +169,7 @@ public class CasKryoTranscoderTests {
     public void verifyEncodeDecodeTGTWithLinkedHashMap() {
         final Credential userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         final TicketGrantingTicket expectedTGT =
-                new MockTicketGrantingTicket(TGT_ID, userPassCredential, new LinkedHashMap<>(this.principalAttributes));
+            new MockTicketGrantingTicket(TGT_ID, userPassCredential, new LinkedHashMap<>(this.principalAttributes));
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
         final var result = transcoder.encode(expectedTGT);
         assertEquals(expectedTGT, transcoder.decode(result));
@@ -181,7 +180,7 @@ public class CasKryoTranscoderTests {
     public void verifyEncodeDecodeTGTWithListOrderedMap() {
         final Credential userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         final TicketGrantingTicket expectedTGT =
-                new MockTicketGrantingTicket(TGT_ID, userPassCredential, this.principalAttributes);
+            new MockTicketGrantingTicket(TGT_ID, userPassCredential, this.principalAttributes);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
         final var result = transcoder.encode(expectedTGT);
         assertEquals(expectedTGT, transcoder.decode(result));
@@ -242,7 +241,7 @@ public class CasKryoTranscoderTests {
         final TicketGrantingTicket tgt = new MockTicketGrantingTicket(USERNAME);
         final var expectedST = new MockServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), tgt);
         final var step
-                = new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(1, 600);
+            = new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(1, 600);
         expectedST.setExpiration(step);
         final var result = transcoder.encode(expectedST);
         assertEquals(expectedST, transcoder.decode(result));
@@ -262,6 +261,7 @@ public class CasKryoTranscoderTests {
             transcoder.encode(expectedST);
             throw new AssertionError("Unregistered class is not allowed by Kryo");
         } catch (final KryoException e) {
+            LOGGER.trace(e.getMessage(), e);
         } catch (final Exception e) {
             throw new AssertionError("Unexpected exception due to not resetting Kryo between de-serializations with unregistered class.");
         }

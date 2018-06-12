@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.shell.commands.FindPropertiesCommand;
 import org.apereo.cas.shell.commands.GenerateCryptoKeysCommand;
 import org.apereo.cas.shell.commands.GenerateJwtCommand;
+import org.apereo.cas.shell.commands.ListUndocumentedPropertiesCommand;
 
 /**
  * This is {@link CasCommandLineEngine}.
@@ -37,6 +38,9 @@ public class CasCommandLineEngine {
         } else if (parser.isGeneratingJwt(line)) {
             final var cmd = new GenerateJwtCommand();
             cmd.generate(parser.getSubject(line));
+        } else if (parser.isScanningUndocumentedProperties(line)) {
+            final ListUndocumentedPropertiesCommand cmd = new ListUndocumentedPropertiesCommand();
+            cmd.listUndocumented();
         } else {
             final var cmd = new FindPropertiesCommand();
             cmd.find(propertyPattern.pattern(), strict, parser.isSummary(line));
