@@ -13,7 +13,6 @@ import org.apereo.cas.configuration.support.RequiresModule;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-couchbase-authentication")
-
 @Getter
 @Setter
 public class CouchbasePrincipalAttributesProperties extends BaseCouchbaseProperties {

@@ -15,7 +15,6 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-electrofence", automated = true)
-
 @Getter
 @Setter
 public class RiskBasedAuthenticationProperties implements Serializable {

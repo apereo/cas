@@ -15,7 +15,6 @@ import java.util.List;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-validation", automated = true)
-
 @Getter
 @Setter
 public class AuthenticationAttributeReleaseProperties implements Serializable {

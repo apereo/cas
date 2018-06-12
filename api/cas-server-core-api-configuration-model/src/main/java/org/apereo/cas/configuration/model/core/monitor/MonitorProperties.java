@@ -20,7 +20,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-monitor", automated = true)
-
 @Getter
 @Setter
 public class MonitorProperties implements Serializable {

@@ -29,7 +29,6 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-services", automated = true)
-
 @Getter
 @Setter
 public class ServiceRegistryProperties implements Serializable {
