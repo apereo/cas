@@ -1,15 +1,17 @@
 package org.apereo.cas.logout;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.http.HttpMessage;
 import org.springframework.http.MediaType;
+
 import java.net.URL;
-import lombok.Setter;
 
 /**
  * A logout http message that is accompanied by a special content type
  * and formatting.
+ *
  * @author Misagh Moayyed
  * @since 4.1.0
  */
@@ -17,12 +19,12 @@ import lombok.Setter;
 @Setter
 public class LogoutHttpMessage extends HttpMessage {
 
+    /**
+     * The parameter name that contains the logout request.
+     */
+    public static final String LOGOUT_REQUEST_PARAMETER = "logoutRequest";
+
     private static final long serialVersionUID = 399581521957873727L;
-
-    /** The parameter name that contains the logout request. */
-    private static final String LOGOUT_REQUEST_PARAMETER = "logoutRequest";
-
-    private boolean prefixLogoutParameterName = true;
 
     /**
      * Constructs a logout message.
@@ -42,6 +44,6 @@ public class LogoutHttpMessage extends HttpMessage {
      */
     @Override
     protected String formatOutputMessageInternal(final String message) {
-        return (this.prefixLogoutParameterName ? LOGOUT_REQUEST_PARAMETER + '=' : StringUtils.EMPTY) + super.formatOutputMessageInternal(message);
+        return LOGOUT_REQUEST_PARAMETER + '=' + StringUtils.EMPTY + super.formatOutputMessageInternal(message);
     }
 }

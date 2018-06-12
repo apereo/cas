@@ -51,7 +51,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final var principal = createPrincipal();
-        final RegisteredService service = addRegisteredService();
+        final OAuthRegisteredService service = addRegisteredService();
         final var code = addCode(principal, service);
         mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
 
@@ -69,7 +69,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final var principal = createPrincipal();
-        final RegisteredService service = addRegisteredService();
+        final OAuthRegisteredService service = addRegisteredService();
         final var code = addCode(principal, service);
         mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
 
@@ -87,7 +87,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
         final var principal = createPrincipal();
-        final RegisteredService service = addRegisteredService();
+        final OAuthRegisteredService service = addRegisteredService();
         final var code = addCode(principal, service);
         mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
 
@@ -106,7 +106,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, "badValue");
         final var principal = createPrincipal();
-        final RegisteredService service = addRegisteredService();
+        final OAuthRegisteredService service = addRegisteredService();
         final var code = addCode(principal, service);
         mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
 
@@ -124,7 +124,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final var principal = createPrincipal();
-        final RegisteredService service = addRegisteredService();
+        final OAuthRegisteredService service = addRegisteredService();
         final var code = addCode(principal, service);
         mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
 
@@ -143,7 +143,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final var principal = createPrincipal();
-        final RegisteredService service = addRegisteredService();
+        final OAuthRegisteredService service = addRegisteredService();
 
         addCode(principal, service);
 
@@ -162,7 +162,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final var principal = createPrincipal();
-        final RegisteredService registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET);
+        final OAuthRegisteredService registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET);
         final var code = addCode(principal, registeredService);
         mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
 
@@ -181,7 +181,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final var principal = createPrincipal();
-        final RegisteredService service = addRegisteredService();
+        final OAuthRegisteredService service = addRegisteredService();
         final var code = addCode(principal, service);
         mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
 
@@ -200,7 +200,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, WRONG_CLIENT_SECRET);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase());
         final var principal = createPrincipal();
-        final RegisteredService service = addRegisteredService();
+        final OAuthRegisteredService service = addRegisteredService();
         final var code = addCode(principal, service);
         mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
 
@@ -247,15 +247,13 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyClientAuthByParameter() throws Exception {
-        final RegisteredService service = addRegisteredService();
-
+        final OAuthRegisteredService service = addRegisteredService();
         internalVerifyClientOK(service, false, false);
     }
 
     @Test
     public void verifyClientAuthByHeader() throws Exception {
-        final RegisteredService service = addRegisteredService();
-
+        final OAuthRegisteredService service = addRegisteredService();
         internalVerifyClientOK(service, false, false);
     }
 
@@ -263,7 +261,6 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     public void verifyClientAuthByParameterWithRefreshToken() throws Exception {
         final var service = addRegisteredService();
         service.setGenerateRefreshToken(true);
-
         internalVerifyClientOK(service, true, false);
     }
 
@@ -271,7 +268,6 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     public void verifyClientAuthByHeaderWithRefreshToken() throws Exception {
         final var service = addRegisteredService();
         service.setGenerateRefreshToken(true);
-
         internalVerifyClientOK(service, true, false);
     }
 
@@ -279,7 +275,6 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     public void verifyClientAuthJsonByParameter() throws Exception {
         final var service = addRegisteredService();
         service.setJsonFormat(true);
-
         internalVerifyClientOK(service, false, true);
     }
 
@@ -287,7 +282,6 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     public void verifyClientAuthJsonByHeader() throws Exception {
         final var service = addRegisteredService();
         service.setJsonFormat(true);
-
         internalVerifyClientOK(service, false, true);
     }
 
@@ -296,7 +290,6 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final var service = addRegisteredService();
         service.setGenerateRefreshToken(true);
         service.setJsonFormat(true);
-
         internalVerifyClientOK(service, true, true);
     }
 
@@ -507,7 +500,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     @Test
     public void verifyRefreshTokenBadCredentials() throws Exception {
         final var principal = createPrincipal();
-        final RegisteredService service = addRegisteredService();
+        final OAuthRegisteredService service = addRegisteredService();
         final var refreshToken = addRefreshToken(principal, service);
 
         final var mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
@@ -540,7 +533,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     @Test
     public void verifyRefreshTokenOKWithExpiredTicketGrantingTicket() throws Exception {
         final var principal = createPrincipal();
-        final RegisteredService service = addRegisteredService();
+        final OAuthRegisteredService service = addRegisteredService();
         final var refreshToken = addRefreshToken(principal, service);
 
         refreshToken.getTicketGrantingTicket().markTicketExpired();

@@ -8,6 +8,7 @@ import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.Import;
 
@@ -24,6 +25,11 @@ import static org.junit.Assert.*;
 @Slf4j
 @Import(JpaServiceRegistryConfiguration.class)
 public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests {
+
+    @Before
+    public void before() {
+        this.servicesManager.deleteAll();
+    }
 
     @Test
     public void verifySavingSamlService() {
@@ -42,7 +48,7 @@ public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests
         servicesManager.save(service);
         servicesManager.load();
         final var services = servicesManager.getAllServices();
-        assertEquals(2, services.size());
+        assertEquals(1, services.size());
         services.forEach(s -> servicesManager.delete(s.getId()));
         assertEquals(0, servicesManager.count());
     }
