@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import com.google.common.collect.Sets;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -41,7 +42,6 @@ import org.opensaml.xmlsec.signature.Signature;
 import org.opensaml.xmlsec.signature.support.SignatureTrustEngine;
 import org.opensaml.xmlsec.signature.support.SignatureValidator;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Iterator;
@@ -55,41 +55,32 @@ import java.util.Set;
  * @since 5.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class SamlObjectSignatureValidator {
     /**
      * The Override signature reference digest methods.
      */
-    protected List overrideSignatureReferenceDigestMethods;
+    protected final List overrideSignatureReferenceDigestMethods;
 
     /**
      * The Override signature algorithms.
      */
-    protected List overrideSignatureAlgorithms;
+    protected final List overrideSignatureAlgorithms;
 
     /**
      * The Override black listed signature algorithms.
      */
-    protected List overrideBlackListedSignatureAlgorithms;
+    protected final List overrideBlackListedSignatureAlgorithms;
 
     /**
      * The Override white listed signature signing algorithms.
      */
-    protected List overrideWhiteListedAlgorithms;
+    protected final List overrideWhiteListedAlgorithms;
 
     /**
      * Cas settings.
      */
-    @Autowired
-    protected CasConfigurationProperties casProperties;
-
-    public SamlObjectSignatureValidator(final List overrideSignatureReferenceDigestMethods, final List overrideSignatureAlgorithms,
-                                        final List overrideBlackListedSignatureAlgorithms, final List overrideWhiteListedAlgorithms) {
-        this.overrideSignatureReferenceDigestMethods = overrideSignatureReferenceDigestMethods;
-        this.overrideSignatureAlgorithms = overrideSignatureAlgorithms;
-        this.overrideBlackListedSignatureAlgorithms = overrideBlackListedSignatureAlgorithms;
-        this.overrideWhiteListedAlgorithms = overrideWhiteListedAlgorithms;
-    }
-
+    protected final CasConfigurationProperties casProperties;
 
     /**
      * Verify saml profile request if needed.
@@ -156,10 +147,10 @@ public class SamlObjectSignatureValidator {
         final SAML2HTTPRedirectDeflateSignatureSecurityHandler handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
         final SAMLPeerEntityContext peer = context.getSubcontext(SAMLPeerEntityContext.class, true);
         peer.setEntityId(SamlIdPUtils.getIssuerFromSamlRequest(profileRequest));
-        
+
         final String peerEntityId = peer.getEntityId();
         LOGGER.debug("Validating request signature for [{}] via [{}]...", peerEntityId, handler.getClass().getSimpleName());
-        
+
         final RoleDescriptor roleDescriptor = roleDescriptorResolver.resolveSingle(
             new CriteriaSet(new EntityIdCriterion(peerEntityId),
                 new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME)));
