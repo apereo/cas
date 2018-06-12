@@ -75,7 +75,24 @@ public class SamlIdPUtils {
             throw new SamlException("SAMLEndpointContext could not be defined for entity " + entityId);
         }
 
-        Endpoint endpoint = null;
+        final Endpoint endpoint = determineAssertionConsumerService(authnRequest, adaptor, binding);
+        LOGGER.debug("Configured peer entity endpoint to be [{}] with binding [{}]", endpoint.getLocation(), endpoint.getBinding());
+        endpointContext.setEndpoint(endpoint);
+    }
+
+    /**
+     * Determine assertion consumer service assertion consumer service.
+     *
+     * @param authnRequest the authn request
+     * @param adaptor      the adaptor
+     * @param binding      the binding
+     * @return the assertion consumer service
+     */
+    public static AssertionConsumerService determineAssertionConsumerService(final RequestAbstractType authnRequest,
+                                                                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                                             final String binding) {
+        AssertionConsumerService endpoint = null;
+
         if (authnRequest instanceof AuthnRequest) {
             final String acsUrl = AuthnRequest.class.cast(authnRequest).getAssertionConsumerServiceURL();
             if (StringUtils.isNotBlank(acsUrl)) {
@@ -93,10 +110,9 @@ public class SamlIdPUtils {
             endpoint = adaptor.getAssertionConsumerService(binding);
         }
         if (StringUtils.isBlank(endpoint.getBinding()) || StringUtils.isBlank(endpoint.getLocation())) {
-            throw new SamlException("Assertion consumer service does not define a binding or location for " + entityId);
+            throw new SamlException("Assertion consumer service does not define a binding or location");
         }
-        LOGGER.debug("Configured peer entity endpoint to be [{}] with binding [{}]", endpoint.getLocation(), endpoint.getBinding());
-        endpointContext.setEndpoint(endpoint);
+        return endpoint;
     }
 
     /**
