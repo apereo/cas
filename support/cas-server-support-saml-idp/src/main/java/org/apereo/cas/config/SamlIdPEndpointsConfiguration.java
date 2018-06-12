@@ -146,7 +146,8 @@ public class SamlIdPEndpointsConfiguration implements ServiceRegistryExecutionPl
             algs.getOverrideSignatureAlgorithms(),
             algs.getOverrideBlackListedSignatureSigningAlgorithms(),
             algs.getOverrideWhiteListedSignatureSigningAlgorithms(),
-            casSamlIdPMetadataResolver
+            casSamlIdPMetadataResolver,
+            casProperties
         );
     }
 
@@ -158,7 +159,8 @@ public class SamlIdPEndpointsConfiguration implements ServiceRegistryExecutionPl
             algs.getOverrideSignatureReferenceDigestMethods(),
             algs.getOverrideSignatureAlgorithms(),
             algs.getOverrideBlackListedSignatureSigningAlgorithms(),
-            algs.getOverrideWhiteListedSignatureSigningAlgorithms()
+            algs.getOverrideWhiteListedSignatureSigningAlgorithms(),
+            casProperties
         );
     }
 

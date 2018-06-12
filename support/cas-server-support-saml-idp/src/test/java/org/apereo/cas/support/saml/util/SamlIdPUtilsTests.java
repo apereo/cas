@@ -6,7 +6,9 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.util.CollectionUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -21,6 +23,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
 import java.util.Iterator;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -33,6 +36,12 @@ import static org.mockito.Mockito.*;
  */
 @Category(FileSystemCategory.class)
 public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
+
+    @Before
+    public void before() {
+        servicesManager.deleteAll();
+    }
+
     @Test
     public void verifyMetadataForAllServices() throws Exception {
         final SamlRegisteredService service = SamlIdPTestUtils.getSamlRegisteredService();
@@ -51,7 +60,7 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifyAssertionConsumerServiceNoIndex() throws Exception {
+    public void verifyAssertionConsumerServiceNoIndex() {
         final SamlRegisteredService service = SamlIdPTestUtils.getSamlRegisteredService();
         servicesManager.save(service);
 
@@ -65,7 +74,7 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    public void verifyAssertionConsumerServiceWithIndex() throws Exception {
+    public void verifyAssertionConsumerServiceWithIndex() {
         final SamlRegisteredService service = SamlIdPTestUtils.getSamlRegisteredService();
         servicesManager.save(service);
 
@@ -78,5 +87,24 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         final AssertionConsumerService acs = SamlIdPUtils.getAssertionConsumerServiceFor(authnRequest, servicesManager,
             samlRegisteredServiceCachingMetadataResolver);
         assertNotNull(acs);
+    }
+
+    @Test
+    public void verifyAssertionConsumerServiceWithUrl() {
+        final SamlRegisteredService service = SamlIdPTestUtils.getSamlRegisteredService();
+        servicesManager.save(service);
+        final AuthnRequest authnRequest = mock(AuthnRequest.class);
+        final Issuer issuer = mock(Issuer.class);
+        when(issuer.getValue()).thenReturn(service.getServiceId());
+        when(authnRequest.getIssuer()).thenReturn(issuer);
+        when(authnRequest.getProtocolBinding()).thenReturn(SAMLConstants.SAML2_POST_BINDING_URI);
+        final String acsUrl = "https://some.acs.url";
+        when(authnRequest.getAssertionConsumerServiceURL()).thenReturn(acsUrl);
+
+        final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adapter =
+            SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
+        final AssertionConsumerService acs = SamlIdPUtils.determineAssertionConsumerService(authnRequest, adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
+        assertNotNull(acs);
+        assertEquals(acsUrl, acs.getLocation());
     }
 }
