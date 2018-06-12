@@ -14,7 +14,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-person-directory", automated = true)
-
 @Getter
 @Setter
 public class LdapPrincipalAttributesProperties extends AbstractLdapSearchProperties {

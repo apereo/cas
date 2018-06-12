@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-core-monitor", automated = true)
-
 @Getter
 @Setter
 @NoArgsConstructor

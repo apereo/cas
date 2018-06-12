@@ -12,7 +12,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-rest", automated = true)
-
 @Getter
 @Setter
 public class RestProperties implements Serializable {
