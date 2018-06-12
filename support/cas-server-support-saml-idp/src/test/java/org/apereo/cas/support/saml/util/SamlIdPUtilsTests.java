@@ -1,11 +1,13 @@
 package org.apereo.cas.support.saml.util;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.BindingCriterion;
@@ -23,6 +25,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Category(FileSystemCategory.class)
 public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
     @Test
     public void verifyMetadataForAllServices() throws Exception {

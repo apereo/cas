@@ -2,6 +2,7 @@ package org.apereo.cas.interrupt.webflow.actions;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.webflow.InterruptUtils;
@@ -26,8 +27,9 @@ public class InquireInterruptAction extends AbstractAction {
         final var authentication = WebUtils.getAuthentication(requestContext);
         final Service service = WebUtils.getService(requestContext);
         final var registeredService = WebUtils.getRegisteredService(requestContext);
+        final Credential credential = WebUtils.getCredential(requestContext);
 
-        final var response = this.interruptInquirer.inquire(authentication, registeredService, service);
+        final var response = this.interruptInquirer.inquire(authentication, registeredService, service, credential);
         if (response == null || !response.isInterrupt()) {
             return no();
         }

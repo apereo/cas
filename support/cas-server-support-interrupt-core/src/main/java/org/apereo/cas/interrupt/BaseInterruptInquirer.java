@@ -2,6 +2,7 @@ package org.apereo.cas.interrupt;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
@@ -15,11 +16,12 @@ import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProper
 @Slf4j
 public abstract class BaseInterruptInquirer implements InterruptInquirer {
     @Override
-    public final InterruptResponse inquire(final Authentication authentication, final RegisteredService registeredService, final Service service) {
+    public final InterruptResponse inquire(final Authentication authentication, final RegisteredService registeredService,
+                                           final Service service, final Credential credential) {
         if (shouldSkipInterruptForRegisteredService(registeredService)) {
             return InterruptResponse.none();
         }
-        return inquireInternal(authentication, registeredService, service);
+        return inquireInternal(authentication, registeredService, service, credential);
     }
 
     /**
@@ -48,7 +50,9 @@ public abstract class BaseInterruptInquirer implements InterruptInquirer {
      * @param authentication    the authentication
      * @param registeredService the registered service
      * @param service           the service
+     * @param credential        the credential
      * @return the interrupt response
      */
-    protected abstract InterruptResponse inquireInternal(Authentication authentication, RegisteredService registeredService, Service service);
+    protected abstract InterruptResponse inquireInternal(Authentication authentication, RegisteredService registeredService,
+                                                         Service service, Credential credential);
 }

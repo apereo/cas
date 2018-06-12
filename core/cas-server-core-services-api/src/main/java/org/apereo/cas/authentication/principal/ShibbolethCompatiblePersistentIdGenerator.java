@@ -5,10 +5,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 
@@ -73,7 +73,8 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         LOGGER.debug("Found principal attributes [{}] to use when generating persistent identifiers", attributes);
         final String principalId;
         if (StringUtils.isNotBlank(this.attribute) && attributes.containsKey(this.attribute)) {
-            principalId = attributes.get(this.attribute).toString();
+            final Object attributeValue = attributes.get(this.attribute);
+            principalId = CollectionUtils.firstElement(attributeValue).get().toString();
             LOGGER.debug("Using attribute [{}] to establish principal id [{}] to generate persistent identifier", this.attribute, principalId);
         } else {
             principalId = principal.getId();

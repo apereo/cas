@@ -587,6 +587,26 @@ public class WebUtils {
     }
 
     /**
+     * Put recaptcha invisible into flow scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putRecaptchaInvisibleIntoFlowScope(final RequestContext context, final Object value) {
+        context.getFlowScope().put("recaptchaInvisible", value);
+    }
+
+    /**
+     * Put recaptcha position into flow scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putRecaptchaPositionIntoFlowScope(final RequestContext context, final Object value) {
+        context.getFlowScope().put("recaptchaPosition", value);
+    }
+
+    /**
      * Put static authentication into flow scope.
      *
      * @param context the context
@@ -729,11 +749,21 @@ public class WebUtils {
      * Put service response into request scope.
      *
      * @param requestContext the request context
+     * @param url            the url
+     */
+    public static void putServiceRedirectUrl(final RequestContext requestContext, final String url) {
+        requestContext.getRequestScope().put("url", url);
+    }
+
+    /**
+     * Put service response into request scope.
+     *
+     * @param requestContext the request context
      * @param response       the response
      */
     public static void putServiceResponseIntoRequestScope(final RequestContext requestContext, final Response response) {
         requestContext.getRequestScope().put("parameters", response.getAttributes());
-        requestContext.getRequestScope().put("url", response.getUrl());
+        putServiceRedirectUrl(requestContext, response.getUrl());
     }
 
     /**

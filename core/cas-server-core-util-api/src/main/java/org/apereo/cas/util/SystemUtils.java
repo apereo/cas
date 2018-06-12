@@ -6,12 +6,14 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.SpringBootVersion;
 import org.springframework.core.SpringVersion;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,6 +29,8 @@ import java.util.Map;
 @UtilityClass
 public class SystemUtils {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final String SEPARATOR_CHAR = "-";
+
     private static final int SYSTEM_INFO_DEFAULT_SIZE = 20;
     private static final String UPDATE_CHECK_MAVEN_URL = "https://search.maven.org/solrsearch/select?q=g:%22org.apereo.cas%22%20AND%20a:%22cas-server%22";
 
@@ -39,6 +43,7 @@ public class SystemUtils {
         final var properties = System.getProperties();
 
         final Map<String, Object> info = new LinkedHashMap<>(SYSTEM_INFO_DEFAULT_SIZE);
+
         info.put("CAS Version", StringUtils.defaultString(CasVersion.getVersion(), "Not Available"));
         info.put("CAS Commit Id", StringUtils.defaultString(CasVersion.getSpecificationVersion(), "Not Available"));
         info.put("CAS Build Date/Time", CasVersion.getDateTime());
@@ -55,6 +60,10 @@ public class SystemUtils {
         info.put("JVM Total Memory", FileUtils.byteCountToDisplaySize(runtime.totalMemory()));
 
         info.put("JCE Installed", StringUtils.capitalize(BooleanUtils.toStringYesNo(EncodingUtils.isJceInstalled())));
+
+        info.put("Node Version", getNodeVersion());
+        info.put("NPM Version", getNpmVersion());
+
         info.put("OS Architecture", properties.get("os.arch"));
         info.put("OS Name", properties.get("os.name"));
         info.put("OS Version", properties.get("os.version"));
@@ -103,4 +112,37 @@ public class SystemUtils {
         }
     }
 
+    /**
+     * Gets node version.
+     *
+     * @return the node version
+     */
+    @SneakyThrows
+    public static String getNodeVersion() {
+        try {
+            final ProcessBuilder pb = new ProcessBuilder("node", "--version");
+            final Process p = pb.start();
+            return IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8).trim();
+        } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
+        }
+        return "N/A";
+    }
+
+    /**
+     * Gets npm version.
+     *
+     * @return the npm version
+     */
+    @SneakyThrows
+    public static String getNpmVersion() {
+        try {
+            final ProcessBuilder pb = new ProcessBuilder("npm", "--version");
+            final Process p = pb.start();
+            return IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8).trim();
+        } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
+        }
+        return "N/A";
+    }
 }

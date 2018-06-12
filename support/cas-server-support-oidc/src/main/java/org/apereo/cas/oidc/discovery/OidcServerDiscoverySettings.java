@@ -95,4 +95,9 @@ public class OidcServerDiscoverySettings {
     public String getIntrospectionEndpoint() {
         return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL);
     }
+
+    @JsonProperty("revocation_endpoint")
+    public String getRevocationEndpoint() {
+        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REVOCATION_URL);
+    }
 }

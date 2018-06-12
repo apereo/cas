@@ -238,7 +238,7 @@ public interface CasWebflowConstants {
     /**
      * The state 'redirectView'.
      */
-    String STATE_ID_REDIR_VIEW = "redirectView";
+    String STATE_ID_REDIRECT_VIEW = "redirectView";
 
     /**
      * The state id 'endWebflowExecution'.

@@ -58,8 +58,11 @@ public class CasCommandLineShellApplication {
      */
     public static void main(final String[] args) {
         new SpringApplicationBuilder(CasCommandLineShellApplication.class)
-            .banner(new DefaultCasBanner()).bannerMode(CasCommandLineParser.getBannerMode(args))
-            .logStartupInfo(false).web(false).run(args);
+            .banner(new DefaultCasBanner())
+            .bannerMode(CasCommandLineParser.getBannerMode(args))
+            .logStartupInfo(false)
+            .web(false)
+            .run(args);
     }
 
     /**

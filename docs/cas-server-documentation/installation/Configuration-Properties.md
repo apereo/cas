@@ -2718,6 +2718,7 @@ Control various settings related to CAS logout functionality. To learn more abou
 ```properties
 # cas.logout.followServiceRedirects=false
 # cas.logout.redirectParameter=service
+# cas.logout.redirectUrl=https://www.github.com
 # cas.logout.confirmLogout=false
 # cas.logout.removeDescendantTickets=false
 ```
@@ -3459,6 +3460,8 @@ Display Google's reCAPTCHA widget on the CAS login page.
 # cas.googleRecaptcha.verifyUrl=https://www.google.com/recaptcha/api/siteverify
 # cas.googleRecaptcha.siteKey=
 # cas.googleRecaptcha.secret=
+# cas.googleRecaptcha.invisible=
+# cas.googleRecaptcha.position=bottomright
 ```
 
 ## Google Analytics Integration

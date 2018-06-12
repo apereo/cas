@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 @Slf4j
-public class OAuthWebApplicationServiceTests {
+public class OAuth20WebApplicationServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthWebApplicationService.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();

@@ -1,7 +1,7 @@
 package org.apereo.cas.services.web;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -25,7 +25,7 @@ import java.util.Locale;
  */
 @Slf4j
 @Setter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ThemeViewResolver extends AbstractCachingViewResolver {
 
     private final ViewResolver delegate;
@@ -50,7 +50,7 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
         final var baseTemplateName = thymeleafView.getTemplateName();
         final var templateName = theme + '/' + baseTemplateName;
         final var path = thymeleafProperties.getPrefix().concat(templateName).concat(thymeleafProperties.getSuffix());
-        final var location = new TemplateLocation(path);
+        LOGGER.trace("Attempting to locate theme location at [{}]", path);
         if (location.exists(getApplicationContext())) {
             thymeleafView.setTemplateName(templateName);
         }

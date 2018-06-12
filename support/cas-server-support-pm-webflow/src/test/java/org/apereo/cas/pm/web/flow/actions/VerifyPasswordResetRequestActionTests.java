@@ -1,11 +1,13 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.category.MailCategory;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -21,6 +23,7 @@ import static org.junit.Assert.*;
  * @since 5.3.0
  */
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 25000)
+@Category(MailCategory.class)
 public class VerifyPasswordResetRequestActionTests extends BasePasswordManagementActionTests {
     @Test
     public void verifyAction() {

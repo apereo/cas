@@ -19,8 +19,9 @@ public class GroovyScriptInterruptInquirerTests {
     public void verifyResponseCanBeFoundFromGroovy() {
         final var q = new GroovyScriptInterruptInquirer(new ClassPathResource("interrupt.groovy"));
         final var response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
-                CoreAuthenticationTestUtils.getRegisteredService(),
-                CoreAuthenticationTestUtils.getService());
+            CoreAuthenticationTestUtils.getRegisteredService(),
+            CoreAuthenticationTestUtils.getService(),
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertNotNull(response);
         assertFalse(response.isBlock());
         assertTrue(response.isSsoEnabled());

@@ -1,7 +1,9 @@
 package org.apereo.cas.dynamodb;
 
+import org.apereo.cas.category.DynamoDbCategory;
 import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import static org.junit.Assert.*;
 
@@ -11,6 +13,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Category(DynamoDbCategory.class)
 public class AmazonDynamoDbClientFactoryTests {
 
     @Test

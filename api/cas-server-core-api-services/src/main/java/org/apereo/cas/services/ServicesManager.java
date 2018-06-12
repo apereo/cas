@@ -34,12 +34,18 @@ public interface ServicesManager {
     RegisteredService save(RegisteredService registeredService, boolean publishEvent);
 
     /**
+     * Delete all entries in the underlying storage service.
+     */
+    void deleteAll();
+
+    /**
      * Delete the entry for this RegisteredService.
      *
      * @param id the id of the registeredService to delete.
      * @return the registered service that was deleted, null if there was none.
      */
     RegisteredService delete(long id);
+
 
     /**
      * Delete the entry for this RegisteredService.

@@ -62,9 +62,8 @@ public class DefaultLogoutWebflowConfigurer extends AbstractCasWebflowConfigurer
      */
     protected ActionState createTerminateSessionActionState(final Flow flow) {
         final var actionState = createActionState(flow, CasWebflowConstants.STATE_ID_TERMINATE_SESSION,
-            createEvaluateAction(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION));
-        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_WARN,
-            CasWebflowConstants.STATE_ID_CONFIRM_LOGOUT_VIEW);
+        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_WARN, CasWebflowConstants.STATE_ID_CONFIRM_LOGOUT_VIEW);
+        createTransitionForState(actionState, CasWebflowConstants.STATE_ID_REDIRECT, CasWebflowConstants.STATE_ID_REDIRECT_VIEW);
         createStateDefaultTransition(actionState, CasWebflowConstants.STATE_ID_DO_LOGOUT);
         return actionState;
     }

@@ -33,5 +33,3 @@ compileJava.dependsOn(processResources)
 if (!Boolean.getBoolean("skipNestedConfigMetadataGen")) {
     jar.dependsOn(generateConfigurationMetadata)
 }
-
-

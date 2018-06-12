@@ -1,21 +1,26 @@
 package org.apereo.cas.support.events.dao;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
+import org.apereo.cas.category.InfluxDbCategory;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionSuccessfulEvent;
 import org.apereo.cas.support.events.config.CasEventsInfluxDbRepositoryConfiguration;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalSpringRunner;
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 import org.apereo.cas.web.support.WebUtils;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.Collection;
 import java.util.Date;
@@ -32,10 +37,19 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class,
     CasEventsInfluxDbRepositoryConfiguration.class
 })
-@RunWith(ConditionalSpringRunner.class)
+@Category(InfluxDbCategory.class)
 @TestPropertySource(locations = "classpath:influxdb-events.properties")
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class InfluxDbCasEventRepositoryTests {
+
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("casEventRepository")

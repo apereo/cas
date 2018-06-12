@@ -1,9 +1,10 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
 
 /**
  * This is {@link AbstractLdapProperties}.

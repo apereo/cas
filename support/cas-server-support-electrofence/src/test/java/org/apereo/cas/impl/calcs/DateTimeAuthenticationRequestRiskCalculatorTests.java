@@ -9,6 +9,9 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+
 import static org.junit.Assert.*;
 
 /**
@@ -17,14 +20,14 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@TestPropertySource(properties = "cas.authn.adaptive.risk.dateTime.enabled=true")
+@TestPropertySource(properties = {"cas.authn.adaptive.risk.dateTime.enabled=true", "cas.authn.adaptive.risk.dateTime.windowInHours=4"})
 @ConditionalIgnore(condition = RunningStandaloneCondition.class)
 public class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
 
     @Test
     public void verifyTestWhenNoAuthnEventsFoundForUser() {
         final var authentication = CoreAuthenticationTestUtils.getAuthentication("datetimeperson");
-        final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
+        final var service = RegisteredServiceTestUtils.getRegisteredService("test");
         final var request = new MockHttpServletRequest();
         final var score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isHighestRisk());
@@ -33,7 +36,7 @@ public class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthen
     @Test
     public void verifyTestWhenAuthnEventsFoundForUser() {
         final var authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
-        final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
+        final var service = RegisteredServiceTestUtils.getRegisteredService("test");
         final var request = new MockHttpServletRequest();
         final var score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isLowestRisk());

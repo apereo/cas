@@ -40,6 +40,12 @@ public class CommandLineOptions {
         .desc("Provide the subject (authenticated user id) to be used in JWTs, etc").build();
 
     /**
+     * Command line option that affect property documentation.
+     */
+    public static final Option OPTION_UNDOCUMENTED_PROPERTIES = Option.builder("pundoc")
+        .desc("Check for CAS properties and settings that may not be documented.").build();
+
+    /**
      * Command line option that indicates a strict-mode matching.
      */
     public static final Option OPTION_STRICT_MATCH = Option.builder("sm")
