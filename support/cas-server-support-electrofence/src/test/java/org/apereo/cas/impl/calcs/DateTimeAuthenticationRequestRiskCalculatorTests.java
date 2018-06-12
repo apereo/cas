@@ -11,6 +11,9 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+
 import static org.junit.Assert.*;
 
 /**
@@ -19,13 +22,13 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@TestPropertySource(properties = "cas.authn.adaptive.risk.dateTime.enabled=true")
+@TestPropertySource(properties = {"cas.authn.adaptive.risk.dateTime.enabled=true", "cas.authn.adaptive.risk.dateTime.windowInHours=4"})
 @ConditionalIgnore(condition = RunningStandaloneCondition.class)
 public class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
 
     @Test
     public void verifyTestWhenNoAuthnEventsFoundForUser() {
-        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("datetimeperson");
+        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("datetimeperson", ZonedDateTime.now(ZoneOffset.UTC));
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);
@@ -34,7 +37,7 @@ public class DateTimeAuthenticationRequestRiskCalculatorTests extends BaseAuthen
 
     @Test
     public void verifyTestWhenAuthnEventsFoundForUser() {
-        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
+        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("casuser", ZonedDateTime.now(ZoneOffset.UTC));
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);

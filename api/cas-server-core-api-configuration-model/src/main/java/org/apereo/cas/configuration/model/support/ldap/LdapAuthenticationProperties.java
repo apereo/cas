@@ -17,7 +17,6 @@ import java.util.List;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-ldap")
-
 @Getter
 @Setter
 public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProperties {

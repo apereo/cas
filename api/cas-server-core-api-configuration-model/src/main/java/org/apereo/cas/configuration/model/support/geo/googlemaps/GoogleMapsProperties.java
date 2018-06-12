@@ -1,10 +1,10 @@
 package org.apereo.cas.configuration.model.support.geo.googlemaps;
 
-import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.RequiredProperty;
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+import org.apereo.cas.configuration.model.support.geo.BaseGeoLocationProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 /**
  * This is {@link GoogleMapsProperties}.
@@ -13,10 +13,9 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-geolocation-googlemaps")
-
 @Getter
 @Setter
-public class GoogleMapsProperties implements Serializable {
+public class GoogleMapsProperties extends BaseGeoLocationProperties {
 
     private static final long serialVersionUID = 4661113818711911462L;
 

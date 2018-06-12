@@ -20,7 +20,10 @@ import java.util.Map;
 @Service
 @Slf4j
 public class ListUndocumentedPropertiesCommand implements CommandMarker {
-
+    /**
+     * Error message prefix.
+     */
+    public static final String ERROR_MSG_PREFIX = "Undocumented Property:";
 
     /**
      * List undocumented settings.
@@ -29,12 +32,12 @@ public class ListUndocumentedPropertiesCommand implements CommandMarker {
     public void listUndocumented() {
         final CasConfigurationMetadataRepository repository = new CasConfigurationMetadataRepository();
         repository.getRepository().getAllProperties()
-                .entrySet()
-                .stream()
-                .filter(p -> p.getKey().startsWith("cas.")
-                        && (StringUtils.isBlank(p.getValue().getShortDescription()) || StringUtils.isBlank(p.getValue().getDescription())))
-                .map(Map.Entry::getValue)
-                .sorted(Comparator.comparing(ConfigurationMetadataProperty::getId))
-                .forEach(p -> LOGGER.info("Property: {} @ {}", p.getId(), p.getType()));
+            .entrySet()
+            .stream()
+            .filter(p -> p.getKey().startsWith("cas.")
+                && (StringUtils.isBlank(p.getValue().getShortDescription()) || StringUtils.isBlank(p.getValue().getDescription())))
+            .map(Map.Entry::getValue)
+            .sorted(Comparator.comparing(ConfigurationMetadataProperty::getId))
+            .forEach(p -> LOGGER.error("{} {} @ {}", ERROR_MSG_PREFIX, p.getId(), p.getType()));
     }
 }
