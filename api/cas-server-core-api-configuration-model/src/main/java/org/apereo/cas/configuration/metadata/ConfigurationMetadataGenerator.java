@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -100,6 +99,8 @@ public class ConfigurationMetadataGenerator {
         if (args.length != 2) {
             throw new RuntimeException("Invalid build configuration. No command-line arguments specified");
         }
+        final var buildDir = args[0];
+        final var projectDir = args[1];
         new ConfigurationMetadataGenerator(buildDir, projectDir).execute();
     }
 
@@ -215,13 +216,13 @@ public class ConfigurationMetadataGenerator {
 
         private ConfigurationMetadataProperty createConfigurationProperty(final FieldDeclaration fieldDecl,
                                                                           final ConfigurationMetadataProperty arg) {
-            final VariableDeclarator variable = fieldDecl.getVariables().get(0);
+            final var variable = fieldDecl.getVariables().get(0);
             final var name = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(variable.getNameAsString()).spliterator(), false)
                 .map(Object::toString)
                 .findFirst()
                 .orElseGet(variable::getNameAsString);
 
-
+            final var indexedGroup = arg.getName().concat(indexNameWithBrackets ? "[]" : StringUtils.EMPTY);
             final var indexedName = indexedGroup.concat(".").concat(name);
 
             final var prop = new ConfigurationMetadataProperty();

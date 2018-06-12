@@ -51,6 +51,7 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
         final var templateName = theme + '/' + baseTemplateName;
         final var path = thymeleafProperties.getPrefix().concat(templateName).concat(thymeleafProperties.getSuffix());
         LOGGER.trace("Attempting to locate theme location at [{}]", path);
+        final var location = new TemplateLocation(path);
         if (location.exists(getApplicationContext())) {
             thymeleafView.setTemplateName(templateName);
         }

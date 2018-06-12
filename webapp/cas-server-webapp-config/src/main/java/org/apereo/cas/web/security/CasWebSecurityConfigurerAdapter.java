@@ -52,6 +52,11 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
         final var configuredEndpoints = endpoints.keySet().toArray(new String[]{});
         requests.requestMatchers(EndpointRequest.toAnyEndpoint().excluding(configuredEndpoints)).denyAll();
+        requests
+            .antMatchers("/resources/**")
+            .permitAll()
+            .antMatchers("/static/**")
+            .permitAll();
 
         endpoints.forEach(Unchecked.biConsumer((k, v) -> {
             final var endpoint = EndpointRequest.to(k);
@@ -83,7 +88,9 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
                     .and()
                     .httpBasic()
                     .and()
-                    .formLogin();
+                    .formLogin()
+                    .loginPage("/adminlogin")
+                    .permitAll();
                 break;
             case IP_ADDRESS:
                 final var addresses = properties.getRequiredIpAddresses()
