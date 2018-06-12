@@ -13,7 +13,6 @@ import java.io.Serializable;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-core", automated = true)
-
 @Getter
 @Setter
 public class CasJavaClientProperties implements Serializable {
