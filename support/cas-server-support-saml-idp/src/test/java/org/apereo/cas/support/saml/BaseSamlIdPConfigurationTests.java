@@ -43,6 +43,7 @@ import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
 import org.junit.runner.RunWith;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.Response;
@@ -101,6 +102,10 @@ import static org.mockito.Mockito.*;
 @Slf4j
 public abstract class BaseSamlIdPConfigurationTests {
     protected static final FileSystemResource METADATA_DIRECTORY = new FileSystemResource("src/test/resources/metadata");
+
+    @Autowired
+    @Qualifier("casSamlIdPMetadataResolver")
+    protected MetadataResolver casSamlIdPMetadataResolver;
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
