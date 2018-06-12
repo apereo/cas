@@ -47,7 +47,7 @@ public class GoogleMapsGeoCodingConfiguration {
         builder.apiKey(properties.getApiKey())
             .connectTimeout(Beans.newDuration(properties.getConnectTimeout()).toMillis(), TimeUnit.MILLISECONDS);
 
-        final GoogleMapsGeoLocationService svc = new GoogleMapsGeoLocationService(builder.build());
+        final var svc = new GoogleMapsGeoLocationService(builder.build());
         svc.setIpStackAccessKey(properties.getIpStackApiAccessKey());
         return svc;
     }

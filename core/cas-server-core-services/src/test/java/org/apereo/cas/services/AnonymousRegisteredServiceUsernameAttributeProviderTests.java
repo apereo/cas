@@ -76,11 +76,11 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
 
     @Test
     public void verifyGeneratedIdsMatchMultiValuedAttribute() {
-        final String salt = "whydontyoustringmealong";
-        final ShibbolethCompatiblePersistentIdGenerator gen = new ShibbolethCompatiblePersistentIdGenerator(salt);
+        final var salt = "whydontyoustringmealong";
+        final var gen = new ShibbolethCompatiblePersistentIdGenerator(salt);
         gen.setAttribute("uid");
-        final AnonymousRegisteredServiceUsernameAttributeProvider provider = new AnonymousRegisteredServiceUsernameAttributeProvider(gen);
-        final String result = provider.resolveUsername(CoreAuthenticationTestUtils.getPrincipal("anyuser",
+        final var provider = new AnonymousRegisteredServiceUsernameAttributeProvider(gen);
+        final var result = provider.resolveUsername(CoreAuthenticationTestUtils.getPrincipal("anyuser",
             CollectionUtils.wrap("uid", CollectionUtils.wrap("obegon"))),
             CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"),
             CoreAuthenticationTestUtils.getRegisteredService());

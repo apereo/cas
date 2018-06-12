@@ -24,7 +24,7 @@ public abstract class AbstractU2FDeviceRepositoryTests {
     public void verifyDeviceSaved() {
         try {
             registerDevices();
-            final U2FDeviceRepository deviceRepository = getDeviceRepository();
+            final var deviceRepository = getDeviceRepository();
             final Collection<DeviceRegistration> devs = deviceRepository.getRegisteredDevices("casuser");
             verifyDevicesAvailable(devs);
         } catch (final Exception e) {
@@ -35,9 +35,9 @@ public abstract class AbstractU2FDeviceRepositoryTests {
     @SneakyThrows
     protected void registerDevices() {
         final X509Certificate cert = CertUtils.readCertificate(new ClassPathResource("cert.crt"));
-        final DeviceRegistration r1 = new DeviceRegistration("keyhandle11", "publickey1", cert, 1);
-        final DeviceRegistration r2 = new DeviceRegistration("keyhandle22", "publickey1", cert, 2);
-        final U2FDeviceRepository deviceRepository = getDeviceRepository();
+        final var r1 = new DeviceRegistration("keyhandle11", "publickey1", cert, 1);
+        final var r2 = new DeviceRegistration("keyhandle22", "publickey1", cert, 2);
+        final var deviceRepository = getDeviceRepository();
         deviceRepository.registerDevice("casuser", r1);
         deviceRepository.registerDevice("casuser", r2);
     }
