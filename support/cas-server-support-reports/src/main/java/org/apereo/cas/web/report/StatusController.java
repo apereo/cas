@@ -59,8 +59,7 @@ public class StatusController extends BaseCasMvcEndpoint {
 
         sb.append("Health: ").append(status.getCode()).append("\n\n\t");
 
-        String healthDetail = Joiner.on("\n\n\t").withKeyValueSeparator(": ").join(health.getDetails());
-        sb.append(healthDetail);        
+        sb.append(Joiner.on("\n\n\t").withKeyValueSeparator(": ").join(health.getDetails()));       
         
         sb.append("\n\nHost:\t\t").append(
             StringUtils.isBlank(casProperties.getHost().getName())
