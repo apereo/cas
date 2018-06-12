@@ -16,7 +16,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
-
 @Getter
 @Setter
 public class PrincipalTransformationProperties implements Serializable {
