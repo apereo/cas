@@ -32,7 +32,11 @@ public class OAuth20ClientAuthenticator implements Authenticator<UsernamePasswor
     @Override
     public void validate(final UsernamePasswordCredentials credentials, final WebContext context) throws CredentialsException {
         LOGGER.debug("Authenticating credential [{}]", credentials);
-
+		String grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+        if(grantType != null && OAuth20Utils.isGrantType(grantType,  OAuth20GrantTypes.PASSWORD)) {
+        	throw new CredentialsException("Service invalid for granttype" + grantType);
+        }
+		
         final String id = credentials.getUsername();
         final String secret = credentials.getPassword();
         
