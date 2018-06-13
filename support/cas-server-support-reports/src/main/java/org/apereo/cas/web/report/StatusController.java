@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import com.google.common.base.Joiner;
 
 
 /**
@@ -56,7 +57,9 @@ public class StatusController extends BaseCasMvcEndpoint {
             response.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value());
         }
 
-        sb.append("Health: ").append(status.getCode());
+        sb.append("Health: ").append(status.getCode())
+            .append("\n\n\t").append(Joiner.on("\n\n\t").withKeyValueSeparator(": ").join(health.getDetails()));
+
         sb.append("\n\nHost:\t\t").append(
             StringUtils.isBlank(casProperties.getHost().getName())
                 ? InetAddressUtils.getCasServerHostName()
