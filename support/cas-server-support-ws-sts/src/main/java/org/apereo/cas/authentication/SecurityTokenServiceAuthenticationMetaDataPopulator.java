@@ -48,6 +48,11 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
                 properties.put(SecurityConstants.USERNAME, up.getUsername());
                 final String uid = credentialCipherExecutor.encode(up.getUsername());
                 properties.put(SecurityConstants.PASSWORD, uid);
+
+		assert Class.forName("javax.xml.transform.Source").getClassLoader() == Class.forName("org.apache.cxf.staxutils.StaxSource").getClassLoader() : "I believe" +
+                        " the class loader difference will cause a classcastexception in org.apache.cxf.service.invoker.AbstractInvoker.performInvocation " +
+                         "on line 179 (cxf-core-3.2.4): m.invoke(serviceObject, paramArray); I need help to understand this error and fix it."; 
+
                 final SecurityToken token = sts.requestSecurityToken(rp.getAppliesTo());
                 final String tokenStr = EncodingUtils.encodeBase64(SerializationUtils.serialize(token));
                 builder.addAttribute(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE, tokenStr);
