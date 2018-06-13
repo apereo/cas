@@ -90,14 +90,28 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     @Override
     public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object o, final ModelAndView modelAndView) {
         if (!HttpMethod.POST.name().equals(request.getMethod())) {
+            LOGGER.trace("Skipping authentication throttling for requests other than POST");
             return;
         }
-        final boolean recordEvent = response.getStatus() != HttpStatus.SC_CREATED
-            && response.getStatus() != HttpStatus.SC_OK && response.getStatus() != HttpStatus.SC_MOVED_TEMPORARILY;
+        final boolean recordEvent = shouldResponseBeRecordedAsFailure(response);
         if (recordEvent) {
             LOGGER.debug("Recording submission failure for [{}]", request.getRequestURI());
             recordSubmissionFailure(request);
+        } else {
+            LOGGER.trace("Skipping to record submission failure for [{}] with response status [{}]",
+                request.getRequestURI(), response.getStatus());
         }
+    }
+
+    /**
+     * Should response be recorded as failure boolean.
+     *
+     * @param response the response
+     * @return the boolean
+     */
+    protected boolean shouldResponseBeRecordedAsFailure(final HttpServletResponse response) {
+        final int status = response.getStatus();
+        return status != HttpStatus.SC_CREATED && status != HttpStatus.SC_OK && status != HttpStatus.SC_MOVED_TEMPORARILY;
     }
 
     /**
@@ -119,6 +133,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     /**
      * Calculate threshold rate and compare boolean.
      * Compute rate in submissions/sec between last two authn failures and compare with threshold.
+     *
      * @param failures the failures
      * @return the boolean
      */

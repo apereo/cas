@@ -15,7 +15,6 @@ import lombok.Setter;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-
 @Getter
 @Setter
 public class EncryptionJwtSigningJwtCryptographyProperties implements Serializable {
