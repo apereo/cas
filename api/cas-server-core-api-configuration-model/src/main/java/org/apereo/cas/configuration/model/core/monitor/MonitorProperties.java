@@ -2,9 +2,12 @@ package org.apereo.cas.configuration.model.core.monitor;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
 import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
 import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -186,6 +189,18 @@ public class MonitorProperties implements Serializable {
          */
         private JaasSecurity jaas = new JaasSecurity();
 
+        /**
+         * Enable Spring Security's JDBC authentication provider
+         * for admin status authorization and access control.
+         */
+        private JdbcSecurity jdbc = new JdbcSecurity();
+
+        /**
+         * Enable Spring Security's LDAP authentication provider
+         * for admin status authorization and access control.
+         */
+        private LdapSecurity ldap = new LdapSecurity();
+        
         @Getter
         @Setter
         public static class JaasSecurity implements Serializable {
@@ -215,6 +230,45 @@ public class MonitorProperties implements Serializable {
              * In the above example, {@code JAASTest} should be set as the context name.
              */
             private String loginContextName;
+        }
+
+        @Getter
+        @Setter
+        public static class LdapSecurity extends AbstractLdapAuthenticationProperties {
+
+            private static final long serialVersionUID = -7333244539096172557L;
+
+            /**
+             * Control authorization settings via LDAP
+             * after ldap authentication.
+             */
+            @NestedConfigurationProperty
+            private LdapAuthorizationProperties ldapAuthz = new LdapAuthorizationProperties();
+        }
+
+        @Getter
+        @Setter
+        public static class JdbcSecurity extends AbstractJpaProperties {
+
+            private static final long serialVersionUID = 2625666117528467867L;
+
+            /**
+             * Prefix to add to the role.
+             */
+            private String rolePrefix;
+
+            /**
+             * Query to execute in order to authenticate users via JDBC.
+             * Example:
+             * {@code SELECT username,password,enabled FROM users WHERE username=?}
+             */
+            private String query;
+
+            /**
+             * Password encoder properties.
+             */
+            @NestedConfigurationProperty
+            private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
         }
     }
 }
