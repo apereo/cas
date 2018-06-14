@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import com.google.common.base.Joiner;
 
 
 /**
