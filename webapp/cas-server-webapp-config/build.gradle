@@ -13,6 +13,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-ldap-core")
     implementation project(":support:cas-server-support-pac4j-core")
 
     testImplementation libraries.thymeleaf

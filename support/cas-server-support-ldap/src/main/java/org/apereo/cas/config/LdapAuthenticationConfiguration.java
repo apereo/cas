@@ -61,8 +61,6 @@ import java.util.function.Predicate;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class LdapAuthenticationConfiguration {
-
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
