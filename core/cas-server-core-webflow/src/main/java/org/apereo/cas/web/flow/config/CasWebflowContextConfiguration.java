@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
@@ -222,6 +223,7 @@ public class CasWebflowContextConfiguration {
     @ConditionalOnMissingBean(name = "defaultWebflowConfigurer")
     @Bean
     @Order(0)
+    @RefreshScope
     public CasWebflowConfigurer defaultWebflowConfigurer() {
         final DefaultLoginWebflowConfigurer c = new DefaultLoginWebflowConfigurer(builder(), loginFlowRegistry(), applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry());
@@ -232,6 +234,7 @@ public class CasWebflowContextConfiguration {
     @ConditionalOnMissingBean(name = "defaultLogoutWebflowConfigurer")
     @Bean
     @Order(0)
+    @RefreshScope
     public CasWebflowConfigurer defaultLogoutWebflowConfigurer() {
         final DefaultLogoutWebflowConfigurer c = new DefaultLogoutWebflowConfigurer(builder(), loginFlowRegistry(),
             applicationContext, casProperties);
@@ -243,12 +246,13 @@ public class CasWebflowContextConfiguration {
     @ConditionalOnMissingBean(name = "groovyWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
+    @RefreshScope
+    @ConditionalOnProperty(name = "cas.webflow.groovy.location")
     public CasWebflowConfigurer groovyWebflowConfigurer() {
         final GroovyWebflowConfigurer c = new GroovyWebflowConfigurer(builder(), loginFlowRegistry(), applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry());
         return c;
     }
-
 
     @Autowired
     @Bean
