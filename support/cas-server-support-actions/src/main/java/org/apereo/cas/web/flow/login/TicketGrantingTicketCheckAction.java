@@ -13,13 +13,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Webflow action that checks whether the TGT in the request context is valid. There are three possible outcomes:
- *
- * <ol>
- * <li>{@link #NOT_EXISTS} - TGT not found in flow request context.</li>
- * <li>{@link #INVALID} TGT has expired or is not found in ticket registry.</li>
- * <li>{@link #VALID} - TGT found in ticket registry and has not expired.</li>
- * </ol>
+ * Webflow action that checks whether the TGT in the request context is valid.
  *
  * @author Marvin S. Addison
  * @since 4.0.0
