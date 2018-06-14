@@ -9,6 +9,8 @@ import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -51,7 +53,7 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
             }
 
             Arrays.stream(statistics).forEach(s -> {
-                Map<String, Object> map = new HashMap<>();
+                final Map<String, Object> map = new HashMap<>();
                 map.put("size", s.getSize());
                 map.put("capacity", s.getCapacity());
                 map.put("evictions", s.getEvictions());
