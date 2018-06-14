@@ -43,7 +43,7 @@ by [Spring Boot actuators](http://docs.spring.io/spring-boot/docs/current/refere
 
 Actuator endpoints provided by Spring Boot can also be visually managed and monitored via the [Spring Boot Administration Server](Configuring-Monitoring-Administration.html).
 
-<div class="alert alert-info"><strong>Use `/status/health` instead of `/status` </strong><p>Note that `/status` endpoint is kept for legacy reason. It is advised to use `/status/health` instead of `/status` for the purpose of general health status monitoring</p></div>
+<div class="alert alert-info"><strong>Use <code>/status/health</code> instead of <code>/status</code> </strong><p>Note that <code>/status</code> endpoint is kept for legacy reason. It is advised to use <code>/status/health</code> instead of <code>/status</code> for the purpose of general health status monitoring</p></div>
 
 ## Security
 
