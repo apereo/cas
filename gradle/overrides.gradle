@@ -9,9 +9,9 @@
  */
 ext["hibernateVersion"] = "5.3.1.Final"
 ext["springBootTomcatVersion"] = "9.0.8"
-ext["hazelcastVersion"] = "3.10.1"
+ext["hazelcastVersion"] = "3.10.2"
 ext["infinispanVersion"] = "9.1.1.Final"
-ext["springVersion"] = "5.0.6.RELEASE"
+ext["springVersion"] = "5.0.7.RELEASE"
 ext["jacksonDatabindVersion"] = "2.9.5"
 ext["thymeleafVersion"] = "3.0.9.RELEASE"
 ext["thymeleafDialectVersion"] = "2.3.0"

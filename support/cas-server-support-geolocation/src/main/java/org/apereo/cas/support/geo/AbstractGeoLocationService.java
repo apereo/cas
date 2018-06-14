@@ -60,7 +60,7 @@ public abstract class AbstractGeoLocationService implements GeoLocationService {
         } catch (final Exception e) {
             if (StringUtils.isNotBlank(ipStackAccessKey)) {
                 final var url = String.format("http://api.ipstack.com/%s?access_key=%s", address, ipStackAccessKey);
-                final HttpResponse response = HttpUtils.executeGet(url);
+                final var response = HttpUtils.executeGet(url);
                 if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                     final var result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                     final var infos = MAPPER.readValue(result, Map.class);
