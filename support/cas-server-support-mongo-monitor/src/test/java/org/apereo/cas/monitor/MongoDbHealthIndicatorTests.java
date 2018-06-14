@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -37,7 +38,6 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.Map;
-import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
 
@@ -93,11 +93,14 @@ public class MongoDbHealthIndicatorTests {
         final Health health = mongoHealthIndicator.health();
         assertEquals(Status.UP, health.getStatus());
         final Map<String, Object> details = health.getDetails();
-        assertTrue(details.containsKey("size"));
-        assertTrue(details.containsKey("capacity"));
-        assertTrue(details.containsKey("evictions"));
-        assertTrue(details.containsKey("percentFree"));
-        assertTrue(details.containsKey("name"));
+        details.values().stream()
+            .map(Map.class::cast)
+            .forEach(map -> {
+                assertTrue(map.containsKey("size"));
+                assertTrue(map.containsKey("capacity"));
+                assertTrue(map.containsKey("evictions"));
+                assertTrue(map.containsKey("percentFree"));
+            });
         assertNotNull(mongoHealthIndicator.toString());
     }
 }
