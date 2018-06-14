@@ -37,8 +37,9 @@ public class DefaultAcceptableUsagePolicyRepositoryTests {
             .thenReturn(CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("carLicense", "false")));
         final DefaultAcceptableUsagePolicyRepository repo = new DefaultAcceptableUsagePolicyRepository(support);
 
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         WebUtils.putTicketGrantingTicketInScopes(context, "TGT-12345");
-        
+
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casaup");
         assertFalse(repo.verify(context, c).getLeft());
         assertTrue(repo.submit(context, c));
