@@ -99,6 +99,8 @@ So in the example above, the returned "Value" statistic is the sum of the maximu
 "Compressed Class Space", and "Metaspace" areas of the heap. If you just wanted to see the maximum size for the "Metaspace", 
 you could add an additional `tag=id:Metaspace`, i.e. `/actuator/metrics/jvm.memory.max?tag=area:nonheap&tag=id:Metaspace`.
 
+<div class="alert alert-info"><strong>Use `/status/health` instead of `/status` </strong><p>Note that `/status` endpoint is kept for legacy reason. It is advised to use `/status/health` instead of `/status` for the purpose of general health status monitoring</p></div>
+
 ## Security
 
 TODO:
