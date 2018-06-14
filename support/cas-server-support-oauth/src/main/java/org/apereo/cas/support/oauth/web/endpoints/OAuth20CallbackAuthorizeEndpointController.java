@@ -17,6 +17,7 @@ import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.engine.DefaultCallbackLogic;
 import org.pac4j.core.http.adapter.J2ENopHttpActionAdapter;
 import org.pac4j.core.profile.ProfileManager;
@@ -64,6 +65,15 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL)
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) {
         final J2EContext context = new J2EContext(request, response, this.oauthConfig.getSessionStore());
+        if (context.getSessionStore().get(context, Pac4jConstants.REQUESTED_URL) == null) {
+            String oAuthAuthorizeUrl = casProperties.getServer().getPrefix()
+                    + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL;
+            final String currentQueryString  = request.getQueryString();
+            if (StringUtils.isNotBlank(currentQueryString)) {
+                oAuthAuthorizeUrl += "?" + currentQueryString;
+            }
+            context.getRequest().getSession(true).setAttribute(Pac4jConstants.REQUESTED_URL, oAuthAuthorizeUrl);
+        }
         final DefaultCallbackLogic callback = new DefaultCallbackLogic();
         callback.perform(context, oauthConfig, J2ENopHttpActionAdapter.INSTANCE,
             null, Boolean.TRUE, Boolean.FALSE,
