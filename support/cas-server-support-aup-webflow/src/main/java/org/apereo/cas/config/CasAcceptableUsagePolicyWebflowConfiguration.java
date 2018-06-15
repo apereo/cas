@@ -14,6 +14,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
@@ -32,6 +33,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("casAcceptableUsagePolicyWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnProperty(prefix = "cas.acceptableUsagePolicy", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Slf4j
 public class CasAcceptableUsagePolicyWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
 
