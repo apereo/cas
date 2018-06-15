@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +11,7 @@ import org.apereo.cas.ticket.BaseTicketSerializers;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.util.CollectionUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -18,8 +20,10 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -34,6 +38,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     private static final String FIELD_NAME_EXPIRE_AFTER_SECONDS = "expireAfterSeconds";
     private static final Query SELECT_ALL_NAMES_QUERY = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).regex(".+"));
+
+    private static final Set<String> MONGO_INDEX_KEYS = Collections.unmodifiableSet(CollectionUtils.wrapSet("v", "key", "name", "ns"));
 
     private final TicketCatalog ticketCatalog;
     private final MongoOperations mongoTemplate;
@@ -57,9 +63,33 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
         LOGGER.debug("Creating indices on collection [{}] to auto-expire documents...", collectionName);
         final DBCollection collection = mongoTemplate.getCollection(collectionName);
-        collection.createIndex(new BasicDBObject(TicketHolder.FIELD_NAME_EXPIRE_AT, 1),
-                new BasicDBObject(FIELD_NAME_EXPIRE_AFTER_SECONDS, ticket.getProperties().getStorageTimeout()));
+        final BasicDBObject indexKey = new BasicDBObject(TicketHolder.FIELD_NAME_EXPIRE_AT, 1);
+        final BasicDBObject indexOptions = new BasicDBObject(FIELD_NAME_EXPIRE_AFTER_SECONDS, ticket.getProperties().getStorageTimeout());
+        removeDifferingIndexIfAny(collection, indexKey, indexOptions);
+        collection.createIndex(indexKey, indexOptions);
         return collection;
+    }
+
+    /**
+     * Remove any index with the same indexKey but differing indexOptions in anticipation of recreating it.
+     * @param collection The collection to check the indexes of
+     * @param indexKey The key of the index to find
+     * @param indexOptions The options the new index with be created with
+     */
+    private void removeDifferingIndexIfAny(final DBCollection collection, final BasicDBObject indexKey, final BasicDBObject indexOptions) {
+        final List<DBObject> indexes = collection.getIndexInfo();
+        final boolean indexExistsWithDifferentOptions = indexes.stream()
+                .anyMatch(dbObject -> {
+                    final boolean keyMatches = dbObject.get("key").equals(indexKey);
+                    final boolean optionsMatch = indexOptions.entrySet().stream().allMatch(entry -> entry.getValue().equals(dbObject.get(entry.getKey())));
+                    final boolean noExtraOptions = dbObject.keySet().stream().allMatch(key -> MONGO_INDEX_KEYS.contains(key) || indexOptions.keySet().contains(key));
+
+                    return keyMatches && !(optionsMatch && noExtraOptions);
+                });
+        if (indexExistsWithDifferentOptions) {
+            LOGGER.debug("Removing MongoDb index [{}] from [{}] because it appears to already exist in a different form", indexKey, collection.getName());
+            collection.dropIndex(indexKey);
+        }
     }
 
     private void createTicketCollections() {
