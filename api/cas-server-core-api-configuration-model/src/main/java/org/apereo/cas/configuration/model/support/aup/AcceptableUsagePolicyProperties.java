@@ -45,6 +45,12 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     private MongoDb mongo = new MongoDb();
 
     /**
+     * AUP enabled allows AUP to be turned off on startup.
+     */
+    @RequiredProperty
+    private boolean enabled = true;
+
+    /**
      * AUP attribute to choose in order to determine whether policy
      * has been accepted or not.
      */
