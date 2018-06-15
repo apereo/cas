@@ -2999,6 +2999,13 @@ Store audit logs inside a MongoDb database.
 Common configuration settings for this feature are available 
 [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.audit`.
 
+### CouchDb Audits
+
+Store audit logs inside a CouchDb database.
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration)
+under the configuration key `cas.audit`.
+
 ### Couchbase Audits
 
 Store audit logs inside a Couchbase database.
