@@ -4187,6 +4187,10 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 
  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.consent`.
 
+### CouchDb Attribute Consent
+
+ Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.consent`.
+
 ### REST Attribute Consent
 
 ```properties
