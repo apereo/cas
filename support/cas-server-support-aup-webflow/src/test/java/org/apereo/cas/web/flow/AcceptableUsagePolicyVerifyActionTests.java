@@ -34,6 +34,7 @@ public class AcceptableUsagePolicyVerifyActionTests extends BaseAcceptableUsageP
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         WebUtils.putTicketGrantingTicketInScopes(context, new MockTicketGrantingTicket("casuser"));
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         assertEquals(AcceptableUsagePolicyVerifyAction.EVENT_ID_MUST_ACCEPT, acceptableUsagePolicyVerifyAction.execute(context).getId());
     }
 }
