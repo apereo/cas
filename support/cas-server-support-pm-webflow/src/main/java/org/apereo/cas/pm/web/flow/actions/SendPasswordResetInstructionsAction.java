@@ -27,14 +27,14 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
     /** Param name for the token. */
     public static final String PARAMETER_NAME_TOKEN = "pswdrst";
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(SendPasswordResetInstructionsAction.class);
+    protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private CasConfigurationProperties casProperties;
+    protected CasConfigurationProperties casProperties;
 
-    private final CommunicationsManager communicationsManager;
+    protected final CommunicationsManager communicationsManager;
 
-    private final PasswordManagementService passwordManagementService;
+    protected final PasswordManagementService passwordManagementService;
 
     public SendPasswordResetInstructionsAction(final CommunicationsManager communicationsManager, 
                                                final PasswordManagementService passwordManagementService) {

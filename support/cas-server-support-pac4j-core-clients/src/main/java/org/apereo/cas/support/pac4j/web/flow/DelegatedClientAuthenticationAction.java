@@ -88,15 +88,15 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DelegatedClientAuthenticationAction.class);
 
-    private static final Pattern PAC4J_CLIENT_SUFFIX_PATTERN = Pattern.compile("Client\\d*");
-    private static final Pattern PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN = Pattern.compile("\\W");
+    protected static final Pattern PAC4J_CLIENT_SUFFIX_PATTERN = Pattern.compile("Client\\d*");
+    protected static final Pattern PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN = Pattern.compile("\\W");
 
-    private final Clients clients;
-    private final AuthenticationSystemSupport authenticationSystemSupport;
-    private final CentralAuthenticationService centralAuthenticationService;
-    private final String themeParamName;
-    private final String localParamName;
-    private final boolean autoRedirect;
+    protected final Clients clients;
+    protected final AuthenticationSystemSupport authenticationSystemSupport;
+    protected final CentralAuthenticationService centralAuthenticationService;
+    protected final String themeParamName;
+    protected final String localParamName;
+    protected final boolean autoRedirect;
 
     public DelegatedClientAuthenticationAction(
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
@@ -269,7 +269,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      *
      * @param name Name of the provider
      */
-    private String getCssClass(final String name) {
+    protected String getCssClass(final String name) {
         String computedCssClass = "fa fa-lock";
         if (name != null) {
             computedCssClass = computedCssClass.concat(" " + PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN.matcher(name).replaceAll("-"));
@@ -285,7 +285,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @param session The HTTP session
      * @param name    The name of the parameter
      */
-    private static void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session, final String name) {
+    protected static void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session, final String name) {
         final String value = (String) session.getAttribute(name);
         request.setAttribute(name, value);
     }
@@ -297,14 +297,14 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @param session The HTTP session
      * @param name    The name of the parameter
      */
-    private static void saveRequestParameter(final HttpServletRequest request, final HttpSession session, final String name) {
+    protected static void saveRequestParameter(final HttpServletRequest request, final HttpSession session, final String name) {
         final String value = request.getParameter(name);
         if (value != null) {
             session.setAttribute(name, value);
         }
     }
 
-    private Event stopWebflow() {
+    protected Event stopWebflow() {
         return new Event(this, STOP);
     }
 
