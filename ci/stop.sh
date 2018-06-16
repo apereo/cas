@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker kill $(docker ps -q) >/dev/null
-docker rm $(docker ps -a -q) >/dev/null
-docker rmi $(docker images -q) >/dev/null
+docker kill $(docker ps -q) >/dev/null 2>&1
+docker rm $(docker ps -a -q) >/dev/null 2>&1
+docker rmi $(docker images -q) >/dev/null 2>&1
 
