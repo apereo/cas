@@ -16,6 +16,7 @@ import org.ektorp.support.CouchDbDocument;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @NoArgsConstructor
 public class RegisteredServiceDocument extends CouchDbDocument {
+    private static final long serialVersionUID = -6787906520673248670L;
     private RegisteredService service;
 
     public RegisteredServiceDocument(final RegisteredService service) {

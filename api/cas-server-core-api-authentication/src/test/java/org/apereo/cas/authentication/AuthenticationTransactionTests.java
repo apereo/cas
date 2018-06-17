@@ -24,17 +24,22 @@ public class AuthenticationTransactionTests {
         assertTrue(transaction.hasCredentialOfType(TestCredentialType2.class));
     }
 
-    private abstract static class BaseTestCredential implements Credential {
+    public abstract static class BaseTestCredential implements Credential {
+        private static final long serialVersionUID = -6933725969701066361L;
     }
 
-    private static class TestCredentialType1 extends BaseTestCredential {
+    public static class TestCredentialType1 extends BaseTestCredential {
+        private static final long serialVersionUID = -2785558255024055757L;
+
         @Override
         public String getId() {
             return null;
         }
     }
 
-    private static class TestCredentialType2 implements Credential {
+    public static class TestCredentialType2 implements Credential {
+        private static final long serialVersionUID = -4137096818705980020L;
+
         @Override
         public String getId() {
             return null;
