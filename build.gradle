@@ -282,10 +282,12 @@ subprojects {
 
     tasks.withType(Test) {
         exclude "**/Abstract*.*", "**/Base*.*"
+        include "**/*Tests.*"
         enabled = !Boolean.getBoolean("skipTests")
         scanForTestClasses = false
         ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
         maxParallelForks = 1
+        failFast = true
         jvmArgs "-Xmx1024m"
         classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
         testLogging {
@@ -585,4 +587,7 @@ tasks.coveralls {
     group = "Coverage reports"
     description = "Uploads the aggregated coverage report to Coveralls"
     dependsOn jacocoRootReport
+    doFirst {
+        println "Starting to run coveralls"
+    }
 }
