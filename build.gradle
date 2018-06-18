@@ -253,7 +253,7 @@ subprojects {
         }
     }
 
-    task testAll(type: Test) {
+    task testAll() {
         dependsOn {
             tasks.findAll {task -> task.name.startsWith('test') && task.name != "testAll"}
         }
