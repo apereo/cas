@@ -282,7 +282,6 @@ subprojects {
 
     tasks.withType(Test) {
         exclude "**/Abstract*.*", "**/Base*.*"
-        include "**/*Tests.*"
         enabled = !Boolean.getBoolean("skipTests")
         scanForTestClasses = false
         ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
