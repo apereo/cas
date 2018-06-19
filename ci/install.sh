@@ -93,7 +93,7 @@ elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     elif [ "$MATRIX_SERVER" == "REDIS" ]; then
         gradleBuild="$gradleBuild testRedis  "
     fi
-    gradleBuild="$gradleBuild coveralls --parallel -DMATRIX_SERVER=$MATRIX_SERVER -x javadoc -x check \
+    gradleBuild="$gradleBuild coveralls -DMATRIX_SERVER=$MATRIX_SERVER -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 elif [ "$MATRIX_JOB_TYPE" == "DEPANALYZE" ]; then
