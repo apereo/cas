@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.subject;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
@@ -60,15 +61,9 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
                                  final String binding) throws SamlException {
 
         final Assertion assertion = Assertion.class.cast(casAssertion);
-
-
         final ZonedDateTime validFromDate = ZonedDateTime.ofInstant(assertion.getValidFromDate().toInstant(), ZoneOffset.UTC);
 
-        final AssertionConsumerService acs = adaptor.getAssertionConsumerService(binding);
-        if (acs == null) {
-            throw new IllegalArgumentException("Failed to locate the assertion consumer service url for binding " + binding);
-        }
-
+        final AssertionConsumerService acs = SamlIdPUtils.determineAssertionConsumerService(authnRequest, adaptor, binding);
         final String location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
         if (StringUtils.isBlank(location)) {
             LOGGER.warn("Subject recipient is not defined from either authentication request or metadata for [{}]", adaptor.getEntityId());
