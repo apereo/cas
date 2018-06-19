@@ -24,7 +24,6 @@ import org.junit.Test;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.oauth.client.FacebookClient;
-import org.pac4j.oauth.client.TwitterClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -85,8 +84,7 @@ public class DelegatedClientAuthenticationActionTests {
         mockRequestContext.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService(MY_SERVICE));
 
         final FacebookClient facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
-        final TwitterClient twitterClient = new TwitterClient("3nJPbVTVRZWAyUgoUKQ8UA", "h6LZyZJmcW46Vu8R47MYfeXTSYGI30EqnWaSwVhFkbA");
-        final Clients clients = new Clients(MY_LOGIN_URL, facebookClient, twitterClient);
+        final Clients clients = new Clients(MY_LOGIN_URL, facebookClient);
 
         final CasDelegatingWebflowEventResolver initialResolver = mock(CasDelegatingWebflowEventResolver.class);
         when(initialResolver.resolveSingle(any())).thenReturn(new Event(this, "success"));
@@ -110,7 +108,7 @@ public class DelegatedClientAuthenticationActionTests {
                 flowScope.get(DelegatedClientAuthenticationAction.PAC4J_URLS);
 
         assertFalse(urls.isEmpty());
-        assertSame(2, urls.size());
+        assertSame(1, urls.size());
     }
 
     @Test
