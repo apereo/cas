@@ -30,7 +30,7 @@ import java.util.Objects;
  */
 @Slf4j
 @AllArgsConstructor
-public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLoader<SamlRegisteredService, MetadataResolver> {
+public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLoader<RegisteredServiceCacheKey, MetadataResolver> {
 
     /**
      * The Config bean.
@@ -47,26 +47,33 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
     @Override
     @Synchronized
     @SneakyThrows
-    public ChainingMetadataResolver load(final SamlRegisteredService service) {
+    public ChainingMetadataResolver load(final RegisteredServiceCacheKey cacheKey) {
 
         final ChainingMetadataResolver metadataResolver = new ChainingMetadataResolver();
         final List<MetadataResolver> metadataResolvers = new ArrayList<>();
 
+        final SamlRegisteredService service = cacheKey.getRegisteredService();
         final Collection<SamlRegisteredServiceMetadataResolver> availableResolvers = this.metadataResolutionPlan.getRegisteredMetadataResolvers();
+        LOGGER.debug("There are [{}] metadata resolver(s) available in the chain", availableResolvers.size());
         availableResolvers
             .stream()
             .filter(Objects::nonNull)
-            .filter(r -> r.supports(service))
-            .map(r -> r.resolve(service))
+            .filter(r -> {
+                LOGGER.debug("Evaluating whether metadata resolver [{}] can support service [{}]", r.getName(), service.getName());
+                return r.supports(service);
+            })
+            .map(r -> {
+                LOGGER.debug("Metadata resolver [{}] has started to process metadata for [{}]", r.getName(), service.getName());
+                return r.resolve(service);
+            })
             .forEach(metadataResolvers::addAll);
 
         if (metadataResolvers.isEmpty()) {
             throw new SamlException("No metadata resolvers could be configured for service " + service.getName()
                 + " with metadata location " + service.getMetadataLocation());
         }
-
-
         metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
+        LOGGER.debug("There are [{}] eligible metadata resolver(s) for this request", availableResolvers.size());
         metadataResolver.setResolvers(metadataResolvers);
         metadataResolver.initialize();
 
