@@ -1,24 +1,23 @@
 package org.apereo.cas.support.saml.mdui;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.XSURI;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
+import org.opensaml.saml.saml2.metadata.LocalizedName;
+import org.opensaml.saml.saml2.metadata.LocalizedURI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.opensaml.saml.saml2.metadata.LocalizedName;
-
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link SamlMetadataUIInfo}.
@@ -47,7 +46,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      * Instantiates a new Simple metadata uI info.
      *
      * @param registeredService the registered service
-     * @param locale browser preferred language
+     * @param locale            browser preferred language
      */
     public SamlMetadataUIInfo(final RegisteredService registeredService, final String locale) {
         this(null, registeredService);
@@ -109,7 +108,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
         final List<Logo> list = new ArrayList<>();
         if (this.uiInfo != null) {
             list.addAll(this.uiInfo.getLogos().stream().map(l -> new Logo(l.getURL(), l.getHeight(),
-                    l.getWidth())).collect(Collectors.toList()));
+                l.getWidth())).collect(Collectors.toList()));
         }
         return list;
     }
@@ -216,7 +215,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      * Gets localized values.
      *
      * @param locale browser preferred language
-     * @param items the items
+     * @param items  the items
      * @return the string value
      */
     private String getLocalizedValues(final String locale, final List<?> items) {
@@ -247,8 +246,19 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
         LOGGER.trace("Locale [en] not found.");
 
         if (!items.isEmpty()) {
-            LOGGER.trace("Loading first available locale [{}]", ((LocalizedName) items.get(0)).getValue());
-            return ((XSString) items.get(0)).getValue();
+            final Object item = items.get(0);
+            String value = StringUtils.EMPTY;
+            if (item instanceof LocalizedName) {
+                value = ((LocalizedName) item).getValue();
+            }
+            if (item instanceof LocalizedURI) {
+                value = ((LocalizedURI) item).getValue();
+            }
+            if (item instanceof XSString) {
+                value = ((XSString) item).getValue();
+            }
+            LOGGER.trace("Loading first available locale [{}]", value);
+            return value;
         }
         return null;
     }
@@ -256,11 +266,11 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .append("displayName", getDisplayName())
-                .append("description", getDescription())
-                .append("informationUrl", getInformationURL())
-                .append("privacyStatementUrl", getPrivacyStatementURL())
-                .toString();
+            .appendSuper(super.toString())
+            .append("displayName", getDisplayName())
+            .append("description", getDescription())
+            .append("informationUrl", getInformationURL())
+            .append("privacyStatementUrl", getPrivacyStatementURL())
+            .toString();
     }
 }

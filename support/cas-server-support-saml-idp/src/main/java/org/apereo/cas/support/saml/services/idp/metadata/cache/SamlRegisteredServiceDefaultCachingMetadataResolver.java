@@ -19,18 +19,16 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlRegisteredServiceDefaultCachingMetadataResolver.class);
     private static final int MAX_CACHE_SIZE = 10_000;
 
-    private final long metadataCacheExpirationMinutes;
     private final SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;
-    private final LoadingCache<SamlRegisteredService, MetadataResolver> cache;
+    private final LoadingCache<RegisteredServiceCacheKey, MetadataResolver> cache;
 
     public SamlRegisteredServiceDefaultCachingMetadataResolver(final long metadataCacheExpirationMinutes,
                                                                final SamlRegisteredServiceMetadataResolverCacheLoader loader) {
-        this.metadataCacheExpirationMinutes = metadataCacheExpirationMinutes;
         this.chainingMetadataResolverCacheLoader = loader;
         this.cache = Caffeine.newBuilder()
-                .maximumSize(MAX_CACHE_SIZE)
-                .expireAfter(new SamlRegisteredServiceMetadataExpirationPolicy(metadataCacheExpirationMinutes))
-                .build(this.chainingMetadataResolverCacheLoader);
+            .maximumSize(MAX_CACHE_SIZE)
+            .expireAfter(new SamlRegisteredServiceMetadataExpirationPolicy(metadataCacheExpirationMinutes))
+            .build(this.chainingMetadataResolverCacheLoader);
     }
 
     @Override
@@ -38,16 +36,19 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
         MetadataResolver resolver = null;
         try {
             LOGGER.debug("Resolving metadata for [{}] at [{}].", service.getName(), service.getMetadataLocation());
-            resolver = this.cache.get(service);
+            final RegisteredServiceCacheKey k = new RegisteredServiceCacheKey(service);
+            LOGGER.debug("Locating cached metadata resolver using key [{}] for service [{}]", k.getId(), service.getName());
+            resolver = this.cache.get(k);
+
             return resolver;
         } catch (final Exception e) {
             throw new IllegalArgumentException("Metadata resolver could not be located from metadata "
-                    + service.getMetadataLocation(), e);
+                + service.getMetadataLocation(), e);
         } finally {
             if (resolver != null) {
                 LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}]",
-                        resolver.getId(),
-                        service.getMetadataLocation());
+                    resolver.getId(),
+                    service.getMetadataLocation());
             }
         }
     }

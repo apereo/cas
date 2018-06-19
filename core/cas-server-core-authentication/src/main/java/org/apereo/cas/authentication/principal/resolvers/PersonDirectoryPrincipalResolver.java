@@ -60,7 +60,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     public PersonDirectoryPrincipalResolver() {
         this(new StubPersonAttributeDao(new HashMap<>()), new DefaultPrincipalFactory(),
-                false, formUserId -> formUserId, null
+                false, String::trim, null
         );
     }
     
@@ -74,7 +74,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     public PersonDirectoryPrincipalResolver(final boolean returnNullIfNoAttributes, final String principalAttributeName) {
         this(new StubPersonAttributeDao(new HashMap<>()), new DefaultPrincipalFactory(),
-                returnNullIfNoAttributes, formUserId -> formUserId, principalAttributeName
+                returnNullIfNoAttributes, String::trim, principalAttributeName
         );
     }
 
