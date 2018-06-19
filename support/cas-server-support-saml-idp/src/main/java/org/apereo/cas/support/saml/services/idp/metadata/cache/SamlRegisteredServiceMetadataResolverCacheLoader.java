@@ -25,7 +25,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLoader<SamlRegisteredService, MetadataResolver> {
+public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLoader<RegisteredServiceCacheKey, MetadataResolver> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlRegisteredServiceMetadataResolverCacheLoader.class);
 
     /**
@@ -52,14 +52,22 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
     }
 
     @Override
-    public ChainingMetadataResolver load(final SamlRegisteredService service) {
+    public ChainingMetadataResolver load(final RegisteredServiceCacheKey cacheKey) {
         try {
             final ChainingMetadataResolver metadataResolver = new ChainingMetadataResolver();
             final List<MetadataResolver> metadataResolvers = new ArrayList<>();
-            
+            final SamlRegisteredService service = cacheKey.getRegisteredService();
+
+            LOGGER.debug("There are [{}] metadata resolver(s) available in the chain", availableResolvers.size());
             this.availableResolvers.stream()
-                    .filter(r -> r.supports(service))
-                    .map(r -> r.resolve(service))
+                    .filter(r -> {
+                        LOGGER.debug("Evaluating whether metadata resolver [{}] can support service [{}]", r.getName(), service.getName());
+                        return r.supports(service);
+                    })
+                    .map(r -> {
+                        LOGGER.debug("Metadata resolver [{}] has started to process metadata for [{}]", r.getName(), service.getName());
+                        return r.resolve(service);
+                    })
                     .forEach(metadataResolvers::addAll);
 
             if (metadataResolvers.isEmpty()) {
@@ -70,6 +78,8 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
             synchronized (this.lock) {
                 metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
                 metadataResolver.setResolvers(metadataResolvers);
+
+                LOGGER.debug("There are [{}] eligible metadata resolver(s) for this request", availableResolvers.size());
                 metadataResolver.initialize();
             }
             return metadataResolver;

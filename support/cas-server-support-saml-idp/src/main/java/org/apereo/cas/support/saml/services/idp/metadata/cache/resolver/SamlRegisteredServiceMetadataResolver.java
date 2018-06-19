@@ -28,4 +28,11 @@ public interface SamlRegisteredServiceMetadataResolver {
      * @return the boolean
      */
     boolean supports(SamlRegisteredService service);
+
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    String getName();
 }

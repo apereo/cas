@@ -180,4 +180,9 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
                     service.getMetadataLocation());
         }
     }
+
+    @Override
+    public String getName() {
+        return getClass().getSimpleName();
+    }
 }

@@ -2,6 +2,7 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.util.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +19,7 @@ import java.util.List;
 public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractArgumentExtractor.class);
-    
+
     /**
      * The factory responsible for creating service objects based on the arguments extracted.
      */
@@ -58,7 +59,7 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
         if (service == null) {
             LOGGER.debug("Extractor did not generate service.");
         } else {
-            LOGGER.debug("Extractor generated service type [{}] for: [{}]", service.getClass().getName(), service.getId());
+            LOGGER.debug("Extractor generated service type [{}] for: [{}]", service.getClass().getName(), DigestUtils.abbreviate(service.getId()));
         }
 
         return service;
@@ -71,10 +72,6 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
      * @return the web application service
      */
     protected abstract WebApplicationService extractServiceInternal(HttpServletRequest request);
-
-    public ServiceFactory<? extends WebApplicationService> getServiceFactory() {
-        return this.serviceFactoryList.get(0);
-    }
 
     @Override
     public List<ServiceFactory<? extends WebApplicationService>> getServiceFactories() {

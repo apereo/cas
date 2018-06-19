@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<SamlRegisteredService, MetadataResolver> {
+public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<RegisteredServiceCacheKey, MetadataResolver> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlRegisteredServiceMetadataExpirationPolicy.class);
 
     private final long defaultExpiration;
@@ -32,9 +32,10 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
     }
 
     @Override
-    public long expireAfterCreate(@Nonnull final SamlRegisteredService service,
+    public long expireAfterCreate(@Nonnull final RegisteredServiceCacheKey key,
                                   @Nonnull final MetadataResolver chainingMetadataResolver,
                                   final long currentTime) {
+        final SamlRegisteredService service = key.getRegisteredService();
         final long duration = getCacheDurationForServiceProvider(service, chainingMetadataResolver);
         if (duration >= 0) {
             return duration;
@@ -50,6 +51,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
 
     private long getCacheDurationForServiceProvider(final SamlRegisteredService service, final MetadataResolver chainingMetadataResolver) {
         try {
+            LOGGER.debug("Attempting to locate cache duration for entity id [{}] and SPSSODescriptor in metadata", service.getServiceId());
             final CriteriaSet set = new CriteriaSet();
             set.add(new EntityIdCriterion(service.getServiceId()));
             set.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
@@ -61,6 +63,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
 
             set.clear();
             set.add(new EntityIdCriterion(service.getServiceId()));
+            LOGGER.debug("Attempting to locate cache duration for entity id [{}] in metadata", service.getServiceId());
             final EntityDescriptor entity = chainingMetadataResolver.resolveSingle(set);
             if (entity.getCacheDuration() != null) {
                 LOGGER.debug("Located cache duration [{}] specified in entity metadata for [{}]", entity.getCacheDuration(), entity.getEntityID());
@@ -73,16 +76,18 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
     }
 
     @Override
-    public long expireAfterUpdate(@Nonnull final SamlRegisteredService service,
+    public long expireAfterUpdate(@Nonnull final RegisteredServiceCacheKey service,
                                   @Nonnull final MetadataResolver chainingMetadataResolver,
                                   final long currentTime, final long currentDuration) {
+        LOGGER.debug("Cache expiration duration after updates is set to [{}]", currentDuration);
         return currentDuration;
     }
 
     @Override
-    public long expireAfterRead(@Nonnull final SamlRegisteredService service,
+    public long expireAfterRead(@Nonnull final RegisteredServiceCacheKey service,
                                 @Nonnull final MetadataResolver chainingMetadataResolver,
                                 final long currentTime, final long currentDuration) {
+        LOGGER.debug("Cache expiration duration after reads is set to [{}]", currentDuration);
         return currentDuration;
     }
 }
