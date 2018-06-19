@@ -20,7 +20,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
     private static final int MAX_CACHE_SIZE = 10_000;
 
     private final SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;
-    private final LoadingCache<SamlRegisteredService, MetadataResolver> cache;
+    private final LoadingCache<RegisteredServiceCacheKey, MetadataResolver> cache;
 
     public SamlRegisteredServiceDefaultCachingMetadataResolver(final long metadataCacheExpirationMinutes,
                                                                final SamlRegisteredServiceMetadataResolverCacheLoader loader) {
@@ -36,7 +36,9 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
         MetadataResolver resolver = null;
         try {
             LOGGER.debug("Resolving metadata for [{}] at [{}].", service.getName(), service.getMetadataLocation());
-            resolver = this.cache.get(service);
+            final RegisteredServiceCacheKey k = new RegisteredServiceCacheKey(service);
+            LOGGER.debug("Locating cached metadata resolver using key [{}] for service [{}]", k.getId(), service.getName());
+            resolver = this.cache.get(k);
             return resolver;
         } finally {
             if (resolver != null) {

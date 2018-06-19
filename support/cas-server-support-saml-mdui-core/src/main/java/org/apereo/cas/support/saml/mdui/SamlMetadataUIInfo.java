@@ -11,6 +11,7 @@ import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.XSURI;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.saml2.metadata.LocalizedName;
+import org.opensaml.saml.saml2.metadata.LocalizedURI;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -213,8 +214,19 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
         }
 
         if (!items.isEmpty()) {
-            LOGGER.trace("Loading first available locale [{}]", ((LocalizedName) items.get(0)).getValue());
-            return ((XSString) items.get(0)).getValue();
+            final Object item = items.get(0);
+            String value = StringUtils.EMPTY;
+            if (item instanceof LocalizedName) {
+                value = ((LocalizedName) item).getValue();
+            }
+            if (item instanceof LocalizedURI) {
+                value = ((LocalizedURI) item).getValue();
+            }
+            if (item instanceof XSString) {
+                value = ((XSString) item).getValue();
+            }
+            LOGGER.trace("Loading first available locale [{}]", value);
+            return value;
         }
         return null;
     }
