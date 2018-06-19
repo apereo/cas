@@ -253,12 +253,6 @@ subprojects {
         }
     }
 
-    task testAll() {
-        dependsOn {
-            tasks.findAll {task -> task.name.startsWith('test') && task.name != "testAll"}
-        }
-    }
-
     test {
         include "**/*Tests.*"
         useJUnit {
