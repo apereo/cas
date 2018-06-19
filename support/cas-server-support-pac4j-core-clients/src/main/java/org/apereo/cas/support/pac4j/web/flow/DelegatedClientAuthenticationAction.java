@@ -88,14 +88,37 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DelegatedClientAuthenticationAction.class);
 
-    protected static final Pattern PAC4J_CLIENT_SUFFIX_PATTERN = Pattern.compile("Client\\d*");
-    protected static final Pattern PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN = Pattern.compile("\\W");
+    private static final Pattern PAC4J_CLIENT_SUFFIX_PATTERN = Pattern.compile("Client\\d*");
+    private static final Pattern PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN = Pattern.compile("\\W");
 
+    /**
+     * All defined pac4j clients for authentication delegation.
+     */
     protected final Clients clients;
+
+    /**
+     * The authentication service.
+     */
     protected final AuthenticationSystemSupport authenticationSystemSupport;
+
+    /**
+     * The authentication service for tickets.
+     */
     protected final CentralAuthenticationService centralAuthenticationService;
+
+    /**
+     * The theme parameter name.
+     */
     protected final String themeParamName;
+
+    /**
+     * The locale parameter name.
+     */
     protected final String localParamName;
+
+    /**
+     * Whether we should perform a redirection automatically to the provider.
+     */
     protected final boolean autoRedirect;
 
     public DelegatedClientAuthenticationAction(
@@ -268,6 +291,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * Get a valid CSS class for the given provider name.
      *
      * @param name Name of the provider
+     * @return the computed CSS for the given provider
      */
     protected String getCssClass(final String name) {
         String computedCssClass = "fa fa-lock";
@@ -304,6 +328,11 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         }
     }
 
+    /**
+     * Returns the event to stop the webflow.
+     *
+     * @return the event to stop the webflow
+     */
     protected Event stopWebflow() {
         return new Event(this, STOP);
     }

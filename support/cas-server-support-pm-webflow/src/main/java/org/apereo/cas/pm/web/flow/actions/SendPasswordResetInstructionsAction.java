@@ -27,13 +27,22 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
     /** Param name for the token. */
     public static final String PARAMETER_NAME_TOKEN = "pswdrst";
     
-    protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
+    /**
+     * The CAS configuration properties.
+     */
     @Autowired
     protected CasConfigurationProperties casProperties;
 
+    /**
+     * The communication manager for SMS/emails.
+     */
     protected final CommunicationsManager communicationsManager;
 
+    /**
+     * The password management service.
+     */
     protected final PasswordManagementService passwordManagementService;
 
     public SendPasswordResetInstructionsAction(final CommunicationsManager communicationsManager, 
@@ -45,31 +54,31 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         if (!communicationsManager.isMailSenderDefined()) {
-            LOGGER.warn("CAS is unable to send password-reset emails given no settings are defined to account for email servers");
+            logger.warn("CAS is unable to send password-reset emails given no settings are defined to account for email servers");
             return error();
         }
         final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         final String username = request.getParameter("username");
         if (StringUtils.isBlank(username)) {
-            LOGGER.warn("No username is provided");
+            logger.warn("No username is provided");
             return error();
         }
 
         final String to = passwordManagementService.findEmail(username);
         if (StringUtils.isBlank(to)) {
-            LOGGER.warn("No recipient is provided");
+            logger.warn("No recipient is provided");
             return error();
         }
         
         final String url = buildPasswordResetUrl(username, passwordManagementService, casProperties);
-        
-        LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url,
+
+        logger.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url,
                 pm.getReset().getExpirationMinutes());
         if (sendPasswordResetEmailToAccount(to, url)) {
             return success();
         }
-        LOGGER.error("Failed to notify account [{}]", to);
+        logger.error("Failed to notify account [{}]", to);
         return error();
     }
 
