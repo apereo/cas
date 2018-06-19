@@ -11,12 +11,14 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import lombok.ToString;
 import lombok.Setter;
 
@@ -58,13 +60,15 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> principal, final Optional<AuthenticationHandler> handler) {
         final List<Principal> principals = new ArrayList<>();
-        chain.stream().filter(resolver -> resolver.supports(credential)).forEach(resolver -> {
-            LOGGER.debug("Invoking principal resolver [{}]", resolver);
-            final Principal p = resolver.resolve(credential, principal, handler);
-            if (p != null) {
-                principals.add(p);
-            }
-        });
+        chain.stream()
+            .filter(resolver -> resolver.supports(credential))
+            .forEach(resolver -> {
+                LOGGER.debug("Invoking principal resolver [{}]", resolver);
+                final Principal p = resolver.resolve(credential, principal, handler);
+                if (p != null) {
+                    principals.add(p);
+                }
+            });
         if (principals.isEmpty()) {
             LOGGER.warn("None of the principal resolvers in the chain were able to produce a principal");
             return NullPrincipal.getInstance();
@@ -80,13 +84,17 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
                 }
             }
         });
-        final long count = principals.stream().map(p -> p.getId().trim().toLowerCase()).distinct().collect(Collectors.toSet()).size();
+        final int count = principals
+            .stream()
+            .map(p -> p.getId().trim().toLowerCase())
+            .collect(Collectors.toSet())
+            .size();
         if (count > 1) {
             throw new PrincipalException("Resolved principals by the chain are not unique because principal resolvers have produced CAS principals "
                 + "with different identifiers which typically is the result of a configuration issue.",
                 new HashMap<>(0), new HashMap<>(0));
         }
-        final String principalId = principal.isPresent() ? principal.get().getId() : principals.get(0).getId();
+        final String principalId = principal.isPresent() ? principal.get().getId() : principals.get(count - 1).getId();
         final Principal finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
         LOGGER.debug("Final principal constructed by the chain of resolvers is [{}]", finalPrincipal);
         return finalPrincipal;
