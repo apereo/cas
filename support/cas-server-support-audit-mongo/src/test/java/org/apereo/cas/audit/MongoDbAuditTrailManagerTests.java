@@ -58,13 +58,14 @@ public class MongoDbAuditTrailManagerTests {
 
     @Test
     public void verify() {
-        final Date since = DateTimeUtils.dateOf(LocalDate.now().minusDays(2));
+        final LocalDate twoDaysAgo = LocalDate.now().minusDays(2);
+        final Date since = DateTimeUtils.dateOf(twoDaysAgo);
         final AuditActionContext ctx = new AuditActionContext("casuser", "resource",
             "action", "appcode", since, "clientIp",
             "serverIp");
         auditTrailExecutionPlan.record(ctx);
 
-        final Set results = auditTrailExecutionPlan.getAuditRecordsSince(LocalDate.now());
+        final Set results = auditTrailExecutionPlan.getAuditRecordsSince(twoDaysAgo);
         assertFalse(results.isEmpty());
     }
 }
