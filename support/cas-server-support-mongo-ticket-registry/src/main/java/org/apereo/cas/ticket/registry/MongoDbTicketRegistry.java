@@ -30,8 +30,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class MongoDbTicketRegistry extends AbstractTicketRegistry {
-
-
     private static final String FIELD_NAME_EXPIRE_AFTER_SECONDS = "expireAfterSeconds";
     private static final Query SELECT_ALL_NAMES_QUERY = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).regex(".+"));
 
