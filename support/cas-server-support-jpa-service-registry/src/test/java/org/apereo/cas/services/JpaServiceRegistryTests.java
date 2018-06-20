@@ -151,12 +151,9 @@ public class JpaServiceRegistryTests {
         r.setProperties(propertyMap);
 
         this.serviceRegistry.save(r);
-
         final var r2 = this.serviceRegistry.load().get(0);
         assertEquals(2, r2.getProperties().size());
-
     }
-
 
     @Test
     public void verifyRegisteredServiceContacts() {
