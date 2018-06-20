@@ -92,22 +92,28 @@ jobs:
   include:
   - stage: initialize
     script: ./gradlew downloadDependencies --parallel --stacktrace --configure-on-demand
+    ##############################
   - stage: publish
     if: type IN (push)
     script: ./ci/install.sh
     env:
       - MATRIX_JOB_TYPE=SNAPSHOT
+    ##############################
   - stage: build
     script: ./ci/install.sh
     env:
       - MATRIX_JOB_TYPE=BUILD
+    ##############################
   - stage: analysis
-    script:
-    - export MATRIX_JOB_TYPE=STYLE
-    - ./ci/install.sh
-    script:
-    - export MATRIX_JOB_TYPE=DEPANALYZE
-    - ./ci/install.sh
+    script: ./ci/install.sh
+    env:
+    - MATRIX_JOB_TYPE=STYLE
+  - stage: analysis
+    script: ./ci/install.sh
+    env:
+    - MATRIX_JOB_TYPE=DEPANALYZE
+    ##############################
+
 #  - stage: test
 #    env:
 #      - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=NONE
