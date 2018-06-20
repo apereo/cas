@@ -68,15 +68,22 @@ jobs:
   include:
   - stage: initialize
     script: ./ci/download-dependencies.sh
+    ############################################
   - stage: publish
     script: ./ci/publish-snapshots.sh
+    ############################################
   - stage: build
     script: ./ci/build.sh
+    ############################################
   - stage: analysis
     script: ./ci/analyze-style.sh
+  - stage: analysis
     script: ./ci/analyze-dependencies.sh
+    ############################################
   - stage: docs
     script: ./ci/build-javadocs.sh
+  - stage: docs
     script: ./ci/build-config-metadata.sh
+    ############################################
   - stage: dependencies
     script: ./ci/report-dependency-updates.sh
