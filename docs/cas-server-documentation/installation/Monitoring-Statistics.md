@@ -33,6 +33,7 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `prometheus`              | Exposes metrics in a format that can be scraped by a Prometheus server.
 
  The following endpoints are provided by CAS:
+
  
 | URL                       | Description
 |---------------------------|-------------------------------------------------------------------------------------
@@ -57,6 +58,8 @@ Other endpoints need to be explicitly enabled and then exposed over the web in C
 
 Actuator endpoints provided by Spring Boot can also be visually managed and monitored
  via the [Spring Boot Administration Server](Configuring-Monitoring-Administration.html).
+<div class="alert alert-info"><strong>Obtaining Health Info</strong><p>Note that <code>/status</code> endpoint is kept mostly 
+as a legacy endpoint. If you wish to obtain health status of each monitor in detail, we recommend the <code>/status/health</code> endpoint instead.</p></div>
  
 ### Attribute Release Endpoint
 

@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @since 5.2.0
  */
 @Slf4j
-public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<SamlRegisteredService, MetadataResolver> {
+public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<RegisteredServiceCacheKey, MetadataResolver> {
     private final long defaultExpiration;
 
     public SamlRegisteredServiceMetadataExpirationPolicy(final long metadataCacheExpirationMinutes) {
@@ -28,10 +28,10 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
     }
 
     @Override
-    public long expireAfterCreate(final SamlRegisteredService service,
+    public long expireAfterCreate(@Nonnull final RegisteredServiceCacheKey cacheKey,
                                   final MetadataResolver chainingMetadataResolver,
                                   final long currentTime) {
-        final var duration = getCacheDurationForServiceProvider(service, chainingMetadataResolver);
+        final SamlRegisteredService service = cacheKey.getRegisteredService();
         if (duration >= 0) {
             return duration;
         }
@@ -69,16 +69,18 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
     }
 
     @Override
-    public long expireAfterUpdate(final SamlRegisteredService service,
+    public long expireAfterUpdate(@Nonnull final RegisteredServiceCacheKey cacheKey,
                                   final MetadataResolver chainingMetadataResolver,
                                   final long currentTime, final long currentDuration) {
+        LOGGER.debug("Cache expiration duration after updates is set to [{}]", currentDuration);
         return currentDuration;
     }
 
     @Override
-    public long expireAfterRead(final SamlRegisteredService service,
+    public long expireAfterRead(@Nonnull final RegisteredServiceCacheKey cacheKey,
                                 final MetadataResolver chainingMetadataResolver,
                                 final long currentTime, final long currentDuration) {
+        LOGGER.debug("Cache expiration duration after reads is set to [{}]", currentDuration);
         return currentDuration;
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.audit;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
@@ -7,12 +8,12 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import lombok.Setter;
 
 /**
  * This is {@link MongoDbAuditTrailManager}.
@@ -53,7 +54,8 @@ public class MongoDbAuditTrailManager implements AuditTrailManager {
     @Override
     public Set<AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
         final var dt = DateTimeUtils.dateOf(localDate);
-        final var query = new Query().addCriteria(Criteria.where("whenActionWasPerformed").lte(dt));
+        LOGGER.debug("Retrieving audit records since [{}] from [{}]", dt, this.collectionName);
+        final var query = new Query().addCriteria(Criteria.where("whenActionWasPerformed").gte(dt));
         return new LinkedHashSet<>(this.mongoTemplate.find(query, AuditActionContext.class, this.collectionName));
     }
 }

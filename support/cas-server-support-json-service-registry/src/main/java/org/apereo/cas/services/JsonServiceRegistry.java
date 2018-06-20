@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
@@ -9,8 +10,8 @@ import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
+
 import java.nio.file.Path;
-import lombok.Getter;
 
 /**
  * Implementation of {@code ServiceRegistry} that reads services definition from JSON
@@ -68,7 +69,7 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) throws Exception {
         super(configDirectory, CollectionUtils.wrapList(new CasAddonsRegisteredServicesJsonSerializer(),
             new DefaultRegisteredServiceJsonSerializer()), enableWatcher, eventPublisher,
-                registeredServiceReplicationStrategy, resourceNamingStrategy);
+            registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
     @Override

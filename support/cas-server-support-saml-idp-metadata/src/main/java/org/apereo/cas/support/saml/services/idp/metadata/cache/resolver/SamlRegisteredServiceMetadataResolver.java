@@ -32,10 +32,20 @@ public interface SamlRegisteredServiceMetadataResolver {
     boolean supports(SamlRegisteredService service);
 
     /**
-     *  Save or update metadata document in the source.
+     * Save or update metadata document in the source.
+     *
      * @param document the metadata document.
      */
     default void saveOrUpdate(final SamlMetadataDocument document) {
         throw new NotImplementedException("Operation saveOrUpdate is not implemented/supported");
+    }
+
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    default String getName() {
+        return getClass().getSimpleName();
     }
 }

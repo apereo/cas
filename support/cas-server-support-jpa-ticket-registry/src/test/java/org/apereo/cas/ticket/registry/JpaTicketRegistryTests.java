@@ -113,7 +113,6 @@ public class JpaTicketRegistryTests {
 
     private static final ExpirationPolicy EXP_POLICY_PT = new MultiTimeUseOrTimeoutExpirationPolicy(1, 2000);
 
-
     @Autowired
     @Qualifier("ticketTransactionManager")
     private PlatformTransactionManager txManager;

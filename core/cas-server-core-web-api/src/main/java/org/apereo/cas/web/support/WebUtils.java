@@ -209,9 +209,18 @@ public class WebUtils {
      * @return the ticket granting ticket id
      */
     public static String getTicketGrantingTicketId(final RequestContext context) {
-        final var tgtFromRequest = (String) context.getRequestScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
-        final var tgtFromFlow = (String) context.getFlowScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
+        final String tgtFromRequest = getTicketGrantingTicketIdFrom(context.getRequestScope());
+        final String tgtFromFlow = getTicketGrantingTicketIdFrom(context.getFlowScope());
         return tgtFromRequest != null ? tgtFromRequest : tgtFromFlow;
+    }
+    /**
+     * Gets ticket granting ticket id from.
+     *
+     * @param scopeMap the scope map
+     * @return the ticket granting ticket id from
+     */
+    public static String getTicketGrantingTicketIdFrom(final MutableAttributeMap scopeMap) {
+        return (String) scopeMap.get(PARAMETER_TICKET_GRANTING_TICKET_ID);
     }
 
     /**
