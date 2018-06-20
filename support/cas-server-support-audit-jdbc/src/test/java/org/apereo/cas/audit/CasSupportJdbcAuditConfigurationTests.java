@@ -49,12 +49,13 @@ public class CasSupportJdbcAuditConfigurationTests {
 
     @Test
     public void verifyAuditManager() {
-        final Date since = DateTimeUtils.dateOf(LocalDate.now().minusDays(2));
+        final LocalDate time = LocalDate.now().minusDays(2);
+        final Date since = DateTimeUtils.dateOf(time);
         final AuditActionContext ctx = new AuditActionContext("casuser", "TEST", "TEST",
             "CAS", since, "1.2.3.4",
             "1.2.3.4");
         jdbcAuditTrailManager.record(ctx);
-        final Set results = jdbcAuditTrailManager.getAuditRecordsSince(LocalDate.now());
+        final Set results = jdbcAuditTrailManager.getAuditRecordsSince(time);
         assertFalse(results.isEmpty());
     }
 }
