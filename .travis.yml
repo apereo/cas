@@ -10,32 +10,23 @@ language: java
 sudo: true
 dist: trusty
 services:
-  - docker
+- docker
 branches:
   only:
   - master
 jdk:
 - oraclejdk8
 before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-  - rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.bin
-  - rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.lock
-  - sudo rm -f  /root/.gradle/caches/modules-2/modules-2.lock
-  - sudo rm -fr /root/.gradle/caches/*/plugin-resolution/
-  - sudo rm -f  /root/.gradle/caches/*/fileHashes/fileHashes.bin
-  - sudo rm -f  /root/.gradle/caches/*/fileHashes/fileHashes.lock
-
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
+  bundler: false
+  cargo: false
   directories:
-    - $HOME/.m2
-    - $HOME/.npm/
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-    - /root/.m2
-    - /root/.npm/
-    - /root/.gradle/caches/
-    - /root/.gradle/wrapper/
+  - $HOME/.m2
+  - $HOME/.npm/
+  - $HOME/.gradle/caches/
+  - $HOME/.gradle/wrapper/
 git:
   depth: 1
 notifications:
@@ -71,7 +62,7 @@ stages:
 - build
 - analysis
 - docs
-#- test
+- test
 - dependencies
 jobs:
   include:
@@ -96,3 +87,24 @@ jobs:
     ############################################
   - stage: dependencies
     script: ./ci/report-dependency-updates.sh
+    ############################################
+  - stage: test
+    script: ./ci/tests/run-tests-simple.sh
+  - stage: test
+    script: ./ci/tests/run-tests-cassandra.sh
+  - stage: test
+    script: ./ci/tests/run-tests-cosmosdb.sh
+  - stage: test
+    script: ./ci/tests/run-tests-couchbase.sh
+
+
+
+
+
+
+
+
+
+
+
+
