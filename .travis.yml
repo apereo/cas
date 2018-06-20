@@ -59,14 +59,24 @@ after_script:
 stages:
 - initialize
 - publish
-#- build
-#- analysis
-#- docs
+- build
+- analysis
+- docs
 #- test
-#- dependencies
+- dependencies
 jobs:
   include:
   - stage: initialize
     script: ./ci/download-dependencies.sh
   - stage: publish
     script: ./ci/publish-snapshots.sh
+  - stage: build
+    script: ./ci/build.sh
+  - stage: analysis
+    script: ./ci/analyze-style.sh
+    script: ./ci/analyze-dependencies.sh
+  - stage: docs
+    script: ./ci/build-javadocs.sh
+    script: ./ci/build-config-metadata.sh
+  - stage: dependencies
+    script: ./ci/report-dependency-updates.sh
