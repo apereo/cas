@@ -64,7 +64,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     protected final String principalAttributeName;
 
     public PersonDirectoryPrincipalResolver() {
-        this(new StubPersonAttributeDao(new HashMap<>()), PrincipalFactoryUtils.newPrincipalFactory(), false, formUserId -> formUserId, null);
+        this(new StubPersonAttributeDao(new HashMap<>()), PrincipalFactoryUtils.newPrincipalFactory(), false,
+            String::trim, null);
     }
 
     public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository, final String principalAttributeName) {
@@ -77,7 +78,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     public PersonDirectoryPrincipalResolver(final boolean returnNullIfNoAttributes, final String principalAttributeName) {
         this(new StubPersonAttributeDao(new HashMap<>()), PrincipalFactoryUtils.newPrincipalFactory(),
-            returnNullIfNoAttributes, formUserId -> formUserId, principalAttributeName);
+            returnNullIfNoAttributes, String::trim, principalAttributeName);
     }
 
     public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository,
@@ -95,6 +96,10 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     public Principal resolve(final Credential credential, final Optional<Principal> currentPrincipal, final Optional<AuthenticationHandler> handler) {
         LOGGER.debug("Attempting to resolve a principal...");
         String principalId = extractPrincipalId(credential, currentPrincipal);
+        if (StringUtils.isBlank(principalId)) {
+            LOGGER.debug("Principal id [{}] could not be found", principalId);
+            return null;
+        }
         if (principalNameTransformer != null) {
             principalId = principalNameTransformer.transform(principalId);
         }
