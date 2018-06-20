@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.principal;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
@@ -17,7 +16,6 @@ import org.junit.rules.ExpectedException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
