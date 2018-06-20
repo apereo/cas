@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.principal.resolvers;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
@@ -49,7 +48,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
     /**
      * {@inheritDoc}
      * Resolves a credential by delegating to each of the configured resolvers in sequence. Note that the
-     * final principal is taken from the first resolved principal in the chain, yet attributes are merged.
+     * final principal is taken from the last resolved principal in the chain, yet attributes are merged.
      *
      * @param credential Authenticated credential.
      * @param principal  Authenticated principal, if any.
@@ -80,13 +79,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
                 }
             }
         });
-        final long count = principals.stream().map(p -> p.getId().trim().toLowerCase()).distinct().collect(Collectors.toSet()).size();
-        if (count > 1) {
-            throw new PrincipalException("Resolved principals by the chain are not unique because principal resolvers have produced CAS principals "
-                + "with different identifiers which typically is the result of a configuration issue.",
-                new HashMap<>(0), new HashMap<>(0));
-        }
-        final String principalId = principal.isPresent() ? principal.get().getId() : principals.get(0).getId();
+        final String principalId = principals.get(principals.size() - 1).getId();
         final Principal finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
         LOGGER.debug("Final principal constructed by the chain of resolvers is [{}]", finalPrincipal);
         return finalPrincipal;

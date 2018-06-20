@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolv
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -16,6 +17,7 @@ import org.junit.rules.ExpectedException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -74,7 +76,7 @@ public class PersonDirectoryPrincipalResolverTests {
         final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository());
 
         final ChainingPrincipalResolver chain = new ChainingPrincipalResolver();
-        chain.setChain(Arrays.asList(resolver, new EchoingPrincipalResolver()));
+        chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put("cn", "changedCN");
         attributes.put(ATTR_1, "value1");
@@ -92,7 +94,7 @@ public class PersonDirectoryPrincipalResolverTests {
         final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository());
 
         final ChainingPrincipalResolver chain = new ChainingPrincipalResolver();
-        chain.setChain(Arrays.asList(resolver, new EchoingPrincipalResolver()));
+        chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
         final Principal p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
                 Optional.of(CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME, Collections.singletonMap(ATTR_1, "value"))),
                 Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
@@ -101,15 +103,20 @@ public class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    public void verifyChainingResolverDistinct() {
+    public void verifyChainingResolverOverwritePrincipal() {
         final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository());
+        final PersonDirectoryPrincipalResolver resolver2 = new PersonDirectoryPrincipalResolver(new StubPersonAttributeDao(Collections.singletonMap("principal", CollectionUtils.wrap("changedPrincipal"))), "principal");
 
         final ChainingPrincipalResolver chain = new ChainingPrincipalResolver();
-        chain.setChain(Arrays.asList(resolver, new EchoingPrincipalResolver()));
+        chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver, resolver2));
 
-        this.thrown.expect(PrincipalException.class);
-        chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+        final Principal p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
                 Optional.of(CoreAuthenticationTestUtils.getPrincipal("somethingelse", Collections.singletonMap(ATTR_1, "value"))),
                 Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+        assertNotNull(p);
+        assertEquals(p.getId(), "changedPrincipal");
+        assertEquals(p.getAttributes().size(), CoreAuthenticationTestUtils.getAttributeRepository().getPossibleUserAttributeNames().size() + 1);
+        assertTrue(p.getAttributes().containsKey(ATTR_1));
+        assertFalse(p.getAttributes().containsKey("principal"));
     }
 }
