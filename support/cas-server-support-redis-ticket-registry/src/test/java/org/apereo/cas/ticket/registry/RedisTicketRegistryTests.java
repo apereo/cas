@@ -1,14 +1,13 @@
 package org.apereo.cas.ticket.registry;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.category.RedisCategory;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.RedisTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,9 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import redis.embedded.RedisServer;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 /**
  * Unit test for {@link RedisTicketRegistry}.
  *
@@ -28,7 +30,9 @@ import redis.embedded.RedisServer;
  * @since 5.0.0
  */
 @RunWith(Parameterized.class)
-@SpringBootTest(classes = {RedisTicketRegistryConfiguration.class,
+@Category(RedisCategory.class)
+@SpringBootTest(classes = {
+    RedisTicketRegistryConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreWebConfiguration.class,
     AopAutoConfiguration.class,
