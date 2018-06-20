@@ -74,8 +74,8 @@ before_install:
 - chmod -R 777 ./ci/*.sh
 - ./ci/push-docs-ghpages.sh
 - ./ci/init-travis-build.sh
-#install:
-#- ./ci/install.sh
+install:
+- echo "Starting the build installation phase..."
 script:
 - ./ci/script.sh
 after_script:
