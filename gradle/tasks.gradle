@@ -76,7 +76,9 @@ task downloadDependencies {
         configurations.getAsMap().each { name, config ->
             println "Retrieving dependencies for $project:$name"
             try {
-                config.files
+                config.files.each {
+                    println it
+                }
             } catch (e) {
                 project.logger.info e.message
             }
