@@ -211,9 +211,7 @@ public class WebUtils {
     public static String getTicketGrantingTicketId(final RequestContext context) {
         final var tgtFromRequest = (String) context.getRequestScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
         final var tgtFromFlow = (String) context.getFlowScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
-
         return tgtFromRequest != null ? tgtFromRequest : tgtFromFlow;
-
     }
 
     /**
