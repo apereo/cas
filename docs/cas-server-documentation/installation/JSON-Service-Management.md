@@ -84,7 +84,7 @@ Note the trailing comma at the end. See the above link for more info on the alte
 
 ## Legacy Syntax
 
-A number of legacy service definitions, supported by CAs automatically, are listed below.
+A number of legacy service definitions, supported by CAS automatically, are listed below.
 
 ## CAS Add-ons
 
