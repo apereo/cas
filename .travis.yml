@@ -21,12 +21,21 @@ before_cache:
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
   - rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.bin
   - rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.lock
+  - sudo rm -f  /root/.gradle/caches/modules-2/modules-2.lock
+  - sudo rm -fr /root/.gradle/caches/*/plugin-resolution/
+  - sudo rm -f  /root/.gradle/caches/*/fileHashes/fileHashes.bin
+  - sudo rm -f  /root/.gradle/caches/*/fileHashes/fileHashes.lock
+
 cache:
   directories:
     - $HOME/.m2
     - $HOME/.npm/
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+    - /root/.m2
+    - /root/.npm/
+    - /root/.gradle/caches/
+    - /root/.gradle/wrapper/
 git:
   depth: 1
 notifications:
