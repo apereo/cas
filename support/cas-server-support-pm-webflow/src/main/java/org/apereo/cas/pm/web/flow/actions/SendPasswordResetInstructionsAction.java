@@ -30,9 +30,20 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      */
     public static final String PARAMETER_NAME_TOKEN = "pswdrst";
 
-    private final CasConfigurationProperties casProperties;
-    private final CommunicationsManager communicationsManager;
-    private final PasswordManagementService passwordManagementService;
+    /**
+     * The CAS configuration properties.
+     */
+    protected final CasConfigurationProperties casProperties;
+
+    /**
+     * The communication manager for SMS/emails.
+     */
+    protected final CommunicationsManager communicationsManager;
+
+    /**
+     * The password management service.
+     */
+    protected final PasswordManagementService passwordManagementService;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
