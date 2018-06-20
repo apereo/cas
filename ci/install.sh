@@ -3,7 +3,7 @@
 branchName="master"
 
 prepCommand="echo 'Running command...'; "
-gradle="sudo ./gradlew $@"
+gradle="./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
 

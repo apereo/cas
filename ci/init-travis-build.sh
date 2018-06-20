@@ -34,7 +34,7 @@ chmod -R 777 ./gradlew
 
 echo "Home directory: $HOME"
 echo "Gradle Home directory:"
-sudo ./gradlew gradleHome
+./gradlew gradleHome
 
 if [ "$MATRIX_JOB_TYPE" == "BUILD" ] || [ "$MATRIX_JOB_TYPE" == "STYLE" ] || [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
     echo -e "Installing NPM...\n"
