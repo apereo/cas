@@ -75,7 +75,7 @@ before_install:
 - ./ci/push-docs-ghpages.sh
 - ./ci/init-travis-build.sh
 install:
-- echo "Starting the build installation phase..."
+- ./ci/install.sh
 script:
 - ./ci/script.sh
 after_script:
@@ -94,8 +94,6 @@ jobs:
     script: ./gradlew downloadDependencies --parallel --stacktrace --configure-on-demand
     ##############################
   - stage: publish
-    if: type IN (push)
-    script: ./ci/install.sh
     env:
       - MATRIX_JOB_TYPE=SNAPSHOT
     ##############################
@@ -105,15 +103,12 @@ jobs:
       - MATRIX_JOB_TYPE=BUILD
     ##############################
   - stage: analysis
-    script: ./ci/install.sh
     env:
     - MATRIX_JOB_TYPE=STYLE
   - stage: analysis
-    script: ./ci/install.sh
     env:
     - MATRIX_JOB_TYPE=DEPANALYZE
     ##############################
-
 #  - stage: test
 #    env:
 #      - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=NONE
