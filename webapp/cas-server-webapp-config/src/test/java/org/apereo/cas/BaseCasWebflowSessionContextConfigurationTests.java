@@ -12,7 +12,6 @@ import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.apereo.cas.config.CasApplicationContextConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -73,8 +72,8 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.test.MockRequestContext;
 
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -91,42 +90,41 @@ import static org.junit.Assert.*;
  * @since 5.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(
-    classes = {CasApplicationContextConfiguration.class,
-        CasThemesConfiguration.class,
-        CasFiltersConfiguration.class,
-        CasPropertiesConfiguration.class,
-        CasSecurityContextConfiguration.class,
-        CasWebAppConfiguration.class,
-        CasWebflowServerSessionContextConfigurationTests.TestWebflowContextConfiguration.class,
-        CasWebflowContextConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreWebflowConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasLoggingConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasSupportActionsConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCookieConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreValidationConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreAuditConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        AopAutoConfiguration.class,
-        RefreshAutoConfiguration.class
-    })
+@SpringBootTest(classes = {
+    CasThemesConfiguration.class,
+    CasFiltersConfiguration.class,
+    CasPropertiesConfiguration.class,
+    CasSecurityContextConfiguration.class,
+    CasWebAppConfiguration.class,
+    CasWebflowServerSessionContextConfigurationTests.TestWebflowContextConfiguration.class,
+    CasWebflowContextConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreWebflowConfiguration.class,
+    CasCoreAuthenticationConfiguration.class, CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasLoggingConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasSupportActionsConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCookieConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasCoreValidationConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreAuditConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    AopAutoConfiguration.class,
+    RefreshAutoConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
@@ -158,8 +156,8 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
         final MockHttpServletResponse nativeResponse = (MockHttpServletResponse) context.getExternalContext().getNativeResponse();
 
         assertEquals(
-                IOUtils.toString(new InputStreamReader(ResourceUtils.getResourceFrom(response).getInputStream(), StandardCharsets.UTF_8)),
-                nativeResponse.getContentAsString()
+            IOUtils.toString(new InputStreamReader(ResourceUtils.getResourceFrom(response).getInputStream(), StandardCharsets.UTF_8)),
+            nativeResponse.getContentAsString()
         );
     }
 
