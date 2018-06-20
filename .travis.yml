@@ -42,8 +42,6 @@ env:
   - JAVA_OPTS="-Xms512m -Xmx3048m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
   - SPRING_MAIN_BANNER-MODE="off"
   - COVERALLS_PARALLEL=true
-  - GRADLE_BUILD_CMD="sudo ./gradlew "
-  - GRADLE_BUILD_OPTIONS="--stacktrace --build-cache --configure-on-demand --no-daemon "
   - secure: "ScUSTo0if5m7ddnwUA7EaYucc6yzEUrKLk0DzCvkMfjn2h5taUFSKHx+S0hd2EzJofv+Em4eI5qncSK5LTxgD7HhHR1e3iZp+SqJenhhOnbuciZfg4QA+tUGw3XUdmREac5cz2l0qhi1q4vsnnZARj2d4vvf2HWuNtEOBu/ZAKI="
   - secure: "iWPPLKSS3zBs2adqLPkMiHfCj2hSLyD5BoV3oodhR7Ne83Kpn1khRcEWFoHF3Ed11eSU+glNdPSzUpc8TzwTZGx5B3RU2Qp36hZFyjuzNWJARmoVPYMiEg3FFBQrUR75w+Tbtn6zPkiAk6nl0K5ewmY0/xixVdnTLXL5HjpE2rc="
   - secure: "f3mDIZ8m6NYJXI8KvWD/sZRSeCCyIyfgPRy3Q6o9u9WyHZuYaJf95Ia0eJQ3gxUDS1TKL31Vk08dhFKrfIcKgifFPa2uQ2uyJkvGxlarMTQ+tpqsZYp4zAJgKc9r4xdZasvF2k4xqr+pl9AFjlpXB4jDD59XPXt3DcRABOYA9sM="
@@ -60,7 +58,7 @@ after_script:
 - ./ci/stop.sh
 stages:
 - initialize
-#- publish
+- publish
 #- build
 #- analysis
 #- docs
@@ -69,4 +67,6 @@ stages:
 jobs:
   include:
   - stage: initialize
-    script: $GRADLE_BUILD_CMD $GRADLE_BUILD_OPTIONS downloadDependencies --parallel
+    script: ./ci/download-dependencies.sh
+  - stage: publish
+    script: ./ci/publish-snapshots.sh
