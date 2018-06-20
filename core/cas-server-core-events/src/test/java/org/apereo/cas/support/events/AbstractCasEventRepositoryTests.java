@@ -27,11 +27,11 @@ public abstract class AbstractCasEventRepositoryTests {
 
         val col = getRepositoryInstance().load();
         assertEquals(2, col.size());
-
-        assertNotEquals(dto1.getId(), 0);
-        assertNotEquals(dto2.getId(), 0);
-        assertNotEquals(dto2.getId(), dto1.getId());
-
+        
+        assertNotEquals(dto1.getEventId(), 0);
+        assertNotEquals(dto2.getEventId(), 0);
+        assertNotEquals(dto2.getEventId(), dto1.getEventId());
+        
         val casEvent = col.stream().findFirst().get();
         assertFalse(casEvent.getProperties().isEmpty());
     }
@@ -44,7 +44,7 @@ public abstract class AbstractCasEventRepositoryTests {
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
         dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
-        dto.putId(event.getTicketGrantingTicket().getId());
+        dto.putEventId(event.getTicketGrantingTicket().getId());
         dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
         return dto;
     }

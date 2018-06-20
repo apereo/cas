@@ -76,7 +76,7 @@ public class InfluxDbCasEventRepositoryTests {
         dto.setCreationTime(DateTimeUtils.zonedDateTimeOf(timestamp).toString());
         dto.putClientIpAddress("1.2.3.4");
         dto.putServerIpAddress("1.2.3.4");
-        dto.putId("1000");
+        dto.putEventId("1000");
         dto.putAgent(WebUtils.getHttpServletRequestUserAgentFromRequestContext());
 
         val location = new GeoLocationRequest(1234, 1234);
