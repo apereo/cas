@@ -24,8 +24,8 @@ import org.junit.Test;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.oauth.client.FacebookClient;
-import org.pac4j.oauth.client.TwitterClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
+import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
@@ -55,7 +55,9 @@ public class DelegatedClientAuthenticationActionTests {
 
     private static final String MY_SECRET = "my_secret";
 
-    private static final String MY_LOGIN_URL = "http://casserver/login";
+    private static final String PAC4J_BASE_URL = "http://www.pac4j.org/";
+
+    private static final String PAC4J_URL = PAC4J_BASE_URL + "test.html";
 
     private static final String MY_SERVICE = "http://myservice";
 
@@ -63,15 +65,13 @@ public class DelegatedClientAuthenticationActionTests {
 
     private static final String MY_LOCALE = "fr";
 
-    private static final String MY_METHOD = "POST";
-
     @Test
     public void verifyStartAuthentication() throws Exception {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setParameter(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, MY_THEME);
         mockRequest.setParameter(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, MY_LOCALE);
-        mockRequest.setParameter(CasProtocolConstants.PARAMETER_METHOD, MY_METHOD);
+        mockRequest.setParameter(CasProtocolConstants.PARAMETER_METHOD, HttpMethod.POST.name());
 
         final MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
@@ -85,8 +85,7 @@ public class DelegatedClientAuthenticationActionTests {
         mockRequestContext.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService(MY_SERVICE));
 
         final FacebookClient facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
-        final TwitterClient twitterClient = new TwitterClient("3nJPbVTVRZWAyUgoUKQ8UA", "h6LZyZJmcW46Vu8R47MYfeXTSYGI30EqnWaSwVhFkbA");
-        final Clients clients = new Clients(MY_LOGIN_URL, facebookClient, twitterClient);
+        final Clients clients = new Clients(PAC4J_URL, facebookClient);
 
         final CasDelegatingWebflowEventResolver initialResolver = mock(CasDelegatingWebflowEventResolver.class);
         when(initialResolver.resolveSingle(any())).thenReturn(new Event(this, "success"));
@@ -103,14 +102,14 @@ public class DelegatedClientAuthenticationActionTests {
         assertEquals("error", event.getId());
         assertEquals(MY_THEME, mockSession.getAttribute(ThemeChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(MY_LOCALE, mockSession.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
-        assertEquals(MY_METHOD, mockSession.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
+        assertEquals(HttpMethod.POST.name(), mockSession.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
         final Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration> urls =
             (Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration>)
                 flowScope.get(DelegatedClientAuthenticationAction.PAC4J_URLS);
 
         assertFalse(urls.isEmpty());
-        assertSame(2, urls.size());
+        assertEquals(1, urls.size());
     }
 
     @Test
@@ -121,7 +120,7 @@ public class DelegatedClientAuthenticationActionTests {
         final MockHttpSession mockSession = new MockHttpSession();
         mockSession.setAttribute(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, MY_THEME);
         mockSession.setAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, MY_LOCALE);
-        mockSession.setAttribute(CasProtocolConstants.PARAMETER_METHOD, MY_METHOD);
+        mockSession.setAttribute(CasProtocolConstants.PARAMETER_METHOD, HttpMethod.POST.name());
         final Service service = CoreAuthenticationTestUtils.getService(MY_SERVICE);
         mockSession.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
         mockRequest.setSession(mockSession);
@@ -140,7 +139,7 @@ public class DelegatedClientAuthenticationActionTests {
             }
         };
         facebookClient.setName(FacebookClient.class.getSimpleName());
-        final Clients clients = new Clients(MY_LOGIN_URL, facebookClient);
+        final Clients clients = new Clients(PAC4J_URL, facebookClient);
         final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(TGT_ID, mock(Authentication.class), mock(ExpirationPolicy.class));
         final CentralAuthenticationService casImpl = mock(CentralAuthenticationService.class);
         when(casImpl.createTicketGrantingTicket(any())).thenReturn(tgt);
@@ -174,7 +173,7 @@ public class DelegatedClientAuthenticationActionTests {
         assertEquals("success", event.getId());
         assertEquals(MY_THEME, mockRequest.getAttribute(ThemeChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(MY_LOCALE, mockRequest.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
-        assertEquals(MY_METHOD, mockRequest.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
+        assertEquals(HttpMethod.POST.name(), mockRequest.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
         assertEquals(MY_SERVICE, mockRequest.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
         final MutableAttributeMap requestScope = mockRequestContext.getRequestScope();
