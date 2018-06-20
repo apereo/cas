@@ -76,8 +76,8 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
         final var p = new SwivelMultifactorAuthenticationProvider(swivel.getSwivelUrl());
         p.setBypassEvaluator(swivelBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
-        p.setOrder(casProperties.getAuthn().getMfa().getSwivel().getRank());
-        p.setId(casProperties.getAuthn().getMfa().getSwivel().getId());
+        p.setOrder(swivel.getRank());
+        p.setId(swivel.getId());
         return p;
     }
 
