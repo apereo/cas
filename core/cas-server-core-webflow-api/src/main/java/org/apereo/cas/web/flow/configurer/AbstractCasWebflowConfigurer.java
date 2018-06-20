@@ -22,7 +22,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.expression.BeanExpressionContextAccessor;
 import org.springframework.context.expression.EnvironmentAccessor;
 import org.springframework.context.expression.MapAccessor;
-import org.springframework.core.Ordered;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
@@ -106,7 +105,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     protected final CasConfigurationProperties casProperties;
 
-    private int order = Ordered.HIGHEST_PRECEDENCE;
+    private int order;
 
     private String name = getClass().getSimpleName();
 
