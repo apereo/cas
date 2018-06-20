@@ -47,8 +47,6 @@ import java.util.regex.Pattern;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
-
-
     private static final String CAS_CLIENT_NAME = "CasClient";
 
     @Autowired
