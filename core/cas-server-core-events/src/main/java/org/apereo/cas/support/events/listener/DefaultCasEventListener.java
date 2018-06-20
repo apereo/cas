@@ -75,7 +75,7 @@ public class DefaultCasEventListener {
         if (this.casEventRepository != null) {
             val dto = prepareCasEvent(event);
             dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
-            dto.putId(TicketIdSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
+            dto.putEventId(TicketIdSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
             dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
             this.casEventRepository.save(dto);
         }
@@ -91,7 +91,7 @@ public class DefaultCasEventListener {
         if (this.casEventRepository != null) {
             val dto = prepareCasEvent(event);
             dto.setPrincipalId(event.getCredential().getId());
-            dto.putId(CasAuthenticationPolicyFailureEvent.class.getSimpleName());
+            dto.putEventId(CasAuthenticationPolicyFailureEvent.class.getSimpleName());
             this.casEventRepository.save(dto);
         }
     }
@@ -106,7 +106,7 @@ public class DefaultCasEventListener {
         if (this.casEventRepository != null) {
             val dto = prepareCasEvent(event);
             dto.setPrincipalId(event.getAuthentication().getPrincipal().getId());
-            dto.putId(CasAuthenticationPolicyFailureEvent.class.getSimpleName());
+            dto.putEventId(CasAuthenticationPolicyFailureEvent.class.getSimpleName());
             this.casEventRepository.save(dto);
         }
     }
@@ -120,7 +120,7 @@ public class DefaultCasEventListener {
     public void handleCasRiskyAuthenticationDetectedEvent(final CasRiskyAuthenticationDetectedEvent event) {
         if (this.casEventRepository != null) {
             val dto = prepareCasEvent(event);
-            dto.putId(event.getService().getName());
+            dto.putEventId(event.getService().getName());
             dto.setPrincipalId(event.getAuthentication().getPrincipal().getId());
             this.casEventRepository.save(dto);
         }

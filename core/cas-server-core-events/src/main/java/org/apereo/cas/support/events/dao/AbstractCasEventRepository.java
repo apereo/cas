@@ -39,7 +39,7 @@ public abstract class AbstractCasEventRepository implements CasEventRepository {
     public Collection<? extends CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
         return getEventsOfType(type)
             .stream()
-            .filter(e -> e.getCreationTime().isEqual(dateTime) || e.getCreationTime().isAfter(dateTime))
+            .filter(e -> e.getCreationZonedDateTime().isEqual(dateTime) || e.getCreationZonedDateTime().isAfter(dateTime))
             .collect(Collectors.toSet());
     }
 
@@ -55,14 +55,14 @@ public abstract class AbstractCasEventRepository implements CasEventRepository {
     public Collection<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal, final ZonedDateTime dateTime) {
         return getEventsOfTypeForPrincipal(type, principal)
             .stream()
-            .filter(e -> e.getCreationTime().isEqual(dateTime) || e.getCreationTime().isAfter(dateTime))
+            .filter(e -> e.getCreationZonedDateTime().isEqual(dateTime) || e.getCreationZonedDateTime().isAfter(dateTime))
             .collect(Collectors.toSet());
     }
 
     @Override
     public Collection<? extends CasEvent> load(final ZonedDateTime dateTime) {
         return load().stream()
-            .filter(e -> e.getCreationTime().isEqual(dateTime) || e.getCreationTime().isAfter(dateTime))
+            .filter(e -> e.getCreationZonedDateTime().isEqual(dateTime) || e.getCreationZonedDateTime().isAfter(dateTime))
             .collect(Collectors.toSet());
     }
 
@@ -70,7 +70,7 @@ public abstract class AbstractCasEventRepository implements CasEventRepository {
     public Collection<? extends CasEvent> getEventsForPrincipal(final String id, final ZonedDateTime dateTime) {
         return getEventsForPrincipal(id)
             .stream()
-            .filter(e -> e.getCreationTime().isEqual(dateTime) || e.getCreationTime().isAfter(dateTime))
+            .filter(e -> e.getCreationZonedDateTime().isEqual(dateTime) || e.getCreationZonedDateTime().isAfter(dateTime))
             .collect(Collectors.toSet());
     }
 
