@@ -28,9 +28,10 @@ cache:
 git:
   depth: 1
 notifications:
-  slack: apereo:tUFPsW9tmnzVSADu1LqqSUV8
-  # Webhook notification turned on for coveralls to support parallel build jobs
+  slack:
+    secure: "gNFUOGd0isowSwPfQ9VqGQWhWRDAjzX9tfH0xGe2gyg1kiOhq3Odb8fdcUg9f3DhAbiMxGDu08IgmDbeEyncB42Zdqk/DFvD3F958WaVy0O9TF2iAzO+ftBG0+slFHPDZ8qAy97+mV/be7KBkLYP+BydYTVfO84NvpLNiylmOVU="
   webhooks:
+    # Coveralls: https://docs.coveralls.io/parallel-build-webhook
     secure: "e3Lkn/iMpq9IjNrBQqMAKAxCbKUcd5t6zbow+l39a5n7trIUcBzgK9YXlSBigRyVnKXwNmI08WQN0GMJuWoT2u9cda5qttgZ5C8p/RFWxGKz6qhlmKwcwmipasU0ykvMARB6nrTMwMeMV/O5btt2xko8KfsRQdmqyZGJBglhDsc="
 matrix:
   fast_finish: true
@@ -57,7 +58,7 @@ after_script:
 jobs:
   include:
   - stage: initialize
-    script: ./gradlew allDependencies --parallel --stacktrace --configure-on-demand
+    script: ./gradlew dependencies --parallel --stacktrace --configure-on-demand
   - stage: publish
     env:
       matrix:
