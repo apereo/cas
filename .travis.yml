@@ -91,7 +91,7 @@ stages:
 jobs:
   include:
   - stage: initialize
-    script: ./gradlew dependencies --parallel --stacktrace --configure-on-demand
+    script: ./gradlew downloadDependencies --parallel --stacktrace --configure-on-demand
   - stage: publish
     if: type IN (push)
     script: ./ci/install.sh
