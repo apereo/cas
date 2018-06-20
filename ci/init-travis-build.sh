@@ -32,6 +32,8 @@ sudo cp ./etc/java.security $JAVA_HOME/jre/lib/security
 echo -e "Configuring Gradle wrapper...\n"
 chmod -R 777 ./gradlew
 
+echo "Home directory: $HOME"
+echo "Gradle Home directory:"
 sudo ./gradlew gradleHome
 
 if [ "$MATRIX_JOB_TYPE" == "BUILD" ] || [ "$MATRIX_JOB_TYPE" == "STYLE" ] || [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
