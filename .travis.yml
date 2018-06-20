@@ -80,6 +80,13 @@ script:
 - ./ci/script.sh
 after_script:
 - ./ci/stop.sh
+stages:
+- initialize
+- build
+- analysis
+- test
+- docs
+- dependencies
 jobs:
   include:
   - stage: initialize
