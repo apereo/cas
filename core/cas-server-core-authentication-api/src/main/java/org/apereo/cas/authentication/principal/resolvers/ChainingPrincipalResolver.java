@@ -12,9 +12,11 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.ToString;
 import lombok.Setter;
@@ -79,6 +81,14 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
                 }
             }
         });
+        Set<String> principalIds = principals
+            .stream()
+            .map(p -> p.getId().trim().toLowerCase())
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+        final int count = principalIds.size();
+        if (count > 1) {
+            LOGGER.debug("Principal resolvers produced [{}] distinct principal IDs [{}]; last resolved principal ID will be the final principal ID", count, principalIds);
+        }
         final String principalId = principals.get(principals.size() - 1).getId();
         final Principal finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
         LOGGER.debug("Final principal constructed by the chain of resolvers is [{}]", finalPrincipal);
