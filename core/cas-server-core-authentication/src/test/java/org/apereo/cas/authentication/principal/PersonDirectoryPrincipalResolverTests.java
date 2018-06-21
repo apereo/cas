@@ -76,15 +76,15 @@ public class PersonDirectoryPrincipalResolverTests {
         final ChainingPrincipalResolver chain = new ChainingPrincipalResolver();
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
         final Map<String, Object> attributes = new HashMap<>();
-        attributes.put("cn", "changedCN");
+        attributes.put("cn", "originalCN");
         attributes.put(ATTR_1, "value1");
         final Principal p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-            Optional.of(CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME, attributes)),
+                Optional.of(CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME, attributes)),
                 Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertEquals(p.getAttributes().size(), CoreAuthenticationTestUtils.getAttributeRepository().getPossibleUserAttributeNames().size() + 1);
         assertTrue(p.getAttributes().containsKey(ATTR_1));
         assertTrue(p.getAttributes().containsKey("cn"));
-        assertTrue(CollectionUtils.toCollection(p.getAttributes().get("cn")).contains("changedCN"));
+        assertNotEquals("originalCN", p.getAttributes().get("cn"));
     }
 
     @Test
