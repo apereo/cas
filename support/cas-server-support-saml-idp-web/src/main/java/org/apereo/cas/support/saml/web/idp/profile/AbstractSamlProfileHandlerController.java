@@ -30,6 +30,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
@@ -273,7 +274,7 @@ public abstract class AbstractSamlProfileHandlerController {
                                                       final HttpServletResponse response) throws Exception {
         final AuthnRequest authnRequest = AuthnRequest.class.cast(pair.getLeft());
         final String serviceUrl = constructServiceUrl(request, response, pair);
-        LOGGER.debug("Created service url [{}]", serviceUrl);
+        LOGGER.debug("Created service url [{}]", DigestUtils.abbreviate(serviceUrl));
 
         final String initialUrl = CommonUtils.constructRedirectUrl(casProperties.getServer().getLoginUrl(),
             CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, authnRequest.isForceAuthn(),
