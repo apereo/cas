@@ -28,7 +28,6 @@ public class RedisServiceRegistryConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    @RefreshScope
     public RedisConnectionFactory redisConnectionFactory() {
         final RedisServiceRegistryProperties redis = casProperties.getServiceRegistry().getRedis();
         final RedisObjectFactory obj = new RedisObjectFactory();
@@ -36,7 +35,6 @@ public class RedisServiceRegistryConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public RedisTemplate registeredServiceRedisTemplate() {
         return new RegisteredServiceRedisTemplate(redisConnectionFactory());
     }
