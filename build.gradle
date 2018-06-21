@@ -42,7 +42,7 @@ buildscript {
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:9.3.1"
+        classpath "com.netflix.nebula:gradle-lint-plugin:9.3.2"
         classpath "io.franzbecker:gradle-lombok:1.14"
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
         classpath "io.spring.gradle:propdeps-plugin:0.0.10.RELEASE"
@@ -50,7 +50,7 @@ buildscript {
         classpath "net.ltgt.gradle:gradle-errorprone-plugin:0.0.14"
         classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2"
-        classpath "org.owasp:dependency-check-gradle:3.1.2"
+        classpath "org.owasp:dependency-check-gradle:3.2.1"
     }
 }
 
