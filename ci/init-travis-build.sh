@@ -33,12 +33,11 @@ echo -e "Configuring Gradle wrapper...\n"
 chmod -R 777 ./gradlew
 
 echo "Home directory: $HOME"
+
 echo "Gradle Home directory:"
 ./gradlew gradleHome
 
-if [ "$MATRIX_JOB_TYPE" == "BUILD" ] || [ "$MATRIX_JOB_TYPE" == "STYLE" ] || [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
-    echo -e "Installing NPM...\n"
-    ./gradlew npmInstall --stacktrace -q
-fi
+echo -e "Installing NPM...\n"
+./gradlew npmInstall --stacktrace -q
 
 echo -e "Configured build environment\n"
