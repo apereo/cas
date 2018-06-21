@@ -9,7 +9,6 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-pwd
 ./ci/tests/cassandra/run-cassandra-server.sh
 
 gradleBuild="$gradleBuild test testCassandra coveralls -DMATRIX_SERVER=CASSANDRA -x javadoc -x check \

@@ -58,67 +58,92 @@ after_script:
 - ./ci/stop.sh
 stages:
 - initialize
-#- publish
-#- build
-#- analysis
-#- docs
+- publish
+- build
+- analysis
+- docs
 - test
-#- dependencies
+- dependencies
 jobs:
   include:
   - stage: initialize
     script: ./ci/download-dependencies.sh
+    env: COMMENT=Download Dependencies
     ############################################
   - stage: publish
     script: ./ci/publish-snapshots.sh master
+    env: COMMENT=Publish Snapshots
     ############################################
   - stage: build
     script: ./ci/build.sh
+    env: COMMENT=Build
     ############################################
   - stage: analysis
     script: ./ci/analyze-style.sh
-  - stage: analysis
-    script: ./ci/analyze-dependencies.sh
+    env: COMMENT=Static Analysis
     ############################################
   - stage: docs
     script: ./ci/build-javadocs.sh
+    env: COMMENT=Publish Javadocs
   - stage: docs
     script: ./ci/build-config-metadata.sh
+    env: COMMENT=Run Configuration Metadata
     ############################################
   - stage: dependencies
+    script: ./ci/analyze-dependencies.sh
+    env: COMMENT=Analyze Depencencies
+  - stage: dependencies
     script: ./ci/report-dependency-updates.sh master
+    env: COMMENT=Report Dependency Updates
     ############################################
   - stage: test
     script: ./ci/tests/run-tests-simple.sh
+    env: COMMENT=Simple Tests
   - stage: test
     script: ./ci/tests/cassandra/run-tests-cassandra.sh
+    env: COMMENT=Cassandra Tests
   - stage: test
     script: ./ci/tests/cosmosdb/run-tests-cosmosdb.sh
+    env: COMMENT=CosmosDb Tests
   - stage: test
     script: ./ci/tests/couchbase/run-tests-couchbase.sh
+    env: COMMENT=Couchbase Tests
   - stage: test
     script: ./ci/tests/dynamodb/run-tests-dynamodb.sh
+    env: COMMENT=DynamoDb Tests
   - stage: test
     script: ./ci/tests/filesystem/run-tests-filesystem.sh
+    env: COMMENT=FileSystem Tests
   - stage: test
     script: ./ci/tests/ignite/run-tests-ignite.sh
+    env: COMMENT=Apache Ignite Tests
   - stage: test
     script: ./ci/tests/influxdb/run-tests-influxdb.sh
+    env: COMMENT=InfluxDb Tests
   - stage: test
     script: ./ci/tests/ldap/run-tests-ldap.sh
+    env: COMMENT=LDAP Tests
   - stage: test
     script: ./ci/tests/mail/run-tests-mail.sh
+    env: COMMENT=Mail Server Tests
   - stage: test
     script: ./ci/tests/couchdb/run-tests-couchdb.sh
+    env: COMMENT=CouchDb Tests
   - stage: test
     script: ./ci/tests/memcached/run-tests-memcached.sh
+    env: COMMENT=Memcached Tests
   - stage: test
     script: ./ci/tests/mysql/run-tests-mysql.sh
+    env: COMMENT=MySQL Tests
   - stage: test
     script: ./ci/tests/mssqlserver/run-tests-mssqlserver.sh
+    env: COMMENT=MS SQL SERVER Tests
   - stage: test
     script: ./ci/tests/postgres/run-tests-postgres.sh
+    env: COMMENT=Postgres Tests
   - stage: test
     script: ./ci/tests/mongodb/run-tests-mongodb.sh
+    env: COMMENT=MongoDb Tests
   - stage: test
     script: ./ci/tests/redis/run-tests-redis.sh
+    env: COMMENT=Redis Tests
