@@ -18,12 +18,14 @@ import org.springframework.context.ApplicationEventPublisher;
 public class YamlServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
 
     @Before
-    public void setup() {
+    @Override
+    public void setUp() {
         try {
             this.dao = new YamlServiceRegistry(RESOURCE, false,
                     mock(ApplicationEventPublisher.class),
                     new NoOpRegisteredServiceReplicationStrategy(),
                     new DefaultRegisteredServiceResourceNamingStrategy());
+            super.setUp();
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }

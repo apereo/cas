@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
  * @since 5.0.0
  */
 @Slf4j
-public abstract class AbstractResourceBasedServiceRegistryTests {
+public abstract class AbstractResourceBasedServiceRegistryTests extends AbstractServiceRegistryTests {
     public static final ClassPathResource RESOURCE = new ClassPathResource("services");
     private static final String SERVICE_ID = "testId";
     private static final String THEME = "theme";
@@ -516,5 +516,10 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
 
         final RegisteredServiceProperty prop = r.getProperties().get("field1");
         assertEquals(2, prop.getValues().size());
+    }
+
+    @Override
+    public ServiceRegistry getNewServiceRegistry() {
+        return this.dao;
     }
 }

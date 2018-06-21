@@ -25,12 +25,14 @@ import static org.mockito.Mockito.*;
 public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
 
     @Before
+    @Override
     public void setUp() {
         try {
             this.dao = new JsonServiceRegistry(RESOURCE, true,
-                    mock(ApplicationEventPublisher.class),
-                    new NoOpRegisteredServiceReplicationStrategy(),
-                    new DefaultRegisteredServiceResourceNamingStrategy());
+                mock(ApplicationEventPublisher.class),
+                new NoOpRegisteredServiceReplicationStrategy(),
+                new DefaultRegisteredServiceResourceNamingStrategy());
+            super.setUp();
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }
@@ -67,5 +69,4 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
         assertNotNull(policy);
         assertEquals(2, policy.getAllowedAttributes().size());
     }
-    
 }

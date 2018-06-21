@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -118,7 +119,7 @@ public class RegisteredServiceTestUtils {
         final RegexRegisteredService s = new RegexRegisteredService();
         s.setServiceId(id);
         s.setEvaluationOrder(1);
-        s.setName("Test registered service " + id);
+        s.setName("TestService" + UUID.randomUUID().toString());
         s.setDescription("Registered service description");
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
         s.setId(RandomUtils.getNativeInstance().nextInt(Math.abs(s.hashCode())));

@@ -37,7 +37,8 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@SpringBootTest(classes = {DynamoDbServiceRegistryConfiguration.class,
+@SpringBootTest(classes = {
+    DynamoDbServiceRegistryConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,

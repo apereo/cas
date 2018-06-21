@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,13 +11,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
 
 /**
  * Abstracted service registry tests for all implementations.
+ *
  * @author Timur Duehr
  * @since 5.3.0
  */
@@ -117,39 +116,6 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void verifySamlService() {
-        final SamlRegisteredService r = new SamlRegisteredService();
-        r.setName("verifySamlService");
-        r.setServiceId("Testing");
-        r.setDescription("description");
-        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        final Map fmt = new HashMap();
-        fmt.put("key", "value");
-        r.setAttributeNameFormats(fmt);
-        r.setMetadataCriteriaDirection("INCLUDE");
-        r.setMetadataCriteriaRemoveEmptyEntitiesDescriptors(true);
-        r.setMetadataSignatureLocation("location");
-        r.setRequiredAuthenticationContextClass("Testing");
-        final SamlRegisteredService r2 = (SamlRegisteredService) this.serviceRegistry.save(r);
-        assertEquals(r, r2);
-    }
-
-    @Test
-    public void verifyOAuthServices() {
-        final OAuthRegisteredService r = new OAuthRegisteredService();
-        r.setName("test1456");
-        r.setServiceId("testId");
-        r.setTheme("theme");
-        r.setDescription("description");
-        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        r.setClientId("testoauthservice");
-        r.setClientSecret("anothertest");
-        r.setBypassApprovalPrompt(true);
-        final RegisteredService r2 = this.serviceRegistry.save(r);
-        assertEquals(r, r2);
-    }
-
-    @Test
     public void verifyDeletingSingleService() {
         final RegisteredService rs = buildService(300);
         final RegisteredService rs2 = buildService(301);
@@ -159,7 +125,7 @@ public abstract class AbstractServiceRegistryTests {
         this.serviceRegistry.delete(rs2);
 
         final List<RegisteredService> services = this.serviceRegistry.load();
-        assertEquals(1, services.size());
+        assertFalse(services.isEmpty());
         assertEquals(services.get(0).getId(), rs.getId());
         assertEquals(services.get(0).getName(), rs.getName());
     }
@@ -175,12 +141,12 @@ public abstract class AbstractServiceRegistryTests {
 
     /**
      * Method to mock RegisteredService objects for testing.
+     *
      * @param i addition to service name for uniqueness.
      * @return new registered service object
      */
     protected static RegisteredService buildService(final int i) {
         final AbstractRegisteredService rs = RegisteredServiceTestUtils.getRegisteredService("^http://www.serviceid" + i + ".org");
-
         final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
         final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
         final Set<String> values = new HashSet<>();

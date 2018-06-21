@@ -10,11 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class InMemoryServiceRegistryTests extends AbstractServiceRegistryTests {
 
-    private static final String SERVICE_ID = "service";
-
     @Override
     public ServiceRegistry getNewServiceRegistry() {
         return new InMemoryServiceRegistry();
     }
-
 }
