@@ -2,12 +2,14 @@ package org.apereo.cas.util;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
+import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderProperties;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.junit.AfterClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Category(FileSystemCategory.class)
 public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
