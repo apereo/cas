@@ -1,7 +1,5 @@
 #!/bin/bash
 
-branchName="$1"
-
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""
@@ -11,24 +9,11 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-echo "Required Branch Name: $branchName"
-
-if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ]; then
-    if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip snapshots]"* ]]; then
-        echo -e "The build will skip deploying SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
-        gradleBuild=""
-    else
-        echo -e "The build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
-        gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check \
-            -DenableIncremental=true -DskipNpmLint=true -DskipNestedConfigMetadataGen=true
-            -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} \
-            -DsonatypePassword=${SONATYPE_PWD} --parallel "
-    fi
-else
-    echo -e "*******************************************************************************************************"
-    echo -e "Skipping SNAPSHOTs since the change-set is a pull request or not targeted at branch $branchName.\n"
-    echo -e "*******************************************************************************************************"
-fi
+echo -e "The build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
+    gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check \
+        -DenableIncremental=true -DskipNpmLint=true -DskipNestedConfigMetadataGen=true
+        -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} \
+        -DsonatypePassword=${SONATYPE_PWD} --parallel "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "
