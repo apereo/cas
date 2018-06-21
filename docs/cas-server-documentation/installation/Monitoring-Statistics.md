@@ -23,6 +23,8 @@ The following endpoints are available and secured by CAS:
 | `/status/attrresolution`          | Examine resolution of user attributes via [CAS attribute resolution](../integration/Attribute-Resolution.html).
 | `/status/discovery`               | Advertises the CAS server's profile, features and capabilities for auto-configuration of client applications.
 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#cas-endpoints).
+
 The following endpoints are secured and available 
 by [Spring Boot actuators](http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html):
 
@@ -33,7 +35,7 @@ by [Spring Boot actuators](http://docs.spring.io/spring-boot/docs/current/refere
 | `/status/configprops`             | List of **internal** configuration properties.
 | `/status/dump`                    | Produces a thread dump for the running CAS server.
 | `/status/env`                     | Produces a collection of all application properties.
-| `/status/health`                  | Reports back general health status of the system, produced by various monitors.
+| `/status/health`                  | Reports back general health status of the system, produced by various monitors.  When the application is secure, a simple `status` when accessed over an unauthenticated connection is presented, or full message details when authenticated.
 | `/status/info`                    | CAS version information and other system traits.
 | `/status/metrics`                 | Runtime metrics and stats.
 | `/status/mappings`                | Describes how requests are mapped and handled by CAS.
@@ -42,6 +44,11 @@ by [Spring Boot actuators](http://docs.spring.io/spring-boot/docs/current/refere
 | `/status/refresh`                 | Refresh the application configuration via a `POST` to let components reload and recognize new values.
 
 Actuator endpoints provided by Spring Boot can also be visually managed and monitored via the [Spring Boot Administration Server](Configuring-Monitoring-Administration.html).
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spring-boot-endpoints).
+
+<div class="alert alert-info"><strong>Obtaining Health Info</strong><p>Note that <code>/status</code> endpoint is kept mostly 
+as a legacy endpoint. If you wish to obtain health status of each monitor in detail, we recommend the <code>/status/health</code> endpoint instead.</p></div>
 
 ## Security
 
@@ -63,7 +70,6 @@ to control access by enforcing rules via IP address matching, delegating to itse
 via IP address matching needs to be very carefully designed, specially in cases where CAS is deployed behind a proxy
 such as Apache. Be sure to test access rules and policies carefully or otherwise devise your own.</p></div>
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#admin-status-endpoints).
 
 ### Spring Security
 

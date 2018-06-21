@@ -63,9 +63,25 @@ task findbugs(type: FindBugs, description: "Set up classpath for Findbugs") {
     pluginClasspath = project.configurations.findbugsPlugins
 }
 
-task showConfiguration << {
-    def cfg = project.hasProperty("configuration") ? project.property("configuration") : "compile"
-    configurations.getByName(cfg).each { println it }
+task showConfiguration {
+    doLast() {
+        def cfg = project.hasProperty("configuration") ? project.property("configuration") : "compile"
+        configurations.getByName(cfg).each { println it }
+    }
+}
+
+task downloadDependencies {
+    description "Pre-download project dependencies for all configurations"
+    doLast {
+        configurations.getAsMap().each { name, config ->
+            println "Retrieving dependencies for $project:$name"
+            try {
+                config.files
+            } catch (e) {
+                project.logger.info e.message
+            }
+        }
+    }
 }
 
 gradle.buildFinished { buildResult ->

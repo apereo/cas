@@ -74,12 +74,45 @@ public class SamlIdPUtils {
         if (endpointContext == null) {
             throw new SamlException("SAMLEndpointContext could not be defined for entity " + entityId);
         }
-        final Endpoint endpoint = adaptor.getAssertionConsumerService(binding);
-        if (StringUtils.isBlank(endpoint.getBinding()) || StringUtils.isBlank(endpoint.getLocation())) {
-            throw new SamlException("Assertion consumer service does not define a binding or location for " + entityId);
-        }
+
+        final Endpoint endpoint = determineAssertionConsumerService(authnRequest, adaptor, binding);
         LOGGER.debug("Configured peer entity endpoint to be [{}] with binding [{}]", endpoint.getLocation(), endpoint.getBinding());
         endpointContext.setEndpoint(endpoint);
+    }
+
+    /**
+     * Determine assertion consumer service assertion consumer service.
+     *
+     * @param authnRequest the authn request
+     * @param adaptor      the adaptor
+     * @param binding      the binding
+     * @return the assertion consumer service
+     */
+    public static AssertionConsumerService determineAssertionConsumerService(final RequestAbstractType authnRequest,
+                                                                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                                             final String binding) {
+        AssertionConsumerService endpoint = null;
+
+        if (authnRequest instanceof AuthnRequest) {
+            final String acsUrl = AuthnRequest.class.cast(authnRequest).getAssertionConsumerServiceURL();
+            if (StringUtils.isNotBlank(acsUrl)) {
+                LOGGER.debug("Using assertion consumer service url [{}] with binding [{}] provided by the authentication request", acsUrl, binding);
+                final AssertionConsumerServiceBuilder builder = new AssertionConsumerServiceBuilder();
+                endpoint = builder.buildObject(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
+                endpoint.setBinding(binding);
+                endpoint.setResponseLocation(acsUrl);
+                endpoint.setLocation(acsUrl);
+            }
+        }
+
+        if (endpoint == null) {
+            LOGGER.debug("Attempting to locate the assertion consumer service url for binding [{}] from metadata", binding);
+            endpoint = adaptor.getAssertionConsumerService(binding);
+        }
+        if (StringUtils.isBlank(endpoint.getBinding()) || StringUtils.isBlank(endpoint.getLocation())) {
+            throw new SamlException("Assertion consumer service does not define a binding or location");
+        }
+        return endpoint;
     }
 
     /**
@@ -109,7 +142,7 @@ public class SamlIdPUtils {
             .collect(Collectors.toList());
 
         LOGGER.debug("Located [{}] metadata resolvers to match against [{}]", resolvers, entityID);
-        
+
         chainingMetadataResolver.setResolvers(resolvers);
         chainingMetadataResolver.setId(entityID);
         chainingMetadataResolver.initialize();

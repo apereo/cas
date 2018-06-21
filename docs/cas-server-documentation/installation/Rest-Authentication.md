@@ -29,7 +29,7 @@ status code where the body should contain `id` and `attributes` fields, the latt
 which represent the authenticated principal for CAS:
 
 ```json
-{"@c":".SimplePrincipal","id":"casuser","attributes":{}}
+{"@class":"org.apereo.cas.authentication.principal.SimplePrincipal","id":"casuser","attributes":{}}
 ```
 
 Expected responses from the REST endpoint are mapped to CAS as such:

@@ -2825,6 +2825,7 @@ Control various settings related to CAS logout functionality. To learn more abou
 ```properties
 # cas.logout.followServiceRedirects=false
 # cas.logout.redirectParameter=service
+# cas.logout.redirectUrl=https://www.github.com
 # cas.logout.confirmLogout=false
 # cas.logout.removeDescendantTickets=false
 ```
@@ -3717,6 +3718,12 @@ If AUP is controlled via JDBC, decide how choices should be remembered back insi
 #### LDAP
 
 If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance. LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.acceptableUsagePolicy.ldap`.
+
+#### Disable Acceptable Usage Policy
+Allow acceptable usage policy webflow to be disabled - requires restart.
+```properties
+cas.acceptableUsagePolicy.enabled=true
+```
 
 ## REST API
 

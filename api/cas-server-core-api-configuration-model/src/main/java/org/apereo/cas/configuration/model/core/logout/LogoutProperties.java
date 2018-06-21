@@ -1,9 +1,10 @@
 package org.apereo.cas.configuration.model.core.logout;
 
-import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+import org.apereo.cas.configuration.support.RequiresModule;
+
+import java.io.Serializable;
 
 /**
  * This is {@link LogoutProperties}.
@@ -12,7 +13,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-logout", automated = true)
-
 @Getter
 @Setter
 public class LogoutProperties implements Serializable {
@@ -46,4 +46,14 @@ public class LogoutProperties implements Serializable {
      * Before logout, allow the option to confirm on the web interface.
      */
     private boolean confirmLogout;
+
+    /**
+     * A url to which CAS must immediately redirect
+     * after all logout operations have completed.
+     * Typically useful in scenarios where CAS is acting
+     * as a proxy and needs to redirect to an external
+     * identity provider's logout endpoint in order to
+     * remove a session, etc.
+     */
+    private String redirectUrl;
 }

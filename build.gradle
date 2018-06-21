@@ -42,7 +42,7 @@ buildscript {
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:9.3.1"
+        classpath "com.netflix.nebula:gradle-lint-plugin:9.3.2"
         classpath "io.franzbecker:gradle-lombok:1.14"
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
         classpath "io.spring.gradle:propdeps-plugin:0.0.10.RELEASE"
@@ -50,7 +50,7 @@ buildscript {
         classpath "net.ltgt.gradle:gradle-errorprone-plugin:0.0.14"
         classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2"
-        classpath "org.owasp:dependency-check-gradle:3.1.2"
+        classpath "org.owasp:dependency-check-gradle:3.2.1"
     }
 }
 
@@ -136,6 +136,7 @@ subprojects {
     apply plugin: "org.owasp.dependencycheck"
 
     apply from: rootProject.file("gradle/tasks.gradle")
+    apply from: rootProject.file("gradle/tests.gradle")
 
     ext.libraries = rootProject.ext.libraries
 
@@ -156,141 +157,7 @@ subprojects {
             options.compilerArgs += ['-Xep:MissingOverride:OFF', '-Xep:ParameterName:OFF']
         }
     }
-
-    task testCassandra(type: Test) {
-        useJUnit {
-            includeCategories 'org.apereo.cas.category.CassandraCategory'
-        }
-    }
-
-    task testCosmosDb(type: Test) {
-        useJUnit {
-            includeCategories 'org.apereo.cas.category.CosmosDbCategory'
-        }
-    }
-
-    task testCouchbase(type: Test) {
-        useJUnit {
-            includeCategories 'org.apereo.cas.category.CouchbaseCategory'
-        }
-    }
-
-    task testCouchDb(type: Test) {
-        useJUnit {
-            includeCategories 'org.apereo.cas.category.CouchDbCategory'
-        }
-    }
-
-    task testMySQL(type: Test) {
-        useJUnit {
-            includeCategories 'org.apereo.cas.category.MySQLCategory'
-        }
-    }
-
-    task testDynamoDb(type: Test) {
-        useJUnit {
-            includeCategories 'org.apereo.cas.category.DynamoDbCategory'
-        }
-    }
-
-    task testFileSystem(type: Test) {
-        useJUnit {
-            includeCategories 'org.apereo.cas.category.FileSystemCategory'
-        }
-    }
-
-    task testIgnite(type: Test) {
-        useJUnit {
-            includeCategories 'org.apereo.cas.category.IgniteCategory'
-        }
-    }
-
-    task testInfluxDb(type: Test) {
-        useJUnit {
-            includeCategories 'org.apereo.cas.category.InfluxDbCategory'
-        }
-    }
-
-    task testLdap(type: Test) {
-        useJUnit {
-            includeCategories 'org.apereo.cas.category.LdapCategory'
-        }
-    }
-
-    task testMail(type: Test) {
-        useJUnit {
-            includeCategories 'org.apereo.cas.category.MailCategory'
-        }
-    }
-
-    task testMemcached(type: Test) {
-        useJUnit {
-            includeCategories 'org.apereo.cas.category.MemcachedCategory'
-        }
-    }
-
-    task testMsSqlServer(type: Test) {
-        useJUnit {
-            includeCategories 'org.apereo.cas.category.MsSqlServerCategory'
-        }
-    }
     
-    task testMongoDb(type: Test) {
-        useJUnit {
-            includeCategories 'org.apereo.cas.category.MongoDbCategory'
-        }
-    }
-
-    task testRedis(type: Test) {
-        useJUnit {
-            includeCategories 'org.apereo.cas.category.RedisCategory'
-        }
-    }
-
-    task testAll(type: Test) {
-        dependsOn {
-            tasks.findAll {task -> task.name.startsWith('test') && task.name != "testAll"}
-        }
-    }
-
-    test {
-        include "**/*Tests.*"
-        useJUnit {
-            excludeCategories 'org.apereo.cas.category.MailCategory'
-            excludeCategories 'org.apereo.cas.category.CassandraCategory'
-            excludeCategories 'org.apereo.cas.category.CosmosDbCategory'
-            excludeCategories 'org.apereo.cas.category.CouchbaseCategory'
-            excludeCategories 'org.apereo.cas.category.DynamoDbCategory'
-            excludeCategories 'org.apereo.cas.category.FileSystemCategory'
-            excludeCategories 'org.apereo.cas.category.IgniteCategory'
-            excludeCategories 'org.apereo.cas.category.InfluxDbCategory'
-            excludeCategories 'org.apereo.cas.category.CouchDbCategory'
-            excludeCategories 'org.apereo.cas.category.LdapCategory'
-            excludeCategories 'org.apereo.cas.category.MailCategory'
-            excludeCategories 'org.apereo.cas.category.MongoDbCategory'
-            excludeCategories 'org.apereo.cas.category.RedisCategory'
-            excludeCategories 'org.apereo.cas.category.MsSqlServerCategory'
-            excludeCategories 'org.apereo.cas.category.MySQLCategory'
-        }
-    }
-
-    tasks.withType(Test) {
-        exclude "**/Abstract*.*", "**/Base*.*"
-        enabled = !Boolean.getBoolean("skipTests")
-        scanForTestClasses = false
-        ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
-        maxParallelForks = 1
-        jvmArgs "-Xmx1024m"
-        classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
-        testLogging {
-            events = ["FAILED", "STANDARD_OUT"]
-            exceptionFormat = "full"
-            showStandardStreams = Boolean.getBoolean("showStandardStreams")
-            showExceptions = true
-            showCauses = true
-        }
-    }
-
     configurations {
         tests
     }
@@ -493,7 +360,7 @@ subprojects {
     }
 }
 
-task wrapper(type: Wrapper, description: "Gradle wrapper") {
+wrapper {
     gradleVersion = project.gradleVersion
 }
 
@@ -524,9 +391,24 @@ artifacts {
     archives rootSourcesJar
 }
 
-task jacocoAggregateReport(type: JacocoReport, description: "Aggregate all test reports into a single directory") {
-    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
+def publishedProjects = subprojects.findAll { !it.path.contains(':docs') }
+
+task jacocoMerge(type: JacocoMerge) {
+    publishedProjects.each { subproject ->
+        executionData subproject.tasks.withType(Test)
+    }
+    doFirst {
+        executionData = files(executionData.findAll { it.exists() })
+    }
+}
+
+task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
+    description = 'Generates an aggregate report from all subprojects'
+    dependsOn publishedProjects.test
+    dependsOn jacocoMerge
+    
+    additionalSourceDirs = files(publishedProjects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(publishedProjects.sourceSets.main.allSource.srcDirs)
     classDirectories = files(files(subprojects.sourceSets.main.output).collect {
         fileTree(dir: it,
                 include: '**/*.class',
@@ -548,26 +430,23 @@ task jacocoAggregateReport(type: JacocoReport, description: "Aggregate all test 
                         '**/**Properties$**'
                 ])
     })
-
-    executionData = files(subprojects.jacocoTestReport.executionData)
+    executionData jacocoMerge.destinationFile
     reports {
-        html.enabled = true
+        html.enabled = false
         xml.enabled = true
-    }
-    doFirst {
-        executionData = files(executionData.findAll {
-            it.exists()
-        })
     }
 }
 
 coveralls {
-    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoAggregateReport/jacocoAggregateReport.xml"
-    sourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs).files.absolutePath
+    sourceDirs = publishedProjects.sourceSets.main.allSource.srcDirs.flatten()
+    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
 }
 
 tasks.coveralls {
     group = "Coverage reports"
     description = "Uploads the aggregated coverage report to Coveralls"
-    dependsOn jacocoAggregateReport
+    dependsOn jacocoRootReport
+    doFirst {
+        println "Starting to run coveralls"
+    }
 }

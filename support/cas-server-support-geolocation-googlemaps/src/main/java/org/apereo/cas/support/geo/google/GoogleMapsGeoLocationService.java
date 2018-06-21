@@ -4,8 +4,6 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
-import io.userinfo.client.UserInfo;
-import io.userinfo.client.model.Info;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
@@ -29,15 +27,6 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
     @Override
     public GeoLocationResponse locate(final InetAddress address) {
         return locate(address.getHostAddress());
-    }
-
-    @Override
-    public GeoLocationResponse locate(final String address) {
-        final Info info = UserInfo.getInfo(address);
-        if (info != null && info.getPosition() != null) {
-            return locate(info.getPosition().getLatitude(), info.getPosition().getLongitude());
-        }
-        return null;
     }
 
     @Override

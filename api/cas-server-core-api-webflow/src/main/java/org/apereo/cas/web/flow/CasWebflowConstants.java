@@ -13,6 +13,21 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_STOP = "stop";
 
     /**
+     * TGT does not exist event ID={@value}.
+     **/
+    String TRANSITION_ID_TGT_NOT_EXISTS = "notExists";
+
+    /**
+     * TGT invalid event ID={@value}.
+     **/
+    String TRANSITION_ID_TGT_INVALID = "invalid";
+
+    /**
+     * TGT valid event ID={@value}.
+     **/
+    String TRANSITION_ID_TGT_VALID = "valid";
+
+    /**
      * The transition state 'success'.
      */
     String TRANSITION_ID_SUCCESS = "success";
@@ -99,7 +114,7 @@ public interface CasWebflowConstants {
      * The view state 'casWsFedStopWebflow'.
      */
     String VIEW_ID_WSFED_STOP_WEBFLOW = "casWsFedStopWebflow";
-    
+
     /**
      * The transition state 'successWithWarnings'.
      */
@@ -180,10 +195,15 @@ public interface CasWebflowConstants {
     String STATE_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
 
     /**
+     * The state id 'ticketGrantingTicketCheck'.
+     */
+    String STATE_ID_TICKET_GRANTING_TICKET_CHECK = "ticketGrantingTicketCheck";
+
+    /**
      * The state id 'createTicketGrantingTicket'.
      */
     String STATE_ID_CREATE_TICKET_GRANTING_TICKET = "createTicketGrantingTicket";
-    
+
     /**
      * The state 'initializeLoginForm'.
      */
@@ -238,7 +258,7 @@ public interface CasWebflowConstants {
     /**
      * The state 'redirectView'.
      */
-    String STATE_ID_REDIR_VIEW = "redirectView";
+    String STATE_ID_REDIRECT_VIEW = "redirectView";
 
     /**
      * The state id 'endWebflowExecution'.
@@ -320,7 +340,7 @@ public interface CasWebflowConstants {
      * Event attribute id 'authenticationWarnings'.
      */
     String ATTRIBUTE_ID_AUTHENTICATION_WARNINGS = "authenticationWarnings";
-    
+
     /**
      * View id 'casResetPasswordSendInstructions'.
      */
@@ -426,6 +446,15 @@ public interface CasWebflowConstants {
      */
     String ACTION_ID_INIT_FLOW_SETUP = "initialFlowSetupAction";
 
+    /**
+     * Action id 'ticketGrantingTicketCheckAction'.
+     */
+    String ACTION_ID_TICKET_GRANTING_TICKET_CHECK = "ticketGrantingTicketCheckAction";
+
+    /**
+     * Action id 'initialAuthenticationRequestValidationAction'.
+     */
+    String ACTION_ID_INITIAL_AUTHN_REQUEST_VALIDATION = "initialAuthenticationRequestValidationAction";
 
     /**
      * Action id 'remoteAuthenticate'.

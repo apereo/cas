@@ -222,6 +222,7 @@ public class CasWebflowContextConfiguration {
     @ConditionalOnMissingBean(name = "defaultWebflowConfigurer")
     @Bean
     @Order(0)
+    @RefreshScope
     public CasWebflowConfigurer defaultWebflowConfigurer() {
         final DefaultLoginWebflowConfigurer c = new DefaultLoginWebflowConfigurer(builder(), loginFlowRegistry(), applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry());
@@ -232,6 +233,7 @@ public class CasWebflowContextConfiguration {
     @ConditionalOnMissingBean(name = "defaultLogoutWebflowConfigurer")
     @Bean
     @Order(0)
+    @RefreshScope
     public CasWebflowConfigurer defaultLogoutWebflowConfigurer() {
         final DefaultLogoutWebflowConfigurer c = new DefaultLogoutWebflowConfigurer(builder(), loginFlowRegistry(),
             applicationContext, casProperties);
@@ -243,12 +245,12 @@ public class CasWebflowContextConfiguration {
     @ConditionalOnMissingBean(name = "groovyWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
+    @RefreshScope
     public CasWebflowConfigurer groovyWebflowConfigurer() {
         final GroovyWebflowConfigurer c = new GroovyWebflowConfigurer(builder(), loginFlowRegistry(), applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry());
         return c;
     }
-
 
     @Autowired
     @Bean
