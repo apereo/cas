@@ -22,7 +22,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" 
         gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check \
             -DenableIncremental=true -DskipNpmLint=true -DskipNestedConfigMetadataGen=true
             -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} \
-            -DsonatypePassword=${SONATYPE_PWD} "
+            -DsonatypePassword=${SONATYPE_PWD} --parallel "
     fi
 else
     echo -e "*******************************************************************************************************"

@@ -58,12 +58,12 @@ after_script:
 - ./ci/stop.sh
 stages:
 - initialize
-- publish
-- build
-- analysis
-- docs
+#- publish
+#- build
+#- analysis
+#- docs
 - test
-- dependencies
+#- dependencies
 jobs:
   include:
   - stage: initialize
