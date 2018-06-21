@@ -67,7 +67,7 @@ public abstract class AbstractServiceRegistryTests {
             final RegisteredService svc = buildService(i);
             list.add(svc);
             this.serviceRegistry.save(svc);
-            final RegisteredService svc2 = this.serviceRegistry.findServiceById(svc.getId());
+            final RegisteredService svc2 = this.serviceRegistry.findServiceByExactServiceName(svc.getName());
             assertNotNull(svc2);
             this.serviceRegistry.delete(svc2);
         }
@@ -124,10 +124,10 @@ public abstract class AbstractServiceRegistryTests {
         this.serviceRegistry.load();
         this.serviceRegistry.delete(rs2);
 
-        final List<RegisteredService> services = this.serviceRegistry.load();
-        assertFalse(services.isEmpty());
-        assertEquals(services.get(0).getId(), rs.getId());
-        assertEquals(services.get(0).getName(), rs.getName());
+        assertFalse(this.serviceRegistry.load().isEmpty());
+
+        final RegisteredService rsNew = this.serviceRegistry.findServiceByExactServiceName(rs.getName());
+        assertNotNull(rsNew);
     }
 
     @Test

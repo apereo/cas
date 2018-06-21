@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
     CasCoreServicesConfiguration.class})
 @DirtiesContext
 @Slf4j
-public class JpaServiceRegistryTests {
+public class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     @Qualifier("jpaServiceRegistry")
@@ -59,7 +59,9 @@ public class JpaServiceRegistryTests {
     private ServicesManager servicesManager;
 
     @Before
+    @Override
     public void setUp() {
+        super.setUp();
         final List<RegisteredService> services = this.serviceRegistry.load();
         services.forEach(service -> this.serviceRegistry.delete(service));
     }
@@ -235,6 +237,11 @@ public class JpaServiceRegistryTests {
         svc = this.servicesManager.findServiceBy(r2.getServiceId());
         assertNotNull(svc);
         assertFalse(svc.getAccessStrategy().isServiceAccessAllowed());
+    }
+
+    @Override
+    public ServiceRegistry getNewServiceRegistry() {
+        return this.serviceRegistry;
     }
 
     @TestConfiguration("timeAwareServicesManagerConfiguration")
