@@ -10,27 +10,30 @@ language: java
 sudo: true
 dist: trusty
 services:
-  - docker
+- docker
 branches:
   only:
   - master
 jdk:
 - oraclejdk8
 before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
+  bundler: false
+  cargo: false
   directories:
-    - $HOME/.m2
-    - $HOME/.npm/
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
+  - $HOME/.m2
+  - $HOME/.npm/
+  - $HOME/.gradle/caches/
+  - $HOME/.gradle/wrapper/
 git:
   depth: 1
 notifications:
-  slack: apereo:tUFPsW9tmnzVSADu1LqqSUV8
-  # Webhook notification turned on for coveralls to support parallel build jobs
+  slack:
+    secure: "gNFUOGd0isowSwPfQ9VqGQWhWRDAjzX9tfH0xGe2gyg1kiOhq3Odb8fdcUg9f3DhAbiMxGDu08IgmDbeEyncB42Zdqk/DFvD3F958WaVy0O9TF2iAzO+ftBG0+slFHPDZ8qAy97+mV/be7KBkLYP+BydYTVfO84NvpLNiylmOVU="
   webhooks:
+    # Coveralls: https://docs.coveralls.io/parallel-build-webhook
     secure: "e3Lkn/iMpq9IjNrBQqMAKAxCbKUcd5t6zbow+l39a5n7trIUcBzgK9YXlSBigRyVnKXwNmI08WQN0GMJuWoT2u9cda5qttgZ5C8p/RFWxGKz6qhlmKwcwmipasU0ykvMARB6nrTMwMeMV/O5btt2xko8KfsRQdmqyZGJBglhDsc="
 matrix:
   fast_finish: true
@@ -43,41 +46,81 @@ env:
   - secure: "iWPPLKSS3zBs2adqLPkMiHfCj2hSLyD5BoV3oodhR7Ne83Kpn1khRcEWFoHF3Ed11eSU+glNdPSzUpc8TzwTZGx5B3RU2Qp36hZFyjuzNWJARmoVPYMiEg3FFBQrUR75w+Tbtn6zPkiAk6nl0K5ewmY0/xixVdnTLXL5HjpE2rc="
   - secure: "f3mDIZ8m6NYJXI8KvWD/sZRSeCCyIyfgPRy3Q6o9u9WyHZuYaJf95Ia0eJQ3gxUDS1TKL31Vk08dhFKrfIcKgifFPa2uQ2uyJkvGxlarMTQ+tpqsZYp4zAJgKc9r4xdZasvF2k4xqr+pl9AFjlpXB4jDD59XPXt3DcRABOYA9sM="
   - secure: "A0B1HJoHzvYGT4pPWPW1bQDS3Ne755vZ/VZ20OtVRgJHTTQfK13eKgH0VbYpEyZKJAFIexmaDVQ0XUdNukzrAoI6rKSm5vwam6qjELrvrKH2ovMgd1xvS2a5a1no5OT3QP3TXKKlmOTdS+Q5ZspjslBxpay3q7aKA9GMNvzChko="
-  matrix:
-  - MATRIX_JOB_TYPE=BUILD
-  - MATRIX_JOB_TYPE=SNAPSHOT
-  - MATRIX_JOB_TYPE=STYLE
-  - MATRIX_JOB_TYPE=JAVADOC
-  - MATRIX_JOB_TYPE=CFGMETADATA
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=NONE
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=CASSANDRA
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=DYNAMODB
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=COSMOSDB
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=COUCHBASE
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=FILESYSTEM
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=IGNITE
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=INFLUXDB
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=LDAP
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=MAIL
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=MEMCACHED
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=MONGODB
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=REDIS
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=COUCHDB
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=MSSQLSERVER
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=MYSQL
-  - MATRIX_JOB_TYPE=TEST MATRIX_SERVER=POSTGRES
-  - MATRIX_JOB_TYPE=DEPUPDATE
-  - MATRIX_JOB_TYPE=DEPANALYZE
 before_install:
 - unset _JAVA_OPTIONS
 - chmod -R 777 ./ci/*.sh
 - ./ci/push-docs-ghpages.sh
 - ./ci/init-travis-build.sh
-install:
-- ./ci/install.sh
+install: true
 script:
 - ./ci/script.sh
 after_script:
 - ./ci/stop.sh
-
-
+stages:
+- initialize
+- publish
+- build
+- analysis
+- docs
+- test
+- dependencies
+jobs:
+  include:
+  - stage: initialize
+    script: ./ci/download-dependencies.sh
+    ############################################
+  - stage: publish
+    if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master) and NOT (commit_message =~ ^\[skip\s+snapshots\])
+    script: ./ci/publish-snapshots.sh
+    ############################################
+  - stage: build
+    script: ./ci/build.sh
+    ############################################
+  - stage: analysis
+    script: ./ci/analyze-style.sh
+    ############################################
+  - stage: docs
+    script: ./ci/build-javadocs.sh
+  - stage: docs
+    script: ./ci/build-config-metadata.sh
+    ############################################
+  - stage: dependencies
+    script: ./ci/analyze-dependencies.sh
+  - stage: dependencies
+    if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+    script: ./ci/report-dependency-updates.sh
+    ############################################
+  - stage: test
+    script: ./ci/tests/run-tests-simple.sh
+  - stage: test
+    script: ./ci/tests/cassandra/run-tests-cassandra.sh
+  - stage: test
+    script: ./ci/tests/cosmosdb/run-tests-cosmosdb.sh
+  - stage: test
+    script: ./ci/tests/couchbase/run-tests-couchbase.sh
+  - stage: test
+    script: ./ci/tests/dynamodb/run-tests-dynamodb.sh
+  - stage: test
+    script: ./ci/tests/filesystem/run-tests-filesystem.sh
+  - stage: test
+    script: ./ci/tests/ignite/run-tests-ignite.sh
+  - stage: test
+    script: ./ci/tests/influxdb/run-tests-influxdb.sh
+  - stage: test
+    script: ./ci/tests/ldap/run-tests-ldap.sh
+  - stage: test
+    script: ./ci/tests/mail/run-tests-mail.sh
+  - stage: test
+    script: ./ci/tests/couchdb/run-tests-couchdb.sh
+  - stage: test
+    script: ./ci/tests/memcached/run-tests-memcached.sh
+  - stage: test
+    script: ./ci/tests/mysql/run-tests-mysql.sh
+  - stage: test
+    script: ./ci/tests/mssqlserver/run-tests-mssqlserver.sh
+  - stage: test
+    script: ./ci/tests/postgres/run-tests-postgres.sh
+  - stage: test
+    script: ./ci/tests/mongodb/run-tests-mongodb.sh
+  - stage: test
+    script: ./ci/tests/redis/run-tests-redis.sh
