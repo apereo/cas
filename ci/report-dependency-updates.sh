@@ -1,6 +1,6 @@
 #!/bin/bash
 
-branchName="master"
+branchName="$1"
 
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
@@ -10,6 +10,8 @@ gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
+
+echo "Required Branch Name: $branchName"
 
 if [ "$MATRIX_JOB_TYPE" == "DEPUPDATE" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ]; then
     gradleBuild="$gradleBuild dependencyUpdates -Drevision=release -x javadoc -x check  \

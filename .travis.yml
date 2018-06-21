@@ -70,7 +70,7 @@ jobs:
     script: ./ci/download-dependencies.sh
     ############################################
   - stage: publish
-    script: ./ci/publish-snapshots.sh
+    script: ./ci/publish-snapshots.sh master
     ############################################
   - stage: build
     script: ./ci/build.sh
@@ -86,7 +86,7 @@ jobs:
     script: ./ci/build-config-metadata.sh
     ############################################
   - stage: dependencies
-    script: ./ci/report-dependency-updates.sh
+    script: ./ci/report-dependency-updates.sh master
     ############################################
   - stage: test
     script: ./ci/tests/run-tests-simple.sh

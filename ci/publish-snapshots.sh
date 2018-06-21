@@ -1,6 +1,6 @@
 #!/bin/bash
 
-branchName="master"
+branchName="$1"
 
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
@@ -10,6 +10,8 @@ gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
+
+echo "Required Branch Name: $branchName"
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ]; then
     if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip snapshots]"* ]]; then
