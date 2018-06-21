@@ -12,6 +12,7 @@ import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.mvc.ParameterizableViewController;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
+import org.springframework.web.servlet.mvc.UrlFilenameViewController;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -44,13 +46,14 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("localeChangeInterceptor")
     private LocaleChangeInterceptor localeChangeInterceptor;
-    
+
     @RefreshScope
     @Bean
+    @Lazy
     public ThemeChangeInterceptor themeChangeInterceptor() {
         final ThemeChangeInterceptor bean = new ThemeChangeInterceptor();
         bean.setParamName(casProperties.getTheme().getParamName());
@@ -59,13 +62,14 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @ConditionalOnMissingBean(name = "localeResolver")
     @Bean
+    @Lazy
     public LocaleResolver localeResolver() {
         final CookieLocaleResolver bean = new CookieLocaleResolver() {
             @Override
             protected Locale determineDefaultLocale(final HttpServletRequest request) {
                 final Locale locale = request.getLocale();
                 if (StringUtils.isBlank(casProperties.getLocale().getDefaultValue())
-                        || !locale.getLanguage().equals(casProperties.getLocale().getDefaultValue())) {
+                    || !locale.getLanguage().equals(casProperties.getLocale().getDefaultValue())) {
                     return locale;
                 }
                 return new Locale(casProperties.getLocale().getDefaultValue());
@@ -73,7 +77,12 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         };
         return bean;
     }
-    
+
+    @Bean
+    @Lazy
+    protected UrlFilenameViewController passThroughController() {
+        return new UrlFilenameViewController();
+    }
 
     @Bean
     protected Controller rootController() {
@@ -83,7 +92,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
                                                          final HttpServletResponse response) {
                 final String queryString = request.getQueryString();
                 final String url = request.getContextPath() + "/login"
-                        + (queryString != null ? '?' + queryString : StringUtils.EMPTY);
+                    + (queryString != null ? '?' + queryString : StringUtils.EMPTY);
                 return new ModelAndView(new RedirectView(response.encodeURL(url)));
             }
 
@@ -91,6 +100,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
+    @Lazy
     public ServletListenerRegistrationBean log4jServletContextListener() {
         final ServletListenerRegistrationBean bean = new ServletListenerRegistrationBean();
         bean.setEnabled(true);
@@ -100,6 +110,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
+    @Lazy
     public SimpleUrlHandlerMapping handlerMapping() {
         final SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
 
@@ -115,13 +126,14 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
+    @Lazy
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
     }
-    
+
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor)
-                .addPathPatterns("/**");
+            .addPathPatterns("/**");
     }
 }
