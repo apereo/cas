@@ -9,9 +9,9 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-./ci/run-mail-server.sh
+./ci/tests/dynamodb/run-dynamodb-server.sh
 
-gradleBuild="$gradleBuild test testMail coveralls -DMATRIX_SERVER=MAIL -x javadoc -x check \
+gradleBuild="$gradleBuild test testDynamoDb coveralls -DMATRIX_SERVER=DYNAMODB -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 

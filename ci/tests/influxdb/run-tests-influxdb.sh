@@ -9,9 +9,9 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-./ci/run-dynamodb-server.sh
+./ci/tests/influxdb/run-influxdb-server.sh
 
-gradleBuild="$gradleBuild test testDynamoDb coveralls -DMATRIX_SERVER=DYNAMODB -x javadoc -x check \
+gradleBuild="$gradleBuild test testInfluxDb coveralls -DMATRIX_SERVER=INFLUXDB -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 

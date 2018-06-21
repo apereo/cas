@@ -9,9 +9,9 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-./ci/run-mssql-server.sh
+./ci/tests/mail/run-mail-server.sh
 
-gradleBuild="$gradleBuild test testMsSqlServer coveralls -DMATRIX_SERVER=MSSQLSERVER -x javadoc -x check \
+gradleBuild="$gradleBuild test testMail coveralls -DMATRIX_SERVER=MAIL -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 

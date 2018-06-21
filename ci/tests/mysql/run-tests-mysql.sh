@@ -9,9 +9,9 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-./ci/run-ldap-server.sh
+./ci/tests/mysql/run-mysql-server.sh
 
-gradleBuild="$gradleBuild test testLdap coveralls -DMATRIX_SERVER=LDAP -x javadoc -x check \
+gradleBuild="$gradleBuild test testMySQL coveralls -DMATRIX_SERVER=MYSQL -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 

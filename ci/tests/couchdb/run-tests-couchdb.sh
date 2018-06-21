@@ -9,9 +9,9 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-./ci/run-couchbase-server.sh
+./ci/tests/couchdb/run-couchdb-server.sh
 
-gradleBuild="$gradleBuild test testCouchbase coveralls -DMATRIX_SERVER=COUCHBASE -x javadoc -x check \
+gradleBuild="$gradleBuild test testCouchDb coveralls -DMATRIX_SERVER=COUCHDB -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 

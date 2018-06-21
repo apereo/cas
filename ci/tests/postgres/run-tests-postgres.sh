@@ -9,9 +9,9 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-./ci/run-cassandra-server.sh
+./ci/tests/postgres/run-postgres-server.sh
 
-gradleBuild="$gradleBuild test testCassandra coveralls -DMATRIX_SERVER=CASSANDRA -x javadoc -x check \
+gradleBuild="$gradleBuild test testPostgres coveralls -DMATRIX_SERVER=POSTGRES -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
