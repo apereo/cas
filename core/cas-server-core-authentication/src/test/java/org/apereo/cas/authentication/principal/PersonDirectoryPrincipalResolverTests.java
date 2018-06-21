@@ -112,7 +112,7 @@ public class PersonDirectoryPrincipalResolverTests {
                 Optional.of(CoreAuthenticationTestUtils.getPrincipal("somethingelse", Collections.singletonMap(ATTR_1, "value"))),
                 Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertNotNull(p);
-        assertEquals(p.getId(), "changedPrincipal");
+        assertEquals("changedPrincipal", p.getId());
         assertEquals(p.getAttributes().size(), CoreAuthenticationTestUtils.getAttributeRepository().getPossibleUserAttributeNames().size() + 1);
         assertTrue(p.getAttributes().containsKey(ATTR_1));
         assertFalse(p.getAttributes().containsKey("principal"));
