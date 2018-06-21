@@ -9,7 +9,9 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-gradleBuild="$gradleBuild test coveralls -DMATRIX_SERVER=NONE -x javadoc -x check \
+./ci/run-memcached-server.sh
+
+gradleBuild="$gradleBuild test testMemcached coveralls -DMATRIX_SERVER=MEMCACHED -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
