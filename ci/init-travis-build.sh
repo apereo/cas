@@ -21,7 +21,6 @@ fi
 
 echo -e "Stopping current services...\n"
 sudo service mysql stop
-sudo service postgres stop
 
 echo -e "Setting build environment...\n"
 sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services /etc/cas/config/saml
@@ -30,13 +29,15 @@ echo -e "Configuring Oracle JDK8 JCE...\n"
 sudo unzip -j -o ./etc/jce8.zip *.jar -d $JAVA_HOME/jre/lib/security
 sudo cp ./etc/java.security $JAVA_HOME/jre/lib/security
 
-
 echo -e "Configuring Gradle wrapper...\n"
 chmod -R 777 ./gradlew
 
-if [ "$MATRIX_JOB_TYPE" == "BUILD" ] || [ "$MATRIX_JOB_TYPE" == "STYLE" ] || [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
-    echo -e "Installing NPM...\n"
-    ./gradlew npmInstall --stacktrace -q
-fi
+echo "Home directory: $HOME"
+
+echo "Gradle Home directory:"
+./gradlew gradleHome
+
+echo -e "Installing NPM...\n"
+./gradlew npmInstall --stacktrace -q
 
 echo -e "Configured build environment\n"
