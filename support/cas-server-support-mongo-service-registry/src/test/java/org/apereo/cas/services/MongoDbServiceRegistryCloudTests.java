@@ -2,15 +2,16 @@ package org.apereo.cas.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.MongoDbServiceRegistryConfiguration;
-import org.junit.ClassRule;
-import org.junit.Rule;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * This is {@link MongoDbServiceRegistryCloudTests}.
@@ -18,23 +19,30 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@SpringBootTest(classes = {MongoDbServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
+@SpringBootTest(classes = {
+    MongoDbServiceRegistryConfiguration.class,
+    RefreshAutoConfiguration.class
+})
 @TestPropertySource(locations = {"classpath:/mongoservices.properties"})
 @Slf4j
+@RunWith(Parameterized.class)
 public class MongoDbServiceRegistryCloudTests extends AbstractServiceRegistryTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("mongoDbServiceRegistry")
     private ServiceRegistry serviceRegistry;
 
+    public MongoDbServiceRegistryCloudTests(final Class<? extends RegisteredService> registeredServiceClass) {
+        super(registeredServiceClass);
+    }
+
     @Override
     public ServiceRegistry getNewServiceRegistry() {
         return this.serviceRegistry;
+    }
+
+    @Parameterized.Parameters
+    public static Collection<Object> getTestParameters() {
+        return Arrays.asList(RegexRegisteredService.class);
     }
 }

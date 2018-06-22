@@ -23,6 +23,10 @@ import static org.junit.Assert.*;
 @ConditionalIgnore(condition = RunningStandaloneCondition.class)
 public class LdapServiceRegistryTests extends BaseLdapServiceRegistryTests {
 
+    public LdapServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
+        super(registeredServiceClass);
+    }
+
     @BeforeClass
     public static void bootstrap() throws Exception {
         LdapIntegrationTestsOperations.initDirectoryServer(1390);

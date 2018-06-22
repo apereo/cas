@@ -6,11 +6,15 @@ import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrat
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -22,7 +26,12 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @Slf4j
+@RunWith(Parameterized.class)
 public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
+    public JsonServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
+        super(registeredServiceClass);
+    }
+
     @Override
     @SneakyThrows
     public void initializeServiceRegistry() {
@@ -31,6 +40,11 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy());
         super.initializeServiceRegistry();
+    }
+
+    @Parameterized.Parameters
+    public static Collection<Object> getTestParameters() {
+        return Arrays.asList(RegexRegisteredService.class);
     }
 
     @Test

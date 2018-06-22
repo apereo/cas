@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
-import org.apereo.cas.util.junit.ConditionalSpringRunner;
+import org.apereo.cas.util.junit.ConditionalParameterizedRunner;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,7 +20,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * @author battags
  * @since 3.1.0
  */
-@RunWith(ConditionalSpringRunner.class)
+@RunWith(ConditionalParameterizedRunner.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
@@ -34,6 +34,15 @@ public class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("jpaServiceRegistry")
     private ServiceRegistry serviceRegistry;
+
+    public JpaServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
+        super(registeredServiceClass);
+    }
+
+    @Parameterized.Parameters
+    public static Collection<Object> getTestParameters() {
+        return Arrays.asList(RegexRegisteredService.class);
+    }
 
     @Override
     public ServiceRegistry getNewServiceRegistry() {

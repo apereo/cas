@@ -7,7 +7,12 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apereo.cas.category.FileSystemCategory;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.springframework.core.io.ClassPathResource;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * This is {@link AbstractResourceBasedServiceRegistryTests}.
@@ -17,10 +22,15 @@ import org.springframework.core.io.ClassPathResource;
  */
 @Slf4j
 @Category(FileSystemCategory.class)
+@RunWith(Parameterized.class)
 public abstract class AbstractResourceBasedServiceRegistryTests extends AbstractServiceRegistryTests {
     public static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
     protected ServiceRegistry dao;
+
+    public AbstractResourceBasedServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
+        super(registeredServiceClass);
+    }
 
     @Override
     @SneakyThrows
@@ -40,5 +50,10 @@ public abstract class AbstractResourceBasedServiceRegistryTests extends Abstract
     @Override
     public ServiceRegistry getNewServiceRegistry() {
         return this.dao;
+    }
+
+    @Parameterized.Parameters
+    public static Collection<Object> getTestParameters() {
+        return Arrays.asList(RegexRegisteredService.class);
     }
 }

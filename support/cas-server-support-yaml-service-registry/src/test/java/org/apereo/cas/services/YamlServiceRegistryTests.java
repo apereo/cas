@@ -4,7 +4,12 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.springframework.context.ApplicationEventPublisher;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 import static org.mockito.Mockito.*;
 
@@ -15,7 +20,17 @@ import static org.mockito.Mockito.*;
  * @since 5.0.0
  */
 @Slf4j
+@RunWith(Parameterized.class)
 public class YamlServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
+
+    public YamlServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
+        super(registeredServiceClass);
+    }
+
+    @Parameterized.Parameters
+    public static Collection<Object> getTestParameters() {
+        return Arrays.asList(RegexRegisteredService.class);
+    }
 
     @Override
     @SneakyThrows

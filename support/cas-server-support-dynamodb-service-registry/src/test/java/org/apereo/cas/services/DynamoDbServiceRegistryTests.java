@@ -8,16 +8,17 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.DynamoDbServiceRegistryConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * This is {@link DynamoDbServiceRegistryTests}.
@@ -25,6 +26,7 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@RunWith(Parameterized.class)
 @SpringBootTest(classes = {
     DynamoDbServiceRegistryConfiguration.class,
     CasCoreServicesConfiguration.class,
@@ -37,12 +39,6 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class DynamoDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("serviceRegistry")
     private ServiceRegistry serviceRegistry;
@@ -52,6 +48,14 @@ public class DynamoDbServiceRegistryTests extends AbstractServiceRegistryTests {
         System.setProperty("aws.secretKey", "UpigXEQDU1tnxolpXBM8OK8G7/a+goMDTJkQPvxQ");
     }
 
+    public DynamoDbServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
+        super(registeredServiceClass);
+    }
+
+    @Parameterized.Parameters
+    public static Collection<Object> getTestParameters() {
+        return Arrays.asList(RegexRegisteredService.class);
+    }
 
     @Override
     public ServiceRegistry getNewServiceRegistry() {

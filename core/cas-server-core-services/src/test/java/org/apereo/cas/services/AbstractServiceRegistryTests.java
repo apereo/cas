@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
@@ -15,9 +16,12 @@ import org.joda.time.DateTimeUtils;
 import org.jooq.lambda.Unchecked;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -44,13 +48,22 @@ import static org.junit.Assert.*;
  */
 @Slf4j
 @Getter
+@RequiredArgsConstructor
 public abstract class AbstractServiceRegistryTests {
     public static final int LOAD_SIZE = 1;
 
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+    
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     private ServiceRegistry serviceRegistry;
+
+    private final Class<? extends RegisteredService> registeredServiceClass;
 
     @Before
     public void setUp() {
@@ -71,7 +84,7 @@ public abstract class AbstractServiceRegistryTests {
      *
      * @return the ServiceRegistry we wish to test
      */
-    public abstract ServiceRegistry getNewServiceRegistry();
+    protected abstract ServiceRegistry getNewServiceRegistry();
 
     @Test
     public void verifyEmptyRegistry() {
@@ -519,7 +532,8 @@ public abstract class AbstractServiceRegistryTests {
      * @return new registered service object
      */
     protected AbstractRegisteredService buildRegisteredServiceInstance(final int randomId) {
-        final AbstractRegisteredService rs = RegisteredServiceTestUtils.getRegisteredService("^http://www.serviceid" + randomId + ".org", getRegisteredServiceClass());
+        final String id = String.format("^http://www.serviceid%s.org", randomId);
+        final AbstractRegisteredService rs = RegisteredServiceTestUtils.getRegisteredService(id, this.registeredServiceClass);
         initializeServiceInstance(rs);
         return rs;
     }
@@ -538,10 +552,6 @@ public abstract class AbstractServiceRegistryTests {
         propertyMap.put("field1", property);
         rs.setProperties(propertyMap);
         return rs;
-    }
-
-    protected Class<? extends RegisteredService> getRegisteredServiceClass() {
-        return RegexRegisteredService.class;
     }
 
     protected int getLoadSize() {

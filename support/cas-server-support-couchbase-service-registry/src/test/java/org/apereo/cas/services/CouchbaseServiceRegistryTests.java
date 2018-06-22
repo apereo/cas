@@ -4,17 +4,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.category.CouchbaseCategory;
 import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * This is {@link CouchbaseServiceRegistryTests}.
@@ -33,23 +33,24 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 @Slf4j
 @Category(CouchbaseCategory.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@RunWith(Parameterized.class)
 public class CouchbaseServiceRegistryTests extends AbstractServiceRegistryTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("couchbaseServiceRegistry")
     private ServiceRegistry serviceRegistry;
 
+    public CouchbaseServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
+        super(registeredServiceClass);
+    }
 
     @Override
     public ServiceRegistry getNewServiceRegistry() {
         return this.serviceRegistry;
+    }
+
+    @Parameterized.Parameters
+    public static Collection<Object> getTestParameters() {
+        return Arrays.asList(RegexRegisteredService.class);
     }
 }

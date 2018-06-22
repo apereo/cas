@@ -4,19 +4,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.ldap.services.config.LdapServiceRegistryConfiguration;
 import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
+import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * This is {@link BaseLdapServiceRegistryTests}.
@@ -27,25 +29,26 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 @EnableScheduling
 @DirtiesContext
 @Slf4j
+@RunWith(Parameterized.class)
 @Category(LdapCategory.class)
 @SpringBootTest(classes = {LdapServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
 public class BaseLdapServiceRegistryTests extends AbstractServiceRegistryTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("ldapServiceRegistry")
     private ServiceRegistry dao;
 
+    public BaseLdapServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
+        super(registeredServiceClass);
+    }
+
     @Override
     public ServiceRegistry getNewServiceRegistry() {
         return this.dao;
+    }
+
+    @Parameterized.Parameters
+    public static Collection<Object> getTestParameters() {
+        return Arrays.asList(RegexRegisteredService.class);
     }
 }
