@@ -31,7 +31,7 @@ It is recommended to deploy CAS locally using the [WAR Overlay method][overlay].
 |------------|-----------------------------------
 | ![](https://img.shields.io/badge/Development-WIP-blue.svg?style=flat) | [Link](https://apereo.github.io/cas/development)
 | ![](https://img.shields.io/badge/5.3.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/current)
-| ![](https://img.shields.io/badge/5.2.x-Maintenance-yellow.svg?style=flat) | [Link](https://apereo.github.io/cas/5.2.x)
+| ![](https://img.shields.io/badge/5.2.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/5.2.x)
 | ![](https://img.shields.io/badge/5.1.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/5.1.x)
 | ![](https://img.shields.io/badge/5.0.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/5.0.x)
 | ![](https://img.shields.io/badge/4.2.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/4.2.x)
@@ -51,8 +51,7 @@ Additional resources are available as follows:
 
 - [How to contribute][contribute]
 
-If you have already identified an enhancement or a bug, it is STRONGLY recommended that you simply submit a pull request to address the case. There is no need for special ceremony to create separate issues. The pull request IS the issue and it will be tracked and tagged as such.
-
+If you have already identified an enhancement or a bug, we recommended that you simply submit a pull request to address the case.
 
 ## Features
 
