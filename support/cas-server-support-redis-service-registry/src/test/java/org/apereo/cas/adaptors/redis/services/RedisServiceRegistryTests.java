@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.redis.services;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.RedisServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -43,7 +44,7 @@ import static org.junit.Assert.*;
 @TestPropertySource(locations = {"classpath:/svc-redis.properties"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class RedisServiceRegistryTests {
+public class RedisServiceRegistryTests extends AbstractServiceRegistryTests {
     private static RedisServer REDIS_SERVER;
 
     @Autowired
@@ -51,9 +52,16 @@ public class RedisServiceRegistryTests {
     private ServiceRegistry dao;
 
     @Before
+    @Override
     public void setUp() {
+        super.setUp();
         final List<RegisteredService> services = this.dao.load();
         services.forEach(service -> this.dao.delete(service));
+    }
+
+    @Override
+    public ServiceRegistry getNewServiceRegistry() {
+        return this.dao;
     }
 
     @BeforeClass

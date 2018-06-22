@@ -17,6 +17,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -39,6 +40,7 @@ import java.util.List;
 @ConditionalOnMissingClass(value = {
     "org.apereo.cas.services.JsonServiceRegistry",
     "org.apereo.cas.services.YamlServiceRegistry"})
+@ConditionalOnBean(ServicesManager.class)
 @Slf4j
 public class CasServiceRegistryInitializationConfiguration {
 

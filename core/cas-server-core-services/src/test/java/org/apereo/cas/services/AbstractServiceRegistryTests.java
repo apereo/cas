@@ -48,7 +48,8 @@ public abstract class AbstractServiceRegistryTests {
      */
     @Test
     public void verifyEmptyRegistry() {
-        assertEquals(0, this.serviceRegistry.load().size());
+        final List<RegisteredService> results = this.serviceRegistry.load();
+        assertEquals(0, results.size());
     }
 
     @Test
@@ -93,7 +94,7 @@ public abstract class AbstractServiceRegistryTests {
     public void verifyUpdatingServices() {
         this.serviceRegistry.save(buildService(200));
         final List<RegisteredService> services = this.serviceRegistry.load();
-
+        assertFalse(services.isEmpty());
         final AbstractRegisteredService rs = (AbstractRegisteredService) this.serviceRegistry.findServiceById(services.get(0).getId());
         assertNotNull(rs);
         rs.setEvaluationOrder(9999);
@@ -166,6 +167,7 @@ public abstract class AbstractServiceRegistryTests {
      * Method to prepare the service registry for testing. Iplementing classes may override this if more is necessary.
      */
     public void initializeServiceRegistry() {
-        this.getServiceRegistry().load().forEach(service -> this.getServiceRegistry().delete(service));
+        final List<RegisteredService> results = this.getServiceRegistry().load();
+        results.forEach(service -> this.getServiceRegistry().delete(service));
     }
 }
