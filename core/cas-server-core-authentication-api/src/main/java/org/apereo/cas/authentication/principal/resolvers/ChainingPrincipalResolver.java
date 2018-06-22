@@ -85,7 +85,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
                 }
             }
         });
-        Set<String> principalIds = principals
+        final Set<String> principalIds = principals
             .stream()
             .map(p -> p.getId().trim().toLowerCase())
             .collect(Collectors.toCollection(LinkedHashSet::new));
