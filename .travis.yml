@@ -70,7 +70,7 @@ jobs:
     script: ./ci/download-dependencies.sh
     ############################################
   - stage: publish
-    if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master) and NOT (commit_message =~ ^\[skip\s+snapshots\])
+    if:  NOT commit_message =~ ^\[skip\s+snapshots\] and type != "pull_request" and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
     script: ./ci/publish-snapshots.sh
     ############################################
   - stage: build
