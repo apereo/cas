@@ -56,7 +56,7 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests {
     public void verifyChainedResolver() {
         final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver(this.attributeRepository);
         final ChainingPrincipalResolver chain = new ChainingPrincipalResolver();
-        chain.setChain(Arrays.asList(resolver, new EchoingPrincipalResolver()));
+        chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
         final Map<String, Object> attributes = new HashMap<>(2);
         attributes.put("a1", "v1");
         attributes.put("a2", "v2");
