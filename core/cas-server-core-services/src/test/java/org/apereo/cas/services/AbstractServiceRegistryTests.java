@@ -82,7 +82,7 @@ public abstract class AbstractServiceRegistryTests {
     @Test
     public void verifySave() {
         final AbstractRegisteredService svc = buildRegisteredServiceInstance(RandomUtils.nextInt());
-        assertEquals(serviceRegistry.save(svc), svc);
+        assertEquals(serviceRegistry.save(svc).getServiceId(), svc.getServiceId());
     }
 
     @Test
@@ -171,21 +171,8 @@ public abstract class AbstractServiceRegistryTests {
         final RegisteredService r2 = this.serviceRegistry.save(r);
         DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis() + 2000);
         this.serviceRegistry.load();
-        final RegisteredService svc = this.serviceRegistry.findServiceById(r2.getServiceId());
+        final RegisteredService svc = this.serviceRegistry.findServiceByExactServiceName(r2.getName());
         assertNotNull(svc);
-    }
-
-    @Test
-    public void verifySavingServiceChangesDn() {
-        this.serviceRegistry.save(buildRegisteredServiceInstance(8080));
-        final List<RegisteredService> services = this.serviceRegistry.load();
-        assertFalse(services.isEmpty());
-        final AbstractRegisteredService rs = (AbstractRegisteredService) this.serviceRegistry.findServiceById(services.get(0).getId());
-        final long originalId = rs.getId();
-        assertNotNull(rs);
-        rs.setId(666);
-        assertNotNull(this.serviceRegistry.save(rs));
-        assertNotEquals(rs.getId(), originalId);
     }
 
     @Test
@@ -194,10 +181,10 @@ public abstract class AbstractServiceRegistryTests {
         final LocalDateTime expirationDate = LocalDateTime.now().plusSeconds(1);
         r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(false, expirationDate));
         final RegisteredService r2 = this.serviceRegistry.save(r);
-        RegisteredService svc = this.serviceRegistry.findServiceById(r2.getServiceId());
+        RegisteredService svc = this.serviceRegistry.findServiceByExactServiceName(r2.getName());
         assertNotNull(svc);
         DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis() + 2000);
-        svc = this.serviceRegistry.findServiceById(r2.getServiceId());
+        svc = this.serviceRegistry.findServiceByExactServiceName(r2.getName());
         assertNotNull(svc);
     }
 
@@ -213,7 +200,6 @@ public abstract class AbstractServiceRegistryTests {
         final RegisteredService r = buildRegisteredServiceInstance(RandomUtils.nextInt());
         final RegisteredService r2 = this.serviceRegistry.save(r);
         final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
-        assertEquals(r, r2);
         assertEquals(r2, r3);
     }
 
@@ -226,7 +212,6 @@ public abstract class AbstractServiceRegistryTests {
         r.setAccessStrategy(strategy);
         final RegisteredService r2 = this.serviceRegistry.save(r);
         final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
-        assertEquals(r, r2);
         assertEquals(r2, r3);
     }
 
@@ -244,7 +229,8 @@ public abstract class AbstractServiceRegistryTests {
         policy.setPrincipalAttributeValueToMatch("cas|CAS|admin");
         r.setMultifactorPolicy(policy);
         final RegisteredService r2 = this.serviceRegistry.save(r);
-        assertEquals(r2, r);
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
+        assertEquals(r2, r3);
     }
 
     @Test
@@ -252,7 +238,8 @@ public abstract class AbstractServiceRegistryTests {
         final AbstractRegisteredService r = buildRegisteredServiceInstance(RandomUtils.nextInt());
         r.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         final RegisteredService r2 = this.serviceRegistry.save(r);
-        assertEquals(r2, r);
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
+        assertEquals(r2, r3);
     }
 
     @Test
@@ -263,7 +250,8 @@ public abstract class AbstractServiceRegistryTests {
             CollectionUtils.wrapSet("test")));
         r.setAttributeReleasePolicy(policy);
         final RegisteredService r2 = this.serviceRegistry.save(r);
-        assertEquals(r2, r);
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
+        assertEquals(r2, r3);
     }
 
     @Test
@@ -271,7 +259,8 @@ public abstract class AbstractServiceRegistryTests {
         final AbstractRegisteredService r = buildRegisteredServiceInstance(RandomUtils.nextInt());
         r.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("cn", "UPPER"));
         final RegisteredService r2 = this.serviceRegistry.save(r);
-        assertEquals(r2, r);
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
+        assertEquals(r2, r3);
     }
 
     @Test
@@ -297,7 +286,6 @@ public abstract class AbstractServiceRegistryTests {
         r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, LocalDate.now()));
         final RegisteredService r2 = this.serviceRegistry.save(r);
         final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
-        assertEquals(r, r2);
         assertEquals(r2, r3);
         assertNotNull(r3.getExpirationPolicy());
         assertEquals(r2.getExpirationPolicy(), r3.getExpirationPolicy());
@@ -309,7 +297,6 @@ public abstract class AbstractServiceRegistryTests {
         r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         final RegisteredService r2 = this.serviceRegistry.save(r);
         final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
-        assertEquals(r, r2);
         assertEquals(r2, r3);
         assertNotNull(r3.getAttributeReleasePolicy());
         assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
@@ -322,8 +309,9 @@ public abstract class AbstractServiceRegistryTests {
         r.setTheme("mytheme");
 
         this.serviceRegistry.save(r);
-        final RegisteredService r3 = this.serviceRegistry.findServiceById(r.getId());
-        assertEquals(r, r3);
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
+        assertEquals(r2, r3);
     }
 
     @Test
@@ -341,7 +329,6 @@ public abstract class AbstractServiceRegistryTests {
         final RegisteredService r2 = this.serviceRegistry.save(r);
         final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
 
-        assertEquals(r, r2);
         assertEquals(r2, r3);
         assertNotNull(r3.getAttributeReleasePolicy());
         assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
@@ -357,7 +344,6 @@ public abstract class AbstractServiceRegistryTests {
         final RegisteredService r2 = this.serviceRegistry.save(r);
         final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
 
-        assertEquals(r, r2);
         assertEquals(r2, r3);
         assertNotNull(r3.getAttributeReleasePolicy());
         assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
@@ -378,7 +364,6 @@ public abstract class AbstractServiceRegistryTests {
         final RegisteredService r2 = this.serviceRegistry.save(r);
         final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
 
-        assertEquals(r, r2);
         assertEquals(r2, r3);
         assertNotNull(r3.getAttributeReleasePolicy());
         assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
@@ -465,7 +450,7 @@ public abstract class AbstractServiceRegistryTests {
 
         this.serviceRegistry.save(r);
         this.serviceRegistry.load();
-        assertNotNull(this.serviceRegistry.findServiceById(r.getId()));
+        assertNotNull(this.serviceRegistry.findServiceByExactServiceName(r.getName()));
     }
 
     @Test
@@ -519,7 +504,7 @@ public abstract class AbstractServiceRegistryTests {
 
         this.serviceRegistry.save(r);
         this.serviceRegistry.load();
-        assertNotNull(this.serviceRegistry.findServiceById(r.getId()));
+        assertNotNull(this.serviceRegistry.findServiceByExactServiceName(r.getName()));
         assertEquals(2, r.getProperties().size());
         assertNotNull(r.getProperties().get("field1"));
 
