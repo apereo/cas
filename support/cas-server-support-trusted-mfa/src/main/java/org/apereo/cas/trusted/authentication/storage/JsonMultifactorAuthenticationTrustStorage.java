@@ -15,6 +15,7 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -52,8 +53,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
             .stream()
             .filter(entry -> entry.getRecordDate().isEqual(onOrBefore) || entry.getRecordDate().isBefore(onOrBefore))
             .sorted()
-            .distinct()
-            .collect(Collectors.toSet());
+            .collect(Collectors.toCollection(LinkedHashSet::new));
 
         LOGGER.info("Found [{}] expired records", results.size());
         if (!results.isEmpty()) {
@@ -71,8 +71,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
             .stream()
             .filter(entry -> entry.getRecordDate().isEqual(onOrAfterDate) || entry.getRecordDate().isAfter(onOrAfterDate))
             .sorted()
-            .distinct()
-            .collect(Collectors.toSet());
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
@@ -82,8 +81,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
             .stream()
             .filter(entry -> entry.getPrincipal().equalsIgnoreCase(principal))
             .sorted()
-            .distinct()
-            .collect(Collectors.toSet());
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
 

@@ -68,8 +68,8 @@ public class OAuthRegisteredService extends RegexRegisteredService {
      */
     @Override
     @PostLoad
-    public void postLoad() {
-        super.postLoad();
+    public void initializeFieldsIfNeeded() {
+        super.initializeFieldsIfNeeded();
         
         if (this.supportedGrantTypes == null) {
             this.supportedGrantTypes = new HashSet<>();

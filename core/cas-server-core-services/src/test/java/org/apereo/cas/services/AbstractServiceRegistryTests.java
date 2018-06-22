@@ -1,16 +1,38 @@
 package org.apereo.cas.services;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
+import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
+import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilter;
+import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
+import org.apereo.cas.util.CollectionUtils;
+import org.joda.time.DateTimeUtils;
+import org.jooq.lambda.Unchecked;
+import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
+import java.net.URI;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 
@@ -23,16 +45,24 @@ import static org.junit.Assert.*;
 @Slf4j
 @Getter
 public abstract class AbstractServiceRegistryTests {
-
     public static final int LOAD_SIZE = 1;
-    private static final String SERVICE_ID = "service";
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private ServiceRegistry serviceRegistry;
 
     @Before
     public void setUp() {
-        this.serviceRegistry = this.getNewServiceRegistry();
-        this.initializeServiceRegistry();
+        this.serviceRegistry = getNewServiceRegistry();
+        clearServiceRegistry();
+        initializeServiceRegistry();
+    }
+
+    @After
+    public void tearDown() {
+        clearServiceRegistry();
+        tearDownServiceRegistry();
     }
 
     /**
@@ -43,9 +73,6 @@ public abstract class AbstractServiceRegistryTests {
      */
     public abstract ServiceRegistry getNewServiceRegistry();
 
-    /**
-     * Verify tests start with empty registry
-     */
     @Test
     public void verifyEmptyRegistry() {
         final List<RegisteredService> results = this.serviceRegistry.load();
@@ -54,13 +81,10 @@ public abstract class AbstractServiceRegistryTests {
 
     @Test
     public void verifySave() {
-        final RegisteredService svc = RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID);
+        final AbstractRegisteredService svc = buildService(RandomUtils.nextInt());
         assertEquals(serviceRegistry.save(svc), svc);
     }
 
-    /**
-     * Method to test service registry saving and loading a service.
-     */
     @Test
     public void verifySaveAndLoad() {
         final List<RegisteredService> list = new ArrayList<>();
@@ -140,13 +164,376 @@ public abstract class AbstractServiceRegistryTests {
         assertEquals(0, this.serviceRegistry.load().size());
     }
 
+    @Test
+    public void verifyExpiredServiceDeleted() {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, LocalDateTime.now().minusSeconds(1)));
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis() + 2000);
+        this.serviceRegistry.load();
+        final RegisteredService svc = this.serviceRegistry.findServiceById(r2.getServiceId());
+        assertNotNull(svc);
+    }
+
+    @Test
+    public void verifySavingServiceChangesDn() {
+        this.serviceRegistry.save(buildService(8080));
+        final List<RegisteredService> services = this.serviceRegistry.load();
+        assertFalse(services.isEmpty());
+        final AbstractRegisteredService rs = (AbstractRegisteredService) this.serviceRegistry.findServiceById(services.get(0).getId());
+        final long originalId = rs.getId();
+        assertNotNull(rs);
+        rs.setId(666);
+        assertNotNull(this.serviceRegistry.save(rs));
+        assertNotEquals(rs.getId(), originalId);
+    }
+
+    @Test
+    public void verifyExpiredServiceDisabled() {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        final LocalDateTime expirationDate = LocalDateTime.now().plusSeconds(1);
+        r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(false, expirationDate));
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        RegisteredService svc = this.serviceRegistry.findServiceById(r2.getServiceId());
+        assertNotNull(svc);
+        DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis() + 2000);
+        svc = this.serviceRegistry.findServiceById(r2.getServiceId());
+        assertNotNull(svc);
+    }
+
+    @Test
+    public void checkLoadingOfServiceFiles() {
+        verifySaveAttributeReleasePolicyMappingRules();
+        verifySaveAttributeReleasePolicyAllowedAttrRulesAndFilter();
+        assertEquals(2, this.serviceRegistry.load().size());
+    }
+
+    @Test
+    public void checkSaveMethodWithNonExistentServiceAndNoAttributes() {
+        final RegisteredService r = buildService(RandomUtils.nextInt());
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
+        assertEquals(r, r2);
+        assertEquals(r2, r3);
+    }
+
+    @Test
+    public void checkSaveMethodWithDelegatedAuthnPolicy() {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        final DefaultRegisteredServiceAccessStrategy strategy = new DefaultRegisteredServiceAccessStrategy();
+        strategy.setDelegatedAuthenticationPolicy(
+            new DefaultRegisteredServiceDelegatedAuthenticationPolicy(CollectionUtils.wrapList("one", "two")));
+        r.setAccessStrategy(strategy);
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
+        assertEquals(r, r2);
+        assertEquals(r2, r3);
+    }
+
+    @Test
+    public void execSaveWithAuthnMethodPolicy() {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        final DefaultRegisteredServiceMultifactorPolicy policy =
+            new DefaultRegisteredServiceMultifactorPolicy();
+        policy.setFailureMode(RegisteredServiceMultifactorPolicy.FailureModes.PHANTOM);
+
+        final Set<String> set = new HashSet<>();
+        set.add("duoAuthenticationProvider");
+        policy.setMultifactorAuthenticationProviders(set);
+        policy.setPrincipalAttributeNameTrigger("memberOf");
+        policy.setPrincipalAttributeValueToMatch("cas|CAS|admin");
+        r.setMultifactorPolicy(policy);
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        assertEquals(r2, r);
+    }
+
+    @Test
+    public void execSaveMethodWithDefaultUsernameAttribute() {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        r.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        assertEquals(r2, r);
+    }
+
+    @Test
+    public void execSaveMethodWithConsentPolicy() {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
+        policy.setConsentPolicy(new DefaultRegisteredServiceConsentPolicy(CollectionUtils.wrapSet("test"),
+            CollectionUtils.wrapSet("test")));
+        r.setAttributeReleasePolicy(policy);
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        assertEquals(r2, r);
+    }
+
+    @Test
+    public void ensureSaveMethodWithDefaultPrincipalAttribute() {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        r.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("cn", "UPPER"));
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        assertEquals(r2, r);
+    }
+
+    @Test
+    public void verifySaveMethodWithDefaultAnonymousAttribute() {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        r.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider(
+            new ShibbolethCompatiblePersistentIdGenerator("helloworld")
+        ));
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        this.serviceRegistry.load();
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
+        final AnonymousRegisteredServiceUsernameAttributeProvider anon =
+            (AnonymousRegisteredServiceUsernameAttributeProvider) r3.getUsernameAttributeProvider();
+        final ShibbolethCompatiblePersistentIdGenerator ss =
+            (ShibbolethCompatiblePersistentIdGenerator) anon.getPersistentIdGenerator();
+        assertEquals("helloworld", ss.getSalt());
+        assertEquals(r2, r3);
+    }
+
+    @Test
+    public void verifyServiceExpirationPolicy() {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(true, LocalDate.now()));
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
+        assertEquals(r, r2);
+        assertEquals(r2, r3);
+        assertNotNull(r3.getExpirationPolicy());
+        assertEquals(r2.getExpirationPolicy(), r3.getExpirationPolicy());
+    }
+
+    @Test
+    public void verifySaveAttributeReleasePolicy() {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
+        assertEquals(r, r2);
+        assertEquals(r2, r3);
+        assertNotNull(r3.getAttributeReleasePolicy());
+        assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
+    }
+
+    @Test
+    public void verifySaveMethodWithExistingServiceNoAttribute() {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        this.serviceRegistry.save(r);
+        r.setTheme("mytheme");
+
+        this.serviceRegistry.save(r);
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r.getId());
+        assertEquals(r, r3);
+    }
+
+    @Test
+    public void verifySaveAttributeReleasePolicyMappingRules() {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        final Multimap<String, Object> map = ArrayListMultimap.create();
+        map.put("attr1", "newattr1");
+        map.put("attr2", "newattr2");
+        map.put("attr2", "newattr3");
+
+        final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
+        policy.setAllowedAttributes(CollectionUtils.wrap(map));
+        r.setAttributeReleasePolicy(policy);
+
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
+
+        assertEquals(r, r2);
+        assertEquals(r2, r3);
+        assertNotNull(r3.getAttributeReleasePolicy());
+        assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
+    }
+
+    @Test
+    public void verifySaveAttributeReleasePolicyAllowedAttrRules() {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
+        policy.setAllowedAttributes(Arrays.asList("1", "2", "3"));
+        r.setAttributeReleasePolicy(policy);
+
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
+
+        assertEquals(r, r2);
+        assertEquals(r2, r3);
+        assertNotNull(r3.getAttributeReleasePolicy());
+        assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
+    }
+
+    @Test
+    public void verifySaveAttributeReleasePolicyAllowedAttrRulesAndFilter() {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        r.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
+        r.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("https://.+"));
+        r.setRequiredHandlers(CollectionUtils.wrapHashSet("h1", "h2"));
+
+        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
+        policy.setAllowedAttributes(Arrays.asList("1", "2", "3"));
+        r.setAttributeReleasePolicy(policy);
+        r.getAttributeReleasePolicy().setAttributeFilter(new RegisteredServiceRegexAttributeFilter("\\w+"));
+
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
+
+        assertEquals(r, r2);
+        assertEquals(r2, r3);
+        assertNotNull(r3.getAttributeReleasePolicy());
+        assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
+    }
+
+    @Test
+    public void verifyServiceType() {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        assertTrue(r2 instanceof RegexRegisteredService);
+    }
+
+    @Test
+    @SneakyThrows
+    public void verifyServiceRemovals() {
+        final List<RegisteredService> list = new ArrayList<>(5);
+        IntStream.range(1, 5).forEach(i -> {
+            final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+            list.add(this.serviceRegistry.save(r));
+        });
+
+        list.forEach(Unchecked.consumer(r2 -> {
+            Thread.sleep(500);
+            this.serviceRegistry.delete(r2);
+            Thread.sleep(2000);
+            assertNull(this.serviceRegistry.findServiceById(r2.getId()));
+        }));
+    }
+
+    @Test
+    public void checkForAuthorizationStrategy() {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        final DefaultRegisteredServiceAccessStrategy authz =
+            new DefaultRegisteredServiceAccessStrategy(false, false);
+
+        final Map<String, Set<String>> attrs = new HashMap<>();
+        attrs.put("cn", Collections.singleton("v1, v2, v3"));
+        attrs.put("memberOf", Collections.singleton("v4, v5, v6"));
+        authz.setRequiredAttributes(attrs);
+        r.setAccessStrategy(authz);
+
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
+        assertEquals(r2, r3);
+    }
+
+    @Test
+    public void verifyAccessStrategyWithStarEndDate() throws Exception {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        final TimeBasedRegisteredServiceAccessStrategy authz =
+            new TimeBasedRegisteredServiceAccessStrategy(true, false);
+
+        authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1).toString());
+        authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusDays(10).toString());
+
+        authz.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
+        r.setAccessStrategy(authz);
+
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
+        assertEquals(r2, r3);
+    }
+
+    @Test
+    public void verifyAccessStrategyWithEndpoint() throws Exception {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        final RemoteEndpointServiceAccessStrategy authz = new RemoteEndpointServiceAccessStrategy();
+        authz.setEndpointUrl("http://www.google.com?this=that");
+        authz.setAcceptableResponseCodes("200,405,403");
+        authz.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
+        r.setAccessStrategy(authz);
+
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
+        assertEquals(r2, r3);
+    }
+
+    @Test
+    public void serializePublicKeyForServiceAndVerify() {
+        final RegisteredServicePublicKey publicKey = new RegisteredServicePublicKeyImpl(
+            "classpath:RSA1024Public.key", "RSA");
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        r.setPublicKey(publicKey);
+
+        this.serviceRegistry.save(r);
+        this.serviceRegistry.load();
+        assertNotNull(this.serviceRegistry.findServiceById(r.getId()));
+    }
+
+    @Test
+    public void verifyMappedRegexAttributeFilter() {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+
+        final ReturnAllowedAttributeReleasePolicy p = new ReturnAllowedAttributeReleasePolicy();
+        final RegisteredServiceMappedRegexAttributeFilter filter = new RegisteredServiceMappedRegexAttributeFilter();
+        filter.setCompleteMatch(true);
+        filter.setPatterns(CollectionUtils.wrap("one", "two"));
+        p.setAttributeFilter(filter);
+
+        r.setAttributeReleasePolicy(p);
+        this.serviceRegistry.save(r);
+        this.serviceRegistry.load();
+    }
+
+    @Test
+    public void verifyServiceContacts() {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+        final DefaultRegisteredServiceContact contact = new DefaultRegisteredServiceContact();
+        contact.setDepartment("Department");
+        contact.setEmail("cas@example.org");
+        contact.setName("Contact");
+        contact.setPhone("123-456-7890");
+        r.setContacts(CollectionUtils.wrap(contact));
+        this.serviceRegistry.save(r);
+        this.serviceRegistry.load();
+    }
+
+    @Test
+    public void persistCustomServiceProperties() {
+        final AbstractRegisteredService r = buildService(RandomUtils.nextInt());
+
+        final Map<String, RegisteredServiceProperty> properties = new HashMap<>();
+        final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
+        final Set<String> values = new HashSet<>();
+        values.add("value1");
+        values.add("value2");
+        property.setValues(values);
+        properties.put("field1", property);
+
+        final DefaultRegisteredServiceProperty property2 = new DefaultRegisteredServiceProperty();
+        final Set<String> values2 = new HashSet<>();
+        values2.add("value12");
+        values2.add("value22");
+        property2.setValues(values2);
+        properties.put("field2", property2);
+
+        r.setProperties(properties);
+
+        this.serviceRegistry.save(r);
+        this.serviceRegistry.load();
+        assertNotNull(this.serviceRegistry.findServiceById(r.getId()));
+        assertEquals(2, r.getProperties().size());
+        assertNotNull(r.getProperties().get("field1"));
+
+        final RegisteredServiceProperty prop = r.getProperties().get("field1");
+        assertEquals(2, prop.getValues().size());
+    }
+
     /**
      * Method to mock RegisteredService objects for testing.
      *
      * @param i addition to service name for uniqueness.
      * @return new registered service object
      */
-    protected static RegisteredService buildService(final int i) {
+    protected static AbstractRegisteredService buildService(final int i) {
         final AbstractRegisteredService rs = RegisteredServiceTestUtils.getRegisteredService("^http://www.serviceid" + i + ".org");
         final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
         final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
@@ -164,9 +551,21 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     /**
-     * Method to prepare the service registry for testing. Iplementing classes may override this if more is necessary.
+     * Method to prepare the service registry for testing.
+     * Implementing classes may override this if more is necessary.
      */
     public void initializeServiceRegistry() {
+
+    }
+
+    /**
+     * Method to shut down the service registry after testing.
+     * Implementing classes may override this if more is necessary.
+     */
+    public void tearDownServiceRegistry() {
+    }
+
+    public void clearServiceRegistry() {
         final List<RegisteredService> results = this.getServiceRegistry().load();
         results.forEach(service -> this.getServiceRegistry().delete(service));
     }

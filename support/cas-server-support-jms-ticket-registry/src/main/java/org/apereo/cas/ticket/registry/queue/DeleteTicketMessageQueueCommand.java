@@ -14,7 +14,7 @@ import lombok.Getter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 @Getter
 public class DeleteTicketMessageQueueCommand extends BaseMessageQueueCommand {

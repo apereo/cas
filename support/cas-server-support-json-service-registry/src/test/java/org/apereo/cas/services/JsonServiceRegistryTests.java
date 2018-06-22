@@ -1,10 +1,10 @@
 package org.apereo.cas.services;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
@@ -23,23 +23,18 @@ import static org.mockito.Mockito.*;
  */
 @Slf4j
 public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
-
-    @Before
     @Override
-    public void setUp() {
-        try {
-            this.dao = new JsonServiceRegistry(RESOURCE, true,
-                mock(ApplicationEventPublisher.class),
-                new NoOpRegisteredServiceReplicationStrategy(),
-                new DefaultRegisteredServiceResourceNamingStrategy());
-            super.setUp();
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(e);
-        }
+    @SneakyThrows
+    public void initializeServiceRegistry() {
+        this.dao = new JsonServiceRegistry(RESOURCE, true,
+            mock(ApplicationEventPublisher.class),
+            new NoOpRegisteredServiceReplicationStrategy(),
+            new DefaultRegisteredServiceResourceNamingStrategy());
+        super.initializeServiceRegistry();
     }
 
     @Test
-    public void verifyLegacyServiceDefn() throws Exception {
+    public void verifyLegacyServiceDefinition() throws Exception {
         final ClassPathResource resource = new ClassPathResource("Legacy-10000003.json");
         final DefaultRegisteredServiceJsonSerializer serializer = new DefaultRegisteredServiceJsonSerializer();
         final RegisteredService service = serializer.from(resource.getInputStream());

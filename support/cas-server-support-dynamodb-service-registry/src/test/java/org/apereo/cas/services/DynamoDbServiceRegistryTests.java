@@ -8,7 +8,6 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.DynamoDbServiceRegistryConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
@@ -19,8 +18,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
-
-import java.util.List;
 
 /**
  * This is {@link DynamoDbServiceRegistryTests}.
@@ -55,13 +52,6 @@ public class DynamoDbServiceRegistryTests extends AbstractServiceRegistryTests {
         System.setProperty("aws.secretKey", "UpigXEQDU1tnxolpXBM8OK8G7/a+goMDTJkQPvxQ");
     }
 
-    @Before
-    @Override
-    public void setUp() {
-        super.setUp();
-        final List<RegisteredService> services = this.serviceRegistry.load();
-        services.forEach(service -> this.serviceRegistry.delete(service));
-    }
 
     @Override
     public ServiceRegistry getNewServiceRegistry() {

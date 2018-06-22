@@ -49,7 +49,6 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @RestController("servicesController")
     @RequestMapping("/")
-    @Slf4j
     public static class ServicesController {
         private final InMemoryServiceRegistry serviceRegistry = new InMemoryServiceRegistry();
 
@@ -68,7 +67,6 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
         @GetMapping("/{id}")
         public RegisteredService findServiceById(@PathVariable(name = "id") final String id) {
             if (NumberUtils.isParsable(id)) {
-                LOGGER.info("Locating service by id [{}]", id);
                 return serviceRegistry.findServiceById(Long.valueOf(id));
             }
             return serviceRegistry.findServiceByExactServiceId(id);

@@ -115,8 +115,8 @@ public class RegisteredServiceTestUtils {
     }
 
     @SneakyThrows
-    public static AbstractRegisteredService getRegisteredService(final String id) {
-        final RegexRegisteredService s = new RegexRegisteredService();
+    public static AbstractRegisteredService getRegisteredService(final String id, final Class<? extends RegisteredService> clazz) {
+        final AbstractRegisteredService s = (AbstractRegisteredService) clazz.getDeclaredConstructor().newInstance();
         s.setServiceId(id);
         s.setEvaluationOrder(1);
         s.setName("TestService" + UUID.randomUUID().toString());
@@ -150,6 +150,11 @@ public class RegisteredServiceTestUtils {
         s.setAttributeReleasePolicy(policy);
 
         return s;
+    }
+
+    @SneakyThrows
+    public static AbstractRegisteredService getRegisteredService(final String id) {
+        return getRegisteredService(id, RegexRegisteredService.class);
     }
 
     public static Principal getPrincipal() {

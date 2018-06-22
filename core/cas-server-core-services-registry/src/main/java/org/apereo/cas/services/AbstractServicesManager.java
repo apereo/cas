@@ -71,7 +71,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .stream()
             .filter(getRegisteredServicesFilteringPredicate(predicate))
             .sorted()
-            .collect(Collectors.toSet());
+            .collect(Collectors.toList());
     }
 
     @Override

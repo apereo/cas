@@ -6,7 +6,6 @@ import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
@@ -16,8 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
-
-import java.util.List;
 
 /**
  * This is {@link CouchbaseServiceRegistryTests}.
@@ -50,13 +47,6 @@ public class CouchbaseServiceRegistryTests extends AbstractServiceRegistryTests 
     @Qualifier("couchbaseServiceRegistry")
     private ServiceRegistry serviceRegistry;
 
-    @Before
-    @Override
-    public void setUp() {
-        super.setUp();
-        final List<RegisteredService> services = this.serviceRegistry.load();
-        services.forEach(service -> this.serviceRegistry.delete(service));
-    }
 
     @Override
     public ServiceRegistry getNewServiceRegistry() {

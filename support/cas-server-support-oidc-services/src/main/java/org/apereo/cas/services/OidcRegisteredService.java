@@ -126,8 +126,8 @@ public class OidcRegisteredService extends OAuthRegisteredService {
      */
     @Override
     @PostLoad
-    public void postLoad() {
-        super.postLoad();
+    public void initializeFieldsIfNeeded() {
+        super.initializeFieldsIfNeeded();
         
         if (this.scopes == null) {
             this.scopes = new HashSet<>();

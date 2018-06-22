@@ -2,23 +2,14 @@ package org.apereo.cas.adaptors.ldap.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.ldap.services.config.LdapServiceRegistryConfiguration;
-import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.category.LdapCategory;
-import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
-import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
-import org.apereo.cas.services.DefaultRegisteredServiceProperty;
-import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,10 +24,7 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -65,13 +53,6 @@ public class BaseLdapServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("ldapServiceRegistry")
     private ServiceRegistry dao;
-
-    @Before
-    @Override
-    public void setUp() {
-        super.setUp();
-        this.dao.load().forEach(service -> this.dao.delete(service));
-    }
 
     @Override
     public ServiceRegistry getNewServiceRegistry() {
@@ -109,45 +90,5 @@ public class BaseLdapServiceRegistryTests extends AbstractServiceRegistryTests {
         r.setBypassApprovalPrompt(true);
         final RegisteredService r2 = this.dao.save(r);
         assertEquals(r, r2);
-    }
-
-    @Test
-    public void verifySavingServiceChangesDn() {
-        this.dao.save(getRegexRegisteredService());
-        final List<RegisteredService> services = this.dao.load();
-
-        final AbstractRegisteredService rs = (AbstractRegisteredService) this.dao.findServiceById(services.get(0).getId());
-        final long originalId = rs.getId();
-        assertNotNull(rs);
-        rs.setId(666);
-        assertNotNull(this.dao.save(rs));
-        assertNotEquals(rs.getId(), originalId);
-    }
-
-    private static RegisteredService getRegexRegisteredService() {
-        final AbstractRegisteredService rs = new RegexRegisteredService();
-        rs.setName("Service Name Regex");
-        rs.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
-        rs.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider(
-            new ShibbolethCompatiblePersistentIdGenerator("hello")
-        ));
-        rs.setDescription("Service description");
-        rs.setServiceId("^http?://.+");
-        rs.setTheme("the theme name");
-        rs.setEvaluationOrder(123);
-        rs.setDescription("Here is another description");
-        rs.setRequiredHandlers(CollectionUtils.wrapHashSet("handler1", "handler2"));
-
-        final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
-        final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
-
-        final Set<String> values = new HashSet<>();
-        values.add("value1");
-        values.add("value2");
-        property.setValues(values);
-        propertyMap.put("field1", property);
-        rs.setProperties(propertyMap);
-
-        return rs;
     }
 }

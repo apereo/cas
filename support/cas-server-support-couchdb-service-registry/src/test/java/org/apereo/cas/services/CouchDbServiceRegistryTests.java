@@ -5,8 +5,6 @@ import org.apereo.cas.category.CouchDbCategory;
 import org.apereo.cas.config.CouchDbServiceRegistryConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.services.RegisteredServiceRepository;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
@@ -39,8 +37,6 @@ public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
-    private static final int LOAD_SIZE = 1;
-
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
@@ -56,17 +52,17 @@ public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
     @Qualifier("serviceRegistryCouchDbRepository")
     private RegisteredServiceRepository registeredServiceRepository;
 
-    @Before
     @Override
-    public void setUp() {
-        super.setUp();
+    public void initializeServiceRegistry() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         registeredServiceRepository.initStandardDesignDocument();
+        super.initializeServiceRegistry();
     }
 
-    @After
-    public void tearDown() {
+    @Override
+    public void tearDownServiceRegistry() {
         couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
+        super.tearDownServiceRegistry();
     }
 
     @Override
