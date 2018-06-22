@@ -90,3 +90,4 @@ CAS is 100% free open source software managed by [Apereo](https://www.apereo.org
 [casgitter]: https://gitter.im/apereo/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 [casslack]: https://apereo.slack.com/
 [blog]: https://apereo.github.io/
+
