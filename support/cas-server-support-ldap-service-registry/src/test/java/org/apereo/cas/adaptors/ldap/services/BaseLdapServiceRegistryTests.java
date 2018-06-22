@@ -7,6 +7,8 @@ import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -32,7 +34,7 @@ import java.util.Collection;
 @RunWith(Parameterized.class)
 @Category(LdapCategory.class)
 @SpringBootTest(classes = {LdapServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
-public class BaseLdapServiceRegistryTests extends AbstractServiceRegistryTests {
+public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     @Qualifier("ldapServiceRegistry")
@@ -49,6 +51,6 @@ public class BaseLdapServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() {
-        return Arrays.asList(RegexRegisteredService.class);
+        return Arrays.asList(RegexRegisteredService.class, OAuthRegisteredService.class, SamlRegisteredService.class);
     }
 }
