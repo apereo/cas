@@ -25,7 +25,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
-import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import java.net.URL;
 import java.util.ArrayList;
@@ -102,7 +101,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Column(name = "username_attr", length = Integer.MAX_VALUE)
     private RegisteredServiceUsernameAttributeProvider usernameAttributeProvider = new DefaultRegisteredServiceUsernameProvider();
 
-    @Column(name = "logout_type", nullable = true)
+    @Column(name = "logout_type")
     private LogoutType logoutType = LogoutType.BACK_CHANNEL;
 
     @Lob
@@ -146,8 +145,8 @@ public abstract class AbstractRegisteredService implements RegisteredService {
      *
      * @since 4.1
      */
-    @PostLoad
-    public void initializeFieldsIfNeeded() {
+    @Override
+    public void initialize() {
         this.proxyPolicy = ObjectUtils.defaultIfNull(this.proxyPolicy, new RefuseRegisteredServiceProxyPolicy());
         this.usernameAttributeProvider = ObjectUtils.defaultIfNull(this.usernameAttributeProvider, new DefaultRegisteredServiceUsernameProvider());
         this.logoutType = ObjectUtils.defaultIfNull(this.logoutType, LogoutType.BACK_CHANNEL);
