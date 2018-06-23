@@ -81,24 +81,13 @@ CAS development may be carried out using any modern IDE.
 
 ### IntelliJ IDEA
 
-For IntelliJ IDEA, execute the following commands:
-
-```bash
-cd cas-server
-./gradlew idea
-```
-
-Then, open the project as you would for any other project and let IDEA resolve the Gradle dependencies. 
-
-<div class="alert alert-warning"><strong>YMMV</strong><p>Using the Gradle tool window to refresh the CAS project might very quickly lead to out-of-memory errors and JVM hang-ups. If you do need to refresh the project, it might be more productive to use the <code>idea</code> task from the command-line first to re-generate the project structure first and then resume. This task is only required if you are about to add/remove CAS modules or update a module's build dependencies.</p></div>
-
 The following IDEA settings for Gradle may also be useful:
 
 ![image](https://user-images.githubusercontent.com/1205228/33073158-33b20b64-ce7f-11e7-91d9-3b9f867201f4.png)
 
 - Note how 'Use auto-import' is turned off. To resolve Gradle modules and dependencies, you are required to force refresh the project rather than have IDEA auto-refresh the project as you make changes to the build script. Disabling auto-import usually results in much better performance.
 - Note how 'Offline work' is enabled. This is equivalent to Gradle's own `--offline` flag, forcing the build to not contact Maven/Gradle repositories for resolving dependencies. Working offline usually results in much better performance.
-- You may also decide to use the 'default gradle wrapper' option as opposed to your own local Gradle installation. 
+- You must also decide to use the 'default gradle wrapper' option as opposed to your own local Gradle installation. 
 
 You may also need to adjust the 'Compiler' settings so modules are built in parallel and automatically:
 
@@ -138,6 +127,13 @@ The following plugins may prove useful during development:
 
 Once you have installed the Lombok plugin, you will also need to ensure Annotation Processing is turned on. You may need to restart IDEA in order for changes to take full effect.
 ![image](https://user-images.githubusercontent.com/1205228/35231112-287f625a-ffad-11e7-8c1a-af23ff33918d.png)
+
+#### Running CAS
+
+It is possible to run the CAS web application directly from IDEA by creating a *Run Configuration* that roughly matches the following screenshot:
+
+![image](https://user-images.githubusercontent.com/1205228/41805461-9ea25b76-765f-11e8-9a36-fa82d286cf09.png)
+
 
 ### Eclipse
 
