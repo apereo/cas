@@ -109,6 +109,7 @@ If you did create a new release branch as part of a new major/minor release:
 - Configure docs to point `current` to the latest available version [here](https://github.com/apereo/cas/blob/gh-pages/current/index.html).
 - Update [this page](https://github.com/apereo/cas/edit/gh-pages/Older-Versions.md/) and add the newly released version.
 - Update the project's `README.md` page as necessary.
+- Update [this page](https://apereo.github.io/cas/developer/Build-Process.html) to include any needed information on how to build the new release.
 
 ## Update Demos (Optional)
 
