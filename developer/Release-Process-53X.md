@@ -16,7 +16,7 @@ current project members *vouch* for you.
 
 ## Environment Review
 
-- Load your SSH key and ensure this SSH key is also referenced in Github.
+- Load your SSH key and ensure this SSH key is also referenced in GitHub.
 - Adjust `$GRADLE_OPTS` to initialize the JVM heap size, if necessary.
 - Load your `~/.gradle/gradle.properties` file with the following *as an example*:
 
@@ -45,10 +45,8 @@ skip this step and move on to next section to build and release.</p></div>
 #### Travis CI
 
 - Change `.travis.yml` to *only* build the newly-created release branch.
-- Change `travis/script.sh` to point to the newly-created release branch.
-- Change `travis/push-javadoc-to-gh-pages.sh` to point to the newly-created release branch.
  
-Do not forget to commit all changes and push changes upstream, creatng a new remote branch to track the release.
+Do not forget to commit all changes and push changes upstream, creating a new remote branch to track the release.
 
 ### Build 
 
@@ -88,7 +86,6 @@ If you did create a new release branch, you should also switch back to `master` 
 ## Housekeeping
 
 - Close [the milestone](https://github.com/apereo/cas/milestones) for this release.
-
 - Find [the release](https://github.com/apereo/cas/releases) that is mapped to the released tag and update the description.
 
 <div class="alert alert-info"><strong>Remember</strong><p>When updating the release description, try to be keep consistent and follow the same layout as previous releases.</p></div>
@@ -111,6 +108,7 @@ If you did create a new release branch as part of a new major/minor release:
 
 - Configure docs to point `current` to the latest available version [here](https://github.com/apereo/cas/blob/gh-pages/current/index.html).
 - Update [this page](https://github.com/apereo/cas/edit/gh-pages/Older-Versions.md/) and add the newly released version.
+- Update the project's `README.md` page as necessary.
 
 ## Update Demos (Optional)
 
