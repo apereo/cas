@@ -3,7 +3,7 @@
 # Generate the OAUTH-TOKEN at https://github.com/settings/applications
 # Install travis: gem install travis
 # Login to travis: travis login
-# Encrypt the token: travis encrypt VAR_NAME=[OAUTH-TOKEN] -r apereo/cas --add env.global
+# Encrypt the token: travis encrypt VAR_NAME=VAR_VALUE -r apereo/cas --add env.global
 # Encrypted settings include SONATYPE_USER, SONATYPE_PWD, GH_TOKEN, COVERITY_SCAN_TOKEN, COVERALLS_REPO_TOKEN
 
 language: java
@@ -49,7 +49,6 @@ env:
 before_install:
 - unset _JAVA_OPTIONS
 - chmod -R 777 ./ci/*.sh
-- ./ci/push-docs-ghpages.sh
 - ./ci/init-travis-build.sh
 install: true
 script:
@@ -70,7 +69,7 @@ jobs:
     script: ./ci/download-dependencies.sh
     ############################################
   - stage: publish
-    if:  NOT commit_message =~ ^\[skip\s+snapshots\] and type != "pull_request" and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+    if: NOT commit_message =~ ^\[skip\s+snapshots\] and type != "pull_request" and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
     script: ./ci/publish-snapshots.sh
     ############################################
   - stage: build
@@ -79,6 +78,9 @@ jobs:
   - stage: analysis
     script: ./ci/analyze-style.sh
     ############################################
+  - stage: docs
+    script: ./ci/push-docs-ghpages.sh
+    if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
   - stage: docs
     script: ./ci/build-javadocs.sh
   - stage: docs

@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casCoreServicesAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnBean(value = AuthenticationManager.class)
+@ConditionalOnBean(value = {AuthenticationManager.class, ServicesManager.class})
 @Slf4j
 public class CasCoreServicesAuthenticationConfiguration {
 

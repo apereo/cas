@@ -14,7 +14,7 @@ import java.util.Date;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Getter
 @ToString
 public class MongoDbMetric implements Serializable {

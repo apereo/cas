@@ -1,5 +1,6 @@
 package org.apereo.cas.otp.repository.credentials;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
@@ -73,18 +74,28 @@ public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTi
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         try {
             final TreeSet<OneTimeTokenAccount> accounts = readAccountsFromJsonRepository();
-            
+
             LOGGER.debug("Found [{}] account(s) and added google authenticator account for [{}]", accounts.size(), account.getUsername());
             final OneTimeTokenAccount encoded = encode(account);
             accounts.add(encoded);
 
-            LOGGER.debug("Saving google authenticator accounts back to the JSON file at [{}]", this.location.getFile());
-            this.serializer.to(this.location.getFile(), accounts);
+            writeAccountsToJsonRepository(accounts);
             return encoded;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return null;
+    }
+
+    @Override
+    public void deleteAll() {
+        writeAccountsToJsonRepository(new TreeSet<>());
+    }
+
+    @SneakyThrows
+    private void writeAccountsToJsonRepository(final TreeSet<OneTimeTokenAccount> accounts) {
+        LOGGER.debug("Saving google authenticator accounts back to the JSON file at [{}]", this.location.getFile());
+        this.serializer.to(this.location.getFile(), accounts);
     }
 
     private TreeSet<OneTimeTokenAccount> readAccountsFromJsonRepository() throws IOException {
