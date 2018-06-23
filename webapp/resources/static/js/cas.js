@@ -47,11 +47,12 @@ function preserveAnchorTagOnForm() {
         var action = $('#fm1').attr('action');
         if (action == undefined) {
             action = location.href;
-        }
-        var qidx = location.href.indexOf('?');
-        if (qidx != -1) {
-            var queryParams = location.href.substring(qidx);
-            action += queryParams;
+        } else {
+            var qidx = location.href.indexOf('?');
+            if (qidx != -1) {
+                var queryParams = location.href.substring(qidx);
+                action += queryParams;
+            }
         }
         action += hash;
         $('#fm1').attr('action', action);
