@@ -57,7 +57,11 @@ public interface ServiceRegistry {
      * @return the registered service
      */
     default RegisteredService findServiceByExactServiceId(final String id) {
-        return load().stream().filter(r -> r.getServiceId().equals(id)).findFirst().orElse(null);
+        return load()
+            .stream()
+            .filter(r -> r.getServiceId().equals(id))
+            .findFirst()
+            .orElse(null);
     }
 
     /**
@@ -67,7 +71,11 @@ public interface ServiceRegistry {
      * @return the registered service
      */
     default RegisteredService findServiceByExactServiceName(final String name) {
-        return load().stream().filter(r -> r.getName().equals(name)).findFirst().orElse(null);
+        return load()
+            .stream()
+            .filter(r -> r.getName().equals(name))
+            .findFirst()
+            .orElse(null);
     }
 
     /**

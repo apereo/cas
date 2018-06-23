@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @since 4.1.0
  */
 @FunctionalInterface
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceUsernameAttributeProvider extends Serializable {
     /**
      * Resolve the username that is to be returned to CAS clients.

@@ -10,7 +10,7 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 gradleBuild="$gradleBuild build -x test -x javadoc -x check -DskipNpmLint=true \
-    -DenableIncremental=true -DskipNestedConfigMetadataGen=true "
+    -DenableIncremental=true -DskipNestedConfigMetadataGen=true --parallel "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "

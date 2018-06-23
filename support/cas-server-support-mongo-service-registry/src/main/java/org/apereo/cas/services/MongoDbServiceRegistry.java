@@ -1,14 +1,15 @@
 package org.apereo.cas.services;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+
 import java.util.List;
 import java.util.regex.Pattern;
-import lombok.ToString;
 
 /**
  * <p>Implementation of {@code ServiceRegistry} that uses a MongoDb repository as the backend
@@ -22,8 +23,8 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
-@AllArgsConstructor
-public class MongoServiceRegistry extends AbstractServiceRegistry {
+@RequiredArgsConstructor
+public class MongoDbServiceRegistry extends AbstractServiceRegistry {
 
     private final MongoOperations mongoTemplate;
     private final String collectionName;

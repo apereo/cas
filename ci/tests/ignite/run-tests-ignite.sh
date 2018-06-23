@@ -10,7 +10,7 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 gradleBuild="$gradleBuild testIgnite coveralls -DMATRIX_SERVER=IGNITE -x javadoc -x check \
-    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
+    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

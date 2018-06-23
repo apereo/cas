@@ -15,7 +15,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 public class SurrogateSessionExpirationPolicy extends BaseDelegatingExpirationPolicy {
     private static final long serialVersionUID = -2735975347698196127L;

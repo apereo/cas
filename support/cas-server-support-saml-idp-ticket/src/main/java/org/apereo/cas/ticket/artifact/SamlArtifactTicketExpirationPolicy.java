@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 @NoArgsConstructor
 public class SamlArtifactTicketExpirationPolicy extends HardTimeoutExpirationPolicy {

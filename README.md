@@ -25,22 +25,33 @@ CAS is an open and well-documented authentication protocol. The primary implemen
 
 It is recommended to deploy CAS locally using the [WAR Overlay method][overlay]. Cloning or downloading the CAS codebase is **ONLY** required if you wish to contribute to the development of the project.
 
-## Documentation
+## Documentation [![Javadoc](https://img.shields.io/badge/Documentation-Javadoc-ff69b4.svg)](https://www.javadoc.io/doc/org.apereo.cas/cas-server)
 
-[![Javadoc](https://img.shields.io/badge/Documentation-Javadoc-ff69b4.svg)](https://www.javadoc.io/doc/org.apereo.cas/cas-server)
+| Version         | Reference   
+|------------|-----------------------------------
+| ![](https://img.shields.io/badge/Development-WIP-blue.svg?style=flat) | [Link](https://apereo.github.io/cas/development)
+| ![](https://img.shields.io/badge/5.3.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/current)
+| ![](https://img.shields.io/badge/5.2.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/5.2.x)
+| ![](https://img.shields.io/badge/5.1.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/5.1.x)
+| ![](https://img.shields.io/badge/5.0.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/5.0.x)
+| ![](https://img.shields.io/badge/4.2.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/4.2.x)
+| ![](https://img.shields.io/badge/4.1.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/4.1.x)
+| ![](https://img.shields.io/badge/4.0.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/4.0.x)
 
-- [Documentation][wiki]
-- [Blog][blog]
+Additional resources are available as follows:
+
+- [Apereo Blog][blog]
 - [Release Notes][releasenotes]
 - [Support][cassupport]
 - [Maintenance Policy][maintenance]
 
-## Contributions [![Contributing Guide](https://img.shields.io/badge/contributing-guide-green.svg?style=flat)][contribute]
+## Contributions 
+[![Contributing Guide](https://img.shields.io/badge/Contributions-guide-green.svg?style=flat)][contribute] 
+[![Open Pull Requests](https://img.shields.io/github/issues-pr/apereo/cas.svg?style=flat)][contribute]
 
 - [How to contribute][contribute]
 
-If you have already identified an enhancement or a bug, it is STRONGLY recommended that you simply submit a pull request to address the case. There is no need for special ceremony to create separate issues. The pull request IS the issue and it will be tracked and tagged as such.
-
+If you have already identified an enhancement or a bug, we recommended that you simply submit a pull request to address the case.
 
 ## Features
 

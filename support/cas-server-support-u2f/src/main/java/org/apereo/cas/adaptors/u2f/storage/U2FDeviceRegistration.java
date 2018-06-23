@@ -25,7 +25,7 @@ import java.time.LocalDate;
  */
 @Entity
 @Table(name = "U2FDeviceRegistration")
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 @Getter
 @Setter

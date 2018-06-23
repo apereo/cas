@@ -4,7 +4,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegistryProperties;
 import org.apereo.cas.services.CasServiceRegistryInitializerConfigurationEventListener;
 import org.apereo.cas.services.ServiceRegistry;
@@ -17,7 +16,9 @@ import org.apereo.cas.util.CollectionUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationEventPublisher;
@@ -38,7 +39,10 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnMissingClass(value = {
     "org.apereo.cas.services.JsonServiceRegistry",
-    "org.apereo.cas.services.YamlServiceRegistry"})
+    "org.apereo.cas.services.YamlServiceRegistry"
+})
+@ConditionalOnBean(ServicesManager.class)
+@ConditionalOnProperty(prefix = "cas.serviceRegistry", name = "initFromJson", havingValue = "true")
 @Slf4j
 public class CasServiceRegistryInitializationConfiguration {
 
@@ -59,17 +63,13 @@ public class CasServiceRegistryInitializationConfiguration {
     @RefreshScope
     @Bean
     public ServiceRegistryInitializer serviceRegistryInitializer() {
-        final ServiceRegistryProperties props = casProperties.getServiceRegistry();
         final ServiceRegistry serviceRegistryInstance = serviceRegistry.getIfAvailable();
-        final ServiceRegistryInitializer initializer =
-            new ServiceRegistryInitializer(embeddedJsonServiceRegistry(), serviceRegistryInstance,
-                servicesManager.getIfAvailable(), props.isInitFromJson());
+        final ServiceRegistryInitializer initializer = new ServiceRegistryInitializer(embeddedJsonServiceRegistry(),
+            serviceRegistryInstance, servicesManager.getIfAvailable());
 
-        if (props.isInitFromJson()) {
-            LOGGER.info("Attempting to initialize the service registry [{}] from service definition resources found at [{}]",
-                serviceRegistryInstance.getName(),
-                getServiceRegistryInitializerServicesDirectoryResource());
-        }
+        LOGGER.info("Attempting to initialize the service registry [{}] from service definition resources found at [{}]",
+            serviceRegistryInstance.getName(),
+            getServiceRegistryInitializerServicesDirectoryResource());
         initializer.initServiceRegistryIfNecessary();
         return initializer;
     }
@@ -85,7 +85,7 @@ public class CasServiceRegistryInitializationConfiguration {
     @SneakyThrows
     public ServiceRegistry embeddedJsonServiceRegistry() {
         final Resource location = getServiceRegistryInitializerServicesDirectoryResource();
-        return new EmbeddedServiceRegistry(eventPublisher, location);
+        return new EmbeddedResourceBasedServiceRegistry(eventPublisher, location);
     }
 
     private Resource getServiceRegistryInitializerServicesDirectoryResource() {
@@ -97,8 +97,8 @@ public class CasServiceRegistryInitializationConfiguration {
      * The embedded service registry that processes built-in JSON service files
      * on the classpath.
      */
-    public static class EmbeddedServiceRegistry extends AbstractResourceBasedServiceRegistry {
-        EmbeddedServiceRegistry(final ApplicationEventPublisher publisher, final Resource location) throws Exception {
+    public static class EmbeddedResourceBasedServiceRegistry extends AbstractResourceBasedServiceRegistry {
+        EmbeddedResourceBasedServiceRegistry(final ApplicationEventPublisher publisher, final Resource location) throws Exception {
             super(location, getRegisteredServiceSerializers(), publisher);
         }
 
@@ -113,5 +113,4 @@ public class CasServiceRegistryInitializationConfiguration {
             return "json";
         }
     }
-
 }

@@ -18,4 +18,7 @@ import org.springframework.test.context.TestPropertySource;
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 3306)
 @Category(MySQLCategory.class)
 public class JpaServiceRegistryMySQLTests extends JpaServiceRegistryTests {
+    public JpaServiceRegistryMySQLTests(final Class<? extends RegisteredService> registeredServiceClass) {
+        super(registeredServiceClass);
+    }
 }

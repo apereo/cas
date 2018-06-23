@@ -30,7 +30,7 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @DiscriminatorValue(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 @NoArgsConstructor
 public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements ProxyGrantingTicket {

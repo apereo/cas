@@ -1,6 +1,6 @@
 package org.apereo.cas.services;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.couchdb.services.RegisteredServiceDocument;
 import org.apereo.cas.couchdb.services.RegisteredServiceRepository;
@@ -16,11 +16,11 @@ import java.util.stream.Collectors;
  * @since 5.3.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CouchDbServiceRegistry extends AbstractServiceRegistry {
 
-    private RegisteredServiceRepository dbClient;
-    private int conflictRetries;
+    private final RegisteredServiceRepository dbClient;
+    private final int conflictRetries;
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
@@ -82,7 +82,7 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public RegisteredService findServiceByExactServiceName(final String name){
+    public RegisteredService findServiceByExactServiceName(final String name) {
         final RegisteredServiceDocument doc = dbClient.findByServiceName(name);
         if (doc == null) {
             return null;

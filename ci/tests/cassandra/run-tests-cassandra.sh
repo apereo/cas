@@ -11,8 +11,8 @@ echo -e "***********************************************"
 
 ./ci/tests/cassandra/run-cassandra-server.sh
 
-gradleBuild="$gradleBuild test testCassandra coveralls -DMATRIX_SERVER=CASSANDRA -x javadoc -x check \
-    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
+gradleBuild="$gradleBuild testCassandra coveralls -DMATRIX_SERVER=CASSANDRA -x javadoc -x check \
+    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

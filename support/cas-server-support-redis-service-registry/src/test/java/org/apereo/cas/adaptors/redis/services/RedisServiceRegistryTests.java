@@ -3,18 +3,14 @@ package org.apereo.cas.adaptors.redis.services;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.RedisServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
+import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
-import org.apereo.cas.util.CollectionUtils;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -22,14 +18,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 import redis.embedded.RedisServer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
-
-import static org.junit.Assert.*;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Unit test for {@link RedisServiceRegistry} class.
@@ -37,23 +29,26 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@RunWith(SpringRunner.class)
+@RunWith(Parameterized.class)
 @SpringBootTest(classes = {RedisServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
 @EnableScheduling
 @TestPropertySource(locations = {"classpath:/svc-redis.properties"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class RedisServiceRegistryTests {
+public class RedisServiceRegistryTests extends AbstractServiceRegistryTests {
     private static RedisServer REDIS_SERVER;
 
     @Autowired
     @Qualifier("redisServiceRegistry")
     private ServiceRegistry dao;
 
-    @Before
-    public void setUp() {
-        final List<RegisteredService> services = this.dao.load();
-        services.forEach(service -> this.dao.delete(service));
+    public RedisServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
+        super(registeredServiceClass);
+    }
+
+    @Override
+    public ServiceRegistry getNewServiceRegistry() {
+        return this.dao;
     }
 
     @BeforeClass
@@ -67,37 +62,8 @@ public class RedisServiceRegistryTests {
         REDIS_SERVER.stop();
     }
 
-    @Test
-    public void execSaveMethodWithDefaultUsernameAttribute() {
-        final RegexRegisteredService r = new RegexRegisteredService();
-        r.setName("execSaveMethodWithDefaultUsernameAttribute");
-        r.setServiceId("testing");
-        r.setDescription("New service");
-        r.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
-        final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
-        policy.setConsentPolicy(new DefaultRegisteredServiceConsentPolicy(CollectionUtils.wrapSet("test"),
-            CollectionUtils.wrapSet("test")));
-        r.setAttributeReleasePolicy(policy);
-        final RegisteredService r2 = this.dao.save(r);
-        assertEquals(r2, r);
-    }
-
-    @Test
-    public void verifyServiceRemovals() {
-        final List<RegisteredService> list = new ArrayList<>(5);
-        IntStream.range(1, 3).forEach(i -> {
-            final RegexRegisteredService r = new RegexRegisteredService();
-            r.setServiceId("serviceId" + i);
-            r.setName("testServiceType");
-            r.setTheme("testtheme");
-            r.setEvaluationOrder(1000);
-            r.setId(i * 100);
-            list.add(this.dao.save(r));
-        });
-        this.dao.load().forEach(r2 -> {
-            this.dao.delete(r2);
-            assertNull(this.dao.findServiceById(r2.getId()));
-        });
-        assertEquals(0, this.dao.size());
+    @Parameterized.Parameters
+    public static Collection<Object> getTestParameters() {
+        return Arrays.asList(RegexRegisteredService.class);
     }
 }

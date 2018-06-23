@@ -11,8 +11,8 @@ echo -e "***********************************************"
 
 ./ci/tests/memcached/run-memcached-server.sh
 
-gradleBuild="$gradleBuild test testMemcached coveralls -DMATRIX_SERVER=MEMCACHED -x javadoc -x check \
-    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
+gradleBuild="$gradleBuild testMemcached coveralls -DMATRIX_SERVER=MEMCACHED -x javadoc -x check \
+    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

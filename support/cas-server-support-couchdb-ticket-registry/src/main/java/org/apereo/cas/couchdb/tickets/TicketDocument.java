@@ -16,7 +16,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor
 public class TicketDocument extends CouchDbDocument {
     private static final long serialVersionUID = -5460618381339711000L;

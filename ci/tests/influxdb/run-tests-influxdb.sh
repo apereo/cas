@@ -11,8 +11,8 @@ echo -e "***********************************************"
 
 ./ci/tests/influxdb/run-influxdb-server.sh
 
-gradleBuild="$gradleBuild test testInfluxDb coveralls -DMATRIX_SERVER=INFLUXDB -x javadoc -x check \
-    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
+gradleBuild="$gradleBuild testInfluxDb coveralls -DMATRIX_SERVER=INFLUXDB -x javadoc -x check \
+    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

@@ -1,16 +1,29 @@
 package org.apereo.cas.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apereo.cas.util.MockWebServer;
-import org.junit.Test;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.MediaType;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.RestTemplate;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.http.HttpStatus;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.RestServiceRegistryConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.nio.charset.StandardCharsets;
-
-import static org.junit.Assert.*;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * This is {@link RestfulServiceRegistryTests}.
@@ -18,67 +31,63 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class RestfulServiceRegistryTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+@RunWith(Parameterized.class)
+@SpringBootTest(classes = {
+    RestServiceRegistryConfiguration.class,
+    RefreshAutoConfiguration.class
+},
+    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
+@EnableAutoConfiguration(exclude = CasCoreServicesConfiguration.class)
+public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
 
-    @Test
-    public void verifySave() throws Exception {
-        final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService();
-        final String data = MAPPER.writeValueAsString(service);
+    @Autowired
+    @Qualifier("restfulServiceRegistry")
+    private ServiceRegistry dao;
 
-        try (MockWebServer webServer = new MockWebServer(9295,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
-            webServer.start();
-            final RestfulServiceRegistry s = new RestfulServiceRegistry(new RestTemplate(), "http://localhost:9295", new LinkedMultiValueMap<>());
-            assertNotNull(s.save(service));
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
-        }
+    public RestfulServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
+        super(registeredServiceClass);
     }
 
-    @Test
-    public void verifyLoad() throws Exception {
-        final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService();
-        final String data = MAPPER.writeValueAsString(new RegisteredService[]{service});
-
-        try (MockWebServer webServer = new MockWebServer(9295,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
-            webServer.start();
-            final RestfulServiceRegistry s = new RestfulServiceRegistry(new RestTemplate(), "http://localhost:9295", new LinkedMultiValueMap<>());
-            assertTrue(s.size() == 1);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
-        }
+    @Override
+    public ServiceRegistry getNewServiceRegistry() {
+        return this.dao;
     }
 
-    @Test
-    public void verifyDelete() {
-        final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService();
-        final String data = "200";
-
-        try (MockWebServer webServer = new MockWebServer(9295,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
-            webServer.start();
-            final RestfulServiceRegistry s = new RestfulServiceRegistry(new RestTemplate(), "http://localhost:9295", new LinkedMultiValueMap<>());
-            assertTrue(s.delete(service));
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
-        }
+    @Parameterized.Parameters
+    public static Collection<Object> getTestParameters() {
+        return Arrays.asList(RegexRegisteredService.class);
     }
 
-    @Test
-    public void verifyFind() throws Exception {
-        final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService();
-        final String data = MAPPER.writeValueAsString(service);
+    @RestController("servicesController")
+    @RequestMapping("/")
+    public static class ServicesController {
+        private final InMemoryServiceRegistry serviceRegistry = new InMemoryServiceRegistry();
 
-        try (MockWebServer webServer = new MockWebServer(9295,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
-            webServer.start();
-            final RestfulServiceRegistry s = new RestfulServiceRegistry(new RestTemplate(), "http://localhost:9295", new LinkedMultiValueMap<>());
-            assertNotNull(s.findServiceById(service.getId()));
-            assertNotNull(s.findServiceById(service.getServiceId()));
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage(), e);
+        @DeleteMapping
+        public Integer findByServiceId(@RequestBody final RegisteredService service) {
+            serviceRegistry.delete(service);
+            return HttpStatus.SC_OK;
+        }
+
+        @PostMapping
+        public RegisteredService save(@RequestBody final RegisteredService service) {
+            serviceRegistry.save(service);
+            return service;
+        }
+
+        @GetMapping("/{id}")
+        public RegisteredService findServiceById(@PathVariable(name = "id") final String id) {
+            if (NumberUtils.isParsable(id)) {
+                return serviceRegistry.findServiceById(Long.valueOf(id));
+            }
+            return serviceRegistry.findServiceByExactServiceId(id);
+        }
+
+        @GetMapping
+        public RegisteredService[] load() {
+            return serviceRegistry.load().toArray(new RegisteredService[]{});
         }
     }
 }

@@ -10,7 +10,8 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 echo -e "The build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
-    gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check \
+
+gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check \
         -DenableIncremental=true -DskipNpmLint=true -DskipNestedConfigMetadataGen=true
         -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} \
         -DsonatypePassword=${SONATYPE_PWD} --parallel "

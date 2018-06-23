@@ -20,7 +20,7 @@ import java.util.Map;
  * @since 3.0.0
  */
 @FunctionalInterface
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface Principal extends Serializable {
 
     /**

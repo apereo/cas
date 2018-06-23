@@ -1113,6 +1113,10 @@ ext.libraries = [
                 dependencies.create("org.apache.activemq:activemq-pool:$activemqPoolVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
+                },
+                dependencies.create("org.apache.activemq:activemq-broker:$activemqPoolVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
                 }
         ],
         thymeleaf               : [
@@ -1298,7 +1302,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "com.fasterxml", module: "classmate")
-                    exclude(group: "net.minidev", module: "json-smart")
                     exclude(group: "org.hibernate", module: "hibernate-validator")
                     exclude(group: "org.objenesis", module: "objenesis")
                     exclude(group: "org.springframework", module: "spring-test")

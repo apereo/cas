@@ -52,12 +52,8 @@ public abstract class BaseInMemoryOneTimeTokenCredentialRepository extends BaseO
         return this.accounts.containsKey(username);
     }
 
-    /**
-     * Remove.
-     *
-     * @param username the username
-     */
-    public void remove(final String username) {
-        this.accounts.remove(username);
+    @Override
+    public void deleteAll() {
+        this.accounts.clear();
     }
 }

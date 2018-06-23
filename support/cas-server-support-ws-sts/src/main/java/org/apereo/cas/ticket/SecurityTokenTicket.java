@@ -18,7 +18,7 @@ import javax.persistence.Table;
 @Table(name = "SECURITYTOKENTICKET")
 @DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue(SecurityTokenTicket.PREFIX)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface SecurityTokenTicket extends Ticket {
     /**
      * Ticket Prefix.

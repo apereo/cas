@@ -11,8 +11,8 @@ echo -e "***********************************************"
 
 ./ci/tests/postgres/run-postgres-server.sh
 
-gradleBuild="$gradleBuild test testPostgres coveralls -DMATRIX_SERVER=POSTGRES -x javadoc -x check \
-    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
+gradleBuild="$gradleBuild testPostgres coveralls -DMATRIX_SERVER=POSTGRES -x javadoc -x check \
+    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

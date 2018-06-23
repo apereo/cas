@@ -44,4 +44,9 @@ public interface OneTimeTokenCredentialRepository {
      * @return the one time token account
      */
     OneTimeTokenAccount update(OneTimeTokenAccount account);
+
+    /**
+     * Delete all tokens in the repository.
+     */
+    void deleteAll();
 }

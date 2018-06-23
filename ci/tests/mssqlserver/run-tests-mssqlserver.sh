@@ -11,8 +11,8 @@ echo -e "***********************************************"
 
 ./ci/tests/mssqlserver/run-mssql-server.sh
 
-gradleBuild="$gradleBuild test testMsSqlServer coveralls -DMATRIX_SERVER=MSSQLSERVER -x javadoc -x check \
-    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
+gradleBuild="$gradleBuild testMsSqlServer coveralls -DMATRIX_SERVER=MSSQLSERVER -x javadoc -x check \
+    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

@@ -3337,6 +3337,8 @@ Signing & encryption settings for this registry are available [here](Configurati
 # spring.activemq.password=secret
 # spring.activemq.pool.enabled=true
 # spring.activemq.pool.max-connections=50
+# spring.activemq.packages.trust-all=false
+# spring.activemq.packages.trusted=org.apereo.cas
 ```
 
 #### JMS Ticket Registry Artemis
