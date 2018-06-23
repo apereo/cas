@@ -111,16 +111,18 @@ If you did create a new release branch as part of a new major/minor release:
 - Update the project's `README.md` page as necessary.
 - Update [this page](https://apereo.github.io/cas/developer/Build-Process.html) to include any needed information on how to build the new release.
 
-## Update Demos (Optional)
-
-A number of CAS demos today run on Heroku and are tracked in dedicated branches inside the codebase. Take a pass and updated each, when relevant.
-
 ## Update Maintenance Policy
 
 Update the [Maintenance Policy](Maintenance-Policy.html) to note the release schedule and EOL timeline. 
 This task is only relevant when dealing with major or minor releases.
 
-## Docker Image (Optional)
+## Optional
+
+### Update Demos
+
+A number of CAS demos today run on Heroku and are tracked in dedicated branches inside the codebase. Take a pass and updated each, when relevant.
+
+### Docker Image
 
 Release a new CAS [Docker image](https://github.com/apereo/cas-webapp-docker).
 This task is only relevant when dealing with GA official releases, regardless of release calibre. All major/feature/patch releases
