@@ -1113,6 +1113,10 @@ ext.libraries = [
                 dependencies.create("org.apache.activemq:activemq-pool:$activemqPoolVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
+                },
+                dependencies.create("org.apache.activemq:activemq-broker:$activemqPoolVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
                 }
         ],
         thymeleaf               : [

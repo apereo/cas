@@ -19,6 +19,8 @@ import lombok.Getter;
 @Getter
 public class DeleteTicketMessageQueueCommand extends BaseMessageQueueCommand {
 
+    private static final long serialVersionUID = 8183330712274484245L;
+
     @JsonProperty
     private String ticketId;
 

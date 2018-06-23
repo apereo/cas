@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry.queue;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.ticket.Ticket;
@@ -16,9 +17,10 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
+@Getter
 public class UpdateTicketMessageQueueCommand extends BaseMessageQueueCommand {
+    private static final long serialVersionUID = -4179190682337040669L;
 
-    
     @JsonProperty
     private Ticket ticket;
 
@@ -26,10 +28,6 @@ public class UpdateTicketMessageQueueCommand extends BaseMessageQueueCommand {
     public UpdateTicketMessageQueueCommand(@JsonProperty("id") final StringBean id, @JsonProperty("ticket") final Ticket ticket) {
         super(id);
         this.ticket = ticket;
-    }
-
-    public Ticket getTicket() {
-        return ticket;
     }
 
     @Override
