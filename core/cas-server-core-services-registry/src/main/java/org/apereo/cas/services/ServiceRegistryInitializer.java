@@ -20,7 +20,6 @@ public class ServiceRegistryInitializer {
     private final ServiceRegistry jsonServiceRegistry;
     private final ServiceRegistry serviceRegistry;
     private final ServicesManager servicesManager;
-    private final boolean initFromJson;
 
     /**
      * Init service registry if necessary.
@@ -28,15 +27,6 @@ public class ServiceRegistryInitializer {
     public void initServiceRegistryIfNecessary() {
         final long size = this.serviceRegistry.size();
         LOGGER.debug("Service registry contains [{}] service definition(s)", size);
-
-        if (!this.initFromJson) {
-            LOGGER.info("The service registry database backed by [{}] will not be initialized from JSON services. "
-                    + "If the service registry database ends up empty, CAS will refuse to authenticate services "
-                    + "until service definitions are added to the registry. To auto-initialize the service registry, "
-                    + "set 'cas.serviceRegistry.initFromJson=true' in your CAS settings.",
-                this.serviceRegistry.getName());
-            return;
-        }
 
         LOGGER.warn("Service registry [{}] will be auto-initialized from JSON service definitions. "
             + "This behavior is only useful for testing purposes and MAY NOT be appropriate for production. "

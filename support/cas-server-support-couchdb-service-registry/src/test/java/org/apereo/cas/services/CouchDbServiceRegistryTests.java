@@ -5,27 +5,16 @@ import org.apereo.cas.category.CouchDbCategory;
 import org.apereo.cas.config.CouchDbServiceRegistryConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.services.RegisteredServiceRepository;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.junit.Assert.*;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * This is {@link CouchDbServiceRegistryTests}.
@@ -33,6 +22,7 @@ import static org.junit.Assert.*;
  * @author Timur Duehr
  * @since 5.3.0
  */
+@RunWith(Parameterized.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CouchDbServiceRegistryConfiguration.class
@@ -44,15 +34,8 @@ import static org.junit.Assert.*;
     })
 @Slf4j
 @Category(CouchDbCategory.class)
-public class CouchDbServiceRegistryTests {
+public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    private static final int LOAD_SIZE = 1;
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("couchDbServiceRegistry")
@@ -66,74 +49,30 @@ public class CouchDbServiceRegistryTests {
     @Qualifier("serviceRegistryCouchDbRepository")
     private RegisteredServiceRepository registeredServiceRepository;
 
-    @Before
-    public void setUp() {
+    public CouchDbServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
+        super(registeredServiceClass);
+    }
+
+    @Override
+    public void initializeServiceRegistry() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         registeredServiceRepository.initStandardDesignDocument();
+        super.initializeServiceRegistry();
     }
 
-    @After
-    public void tearDown() {
+    @Override
+    public void tearDownServiceRegistry() {
         couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
+        super.tearDownServiceRegistry();
     }
 
-    @Test
-    public void verifySaveAndLoad() {
-        final List<RegisteredService> list = new ArrayList<>();
-        for (int i = 0; i < LOAD_SIZE; i++) {
-            final RegisteredService svc = buildService(i);
-            list.add(svc);
-            this.serviceRegistry.save(svc);
-            final RegisteredService svc2 = this.serviceRegistry.findServiceById(svc.getId());
-            assertNotNull(svc2);
-
-            this.serviceRegistry.delete(svc2);
-        }
-        assertTrue(this.serviceRegistry.load().isEmpty());
+    @Override
+    public ServiceRegistry getNewServiceRegistry() {
+        return this.serviceRegistry;
     }
 
-    @Test
-    public void verifyFindByServiceId() {
-        final List<RegisteredService> list = new ArrayList<>();
-        for (int i = 0; i < LOAD_SIZE; i++) {
-            final RegisteredService svc = buildService(i);
-            list.add(svc);
-            this.serviceRegistry.save(svc);
-            final RegisteredService svc2 = this.serviceRegistry.findServiceByExactServiceId(svc.getServiceId());
-            assertNotNull(svc2);
-
-            this.serviceRegistry.delete(svc2);
-        }
-        assertTrue(this.serviceRegistry.load().isEmpty());
+    @Parameterized.Parameters
+    public static Collection<Object> getTestParameters() {
+        return Arrays.asList(RegexRegisteredService.class);
     }
-
-    @Test
-    public void verifyFindByServiceName() {
-        final List<RegisteredService> list = new ArrayList<>();
-        for (int i = 0; i < LOAD_SIZE; i++) {
-            final RegisteredService svc = buildService(i);
-            list.add(svc);
-            this.serviceRegistry.save(svc);
-            final RegisteredService svc2 = this.serviceRegistry.findServiceByExactServiceName(svc.getName());
-            assertNotNull(svc2);
-
-            this.serviceRegistry.delete(svc2);
-        }
-        assertTrue(this.serviceRegistry.load().isEmpty());
-    }
-
-    private static RegisteredService buildService(final int i) {
-        final AbstractRegisteredService rs = RegisteredServiceTestUtils.getRegisteredService("^http://www.serviceid" + i + ".org");
-
-        final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
-        final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
-        final Set<String> values = new HashSet<>();
-        values.add("value1");
-        values.add("value2");
-        property.setValues(values);
-        propertyMap.put("field1", property);
-        rs.setProperties(propertyMap);
-        return rs;
-    }
-
 }

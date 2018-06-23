@@ -18,7 +18,7 @@ import java.io.Serializable;
  * @since 5.1.0
  */
 @FunctionalInterface
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface ResponseBuilderLocator<T extends WebApplicationService> extends Serializable {
 
     /**

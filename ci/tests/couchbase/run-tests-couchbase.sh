@@ -11,8 +11,8 @@ echo -e "***********************************************"
 
 ./ci/tests/couchbase/run-couchbase-server.sh
 
-gradleBuild="$gradleBuild test testCouchbase coveralls -DMATRIX_SERVER=COUCHBASE -x javadoc -x check \
-    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
+gradleBuild="$gradleBuild testCouchbase coveralls -DMATRIX_SERVER=COUCHBASE -x javadoc -x check \
+    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
