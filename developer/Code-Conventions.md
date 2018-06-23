@@ -11,7 +11,7 @@ The following document describes the set of coding conventions that are specific
 
 ## Tooling
 
-- The current codebase takes advantage of the [Checkstyle engine](http://checkstyle.sourceforge.net) to [enforce conventions](https://github.com/Apereo/cas/blob/master/style/checkstyle-rules.xml) as much as possible.
+- The current codebase takes advantage of the [Checkstyle engine](http://checkstyle.sourceforge.net) to [enforce conventions](https://github.com/Apereo/cas/blob/master/style/checkstyle-rules.xml) as much as possible. Certain number of checks are also executed using [SpotBugs](https://spotbugs.github.io/).
 - Where appropriate, the codebase takes advantage of [Project Lombok](https://projectlombok.org/) for auto-generation of code constructs such as getters and setters, etc.
  
 ## Consistency
@@ -54,6 +54,10 @@ public class FooClass {
 ## Getter/Setter Methods
 
 Generating Getter/Setter methods for fields is typically done using Project Lombok's `@Getter` and `@Setter` annotations.
+
+## Constructors
+
+Creating constructors is typically done using Project Lombok's `@NoArgsConstructor`, `@AllArgsConstructor` or `@RequiredArgsConstructor` annotations.
 
 ## Indentations
 
@@ -108,22 +112,9 @@ If we were writing a JUnit testcase for code defined in `Foo.java`, we would nam
 
 For required dependencies, the constructor injection must be used whereas setters can be used for optional dependencies.
 
-## equals() and hashCode() methods
+## toString(), equals(), hashCode() methods
 
-The recommend way to build the `hashCode()` and `equals()` methods is to use the `EqualsBuilder` and `HashCodeBuilder `classes form the `commons-lang(3)` library.
-
-## Template for commit messages
-
-Short (50 chars or less) summary of changes.
-
-More detailed explanatory text, if necessary.  Wrap it to about 72 characters or so.  In some contexts, the first line is treated as the subject of an email and the rest of the text as the body.  The blank line separating the summary from the body is critical (unless you omit the body entirely); tools like rebase can get confused if you run the two together. 
-
-- Further paragraphs come after blank lines. 
-- Bullet points are okay, too 
-- Typically a hyphen or asterisk is used for the bullet, preceded by a  single space, with blank lines in between.
-- The summary should contain both a Jira issue number where possible and a brief description, e.g.
-
-Placing _both_ the issue number and brief description would improve commit history in SCM. 
+Take a look at Project Lombok's `@ToString` and `@EqualsAndHashCode` annotations.
 
 ## Creating Pull Requests
 
@@ -132,5 +123,3 @@ When creating a pull request, make sure that the pull references the Github issu
 ![](https://camo.githubusercontent.com/0d91dc7e679d86bd4814faae37f0316279074571/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f3539372f3439383937372f64383262643761382d626332362d313165322d383663652d3835613435336334643638332e706e67)
 
 This allows the pull request to be linked to the issue. When the pull is merged, the issue will automatically be closed as well.
-
-
