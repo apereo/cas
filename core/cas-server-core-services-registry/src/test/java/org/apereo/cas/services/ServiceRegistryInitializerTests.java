@@ -24,9 +24,7 @@ public class ServiceRegistryInitializerTests {
         when(jsonServiceRegistry.load()).thenReturn(Arrays.asList(initialService));
 
         final ServiceRegistry serviceRegistry = new InMemoryServiceRegistry();
-        final ServiceRegistryInitializer serviceRegistryInitializer = new ServiceRegistryInitializer(jsonServiceRegistry, serviceRegistry,
-            servicesManager, true);
-
+        final ServiceRegistryInitializer serviceRegistryInitializer = new ServiceRegistryInitializer(jsonServiceRegistry, serviceRegistry, servicesManager);
         serviceRegistryInitializer.initServiceRegistryIfNecessary();
         assertThat(serviceRegistry.size()).isEqualTo(1);
 
