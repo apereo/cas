@@ -58,6 +58,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .stream()
             .filter(getRegisteredServicesFilteringPredicate())
             .sorted()
+            .peek(RegisteredService::initialize)
             .collect(Collectors.toList());
     }
 
@@ -71,7 +72,9 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .stream()
             .filter(getRegisteredServicesFilteringPredicate(predicate))
             .sorted()
-            .collect(Collectors.toSet());
+            .peek(RegisteredService::initialize)
+            .collect(Collectors.toList());
+
     }
 
     @Override
@@ -85,6 +88,11 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .filter(r -> r.matches(serviceId))
             .findFirst()
             .orElse(null);
+
+        if (service != null) {
+            service.initialize();
+        }
+
         final RegisteredService result = validateRegisteredService(service);
         return result;
     }

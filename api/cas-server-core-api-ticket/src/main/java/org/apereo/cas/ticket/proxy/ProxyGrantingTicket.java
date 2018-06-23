@@ -13,7 +13,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface ProxyGrantingTicket extends TicketGrantingTicket {
 
     /** The prefix to use when generating an id for a Proxy Granting Ticket. */

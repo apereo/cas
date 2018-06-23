@@ -28,6 +28,8 @@ import java.util.List;
 @Slf4j
 @ToString
 public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
+    private static final String ENTITY_NAME = GoogleAuthenticatorAccount.class.getSimpleName();
+
     private final IGoogleAuthenticator googleAuthenticator;
 
     @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
@@ -42,8 +44,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
     @Override
     public OneTimeTokenAccount get(final String username) {
         try {
-            final GoogleAuthenticatorAccount r = this.entityManager.createQuery("SELECT r FROM "
-                    + GoogleAuthenticatorAccount.class.getSimpleName() + " r where r.username = :username",
+            final GoogleAuthenticatorAccount r = this.entityManager.createQuery("SELECT r FROM " + ENTITY_NAME + " r where r.username = :username",
                 GoogleAuthenticatorAccount.class)
                 .setParameter("username", username)
                 .getSingleResult();
@@ -84,6 +85,10 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
         final OneTimeTokenAccount encoded = encode(account);
         this.entityManager.merge(encoded);
         return encoded;
+    }
 
+    @Override
+    public void deleteAll() {
+        this.entityManager.createQuery("DELETE FROM " + ENTITY_NAME).executeUpdate();
     }
 }

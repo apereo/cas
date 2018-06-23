@@ -5,9 +5,9 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
 import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
-import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -67,6 +67,12 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
     public OneTimeTokenAccount create(final String username) {
         final GoogleAuthenticatorKey key = this.googleAuthenticator.createCredentials();
         return new GoogleAuthenticatorAccount(username, key.getKey(), key.getVerificationCode(), key.getScratchCodes());
+    }
+
+    @Override
+    public void deleteAll() {
+        final GAuthMultifactorProperties.Rest rest = gauth.getRest();
+        restTemplate.delete(rest.getEndpointUrl());
     }
 
     @Override

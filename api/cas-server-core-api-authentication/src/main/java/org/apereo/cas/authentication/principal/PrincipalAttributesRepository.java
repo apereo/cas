@@ -18,7 +18,7 @@ import java.util.Map;
  * @since 4.1
  */
 @FunctionalInterface
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface PrincipalAttributesRepository extends Serializable {
 
     /**

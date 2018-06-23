@@ -9,12 +9,37 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-gradleBuild="$gradleBuild dependencyCheckAnalyze dependencyCheckUpdate -x javadoc -x check \
-    -DskipNpmLint=true -DskipGradleLint=true --parallel -DskipSass=true -DskipNpmLint=true \
-    -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
+runAnalysis=false
 
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
-    gradleBuild="$gradleBuild -DshowStandardStreams=true "
+if [ "$TRAVIS_PULL_REQUEST" == "true" ]; then
+    echo "Reviewing changes that might affect the Gradle build in this pull request..."
+
+    results=`git diff --name-only HEAD~1`
+    for i in "$results"
+        do
+            :
+            if [[ "$i" =~ gradle ]]; then
+                echo "Changes affect Gradle build descriptors. Dependency analysis will run."
+                runAnalysis=true
+                break
+            fi
+    done
+else
+    echo "Dependency analysis will run against branch $TRAVIS_BRANCH"
+    runAnalysis=true
+fi
+
+if [ "$runAnalysis" = true ]; then
+    echo "Running dependency analysis..."
+
+    gradleBuild="$gradleBuild dependencyCheckAnalyze dependencyCheckUpdate -x javadoc -x check \
+        -DskipNpmLint=true -DskipGradleLint=true --parallel -DskipSass=true -DskipNpmLint=true \
+        -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
+
+    if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
+        gradleBuild="$gradleBuild -DshowStandardStreams=true "
+    fi
+
 fi
 
 if [ -z "$gradleBuild" ]; then

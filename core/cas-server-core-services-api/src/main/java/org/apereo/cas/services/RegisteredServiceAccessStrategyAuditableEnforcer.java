@@ -24,7 +24,6 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         actionResolverName = "SERVICE_ACCESS_ENFORCEMENT_ACTION_RESOLVER",
         resourceResolverName = "SERVICE_ACCESS_ENFORCEMENT_RESOURCE_RESOLVER")
     public AuditableExecutionResult execute(final AuditableContext context) {
-
         final Optional<RegisteredService> registeredService = context.getRegisteredService();
         if (context.getServiceTicket().isPresent() && context.getAuthenticationResult().isPresent() && registeredService.isPresent()) {
             final AuditableExecutionResult result = AuditableExecutionResult.of(context);
@@ -86,7 +85,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             }
             return result;
         }
-        
+
         throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized");
     }
 }

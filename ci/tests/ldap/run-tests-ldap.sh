@@ -11,8 +11,8 @@ echo -e "***********************************************"
 
 ./ci/tests/ldap/run-ldap-server.sh
 
-gradleBuild="$gradleBuild test testLdap coveralls -DMATRIX_SERVER=LDAP -x javadoc -x check \
-    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
+gradleBuild="$gradleBuild testLdap coveralls -DMATRIX_SERVER=LDAP -x javadoc -x check \
+    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

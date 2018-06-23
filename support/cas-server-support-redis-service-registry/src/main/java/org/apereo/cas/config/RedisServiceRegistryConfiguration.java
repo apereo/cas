@@ -2,14 +2,15 @@ package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.redis.services.RedisServiceRegistry;
-import org.apereo.cas.adaptors.redis.services.RegisteredServiceRedisTemplate;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisServiceRegistryProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -32,17 +33,18 @@ public class RedisServiceRegistryConfiguration implements ServiceRegistryExecuti
     private CasConfigurationProperties casProperties;
 
     @Bean
-    @RefreshScope
-    public RedisConnectionFactory redisConnectionFactory() {
+    @ConditionalOnMissingBean(name = "redisServiceConnectionFactory")
+    public RedisConnectionFactory redisServiceConnectionFactory() {
         final RedisServiceRegistryProperties redis = casProperties.getServiceRegistry().getRedis();
         final RedisObjectFactory obj = new RedisObjectFactory();
         return obj.newRedisConnectionFactory(redis);
     }
 
     @Bean
-    @RefreshScope
+    @ConditionalOnMissingBean(name = "registeredServiceRedisTemplate")
     public RedisTemplate registeredServiceRedisTemplate() {
-        return new RegisteredServiceRedisTemplate(redisConnectionFactory());
+        final RedisObjectFactory obj = new RedisObjectFactory();
+        return obj.newRedisTemplate(redisServiceConnectionFactory(), String.class, RegisteredService.class);
     }
 
     @Bean
