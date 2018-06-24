@@ -1,5 +1,4 @@
 #!/bin/bash
-invokeDoc=false
 
 branchVersion="development"
 
@@ -15,17 +14,12 @@ echo -e "Cloning the repository to push documentation...\n"
 git clone --single-branch --depth 1 --branch gh-pages --quiet https://${GH_TOKEN}@github.com/apereo/cas gh-pages > /dev/null
 cd gh-pages
 
-echo -e "Configuring tracking branches for repository...\n"
-for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v $casBranch`; do
- git branch --track ${branch##*/} $branch > /dev/null
-done
-
 echo -e "Switching to gh-pages branch\n"
 git checkout gh-pages > /dev/null
 
-echo -e "\nStaring to move project documentation over...\n"
+echo -e "Configuring tracking branches for repository...\n"
+git branch -u origin/gh-pages
 
-if [ "$invokeDoc" == true ]; then
 echo -e "Removing previous documentation from $branchVersion...\n"
 git rm -rf ./"$branchVersion" > /dev/null
 
@@ -35,7 +29,6 @@ test -d "./$branchVersion" || mkdir -m777 -v "./$branchVersion"
 echo -e "Copying new docs from $HOME/docs-latest over to $branchVersion...\n"
 cp -Rf $HOME/docs-latest/* "./$branchVersion"
 echo -e "Copied project documentation...\n"
-fi
 
 echo -e "Adding changes to the git index...\n"
 git add -f . > /dev/null
