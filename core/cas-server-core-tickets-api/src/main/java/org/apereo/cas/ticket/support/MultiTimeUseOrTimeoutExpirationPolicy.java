@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
@@ -93,7 +93,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     /**
      * The Proxy ticket expiration policy.
      */
-    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     public static class ProxyTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
 
         private static final long serialVersionUID = -5814201080268311070L;
@@ -113,7 +113,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     /**
      * The Service ticket expiration policy.
      */
-    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     public static class ServiceTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
 
         private static final long serialVersionUID = -5814201080268311070L;

@@ -11,8 +11,8 @@ echo -e "***********************************************"
 
 ./ci/tests/mail/run-mail-server.sh
 
-gradleBuild="$gradleBuild test testMail coveralls -DMATRIX_SERVER=MAIL -x javadoc -x check \
-    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
+gradleBuild="$gradleBuild testMail coveralls -DMATRIX_SERVER=MAIL -x javadoc -x check \
+    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then

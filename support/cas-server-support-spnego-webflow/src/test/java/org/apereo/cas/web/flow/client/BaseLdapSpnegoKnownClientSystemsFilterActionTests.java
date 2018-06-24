@@ -17,7 +17,6 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import javax.annotation.PostConstruct;
 
-import static groovy.util.GroovyTestCase.*;
 import static org.junit.Assert.*;
 
 /**

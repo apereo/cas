@@ -13,6 +13,7 @@ import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
@@ -29,8 +30,8 @@ import org.springframework.core.Ordered;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 1)
 @Slf4j
+@ConditionalOnProperty(prefix = "cas.serviceRegistry.json", name = "location")
 public class JsonServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
-
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -45,7 +46,6 @@ public class JsonServiceRegistryConfiguration implements ServiceRegistryExecutio
     @Autowired
     @Qualifier("registeredServiceResourceNamingStrategy")
     private RegisteredServiceResourceNamingStrategy resourceNamingStrategy;
-
 
     @Bean
     @SneakyThrows

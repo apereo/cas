@@ -1,13 +1,14 @@
 package org.apereo.cas.services;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
-import lombok.ToString;
 
 /**
  * Implementation of the ServiceRegistry based on JPA.
@@ -21,6 +22,7 @@ import lombok.ToString;
 @Slf4j
 @ToString
 public class JpaServiceRegistry extends AbstractServiceRegistry {
+    private static final String ENTITY_NAME = AbstractRegisteredService.class.getSimpleName();
 
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
     private transient EntityManager entityManager;
@@ -37,8 +39,8 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public List<RegisteredService> load() {
-        final List<RegisteredService> list = this.entityManager.createQuery("select r from AbstractRegisteredService r",
-            RegisteredService.class).getResultList();
+        final String query = String.format("select r from %s r", ENTITY_NAME);
+        final List<RegisteredService> list = this.entityManager.createQuery(query, RegisteredService.class).getResultList();
         list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
         return list;
     }
@@ -65,6 +67,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public long size() {
-        return this.entityManager.createQuery("select count(r) from AbstractRegisteredService r", Long.class).getSingleResult();
+        final String query = String.format("select count(r) from %s r", ENTITY_NAME);
+        return this.entityManager.createQuery(query, Long.class).getSingleResult();
     }
 }
