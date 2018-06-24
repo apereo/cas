@@ -149,13 +149,14 @@ public class OidcAuthorizationRequestSupport {
     /**
      * Is cas authentication available and old for max age authorization request?
      *
-     * @param context        the context
+     * @param context
+     *            the context
      * @return true/false
      */
     public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context) {
-    	return isCasAuthenticationAvailable(context)
-			.filter(a -> isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, a))
-			.isPresent();
+        return isCasAuthenticationAvailable(context)
+                .filter(a -> isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, a))
+                .isPresent();
     }
 
     /**
