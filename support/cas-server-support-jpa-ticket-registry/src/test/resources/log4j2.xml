@@ -15,7 +15,19 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="off" additivity="false">
+        <Logger name="org.apereo" level="error" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.springframework.jdbc" level="warn" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.springframework.transaction" level="warn" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.hibernate.sql" level="warn" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.hibernate.engine" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="off">
