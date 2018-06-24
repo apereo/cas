@@ -60,7 +60,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         final String encTicketId = encodeTicketId(ticketId);
-        if (encTicketId == null) {
+        if (StringUtils.isBlank(encTicketId)) {
             return false;
         }
         return getMapInstance().remove(encTicketId) != null;

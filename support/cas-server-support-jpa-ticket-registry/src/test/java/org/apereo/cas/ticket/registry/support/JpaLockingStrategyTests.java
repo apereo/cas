@@ -96,8 +96,6 @@ public class JpaLockingStrategyTests {
      */
     private static final int CONCURRENT_SIZE = 13;
 
-
-
     @Autowired
     @Qualifier("ticketTransactionManager")
     private PlatformTransactionManager txManager;
@@ -173,8 +171,7 @@ public class JpaLockingStrategyTests {
             lock.release();
             assertNull(getOwner(appId));
         } catch (final Exception e) {
-            LOGGER.debug("testNonReentrantBehavior produced an error", e);
-            throw new AssertionError("testNonReentrantBehavior failed.");
+            throw new AssertionError("testNonReentrantBehavior failed.", e);
         }
     }
 
@@ -187,8 +184,7 @@ public class JpaLockingStrategyTests {
         try {
             testConcurrency(executor, Arrays.asList(getConcurrentLocks("concurrent-new")));
         } catch (final Exception e) {
-            LOGGER.debug("testConcurrentAcquireAndRelease produced an error", e);
-            throw new AssertionError("testConcurrentAcquireAndRelease failed.");
+            throw new AssertionError("testConcurrentAcquireAndRelease failed.", e);
         } finally {
             executor.shutdownNow();
         }
@@ -206,8 +202,7 @@ public class JpaLockingStrategyTests {
         try {
             testConcurrency(executor, Arrays.asList(locks));
         } catch (final Exception e) {
-            LOGGER.debug("testConcurrentAcquireAndReleaseOnExistingLock produced an error", e);
-            throw new AssertionError("testConcurrentAcquireAndReleaseOnExistingLock failed.");
+            throw new AssertionError("testConcurrentAcquireAndReleaseOnExistingLock failed.", e);
         } finally {
             executor.shutdownNow();
         }
