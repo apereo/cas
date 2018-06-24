@@ -49,7 +49,8 @@ import java.util.Collection;
  */
 @RunWith(Parameterized.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
-@SpringBootTest(classes = {CouchDbTicketRegistryConfiguration.class,
+@SpringBootTest(classes = {
+    CouchDbTicketRegistryConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,

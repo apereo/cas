@@ -2,10 +2,13 @@ package org.apereo.cas.ticket.registry;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.logout.LogoutManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,6 +25,10 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(Parameterized.class)
 @Slf4j
+@SpringBootTest(classes = {
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class
+})
 public class CachingTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     public CachingTicketRegistryTests(final boolean useEncryption) {
