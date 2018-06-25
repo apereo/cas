@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.apereo.cas.config.CasApplicationContextConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -88,10 +87,10 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-    CasApplicationContextConfiguration.class,
     CasThemesConfiguration.class,
     CasFiltersConfiguration.class,
     CasPropertiesConfiguration.class,
+    CasSecurityContextConfiguration.class,
     CasWebAppConfiguration.class,
     CasWebflowServerSessionContextConfigurationTests.TestWebflowContextConfiguration.class,
     CasWebflowContextConfiguration.class,

@@ -15,7 +15,7 @@ import java.util.Map;
  * @since 4.1.0
  */
 @FunctionalInterface
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceAttributeReleasePolicy extends Serializable {
 
     /**

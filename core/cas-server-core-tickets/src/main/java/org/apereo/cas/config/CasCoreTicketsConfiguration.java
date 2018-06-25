@@ -55,6 +55,7 @@ import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Cas10TicketValidator;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
 import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -113,15 +114,15 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
-    private HttpClient httpClient;
+    private ObjectProvider<HttpClient> httpClient;
 
     @Autowired
     @Qualifier("hostnameVerifier")
-    private HostnameVerifier hostnameVerifier;
+    private ObjectProvider<HostnameVerifier> hostnameVerifier;
 
     @Autowired
     @Qualifier("sslContext")
-    private SSLContext sslContext;
+    private ObjectProvider<SSLContext> sslContext;
 
     @ConditionalOnMissingBean(name = "casClientTicketValidator")
     @Bean
@@ -148,8 +149,8 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
             public HttpURLConnection buildHttpURLConnection(final URLConnection conn) {
                 if (conn instanceof HttpsURLConnection) {
                     final var httpsConnection = (HttpsURLConnection) conn;
-                    httpsConnection.setSSLSocketFactory(sslContext.getSocketFactory());
-                    httpsConnection.setHostnameVerifier(hostnameVerifier);
+                    httpsConnection.setSSLSocketFactory(sslContext.getIfAvailable().getSocketFactory());
+                    httpsConnection.setHostnameVerifier(hostnameVerifier.getIfAvailable());
                 }
                 return (HttpURLConnection) conn;
             }
@@ -252,7 +253,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
     public ProxyHandler proxy20Handler() {
-        return new Cas20ProxyHandler(httpClient, proxy20TicketUniqueIdGenerator());
+        return new Cas20ProxyHandler(httpClient.getIfAvailable(), proxy20TicketUniqueIdGenerator());
     }
 
     @ConditionalOnMissingBean(name = "ticketRegistry")

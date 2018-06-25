@@ -15,7 +15,7 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 @Getter
 @Setter

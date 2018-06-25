@@ -239,8 +239,13 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     @Override
     public synchronized List<RegisteredService> load() {
         final var files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true);
-        this.serviceMap = files.stream().map(this::load).filter(Objects::nonNull).flatMap(Collection::stream)
-            .sorted().collect(Collectors.toMap(RegisteredService::getId, Function.identity(),
+        this.serviceMap = files
+            .stream()
+            .map(this::load)
+            .filter(Objects::nonNull)
+            .flatMap(Collection::stream)
+            .sorted()
+            .collect(Collectors.toMap(RegisteredService::getId, Function.identity(),
                 LOG_DUPLICATE_AND_RETURN_FIRST_ONE, LinkedHashMap::new));
         final List<RegisteredService> services = new ArrayList<>(this.serviceMap.values());
         final var results =
@@ -278,7 +283,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                 fileName, this.serviceFileNamePattern.pattern());
         }
         try (var in = Files.newBufferedReader(file.toPath())) {
-            return this.registeredServiceSerializers.stream()
+            return this.registeredServiceSerializers
+                .stream()
                 .filter(s -> s.supports(file))
                 .map(s -> s.load(in))
                 .filter(Objects::nonNull)

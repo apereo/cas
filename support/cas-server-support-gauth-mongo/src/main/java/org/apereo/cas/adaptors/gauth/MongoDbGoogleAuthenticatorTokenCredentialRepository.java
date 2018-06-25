@@ -70,4 +70,9 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseOne
         this.mongoTemplate.save(encodedAccount, this.collectionName);
         return encodedAccount;
     }
+
+    @Override
+    public void deleteAll() {
+        this.mongoTemplate.remove(new Query(), GoogleAuthenticatorAccount.class, this.collectionName);
+    }
 }
