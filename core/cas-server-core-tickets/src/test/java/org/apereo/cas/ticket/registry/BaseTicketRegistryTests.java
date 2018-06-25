@@ -195,7 +195,7 @@ public abstract class BaseTicketRegistryTests {
                     CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             }
-            final long actual = this.ticketRegistry.deleteAll();
+            final var actual = this.ticketRegistry.deleteAll();
             assertEquals(TICKETS_IN_REGISTRY, actual);
         } catch (final Exception e) {
             throw new AssertionError(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage(), e);

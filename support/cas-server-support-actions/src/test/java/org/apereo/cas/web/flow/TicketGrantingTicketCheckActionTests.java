@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.Assert.*;
@@ -30,7 +31,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
     public void verifyNullTicket() throws Exception {
         final var ctx = new MockRequestContext();
         final Action action = new TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
-        final Event event = action.execute(ctx);
+        final var event = action.execute(ctx);
         assertEquals(CasWebflowConstants.TRANSITION_ID_TGT_NOT_EXISTS, event.getId());
     }
 
@@ -40,7 +41,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
         final var tgt = new MockTicketGrantingTicket("user");
         WebUtils.putTicketGrantingTicketInScopes(ctx, tgt);
         final Action action = new TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
-        final Event event = action.execute(ctx);
+        final var event = action.execute(ctx);
         assertEquals(CasWebflowConstants.TRANSITION_ID_TGT_INVALID, event.getId());
     }
 
@@ -51,7 +52,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
         final var tgt = this.getCentralAuthenticationService().createTicketGrantingTicket(ctxAuthN);
         WebUtils.putTicketGrantingTicketInScopes(ctx, tgt);
         final Action action = new TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
-        final Event event = action.execute(ctx);
+        final var event = action.execute(ctx);
         assertEquals(CasWebflowConstants.TRANSITION_ID_TGT_VALID, event.getId());
     }
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.surrogate;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
+import lombok.SneakyThrows;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.category.LdapCategory;
@@ -37,6 +38,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,7 +49,6 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.Collection;
-import lombok.SneakyThrows;
 
 import static org.junit.Assert.*;
 
@@ -59,7 +60,8 @@ import static org.junit.Assert.*;
  */
 @TestPropertySource(locations = "classpath:/surrogate-ldap.properties")
 @Category(LdapCategory.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class,
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,

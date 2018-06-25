@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
 import com.github.benmanes.caffeine.cache.Expiry;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +12,7 @@ import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,10 +30,11 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Reg
     }
 
     @Override
-    public long expireAfterCreate(@Nonnull final RegisteredServiceCacheKey cacheKey,
+    public long expireAfterCreate(@NonNull final RegisteredServiceCacheKey cacheKey,
                                   final MetadataResolver chainingMetadataResolver,
                                   final long currentTime) {
-        final SamlRegisteredService service = cacheKey.getRegisteredService();
+        final var service = cacheKey.getRegisteredService();
+        final var duration = getCacheDurationForServiceProvider(service, chainingMetadataResolver);
         if (duration >= 0) {
             return duration;
         }

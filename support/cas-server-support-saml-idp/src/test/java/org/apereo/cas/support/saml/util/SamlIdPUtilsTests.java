@@ -16,6 +16,7 @@ import org.opensaml.saml.criterion.BindingCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
+import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
 import java.util.Optional;
@@ -85,7 +86,7 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     public void verifyAssertionConsumerServiceWithUrl() {
-        final SamlRegisteredService service = SamlIdPTestUtils.getSamlRegisteredService();
+        final var service = SamlIdPTestUtils.getSamlRegisteredService();
         servicesManager.save(service);
         final var authnRequest = mock(AuthnRequest.class);
         final var issuer = mock(Issuer.class);
@@ -95,9 +96,8 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
         final var acsUrl = "https://some.acs.url";
         when(authnRequest.getAssertionConsumerServiceURL()).thenReturn(acsUrl);
 
-        final var adapter =
-            SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
-        final AssertionConsumerService acs = SamlIdPUtils.determineAssertionConsumerService(authnRequest, adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
+        final var adapter = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId());
+        final var acs = SamlIdPUtils.determineAssertionConsumerService(authnRequest, adapter.get(), SAMLConstants.SAML2_POST_BINDING_URI);
         assertNotNull(acs);
         assertEquals(acsUrl, acs.getLocation());
     }

@@ -214,7 +214,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
 
         if (!items.isEmpty()) {
             final Object item = items.get(0);
-            String value = StringUtils.EMPTY;
+            var value = StringUtils.EMPTY;
             if (item instanceof LocalizedName) {
                 value = ((LocalizedName) item).getValue();
             }

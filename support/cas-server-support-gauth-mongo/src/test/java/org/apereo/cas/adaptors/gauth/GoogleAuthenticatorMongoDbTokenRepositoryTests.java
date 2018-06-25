@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.gauth;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.gauth.token.GoogleAuthenticatorToken;
+import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -45,7 +47,6 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import lombok.extern.slf4j.Slf4j;
 import static org.junit.Assert.*;
 
 /**
