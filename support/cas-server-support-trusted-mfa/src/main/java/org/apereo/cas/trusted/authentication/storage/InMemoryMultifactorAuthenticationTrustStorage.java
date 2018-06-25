@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,8 +35,7 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
                 .stream()
                 .filter(entry -> entry.getRecordDate().isEqual(onOrBefore) || entry.getRecordDate().isBefore(onOrBefore))
                 .sorted()
-                .distinct()
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         LOGGER.info("Found [{}] expired records", results.size());
         if (!results.isEmpty()) {
@@ -52,8 +52,7 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
                 .stream()
                 .filter(entry -> entry.getRecordDate().isEqual(onOrAfterDate) || entry.getRecordDate().isAfter(onOrAfterDate))
                 .sorted()
-                .distinct()
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
@@ -63,8 +62,7 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
                 .stream()
                 .filter(entry -> entry.getPrincipal().equalsIgnoreCase(principal))
                 .sorted()
-                .distinct()
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
     
     @Override

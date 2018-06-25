@@ -83,7 +83,7 @@ public class TrustedAuthenticationConfiguration {
         final var trusted = casProperties.getAuthn().getTrusted();
         final var bearingPrincipalResolver = new PrincipalBearingPrincipalResolver(attributeRepository,
                 trustedPrincipalFactory(), trusted.isReturnNull(), trusted.getPrincipalAttribute());
-        resolver.setChain(CollectionUtils.wrapList(bearingPrincipalResolver, new EchoingPrincipalResolver()));
+        resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver(), bearingPrincipalResolver));
         return resolver;
     }
 

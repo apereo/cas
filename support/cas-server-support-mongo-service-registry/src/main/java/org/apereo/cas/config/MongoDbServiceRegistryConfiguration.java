@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
-import org.apereo.cas.services.MongoServiceRegistry;
+import org.apereo.cas.services.MongoDbServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
@@ -42,7 +42,7 @@ public class MongoDbServiceRegistryConfiguration implements ServiceRegistryExecu
     @Bean
     public ServiceRegistry mongoDbServiceRegistry() {
         final var mongo = casProperties.getServiceRegistry().getMongo();
-        return new MongoServiceRegistry(
+        return new MongoDbServiceRegistry(
                 mongoDbServiceRegistryTemplate(),
                 mongo.getCollection());
     }

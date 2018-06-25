@@ -205,7 +205,7 @@ def generatePom() {
         }
 
     }.whenConfigured { pom ->
-        println "POM is fully configured for $project.name"
+        logger.info "POM is fully configured for $project.name"
     }
 }
 

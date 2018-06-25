@@ -50,7 +50,7 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
 
         final var tUsername = up.getUsername();
         final var surrogateUsername = tUsername.substring(0, tUsername.indexOf(this.separator));
-        final var realUsername = tUsername.substring(tUsername.indexOf(this.separator) + 1);
+        final String realUsername = tUsername.substring(tUsername.indexOf(this.separator) + this.separator.length());
         LOGGER.debug("Converting to surrogate credential for username [{}], surrogate username [{}]", realUsername, surrogateUsername);
 
         if (StringUtils.isBlank(surrogateUsername)) {

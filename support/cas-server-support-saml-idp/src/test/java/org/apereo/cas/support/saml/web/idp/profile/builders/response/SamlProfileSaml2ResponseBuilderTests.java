@@ -1,8 +1,10 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
+import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -16,6 +18,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Category(FileSystemCategory.class)
 public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests {
     @Test
     public void verifySamlResponseAllSigned() {

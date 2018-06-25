@@ -105,6 +105,7 @@ The behavior is only activated when an endpoint url is provided.
 | Method    | Headers             | Expected Response
 |-----------|--------------------------------------------------
 | `GET`     | `username`          | `200`. Secret key of the account in the body.
+| `DELETE`  | N/A          | `200`.
 | `POST`    | `username`, `validationCode`, `secretKey`, `scratchCodes` | `200`. `true/false` in the body.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#google-authenticator-rest).

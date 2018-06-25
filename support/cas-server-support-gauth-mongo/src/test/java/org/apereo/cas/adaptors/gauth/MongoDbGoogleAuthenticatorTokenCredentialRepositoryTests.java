@@ -25,6 +25,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.SchedulingUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
@@ -51,31 +52,30 @@ import static org.junit.Assert.*;
  * @since 5.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(
-    classes = {
-        MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests.MongoTestConfiguration.class,
-        GoogleAuthenticatorMongoDbConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
-        AopAutoConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreWebConfiguration.class})
+@SpringBootTest(classes = {
+    MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests.MongoTestConfiguration.class,
+    GoogleAuthenticatorMongoDbConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
+    AopAutoConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreWebConfiguration.class})
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(locations = {"classpath:/mongogauth.properties"})
@@ -87,6 +87,11 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;
+
+    @Before
+    public void cleanUp() {
+        registry.deleteAll();
+    }
 
     @Test
     public void verifySave() {

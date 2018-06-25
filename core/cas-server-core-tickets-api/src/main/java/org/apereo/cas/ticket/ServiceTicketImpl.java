@@ -33,7 +33,7 @@ import javax.persistence.Table;
 @Table(name = "SERVICETICKET")
 @DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue(ServiceTicket.PREFIX)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 @Setter
 @NoArgsConstructor

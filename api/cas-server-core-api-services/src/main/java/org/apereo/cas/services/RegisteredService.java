@@ -18,7 +18,7 @@ import java.util.Set;
  * @author Scott Battaglia
  * @since 3.1
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredService extends Serializable, Comparable<RegisteredService> {
 
     /**
@@ -122,10 +122,11 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
 
     /**
      * Sets the identifier for this service. Use {@link #INITIAL_IDENTIFIER_VALUE} to indicate a branch new service definition.
+     *
      * @param id the numeric identifier for the service.
      */
     void setId(long id);
-    
+
     /**
      * Get the name of the attribute this service prefers to consume as username.
      *
@@ -270,5 +271,12 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     @JsonIgnore
     default String getFriendlyName() {
         return this.getClass().getSimpleName();
+    }
+
+    /**
+     * Initialize the registered service instance by defaulting fields to specific
+     * values or object instances, etc.
+     */
+    default void initialize() {
     }
 }

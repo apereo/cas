@@ -17,7 +17,7 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface TicketGrantingTicket extends Ticket {
 
     /**

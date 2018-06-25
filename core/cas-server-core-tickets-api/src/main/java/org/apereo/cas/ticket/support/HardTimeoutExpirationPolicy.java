@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
  * @author Andrew Feller
  * @since 3.1.2
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)

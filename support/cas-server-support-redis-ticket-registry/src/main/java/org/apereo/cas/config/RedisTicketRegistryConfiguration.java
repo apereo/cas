@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.RedisTicketRegistry;
-import org.apereo.cas.ticket.registry.TicketRedisTemplate;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +40,8 @@ public class RedisTicketRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "ticketRedisTemplate")
     public RedisTemplate<String, Ticket> ticketRedisTemplate() {
-        return new TicketRedisTemplate(redisTicketConnectionFactory());
+        final RedisObjectFactory obj = new RedisObjectFactory();
+        return obj.newRedisTemplate(redisTicketConnectionFactory(), String.class, Ticket.class);
     }
 
     @Bean

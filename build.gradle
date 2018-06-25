@@ -27,6 +27,28 @@ def isArtifactSigningRequired = {
     return (publishReleases && sonatypeUsername != null && sonatypePassword != null)
 }
 
+/*
+    See: https://github.com/tbroyer/gradle-errorprone-plugin/issues/56
+    Do not use caching by default to work around issues with parallel builds.
+    TODO May be removed with Java 9 and above.
+ */
+if (JavaVersion.VERSION_1_8.isJava8()) {
+    println "Disable"
+    def url = new URL("$projectUrl")
+    new HttpURLConnection(url) {
+        @Override
+        void connect() throws IOException {
+        }
+        @Override
+         void disconnect() {
+        }
+        @Override
+        boolean usingProxy() {
+            return false
+        }
+    }.setDefaultUseCaches(false)
+}
+
 apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
 apply plugin: "com.github.kt3k.coveralls"
@@ -59,8 +81,8 @@ buildscript {
 
 if (rootProject.continuousIntegrationBuild) {
     buildScan {
-        licenseAgreementUrl = 'https://gradle.com/terms-of-service'
-        licenseAgree = 'yes'
+        licenseAgreementUrl = "https://gradle.com/terms-of-service"
+        licenseAgree = "yes"
     }
 }
 
@@ -173,8 +195,8 @@ subprojects {
                 failOnVersionConflict()
             }
             preferProjectModules()
-            cacheDynamicVersionsFor 5, 'days'
-            cacheChangingModulesFor 5, 'days'
+            cacheDynamicVersionsFor 5, "days"
+            cacheChangingModulesFor 5, "days"
 
             /**
              * Required for all JRadius modules

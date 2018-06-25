@@ -15,7 +15,6 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
-import static groovy.util.GroovyTestCase.*;
 import static org.junit.Assert.*;
 
 /**

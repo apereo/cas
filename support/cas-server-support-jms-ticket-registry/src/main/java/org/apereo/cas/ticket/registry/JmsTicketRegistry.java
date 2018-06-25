@@ -24,8 +24,6 @@ public class JmsTicketRegistry extends DefaultTicketRegistry {
      */
     public static final String QUEUE_DESTINATION = "CasJmsTicketRegistry";
 
-
-
     private final JmsTemplate jmsTemplate;
     private final StringBean id;
 

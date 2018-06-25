@@ -4,9 +4,8 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
-import org.apereo.cas.mock.MockServiceTicket;
-import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -19,6 +18,7 @@ import org.junit.Assume;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.test.util.AopTestUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,7 +39,7 @@ public abstract class BaseTicketRegistryTests {
     private static final String PGT_1_ID = "PGT-1";
 
     private static final int TICKETS_IN_REGISTRY = 10;
-    private static final String EXCEPTION_CAUGHT_NONE_EXPECTED = "Exception caught.  None expected.";
+    private static final String EXCEPTION_CAUGHT_NONE_EXPECTED = "Exception caught. None expected.";
     private static final String CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED = "Caught an exception. But no exception should have been thrown: ";
 
     private final boolean useEncryption;
@@ -203,6 +203,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @Test
+    @Transactional
     public void verifyDeleteExistingTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
@@ -216,6 +217,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @Test
+    @Transactional
     public void verifyDeleteNonExistingTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
@@ -282,6 +284,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @Test
+    @Transactional
     public void verifyDeleteTicketWithChildren() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + '1', CoreAuthenticationTestUtils.getAuthentication(),
@@ -319,6 +322,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @Test
+    @Transactional
     public void verifyWriteGetDelete() {
         final Ticket ticket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
             CoreAuthenticationTestUtils.getAuthentication(),
@@ -333,14 +337,19 @@ public abstract class BaseTicketRegistryTests {
 
     @Test
     public void verifyExpiration() {
-        final var id = "ST-1234567890ABCDEFGHIJKL-exp1";
-        final var ticket = new MockServiceTicket(id, RegisteredServiceTestUtils.getService(), new MockTicketGrantingTicket("test"));
-        ticket.setExpiration(new AlwaysExpiresExpirationPolicy());
-        ticketRegistry.addTicket(ticket);
-        assertNull(ticketRegistry.getTicket(id, ServiceTicket.class));
+        final Authentication a = CoreAuthenticationTestUtils.getAuthentication();
+        this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TGT_ID, a, new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(TGT_ID, TicketGrantingTicket.class);
+        final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
+        final AbstractTicket ticket = (AbstractTicket) tgt.grantServiceTicket(ST_1_ID, service, new NeverExpiresExpirationPolicy(), false, true);
+        ticket.setExpirationPolicy(new AlwaysExpiresExpirationPolicy());
+        this.ticketRegistry.addTicket(ticket);
+        this.ticketRegistry.updateTicket(tgt);
+        assertNull(ticketRegistry.getTicket(ST_1_ID, ServiceTicket.class));
     }
 
     @Test
+    @Transactional
     public void verifyDeleteTicketWithPGT() {
         final var a = CoreAuthenticationTestUtils.getAuthentication();
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TGT_ID, a, new NeverExpiresExpirationPolicy()));
@@ -372,6 +381,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @Test
+    @Transactional
     public void verifyDeleteTicketsWithMultiplePGTs() {
         final var a = CoreAuthenticationTestUtils.getAuthentication();
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TGT_ID, a, new NeverExpiresExpirationPolicy()));

@@ -13,7 +13,7 @@ import org.ektorp.support.CouchDbDocument;
  * @since 5.3.0
  */
 @Getter
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor
 public class RegisteredServiceDocument extends CouchDbDocument {
     private static final long serialVersionUID = -6787906520673248670L;

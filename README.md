@@ -19,30 +19,43 @@ enterprise multilingual single sign-on solution for the web and attempts to be a
 CAS is an open and well-documented authentication protocol. The primary implementation of the protocol is an open-source Java server 
 component by the same name hosted here, with support for a plethora of additional authentication protocols and features.
 
-## Contributions [![Contributing Guide](https://img.shields.io/badge/contributing-guide-green.svg?style=flat)][contribute]
+## Contributions 
+[![Contributing Guide](https://img.shields.io/badge/Contributions-guide-green.svg?style=flat)][contribute] 
+[![Open Pull Requests](https://img.shields.io/github/issues-pr/apereo/cas.svg?style=flat)][contribute]
 
 - [How to contribute][contribute]
 
 If you have already identified an enhancement or a bug, it is STRONGLY recommended that you simply submit a pull request to address the case. 
 There is no need for special ceremony to create separate issues. The pull request IS the issue and it will be tracked and tagged as such.
 
-## Documentation
+## Documentation [![Javadoc](https://img.shields.io/badge/Documentation-Javadoc-ff69b4.svg)](https://www.javadoc.io/doc/org.apereo.cas/cas-server)
 
-[![Javadoc](https://img.shields.io/badge/Documentation-Javadoc-ff69b4.svg)](https://www.javadoc.io/doc/org.apereo.cas/cas-server)
+| Version         | Reference   
+|------------|-----------------------------------
+| ![](https://img.shields.io/badge/Development-WIP-blue.svg?style=flat) | [Link](https://apereo.github.io/cas/development)
+| ![](https://img.shields.io/badge/5.3.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/current)
+| ![](https://img.shields.io/badge/5.2.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/5.2.x)
+| ![](https://img.shields.io/badge/5.1.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/5.1.x)
+| ![](https://img.shields.io/badge/5.0.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/5.0.x)
+| ![](https://img.shields.io/badge/4.2.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/4.2.x)
+| ![](https://img.shields.io/badge/4.1.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/4.1.x)
+| ![](https://img.shields.io/badge/4.0.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/4.0.x)
 
-- [Documentation][wiki]
-- [Blog][blog]
+Additional resources are available as follows:
+
+- [Apereo Blog][blog]
 - [Release Notes][releasenotes]
 - [Support][cassupport]
 - [Maintenance Policy][maintenance]
 - [Release Schedule][releaseschedule]
 
 ## Deployment 
+[![Contributing Guide](https://img.shields.io/badge/Contributions-guide-green.svg?style=flat)][contribute] 
+[![Open Pull Requests](https://img.shields.io/github/issues-pr/apereo/cas.svg?style=flat)][contribute]
 
 [![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas) 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-webapp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server) 
 [![Github Releases](https://img.shields.io/github/release/apereo/cas.svg)](https://github.com/apereo/cas/releases)
-
 It is recommended to deploy CAS locally using the [WAR Overlay method][overlay]. Cloning or downloading the CAS codebase 
 is **ONLY** required if you wish to contribute to the development of the project.
 
@@ -100,3 +113,4 @@ If you (or your employer) benefit from this project, please consider becoming a 
 [casgitter]: https://gitter.im/apereo/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 [casslack]: https://apereo.slack.com/
 [blog]: https://apereo.github.io/
+

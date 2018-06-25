@@ -45,7 +45,7 @@ and integration tests. They are <strong>NOT</strong> set up for internal demos a
 The following demos are provided by the Apereo CAS project:
 
 | Topic                                                                                      | Source Branch            | Location | Heroku
-|-------------------------------------|-------------- --------|--------------------------------------------------------|---------------------------------------
+|-------------------------------------|----------------------|--------------------------------------------------------|---------------------------------------
 | [CAS Overlay Project Initializr](installation/Maven-Overlay-Installation.html)            | `heroku-casinitializr`   | [Link](https://casinitializr.herokuapp.com) | ![](https://heroku-badge.herokuapp.com/?app=casinitializr)
 | [CAS Web Application Server](index.html)                                                  | `heroku-caswebapp`       | [Link](https://casserver.herokuapp.com/cas) | ![](https://heroku-badge.herokuapp.com/?app=casserver&root=cas)
 | [CAS Management Server](installation/Installing-ServicesMgmt-Webapp.html)        | `heroku-mgmtwebapp` | [Link](https://casservermgmt.herokuapp.com/cas-management)  | ![](https://heroku-badge.herokuapp.com/?app=casservermgmt&root=cas-management)

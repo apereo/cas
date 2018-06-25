@@ -19,7 +19,6 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         actionResolverName = "SERVICE_ACCESS_ENFORCEMENT_ACTION_RESOLVER",
         resourceResolverName = "SERVICE_ACCESS_ENFORCEMENT_RESOURCE_RESOLVER")
     public AuditableExecutionResult execute(final AuditableContext context) {
-
         final var registeredService = context.getRegisteredService();
         if (context.getServiceTicket().isPresent() && context.getAuthenticationResult().isPresent() && registeredService.isPresent()) {
             final var result = AuditableExecutionResult.of(context);
