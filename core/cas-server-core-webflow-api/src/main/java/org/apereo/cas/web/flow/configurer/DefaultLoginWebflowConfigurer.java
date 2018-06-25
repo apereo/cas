@@ -141,7 +141,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
     }
 
     private void createTicketGrantingTicketCheckAction(final Flow flow) {
-        final ActionState action = createActionState(flow, CasWebflowConstants.STATE_ID_TICKET_GRANTING_TICKET_CHECK,
+        final var action = createActionState(flow, CasWebflowConstants.STATE_ID_TICKET_GRANTING_TICKET_CHECK,
             CasWebflowConstants.ACTION_ID_TICKET_GRANTING_TICKET_CHECK);
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_TGT_NOT_EXISTS, CasWebflowConstants.STATE_ID_GATEWAY_REQUEST_CHECK);
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_TGT_INVALID, CasWebflowConstants.STATE_ID_TERMINATE_SESSION);
@@ -149,7 +149,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
     }
 
     private void createInitialAuthenticationRequestValidationCheckAction(final Flow flow) {
-        final ActionState action = createActionState(flow, CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK,
+        final var action = createActionState(flow, CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK,
             CasWebflowConstants.ACTION_ID_INITIAL_AUTHN_REQUEST_VALIDATION);
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE);
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
@@ -163,7 +163,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      * @param flow the flow
      */
     protected void createTerminateSessionAction(final Flow flow) {
-        final ActionState terminateSession = createActionState(flow,
+        final var terminateSession = createActionState(flow,
             CasWebflowConstants.STATE_ID_TERMINATE_SESSION, createEvaluateAction(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION));
         createStateDefaultTransition(terminateSession, CasWebflowConstants.STATE_ID_GATEWAY_REQUEST_CHECK);
     }
@@ -227,7 +227,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      * @param flow the flow
      */
     protected void createRedirectToServiceActionState(final Flow flow) {
-        final ActionState redirectToView = createActionState(flow, CasWebflowConstants.STATE_ID_REDIRECT, CasWebflowConstants.ACTION_ID_REDIRECT_TO_SERVICE);
+        final var redirectToView = createActionState(flow, CasWebflowConstants.STATE_ID_REDIRECT, CasWebflowConstants.ACTION_ID_REDIRECT_TO_SERVICE);
         createTransitionForState(redirectToView, Response.ResponseType.POST.name().toLowerCase(), CasWebflowConstants.STATE_ID_POST_VIEW);
         createTransitionForState(redirectToView, Response.ResponseType.HEADER.name().toLowerCase(), CasWebflowConstants.STATE_ID_HEADER_VIEW);
         createTransitionForState(redirectToView, Response.ResponseType.REDIRECT.name().toLowerCase(), CasWebflowConstants.STATE_ID_REDIRECT_VIEW);

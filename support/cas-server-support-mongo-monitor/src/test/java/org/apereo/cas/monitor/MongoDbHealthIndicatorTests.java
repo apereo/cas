@@ -36,6 +36,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
+import java.util.Map;
+
 import static org.junit.Assert.*;
 
 /**

@@ -36,7 +36,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
         MetadataResolver resolver = null;
         try {
             LOGGER.debug("Resolving metadata for [{}] at [{}].", service.getName(), service.getMetadataLocation());
-            final RegisteredServiceCacheKey k = new RegisteredServiceCacheKey(service);
+            final var k = new RegisteredServiceCacheKey(service);
             LOGGER.debug("Locating cached metadata resolver using key [{}] for service [{}]", k.getId(), service.getName());
             resolver = this.cache.get(k);
             return resolver;
