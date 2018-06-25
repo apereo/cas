@@ -80,7 +80,7 @@ public class HazelcastHealthIndicatorTests {
     public void verifyMonitor() {
         final var health = hazelcastHealthIndicator.health();
         assertEquals(Status.UP, health.getStatus());
-        final Map<String, Object> details = health.getDetails();
+        final var details = health.getDetails();
         details.values().stream()
             .map(Map.class::cast)
             .forEach(map -> {

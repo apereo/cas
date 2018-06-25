@@ -207,6 +207,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @return the base client
      */
     protected BaseClient<Credentials, CommonProfile> findDelegatedClientByName(final HttpServletRequest request, final String clientName, final Service service) {
+        final var client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
         LOGGER.debug("Delegated authentication client is [{}] with service [{}}", client, service);
         if (service != null) {
             request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service.getId());

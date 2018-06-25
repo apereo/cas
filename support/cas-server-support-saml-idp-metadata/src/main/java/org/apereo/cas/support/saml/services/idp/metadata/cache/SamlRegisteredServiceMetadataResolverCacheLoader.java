@@ -8,12 +8,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
 import org.apereo.cas.util.http.HttpClient;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,7 +52,8 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
         final var metadataResolver = new ChainingMetadataResolver();
         final List<MetadataResolver> metadataResolvers = new ArrayList<>();
 
-        final SamlRegisteredService service = cacheKey.getRegisteredService();
+        final var service = cacheKey.getRegisteredService();
+        final var availableResolvers = this.metadataResolutionPlan.getRegisteredMetadataResolvers();
         LOGGER.debug("There are [{}] metadata resolver(s) available in the chain", availableResolvers.size());
         availableResolvers
             .stream()
