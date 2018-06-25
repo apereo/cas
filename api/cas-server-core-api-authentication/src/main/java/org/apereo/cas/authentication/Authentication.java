@@ -29,7 +29,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface Authentication extends Serializable {
 
     /**

@@ -13,7 +13,6 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
-import javax.persistence.PostLoad;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -120,15 +119,9 @@ public class OidcRegisteredService extends OAuthRegisteredService {
         getScopes().addAll(scopes);
     }
 
-    /**
-     * Initializes the registered service with default values
-     * for fields that are unspecified. Only triggered by JPA.
-     */
     @Override
-    @PostLoad
-    public void postLoad() {
-        super.postLoad();
-        
+    public void initialize() {
+        super.initialize();
         if (this.scopes == null) {
             this.scopes = new HashSet<>();
         }

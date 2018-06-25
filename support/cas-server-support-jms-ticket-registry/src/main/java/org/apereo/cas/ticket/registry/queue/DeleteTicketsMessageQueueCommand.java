@@ -13,10 +13,10 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 public class DeleteTicketsMessageQueueCommand extends BaseMessageQueueCommand {
-
+    private static final long serialVersionUID = 8907022828993467474L;
 
     @JsonCreator
     public DeleteTicketsMessageQueueCommand(@JsonProperty("id") final StringBean id) {

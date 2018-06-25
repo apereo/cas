@@ -70,6 +70,20 @@ task showConfiguration {
     }
 }
 
+task downloadDependencies {
+    description "Pre-download project dependencies for all configurations"
+    doLast {
+        configurations.getAsMap().each { name, config ->
+            println "Retrieving dependencies for $project:$name"
+            try {
+                config.files
+            } catch (e) {
+                project.logger.info e.message
+            }
+        }
+    }
+}
+
 gradle.buildFinished { buildResult ->
     cleanLogs
 }

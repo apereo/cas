@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -12,10 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
-import javax.persistence.PostLoad;
 import java.util.HashSet;
-
-import lombok.Getter;
 
 /**
  * An extension of the {@link RegexRegisteredService} that defines the
@@ -63,14 +61,9 @@ public class OAuthRegisteredService extends RegexRegisteredService {
         return new OAuthRegisteredService();
     }
 
-    /**
-     * Post load processing, once the service is located via JPA.
-     */
     @Override
-    @PostLoad
-    public void postLoad() {
-        super.postLoad();
-        
+    public void initialize() {
+        super.initialize();
         if (this.supportedGrantTypes == null) {
             this.supportedGrantTypes = new HashSet<>();
         }

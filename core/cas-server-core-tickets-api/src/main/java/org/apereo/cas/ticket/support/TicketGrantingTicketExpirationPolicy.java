@@ -21,7 +21,7 @@ import java.time.temporal.ChronoUnit;
  * @author William G. Thompson, Jr.
  * @since 3.4.10
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
