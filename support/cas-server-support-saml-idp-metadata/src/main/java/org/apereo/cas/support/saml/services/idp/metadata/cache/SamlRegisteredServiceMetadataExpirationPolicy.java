@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  * @since 5.2.0
  */
 @Slf4j
-public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<RegisteredServiceCacheKey, MetadataResolver> {
+public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<SamlRegisteredServiceCacheKey, MetadataResolver> {
     private final long defaultExpiration;
     
     public SamlRegisteredServiceMetadataExpirationPolicy(final long metadataCacheExpirationMinutes) {
@@ -30,7 +30,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Reg
     }
 
     @Override
-    public long expireAfterCreate(@Nonnull final RegisteredServiceCacheKey cacheKey,
+    public long expireAfterCreate(@Nonnull final SamlRegisteredServiceCacheKey cacheKey,
                                   @Nonnull final MetadataResolver chainingMetadataResolver, 
                                   final long currentTime) {
         final SamlRegisteredService service = cacheKey.getRegisteredService();
@@ -72,7 +72,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Reg
     }
 
     @Override
-    public long expireAfterUpdate(@Nonnull final RegisteredServiceCacheKey cacheKey,
+    public long expireAfterUpdate(@Nonnull final SamlRegisteredServiceCacheKey cacheKey,
                                   @Nonnull final MetadataResolver chainingMetadataResolver,
                                   final long currentTime, final long currentDuration) {
         LOGGER.debug("Cache expiration duration after updates is set to [{}]", currentDuration);
@@ -80,7 +80,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Reg
     }
 
     @Override
-    public long expireAfterRead(@Nonnull final RegisteredServiceCacheKey cacheKey,
+    public long expireAfterRead(@Nonnull final SamlRegisteredServiceCacheKey cacheKey,
                                 @Nonnull final MetadataResolver chainingMetadataResolver, 
                                 final long currentTime, final long currentDuration) {
         LOGGER.debug("Cache expiration duration after reads is set to [{}]", currentDuration);

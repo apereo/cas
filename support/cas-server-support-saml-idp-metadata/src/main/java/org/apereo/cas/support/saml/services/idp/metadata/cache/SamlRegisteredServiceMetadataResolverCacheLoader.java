@@ -30,7 +30,7 @@ import java.util.Objects;
  */
 @Slf4j
 @AllArgsConstructor
-public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLoader<RegisteredServiceCacheKey, MetadataResolver> {
+public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLoader<SamlRegisteredServiceCacheKey, MetadataResolver> {
 
     /**
      * The Config bean.
@@ -47,7 +47,7 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
     @Override
     @Synchronized
     @SneakyThrows
-    public ChainingMetadataResolver load(final RegisteredServiceCacheKey cacheKey) {
+    public ChainingMetadataResolver load(final SamlRegisteredServiceCacheKey cacheKey) {
 
         final ChainingMetadataResolver metadataResolver = new ChainingMetadataResolver();
         final List<MetadataResolver> metadataResolvers = new ArrayList<>();

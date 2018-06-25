@@ -4,13 +4,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.DigestUtils;
 
+import java.io.Serializable;
+
 /**
- * This is {@link RegisteredServiceCacheKey}.
+ * This is {@link SamlRegisteredServiceCacheKey}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -19,37 +19,15 @@ import org.apereo.cas.util.DigestUtils;
 @ToString
 @EqualsAndHashCode(of = "id")
 @Getter
-public class RegisteredServiceCacheKey {
+public class SamlRegisteredServiceCacheKey implements Serializable {
+    private static final long serialVersionUID = -7238573226470492601L;
+
     private final String id;
     private final SamlRegisteredService registeredService;
 
-    public RegisteredServiceCacheKey(final SamlRegisteredService registeredService) {
+    public SamlRegisteredServiceCacheKey(final SamlRegisteredService registeredService) {
         this.id = buildRegisteredServiceCacheKey(registeredService);
         this.registeredService = registeredService;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final RegisteredServiceCacheKey rhs = (RegisteredServiceCacheKey) obj;
-        return new EqualsBuilder()
-            .append(this.id, rhs.id)
-            .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-            .append(id)
-            .toHashCode();
     }
 
     /**
