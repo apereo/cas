@@ -39,7 +39,7 @@ public class RegisteredServiceCacheKey {
         if (obj.getClass() != getClass()) {
             return false;
         }
-        final RegisteredServiceCacheKey rhs = (RegisteredServiceCacheKey) obj;
+        final var rhs = (RegisteredServiceCacheKey) obj;
         return new EqualsBuilder()
             .append(this.id, rhs.id)
             .isEquals();
@@ -59,9 +59,9 @@ public class RegisteredServiceCacheKey {
      * @return the string
      */
     public static String buildRegisteredServiceCacheKey(final SamlRegisteredService service) {
-        final String key = String.valueOf(service.getId()).concat("@").concat(service.getName());
+        final var key = String.valueOf(service.getId()).concat("@").concat(service.getName());
         LOGGER.debug("Determined cache key for service [{}] as [{}]", service.getName(), key);
-        final String hashedKey = DigestUtils.sha512(key);
+        final var hashedKey = DigestUtils.sha512(key);
         LOGGER.debug("Hashed service cache key as [{}]", hashedKey);
         return hashedKey;
     }

@@ -209,8 +209,8 @@ public class WebUtils {
      * @return the ticket granting ticket id
      */
     public static String getTicketGrantingTicketId(final RequestContext context) {
-        final String tgtFromRequest = getTicketGrantingTicketIdFrom(context.getRequestScope());
-        final String tgtFromFlow = getTicketGrantingTicketIdFrom(context.getFlowScope());
+        final var tgtFromRequest = getTicketGrantingTicketIdFrom(context.getRequestScope());
+        final var tgtFromFlow = getTicketGrantingTicketIdFrom(context.getFlowScope());
         return tgtFromRequest != null ? tgtFromRequest : tgtFromFlow;
     }
     /**
