@@ -19,6 +19,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -52,6 +53,7 @@ public class CasFiltersConfiguration {
 
     @RefreshScope
     @Bean
+    @Lazy
     public FilterRegistrationBean characterEncodingFilter() {
         final var bean = new FilterRegistrationBean();
         final var web = casProperties.getHttpWebRequest().getWeb();
@@ -64,6 +66,7 @@ public class CasFiltersConfiguration {
 
     @RefreshScope
     @Bean
+    @Lazy
     public FilterRegistrationBean responseHeadersFilter() {
         final var bean = new FilterRegistrationBean();
         final var filter = new AddResponseHeadersFilter();

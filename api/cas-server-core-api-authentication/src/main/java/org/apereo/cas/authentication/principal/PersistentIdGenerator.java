@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author Scott Battaglia
  * @since 3.1
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface PersistentIdGenerator extends Serializable {
 
     /**
