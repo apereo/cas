@@ -10,7 +10,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.joda.time.DateTimeUtils;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.springframework.test.annotation.DirtiesContext;
@@ -43,7 +43,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
     private ExpirationPolicy expirationPolicy;
     private TicketGrantingTicket ticketGrantingTicket;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         this.expirationPolicy = new MovingTimeTicketExpirationPolicy();
         this.ticketGrantingTicket = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), this.expirationPolicy);

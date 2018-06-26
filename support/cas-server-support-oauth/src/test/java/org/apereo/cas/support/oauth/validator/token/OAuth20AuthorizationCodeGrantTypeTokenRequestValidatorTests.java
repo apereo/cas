@@ -19,7 +19,7 @@ import org.apereo.cas.ticket.code.OAuthCodeExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
@@ -43,7 +43,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
     private TicketRegistry ticketRegistry;
     private OAuthRegisteredService registeredService;
 
-    @BeforeEach
+    @Before
     public void before() {
         final var service = RegisteredServiceTestUtils.getService();
 

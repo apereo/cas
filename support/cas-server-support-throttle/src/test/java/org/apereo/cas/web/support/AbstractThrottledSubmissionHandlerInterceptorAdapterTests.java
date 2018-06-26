@@ -8,8 +8,8 @@ import org.apereo.cas.web.support.config.CasThrottlingConfiguration;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -49,7 +49,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
     @Qualifier("authenticationThrottle")
     protected ThrottledSubmissionHandlerInterceptor throttle;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         final var request = new MockHttpServletRequest();
         request.setRemoteAddr(IP_ADDRESS);
@@ -57,7 +57,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
     }
 
-    @AfterEach
+    @After
     public void afterEachTest() {
         ClientInfoHolder.setClientInfo(null);
     }

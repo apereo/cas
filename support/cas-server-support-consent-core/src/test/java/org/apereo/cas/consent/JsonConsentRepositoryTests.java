@@ -3,8 +3,8 @@ package org.apereo.cas.consent;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.junit.AfterClass;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterAll;
 import org.springframework.core.io.FileSystemResource;
 
 import static org.junit.Assert.*;
@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 public class JsonConsentRepositoryTests {
     private static final FileSystemResource JSON_FILE = new FileSystemResource("ConsentRepository.json");
 
-    @AfterAll
+    @AfterClass
     public static void shutdown() {
         JSON_FILE.getFile().delete();
     }

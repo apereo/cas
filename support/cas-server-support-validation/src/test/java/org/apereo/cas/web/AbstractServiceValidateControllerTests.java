@@ -18,7 +18,7 @@ import org.apereo.cas.validation.ValidationResponseType;
 import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.StaticApplicationContext;
@@ -44,7 +44,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     protected AbstractServiceValidateController serviceValidateController;
 
-    @BeforeEach
+    @Before
     public void onSetUp() throws Exception {
         final var context = new StaticApplicationContext();
         context.refresh();

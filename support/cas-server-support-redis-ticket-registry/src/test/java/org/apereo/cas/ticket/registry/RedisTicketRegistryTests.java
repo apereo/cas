@@ -7,8 +7,8 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.RedisTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -63,13 +63,13 @@ public class RedisTicketRegistryTests extends BaseSpringRunnableTicketRegistryTe
     }
 
 
-    @BeforeAll
+    @BeforeClass
     public static void startRedis() throws Exception {
         REDIS_SERVER = new RedisServer(6379);
         REDIS_SERVER.start();
     }
 
-    @AfterAll
+    @AfterClass
     public static void stopRedis() {
         REDIS_SERVER.stop();
     }
