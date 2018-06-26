@@ -1,8 +1,11 @@
 package org.apereo.cas.oidc.util;
 
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -12,17 +15,14 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.client.util.URIBuilder;
-import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link OidcAuthorizationRequestSupport}.
@@ -145,6 +145,19 @@ public class OidcAuthorizationRequestSupport {
                                                                        final Authentication authentication) {
         return isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, authentication.getAuthenticationDate());
     }
+    
+    /**
+     * Is cas authentication available and old for max age authorization request?
+     *
+     * @param context
+     *            the context
+     * @return true/false
+     */
+    public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context) {
+        return isCasAuthenticationAvailable(context)
+                .filter(a -> isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, a))
+                .isPresent();
+    }
 
     /**
      * Is cas authentication old for max age authorization request?
@@ -162,48 +175,5 @@ public class OidcAuthorizationRequestSupport {
         }
         final ZonedDateTime dt = ZonedDateTime.parse(authTime.toString());
         return isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, dt);
-    }
-
-    /**
-     * Configure client for max age authorization request.
-     * Sets the CAS client to ask for renewed authentication if
-     * the authn time is too old based on the requested max age.
-     *
-     * @param casClient      the cas client
-     * @param context        the context
-     * @param authentication the authentication
-     */
-    public void configureClientForMaxAgeAuthorizationRequest(final CasClient casClient, final WebContext context,
-                                                             final Authentication authentication) {
-        if (isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, authentication)) {
-            casClient.getConfiguration().setRenew(true);
-        }
-    }
-
-    /**
-     * Configure client for prompt login authorization request.
-     *
-     * @param casClient the cas client
-     * @param context   the context
-     */
-    public static void configureClientForPromptLoginAuthorizationRequest(final CasClient casClient, final WebContext context) {
-        final Set<String> prompts = getOidcPromptFromAuthorizationRequest(context);
-        if (prompts.contains(OidcConstants.PROMPT_LOGIN)) {
-            casClient.getConfiguration().setRenew(true);
-        }
-    }
-
-    /**
-     * Configure client for prompt none authorization request.
-     *
-     * @param casClient the cas client
-     * @param context   the context
-     */
-    public static void configureClientForPromptNoneAuthorizationRequest(final CasClient casClient, final WebContext context) {
-        final Set<String> prompts = getOidcPromptFromAuthorizationRequest(context);
-        if (prompts.contains(OidcConstants.PROMPT_NONE)) {
-            casClient.getConfiguration().setRenew(false);
-            casClient.getConfiguration().setGateway(true);
-        }
     }
 }
