@@ -32,7 +32,6 @@ def isArtifactSigningRequired = {
     TODO May be removed with Java 9 and above.
  */
 if (JavaVersion.VERSION_1_8.isJava8()) {
-    println "Disable"
     def url = new URL("$projectUrl")
     new HttpURLConnection(url) {
         @Override
