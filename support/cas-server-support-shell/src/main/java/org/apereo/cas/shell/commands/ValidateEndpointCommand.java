@@ -103,7 +103,7 @@ public class ValidateEndpointCommand implements CommandMarker {
 
         if (StringUtils.isNotBlank(proxy)) {
             final var proxyUrl = new URL(proxy);
-            LOGGER.info("Using proxy address [{}]");
+            LOGGER.info("Using proxy address [{}]", proxy);
             final var proxyAddr = new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort());
             conn = constructedUrl.openConnection(new Proxy(Proxy.Type.HTTP, proxyAddr));
         } else {

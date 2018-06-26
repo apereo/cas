@@ -12,6 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -49,7 +50,7 @@ public class FortressAuthenticationHandlerTests {
 
     @Test
     public void verifyUnauthorizedUserLoginIncorrect() throws Exception {
-        Mockito.when(accessManager.createSession(Mockito.any(User.class), Mockito.anyBoolean()))
+        Mockito.when(accessManager.createSession(ArgumentMatchers.any(User.class), ArgumentMatchers.anyBoolean()))
             .thenThrow(new PasswordException(GlobalErrIds.USER_PW_INVLD, "error message"));
         this.thrown.expect(FailedLoginException.class);
         fortressAuthenticationHandler.authenticateUsernamePasswordInternal(
@@ -61,7 +62,7 @@ public class FortressAuthenticationHandlerTests {
         final var sessionId = UUID.randomUUID();
         final var session = new Session(new User(CoreAuthenticationTestUtils.CONST_USERNAME), sessionId.toString());
         session.setAuthenticated(true);
-        Mockito.when(accessManager.createSession(Mockito.any(User.class), Mockito.anyBoolean())).thenReturn(session);
+        Mockito.when(accessManager.createSession(ArgumentMatchers.any(User.class), ArgumentMatchers.anyBoolean())).thenReturn(session);
         try {
             final var handlerResult = fortressAuthenticationHandler.authenticateUsernamePasswordInternal(
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), null);
