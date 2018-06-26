@@ -42,7 +42,7 @@ public class RedisServiceRegistryConfiguration implements ServiceRegistryExecuti
     @Bean
     @ConditionalOnMissingBean(name = "registeredServiceRedisTemplate")
     public RedisTemplate registeredServiceRedisTemplate() {
-        final RedisObjectFactory obj = new RedisObjectFactory();
+        final var obj = new RedisObjectFactory();
         return obj.newRedisTemplate(redisServiceConnectionFactory(), String.class, RegisteredService.class);
     }
 

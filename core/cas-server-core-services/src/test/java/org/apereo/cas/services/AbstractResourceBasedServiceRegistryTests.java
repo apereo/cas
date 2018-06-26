@@ -41,7 +41,7 @@ public abstract class AbstractResourceBasedServiceRegistryTests extends Abstract
 
     @Test
     public void verifyServiceWithInvalidFileName() {
-        final AbstractRegisteredService r = buildRegisteredServiceInstance(RandomUtils.nextInt());
+        final var r = buildRegisteredServiceInstance(RandomUtils.nextInt());
         r.setName("hell/o@world:*");
         this.thrown.expect(IllegalArgumentException.class);
         this.dao.save(r);

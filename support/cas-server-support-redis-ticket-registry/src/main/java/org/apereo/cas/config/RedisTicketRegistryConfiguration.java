@@ -40,7 +40,7 @@ public class RedisTicketRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "ticketRedisTemplate")
     public RedisTemplate<String, Ticket> ticketRedisTemplate() {
-        final RedisObjectFactory obj = new RedisObjectFactory();
+        final var obj = new RedisObjectFactory();
         return obj.newRedisTemplate(redisTicketConnectionFactory(), String.class, Ticket.class);
     }
 

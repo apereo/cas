@@ -8,9 +8,9 @@ import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -18,8 +18,6 @@ import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
-import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
-import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.pac4j.saml.client.SAML2Client;
@@ -44,7 +42,7 @@ public class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationT
     private MessageContext<SAMLObject> samlContext;
     private SamlRegisteredServiceServiceProviderMetadataFacade adaptor;
 
-    @Before
+    @BeforeEach
     public void before() throws Exception {
         final var idpMetadata = new File("src/test/resources/metadata/idp-metadata.xml").getCanonicalPath();
         final var keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
