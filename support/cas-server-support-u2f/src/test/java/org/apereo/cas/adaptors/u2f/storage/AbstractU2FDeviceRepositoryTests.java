@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.security.cert.X509Certificate;
 import java.util.Collection;
 
 import static org.junit.Assert.*;

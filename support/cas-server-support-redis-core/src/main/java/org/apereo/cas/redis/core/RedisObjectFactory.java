@@ -7,13 +7,12 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisNode;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.util.StringUtils;
-import java.util.ArrayList;
-import java.util.List;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +40,7 @@ public class RedisObjectFactory {
                                                        final Class<K> keyClass, final Class<V> valueClass) {
         final RedisTemplate<K, V> template = new RedisTemplate();
         final RedisSerializer<String> string = new StringRedisSerializer();
-        final JdkSerializationRedisSerializer jdk = new JdkSerializationRedisSerializer();
+        final var jdk = new JdkSerializationRedisSerializer();
         template.setKeySerializer(string);
         template.setValueSerializer(jdk);
         template.setHashValueSerializer(jdk);
@@ -120,7 +119,7 @@ public class RedisObjectFactory {
         final List<RedisNode> redisNodes = new ArrayList<>();
         if (redis.getSentinel().getNode() != null) {
             final var nodes = redis.getSentinel().getNode();
-            for (final String hostAndPort: nodes) {
+            for (final var hostAndPort: nodes) {
                 final var args = StringUtils.split(hostAndPort, ":");
                 redisNodes.add(new RedisNode(args[0], Integer.parseInt(args[1])));
             }

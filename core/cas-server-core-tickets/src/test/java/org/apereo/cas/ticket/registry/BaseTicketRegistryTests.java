@@ -337,11 +337,11 @@ public abstract class BaseTicketRegistryTests {
 
     @Test
     public void verifyExpiration() {
-        final Authentication a = CoreAuthenticationTestUtils.getAuthentication();
-        this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TGT_ID, a, new NeverExpiresExpirationPolicy()));
-        final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(TGT_ID, TicketGrantingTicket.class);
+        final var authn = CoreAuthenticationTestUtils.getAuthentication();
+        this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TGT_ID, authn, new NeverExpiresExpirationPolicy()));
+        final var tgt = this.ticketRegistry.getTicket(TGT_ID, TicketGrantingTicket.class);
         final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
-        final AbstractTicket ticket = (AbstractTicket) tgt.grantServiceTicket(ST_1_ID, service, new NeverExpiresExpirationPolicy(), false, true);
+        final var ticket = (AbstractTicket) tgt.grantServiceTicket(ST_1_ID, service, new NeverExpiresExpirationPolicy(), false, true);
         ticket.setExpirationPolicy(new AlwaysExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(ticket);
         this.ticketRegistry.updateTicket(tgt);

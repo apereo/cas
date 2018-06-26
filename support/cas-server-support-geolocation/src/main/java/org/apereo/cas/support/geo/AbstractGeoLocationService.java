@@ -2,14 +2,12 @@ package org.apereo.cas.support.geo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.userinfo.client.UserInfo;
-import io.userinfo.client.model.Info;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
