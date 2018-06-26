@@ -37,7 +37,7 @@ public class ChainingAuditPrincipalIdProvider implements AuditPrincipalIdProvide
         final AuditPrincipalIdProvider result = providers.stream()
             .filter(p -> p.supports(authentication, resultValue, exception))
             .findFirst()
-            .orElse(new DefaultAuditPrincipalIdProvider());
+            .orElseGet(DefaultAuditPrincipalIdProvider::new);
         return result.getPrincipalIdFrom(authentication, resultValue, exception);
     }
 
