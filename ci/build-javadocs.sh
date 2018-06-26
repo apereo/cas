@@ -10,7 +10,7 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 gradleBuild="$gradleBuild javadoc -x test -x check -DskipNpmLint=true \
-     -DskipGradleLint=true -DskipSass=true -DenableIncremental=true
+     -DskipGradleLint=true -DskipSass=true \
      -DskipNestedConfigMetadataGen=true --parallel \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true "
 
