@@ -29,7 +29,7 @@ public class ClientCredential implements Credential, Serializable {
     /**
      * The internal credentials provided by the authentication at the provider.
      */
-    private org.pac4j.core.credentials.Credentials credentials;
+    private transient org.pac4j.core.credentials.Credentials credentials;
 
     /**
      * Define the credentials.
