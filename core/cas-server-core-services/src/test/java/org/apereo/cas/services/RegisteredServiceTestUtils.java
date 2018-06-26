@@ -116,7 +116,7 @@ public class RegisteredServiceTestUtils {
 
     @SneakyThrows
     public static AbstractRegisteredService getRegisteredService(final String id, final Class<? extends RegisteredService> clazz) {
-        final AbstractRegisteredService s = (AbstractRegisteredService) clazz.getDeclaredConstructor().newInstance();
+        final var s = (AbstractRegisteredService) clazz.getDeclaredConstructor().newInstance();
         s.setServiceId(id);
         s.setEvaluationOrder(1);
         s.setName("TestService" + UUID.randomUUID().toString());

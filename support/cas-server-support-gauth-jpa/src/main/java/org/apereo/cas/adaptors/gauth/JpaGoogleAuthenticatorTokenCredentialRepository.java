@@ -43,7 +43,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
     @Override
     public OneTimeTokenAccount get(final String username) {
         try {
-            final GoogleAuthenticatorAccount r = this.entityManager.createQuery("SELECT r FROM " + ENTITY_NAME + " r where r.username = :username",
+            final var r = this.entityManager.createQuery("SELECT r FROM " + ENTITY_NAME + " r where r.username = :username",
                 GoogleAuthenticatorAccount.class)
                 .setParameter("username", username)
                 .getSingleResult();

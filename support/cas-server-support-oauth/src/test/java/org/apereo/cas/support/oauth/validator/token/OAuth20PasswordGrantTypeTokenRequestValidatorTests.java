@@ -1,6 +1,5 @@
 package org.apereo.cas.support.oauth.validator.token;
 
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -10,15 +9,13 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import javax.servlet.http.HttpSession;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -33,7 +30,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
     private OAuth20TokenRequestValidator validator;
     private OAuthRegisteredService registeredService;
 
-    @Before
+    @BeforeEach
     public void before() {
         final var service = RegisteredServiceTestUtils.getService();
 

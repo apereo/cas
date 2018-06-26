@@ -63,7 +63,7 @@ public class CasServiceRegistryInitializationConfiguration {
     @Bean
     public ServiceRegistryInitializer serviceRegistryInitializer() {
         final var serviceRegistryInstance = serviceRegistry.getIfAvailable();
-        final ServiceRegistryInitializer initializer = new ServiceRegistryInitializer(embeddedJsonServiceRegistry(),
+        final var initializer = new ServiceRegistryInitializer(embeddedJsonServiceRegistry(),
             serviceRegistryInstance, servicesManager.getIfAvailable());
 
         LOGGER.info("Attempting to initialize the service registry [{}] from service definition resources found at [{}]",

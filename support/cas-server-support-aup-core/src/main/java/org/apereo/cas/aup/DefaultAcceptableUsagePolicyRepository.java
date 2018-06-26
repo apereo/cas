@@ -2,7 +2,6 @@ package org.apereo.cas.aup;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;

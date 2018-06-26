@@ -89,11 +89,11 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
             .stream()
             .map(p -> p.getId().trim().toLowerCase())
             .collect(Collectors.toCollection(LinkedHashSet::new));
-        final int count = principalIds.size();
+        final var count = principalIds.size();
         if (count > 1) {
             LOGGER.debug("Principal resolvers produced [{}] distinct principal IDs [{}]; last resolved principal ID will be the final principal ID", count, principalIds);
         }
-        final String principalId = principals.get(principals.size() - 1).getId();
+        final var principalId = principals.get(principals.size() - 1).getId();
         final var finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
         LOGGER.debug("Final principal constructed by the chain of resolvers is [{}]", finalPrincipal);
         return finalPrincipal;

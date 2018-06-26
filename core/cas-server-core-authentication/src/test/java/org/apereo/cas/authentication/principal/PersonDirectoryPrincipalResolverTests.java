@@ -102,15 +102,15 @@ public class PersonDirectoryPrincipalResolverTests {
 
     @Test
     public void verifyChainingResolverOverwritePrincipal() {
-        final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver(
+        final var resolver = new PersonDirectoryPrincipalResolver(
                 CoreAuthenticationTestUtils.getAttributeRepository());
-        final PersonDirectoryPrincipalResolver resolver2 = new PersonDirectoryPrincipalResolver(
+        final var resolver2 = new PersonDirectoryPrincipalResolver(
                 new StubPersonAttributeDao(Collections.singletonMap("principal", CollectionUtils.wrap("changedPrincipal"))), "principal");
 
         final var chain = new ChainingPrincipalResolver();
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver, resolver2));
 
-        final Principal p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+        final var p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
                 Optional.of(CoreAuthenticationTestUtils.getPrincipal("somethingelse", Collections.singletonMap(ATTR_1, "value"))),
                 Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertNotNull(p);

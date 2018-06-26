@@ -25,8 +25,8 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.SchedulingUtils;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +88,7 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;
 
-    @Before
+    @BeforeEach
     public void cleanUp() {
         registry.deleteAll();
     }

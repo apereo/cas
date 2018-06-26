@@ -4,11 +4,8 @@ import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningStandaloneCondition;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
-
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -34,10 +31,10 @@ public class LdapServiceRegistryTests extends BaseLdapServiceRegistryTests {
     @Test
     public void verifySavingServiceChangesDn() {
         getServiceRegistry().save(buildRegisteredServiceInstance(8080));
-        final List<RegisteredService> services = getServiceRegistry().load();
+        final var services = getServiceRegistry().load();
         assertFalse(services.isEmpty());
-        final RegisteredService rs = getServiceRegistry().findServiceById(services.get(0).getId());
-        final long originalId = rs.getId();
+        final var rs = getServiceRegistry().findServiceById(services.get(0).getId());
+        final var originalId = rs.getId();
         assertNotNull(rs);
         rs.setId(666);
         assertNotNull(getServiceRegistry().save(rs));

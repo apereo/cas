@@ -69,7 +69,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
 
     @Override
     public void deleteAll() {
-        final GAuthMultifactorProperties.Rest rest = gauth.getRest();
+        final var rest = gauth.getRest();
         restTemplate.delete(rest.getEndpointUrl());
     }
 

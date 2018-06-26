@@ -39,8 +39,8 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public List<RegisteredService> load() {
-        final String query = String.format("select r from %s r", ENTITY_NAME);
-        final List<RegisteredService> list = this.entityManager.createQuery(query, RegisteredService.class).getResultList();
+        final var query = String.format("select r from %s r", ENTITY_NAME);
+        final var list = this.entityManager.createQuery(query, RegisteredService.class).getResultList();
         list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
         return list;
     }
@@ -67,7 +67,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public long size() {
-        final String query = String.format("select count(r) from %s r", ENTITY_NAME);
+        final var query = String.format("select count(r) from %s r", ENTITY_NAME);
         return this.entityManager.createQuery(query, Long.class).getSingleResult();
     }
 }

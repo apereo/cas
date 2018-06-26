@@ -7,15 +7,13 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import javax.servlet.http.HttpSession;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -30,7 +28,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
     private TicketRegistry ticketRegistry;
     private OAuth20TokenRequestValidator validator;
 
-    @Before
+    @BeforeEach
     public void before() {
         final var oauthCode = mock(RefreshToken.class);
         when(oauthCode.getId()).thenReturn("RT-12345678");
