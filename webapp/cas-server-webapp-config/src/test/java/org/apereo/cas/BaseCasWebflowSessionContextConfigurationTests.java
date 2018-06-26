@@ -90,7 +90,6 @@ import static org.junit.Assert.*;
     CasThemesConfiguration.class,
     CasFiltersConfiguration.class,
     CasPropertiesConfiguration.class,
-    CasSecurityContextConfiguration.class,
     CasWebAppConfiguration.class,
     CasWebflowServerSessionContextConfigurationTests.TestWebflowContextConfiguration.class,
     CasWebflowContextConfiguration.class,

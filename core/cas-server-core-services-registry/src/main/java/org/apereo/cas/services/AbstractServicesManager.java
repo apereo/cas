@@ -92,8 +92,7 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
         if (service != null) {
             service.initialize();
         }
-
-        return result;
+        return validateRegisteredService(service);
     }
 
     @Override
