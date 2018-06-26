@@ -227,7 +227,7 @@ public class ConfigurationMetadataGenerator {
             final String name = StreamSupport.stream(RelaxedNames.forCamelCase(variable.getNameAsString()).spliterator(), false)
                 .map(Object::toString)
                 .findFirst()
-                .orElse(variable.getNameAsString());
+                .orElseGet(variable::getNameAsString);
 
 
             final String indexedGroup = arg.getName().concat(indexNameWithBrackets ? "[]" : StringUtils.EMPTY);

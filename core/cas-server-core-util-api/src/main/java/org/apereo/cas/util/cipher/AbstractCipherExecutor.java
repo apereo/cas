@@ -116,7 +116,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      */
     @SneakyThrows
     public static PrivateKey extractPrivateKeyFromResource(final String signingSecretKey) {
-        LOGGER.debug("Attempting to extract private key...", signingSecretKey);
+        LOGGER.debug("Attempting to extract private key...");
         final Resource resource = ResourceUtils.getResourceFrom(signingSecretKey);
         final PrivateKeyFactoryBean factory = new PrivateKeyFactoryBean();
         factory.setAlgorithm(RsaKeyUtil.RSA);

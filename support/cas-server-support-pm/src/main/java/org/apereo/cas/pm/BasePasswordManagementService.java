@@ -1,6 +1,6 @@
 package org.apereo.cas.pm;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
@@ -25,18 +25,18 @@ import java.util.UUID;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BasePasswordManagementService implements PasswordManagementService {
 
     /**
      * Password management settings.
      */
     protected final PasswordManagementProperties properties;
-    
+
     private final CipherExecutor<Serializable, String> cipherExecutor;
 
     private final String issuer;
-    
+
     @Override
     public String parseToken(final String token) {
         try {
@@ -104,8 +104,8 @@ public class BasePasswordManagementService implements PasswordManagementService 
     }
 
     @Audit(action = "CHANGE_PASSWORD",
-            actionResolverName = "CHANGE_PASSWORD_ACTION_RESOLVER",
-            resourceResolverName = "CHANGE_PASSWORD_RESOURCE_RESOLVER")
+        actionResolverName = "CHANGE_PASSWORD_ACTION_RESOLVER",
+        resourceResolverName = "CHANGE_PASSWORD_RESOURCE_RESOLVER")
     @Override
     public boolean change(final Credential c, final PasswordChangeBean bean) throws InvalidPasswordException {
         return changeInternal(c, bean);
