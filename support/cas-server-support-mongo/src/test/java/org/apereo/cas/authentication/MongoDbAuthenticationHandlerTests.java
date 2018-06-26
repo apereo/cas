@@ -21,7 +21,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -80,7 +80,7 @@ public class MongoDbAuthenticationHandlerTests {
     @Qualifier("mongoAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         RequestContextHolder.setRequestAttributes(
                 new ServletRequestAttributes(new MockHttpServletRequest(), new MockHttpServletResponse()));

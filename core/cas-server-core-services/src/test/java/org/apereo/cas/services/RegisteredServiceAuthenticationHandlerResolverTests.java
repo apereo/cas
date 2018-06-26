@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 import org.apereo.cas.authentication.RegisteredServiceAuthenticationHandlerResolver;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
     private DefaultServicesManager defaultServicesManager;
     private Set<AuthenticationHandler> handlers;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         final var dao = new InMemoryServiceRegistry();
         final List<RegisteredService> list = new ArrayList<>();

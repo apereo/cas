@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +22,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
 
     private SamlAuthenticationMetaDataPopulator populator;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         this.populator = new SamlAuthenticationMetaDataPopulator();
     }

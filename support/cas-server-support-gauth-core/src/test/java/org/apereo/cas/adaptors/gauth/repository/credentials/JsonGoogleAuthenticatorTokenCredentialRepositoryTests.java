@@ -8,7 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,7 +37,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     private IGoogleAuthenticator google;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         final var bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
         this.google = new GoogleAuthenticator(bldr.build());

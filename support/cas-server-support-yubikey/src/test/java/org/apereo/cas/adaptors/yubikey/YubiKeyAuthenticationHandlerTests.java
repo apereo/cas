@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.junit.rules.ExpectedException;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
@@ -39,7 +39,7 @@ public class YubiKeyAuthenticationHandlerTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    @BeforeEach
+    @Before
     public void before() {
         final var ctx = mock(RequestContext.class);
         when(ctx.getConversationScope()).thenReturn(new LocalAttributeMap<>());

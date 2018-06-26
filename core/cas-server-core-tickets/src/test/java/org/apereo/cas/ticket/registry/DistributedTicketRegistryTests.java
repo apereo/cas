@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import static org.junit.Assert.*;
 import lombok.Setter;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 
 /**
  * @author Scott Battaglia
@@ -34,7 +34,7 @@ public class DistributedTicketRegistryTests {
 
     private boolean wasTicketUpdated;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         this.ticketRegistry = new TestDistributedTicketRegistry(this);
         this.wasTicketUpdated = false;
