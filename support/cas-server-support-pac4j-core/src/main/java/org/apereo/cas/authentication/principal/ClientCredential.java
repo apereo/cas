@@ -45,7 +45,7 @@ public class ClientCredential implements Credential {
     /**
      * The internal credentials provided by the authentication at the provider.
      */
-    private final org.pac4j.core.credentials.Credentials credentials;
+    private final transient org.pac4j.core.credentials.Credentials credentials;
 
     /**
      * Name of the client that established the credential.
