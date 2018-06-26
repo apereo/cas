@@ -24,10 +24,10 @@ public class OidcCasClientRedirectActionBuilder extends OAuth20DefaultCasClientR
 
     @Override
     public RedirectAction build(final CasClient casClient, final WebContext context) {
-        boolean renew = casClient.getConfiguration().isRenew();
-        boolean gateway = casClient.getConfiguration().isGateway();
+        var renew = casClient.getConfiguration().isRenew();
+        var gateway = casClient.getConfiguration().isGateway();
 
-        final Set<String> prompts = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(context);
+        final var prompts = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(context);
         if (prompts.contains(OidcConstants.PROMPT_NONE)) {
             renew = false;
             gateway = true;
@@ -36,7 +36,7 @@ public class OidcCasClientRedirectActionBuilder extends OAuth20DefaultCasClientR
             renew = true;
         }
 
-        final RedirectAction action = super.build(casClient, context, renew, gateway);
+        final var action = super.build(casClient, context, renew, gateway);
         LOGGER.debug("Final redirect action is [{}]", action);
         return action;
     }
