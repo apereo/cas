@@ -34,7 +34,7 @@ public class OAuth20DefaultCasClientRedirectActionBuilder implements OAuth20CasC
      * @return the redirect action
      */
     protected RedirectAction build(final CasClient casClient, final WebContext context, final boolean renew, final boolean gateway) {
-        final String redirectionUrl = CommonUtils.constructRedirectUrl(casClient.getConfiguration().getLoginUrl(),
+        final var redirectionUrl = CommonUtils.constructRedirectUrl(casClient.getConfiguration().getLoginUrl(),
                 CasProtocolConstants.PARAMETER_SERVICE,
                 casClient.computeFinalCallbackUrl(context),
                 renew, gateway);
