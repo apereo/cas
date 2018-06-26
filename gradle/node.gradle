@@ -6,8 +6,12 @@ node {
     download = true
 }
 
+npm_update {
+    args = ['--production', '--loglevel', 'warn']
+}
+
 if (!Boolean.getBoolean("skipNpmCache")) {
-    npm_install.dependsOn(npm_cache_clean)
+    npm_install.dependsOn(npm_cache_verify)
 } else {
     npm_install.enabled = false
 }
