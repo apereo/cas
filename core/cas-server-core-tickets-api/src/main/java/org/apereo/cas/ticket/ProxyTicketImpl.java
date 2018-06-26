@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @DiscriminatorValue(ProxyTicket.PROXY_TICKET_PREFIX)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 @NoArgsConstructor
 public class ProxyTicketImpl extends ServiceTicketImpl implements ProxyTicket {

@@ -37,7 +37,7 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @Entity
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Table(name = "TRANSIENTSESSIONTICKET")
 @DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue(TransientSessionTicket.PREFIX)

@@ -241,8 +241,13 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     @Override
     public synchronized List<RegisteredService> load() {
         final Collection<File> files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true);
-        this.serviceMap = files.stream().map(this::load).filter(Objects::nonNull).flatMap(Collection::stream)
-            .sorted().collect(Collectors.toMap(RegisteredService::getId, Function.identity(),
+        this.serviceMap = files
+            .stream()
+            .map(this::load)
+            .filter(Objects::nonNull)
+            .flatMap(Collection::stream)
+            .sorted()
+            .collect(Collectors.toMap(RegisteredService::getId, Function.identity(),
                 LOG_DUPLICATE_AND_RETURN_FIRST_ONE, LinkedHashMap::new));
         final List<RegisteredService> services = new ArrayList<>(this.serviceMap.values());
         final List<RegisteredService> results =
@@ -280,8 +285,13 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                 fileName, this.serviceFileNamePattern.pattern());
         }
         try (BufferedInputStream in = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
-            return this.registeredServiceSerializers.stream().filter(s -> s.supports(file)).map(s -> s.load(in))
-                .filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toList());
+            return this.registeredServiceSerializers
+                .stream()
+                .filter(s -> s.supports(file))
+                .map(s -> s.load(in))
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
         } catch (final Exception e) {
             LOGGER.error("Error reading configuration file [{}]", fileName, e);
         }

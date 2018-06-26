@@ -45,7 +45,8 @@ import lombok.extern.slf4j.Slf4j;
 @RunWith(Parameterized.class)
 @Category(CouchbaseCategory.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
-@SpringBootTest(classes = {CouchbaseTicketRegistryConfiguration.class,
+@SpringBootTest(classes = {
+    CouchbaseTicketRegistryConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,

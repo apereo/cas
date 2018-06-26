@@ -23,7 +23,7 @@ import lombok.Setter;
 @JsonSerialize(using = X509CertificateCredentialJsonSerializer.class)
 @JsonDeserialize(using = X509CertificateCredentialJsonDeserializer.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 @Setter
 public class X509CertificateCredential extends AbstractCredential {

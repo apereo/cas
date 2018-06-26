@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -114,11 +115,11 @@ public class RegisteredServiceTestUtils {
     }
 
     @SneakyThrows
-    public static AbstractRegisteredService getRegisteredService(final String id) {
-        final RegexRegisteredService s = new RegexRegisteredService();
+    public static AbstractRegisteredService getRegisteredService(final String id, final Class<? extends RegisteredService> clazz) {
+        final AbstractRegisteredService s = (AbstractRegisteredService) clazz.getDeclaredConstructor().newInstance();
         s.setServiceId(id);
         s.setEvaluationOrder(1);
-        s.setName("Test registered service " + id);
+        s.setName("TestService" + UUID.randomUUID().toString());
         s.setDescription("Registered service description");
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
         s.setId(RandomUtils.getNativeInstance().nextInt(Math.abs(s.hashCode())));
@@ -149,6 +150,11 @@ public class RegisteredServiceTestUtils {
         s.setAttributeReleasePolicy(policy);
 
         return s;
+    }
+
+    @SneakyThrows
+    public static AbstractRegisteredService getRegisteredService(final String id) {
+        return getRegisteredService(id, RegexRegisteredService.class);
     }
 
     public static Principal getPrincipal() {

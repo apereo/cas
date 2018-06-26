@@ -39,8 +39,8 @@ public class RsaKeyPairCipherExecutorTests {
     public void verifyRsaKeyPair() {
         final String publicKey = "classpath:keys/RSA2048Public.key";
         final String privateKey = "classpath:keys/RSA2048Private.key";
-        final KeyPair kp = new KeyPair(RsaKeyPairCipherExecutor.extractPublicKeyFromResource(publicKey),
-            RsaKeyPairCipherExecutor.extractPrivateKeyFromResource(privateKey));
+        final KeyPair kp = new KeyPair(AbstractCipherExecutor.extractPublicKeyFromResource(publicKey),
+            AbstractCipherExecutor.extractPrivateKeyFromResource(privateKey));
         final CipherExecutor cipher = new RsaKeyPairCipherExecutor(kp, kp);
         final Object testValue = cipher.encode("TestValue");
         assertNotNull(testValue);
@@ -51,8 +51,8 @@ public class RsaKeyPairCipherExecutorTests {
     public void verifyRsaKeyPairSigning() {
         final String publicKey = "classpath:keys/RSA2048Public.key";
         final String privateKey = "classpath:keys/RSA2048Private.key";
-        final KeyPair kp = new KeyPair(RsaKeyPairCipherExecutor.extractPublicKeyFromResource(publicKey),
-            RsaKeyPairCipherExecutor.extractPrivateKeyFromResource(privateKey));
+        final KeyPair kp = new KeyPair(AbstractCipherExecutor.extractPublicKeyFromResource(publicKey),
+            AbstractCipherExecutor.extractPrivateKeyFromResource(privateKey));
         final CipherExecutor cipher = new RsaKeyPairCipherExecutor(kp);
         final Object testValue = cipher.encode("Value");
         assertEquals("Value", cipher.decode(testValue));

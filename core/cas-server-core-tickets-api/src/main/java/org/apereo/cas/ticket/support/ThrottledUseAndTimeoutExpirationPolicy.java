@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 @Setter
 @NoArgsConstructor

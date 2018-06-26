@@ -17,7 +17,7 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.2.1
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 public class RememberMeDelegatingExpirationPolicy extends BaseDelegatingExpirationPolicy {
 

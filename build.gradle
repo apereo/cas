@@ -26,6 +26,27 @@ def isArtifactSigningRequired = {
     return (publishReleases && sonatypeUsername != null && sonatypePassword != null)
 }
 
+/*
+    See: https://github.com/tbroyer/gradle-errorprone-plugin/issues/56
+    Do not use caching by default to work around issues with parallel builds.
+    TODO May be removed with Java 9 and above.
+ */
+if (JavaVersion.VERSION_1_8.isJava8()) {
+    def url = new URL("$projectUrl")
+    new HttpURLConnection(url) {
+        @Override
+        void connect() throws IOException {
+        }
+        @Override
+         void disconnect() {
+        }
+        @Override
+        boolean usingProxy() {
+            return false
+        }
+    }.setDefaultUseCaches(false)
+}
+
 apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
 apply plugin: "com.github.kt3k.coveralls"
@@ -42,22 +63,22 @@ buildscript {
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:9.3.1"
+        classpath "com.netflix.nebula:gradle-lint-plugin:9.3.2"
         classpath "io.franzbecker:gradle-lombok:1.14"
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.17.0"
         classpath "io.spring.gradle:propdeps-plugin:0.0.10.RELEASE"
         classpath "org.ajoberstar:grgit:2.2.0"
         classpath "net.ltgt.gradle:gradle-errorprone-plugin:0.0.14"
         classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2"
-        classpath "org.owasp:dependency-check-gradle:3.1.2"
+        classpath "org.owasp:dependency-check-gradle:3.2.1"
     }
 }
 
 if (rootProject.continuousIntegrationBuild) {
     buildScan {
-        licenseAgreementUrl = 'https://gradle.com/terms-of-service'
-        licenseAgree = 'yes'
+        licenseAgreementUrl = "https://gradle.com/terms-of-service"
+        licenseAgree = "yes"
     }
 }
 
@@ -154,7 +175,7 @@ subprojects {
     tasks.withType(JavaCompile) {
         if (!Boolean.getBoolean("skipErrorProneCompiler")) {
             // The last argument to disable parameter names is a workaround for: https://github.com/google/error-prone/issues/780
-            options.compilerArgs += ['-Xep:MissingOverride:OFF', '-Xep:ParameterName:OFF']
+            options.compilerArgs += ["-Xep:MissingOverride:OFF", "-Xep:ParameterName:OFF"]
         }
     }
     
@@ -168,8 +189,8 @@ subprojects {
                 failOnVersionConflict()
             }
             preferProjectModules()
-            cacheDynamicVersionsFor 5, 'days'
-            cacheChangingModulesFor 5, 'days'
+            cacheDynamicVersionsFor 5, "days"
+            cacheChangingModulesFor 5, "days"
 
             /**
              * Required for all JRadius modules
