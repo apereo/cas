@@ -39,7 +39,7 @@ public class RsaKeyPairCipherExecutorTests {
     public void verifyRsaKeyPair() {
         final var publicKey = "classpath:keys/RSA2048Public.key";
         final var privateKey = "classpath:keys/RSA2048Private.key";
-        final KeyPair kp = new KeyPair(AbstractCipherExecutor.extractPublicKeyFromResource(publicKey),
+        final var kp = new KeyPair(AbstractCipherExecutor.extractPublicKeyFromResource(publicKey),
             AbstractCipherExecutor.extractPrivateKeyFromResource(privateKey));
         final CipherExecutor cipher = new RsaKeyPairCipherExecutor(kp, kp);
         final var testValue = cipher.encode("TestValue");
@@ -51,7 +51,7 @@ public class RsaKeyPairCipherExecutorTests {
     public void verifyRsaKeyPairSigning() {
         final var publicKey = "classpath:keys/RSA2048Public.key";
         final var privateKey = "classpath:keys/RSA2048Private.key";
-        final KeyPair kp = new KeyPair(AbstractCipherExecutor.extractPublicKeyFromResource(publicKey),
+        final var kp = new KeyPair(AbstractCipherExecutor.extractPublicKeyFromResource(publicKey),
             AbstractCipherExecutor.extractPrivateKeyFromResource(privateKey));
         final CipherExecutor cipher = new RsaKeyPairCipherExecutor(kp);
         final var testValue = cipher.encode("Value");
