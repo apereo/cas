@@ -5,7 +5,7 @@ import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
 import org.springframework.test.context.TestPropertySource;
 
@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 public class LdapContinuousIntegrationSpnegoKnownClientSystemsFilterActionTests
     extends BaseLdapSpnegoKnownClientSystemsFilterActionTests {
 
-    @BeforeAll
+    @BeforeClass
     public static void bootstrap() throws Exception {
         final var c = new LDAPConnection("localhost", 10389,
             "cn=Directory Manager", "password");

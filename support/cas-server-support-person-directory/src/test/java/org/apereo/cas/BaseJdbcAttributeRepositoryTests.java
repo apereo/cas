@@ -6,8 +6,8 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,7 +38,7 @@ public abstract class BaseJdbcAttributeRepositoryTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @BeforeEach
+    @Before
     @SneakyThrows
     public void setupDatabase() {
         this.dataSource = JpaBeans.newDataSource(casProperties.getAuthn().getAttributeRepository().getJdbc().get(0));
@@ -51,7 +51,7 @@ public abstract class BaseJdbcAttributeRepositoryTests {
 
     public abstract void prepareDatabaseTable(Statement statement);
 
-    @AfterEach
+    @After
     @SneakyThrows
     public void cleanup() {
         @Cleanup

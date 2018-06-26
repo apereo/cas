@@ -15,7 +15,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.hamcrest.CustomMatcher;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
@@ -73,7 +73,7 @@ public class RestfulAuthenticationPolicyTests {
 
     private RestfulAuthenticationPolicy policy;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         MockitoAnnotations.initMocks(this);
         mockServer = MockRestServiceServer.createServer(restTemplate);

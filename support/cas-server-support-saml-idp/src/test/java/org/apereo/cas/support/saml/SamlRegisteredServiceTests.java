@@ -15,7 +15,7 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.BeforeClass;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 
@@ -43,7 +43,7 @@ public class SamlRegisteredServiceTests {
     private static final String SAML_SERVICE = "SAMLService";
     private static final String METADATA_LOCATION = "classpath:/metadata/idp-metadata.xml";
 
-    @BeforeAll
+    @BeforeClass
     public static void prepTests() throws Exception {
         FileUtils.cleanDirectory(RESOURCE.getFile());
     }

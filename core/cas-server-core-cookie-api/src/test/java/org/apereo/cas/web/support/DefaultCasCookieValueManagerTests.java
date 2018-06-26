@@ -7,8 +7,8 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.After;
+import org.junit.Before;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.OngoingStubbing;
@@ -35,7 +35,7 @@ public class DefaultCasCookieValueManagerTests {
     @Mock
     private Cookie cookie;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         MockitoAnnotations.initMocks(this);
 
@@ -43,7 +43,7 @@ public class DefaultCasCookieValueManagerTests {
         cookieValueManager = new DefaultCasCookieValueManager(CipherExecutor.noOp());
     }
 
-    @AfterEach
+    @After
     public void cleanup() {
         ClientInfoHolder.clear();
     }

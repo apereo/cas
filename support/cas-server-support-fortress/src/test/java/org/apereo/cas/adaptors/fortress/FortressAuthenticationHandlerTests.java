@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
@@ -42,7 +42,7 @@ public class FortressAuthenticationHandlerTests {
     @InjectMocks
     private FortressAuthenticationHandler fortressAuthenticationHandler;
 
-    @BeforeEach
+    @Before
     public void initializeTest() {
         MockitoAnnotations.initMocks(this);
         fortressAuthenticationHandler.setAccessManager(accessManager);

@@ -7,8 +7,8 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
     @Qualifier("dataSource")
     private DataSource dataSource;
 
-    @BeforeEach
+    @Before
     public void initialize() throws Exception {
         final var c = this.dataSource.getConnection();
         final var s = c.createStatement();
@@ -60,7 +60,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
         c.close();
     }
 
-    @AfterEach
+    @After
     public void afterEachTest() throws Exception {
         final var c = this.dataSource.getConnection();
         final var s = c.createStatement();

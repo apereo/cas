@@ -7,7 +7,7 @@ import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
@@ -31,7 +31,7 @@ public class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTe
     @Autowired
     private ApplicationContextProvider applicationContextProvider;
 
-    @BeforeEach
+    @Before
     public void init() {
         this.applicationContextProvider.setApplicationContext(this.applicationContext);
     }

@@ -11,8 +11,8 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.After;
+import org.junit.Before;
 
 import java.util.Collection;
 
@@ -28,7 +28,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
     private HazelcastInstance hz;
     private RegisteredServiceHazelcastDistributedCacheManager mgr;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         final var factory = new HazelcastConfigurationFactory();
         final var properties = new BaseHazelcastProperties();
@@ -38,7 +38,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
         mgr = new RegisteredServiceHazelcastDistributedCacheManager(this.hz);
     }
 
-    @AfterEach
+    @After
     public void shutdown() {
         this.hz.shutdown();
     }

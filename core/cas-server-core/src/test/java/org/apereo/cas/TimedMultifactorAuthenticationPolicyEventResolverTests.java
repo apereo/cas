@@ -24,7 +24,7 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,7 +92,7 @@ public class TimedMultifactorAuthenticationPolicyEventResolverTests {
     private MockRequestContext context;
     private MockHttpServletRequest request;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         this.context = new MockRequestContext();
 

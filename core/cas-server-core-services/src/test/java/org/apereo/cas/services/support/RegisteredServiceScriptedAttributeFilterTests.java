@@ -3,7 +3,7 @@ package org.apereo.cas.services.support;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
@@ -24,7 +24,7 @@ public class RegisteredServiceScriptedAttributeFilterTests {
 
     private Map<String, Object> givenAttributesMap;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         this.givenAttributesMap = new HashMap<>();
         this.givenAttributesMap.put("employeeId", "E1234");

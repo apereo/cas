@@ -41,8 +41,8 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.After;
+import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -125,7 +125,7 @@ public class RestSamlRegisteredServiceMetadataResolverTests {
 
     private MockWebServer webServer;
 
-    @BeforeEach
+    @Before
     @SneakyThrows
     public void initialize() {
         final var doc = new SamlMetadataDocument();
@@ -142,7 +142,7 @@ public class RestSamlRegisteredServiceMetadataResolverTests {
         this.webServer.start();
     }
 
-    @AfterEach
+    @After
     public void cleanup() {
         this.webServer.stop();
     }

@@ -11,7 +11,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +38,7 @@ public class RememberMeDelegatingExpirationPolicyTests {
 
     private RememberMeDelegatingExpirationPolicy p;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         final var rememberMe = new MultiTimeUseOrTimeoutExpirationPolicy(1, 20000);
         p = new RememberMeDelegatingExpirationPolicy(rememberMe);

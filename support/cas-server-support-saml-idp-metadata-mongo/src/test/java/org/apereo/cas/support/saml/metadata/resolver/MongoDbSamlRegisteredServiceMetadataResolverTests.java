@@ -40,7 +40,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -120,7 +120,7 @@ public class MongoDbSamlRegisteredServiceMetadataResolverTests {
     @Qualifier("mongoDbSamlRegisteredServiceMetadataResolver")
     private SamlRegisteredServiceMetadataResolver resolver;
 
-    @BeforeEach
+    @Before
     public void initialize() throws Exception {
         final var mongo = casProperties.getAuthn().getSamlIdp().getMetadata().getMongo();
         final var res = new ClassPathResource("sp-metadata.xml");

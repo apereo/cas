@@ -7,7 +7,7 @@ import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.BeforeClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
@@ -35,7 +35,7 @@ public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapCon
             casProperties.getConsent().getLdap().getBindCredential());
     }
 
-    @BeforeAll
+    @BeforeClass
     @SneakyThrows
     public static void bootstrap() {
         final var localhost = new LDAPConnection("localhost", LDAP_PORT,

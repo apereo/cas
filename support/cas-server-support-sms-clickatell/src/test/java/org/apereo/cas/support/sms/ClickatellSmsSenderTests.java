@@ -5,8 +5,8 @@ import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.io.SmsSender;
 import org.apereo.cas.util.junit.ConditionalSpringRunner;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,7 +39,7 @@ public class ClickatellSmsSenderTests {
 
     private MockWebServer webServer;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         final var data = "{\n"
             + "\"messages\": [\n"
@@ -64,7 +64,7 @@ public class ClickatellSmsSenderTests {
         this.webServer.start();
     }
 
-    @AfterEach
+    @After
     public void cleanup() {
         this.webServer.stop();
     }

@@ -8,7 +8,7 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.registry.MemcachedTicketRegistry;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 @Category(MemcachedCategory.class)
 public class OAuth20AccessTokenControllerMemcachedTests extends AbstractOAuth20Tests {
 
-    @BeforeEach
+    @Before
     public void initialize() {
         clearAllServices();
     }

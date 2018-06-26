@@ -7,9 +7,9 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.rules.ExpectedException;
 import org.springframework.core.io.ClassPathResource;
 
@@ -32,10 +32,10 @@ public class FileAuthenticationHandlerTests {
 
     private FileAuthenticationHandler authenticationHandler;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("authentication.txt"),
-                FileAuthenticationHandler.DEFAULT_SEPARATOR);
+            FileAuthenticationHandler.DEFAULT_SEPARATOR);
         final var p = new PasswordEncoderProperties();
         p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
         p.setEncodingAlgorithm("MD5");

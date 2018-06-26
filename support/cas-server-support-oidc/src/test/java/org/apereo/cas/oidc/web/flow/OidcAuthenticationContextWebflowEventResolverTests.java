@@ -11,7 +11,7 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,7 +47,7 @@ public class OidcAuthenticationContextWebflowEventResolverTests extends Abstract
 
     private MockRequestContext context;
 
-    @BeforeEach
+    @Before
     @Override
     public void initialize() {
         super.initialize();

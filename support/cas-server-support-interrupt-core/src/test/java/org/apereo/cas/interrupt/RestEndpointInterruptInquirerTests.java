@@ -9,7 +9,7 @@ import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 
@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 public class RestEndpointInterruptInquirerTests {
     private MockWebServer webServer;
 
-    @BeforeEach
+    @Before
     @SneakyThrows
     public void initialize() {
         final var response = new InterruptResponse();

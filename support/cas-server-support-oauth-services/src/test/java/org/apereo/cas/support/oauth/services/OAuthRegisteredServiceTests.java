@@ -10,7 +10,7 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.BeforeClass;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 
@@ -39,7 +39,7 @@ public class OAuthRegisteredServiceTests {
                      new DefaultRegisteredServiceResourceNamingStrategy());
     }
 
-    @BeforeAll
+    @BeforeClass
     public static void prepTests() throws Exception {
         FileUtils.cleanDirectory(RESOURCE.getFile());
     }

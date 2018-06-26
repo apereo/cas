@@ -11,7 +11,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.junit.rules.ExpectedException;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -43,7 +43,7 @@ public class ServiceAuthorizationCheckTests {
 
     private final ServicesManager servicesManager = mock(ServicesManager.class);
 
-    @BeforeEach
+    @Before
     public void setUpMocks() {
         final var authorizedRegisteredService = new RegexRegisteredService();
         final var unauthorizedRegisteredService = new RegexRegisteredService();

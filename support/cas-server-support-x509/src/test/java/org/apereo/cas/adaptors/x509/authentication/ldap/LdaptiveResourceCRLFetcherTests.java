@@ -26,7 +26,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +84,7 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests imple
         SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
     }
 
-    @BeforeAll
+    @BeforeClass
     public static void bootstrapTests() throws Exception {
         initDirectoryServer(LDAP_PORT);
         AbstractX509LdapTests.bootstrap(LDAP_PORT);

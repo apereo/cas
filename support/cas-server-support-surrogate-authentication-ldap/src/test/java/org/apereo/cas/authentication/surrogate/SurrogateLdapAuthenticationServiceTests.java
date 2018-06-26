@@ -38,7 +38,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.BeforeClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -122,7 +122,7 @@ public class SurrogateLdapAuthenticationServiceTests {
         assertTrue(result);
     }
 
-    @BeforeAll
+    @BeforeClass
     @SneakyThrows
     public static void bootstrap() {
         final var localhost = new LDAPConnection("localhost", LDAP_PORT,

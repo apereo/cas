@@ -9,7 +9,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.BindingCriterion;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 @Category(FileSystemCategory.class)
 public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
 
-    @BeforeEach
+    @Before
     public void before() {
         servicesManager.deleteAll();
     }
