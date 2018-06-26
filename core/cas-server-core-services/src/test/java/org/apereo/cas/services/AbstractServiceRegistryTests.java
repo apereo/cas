@@ -17,8 +17,8 @@ import org.jooq.lambda.Unchecked;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.rules.ExpectedException;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
@@ -65,14 +65,14 @@ public abstract class AbstractServiceRegistryTests {
 
     private final Class<? extends RegisteredService> registeredServiceClass;
 
-    @BeforeEach
+    @Before
     public void setUp() {
         this.serviceRegistry = getNewServiceRegistry();
         clearServiceRegistry();
         initializeServiceRegistry();
     }
 
-    @AfterEach
+    @After
     public void tearDown() {
         clearServiceRegistry();
         tearDownServiceRegistry();

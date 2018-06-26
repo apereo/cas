@@ -21,7 +21,7 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.flow.config.TokenAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
@@ -64,7 +64,7 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
-    @BeforeEach
+    @Before
     public void before() {
         final var svc = RegisteredServiceTestUtils.getRegisteredService("https://example.token.org");
         svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());

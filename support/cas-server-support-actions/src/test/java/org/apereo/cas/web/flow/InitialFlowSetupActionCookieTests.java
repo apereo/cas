@@ -15,7 +15,7 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -55,7 +55,7 @@ public class InitialFlowSetupActionCookieTests extends AbstractCentralAuthentica
     private CookieRetrievingCookieGenerator warnCookieGenerator;
     private CookieRetrievingCookieGenerator tgtCookieGenerator;
 
-    @BeforeEach
+    @Before
     public void initialize() throws Exception {
         this.warnCookieGenerator = new CookieRetrievingCookieGenerator("warn", "", 2,
                 false, null, false);

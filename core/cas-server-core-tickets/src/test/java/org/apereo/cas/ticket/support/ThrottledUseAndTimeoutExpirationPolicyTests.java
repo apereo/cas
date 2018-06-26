@@ -9,7 +9,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
 
     private TicketGrantingTicket ticket;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         this.expirationPolicy = new ThrottledUseAndTimeoutExpirationPolicy();
         this.expirationPolicy.setTimeToKillInSeconds(TIMEOUT);

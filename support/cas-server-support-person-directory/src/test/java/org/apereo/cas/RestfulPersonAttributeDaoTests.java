@@ -4,8 +4,8 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,7 +38,7 @@ public class RestfulPersonAttributeDaoTests {
 
     private MockWebServer webServer;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         final var data = '{'
             + "   \"name\" :\"casuser\","
@@ -51,7 +51,7 @@ public class RestfulPersonAttributeDaoTests {
         this.webServer.start();
     }
 
-    @AfterEach
+    @After
     public void cleanup() {
         this.webServer.stop();
     }

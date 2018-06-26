@@ -25,7 +25,7 @@ import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.SchedulingUtils;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.After;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,7 +106,7 @@ public class DefaultHazelcastInstanceConfigurationTests {
         assertEquals(5, config.getMapConfigs().size());
     }
 
-    @AfterEach
+    @After
     public void shutdownHz() {
         LOGGER.info("Shutting down hazelcast instance [{}]", this.hzInstance.getConfig().getInstanceName());
         this.hzInstance.shutdown();

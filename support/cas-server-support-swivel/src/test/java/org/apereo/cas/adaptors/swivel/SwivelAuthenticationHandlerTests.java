@@ -30,8 +30,8 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +98,7 @@ public class SwivelAuthenticationHandlerTests {
 
     private MockWebServer webServer;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         final var data = "<?xml version=\"1.0\" ?>"
             + "<SASResponse secret=\"MyAdminAgent\" version=\"3.4\">"
@@ -112,7 +112,7 @@ public class SwivelAuthenticationHandlerTests {
         this.webServer.start();
     }
 
-    @AfterEach
+    @After
     public void cleanup() {
         this.webServer.stop();
     }

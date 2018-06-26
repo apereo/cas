@@ -24,7 +24,7 @@ import org.apereo.cas.config.CasRestAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +98,7 @@ public class RestAuthenticationHandlerTests {
 
     private ResponseActions server;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         server = MockRestServiceServer.bindTo(restAuthenticationTemplate).build()
             .expect(manyTimes(), requestTo("http://localhost:8081/authn"))

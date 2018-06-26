@@ -10,7 +10,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.util.serialization.SerializationUtils;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -66,7 +66,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
         this.givenAttributesMap.put("mapAttribute", mapAttributes);
     }
 
-    @BeforeEach
+    @Before
     public void initialize() {
         MockitoAnnotations.initMocks(this);
 

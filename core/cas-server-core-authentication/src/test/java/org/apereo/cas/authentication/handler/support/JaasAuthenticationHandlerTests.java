@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.junit.rules.ExpectedException;
 import org.springframework.core.io.ClassPathResource;
 
@@ -31,7 +31,7 @@ public class JaasAuthenticationHandlerTests {
 
     private File fileName;
 
-    @BeforeEach
+    @Before
     public void initialize() throws Exception {
         final var resource = new ClassPathResource("jaas.conf");
         this.fileName = new File(System.getProperty("java.io.tmpdir"), "jaas-custom.conf");

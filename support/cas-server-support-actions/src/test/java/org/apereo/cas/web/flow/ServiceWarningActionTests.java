@@ -10,7 +10,7 @@ import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.flow.login.ServiceWarningAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -41,7 +41,7 @@ public class ServiceWarningActionTests extends AbstractCentralAuthenticationServ
 
     private MockRequestContext context;
 
-    @BeforeEach
+    @Before
     public void onSetUp() {
         this.context = new MockRequestContext();
     }

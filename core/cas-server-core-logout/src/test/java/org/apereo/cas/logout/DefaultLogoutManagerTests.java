@@ -18,7 +18,7 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mock;
@@ -65,7 +65,7 @@ public class DefaultLogoutManagerTests {
         MockitoAnnotations.initMocks(this);
     }
 
-    @BeforeEach
+    @Before
     public void initialize() {
         when(client.isValidEndPoint(any(String.class))).thenReturn(true);
         when(client.isValidEndPoint(any(URL.class))).thenReturn(true);

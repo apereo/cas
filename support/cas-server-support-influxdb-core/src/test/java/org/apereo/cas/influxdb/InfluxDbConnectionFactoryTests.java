@@ -12,8 +12,8 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.After;
+import org.junit.Before;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
@@ -50,13 +50,13 @@ public class InfluxDbConnectionFactoryTests {
 
     private InfluxDbConnectionFactory factory;
 
-    @BeforeEach
+    @Before
     public void init() {
         this.factory = new InfluxDbConnectionFactory("http://localhost:8086", "root",
             "root", CAS_EVENTS_DATABASE, true);
     }
 
-    @AfterEach
+    @After
     public void shutdown() {
         this.factory.close();
     }

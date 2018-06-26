@@ -18,7 +18,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.After;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -66,7 +66,7 @@ public abstract class BaseLdapConsentRepositoryTests {
     @Qualifier("consentRepository")
     private ConsentRepository repository;
 
-    @AfterEach
+    @After
     public void cleanDecisions() throws Exception {
         final var conn = getConnection();
         final var res = conn.search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);

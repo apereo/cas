@@ -16,7 +16,7 @@ import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.junit.Assume;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.springframework.test.util.AopTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,7 +49,7 @@ public abstract class BaseTicketRegistryTests {
         this.useEncryption = useEncryption;
     }
 
-    @BeforeEach
+    @Before
     public void initialize() {
         this.ticketRegistry = this.getNewTicketRegistry();
         if (ticketRegistry != null) {

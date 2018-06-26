@@ -19,7 +19,7 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -60,7 +60,7 @@ public class ServiceTicketResourceTests {
 
     private MockMvc mockMvc;
 
-    @BeforeEach
+    @Before
     public void initialize() {
         final var mgmr = mock(AuthenticationManager.class);
         when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());

@@ -9,7 +9,7 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.openid4java.association.Association;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -38,7 +38,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
     private final MockHttpServletRequest request = new MockHttpServletRequest();
     private Association association;
 
-    @BeforeEach
+    @Before
     public void initialize() throws Exception {
         request.addParameter(OpenIdProtocolConstants.OPENID_IDENTITY, OPEN_ID_PREFIX_URL);
         request.addParameter(OpenIdProtocolConstants.OPENID_RETURNTO, RETURN_TO_URL);
