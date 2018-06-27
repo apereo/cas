@@ -1,5 +1,5 @@
 #!/bin/bash
-./ci/functions.sh
+source ./ci/functions.sh
 
 runBuild=false
 if [ "$TRAVIS_PULL_REQUEST" == "true" ]; then
