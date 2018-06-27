@@ -12,8 +12,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -30,9 +28,6 @@ import static org.mockito.Mockito.*;
  */
 @Slf4j
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class
-})
 @DirtiesContext
 public class DefaultMultifactorAuthenticationProviderBypassTests {
     @Autowired
