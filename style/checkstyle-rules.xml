@@ -64,7 +64,7 @@
         -->
         <module name="AnnotationLocation">
             <property name="severity" value="error"/>
-            <property name="allowSamelineSingleParameterlessAnnotation" value="false"/>
+            <property name="allowSamelineSingleParameterlessAnnotation" value="true"/>
         </module>
         <module name="ConstantName">
             <property name="severity" value="error"/>
