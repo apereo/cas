@@ -47,26 +47,26 @@ import static org.junit.Assert.*;
  */
 @Category(MongoDbCategory.class)
 @SpringBootTest(
-        classes = {CasMongoAuthenticationConfiguration.class,
-                CasCoreAuthenticationConfiguration.class, 
-                CasCoreServicesAuthenticationConfiguration.class,
-                CasCoreUtilConfiguration.class,
-                CasCoreAuthenticationPrincipalConfiguration.class,
-                CasCoreAuthenticationPolicyConfiguration.class,
-                CasCoreAuthenticationMetadataConfiguration.class,
-                CasCoreAuthenticationSupportConfiguration.class,
-                CasCoreAuthenticationHandlersConfiguration.class,
-                CasCoreHttpConfiguration.class,
-                CasCoreTicketCatalogConfiguration.class,
-                CasCoreTicketsConfiguration.class,
-                CasCoreServicesConfiguration.class,
-                CasWebApplicationServiceFactoryConfiguration.class,
-                CasPersonDirectoryConfiguration.class,
-                CasCoreWebConfiguration.class,
-                CasWebApplicationServiceFactoryConfiguration.class,
-                RefreshAutoConfiguration.class})
+    classes = {CasMongoAuthenticationConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        RefreshAutoConfiguration.class})
 @EnableScheduling
-@TestPropertySource(locations={"classpath:/mongo.properties"})
+@TestPropertySource(locations = {"classpath:/mongo.properties"})
 @Slf4j
 public class MongoDbAuthenticationHandlerTests {
 
@@ -83,12 +83,13 @@ public class MongoDbAuthenticationHandlerTests {
     @Before
     public void setUp() {
         RequestContextHolder.setRequestAttributes(
-                new ServletRequestAttributes(new MockHttpServletRequest(), new MockHttpServletResponse()));
+            new ServletRequestAttributes(new MockHttpServletRequest(), new MockHttpServletResponse()));
     }
+
     @Test
     public void verifyAuthentication() throws Exception {
         final AuthenticationHandlerExecutionResult result = this.authenticationHandler.authenticate(CoreAuthenticationTestUtils
-                .getCredentialsWithDifferentUsernameAndPassword("u1", "p1"));
+            .getCredentialsWithDifferentUsernameAndPassword("u1", "p1"));
         assertEquals("u1", result.getPrincipal().getId());
         assertTrue(result.getPrincipal().getAttributes().containsKey("loc"));
         assertTrue(result.getPrincipal().getAttributes().containsKey("state"));
