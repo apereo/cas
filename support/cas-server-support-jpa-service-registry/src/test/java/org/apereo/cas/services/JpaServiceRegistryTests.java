@@ -7,6 +7,7 @@ import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.junit.ConditionalParameterizedRunner;
+import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,12 @@ public class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() {
-        return Arrays.asList(RegexRegisteredService.class, OAuthRegisteredService.class, SamlRegisteredService.class);
+        return Arrays.asList(
+            RegexRegisteredService.class,
+            OAuthRegisteredService.class,
+            OidcRegisteredService.class,
+            SamlRegisteredService.class,
+            WSFederationRegisteredService.class);
     }
 
     @Override
