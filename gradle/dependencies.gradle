@@ -14,7 +14,6 @@ ext.libraries = [
                 },
                 dependencies.create("org.glassfish.jaxb:jaxb-core:$jaxbVersion") {
                     force = true
-                    transitive = false
                 }
         ],
         aspectj                 : [
