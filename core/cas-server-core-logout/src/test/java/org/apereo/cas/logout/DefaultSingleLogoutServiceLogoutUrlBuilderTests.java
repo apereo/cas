@@ -10,8 +10,6 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.net.URL;
@@ -24,7 +22,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RunWith(JUnit4.class)
 @Slf4j
 public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
 
@@ -34,7 +31,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         svc.setLogoutUrl(new URL("http://www.example.com/logout"));
         final var builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false);
         final var url = builder.determineLogoutUrl(svc, getService("https://www.google.com"));
-        assertEquals(url, svc.getLogoutUrl());
+        assertEquals(url.iterator().next(), svc.getLogoutUrl());
     }
 
     @Test
@@ -43,7 +40,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         svc.setLogoutUrl(null);
         final var builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false);
         final var url = builder.determineLogoutUrl(svc, getService("https://www.somewhere.com/logout?p=v"));
-        assertEquals(url, new URL("https://www.somewhere.com/logout?p=v"));
+        assertEquals(url.iterator().next(), new URL("https://www.somewhere.com/logout?p=v"));
     }
 
     @Test
@@ -70,7 +67,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         svc.setLogoutUrl(null);
         final var builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(true);
         final var url = builder.determineLogoutUrl(svc, getService("https://localhost/logout?p=v"));
-        assertEquals(url, new URL("https://localhost/logout?p=v"));
+        assertEquals(url.iterator().next(), new URL("https://localhost/logout?p=v"));
     }
 
     @Test
@@ -79,7 +76,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         svc.setLogoutUrl(null);
         final var builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false, "\\w*", true);
         final var url = builder.determineLogoutUrl(svc, getService("https://localhost/logout?p=v"));
-        assertEquals(url, new URL("https://localhost/logout?p=v"));
+        assertEquals(url.iterator().next(), new URL("https://localhost/logout?p=v"));
     }
 
     @Test
@@ -88,7 +85,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         svc.setLogoutUrl(null);
         final var builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(true, "\\d*", true);
         final var url = builder.determineLogoutUrl(svc, getService("https://localhost/logout?p=v"));
-        assertEquals(url, new URL("https://localhost/logout?p=v"));
+        assertEquals(url.iterator().next(), new URL("https://localhost/logout?p=v"));
     }
 
     @Test
