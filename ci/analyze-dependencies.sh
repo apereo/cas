@@ -12,7 +12,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "true" ]; then
         runBuild=true
     else
         echo "Changes do NOT affect Gradle build descriptors. Dependency analysis will be skipped."
-        runBuild=true
+        runBuild=false
     fi
 else
     echo "Dependency analysis will run against branch $TRAVIS_BRANCH"
