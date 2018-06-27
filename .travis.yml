@@ -59,8 +59,6 @@ stages:
 - initialize
 - publish
 - build
-- analysis
-- docs
 - test
 - dependencies
 jobs:
@@ -74,16 +72,14 @@ jobs:
     ############################################
   - stage: build
     script: ./ci/build.sh
-    ############################################
-  - stage: analysis
+  - stage: build
     script: ./ci/analyze-style.sh
-    ############################################
-  - stage: docs
+  - stage: build
     script: ./ci/push-docs-ghpages.sh
     if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-  - stage: docs
+  - stage: build
     script: ./ci/build-javadocs.sh
-  - stage: docs
+  - stage: build
     script: ./ci/build-config-metadata.sh
     ############################################
   - stage: dependencies
