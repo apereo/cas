@@ -19,36 +19,30 @@ currentChangeSetContains() {
 
 currentChangeSetAffectsTests() {
     currentChangeSetContains "java|groovy|xml|properties|yml|json"
-    retval=$?
-    return retval
+    return `(expr "$?" + 0)`
 }
 
 currentChangeSetAffectsStyle() {
     currentChangeSetContains "java|groovy|xml"
-    retval=$?
-    return retval
+    return `(expr "$?" + 0)`
 }
 
 currentChangeSetAffectsJavadocs() {
     currentChangeSetContains "java|groovy"
-    retval=$?
-    return retval
+    return `(expr "$?" + 0)`
 }
 
 currentChangeSetAffectsDocumentation() {
     currentChangeSetContains "md"
-    retval=$?
-    return retval
+    return `(expr "$?" + 0)`
 }
 
 currentChangeSetAffectsDependencies() {
     currentChangeSetContains "gradle|properties"
-    retval=$?
-    return retval
+    return `(expr "$?" + 0)`
 }
 
 currentChangeSetAffectsSnapshots() {
     currentChangeSetContains "java|groovy|yml|properties"
-    retval=$?
-    return retval
+    return `(expr "$?" + 0)`
 }

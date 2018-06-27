@@ -37,7 +37,7 @@ echo -e "Stopping current services...\n"
 sudo service mysql stop
 
 echo -e "Setting build environment...\n"
-mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
+sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
 
 # echo -e "Configuring Oracle JDK8 JCE...\n"
 # unzip -j -o ./etc/jce8.zip *.jar -d $JAVA_HOME/jre/lib/security
