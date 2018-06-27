@@ -16,3 +16,9 @@ currentChangeSetContains() {
     done
     return 1
 }
+
+currentChangeSetAffectsTests() {
+    currentChangeSetContains "java|groovy|xml|properties|yml|json"
+    retval=$?
+    return retval
+}
