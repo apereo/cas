@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import com.google.common.collect.ImmutableSet;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
@@ -11,7 +12,6 @@ import org.apereo.cas.ticket.BaseTicketSerializers;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
-import org.apereo.cas.util.CollectionUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -20,7 +20,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -37,7 +36,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     private static final String FIELD_NAME_EXPIRE_AFTER_SECONDS = "expireAfterSeconds";
     private static final Query SELECT_ALL_NAMES_QUERY = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).regex(".+"));
 
-    private static final Set<String> MONGO_INDEX_KEYS = Collections.unmodifiableSet(CollectionUtils.wrapSet("v", "key", "name", "ns"));
+    private static final Set<String> MONGO_INDEX_KEYS = ImmutableSet.of("v", "key", "name", "ns");
 
     private final TicketCatalog ticketCatalog;
     private final MongoOperations mongoTemplate;
