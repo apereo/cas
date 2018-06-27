@@ -11,6 +11,7 @@ currentChangeSetContains() {
         do
             :
             if [[ "$i" =~ $1 ]]; then
+                echo "Found a match against pattern $1"
                 return 0
             fi
     done
@@ -18,31 +19,31 @@ currentChangeSetContains() {
 }
 
 currentChangeSetAffectsTests() {
-    currentChangeSetContains "java|groovy|xml|properties|yml|json"
+    currentChangeSetContains "\.(java|groovy|xml|properties|yml|json)"
     return `(expr "$?" + 0)`
 }
 
 currentChangeSetAffectsStyle() {
-    currentChangeSetContains "java|groovy|xml"
+    currentChangeSetContains "\.(java|groovy|xml)"
     return `(expr "$?" + 0)`
 }
 
 currentChangeSetAffectsJavadocs() {
-    currentChangeSetContains "java|groovy"
+    currentChangeSetContains "\.(java|groovy)"
     return `(expr "$?" + 0)`
 }
 
 currentChangeSetAffectsDocumentation() {
-    currentChangeSetContains "md"
+    currentChangeSetContains "\.md"
     return `(expr "$?" + 0)`
 }
 
 currentChangeSetAffectsDependencies() {
-    currentChangeSetContains "gradle|properties"
+    currentChangeSetContains "\.(gradle|properties)"
     return `(expr "$?" + 0)`
 }
 
 currentChangeSetAffectsSnapshots() {
-    currentChangeSetContains "java|groovy|yml|properties"
+    currentChangeSetContains "\.(java|groovy|yml|properties)"
     return `(expr "$?" + 0)`
 }
