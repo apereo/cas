@@ -1,4 +1,20 @@
 #!/bin/bash
+./functions.sh
+
+runBuild=false
+echo "Reviewing changes that might affect the Gradle build..."
+currentChangeSetContains "gradle|properties"
+retval=$?
+if [ "$retval" == 0 ]
+then
+    echo "Found changes that affect project dependencies."
+    runBuild=true
+else
+    echo "Changes do NOT affect project dependencies."
+    runBuild=true
+fi
+
+
 
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
