@@ -1,4 +1,22 @@
 #!/bin/bash
+./functions.sh
+
+runBuild=false
+echo "Reviewing changes that might affect the Gradle build..."
+currentChangeSetAffectsSnapshots
+retval=$?
+if [ "$retval" == 0 ]
+then
+    echo "Found changes that require snapshots to be published."
+    runBuild=true
+else
+    echo "Changes do NOT affect project snapshots."
+    runBuild=true
+fi
+
+if [ "$runBuild" = false ]; then
+    return 0
+fi
 
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"

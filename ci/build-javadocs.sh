@@ -1,4 +1,23 @@
 #!/bin/bash
+./functions.sh
+
+runBuild=false
+echo "Reviewing changes that might affect the Gradle build..."
+currentChangeSetAffectsJavadocs
+retval=$?
+if [ "$retval" == 0 ]
+then
+    echo "Found changes that require the build to run javadocs."
+    runBuild=true
+else
+    echo "Changes do NOT affect project javadocs."
+    runBuild=true
+fi
+
+if [ "$runBuild" = false ]; then
+    return 0
+fi
+
 
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
