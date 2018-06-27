@@ -39,20 +39,3 @@ determined through pre-configured LDAP attributes with default values in place.
 A certain number of database authentication schemes have limited support for detecting locked/disabled/etc accounts
 via column names that are defined in the CAS settings. To see the relevant list of CAS properties,
 please [review this guide](Configuration-Properties.html#database-authentication).
-
-## Password Management
-
-CAS presents humble password management features. If authentication fails due to a rejected password policy, CAS is able to intercept
-that request and allow the user to update the account password in place. 
- 
-To learn more about this topic, please [review this guide](Password-Management.html).
-
-### LDAP
-
-The updated password may be stored inside an LDAP server.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ldap-password-management).
-
-### JDBC
-
-The updated password may be stored inside a database.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jdbc-password-management).
