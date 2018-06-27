@@ -7,8 +7,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -22,9 +20,6 @@ import static org.junit.Assert.*;
  * @since 5.3.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class
-})
 @DirtiesContext
 public class DefaultMultifactorAuthenticationContextValidatorTests {
     @Autowired
@@ -87,7 +82,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
             CollectionUtils.wrap("authn_method", "mfa-other",
                 MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, true,
-            MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, "mfa-dummy"));
+                MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, "mfa-dummy"));
         final var result = v.validate(authentication,
             "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
         assertTrue(result.getKey());

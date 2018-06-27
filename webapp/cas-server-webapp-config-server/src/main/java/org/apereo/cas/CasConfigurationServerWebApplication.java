@@ -1,7 +1,7 @@
 package org.apereo.cas;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
@@ -16,7 +16,6 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.config.server.EnableConfigServer;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link CasConfigurationServerWebApplication}.
@@ -24,12 +23,19 @@ import lombok.NoArgsConstructor;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@SpringBootApplication
-@EnableAutoConfiguration(exclude = { HibernateJpaAutoConfiguration.class, JerseyAutoConfiguration.class,
-    GroovyTemplateAutoConfiguration.class, JmxAutoConfiguration.class, DataSourceAutoConfiguration.class,
-    RedisAutoConfiguration.class, MongoAutoConfiguration.class, MongoDataAutoConfiguration.class,
-    CassandraAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class,
-    RedisRepositoriesAutoConfiguration.class })
+@SpringBootApplication(exclude = {
+    HibernateJpaAutoConfiguration.class,
+    JerseyAutoConfiguration.class,
+    GroovyTemplateAutoConfiguration.class,
+    JmxAutoConfiguration.class,
+    DataSourceAutoConfiguration.class,
+    RedisAutoConfiguration.class,
+    MongoAutoConfiguration.class,
+    MongoDataAutoConfiguration.class,
+    CassandraAutoConfiguration.class,
+    DataSourceTransactionManagerAutoConfiguration.class,
+    RedisRepositoriesAutoConfiguration.class
+})
 @EnableConfigServer
 @Slf4j
 @NoArgsConstructor

@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
 import com.microsoft.azure.documentdb.ConsistencyLevel;
+import com.microsoft.azure.documentdb.IndexingMode;
+import com.microsoft.azure.documentdb.IndexingPolicy;
 import com.microsoft.azure.documentdb.RequestOptions;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -56,7 +58,11 @@ public class CosmosDbServiceRegistryConfiguration implements ServiceRegistryExec
                 LOGGER.error(e.getMessage(), e);
             }
         }
-        db.createCollectionIfNotExists(cosmosDb.getCollection(), PARTITION_KEY_FIELD_NAME, cosmosDb.getThroughput());
+        final var indexingPolicy = new IndexingPolicy();
+        indexingPolicy.setAutomatic(true);
+        indexingPolicy.setIndexingMode(IndexingMode.valueOf(cosmosDb.getIndexingMode()));
+        db.createCollectionIfNotExists(cosmosDb.getCollection(), PARTITION_KEY_FIELD_NAME,
+            cosmosDb.getThroughput(), indexingPolicy);
         return new CosmosDbServiceRegistry(db, dbFactory, cosmosDb.getCollection(), cosmosDb.getDatabase());
     }
 
