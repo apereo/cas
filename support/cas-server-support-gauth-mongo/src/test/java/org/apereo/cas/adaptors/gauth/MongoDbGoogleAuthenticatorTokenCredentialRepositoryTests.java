@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.gauth;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -26,7 +27,7 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.SchedulingUtils;
 import org.junit.Test;
-import org.junit.Before;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +82,7 @@ import static org.junit.Assert.*;
 @TestPropertySource(locations = {"classpath:/mongogauth.properties"})
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
+@Category(MongoDbCategory.class)
 @Slf4j
 public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
 
