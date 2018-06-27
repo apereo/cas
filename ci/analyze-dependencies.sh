@@ -4,7 +4,7 @@
 runBuild=false
 if [ "$TRAVIS_PULL_REQUEST" == "true" ]; then
     echo "Reviewing changes that might affect the Gradle build in this pull request..."
-    currentChangeSetContains "gradle"
+    currentChangeSetAffectsDependencies
     retval=$?
     if [ "$retval" == 0 ]
     then

@@ -3,7 +3,7 @@
 
 runBuild=false
 echo "Reviewing changes that might affect the Gradle build..."
-currentChangeSetContains "md"
+currentChangeSetAffectsDocumentation
 retval=$?
 if [ "$retval" == 0 ]
 then

@@ -3,7 +3,7 @@
 
 runBuild=false
 echo "Reviewing changes that might affect the Gradle build..."
-currentChangeSetContains "gradle|properties"
+currentChangeSetAffectsDependencies
 retval=$?
 if [ "$retval" == 0 ]
 then
@@ -14,6 +14,9 @@ else
     runBuild=true
 fi
 
+if [ "$runBuild" = false ]; then
+    return 0
+fi
 
 
 prepCommand="echo 'Running command...'; "
