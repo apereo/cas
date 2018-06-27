@@ -5,6 +5,7 @@ import com.microsoft.azure.documentdb.Document;
 import com.microsoft.azure.documentdb.DocumentClientException;
 import com.microsoft.azure.documentdb.FeedOptions;
 import com.microsoft.azure.documentdb.FeedResponse;
+import com.microsoft.azure.documentdb.PartitionKey;
 import com.microsoft.azure.documentdb.SqlQuerySpec;
 import com.microsoft.azure.documentdb.internal.HttpConstants;
 import com.microsoft.azure.spring.data.documentdb.DocumentDbFactory;
@@ -59,14 +60,14 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
 
     private void insert(final RegisteredService registeredService) {
         final var document = createCosmosDbDocument(registeredService);
-        this.documentDbTemplate.insert(this.collectionName, document, document.getPartitionKey());
+        this.documentDbTemplate.insert(this.collectionName, document, new PartitionKey(document.getPartitionKey()));
     }
 
     private void update(final RegisteredService registeredService) {
         try {
             final var document = createCosmosDbDocument(registeredService);
             final var id = String.valueOf(registeredService.getId());
-            this.documentDbTemplate.upsert(this.collectionName, document, id, document.getPartitionKey());
+            this.documentDbTemplate.upsert(this.collectionName, document, id, new PartitionKey(document.getPartitionKey()));
         } catch (final Exception e) {
             if (e.getCause().getClass().equals(DocumentClientException.class)) {
                 final var ex = DocumentClientException.class.cast(e.getCause());
@@ -80,7 +81,7 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
     @Override
     public boolean delete(final RegisteredService registeredService) {
         final var id = String.valueOf(registeredService.getId());
-        this.documentDbTemplate.deleteById(this.collectionName, id, Document.class, PARTITION_KEY_FIELD_VALUE);
+        this.documentDbTemplate.deleteById(this.collectionName, id, Document.class, new PartitionKey(PARTITION_KEY_FIELD_VALUE));
         return true;
     }
 
@@ -113,8 +114,7 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        final var doc = this.documentDbTemplate.findById(this.collectionName, String.valueOf(id),
-            CosmosDbDocument.class, PARTITION_KEY_FIELD_VALUE);
+        final var doc = this.documentDbTemplate.findById(this.collectionName, String.valueOf(id), CosmosDbDocument.class);
         if (doc != null) {
             return this.serializer.from(doc.getBody());
         }
