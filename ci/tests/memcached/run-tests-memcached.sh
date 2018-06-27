@@ -1,4 +1,22 @@
 #!/bin/bash
+./functions.sh
+
+runBuild=false
+echo "Reviewing changes that might affect the Gradle build..."
+currentChangeSetAffectsTests
+retval=$?
+if [ "$retval" == 0 ]
+then
+    echo "Found changes that require the build to run test cases."
+    runBuild=true
+else
+    echo "Changes do NOT affect project test cases."
+    runBuild=true
+fi
+
+if [ "$runBuild" = false ]; then
+    return 0
+fi
 
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
