@@ -81,7 +81,7 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
      */
     protected Status status(final CacheStatistics statistics) {
         if (statistics.getEvictions() > 0 && statistics.getEvictions() > evictionThreshold) {
-            return Status.DOWN;
+            return new Status("WARN");
         }
         if (statistics.getPercentFree() > 0 && statistics.getPercentFree() < threshold) {
             return Status.OUT_OF_SERVICE;
