@@ -33,9 +33,10 @@ public class CacheHealthIndicatorTests {
 
     @Test
     public void verifyObserveOk() {
+        final var warn = casProperties.getMonitor().getWarn();
         final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(
-            casProperties.getMonitor().getWarn().getEvictionThreshold(),
-            casProperties.getMonitor().getWarn().getThreshold()) {
+            warn.getEvictionThreshold(),
+            warn.getThreshold()) {
             @Override
             protected SimpleCacheStatistics[] getStatistics() {
                 return statsArray(new SimpleCacheStatistics(100, 200, 0));
@@ -47,9 +48,10 @@ public class CacheHealthIndicatorTests {
 
     @Test
     public void verifyObserveWarn() {
+        final var warn = casProperties.getMonitor().getWarn();
         final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(
-            casProperties.getMonitor().getWarn().getEvictionThreshold(),
-            casProperties.getMonitor().getWarn().getThreshold()
+            warn.getEvictionThreshold(),
+            warn.getThreshold()
         ) {
             @Override
             protected SimpleCacheStatistics[] getStatistics() {
@@ -62,9 +64,10 @@ public class CacheHealthIndicatorTests {
 
     @Test
     public void verifyObserveError() {
+        final var warn = casProperties.getMonitor().getWarn();
         final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(
-            casProperties.getMonitor().getWarn().getEvictionThreshold(),
-            casProperties.getMonitor().getWarn().getThreshold()) {
+            warn.getEvictionThreshold(),
+            warn.getThreshold()) {
             @Override
             protected SimpleCacheStatistics[] getStatistics() {
                 return statsArray(new SimpleCacheStatistics(100, 110, 0));
@@ -76,10 +79,10 @@ public class CacheHealthIndicatorTests {
 
     @Test
     public void verifyObserveError2() {
-        // When cache has exceeded both thresholds, should report ERROR status
+        final var warn = casProperties.getMonitor().getWarn();
         final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(
-            casProperties.getMonitor().getWarn().getEvictionThreshold(),
-            casProperties.getMonitor().getWarn().getThreshold()) {
+            warn.getEvictionThreshold(),
+            warn.getThreshold()) {
             @Override
             protected SimpleCacheStatistics[] getStatistics() {
                 return statsArray(new SimpleCacheStatistics(199, 200, 1));
