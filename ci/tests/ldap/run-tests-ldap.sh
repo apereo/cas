@@ -15,7 +15,7 @@ else
 fi
 
 if [ "$runBuild" = false ]; then
-    return 0
+    exit 0
 fi
 
 prepCommand="echo 'Running command...'; "
