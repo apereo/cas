@@ -1,5 +1,5 @@
 #!/bin/bash
-./ci/functions.sh
+source ./ci/functions.sh
 
 runBuild=false
 echo "Reviewing changes that might affect the Gradle build..."
