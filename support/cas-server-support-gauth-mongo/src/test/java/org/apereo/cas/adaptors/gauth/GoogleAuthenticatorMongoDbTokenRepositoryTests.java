@@ -46,6 +46,7 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.PostConstruct;
+
 import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
@@ -58,30 +59,30 @@ import static org.junit.Assert.*;
  */
 @Category(MongoDbCategory.class)
 @SpringBootTest(
-        classes = {
-                MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests.MongoTestConfiguration.class,
-                GoogleAuthenticatorMongoDbConfiguration.class,
-                CasCoreTicketsConfiguration.class,
-                CasCoreTicketCatalogConfiguration.class,
-                CasCoreLogoutConfiguration.class,
-                CasCoreHttpConfiguration.class,
-                CasCoreServicesConfiguration.class,
-                CasWebApplicationServiceFactoryConfiguration.class,
-                CasCoreAuthenticationConfiguration.class,
-                CasCoreServicesAuthenticationConfiguration.class,
-                CasCoreAuthenticationMetadataConfiguration.class,
-                CasCoreAuthenticationPolicyConfiguration.class,
-                CasCoreAuthenticationPrincipalConfiguration.class,
-                CasCoreAuthenticationHandlersConfiguration.class,
-                CasCoreAuthenticationSupportConfiguration.class,
-                CasPersonDirectoryConfiguration.class,
-                GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
-                AopAutoConfiguration.class,
-                CasCoreConfiguration.class,
-                CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-                CasCoreUtilConfiguration.class,
-                RefreshAutoConfiguration.class,
-                CasCoreWebConfiguration.class})
+    classes = {
+        MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests.MongoTestConfiguration.class,
+        GoogleAuthenticatorMongoDbConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration.class,
+        AopAutoConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        RefreshAutoConfiguration.class,
+        CasCoreWebConfiguration.class})
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(locations = {"classpath:/mongogauth.properties"})
@@ -119,13 +120,13 @@ public class GoogleAuthenticatorMongoDbTokenRepositoryTests {
 
         final OneTimeToken t1 = repository.get("casuser", 1111);
         final OneTimeToken t2 = repository.get("casuser", 5678);
-        
+
         assertTrue(t1.getId() > 0);
         assertTrue(t2.getId() > 0);
         assertNotEquals(token.getId(), token2.getId());
         assertTrue(t1.getToken() == 1111);
     }
-    
+
     @TestConfiguration
     public static class MongoTestConfiguration {
         @Autowired
@@ -136,5 +137,5 @@ public class GoogleAuthenticatorMongoDbTokenRepositoryTests {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
-    
+
 }
