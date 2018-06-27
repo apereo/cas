@@ -11,7 +11,7 @@ then
     runBuild=true
 else
     echo "Changes do NOT affect project dependencies."
-    runBuild=true
+    runBuild=false
 fi
 
 if [ "$runBuild" = false ]; then
