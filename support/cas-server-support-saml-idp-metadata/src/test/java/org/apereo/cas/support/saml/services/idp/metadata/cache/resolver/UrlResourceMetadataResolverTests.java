@@ -1,12 +1,12 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.util.http.SimpleHttpClient;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,7 +20,6 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.Collection;
-import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
 
