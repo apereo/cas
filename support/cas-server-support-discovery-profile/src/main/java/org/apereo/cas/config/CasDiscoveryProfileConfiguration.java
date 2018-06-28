@@ -38,6 +38,7 @@ public class CasDiscoveryProfileConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
     @Qualifier("builtClients")
     private ObjectProvider<Clients> builtClients;
 
