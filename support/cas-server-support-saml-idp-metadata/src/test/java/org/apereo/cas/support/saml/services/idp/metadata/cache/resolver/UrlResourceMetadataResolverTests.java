@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
@@ -36,6 +37,7 @@ import static org.junit.Assert.*;
     CoreSamlConfiguration.class
 })
 @Category(FileSystemCategory.class)
+@TestPropertySource(properties = {"cas.authn.samlIdp.metadata.location=file:/tmp"})
 public class UrlResourceMetadataResolverTests {
 
     @ClassRule
@@ -43,11 +45,7 @@ public class UrlResourceMetadataResolverTests {
 
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Autowired
-    @Qualifier("httpClient")
-    private SimpleHttpClient httpClient;
-
+    
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
     private OpenSamlConfigBean openSamlConfigBean;
