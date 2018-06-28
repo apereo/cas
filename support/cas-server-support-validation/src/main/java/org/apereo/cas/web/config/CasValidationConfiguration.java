@@ -59,7 +59,7 @@ public class CasValidationConfiguration {
 
     @Autowired
     @Qualifier("casAttributeEncoder")
-    private ProtocolAttributeEncoder protocolAttributeEncoder;
+    private ObjectProvider<ProtocolAttributeEncoder> protocolAttributeEncoder;
 
     @Autowired
     @Qualifier("cas3SuccessView")
@@ -149,7 +149,7 @@ public class CasValidationConfiguration {
     @ConditionalOnMissingBean(name = "cas1ServiceSuccessView")
     public View cas1ServiceSuccessView() {
         return new Cas10ResponseView(true,
-            protocolAttributeEncoder,
+            protocolAttributeEncoder.getIfAvailable(),
             servicesManager,
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             authenticationAttributeReleasePolicy);
@@ -159,7 +159,7 @@ public class CasValidationConfiguration {
     @ConditionalOnMissingBean(name = "cas1ServiceFailureView")
     public View cas1ServiceFailureView() {
         return new Cas10ResponseView(false,
-            protocolAttributeEncoder,
+            protocolAttributeEncoder.getIfAvailable(),
             servicesManager,
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             authenticationAttributeReleasePolicy);
@@ -168,7 +168,8 @@ public class CasValidationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "cas2ServiceSuccessView")
     public View cas2ServiceSuccessView() {
-        return new Cas20ResponseView(true, protocolAttributeEncoder,
+        return new Cas20ResponseView(true,
+            protocolAttributeEncoder.getIfAvailable(),
             servicesManager,
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             cas2SuccessView,
@@ -182,7 +183,7 @@ public class CasValidationConfiguration {
         final var authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         final var isReleaseProtocolAttributes = casProperties.getAuthn().isReleaseProtocolAttributes();
         return new Cas30JsonResponseView(true,
-            protocolAttributeEncoder,
+            protocolAttributeEncoder.getIfAvailable(),
             servicesManager,
             authenticationContextAttribute,
             isReleaseProtocolAttributes,
@@ -209,7 +210,7 @@ public class CasValidationConfiguration {
         final var authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         final var isReleaseProtocolAttributes = casProperties.getAuthn().isReleaseProtocolAttributes();
         return new Cas30ResponseView(true,
-            protocolAttributeEncoder,
+            protocolAttributeEncoder.getIfAvailable(),
             servicesManager,
             authenticationContextAttribute,
             cas3SuccessView,
