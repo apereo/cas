@@ -248,12 +248,12 @@ var loggingDashboard = (function () {
         default:
             btnColor = 'default';
         }
-        var btnGroup = '<div class="btn-group btn-block" data-logger="' + full + '"><button class="btn btn-sm btn-block bg-' + btnColor + ' dropdown-toggle" name="recordinput" data-toggle="dropdown">' + data + ' <span class="caret"></span></button>' +
-            '<ul class="dropdown-menu">';
+        var btnGroup = '<div class="dropdown" data-logger="' + full + '"><button class="btn btn-sm btn-block bg-' + btnColor + ' dropdown-toggle" name="recordinput" data-toggle="dropdown">' + data + ' <span class="caret"></span></button>' +
+            '<div class="dropdown-menu">';
         for (var i = 0; i < logLevels.length; i++) {
-            btnGroup += '<li><a href="#">' + logLevels[i].toUpperCase() + '</a></li>';
+            btnGroup += '<a class="dropdown-item" href="#">' + logLevels[i].toUpperCase() + '</a>';
         }
-        btnGroup += '</ul></div>';
+        btnGroup += '</div>';
 
         return btnGroup;
     };
@@ -270,7 +270,7 @@ var loggingDashboard = (function () {
     var addEventHandlers = function () {
         //console.log('addEventHAndlers()');
 
-        $(document).on('click', '#loggersTable .dropdown-menu li a', function (e) {
+        $(document).on('click', '#loggersTable .dropdown-menu a', function (e) {
             //console.log('status change', this);
             e.preventDefault();
             var selText = $(this).text();
