@@ -1,3 +1,4 @@
+
 package org.apereo.cas.support.pac4j.config.support.authentication;
 
 import lombok.extern.slf4j.Slf4j;
