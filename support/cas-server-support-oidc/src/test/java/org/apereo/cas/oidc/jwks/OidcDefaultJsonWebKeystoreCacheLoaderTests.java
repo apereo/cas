@@ -2,7 +2,6 @@ package org.apereo.cas.oidc.jwks;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.junit.Test;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.Assert.*;
 
