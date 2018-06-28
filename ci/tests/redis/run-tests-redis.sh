@@ -1,7 +1,7 @@
 #!/bin/bash
 
 prepCommand="echo 'Running command...'; "
-gradle="./gradlew $@"
+gradle="MATRIX_SERVER=REDIS ./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
 
@@ -9,7 +9,7 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-gradleBuild="$gradleBuild testRedis coveralls -DMATRIX_SERVER=REDIS -x javadoc -x check \
+gradleBuild="$gradleBuild testRedis coveralls -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 

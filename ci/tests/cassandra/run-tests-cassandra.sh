@@ -1,7 +1,7 @@
 #!/bin/bash
 
 prepCommand="echo 'Running command...'; "
-gradle="./gradlew $@"
+gradle="MATRIX_SERVER=CASSANDRA ./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
 
@@ -11,7 +11,7 @@ echo -e "***********************************************"
 
 ./ci/tests/cassandra/run-cassandra-server.sh
 
-gradleBuild="$gradleBuild testCassandra coveralls -DMATRIX_SERVER=CASSANDRA -x javadoc -x check \
+gradleBuild="$gradleBuild testCassandra coveralls -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
