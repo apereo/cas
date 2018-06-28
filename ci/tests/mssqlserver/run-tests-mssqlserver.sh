@@ -1,7 +1,7 @@
 #!/bin/bash
 
 prepCommand="echo 'Running command...'; "
-gradle="./gradlew $@"
+gradle="MATRIX_SERVER=MSSQLSERVER ./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
 
@@ -11,7 +11,7 @@ echo -e "***********************************************"
 
 ./ci/tests/mssqlserver/run-mssql-server.sh
 
-gradleBuild="$gradleBuild testMsSqlServer coveralls -DMATRIX_SERVER=MSSQLSERVER -x javadoc -x check \
+gradleBuild="$gradleBuild testMsSqlServer coveralls -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 

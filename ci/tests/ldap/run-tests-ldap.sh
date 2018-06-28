@@ -1,7 +1,7 @@
 #!/bin/bash
 
 prepCommand="echo 'Running command...'; "
-gradle="./gradlew $@"
+gradle="MATRIX_SERVER=LDAP ./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
 
@@ -11,7 +11,7 @@ echo -e "***********************************************"
 
 ./ci/tests/ldap/run-ldap-server.sh
 
-gradleBuild="$gradleBuild testLdap coveralls -DMATRIX_SERVER=LDAP -x javadoc -x check \
+gradleBuild="$gradleBuild testLdap coveralls -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
