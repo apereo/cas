@@ -1,7 +1,7 @@
 #!/bin/bash
 
 prepCommand="echo 'Running command...'; "
-gradle="./gradlew $@"
+gradle="MATRIX_SERVER=POSTGRES ./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
 
@@ -11,7 +11,7 @@ echo -e "***********************************************"
 
 ./ci/tests/postgres/run-postgres-server.sh
 
-gradleBuild="$gradleBuild testPostgres coveralls -DMATRIX_SERVER=POSTGRES -x javadoc -x check \
+gradleBuild="$gradleBuild testPostgres coveralls -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
