@@ -14,13 +14,14 @@ import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.OpenIdConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.authentication.OpenIdAuthenticationEventExecutionPlanConfiguration;
@@ -37,9 +38,9 @@ import org.junit.runner.RunWith;
 import org.openid4java.server.ServerManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -49,37 +50,40 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since 4.2
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(
-        classes = {OpenIdConfiguration.class,
-                OpenIdUniqueTicketIdGeneratorConfiguration.class,
-                OpenIdServiceFactoryConfiguration.class,
-                OpenIdAuthenticationEventExecutionPlanConfiguration.class,
-                CasProtocolViewsConfiguration.class,
-                CasCookieConfiguration.class,
-                CasValidationConfiguration.class,
-                CasCoreLogoutConfiguration.class,
-                CasPersonDirectoryConfiguration.class,
-                CasCoreConfiguration.class,
-                CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-                RefreshAutoConfiguration.class,
-                CasCoreWebConfiguration.class,
-                CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-                CasCoreTicketIdGeneratorsConfiguration.class,
-                CasWebApplicationServiceFactoryConfiguration.class,
-                CasCoreAuthenticationConfiguration.class, CasCoreServicesAuthenticationConfiguration.class,
-                CasCoreAuthenticationPolicyConfiguration.class,
-                CasCoreAuthenticationPrincipalConfiguration.class,
-                CasCoreAuthenticationMetadataConfiguration.class,
-                CasCoreAuthenticationSupportConfiguration.class,
-                CasCoreAuthenticationHandlersConfiguration.class,
-                CasCoreHttpConfiguration.class,
-                CasCoreValidationConfiguration.class,
-                CasCoreServicesConfiguration.class,
-                CasCoreTicketsConfiguration.class,
-                CasCoreTicketCatalogConfiguration.class,
-                CasCoreWebflowConfiguration.class,
-                CasCoreUtilConfiguration.class})
-@ContextConfiguration(locations = "classpath:/openid-config.xml")
+@SpringBootTest(classes = {
+    CasCoreServicesConfiguration.class,
+    CasRegisteredServicesTestConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasProtocolViewsConfiguration.class,
+    CasCookieConfiguration.class,
+    CasValidationConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreValidationConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreWebflowConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    OpenIdConfiguration.class,
+    OpenIdUniqueTicketIdGeneratorConfiguration.class,
+    OpenIdServiceFactoryConfiguration.class,
+    OpenIdAuthenticationEventExecutionPlanConfiguration.class,
+    ThymeleafAutoConfiguration.class
+})
 @Slf4j
 public class AbstractOpenIdTests {
 

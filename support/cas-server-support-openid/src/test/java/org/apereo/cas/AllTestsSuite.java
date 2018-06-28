@@ -20,13 +20,15 @@ import org.junit.runners.Suite;
  */
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({OpenIdPostUrlHandlerMappingTests.class, 
-        DefaultOpenIdUserNameExtractorTests.class,
-        SmartOpenIdControllerTests.class, 
-        OpenIdSingleSignOnActionTests.class,
-        OpenIdCredentialsAuthenticationHandlerTests.class, 
-        OpenIdServiceFactoryTests.class,
-        OpenIdServiceTests.class})
+@Suite.SuiteClasses({
+    OpenIdPostUrlHandlerMappingTests.class,
+    DefaultOpenIdUserNameExtractorTests.class,
+    SmartOpenIdControllerTests.class,
+    OpenIdSingleSignOnActionTests.class,
+    OpenIdCredentialsAuthenticationHandlerTests.class,
+    OpenIdServiceFactoryTests.class,
+    OpenIdServiceTests.class
+})
 @Slf4j
 public class AllTestsSuite {
 }

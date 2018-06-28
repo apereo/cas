@@ -8,13 +8,17 @@
                      filePattern="openid-%d{yyyy-MM-dd-HH}-%i.log.gz">
             <PatternLayout pattern="%d %p [%c] - %m%n"/>
             <Policies>
-                <OnStartupTriggeringPolicy />
+                <OnStartupTriggeringPolicy/>
                 <SizeBasedTriggeringPolicy size="10 MB"/>
-                <TimeBasedTriggeringPolicy />
+                <TimeBasedTriggeringPolicy/>
             </Policies>
         </RollingFile>
     </Appenders>
+
     <Loggers>
+        <Logger name="org.apereo.cas" level="error" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

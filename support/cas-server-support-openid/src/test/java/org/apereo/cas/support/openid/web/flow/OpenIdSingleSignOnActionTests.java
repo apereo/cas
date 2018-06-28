@@ -88,9 +88,9 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
         this.ticketRegistry.addTicket(t);
 
         request.setParameter(OpenIdProtocolConstants.OPENID_IDENTITY, "http://openid.aol.com/scootman28");
-        request.setParameter(OpenIdProtocolConstants.OPENID_RETURNTO, "http://www.cnn.com");
+        request.setParameter(OpenIdProtocolConstants.OPENID_RETURNTO, "https://google.com");
 
-        final var service = new OpenIdServiceFactory("").createService(request);
+        final var service = new OpenIdServiceFactory().createService(request);
         context.getFlowScope().put("service", service);
         context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, t.getId());
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

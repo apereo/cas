@@ -13,6 +13,9 @@ dependencies {
     implementation libraries.openid4java
     implementation project(":core:cas-server-core-authentication-api")
 
+    testImplementation libraries.thymeleaf
+    testImplementation libraries.thymeleafdialect
+    
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-logout-api")
@@ -21,8 +24,6 @@ dependencies {
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-tickets")
-    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-services-registry")
     testImplementation project(":core:cas-server-core-configuration")
@@ -32,5 +33,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-web-api")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-logout-api")
-    
+
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
 }
