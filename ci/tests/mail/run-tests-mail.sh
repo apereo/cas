@@ -1,7 +1,7 @@
 #!/bin/bash
 
 prepCommand="echo 'Running command...'; "
-gradle="./gradlew $@"
+gradle="MATRIX_SERVER=MAIL ./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
 
@@ -11,7 +11,7 @@ echo -e "***********************************************"
 
 ./ci/tests/mail/run-mail-server.sh
 
-gradleBuild="$gradleBuild testMail coveralls -DMATRIX_SERVER=MAIL -x javadoc -x check \
+gradleBuild="$gradleBuild testMail coveralls -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
