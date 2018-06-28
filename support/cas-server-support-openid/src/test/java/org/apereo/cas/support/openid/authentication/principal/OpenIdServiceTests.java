@@ -26,9 +26,6 @@ import static org.mockito.Mockito.*;
  */
 @Slf4j
 public class OpenIdServiceTests extends AbstractOpenIdTests {
-
-
-
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "openIdService.json");
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     private static final String OPEN_ID_PREFIX_URL = "http://openid.ja-sig.org/battags";
