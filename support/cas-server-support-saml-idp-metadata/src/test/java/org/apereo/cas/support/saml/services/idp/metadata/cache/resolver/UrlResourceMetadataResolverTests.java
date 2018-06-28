@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
@@ -44,7 +46,7 @@ public class UrlResourceMetadataResolverTests {
 
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
-    
+
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
     private OpenSamlConfigBean openSamlConfigBean;
@@ -63,6 +65,7 @@ public class UrlResourceMetadataResolverTests {
     @Test
     public void verifyResolverResolves() {
         final SamlIdPProperties props = new SamlIdPProperties();
+        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
         final UrlResourceMetadataResolver resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
         final SamlRegisteredService service = new SamlRegisteredService();
         service.setName("TestShib");
