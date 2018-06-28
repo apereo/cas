@@ -151,12 +151,12 @@ public abstract class BaseSamlIdPConfigurationTests {
         return service;
     }
 
-    protected Assertion getAssertion() {
+    protected static Assertion getAssertion() {
         final AttributePrincipalImpl casuser = new AttributePrincipalImpl("casuser", CoreAuthenticationTestUtils.getAttributes());
         return new AssertionImpl(casuser, CoreAuthenticationTestUtils.getAttributes());
     }
 
-    protected AuthnRequest getAuthnRequestFor(final SamlRegisteredService service) {
+    protected static AuthnRequest getAuthnRequestFor(final SamlRegisteredService service) {
         final AuthnRequest authnRequest = mock(AuthnRequest.class);
         when(authnRequest.getID()).thenReturn("23hgbcehfgeb7843jdv1");
         final Issuer issuer = mock(Issuer.class);
