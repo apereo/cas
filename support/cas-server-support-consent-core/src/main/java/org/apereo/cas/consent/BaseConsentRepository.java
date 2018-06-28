@@ -11,6 +11,7 @@ import org.apereo.cas.util.RandomUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public abstract class BaseConsentRepository implements ConsentRepository {
     private static final long serialVersionUID = 1736846688546785564L;
-    private Set<ConsentDecision> consentDecisions;
+    private Set<ConsentDecision> consentDecisions = new LinkedHashSet<>();
 
     @Override
     public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService,
