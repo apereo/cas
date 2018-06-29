@@ -13,7 +13,7 @@ services:
 - docker
 branches:
   only:
-  - boot2
+  - master
 jdk:
 - oraclejdk10
 before_cache:
