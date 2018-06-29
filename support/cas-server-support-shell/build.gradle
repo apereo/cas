@@ -76,4 +76,4 @@ task listUndocumentedProperties(type: JavaExec) {
     }
 }
 
-jar.finalizedBy(listUndocumentedProperties)
+//jar.finalizedBy(listUndocumentedProperties)
