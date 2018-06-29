@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.util.CoreTicketUtils;
 
 import lombok.val;
+import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,10 +31,13 @@ public class CouchDbTicketRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    private ObjectMapperFactory objectMapperFactory;
+
     @RefreshScope
     @Bean
     public CouchDbConnectorFactory ticketRegistryCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getTicket().getRegistry().getCouchDb());
+        return new CouchDbConnectorFactory(casProperties.getTicket().getRegistry().getCouchDb(), objectMapperFactory);
     }
 
     @Bean
