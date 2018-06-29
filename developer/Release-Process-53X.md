@@ -56,6 +56,12 @@ Do not forget to commit all changes and push changes upstream, creating a new re
 ### Build 
 
 - In the project's `gradle.properties`, change the project version to the release version. (i.e. `5.0.0-RC1`). 
+- Ensure NPM is installed:
+
+```bash
+./gradlew npmInstall
+```
+
 - Then build the project using the following command:
 
 ```bash
