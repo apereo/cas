@@ -10,6 +10,7 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 
 import lombok.val;
+import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -35,10 +36,13 @@ public class CouchDbServiceRegistryConfiguration implements ServiceRegistryExecu
     @Qualifier("serviceRegistryCouchDbFactory")
     private CouchDbConnectorFactory couchDbFactory;
 
+    @Autowired
+    private ObjectMapperFactory objectMapperFactory;
+
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory serviceRegistryCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getServiceRegistry().getCouchDb());
+        return new CouchDbConnectorFactory(casProperties.getServiceRegistry().getCouchDb(), objectMapperFactory);
     }
 
     @Bean
