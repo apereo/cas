@@ -33,6 +33,11 @@ public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     protected SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
 
+    @BeforeClass
+    public static void beforeClass() {
+        METADATA_DIRECTORY = new FileSystemResource(FileUtils.getTempDirectoryPath());
+    }
+
     @Test
     public void verifyNewSamlServiceProvider() throws Exception {
         final EntityDescriptor entity = mock(EntityDescriptor.class);
@@ -69,7 +74,7 @@ public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
 
     @AfterClass
     public static void shutdown() {
-        final Collection<File> cols = FileUtils.listFiles(METADATA_DIRECTORY.getFile(), new String[] {"crt", "key", "xml"}, false);
+        final Collection<File> cols = FileUtils.listFiles(METADATA_DIRECTORY.getFile(), new String[]{"crt", "key", "xml"}, false);
         cols.forEach(FileUtils::deleteQuietly);
     }
 }
