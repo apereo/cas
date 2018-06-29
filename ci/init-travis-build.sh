@@ -24,24 +24,14 @@ echo -e "Commit Message: ${TRAVIS_COMMIT_MESSAGE}"
 echo -e "************************************"
 echo -e "User: ${USER}"
 echo -e "User HOME directory: ${HOME}"
+echo -e "Secure environment variables: ${TRAVIS_SECURE_ENV_VARS}"
 echo -e "************************************"
-
-if [ "$TRAVIS_SECURE_ENV_VARS" == "false" ]
-then
-  echo -e "Secure environment variables are NOT available...\n"
-else
-  echo -e "Secure environment variables are available...\n"
-fi
 
 echo -e "Stopping current services...\n"
 sudo service mysql stop
 
 echo -e "Setting build environment...\n"
 sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
-
-# echo -e "Configuring Oracle JDK8 JCE...\n"
-# unzip -j -o ./etc/jce8.zip *.jar -d $JAVA_HOME/jre/lib/security
-# cp ./etc/java.security $JAVA_HOME/jre/lib/security
 
 echo -e "Configuring Gradle wrapper...\n"
 chmod -R 777 ./gradlew

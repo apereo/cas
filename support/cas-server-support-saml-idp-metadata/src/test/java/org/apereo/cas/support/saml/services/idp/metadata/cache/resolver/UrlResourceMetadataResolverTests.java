@@ -68,6 +68,7 @@ public class UrlResourceMetadataResolverTests {
         final var props = new SamlIdPProperties();
         props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
         final var service = new SamlRegisteredService();
+        final var resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
         service.setName("TestShib");
         service.setId(1000);
         service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
