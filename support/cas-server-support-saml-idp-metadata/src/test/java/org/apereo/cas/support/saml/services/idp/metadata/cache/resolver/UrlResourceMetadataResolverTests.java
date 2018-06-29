@@ -54,6 +54,7 @@ public class UrlResourceMetadataResolverTests {
     @Test
     public void verifyResolverSupports() {
         final SamlIdPProperties props = new SamlIdPProperties();
+        props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
         final UrlResourceMetadataResolver resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
         final SamlRegisteredService service = new SamlRegisteredService();
         service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
