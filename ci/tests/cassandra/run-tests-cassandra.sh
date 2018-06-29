@@ -21,7 +21,7 @@ fi
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon -DtestCategoryType=CASSANDRA "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
@@ -29,7 +29,7 @@ echo -e "***********************************************"
 
 ./ci/tests/cassandra/run-cassandra-server.sh
 
-gradleBuild="$gradleBuild testCassandra coveralls -DMATRIX_SERVER=CASSANDRA -x javadoc -x check \
+gradleBuild="$gradleBuild testCassandra coveralls -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 

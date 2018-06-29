@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -54,12 +55,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.execution.Action;
 
 import java.util.Optional;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link AbstractOidcTests}.
@@ -102,6 +103,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @DirtiesContext
 @Category(FileSystemCategory.class)
+@TestPropertySource(properties = {
+    "cas.authn.oidc.issuer=https://sso.example.org/cas/oidc",
+    "cas.authn.oidc.jwksFile=classpath:keystore.jwks"
+})
 public abstract class AbstractOidcTests {
 
     @ClassRule

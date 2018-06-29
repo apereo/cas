@@ -7,8 +7,8 @@ ext {
     publishReleases = Boolean.getBoolean("publishReleases")
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
-    forceBom = Boolean.getBoolean('forceBom')
-    skipErrorProneCompiler = Boolean.getBoolean("skipErrorProneCompiler")
+    testCategoryType = System.getProperty("testCategoryType")
+    forceBom = Boolean.getBoolean("forceBom")
     enableRemoteDebugging = Boolean.getBoolean("enableRemoteDebugging")
     continuousIntegrationBuild = Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
 
@@ -458,7 +458,4 @@ tasks.coveralls {
     group = "Coverage reports"
     description = "Uploads the aggregated coverage report to Coveralls"
     dependsOn jacocoRootReport
-    doFirst {
-        println "Starting to run coveralls"
-    }
 }

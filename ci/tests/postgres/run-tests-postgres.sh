@@ -21,7 +21,7 @@ fi
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon -DtestCategoryType=POSTGRES "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
@@ -29,7 +29,7 @@ echo -e "***********************************************"
 
 ./ci/tests/postgres/run-postgres-server.sh
 
-gradleBuild="$gradleBuild testPostgres coveralls -DMATRIX_SERVER=POSTGRES -x javadoc -x check \
+gradleBuild="$gradleBuild testPostgres coveralls -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
