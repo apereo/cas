@@ -1,6 +1,8 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -59,8 +61,6 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
 
@@ -119,9 +119,6 @@ public class RestSamlRegisteredServiceMetadataResolverTests {
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
     @Qualifier("restSamlRegisteredServiceMetadataResolver")
     private SamlRegisteredServiceMetadataResolver resolver;
 
@@ -136,7 +133,7 @@ public class RestSamlRegisteredServiceMetadataResolverTests {
         doc.setSignature(null);
         doc.setValue(IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8));
         final String data = MAPPER.writeValueAsString(doc);
-        
+
         this.webServer = new MockWebServer(8078,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_XML_VALUE);
