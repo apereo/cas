@@ -16,7 +16,6 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-wsfederation-webflow")
-
 @Getter
 @Setter
 public class WsFederationDelegationProperties implements Serializable {
