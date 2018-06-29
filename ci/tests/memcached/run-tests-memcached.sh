@@ -21,7 +21,7 @@ fi
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon -DtestCategoryType=MEMCACHED "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
@@ -29,7 +29,7 @@ echo -e "***********************************************"
 
 ./ci/tests/memcached/run-memcached-server.sh
 
-gradleBuild="$gradleBuild testMemcached coveralls -DMATRIX_SERVER=MEMCACHED -x javadoc -x check \
+gradleBuild="$gradleBuild testMemcached coveralls -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
