@@ -1,6 +1,6 @@
 #!/bin/bash
 
-branchVersion="development"
+branchVersion="5.3.x"
 
 echo -e "Copying project documentation over to $HOME/docs-latest...\n"
 cp -R docs/cas-server-documentation $HOME/docs-latest
