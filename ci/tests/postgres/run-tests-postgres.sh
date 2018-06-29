@@ -1,9 +1,9 @@
 #!/bin/bash
 
 prepCommand="echo 'Running command...'; "
-gradle="MATRIX_SERVER=POSTGRES ./gradlew $@"
+gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon -DtestCategoryType=POSTGRES "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"

@@ -1,12 +1,9 @@
-def testType = System.getenv("testType")
-logger.info "Configured test type is $testType"
-
 task testCassandra(type: Test) {
     useJUnit {
         includeCategories 'org.apereo.cas.category.CassandraCategory'
     }
     onlyIf {
-        "CASSANDRA".equalsIgnoreCase(testType)
+        "CASSANDRA".equalsIgnoreCase(rootProject.testCategoryType)
     }
 }
 
@@ -15,7 +12,7 @@ task testCosmosDb(type: Test) {
         includeCategories 'org.apereo.cas.category.CosmosDbCategory'
     }
     onlyIf {
-        "COSMOSDB".equalsIgnoreCase(testType)
+        "COSMOSDB".equalsIgnoreCase(rootProject.testCategoryType)
     }
 }
 
@@ -24,7 +21,7 @@ task testCouchbase(type: Test) {
         includeCategories 'org.apereo.cas.category.CouchbaseCategory'
     }
     onlyIf {
-        "COUCHBASE".equalsIgnoreCase(testType)
+        "COUCHBASE".equalsIgnoreCase(rootProject.testCategoryType)
     }
 }
 
@@ -33,7 +30,7 @@ task testCouchDb(type: Test) {
         includeCategories 'org.apereo.cas.category.CouchDbCategory'
     }
     onlyIf {
-        "COUCHDB".equalsIgnoreCase(testType)
+        "COUCHDB".equalsIgnoreCase(rootProject.testCategoryType)
     }
 }
 
@@ -42,7 +39,7 @@ task testMySQL(type: Test) {
         includeCategories 'org.apereo.cas.category.MySQLCategory'
     }
     onlyIf {
-        "MYSQL".equalsIgnoreCase(testType)
+        "MYSQL".equalsIgnoreCase(rootProject.testCategoryType)
     }
 }
 
@@ -51,7 +48,7 @@ task testPostgres(type: Test) {
         includeCategories 'org.apereo.cas.category.PostgresCategory'
     }
     onlyIf {
-        "POSTGRES".equalsIgnoreCase(testType)
+        "POSTGRES".equalsIgnoreCase(rootProject.testCategoryType)
     }
 }
 
@@ -60,7 +57,7 @@ task testDynamoDb(type: Test) {
         includeCategories 'org.apereo.cas.category.DynamoDbCategory'
     }
     onlyIf {
-        "DYNAMODB".equalsIgnoreCase(testType)
+        "DYNAMODB".equalsIgnoreCase(rootProject.testCategoryType)
     }
 }
 
@@ -69,7 +66,7 @@ task testFileSystem(type: Test) {
         includeCategories 'org.apereo.cas.category.FileSystemCategory'
     }
     onlyIf {
-        "FILESYSTEM".equalsIgnoreCase(testType)
+        "FILESYSTEM".equalsIgnoreCase(rootProject.testCategoryType)
     }
 }
 
@@ -78,7 +75,7 @@ task testIgnite(type: Test) {
         includeCategories 'org.apereo.cas.category.IgniteCategory'
     }
     onlyIf {
-        "IGNITE".equalsIgnoreCase(testType)
+        "IGNITE".equalsIgnoreCase(rootProject.testCategoryType)
     }
 }
 
@@ -87,7 +84,7 @@ task testInfluxDb(type: Test) {
         includeCategories 'org.apereo.cas.category.InfluxDbCategory'
     }
     onlyIf {
-        "INFLUXDB".equalsIgnoreCase(testType)
+        "INFLUXDB".equalsIgnoreCase(rootProject.testCategoryType)
     }
 }
 
@@ -96,7 +93,7 @@ task testLdap(type: Test) {
         includeCategories 'org.apereo.cas.category.LdapCategory'
     }
     onlyIf {
-        "LDAP".equalsIgnoreCase(testType)
+        "LDAP".equalsIgnoreCase(rootProject.testCategoryType)
     }
 }
 
@@ -105,7 +102,7 @@ task testMail(type: Test) {
         includeCategories 'org.apereo.cas.category.MailCategory'
     }
     onlyIf {
-        "MAIL".equalsIgnoreCase(testType)
+        "MAIL".equalsIgnoreCase(rootProject.testCategoryType)
     }
 }
 
@@ -114,7 +111,7 @@ task testMemcached(type: Test) {
         includeCategories 'org.apereo.cas.category.MemcachedCategory'
     }
     onlyIf {
-        "MEMCACHED".equalsIgnoreCase(testType)
+        "MEMCACHED".equalsIgnoreCase(rootProject.testCategoryType)
     }
 }
 
@@ -123,7 +120,7 @@ task testMsSqlServer(type: Test) {
         includeCategories 'org.apereo.cas.category.MsSqlServerCategory'
     }
     onlyIf {
-        "MSSQLSERVER".equalsIgnoreCase(testType)
+        "MSSQLSERVER".equalsIgnoreCase(rootProject.testCategoryType)
     }
 }
 
@@ -132,7 +129,7 @@ task testMongoDb(type: Test) {
         includeCategories 'org.apereo.cas.category.MongoDbCategory'
     }
     onlyIf {
-        "MONGODB".equalsIgnoreCase(testType)
+        "MONGODB".equalsIgnoreCase(rootProject.testCategoryType)
     }
 }
 
@@ -141,7 +138,7 @@ task testRedis(type: Test) {
         includeCategories 'org.apereo.cas.category.RedisCategory'
     }
     onlyIf {
-        "REDIS".equalsIgnoreCase(testType)
+        "REDIS".equalsIgnoreCase(rootProject.testCategoryType)
     }
 }
 
@@ -165,7 +162,7 @@ test {
         excludeCategories 'org.apereo.cas.category.MySQLCategory'
     }
     onlyIf {
-        "SIMPLE".equalsIgnoreCase(testType)
+        "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType)
     }
 }
 
@@ -185,5 +182,5 @@ tasks.withType(Test) {
         showExceptions = true
         showCauses = true
     }
-    enabled = testType != null
+    enabled = rootProject.testCategoryType != null
 }
