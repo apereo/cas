@@ -30,7 +30,7 @@ It is recommended to deploy CAS locally using the [WAR Overlay method][overlay].
 | Version         | Reference   
 |------------|-----------------------------------
 | ![](https://img.shields.io/badge/Development-WIP-blue.svg?style=flat) | [Link](https://apereo.github.io/cas/development)
-| ![](https://img.shields.io/badge/5.3.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/current)
+| ![](https://img.shields.io/badge/5.3.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/5.3.x)
 | ![](https://img.shields.io/badge/5.2.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/5.2.x)
 | ![](https://img.shields.io/badge/5.1.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/5.1.x)
 | ![](https://img.shields.io/badge/5.0.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/5.0.x)
