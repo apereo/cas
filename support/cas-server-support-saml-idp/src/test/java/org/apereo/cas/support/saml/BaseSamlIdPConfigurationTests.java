@@ -42,6 +42,7 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -101,7 +102,7 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class})
 @Slf4j
 public abstract class BaseSamlIdPConfigurationTests {
-    protected static final FileSystemResource METADATA_DIRECTORY = new FileSystemResource("src/test/resources/metadata");
+    protected static FileSystemResource METADATA_DIRECTORY;
 
     @Autowired
     @Qualifier("casSamlIdPMetadataResolver")
@@ -130,6 +131,15 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlObjectSignatureValidator")
     protected SamlObjectSignatureValidator samlObjectSignatureValidator;
+
+    @BeforeClass
+    public static void beforeClass() {
+        METADATA_DIRECTORY = new FileSystemResource("src/test/resources/metadata");
+    }
+
+    protected SamlRegisteredService getSamlRegisteredServiceForTestShib() {
+        return getSamlRegisteredServiceForTestShib(false, false, false);
+    }
 
     protected SamlRegisteredService getSamlRegisteredServiceForTestShib(final boolean signAssertion,
                                                                         final boolean signResponses) {
@@ -164,6 +174,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         when(authnRequest.getIssuer()).thenReturn(issuer);
         return authnRequest;
     }
+
 
     @TestConfiguration
     public static class SamlIdPMetadataTestConfiguration {
