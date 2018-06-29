@@ -4,7 +4,6 @@ import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -34,7 +33,7 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends Base
         final GroovySamlRegisteredServiceAttributeReleasePolicy filter = new GroovySamlRegisteredServiceAttributeReleasePolicy();
         filter.setGroovyScript("classpath:saml-groovy-attrs.groovy");
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
-        final SamlRegisteredService registeredService = SamlIdPTestUtils.getSamlRegisteredService();
+        final SamlRegisteredService registeredService = getSamlRegisteredServiceForTestShib();
         registeredService.setAttributeReleasePolicy(filter);
         final Map attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
             CoreAuthenticationTestUtils.getService(), registeredService);
