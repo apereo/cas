@@ -11,7 +11,7 @@ echo -e "***********************************************"
 
 ./ci/tests/couchbase/run-couchbase-server.sh
 
-gradleBuild="$gradleBuild testCouchbase coveralls -DMATRIX_SERVER=COUCHBASE -x javadoc -x check \
+gradleBuild="$gradleBuild testCouchbase coveralls -DtestCategoryType=COUCHBASE -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
