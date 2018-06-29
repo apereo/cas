@@ -8,6 +8,7 @@ ext {
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
     testCategoryType = System.getProperty("testCategoryType")
+    skipErrorProneCompiler = System.getProperty("skipErrorProneCompiler")
     forceBom = Boolean.getBoolean("forceBom")
     enableRemoteDebugging = Boolean.getBoolean("enableRemoteDebugging")
     continuousIntegrationBuild = Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
