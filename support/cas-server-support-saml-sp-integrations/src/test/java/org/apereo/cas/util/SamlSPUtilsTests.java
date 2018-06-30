@@ -16,6 +16,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
 import java.util.Collection;
@@ -30,6 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Category(FileSystemCategory.class)
+@TestPropertySource(properties = {"cas.authn.samlIdp.metadata.location=file:/tmp"})
 public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
