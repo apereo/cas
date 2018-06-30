@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderPr
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.AfterClass;
@@ -14,6 +15,8 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -25,10 +28,16 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Category(FileSystemCategory.class)
+@TestPropertySource(properties = {"cas.authn.samlIdp.metadata.location=file:/tmp"})
 public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     protected SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
+
+    @BeforeClass
+    public static void beforeClass() {
+        METADATA_DIRECTORY = new FileSystemResource(FileUtils.getTempDirectoryPath());
+    }
 
     @Test
     public void verifyNewSamlServiceProvider() throws Exception {
@@ -66,7 +75,7 @@ public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
 
     @AfterClass
     public static void shutdown() {
-        final var cols = FileUtils.listFiles(METADATA_DIRECTORY.getFile(), new String[] {"crt", "key", "xml"}, false);
+        final var cols = FileUtils.listFiles(METADATA_DIRECTORY.getFile(), new String[]{"crt", "key", "xml"}, false);
         cols.forEach(FileUtils::deleteQuietly);
     }
 }
