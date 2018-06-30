@@ -19,7 +19,7 @@ import lombok.SneakyThrows;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestPropertySource(properties = "cas.authn.mfa.trusted.json.location=file:/etc/cas/trusted-device.json")
+@TestPropertySource(properties = "cas.authn.mfa.trusted.json.location=file:/tmp/trusted-device.json")
 @Category(FileSystemCategory.class)
 public class JsonMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
     @BeforeClass
@@ -35,7 +35,7 @@ public class JsonMultifactorAuthenticationTrustStorageTests extends AbstractMult
     }
 
     private static void deleteJsonFile() throws IOException {
-        final File file = new File("/etc/cas/trusted-device.json");
+        final File file = new File("/tmp/trusted-device.json");
         if (file.exists()) {
             FileUtils.forceDelete(file);
         }
