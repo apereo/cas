@@ -13,10 +13,9 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
 import org.pac4j.jwt.profile.JwtGenerator;
-import org.springframework.shell.core.CommandMarker;
-import org.springframework.shell.core.annotation.CliCommand;
-import org.springframework.shell.core.annotation.CliOption;
-import org.springframework.stereotype.Service;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -27,18 +26,17 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Service
+@ShellComponent
 @Slf4j
-public class GenerateJwtCommand implements CommandMarker {
+public class GenerateJwtCommand {
 
     private static final int SEP_LENGTH = 8;
-    
+
     private static final int DEFAULT_SIGNING_SECRET_SIZE = 256;
     private static final int DEFAULT_ENCRYPTION_SECRET_SIZE = 48;
     private static final String DEFAULT_SIGNING_ALGORITHM = "HS256";
     private static final String DEFAULT_ENCRYPTION_ALGORITHM = "dir";
     private static final String DEFAULT_ENCRYPTION_METHOD = "A192CBC-HS384";
-
 
     /**
      * Generate.
@@ -47,8 +45,8 @@ public class GenerateJwtCommand implements CommandMarker {
      */
     public void generate(final String subject) {
         generate(DEFAULT_SIGNING_SECRET_SIZE, DEFAULT_ENCRYPTION_SECRET_SIZE,
-                DEFAULT_SIGNING_ALGORITHM, DEFAULT_ENCRYPTION_ALGORITHM,
-                DEFAULT_ENCRYPTION_METHOD, subject);
+            DEFAULT_SIGNING_ALGORITHM, DEFAULT_ENCRYPTION_ALGORITHM,
+            DEFAULT_ENCRYPTION_METHOD, subject);
     }
 
     /**
@@ -61,37 +59,25 @@ public class GenerateJwtCommand implements CommandMarker {
      * @param encryptionMethod     the encryption algorithm
      * @param subject              the subject
      */
-    @CliCommand(value = "generate-jwt", help = "Generate a JWT with given size and algorithm for signing and encryption.")
+    @ShellMethod(key = "generate-jwt", value = "Generate a JWT with given size and algorithm for signing and encryption.")
     public void generate(
-            @CliOption(key = {"signingSecretSize"},
-                    help = "Size of the signing secret",
-                    optionContext = "Size of the signing secret",
-                    specifiedDefaultValue = "" + DEFAULT_SIGNING_SECRET_SIZE,
-                    unspecifiedDefaultValue = "" + DEFAULT_SIGNING_SECRET_SIZE) final int signingSecretSize,
-            @CliOption(key = {"encryptionSecretSize"},
-                    help = "Size of the encryption secret",
-                    optionContext = "Size of the encryption secret",
-                    specifiedDefaultValue = "" + DEFAULT_ENCRYPTION_SECRET_SIZE,
-                    unspecifiedDefaultValue = "" + DEFAULT_ENCRYPTION_SECRET_SIZE) final int encryptionSecretSize,
-            @CliOption(key = {"signingAlgorithm"},
-                    help = "Algorithm to use for signing",
-                    optionContext = "Algorithm to use for signing",
-                    specifiedDefaultValue = DEFAULT_SIGNING_ALGORITHM,
-                    unspecifiedDefaultValue = DEFAULT_SIGNING_ALGORITHM) final String signingAlgorithm,
-            @CliOption(key = {"encryptionAlgorithm"},
-                    help = "Algorithm to use for encryption",
-                    optionContext = "Algorithm to use for encryption",
-                    specifiedDefaultValue = DEFAULT_ENCRYPTION_ALGORITHM,
-                    unspecifiedDefaultValue = DEFAULT_ENCRYPTION_ALGORITHM) final String encryptionAlgorithm,
-            @CliOption(key = {"encryptionMethod"},
-                    help = "Method to use for encryption",
-                    optionContext = "Method to use for encryption",
-                    specifiedDefaultValue = DEFAULT_ENCRYPTION_METHOD,
-                    unspecifiedDefaultValue = DEFAULT_ENCRYPTION_METHOD) final String encryptionMethod,
-            @CliOption(key = {"subject"},
-                    help = "Subject to use for the JWT",
-                    optionContext = "Subject to use for the JWT",
-                    mandatory = true) final String subject) {
+        @ShellOption(value = {"signingSecretSize"},
+            help = "Size of the signing secret",
+            defaultValue = "" + DEFAULT_SIGNING_SECRET_SIZE) final int signingSecretSize,
+        @ShellOption(value = {"encryptionSecretSize"},
+            help = "Size of the encryption secret",
+            defaultValue = "" + DEFAULT_ENCRYPTION_SECRET_SIZE) final int encryptionSecretSize,
+        @ShellOption(value = {"signingAlgorithm"},
+            help = "Algorithm to use for signing",
+            defaultValue = DEFAULT_SIGNING_ALGORITHM) final String signingAlgorithm,
+        @ShellOption(value = {"encryptionAlgorithm"},
+            help = "Algorithm to use for encryption",
+            defaultValue = DEFAULT_ENCRYPTION_ALGORITHM) final String encryptionAlgorithm,
+        @ShellOption(value = {"encryptionMethod"},
+            help = "Method to use for encryption",
+            defaultValue = DEFAULT_ENCRYPTION_METHOD) final String encryptionMethod,
+        @ShellOption(value = {"subject"},
+            help = "Subject to use for the JWT") final String subject) {
 
         final JwtGenerator<CommonProfile> g = new JwtGenerator<>();
 
@@ -104,10 +90,10 @@ public class GenerateJwtCommand implements CommandMarker {
         final var repeat = StringUtils.repeat('=', SEP_LENGTH);
         LOGGER.debug(repeat);
         LOGGER.info("\nGenerating JWT for subject [{}] with signing key size [{}], signing algorithm [{}], "
-                + "encryption key size [{}], encryption method [{}] and encryption algorithm [{}]\n", 
-                subject, signingSecretSize, signingAlgorithm, encryptionSecretSize, encryptionMethod, encryptionAlgorithm);
+                + "encryption key size [{}], encryption method [{}] and encryption algorithm [{}]\n",
+            subject, signingSecretSize, signingAlgorithm, encryptionSecretSize, encryptionMethod, encryptionAlgorithm);
         LOGGER.debug(repeat);
-        
+
         final var token = g.generate(profile);
         LOGGER.info("==== JWT ====\n[{}]", token);
     }
@@ -123,37 +109,37 @@ public class GenerateJwtCommand implements CommandMarker {
         LOGGER.info("==== Encryption Secret ====\n[{}]\n", encryptionSecret);
 
         final var acceptedEncAlgs = Arrays.stream(JWEAlgorithm.class.getDeclaredFields())
-                .filter(f -> f.getType().equals(JWEAlgorithm.class))
-                .map(Unchecked.function(f -> {
-                    f.setAccessible(true);
-                    return ((JWEAlgorithm) f.get(null)).getName();
-                }))
-                .collect(Collectors.joining(","));
+            .filter(f -> f.getType().equals(JWEAlgorithm.class))
+            .map(Unchecked.function(f -> {
+                f.setAccessible(true);
+                return ((JWEAlgorithm) f.get(null)).getName();
+            }))
+            .collect(Collectors.joining(","));
         LOGGER.debug("Encryption algorithm: [{}]. Available algorithms are [{}]", encryptionAlgorithm, acceptedEncAlgs);
 
         final var acceptedEncMethods = Arrays.stream(EncryptionMethod.class.getDeclaredFields())
-                .filter(f -> f.getType().equals(EncryptionMethod.class))
-                .map(Unchecked.function(f -> {
-                    f.setAccessible(true);
-                    return ((EncryptionMethod) f.get(null)).getName();
-                }))
-                .collect(Collectors.joining(","));
+            .filter(f -> f.getType().equals(EncryptionMethod.class))
+            .map(Unchecked.function(f -> {
+                f.setAccessible(true);
+                return ((EncryptionMethod) f.get(null)).getName();
+            }))
+            .collect(Collectors.joining(","));
         LOGGER.debug("Encryption method: [{}]. Available methods are [{}]", encryptionMethod, acceptedEncMethods);
 
         final var algorithm = JWEAlgorithm.parse(encryptionAlgorithm);
         final var encryptionMethodAlg = EncryptionMethod.parse(encryptionMethod);
-        
+
         if (DirectDecrypter.SUPPORTED_ALGORITHMS.contains(algorithm)) {
             if (!DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethodAlg)) {
                 LOGGER.warn("Encrypted method [{}] is not supported for algorithm [{}]. Accepted methods are [{}]",
-                        encryptionMethod, encryptionAlgorithm, DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS);
+                    encryptionMethod, encryptionAlgorithm, DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS);
                 return;
             }
         }
         if (AESDecrypter.SUPPORTED_ALGORITHMS.contains(algorithm)) {
             if (!AESDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethodAlg)) {
                 LOGGER.warn("Encrypted method [{}] is not supported for algorithm [{}]. Accepted methods are [{}]",
-                        encryptionMethod, encryptionAlgorithm, AESDecrypter.SUPPORTED_ENCRYPTION_METHODS);
+                    encryptionMethod, encryptionAlgorithm, AESDecrypter.SUPPORTED_ENCRYPTION_METHODS);
                 return;
             }
         }
@@ -172,12 +158,12 @@ public class GenerateJwtCommand implements CommandMarker {
         LOGGER.info("==== Signing Secret ====\n{}\n", signingSecret);
 
         final var acceptedSigningAlgs = Arrays.stream(JWSAlgorithm.class.getDeclaredFields())
-                .filter(f -> f.getType().equals(JWSAlgorithm.class))
-                .map(Unchecked.function(f -> {
-                    f.setAccessible(true);
-                    return ((JWSAlgorithm) f.get(null)).getName();
-                }))
-                .collect(Collectors.joining(","));
+            .filter(f -> f.getType().equals(JWSAlgorithm.class))
+            .map(Unchecked.function(f -> {
+                f.setAccessible(true);
+                return ((JWSAlgorithm) f.get(null)).getName();
+            }))
+            .collect(Collectors.joining(","));
         LOGGER.debug("Signing algorithm: [{}]. Available algorithms are [{}]", signingAlgorithm, acceptedSigningAlgs);
 
         g.setSignatureConfiguration(new SecretSignatureConfiguration(signingSecret, JWSAlgorithm.parse(signingAlgorithm)));

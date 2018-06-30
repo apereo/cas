@@ -8,10 +8,10 @@ import org.springframework.beans.factory.config.YamlProcessor;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.shell.core.CommandMarker;
-import org.springframework.shell.core.annotation.CliCommand;
-import org.springframework.shell.core.annotation.CliOption;
-import org.springframework.stereotype.Service;
+import org.springframework.shell.standard.ShellCommandGroup;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -31,9 +31,10 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Service
+@ShellCommandGroup("CAS Properties")
+@ShellComponent
 @Slf4j
-public class AddPropertiesToConfigurationCommand implements CommandMarker {
+public class AddPropertiesToConfigurationCommand {
     /**
      * Add properties to configuration.
      *
@@ -41,18 +42,13 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
      * @param group the group
      * @throws Exception the exception
      */
-    @CliCommand(value = "add-properties", help = "Add properties associated with a CAS group/module to a Properties/Yaml configuration file.")
-    public void add(@CliOption(key = {"file"},
+    @ShellMethod(key = "add-properties", value = "Add properties associated with a CAS group/module to a Properties/Yaml configuration file.")
+    public void add(
+        @ShellOption(value = {"file"},
             help = "Path to the CAS configuration file",
-            unspecifiedDefaultValue = "/etc/cas/config/cas.properties",
-            specifiedDefaultValue = "/etc/cas/config/cas.properties",
-            optionContext = "Path to the CAS configuration file") final String file,
-                    @CliOption(key = {"group"},
-                            specifiedDefaultValue = "",
-                            unspecifiedDefaultValue = "",
-                            help = "Group/module whose associated settings should be added to the CAS configuration file",
-                            optionContext = "Group/module whose associated settings should be added to the CAS configuration file",
-                            mandatory = true) final String group) throws Exception {
+            defaultValue = "/etc/cas/config/cas.properties") final String file,
+        @ShellOption(value = {"group"},
+            help = "Group/module whose associated settings should be added to the CAS configuration file") final String group) throws Exception {
 
         if (StringUtils.isBlank(file)) {
             LOGGER.warn("Configuration file must be specified");
@@ -82,10 +78,10 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
             default:
                 LOGGER.warn("Configuration file format [{}] is not recognized", filePath.getCanonicalPath());
         }
-        
+
     }
 
-    private void writeYamlConfigurationPropertiesToFile(final File filePath, final Map<String, ConfigurationMetadataProperty> results, 
+    private void writeYamlConfigurationPropertiesToFile(final File filePath, final Map<String, ConfigurationMetadataProperty> results,
                                                         final Properties yamlProps) throws Exception {
         final var options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.AUTO);
@@ -108,7 +104,7 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
         return factory.getObject();
     }
 
-    private void writeConfigurationPropertiesToFile(final File filePath, final Map<String, ConfigurationMetadataProperty> results, 
+    private void writeConfigurationPropertiesToFile(final File filePath, final Map<String, ConfigurationMetadataProperty> results,
                                                     final Properties p) throws Exception {
         LOGGER.info("Located [{}] properties in configuration file [{}]", results.size(), filePath.getCanonicalPath());
         putResultsIntoProperties(results, p);
@@ -120,7 +116,7 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
     private void putResultsIntoProperties(final Map<String, ConfigurationMetadataProperty> results, final Properties p) {
         final var lines = results.values().stream().collect(Collectors.toList());
         Collections.sort(lines, Comparator.comparing(ConfigurationMetadataProperty::getName));
-        
+
         lines.forEach(v -> {
             final String value;
             if (v.getDefaultValue() == null) {

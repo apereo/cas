@@ -3,6 +3,7 @@ package org.apereo.cas.web;
 import lombok.NoArgsConstructor;
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
@@ -59,7 +60,7 @@ public class CasWebApplication {
         final var banner = CasEmbeddedContainerUtils.getCasBannerInstance();
         new SpringApplicationBuilder(CasWebApplication.class)
             .banner(banner)
-            .web(true)
+            .web(WebApplicationType.SERVLET)
             .properties(properties)
             .logStartupInfo(true)
             .contextClass(CasWebApplicationContext.class)
