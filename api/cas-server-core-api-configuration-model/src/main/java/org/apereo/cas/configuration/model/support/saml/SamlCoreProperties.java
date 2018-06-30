@@ -47,5 +47,5 @@ public class SamlCoreProperties implements Serializable {
     /**
      * Qualified name of the security manager class used for creating a SAML parser pool.
      */
-    private String securityManager = "com.sun.org.apache.xerces.internal.util.SecurityManager";
+    private String securityManager = "org.apache.xerces.util.SecurityManager";
 }
