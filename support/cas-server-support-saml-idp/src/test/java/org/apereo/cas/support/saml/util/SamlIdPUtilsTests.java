@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.util;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.util.CollectionUtils;
@@ -37,7 +36,7 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     public void verifyMetadataForAllServices() throws Exception {
-        final var service = SamlIdPTestUtils.getSamlRegisteredService();
+        final var service = getSamlRegisteredServiceForTestShib();
         servicesManager.save(service);
         final var md = SamlIdPUtils.getMetadataResolverForAllSamlServices(servicesManager, service.getServiceId(),
             samlRegisteredServiceCachingMetadataResolver);
@@ -54,7 +53,7 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     public void verifyAssertionConsumerServiceNoIndex() {
-        final var service = SamlIdPTestUtils.getSamlRegisteredService();
+        final var service = getSamlRegisteredServiceForTestShib();
         servicesManager.save(service);
 
         final var authnRequest = mock(AuthnRequest.class);
@@ -68,7 +67,7 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     public void verifyAssertionConsumerServiceWithIndex() {
-        final var service = SamlIdPTestUtils.getSamlRegisteredService();
+        final var service = getSamlRegisteredServiceForTestShib();
         servicesManager.save(service);
 
         final var authnRequest = mock(AuthnRequest.class);
@@ -84,7 +83,7 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     public void verifyAssertionConsumerServiceWithUrl() {
-        final var service = SamlIdPTestUtils.getSamlRegisteredService();
+        final var service = getSamlRegisteredServiceForTestShib();
         servicesManager.save(service);
         final var authnRequest = mock(AuthnRequest.class);
         final var issuer = mock(Issuer.class);
