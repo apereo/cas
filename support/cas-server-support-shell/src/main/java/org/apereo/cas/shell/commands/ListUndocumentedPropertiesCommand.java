@@ -4,9 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
-import org.springframework.shell.core.CommandMarker;
-import org.springframework.shell.core.annotation.CliCommand;
-import org.springframework.stereotype.Service;
+import org.springframework.shell.standard.ShellCommandGroup;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
 
 import java.util.Comparator;
 import java.util.Map;
@@ -17,9 +17,10 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Service
+@ShellCommandGroup("CAS Properties")
+@ShellComponent
 @Slf4j
-public class ListUndocumentedPropertiesCommand implements CommandMarker {
+public class ListUndocumentedPropertiesCommand {
     /**
      * Error message prefix.
      */
@@ -28,7 +29,7 @@ public class ListUndocumentedPropertiesCommand implements CommandMarker {
     /**
      * List undocumented settings.
      */
-    @CliCommand(value = "list-undocumented", help = "List all CAS undocumented properties.")
+    @ShellMethod(key = "list-undocumented", value = "List all CAS undocumented properties.")
     public void listUndocumented() {
         final var repository = new CasConfigurationMetadataRepository();
         repository.getRepository().getAllProperties()

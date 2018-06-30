@@ -15,7 +15,8 @@ dependencies {
     compile project(":core:cas-server-core-util")
     compile project(":core:cas-server-core-services-api")
     compile project(":core:cas-server-core-configuration-metadata-repository")
-
+    compile project(":core:cas-server-core-logging")
+    
     compile project(":support:cas-server-support-oauth-services")
     compile project(":support:cas-server-support-oidc-services")
     compile project(":support:cas-server-support-saml-idp-core")
@@ -29,7 +30,6 @@ dependencies {
     compile libraries.bouncycastle
     compile libraries.opensaml
 }
-
 
 task listUndocumentedProperties(type: JavaExec) {
     standardOutput = new ByteArrayOutputStream()

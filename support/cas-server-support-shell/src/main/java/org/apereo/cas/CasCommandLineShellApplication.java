@@ -8,6 +8,7 @@ import org.apereo.cas.shell.cli.CasCommandLineEngine;
 import org.apereo.cas.shell.cli.CasCommandLineParser;
 import org.apereo.cas.util.spring.boot.DefaultCasBanner;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
@@ -61,7 +62,7 @@ public class CasCommandLineShellApplication {
             .banner(new DefaultCasBanner())
             .bannerMode(CasCommandLineParser.getBannerMode(args))
             .logStartupInfo(false)
-            .web(false)
+            .web(WebApplicationType.NONE)
             .run(args);
     }
 
