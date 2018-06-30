@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
-import org.springframework.shell.core.CommandMarker;
-import org.springframework.shell.core.annotation.CliCommand;
-import org.springframework.shell.core.annotation.CliOption;
-import org.springframework.stereotype.Service;
+import org.springframework.shell.standard.ShellCommandGroup;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
 
 import java.io.File;
 
@@ -17,9 +17,10 @@ import java.io.File;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Service
+@ShellCommandGroup("Registered Services")
+@ShellComponent
 @Slf4j
-public class ValidateRegisteredServiceCommand implements CommandMarker {
+public class ValidateRegisteredServiceCommand {
 
     private static final int SEP_LINE_LENGTH = 70;
 
@@ -29,18 +30,13 @@ public class ValidateRegisteredServiceCommand implements CommandMarker {
      * @param file      the file
      * @param directory the directory
      */
-    @CliCommand(value = "validate-service", help = "Validate a given JSON/YAML service definition by path or directory")
+    @ShellMethod(key = "validate-service", value = "Validate a given JSON/YAML service definition by path or directory")
     public void validateService(
-            @CliOption(key = {"file"},
-                    help = "Path to the JSON/YAML service definition file",
-                    specifiedDefaultValue = "",
-                    unspecifiedDefaultValue = "",
-                    optionContext = "Path to the JSON/YAML service definition") final String file,
-            @CliOption(key = {"directory"},
-                    help = "Path to the JSON/YAML service definitions directory",
-                    specifiedDefaultValue = "/etc/cas/services",
-                    unspecifiedDefaultValue = "/etc/cas/services",
-                    optionContext = "Path to the JSON/YAML service definitions directory") final String directory) {
+        @ShellOption(value = {"file"},
+            help = "Path to the JSON/YAML service definition file") final String file,
+        @ShellOption(value = {"directory"},
+            help = "Path to the JSON/YAML service definitions directory",
+            defaultValue = "/etc/cas/services") final String directory) {
 
         if (StringUtils.isBlank(file) && StringUtils.isBlank(directory)) {
             LOGGER.warn("Either file or directory must be specified");
@@ -76,6 +72,6 @@ public class ValidateRegisteredServiceCommand implements CommandMarker {
         } finally {
             LOGGER.info(StringUtils.repeat('-', SEP_LINE_LENGTH));
         }
-        
+
     }
 }

@@ -7,10 +7,9 @@ import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificateAndKeyWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.shell.core.CommandMarker;
-import org.springframework.shell.core.annotation.CliCommand;
-import org.springframework.shell.core.annotation.CliOption;
-import org.springframework.stereotype.Service;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
 
 import java.io.File;
 
@@ -20,9 +19,9 @@ import java.io.File;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Service
+@ShellComponent
 @Slf4j
-public class GenerateSamlIdPMetadataCommand implements CommandMarker {
+public class GenerateSamlIdPMetadataCommand {
     @Autowired
     private ResourceLoader resourceLoader;
 
@@ -35,33 +34,22 @@ public class GenerateSamlIdPMetadataCommand implements CommandMarker {
      * @param scope            the scope
      * @param force            force generation of metadata
      */
-    @CliCommand(value = "generate-idp-metadata", help = "Generate SAML2 IdP Metadata")
+    @ShellMethod(key = "generate-idp-metadata", value = "Generate SAML2 IdP Metadata")
     public void generate(
-        @CliOption(key = {"metadataLocation"},
+        @ShellOption(value = {"metadataLocation"},
             help = "Directory location to hold metadata and relevant keys/certificates",
-            specifiedDefaultValue = "/etc/cas/saml",
-            unspecifiedDefaultValue = "/etc/cas/saml",
-            optionContext = "Directory location to hold metadata and relevant keys/certificates") final String metadataLocation,
-        @CliOption(key = {"entityId"},
+            defaultValue = "/etc/cas/saml") final String metadataLocation,
+        @ShellOption(value = {"entityId"},
             help = "Entity ID to use for the generated metadata",
-            specifiedDefaultValue = "cas.example.org",
-            unspecifiedDefaultValue = "cas.example.org",
-            optionContext = "Entity ID to use for the generated metadata") final String entityId,
-        @CliOption(key = {"hostName"},
+            defaultValue = "cas.example.org") final String entityId,
+        @ShellOption(value = {"hostName"},
             help = "CAS server prefix to be used at the IdP host name when generating metadata",
-            specifiedDefaultValue = "https://cas.example.org/cas",
-            unspecifiedDefaultValue = "https://cas.example.org/cas",
-            optionContext = "CAS server prefix to be used at the IdP host name when generating metadata") final String serverPrefix,
-        @CliOption(key = {"scope"},
+            defaultValue = "https://cas.example.org/cas") final String serverPrefix,
+        @ShellOption(value = {"scope"},
             help = "Scope to use when generating metadata",
-            specifiedDefaultValue = "example.org",
-            unspecifiedDefaultValue = "example.org",
-            optionContext = "Scope to use when generating metadata") final String scope,
-        @CliOption(key = {"force"},
-            specifiedDefaultValue = "false",
-            unspecifiedDefaultValue = "false",
-            help = "Force metadata generation, disregarding anything that might already be available at the specified location",
-            optionContext = "Force metadata generation, disregarding anything that might already be available at the specified location") final boolean force) {
+            defaultValue = "example.org") final String scope,
+        @ShellOption(value = {"force"},
+            help = "Force metadata generation, disregarding anything that might already be available at the specified location") final boolean force) {
 
         final SamlIdPMetadataLocator locator = new DefaultSamlIdPMetadataLocator(new File(metadataLocation));
         final var writer = new DefaultSamlIdPCertificateAndKeyWriter();

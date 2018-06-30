@@ -25,10 +25,9 @@ import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.hibernate.tool.schema.TargetType;
 import org.reflections.Reflections;
-import org.springframework.shell.core.CommandMarker;
-import org.springframework.shell.core.annotation.CliCommand;
-import org.springframework.shell.core.annotation.CliOption;
-import org.springframework.stereotype.Service;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
 
 import javax.persistence.Entity;
 import javax.persistence.MappedSuperclass;
@@ -42,11 +41,9 @@ import java.util.TreeMap;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Service
+@ShellComponent
 @Slf4j
-public class GenerateDdlCommand implements CommandMarker {
-
-
+public class GenerateDdlCommand {
     private static final Map<String, String> DIALECTS_MAP = new TreeMap<>();
     private static final Reflections REFLECTIONS = new Reflections("org.apereo.cas");
 
@@ -86,43 +83,29 @@ public class GenerateDdlCommand implements CommandMarker {
      * @param createSchema the create schema
      * @param haltOnError  the halt on error
      */
-    @CliCommand(value = "generate-ddl", help = "Generate database DDL scripts")
+    @ShellMethod(key = "generate-ddl", value = "Generate database DDL scripts")
     public void generate(
-        @CliOption(key = {"file"},
+        @ShellOption(value = {"file"},
             help = "DDL file to contain to generated script",
-            specifiedDefaultValue = "/etc/cas/config/cas-db-schema.sql",
-            unspecifiedDefaultValue = "/etc/cas/config/cas-db-schema.sql",
-            optionContext = "DDL file to contain to generated script") final String file,
-        @CliOption(key = {"dialect"},
+            defaultValue = "/etc/cas/config/cas-db-schema.sql") final String file,
+        @ShellOption(value = {"dialect"},
             help = "Database dialect class",
-            specifiedDefaultValue = "HSQL",
-            unspecifiedDefaultValue = "HSQL",
-            optionContext = "Database dialect class") final String dialect,
-        @CliOption(key = {"delimiter"},
+            defaultValue = "HSQL") final String dialect,
+        @ShellOption(value = {"delimiter"},
             help = "Delimiter to use for separation of statements when generating SQL",
-            specifiedDefaultValue = ";",
-            unspecifiedDefaultValue = ";",
-            optionContext = "Delimiter to use for separation of statements when generating SQL") final String delimiter,
-        @CliOption(key = {"pretty"},
+            defaultValue = ";") final String delimiter,
+        @ShellOption(value = {"pretty"},
             help = "Format DDL scripts and pretty-print the output",
-            specifiedDefaultValue = "true",
-            unspecifiedDefaultValue = "true",
-            optionContext = "Format DDL scripts and pretty-print the output") final boolean pretty,
-        @CliOption(key = {"dropSchema"},
+            defaultValue = "true") final boolean pretty,
+        @ShellOption(value = {"dropSchema"},
             help = "Generate DROP SQL statements in the DDL",
-            specifiedDefaultValue = "true",
-            unspecifiedDefaultValue = "true",
-            optionContext = "Generate DROP statements in the DDL") final boolean dropSchema,
-        @CliOption(key = {"createSchema"},
+            defaultValue = "true") final boolean dropSchema,
+        @ShellOption(value = {"createSchema"},
             help = "Generate DROP SQL statements in the DDL",
-            specifiedDefaultValue = "true",
-            unspecifiedDefaultValue = "true",
-            optionContext = "Generate CREATE SQL statements in the DDL") final boolean createSchema,
-        @CliOption(key = {"haltOnError"},
+            defaultValue = "true") final boolean createSchema,
+        @ShellOption(value = {"haltOnError"},
             help = "Halt if an error occurs during the generation process",
-            specifiedDefaultValue = "true",
-            unspecifiedDefaultValue = "true",
-            optionContext = "Halt if an error occurs during the generation process") final boolean haltOnError) {
+            defaultValue = "true") final boolean haltOnError) {
 
         final var dialectName = DIALECTS_MAP.getOrDefault(dialect.trim().toUpperCase(), dialect);
         LOGGER.info("Using database dialect class [{}]", dialectName);
@@ -145,7 +128,7 @@ public class GenerateDdlCommand implements CommandMarker {
         export.setFormat(pretty);
         export.setHaltOnError(haltOnError);
         export.setManageNamespaces(true);
-        
+
         final SchemaExport.Action action;
         if (createSchema && dropSchema) {
             action = SchemaExport.Action.BOTH;

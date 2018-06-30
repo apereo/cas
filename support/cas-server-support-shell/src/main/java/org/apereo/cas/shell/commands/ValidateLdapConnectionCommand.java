@@ -2,10 +2,10 @@ package org.apereo.cas.shell.commands;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.shell.core.CommandMarker;
-import org.springframework.shell.core.annotation.CliCommand;
-import org.springframework.shell.core.annotation.CliOption;
-import org.springframework.stereotype.Service;
+import org.springframework.shell.standard.ShellCommandGroup;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
 import org.springframework.util.StringUtils;
 
 import javax.naming.Context;
@@ -21,9 +21,10 @@ import java.util.Hashtable;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Service
+@ShellComponent
 @Slf4j
-public class ValidateLdapConnectionCommand implements CommandMarker {
+@ShellCommandGroup("Utilities")
+public class ValidateLdapConnectionCommand {
     private static final int TIMEOUT = 5000;
 
     /**
@@ -37,50 +38,22 @@ public class ValidateLdapConnectionCommand implements CommandMarker {
      * @param userPassword   the user password
      * @param userAttributes the user attributes
      */
-    @CliCommand(value = "validate-ldap", help = "Test connections to an LDAP server to verify connectivity, SSL, etc")
+    @ShellMethod(key = "validate-ldap", value = "Test connections to an LDAP server to verify connectivity, SSL, etc")
     public void validateEndpoint(
-        @CliOption(key = {"url"},
-            mandatory = true,
-            help = "LDAP URL to test, comma-separated.",
-            optionContext = "LDAP URL to test, comma-separated.",
-            specifiedDefaultValue = "false",
-            unspecifiedDefaultValue = "false") final String url,
-        @CliOption(key = {"bindDn"},
-            help = "bindDn to use when testing the LDAP server",
-            specifiedDefaultValue = "",
-            unspecifiedDefaultValue = "",
-            mandatory = true,
-            optionContext = "Proxy address to use when testing the endpoint url") final String bindDn,
-        @CliOption(key = {"bindCredential"},
-            help = "bindCredential to use when testing the LDAP server",
-            specifiedDefaultValue = "",
-            unspecifiedDefaultValue = "",
-            mandatory = true,
-            optionContext = "bindCredential to use when testing the LDAP server") final String bindCredential,
-        @CliOption(key = {"baseDn"},
-            help = "baseDn to use when testing the LDAP server, searching for accounts (i.e. OU=some,DC=org,DC=edu)",
-            specifiedDefaultValue = "",
-            unspecifiedDefaultValue = "",
-            mandatory = true,
-            optionContext = "baseDn to use when testing the LDAP server, searching for accounts (i.e. OU=some,DC=org,DC=edu)") final String baseDn,
-        @CliOption(key = {"searchFilter"},
-            help = "Filter to use when searching for accounts (i.e. (&(objectClass=*) (sAMAccountName=user)))",
-            specifiedDefaultValue = "",
-            unspecifiedDefaultValue = "",
-            mandatory = false,
-            optionContext = "Filter to use when searching for accounts (i.e. (&(objectClass=*) (sAMAccountName=user)))") final String searchFilter,
-        @CliOption(key = {"userPassword"},
-            help = "Password for the user found in the search result, to attempt authentication",
-            specifiedDefaultValue = "",
-            unspecifiedDefaultValue = "",
-            mandatory = false,
-            optionContext = "Password for the user found in the search result, to attempt authentication") final String userPassword,
-        @CliOption(key = {"userAttributes"},
-            help = "User attributes, comma-separated, to fetch for the user found in the search result",
-            specifiedDefaultValue = "",
-            unspecifiedDefaultValue = "",
-            mandatory = false,
-            optionContext = "User attributes, comma-separated, to fetch for the user found in the search result") final String userAttributes) {
+        @ShellOption(value = {"url"},
+            help = "LDAP URL to test, comma-separated.") final String url,
+        @ShellOption(value = {"bindDn"},
+            help = "bindDn to use when testing the LDAP server") final String bindDn,
+        @ShellOption(value = {"bindCredential"},
+            help = "bindCredential to use when testing the LDAP server") final String bindCredential,
+        @ShellOption(value = {"baseDn"},
+            help = "baseDn to use when testing the LDAP server, searching for accounts (i.e. OU=some,DC=org,DC=edu)") final String baseDn,
+        @ShellOption(value = {"searchFilter"},
+            help = "Filter to use when searching for accounts (i.e. (&(objectClass=*) (sAMAccountName=user)))") final String searchFilter,
+        @ShellOption(value = {"userPassword"},
+            help = "Password for the user found in the search result, to attempt authentication") final String userPassword,
+        @ShellOption(value = {"userAttributes"},
+            help = "User attributes, comma-separated, to fetch for the user found in the search result") final String userAttributes) {
         try {
             connect(url, bindDn, bindCredential, baseDn, searchFilter, userAttributes, userPassword);
         } catch (final Exception e) {
@@ -162,7 +135,7 @@ public class ValidateLdapConnectionCommand implements CommandMarker {
 
     private Pair<String, DirContext> getContext(final String ldapUrl, final String bindDn, final String bindCredential) {
         final var urls = StringUtils.commaDelimitedListToSet(ldapUrl);
-        for (final var url : urls) {
+        for (final var url: urls) {
             if (ldapUrl != null && !ldapUrl.isEmpty()) {
                 LOGGER.info("Attempting connect to LDAP instance [{}]", url);
 

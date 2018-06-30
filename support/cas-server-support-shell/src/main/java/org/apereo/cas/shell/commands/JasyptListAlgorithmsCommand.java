@@ -1,15 +1,15 @@
 package org.apereo.cas.shell.commands;
 
-import java.security.Security;
-import java.util.Set;
-
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.registry.AlgorithmRegistry;
-import org.springframework.shell.core.CommandMarker;
-import org.springframework.shell.core.annotation.CliCommand;
-import org.springframework.shell.core.annotation.CliOption;
-import org.springframework.stereotype.Service;
+import org.springframework.shell.standard.ShellCommandGroup;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
+
+import java.security.Security;
+import java.util.Set;
 
 /**
  * This is {@link JasyptListAlgorithmsCommand}.
@@ -17,20 +17,19 @@ import org.springframework.stereotype.Service;
  * @author Hal Deadman
  * @since 5.3.0
  */
+@ShellCommandGroup("Jasypt")
 @Slf4j
-@Service
-public class JasyptListAlgorithmsCommand implements CommandMarker {
+@ShellComponent
+public class JasyptListAlgorithmsCommand {
 
     /**
      * List algorithms you can use Jasypt.
-     * @param includeBC      whether to include the BouncyCastle provider
+     *
+     * @param includeBC whether to include the BouncyCastle provider
      */
-    @CliCommand(value = "jasypt-list-algorithms", help = "List alogrithms you can use with Jasypt for property encryption")
-    public void listAlgorithms(@CliOption(key = { "includeBC" }, 
-                                mandatory = false, 
-                                help = "Include Bouncy Castle provider",  
-                                specifiedDefaultValue = "true",
-                                unspecifiedDefaultValue = "false") final boolean includeBC) {
+    @ShellMethod(key = "jasypt-list-algorithms", value = "List alogrithms you can use with Jasypt for property encryption")
+    public void listAlgorithms(@ShellOption(value = {"includeBC"},
+        help = "Include Bouncy Castle provider") final boolean includeBC) {
         if (includeBC) {
             if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
                 Security.addProvider(new BouncyCastleProvider());
@@ -40,12 +39,12 @@ public class JasyptListAlgorithmsCommand implements CommandMarker {
         }
         final var providers = Security.getProviders();
         LOGGER.info("Loaded providers: ");
-        for (final var provider : providers) {
+        for (final var provider: providers) {
             LOGGER.info("Provider: [{}] [{}]", provider.getName(), provider.getClass().getName());
         }
         final Set<String> pbeAlgos = AlgorithmRegistry.getAllPBEAlgorithms();
         LOGGER.info("==== JASYPT Password Based Encryption Algorithms ====\n");
-        for (final var pbeAlgo : pbeAlgos) {
+        for (final var pbeAlgo: pbeAlgos) {
             LOGGER.info(pbeAlgo);
         }
     }
