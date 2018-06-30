@@ -28,7 +28,7 @@ public class ScriptingUtilsTests {
 
     @Test
     public void verifyExternalGroovyScript() {
-        assertTrue(ScriptingUtils.isExternalGroovyScript("file:/etc/cas/sample.groovy"));
+        assertTrue(ScriptingUtils.isExternalGroovyScript("file:/tmp/sample.groovy"));
     }
 
     @Test
