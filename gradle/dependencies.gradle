@@ -2748,7 +2748,7 @@ ext.libraries = [
                 }
         ],
         spring                  : [
-                dependencies.create("org.springframework.shell:spring-shell:$springShellVersion") {
+                dependencies.create("org.springframework.shell:spring-shell-starter:$springShellVersion") {
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")

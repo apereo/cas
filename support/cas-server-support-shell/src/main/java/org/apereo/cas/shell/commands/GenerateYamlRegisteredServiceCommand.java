@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
-import org.springframework.shell.core.CommandMarker;
-import org.springframework.shell.core.annotation.CliCommand;
-import org.springframework.shell.core.annotation.CliOption;
-import org.springframework.stereotype.Service;
+import org.springframework.shell.standard.ShellCommandGroup;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
 
 import java.io.File;
 import java.io.StringWriter;
@@ -18,9 +18,10 @@ import java.io.StringWriter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Service
+@ShellCommandGroup("Registered Services")
+@ShellComponent
 @Slf4j
-public class GenerateYamlRegisteredServiceCommand implements CommandMarker {
+public class GenerateYamlRegisteredServiceCommand {
 
     private static final int SEP_LINE_LENGTH = 70;
 
@@ -30,20 +31,12 @@ public class GenerateYamlRegisteredServiceCommand implements CommandMarker {
      * @param file        the file
      * @param destination the destination
      */
-    @CliCommand(value = "generate-yaml", help = "Generate a YAML registered service definition")
+    @ShellMethod(key = "generate-yaml", value = "Generate a YAML registered service definition")
     public void generateYaml(
-            @CliOption(key = {"file"},
-                    help = "Path to the JSON service definition file",
-                    specifiedDefaultValue = "",
-                    unspecifiedDefaultValue = "",
-                    mandatory = true,
-                    optionContext = "Path to the JSON service definition") final String file,
-            @CliOption(key = {"destination"},
-                    help = "Path to the destination YAML service definition file",
-                    specifiedDefaultValue = "",
-                    unspecifiedDefaultValue = "",
-                    optionContext = "Path to the destination YAML service definition file") final String destination) {
-
+        @ShellOption(value = {"file"},
+            help = "Path to the JSON service definition file") final String file,
+        @ShellOption(value = {"destination"},
+            help = "Path to the destination YAML service definition file") final String destination) {
         if (StringUtils.isBlank(file)) {
             LOGGER.warn("File must be specified");
             return;
@@ -64,7 +57,7 @@ public class GenerateYamlRegisteredServiceCommand implements CommandMarker {
                 try (var writer = new StringWriter()) {
                     yaml.to(writer, svc);
                     LOGGER.info(writer.toString());
-                    
+
                     if (result != null) {
                         yaml.to(result, svc);
                         LOGGER.info("YAML service definition is saved at [{}].", result.getCanonicalPath());

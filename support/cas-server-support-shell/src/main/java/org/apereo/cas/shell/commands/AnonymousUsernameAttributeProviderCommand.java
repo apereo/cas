@@ -2,10 +2,10 @@ package org.apereo.cas.shell.commands;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
-import org.springframework.shell.core.CommandMarker;
-import org.springframework.shell.core.annotation.CliCommand;
-import org.springframework.shell.core.annotation.CliOption;
-import org.springframework.stereotype.Service;
+import org.springframework.shell.standard.ShellCommandGroup;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
 
 /**
  * This is {@link AnonymousUsernameAttributeProviderCommand}.
@@ -13,9 +13,10 @@ import org.springframework.stereotype.Service;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Service
+@ShellCommandGroup("Registered Services")
+@ShellComponent
 @Slf4j
-public class AnonymousUsernameAttributeProviderCommand implements CommandMarker {
+public class AnonymousUsernameAttributeProviderCommand {
     /**
      * Generate username.
      *
@@ -23,21 +24,14 @@ public class AnonymousUsernameAttributeProviderCommand implements CommandMarker 
      * @param service  the service
      * @param salt     the salt
      */
-    @CliCommand(value = "generate-anonymous-user", help = "Generate an anonymous (persistent) username identifier")
+    @ShellMethod(key = "generate-anonymous-user", value = "Generate an anonymous (persistent) username identifier")
     public void generateUsername(
-        @CliOption(key = {"username"},
-            mandatory = true,
-            help = "Authenticated username",
-            optionContext = "Authenticated username") final String username,
-        @CliOption(key = {"service"},
-            mandatory = true,
-            help = "Service application URL to generate the identifier for",
-            optionContext = "Service application URL to generate the identifier for") final String service,
-        @CliOption(key = {"salt"},
-            mandatory = true,
-            help = "Salt used to generate and encode the anonymous identifier",
-            optionContext = "Salt used to generate and encode the anonymous identifier") final String salt) {
-
+        @ShellOption(value = {"username"},
+            help = "Authenticated username") final String username,
+        @ShellOption(value = {"service"},
+            help = "Service application URL for which CAS may generate the identifier") final String service,
+        @ShellOption(value = {"salt"},
+            help = "Salt used to generate and encode the anonymous identifier") final String salt) {
         final var generator = new ShibbolethCompatiblePersistentIdGenerator(salt);
         final var id = generator.generate(username, service);
         LOGGER.info("Generated identifier:\n[{}]", id);

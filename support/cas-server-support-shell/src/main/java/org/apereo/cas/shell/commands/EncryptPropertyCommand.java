@@ -1,17 +1,16 @@
 package org.apereo.cas.shell.commands;
 
-import java.security.Security;
-
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.shell.core.CommandMarker;
-import org.springframework.shell.core.annotation.CliCommand;
-import org.springframework.shell.core.annotation.CliOption;
-import org.springframework.stereotype.Service;
+import org.springframework.shell.standard.ShellCommandGroup;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
+
+import java.security.Security;
 
 /**
  * This is {@link EncryptPropertyCommand}.
@@ -19,11 +18,10 @@ import org.springframework.stereotype.Service;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Service
+@ShellCommandGroup("CAS Properties")
+@ShellComponent
 @Slf4j
-public class EncryptPropertyCommand implements CommandMarker {
-
-
+public class EncryptPropertyCommand {
     @Autowired
     private Environment environment;
 
@@ -36,31 +34,18 @@ public class EncryptPropertyCommand implements CommandMarker {
      * @param password   the password
      * @param iterations the iterations
      */
-    @CliCommand(value = "encrypt-value", help = "Encrypt a CAS property value/setting via Jasypt")
+    @ShellMethod(key = "encrypt-value", value = "Encrypt a CAS property value/setting via Jasypt")
     public void encryptValue(
-        @CliOption(key = {"value"},
-            help = "Value to encrypt",
-            mandatory = true,
-            optionContext = "Value to encrypt") final String value,
-         @CliOption(key = {"alg"},
-             help = "Algorithm to use to encrypt",
-             optionContext = "Algorithm to use to encrypt",
-             specifiedDefaultValue = StringUtils.EMPTY,
-             unspecifiedDefaultValue = StringUtils.EMPTY) final String alg,
-         @CliOption(key = {"provider"},
-             help = "Security provider to use to encrypt",
-             optionContext = "Security provider to use to encrypt (Enter BC for BouncyCastle)",
-             specifiedDefaultValue = StringUtils.EMPTY,
-             unspecifiedDefaultValue = StringUtils.EMPTY) final String provider,
-         @CliOption(key = {"password"},
-             mandatory = true,
-             help = "Password (encryption key) to encrypt",
-             optionContext = "Password (encryption key) to encrypt") final String password,
-         @CliOption(key = {"iterations"},
-             help = "Key obtention iterations to encrypt",
-             optionContext = "Key obtention iterations to encrypt",
-             specifiedDefaultValue = StringUtils.EMPTY,
-             unspecifiedDefaultValue = StringUtils.EMPTY) final String iterations) {
+        @ShellOption(value = {"value"},
+            help = "Value to encrypt") final String value,
+        @ShellOption(value = {"alg"},
+            help = "Algorithm to use to encrypt") final String alg,
+        @ShellOption(value = {"provider"},
+            help = "Security provider to use to encrypt") final String provider,
+        @ShellOption(value = {"password"},
+            help = "Password (encryption key) to encrypt") final String password,
+        @ShellOption(value = {"iterations"},
+            help = "Key obtention iterations to encrypt") final String iterations) {
 
         final var cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
         cipher.setAlgorithm(alg);

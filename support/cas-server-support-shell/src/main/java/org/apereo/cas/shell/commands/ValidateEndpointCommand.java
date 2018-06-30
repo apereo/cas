@@ -3,10 +3,10 @@ package org.apereo.cas.shell.commands;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.shell.core.CommandMarker;
-import org.springframework.shell.core.annotation.CliCommand;
-import org.springframework.shell.core.annotation.CliOption;
-import org.springframework.stereotype.Service;
+import org.springframework.shell.standard.ShellCommandGroup;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -40,9 +40,10 @@ import java.util.List;
  * @author John Gasper
  * @since 5.3.0
  */
-@Service
+@ShellCommandGroup("Utilities")
+@ShellComponent
 @Slf4j
-public class ValidateEndpointCommand implements CommandMarker {
+public class ValidateEndpointCommand {
     /**
      * Validate endpoint.
      *
@@ -50,26 +51,15 @@ public class ValidateEndpointCommand implements CommandMarker {
      * @param proxy   the proxy
      * @param timeout the timeout
      */
-    @CliCommand(value = "validate-endpoint", help = "Test connections to an endpoint to verify connectivity, SSL, etc")
+    @ShellMethod(key = "validate-endpoint", value = "Test connections to an endpoint to verify connectivity, SSL, etc")
     public void validateEndpoint(
-        @CliOption(key = {"url"},
-            mandatory = true,
-            help = "Endpoint URL to test",
-            optionContext = "Endpoint URL to test",
-            specifiedDefaultValue = "false",
-            unspecifiedDefaultValue = "false") final String url,
-        @CliOption(key = {"proxy"},
-            help = "Proxy address to use when testing the endpoint url",
-            specifiedDefaultValue = "",
-            unspecifiedDefaultValue = "",
-            mandatory = false,
-            optionContext = "Proxy address to use when testing the endpoint url") final String proxy,
-        @CliOption(key = {"timeout"},
+        @ShellOption(value = {"url"},
+            help = "Endpoint URL to test") final String url,
+        @ShellOption(value = {"proxy"},
+            help = "Proxy address to use when testing the endpoint url") final String proxy,
+        @ShellOption(value = {"timeout"},
             help = "Timeout to use in milliseconds when testing the url",
-            specifiedDefaultValue = "5000",
-            unspecifiedDefaultValue = "5000",
-            mandatory = false,
-            optionContext = "Timeout to use in milliseconds when testing the url") final int timeout) {
+            defaultValue = "5000") final int timeout) {
 
         try {
             LOGGER.info("Trying to connect to [{}]", url);
@@ -138,7 +128,7 @@ public class ValidateEndpointCommand implements CommandMarker {
 
             final var httpsConnection = (HttpsURLConnection) urlConnection;
 
-            //Setting our own Trust Manager so the connection completes and we can examine the server cert chain.
+            // Setting our own Trust Manager so the connection completes and we can examine the server cert chain.
             httpsConnection.setSSLSocketFactory(getTheAllTrustingSSLContext().getSocketFactory());
 
             try (var reader = new InputStreamReader(httpsConnection.getInputStream(), "UTF-8")) {
@@ -164,7 +154,7 @@ public class ValidateEndpointCommand implements CommandMarker {
             Arrays.copyOf(certificates, certificates.length, X509Certificate[].class);
 
         LOGGER.info("Server provided certs: ");
-        for (final var certificate : serverCertificates) {
+        for (final var certificate: serverCertificates) {
 
             String validity;
             try {
@@ -194,7 +184,7 @@ public class ValidateEndpointCommand implements CommandMarker {
         LOGGER.info("Detected Truststore: {}", trustManagerFactory.getProvider().getName());
         final List<X509TrustManager> x509TrustManagers = new ArrayList<>();
 
-        for (final var trustManager : trustManagerFactory.getTrustManagers()) {
+        for (final var trustManager: trustManagerFactory.getTrustManagers()) {
             if (trustManager instanceof X509TrustManager) {
                 final var x509TrustManager = (X509TrustManager) trustManager;
                 LOGGER.info("Trusted issuers found: {}", x509TrustManager.getAcceptedIssuers().length);
@@ -207,8 +197,8 @@ public class ValidateEndpointCommand implements CommandMarker {
 
     private String checkTrustedCertStatus(final X509Certificate certificate, final X509TrustManager[] trustManagers) {
 
-        for (final var trustManager : trustManagers) {
-            for (final var trustedCert : trustManager.getAcceptedIssuers()) {
+        for (final var trustManager: trustManagers) {
+            for (final var trustedCert: trustManager.getAcceptedIssuers()) {
                 try {
                     certificate.verify(trustedCert.getPublicKey());
                     return "Matches found: " + trustedCert.getIssuerDN().getName();
