@@ -1,4 +1,4 @@
-package org.apereo.cas.shell.commands;
+package org.apereo.cas.shell.commands.cipher;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;
@@ -20,7 +20,7 @@ import org.springframework.shell.standard.ShellOption;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@ShellCommandGroup("Cipher Operations")
+@ShellCommandGroup("Cipher Ops")
 @ShellComponent
 @Slf4j
 public class GenerateCryptoKeysCommand {

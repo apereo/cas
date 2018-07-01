@@ -3,11 +3,8 @@ package org.apereo.cas;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.shell.CasCommandLineShellBootstrapper;
-import org.apereo.cas.shell.cli.CasCommandLineEngine;
-import org.apereo.cas.shell.cli.CasCommandLineParser;
 import org.apereo.cas.util.spring.boot.DefaultCasBanner;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.Banner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
@@ -23,7 +20,6 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
@@ -60,27 +56,9 @@ public class CasCommandLineShellApplication {
     public static void main(final String[] args) {
         new SpringApplicationBuilder(CasCommandLineShellApplication.class)
             .banner(new DefaultCasBanner())
-            .bannerMode(CasCommandLineParser.getBannerMode(args))
-            .logStartupInfo(false)
+            .bannerMode(Banner.Mode.CONSOLE)
+            .logStartupInfo(true)
             .web(WebApplicationType.NONE)
             .run(args);
-    }
-
-    /**
-     * Command line runner.
-     *
-     * @return the command line runner
-     */
-    @Bean
-    public CommandLineRunner commandLineRunner() {
-        return args -> {
-            if (CasCommandLineParser.isShell(args)) {
-                final var sh = new CasCommandLineShellBootstrapper();
-                sh.execute(args);
-            } else {
-                final var engine = new CasCommandLineEngine();
-                engine.execute(args);
-            }
-        };
     }
 }
