@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,6 +41,7 @@ import java.util.Collection;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @EnableAutoConfiguration(exclude = CasCoreServicesConfiguration.class)
+@TestPropertySource(locations = "classpath:restful-svc.properties")
 public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
