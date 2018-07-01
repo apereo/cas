@@ -2260,6 +2260,10 @@ The signing key and the encryption key [are both JWKs](Configuration-Properties-
 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.gauth.yubikey`.
 
+### YubiKey CouchDb Device Store
+
+Configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
+
 ### YubiKey MongoDb Device Store
 
  Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
