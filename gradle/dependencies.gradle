@@ -1,5 +1,5 @@
 ext.libraries = [
-        jaxb                 : [
+        jaxb                    : [
                 dependencies.create("javax.xml.bind:jaxb-api:$jaxbVersion") {
                     force = true
                     transitive = false
@@ -1235,7 +1235,7 @@ ext.libraries = [
                 }
         ],
         couchbase               : dependencies.create("com.couchbase.client:java-client:$couchbaseVersion"),
-        ektorp                 : dependencies.create("org.ektorp:org.ektorp:$ektorpVersion"),
+        ektorp                  : dependencies.create("org.ektorp:org.ektorp:$ektorpVersion"),
         jcifs                   : [
                 dependencies.create("jcifs:jcifs:$jcifsVersion") {
                     exclude(group: "javax.servlet", module: "servlet-api")
@@ -1917,7 +1917,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        springcomponentindexer: [
+        springcomponentindexer  : [
                 dependencies.create("org.springframework:spring-context-indexer:$springVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-webmvc")
@@ -2747,7 +2747,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        spring                  : [
+        springshell             : [
                 dependencies.create("org.springframework.shell:spring-shell-starter:$springShellVersion") {
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-core")
@@ -2758,7 +2758,10 @@ ext.libraries = [
                     exclude(group: "commons-io", module: "commons-io")
                     exclude(group: "com.google.guava", module: "guava")
                     force = true
-                },
+                }
+        ],
+
+        spring                  : [
                 dependencies.create("org.springframework:spring-aop:$springVersion") {
                     force = true
                 },
