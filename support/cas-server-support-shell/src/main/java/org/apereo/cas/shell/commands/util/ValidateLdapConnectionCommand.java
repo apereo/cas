@@ -1,4 +1,4 @@
-package org.apereo.cas.shell.commands;
+package org.apereo.cas.shell.commands.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -39,7 +39,7 @@ public class ValidateLdapConnectionCommand {
      * @param userAttributes the user attributes
      */
     @ShellMethod(key = "validate-ldap", value = "Test connections to an LDAP server to verify connectivity, SSL, etc")
-    public void validateEndpoint(
+    public void validateLdap(
         @ShellOption(value = {"url"},
             help = "LDAP URL to test, comma-separated.") final String url,
         @ShellOption(value = {"bindDn"},

@@ -10,7 +10,6 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 gradleBuild="$gradleBuild :api:cas-server-core-api-configuration-model:build \
-     :support:cas-server-support-shell:listUndocumentedProperties
      -x check -x test -x javadoc \
      -DskipGradleLint=true -DskipSass=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true  "
