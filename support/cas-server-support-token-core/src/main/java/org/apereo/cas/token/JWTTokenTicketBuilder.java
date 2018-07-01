@@ -1,5 +1,7 @@
 package org.apereo.cas.token;
 
+import com.nimbusds.jose.JOSEObjectType;
+import com.nimbusds.jose.PlainHeader;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import lombok.Getter;
@@ -90,7 +92,6 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
                 .issueTime(issueDate)
                 .subject(subject);
 
-
         attributes.forEach(claims::claim);
         claims.expirationTime(validUntilDate);
 
@@ -115,7 +116,10 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
             LOGGER.debug("Encoding JWT based on default global keys for [{}]", serviceAudience);
             return defaultTokenCipherExecutor.encode(jwtJson);
         }
-        final var token = new PlainJWT(claimsSet).serialize();
+        final var header =new PlainHeader.Builder()
+            .type(JOSEObjectType.JWT)
+            .build();
+        final var token = new PlainJWT(header, claimsSet).serialize();
         LOGGER.trace("Generating plain JWT as the ticket: [{}]", token);
         return token;
     }
