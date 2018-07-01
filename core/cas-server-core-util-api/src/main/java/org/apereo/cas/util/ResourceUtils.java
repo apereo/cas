@@ -165,7 +165,7 @@ public class ResourceUtils {
             return null;
         }
 
-        if (!ClassUtils.isAssignable(resource.getClass(), ClassPathResource.class)) {
+        if (resource instanceof ClassPathResource) {
             return resource;
         }
         if (org.springframework.util.ResourceUtils.isFileURL(resource.getURL())) {
