@@ -1,4 +1,4 @@
-package org.apereo.cas.shell.commands;
+package org.apereo.cas.shell.commands.db;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +25,7 @@ import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.hibernate.tool.schema.TargetType;
 import org.reflections.Reflections;
+import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
@@ -41,6 +42,7 @@ import java.util.TreeMap;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@ShellCommandGroup("Relational Databases")
 @ShellComponent
 @Slf4j
 public class GenerateDdlCommand {

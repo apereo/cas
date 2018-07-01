@@ -1,4 +1,4 @@
-package org.apereo.cas.shell.commands;
+package org.apereo.cas.shell.commands.jasypt;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;

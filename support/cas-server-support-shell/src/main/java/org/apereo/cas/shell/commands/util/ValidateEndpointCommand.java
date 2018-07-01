@@ -1,4 +1,4 @@
-package org.apereo.cas.shell.commands;
+package org.apereo.cas.shell.commands.util;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
