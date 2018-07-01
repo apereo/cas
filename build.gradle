@@ -1,5 +1,4 @@
 description = "Apereo Central Authentication Service $version"
-
 defaultTasks "clean", "build"
 
 ext {

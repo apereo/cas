@@ -9,13 +9,12 @@ dependencies {
      * executable jar by the build packaging process.
      */
     compile project(":api:cas-server-core-api-services")
-
-    compile project(":core:cas-server-core-configuration")
+    
     compile project(":core:cas-server-core-configuration-api")
-    compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-util-api")
     compile project(":core:cas-server-core-services-api")
+    compile project(":core:cas-server-core-logging-config")
     compile project(":core:cas-server-core-configuration-metadata-repository")
-    compile project(":core:cas-server-core-logging")
     
     compile project(":support:cas-server-support-oauth-services")
     compile project(":support:cas-server-support-oidc-services")
@@ -30,18 +29,3 @@ dependencies {
     compile libraries.bouncycastle
     compile libraries.opensaml
 }
-
-task listUndocumentedProperties(type: JavaExec) {
-    standardOutput = new ByteArrayOutputStream()
-    main = "org.apereo.cas.CasCommandLineShellApplication"
-    classpath = sourceSets.main.runtimeClasspath
-    args "-skb", "-pundoc"
-    doLast {
-        def theOutput = standardOutput.toString()
-        if (theOutput != null && theOutput.length() > 0 && theOutput.contains("Undocumented Property:")) {
-            throw new GradleException("Undocumented properties found:\n" + theOutput)
-        }
-    }
-}
-
-// jar.finalizedBy(listUndocumentedProperties)

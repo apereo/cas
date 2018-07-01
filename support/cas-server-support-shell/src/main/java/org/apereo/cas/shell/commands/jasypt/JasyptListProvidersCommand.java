@@ -1,18 +1,18 @@
-package org.apereo.cas.shell.commands;
+package org.apereo.cas.shell.commands.jasypt;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.jasypt.registry.AlgorithmRegistry;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
+import java.security.Provider;
 import java.security.Security;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
- * This is {@link JasyptListAlgorithmsCommand}.
+ * This is {@link JasyptListProvidersCommand}.
  *
  * @author Hal Deadman
  * @since 5.3.0
@@ -20,14 +20,14 @@ import java.util.Set;
 @ShellCommandGroup("Jasypt")
 @Slf4j
 @ShellComponent
-public class JasyptListAlgorithmsCommand {
+public class JasyptListProvidersCommand {
 
     /**
-     * List algorithms you can use Jasypt.
+     * List providers you can use Jasypt.
      *
      * @param includeBC whether to include the BouncyCastle provider
      */
-    @ShellMethod(key = "jasypt-list-algorithms", value = "List alogrithms you can use with Jasypt for property encryption")
+    @ShellMethod(key = "jasypt-list-providers", value = "List encryption providers with PBE Ciphers you can use with Jasypt")
     public void listAlgorithms(@ShellOption(value = {"includeBC"},
         help = "Include Bouncy Castle provider") final boolean includeBC) {
         if (includeBC) {
@@ -37,15 +37,21 @@ public class JasyptListAlgorithmsCommand {
         } else {
             Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
         }
+
         final var providers = Security.getProviders();
-        LOGGER.info("Loaded providers: ");
         for (final var provider: providers) {
-            LOGGER.info("Provider: [{}] [{}]", provider.getName(), provider.getClass().getName());
-        }
-        final Set<String> pbeAlgos = AlgorithmRegistry.getAllPBEAlgorithms();
-        LOGGER.info("==== JASYPT Password Based Encryption Algorithms ====\n");
-        for (final var pbeAlgo: pbeAlgos) {
-            LOGGER.info(pbeAlgo);
+            final var services = provider.getServices();
+            final var algorithms =
+                services.stream()
+                    .filter(service -> "Cipher".equals(service.getType()) && service.getAlgorithm().contains("PBE"))
+                    .map(Provider.Service::getAlgorithm)
+                    .collect(Collectors.toList());
+            if (!algorithms.isEmpty()) {
+                LOGGER.info("Provider: Name: [{}] Class: [{}]", provider.getName(), provider.getClass().getName());
+                for (final var algorithm: algorithms) {
+                    LOGGER.info(" - Algorithm: [{}]", algorithm);
+                }
+            }
         }
     }
 }
