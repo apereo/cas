@@ -345,6 +345,7 @@ public class EncodingUtils {
         jws.setEncodedPayload(base64);
         jws.setAlgorithmHeaderValue(algHeaderValue);
         jws.setKey(key);
+        jws.setHeader("typ", "JWT");
         return jws.getCompactSerialization().getBytes(StandardCharsets.UTF_8);
     }
 
@@ -393,6 +394,7 @@ public class EncodingUtils {
             jwe.setAlgorithmHeaderValue(algorithmHeaderValue);
             jwe.setEncryptionMethodHeaderParameter(contentEncryptionAlgorithmIdentifier);
             jwe.setKey(secretKeyEncryptionKey);
+            jwe.setHeader("typ", "JWT");
             LOGGER.debug("Encrypting via [{}]", contentEncryptionAlgorithmIdentifier);
             return jwe.getCompactSerialization();
         } catch (final Exception e) {
