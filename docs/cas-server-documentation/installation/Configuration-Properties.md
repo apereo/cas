@@ -474,27 +474,80 @@ This check is off by default and may be enabled with a system property of `-DCAS
 ## Actuator Management Endpoints
 
 The following properties describe access controls and settings for the `/actuator`
-endpoint of CAS which provides administrative functionality and oversight into the CAS software. 
-These endpoints are specific to Spring Boot.
+endpoint of CAS which provides administrative functionality and oversight into the CAS software.
 
 To learn more about this topic, [please review this guide](Monitoring-Statistics.html).
 
 ```properties
-# management.endpoints.enabled-by-default=false
+# management.endpoints.enabled-by-default=true
 # management.endpoints.web.base-path=/actuator
+
+# management.endpoints.web.exposure.include=info,health,status,configuration-metadata
+# management.server.add-application-context-header=false
 ```
 
-While most if not all endpoints are disabled by default, they may all be globally controlled via the following setting:
+Credentials for basic authentication may be defined via the following settings:
 
 ```properties
-# management.endpoints.enabled-by-default=true
+# spring.security.user.name=casuser
+# spring.security.user.password=
+# spring.security.user.roles=
 ```
 
-The calculation order for all endpoints is as follows:
+Endpoint security configuration controlled by CAS may be controlled via the following settings:
 
-1. The `enabled` setting of the individual endpoint is consulted in CAS settings.
+```properties
+# cas.monitor.endpoints.enableEndpointSecurity=true
+```
+
+JAAS authentication for endpoint security may be configured via the following settings:
+
+```properties
+# cas.monitor.endpoints.jaas.refreshConfigurationOnStartup=true
+# cas.monitor.endpoints.jaas.loginConfig=file:/etc/cas/config/jaas.conf
+# cas.monitor.endpoints.jaas.loginContextName=CAS
+```
+
+Shared LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) 
+under the configuration key `cas.monitor.endpoints.ldap`.
+
+LDAP authentication for endpoint security may be additionally configured via the following settings:
+
+```properties
+# cas.monitor.endpoints.ldap.ldapAuthz.roleAttribute=uugid
+# cas.monitor.endpoints.ldap.ldapAuthz.rolePrefix=ROLE_
+# cas.monitor.endpoints.ldap.ldapAuthz.allowMultipleResults=false
+# cas.monitor.endpoints.ldap.ldapAuthz.groupAttribute=
+# cas.monitor.endpoints.ldap.ldapAuthz.groupPrefix=
+# cas.monitor.endpoints.ldap.ldapAuthz.groupFilter=
+# cas.monitor.endpoints.ldap.ldapAuthz.groupBaseDn=
+# cas.monitor.endpoints.ldap.ldapAuthz.baseDn=
+# cas.monitor.endpoints.ldap.ldapAuthz.searchFilter=
+```
+
+Shared database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings)
+under the configuration key `cas.monitor.endpoints.jdbc`.
+
+JDBC authentication for endpoint security may be additionally configured via the following settings:
+
+```properties
+# cas.monitor.endpoints.jdbc.rolePrefix=
+# cas.monitor.endpoints.jdbc.query=
+```
+
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) 
+under the configuration key `cas.monitor.endpoints.jdbc`.
+
+
+To determine whether an endpoint is available, the calculation order for all endpoints is as follows:
+
+1. The `enabled` setting of the individual endpoint (i.e. `info`)is consulted in CAS settings, as demonstrated below:
+
+```properties
+# management.endpoint.info.enabled=true
+```
 2. If undefined, the global setting noted above is consulted from CAS settings.
-3. If undefined, the default built-in setting for the endpoint in CAS is consulted which is `false` by default.
+3. If undefined, the default built-in setting for the endpoint in CAS is consulted, which is typically `false` by default.
 
 Endpoints may also be mapped to custom arbitrary endpoints. For example, to remap the `health` endpoint to `healthcheck`, 
 specify the following settings:
@@ -506,7 +559,7 @@ specify the following settings:
 The `health` endpoint may also be configured to show details using `management.endpoint.health.show-details` via the following conditions:
 
 | URL                  | Description
-|----------------------|----------------------------------------------------------
+|----------------------|-------------------------------------------------------
 | `never`              | Never display details of health monitors.
 | `always`             | Always display details of health monitors.
 | `when-authorized`   | Details are only shown to authorized users. Authorized roles can be configured using `management.endpoint.health.roles`.
@@ -1469,7 +1522,8 @@ server, simply increment the index and specify the settings for the next LDAP se
 retrieved from [other attribute repository sources](#authentication-attributes), if any.
 Attributes retrieved directly as part of LDAP authentication trump all other attributes.
 
-To learn more about this topic, [please review this guide](LDAP-Authentication.html). LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.ldap[0]`.
+To learn more about this topic, [please review this guide](LDAP-Authentication.html). 
+LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.ldap[0]`.
 
 ```properties
 #

@@ -9,7 +9,7 @@ Actuator endpoints used to monitor and diagnose the internal configuration of th
 exposed over the endpoint `/actuator`. The following endpoints are secured and available by 
 [Spring Boot actuators](http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html):
 
-| URL                       | Description
+| Endpoint                  | Description
 |---------------------------|-------------------------------------------------------------------------------------
 | `autoconfig`              | Describes how the CAS application context is auto-configured. 
 | `beans`                   | Displays all CAS application context **internal** Spring beans.
@@ -33,9 +33,8 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `prometheus`              | Exposes metrics in a format that can be scraped by a Prometheus server.
 
  The following endpoints are provided by CAS:
-
  
-| URL                       | Description
+| Endpoint                  | Description
 |---------------------------|-------------------------------------------------------------------------------------
 | `spring-webflow`          | Provides a JSON representation of the CAS authentication webflows.
 | `events`                  | Provides a JSON representation of all CAS recorded events.
@@ -102,11 +101,29 @@ So in the example above, the returned "Value" statistic is the sum of the maximu
 "Compressed Class Space", and "Metaspace" areas of the heap. If you just wanted to see the maximum size for the "Metaspace", 
 you could add an additional `tag=id:Metaspace`, i.e. `/actuator/metrics/jvm.memory.max?tag=area:nonheap&tag=id:Metaspace`.
 
-<div class="alert alert-info"><strong>Use `/status/health` instead of `/status` </strong><p>Note that `/status` endpoint is kept for legacy reason. It is advised to use `/status/health` instead of `/status` for the purpose of general health status monitoring</p></div>
+<div class="alert alert-info"><strong>Use `/status/health` instead of `/status` </strong><p>Note that `/status` endpoint is kept for legacy reason. 
+It is advised to use `/status/health` instead of `/status` for the purpose of general health status monitoring</p></div>
 
 ## Security
 
-TODO:
+Once endpoints are enabled and exposed, the security of all provided endpoints is handled 
+by [Spring Security](https://spring.io/projects/spring-security). Protection and access to each endpoint
+is controlled via CAS settings individually such that you may decide a specific security level and method of authentication for each endpoint independently.
+
+If CAS is configured to *NOT* enforce endpoint security rules, then all endpoints are considered sensitive and require authentication, typically handled
+via basic authentication with master credentials defined in CAS settings. 
+
+If CAS is configured to enforce endpoint security rules, then each endpoint may be tagged with a specific security rule allowing access via authorized IP addresses,
+basic credentials, roles and attributes, etc. 
+
+Authentication credentials are typically controlled via CAS settings. For basic authentication, the default username is `casuser`. The password 
+may be automatically generated at startup and displayed in CAS logs if it is left undefined in CAS settings. Additional sources may also be defined
+that would authenticate the request via JAAS, LDAP, JDBC, etc.
+
+Depending on method of access and the `content-type` that is negotiated between the caller and CAS, (i.e. web-based vs. command-line access), 
+credentials may be supplied in headers via `curl` and family or they may be entered into a web-based login form.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#actuator-management-endpoints]).
 
 ### Troubleshooting
 
