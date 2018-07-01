@@ -222,9 +222,6 @@ Execute the following command:
 ```bash
 cd webapp/cas-server-webapp-tomcat
 
-# Or for the management-webapp:
-# cd webapp-mgmt/cas-management-webapp
-
 ../../gradlew build bootRun --parallel --offline --configure-on-demand --build-cache --stacktrace
 ```
 
