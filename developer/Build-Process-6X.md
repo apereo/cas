@@ -58,6 +58,7 @@ The following commandline boolean flags are supported by the build:
 | `skipErrorProneCompiler`          | Skip running the `error-prone` static-analysis compiler.
 | `skipNpmCache`                    | Skip cleaning the NPM cache.
 | `skipNpmLint`                     | Skip running the linter for resources managed by NPM, such as Javascript files.
+| `forceBom`                        | Force the generation of the CAS Maven BOM.
 
 - You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`, `-x check`).
 - If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.
@@ -268,9 +269,9 @@ The following special commit messages are recognized by Travis CI to control asp
 of build behavior:
 
 | Commit Message                    | Description
-|-----------------------------------+------------------------------------------------------------------+
+|-----------------------------------+-----------------------------------------------------------------------------------+
 | `[skip ci]`                       | Skip running a build completely.
-| `[skip tests]`                    | Skip running tests.
+| `[force build]`                   | Ensure the build job is executed forcefully regardless of the commit changeset.
 
 Travis CI is mainly responsible for the following tasks:
 
