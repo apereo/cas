@@ -5,88 +5,76 @@ title: CAS - Metrics
 
 # CAS Metrics
 
-CAS via Spring Boot registers the following core metrics when applicable:
+Supported metrics include:
 
-JVM metrics, report utilization of:
+- Run count and elapsed times for all supported garbage collectors
+- Memory usage for all memory pools, including off-heap memory
+- Breakdown of thread states, including deadlocks
+- File descriptor usage
+- ...
 
-- Various memory and buffer pools
-- Statistics related to garbage collection
-- Threads utilization
-- Number of classes loaded/unloaded
-- CPU metrics
-- File descriptor metrics
-- Logback metrics: record the number of events logged to Logback at each level
-- Uptime metrics: report a gauge for uptime and a fixed gauge representing the application’s absolute start time
-- Tomcat metrics
-- Spring Integration metrics
+## Refresh Interval
 
-Auto-configuration enables the instrumentation of all available DataSource objects 
-with a metric named `jdbc`. Data source instrumentation results in gauges representing the 
-currently active, maximum allowed, and minimum allowed connections in the pool. 
-Each of these gauges has a name that is prefixed by `jdbc`. Metrics are also tagged by the name of the `DataSource` 
-computed based on the bean name. Also, Hikari-specific metrics are exposed with a `hikaricp` prefix. Each metric is tagged by the name of the Pool.
+The metrics reporting interval can be configured via CAS properties.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#metrics).
 
-Auto-configuration enables the instrumentation of all available Caches on startup with metrics prefixed with cache. 
-Cache instrumentation is standardized for a basic set of metrics. Additional, cache-specific metrics are also available.
+## Logging
 
-Auto-configuration will enable the instrumentation of all available RabbitMQ connection factories with a metric named `rabbitmq`.
+All performance data and metrics are routed to a log file via the Log4j configuration:
 
-CAS Metrics are accessed and queried using the CAS actuator admin endpoints. 
-Navigating to the endpoint displays a list of available meter names. 
-You can drill down to view information about a particular meter by providing its name as a selector.
+```xml
+...
+<RollingFile name="perfFileAppender" fileName="perfStats.log" append="true"
+             filePattern="perfStats-%d{yyyy-MM-dd-HH}-%i.log">
+    <PatternLayout pattern="%m%n"/>
+    <Policies>
+        <OnStartupTriggeringPolicy />
+        <SizeBasedTriggeringPolicy size="10 MB"/>
+        <TimeBasedTriggeringPolicy />
+    </Policies>
+</RollingFile>
 
-[See this guide](Monitoring-Statistics.html) to learn more.
+...
 
-## Custom Metrics
-
-To register custom metrics, inject `MeterRegistry` into your component, as shown in the following example:
-
-```java
-public class Dictionary {
-	private final List<String> words = new CopyOnWriteArrayList<>();
-
-	Dictionary(final MeterRegistry registry) {
-		registry.gaugeCollectionSize("dictionary.size", Tags.empty(), this.words);
-	}
-}
+<CasAppender name="casPerf">
+    <AppenderRef ref="perfFileAppender" />
+</CasAppender>
 ```
 
-If you find that you repeatedly instrument a suite of metrics across components or applications,
- you may encapsulate this suite in a `MeterBinder` implementation. By default, metrics 
- from all `MeterBinder` beans will be automatically bound to the Spring-managed `MeterRegistry`.
+### Sample Output
 
-# Customizing Metrics
+```bash
+type=GAUGE, name=jvm.gc.Copy.count, value=22
+type=GAUGE, name=jvm.gc.Copy.time, value=466
+type=GAUGE, name=jvm.gc.MarkSweepCompact.count, value=3
+type=GAUGE, name=jvm.gc.MarkSweepCompact.time, value=414
+type=GAUGE, name=jvm.memory.heap.committed, value=259653632
+type=GAUGE, name=jvm.memory.heap.init, value=268435456
+type=GAUGE, name=jvm.memory.heap.max, value=1062338560
+type=GAUGE, name=jvm.memory.heap.usage, value=0.09121857348376773
+type=GAUGE, name=jvm.memory.heap.used, value=96905008
 
-If you need to apply customizations to specific Meter instances you can use the `io.micrometer.core.instrument.config.MeterFilter` interface. 
-By default, all `MeterFilter` beans will be automatically applied to the micrometer `MeterRegistry.Config`.
+type=METER, name=org.apereo.cas.DefaultCentralAuthenticationService.CREATE_TICKET_GRANTING_TICKET_METER, count=0,
+mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond
 
-For example, if you want to rename the `mytag.region` tag to `mytag.area` for all meter IDs beginning with `com.example`, you can do the following:
+type=METER, name=org.apereo.cas.DefaultCentralAuthenticationService.DESTROY_TICKET_GRANTING_TICKET_METER,
+count=0, mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond
 
-```java
-@Bean
-public MeterFilter renameRegionTagMeterFilter() {
-	return MeterFilter.renameTag("com.example", "mytag.region", "mytag.area");
-}
+type=TIMER, name=org.apereo.cas.DefaultCentralAuthenticationService.GRANT_SERVICE_TICKET_TIMER, count=0,
+min=0.0, max=0.0, mean=0.0, stddev=0.0, median=0.0, p75=0.0, p95=0.0, p98=0.0, p99=0.0, p999=0.0,
+mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond, duration_unit=milliseconds
 ```
 
 ## Storage
 
 CAS metrics may be routed to varying types of databases for storage and analytics. The following options are available:
 
-- Simple (In Memory)
-- Graphite
-- Ganglia
-- JMX
-- Atlas
-- Signal FX
+- Redis
+- Open TSDB
 - Statsd
 - InfluxDb
-- Prometheus
-- Wavefront
-- New Relic
-- CloudWatch
-- ...
-                
+- MongoDb
+
 Support is enabled by including the following module in the Overlay:
 
 ```xml

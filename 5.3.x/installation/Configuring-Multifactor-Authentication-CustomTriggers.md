@@ -79,7 +79,7 @@ package org.apereo.cas.custom.config;
 
 @Configuration("SomethingConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SomethingConfiguration implements InitializingBean {
+public class SomethingConfiguration {
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
@@ -90,8 +90,8 @@ public class SomethingConfiguration implements InitializingBean {
         return new CustomWebflowEventResolver();
     }
 
-    @Override
-    public void afterPropertiesSet() {
+    @PostConstruct
+    public void initialize() {
         initialEventResolver.addDelegate(customWebflowEventResolver());
     }
 }
