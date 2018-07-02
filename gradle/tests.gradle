@@ -1,150 +1,138 @@
-task testCassandra(type: Test) {
-    useJUnit {
-        includeCategories 'org.apereo.cas.category.CassandraCategory'
-    }
-    onlyIf {
-        "CASSANDRA".equalsIgnoreCase(rootProject.testCategoryType)
-    }
-}
-
-task testCosmosDb(type: Test) {
-    useJUnit {
-        includeCategories 'org.apereo.cas.category.CosmosDbCategory'
-    }
-    onlyIf {
-        "COSMOSDB".equalsIgnoreCase(rootProject.testCategoryType)
+if (project.name =~ /cassandra/) {
+    task testCassandra(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.CassandraCategory'
+        }
     }
 }
 
-task testCouchbase(type: Test) {
-    useJUnit {
-        includeCategories 'org.apereo.cas.category.CouchbaseCategory'
-    }
-    onlyIf {
-        "COUCHBASE".equalsIgnoreCase(rootProject.testCategoryType)
-    }
-}
-
-task testCouchDb(type: Test) {
-    useJUnit {
-        includeCategories 'org.apereo.cas.category.CouchDbCategory'
-    }
-    onlyIf {
-        "COUCHDB".equalsIgnoreCase(rootProject.testCategoryType)
+if (project.name =~ /cosmos/) {
+    task testCosmosDb(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.CosmosDbCategory'
+        }
     }
 }
 
-task testMySQL(type: Test) {
-    useJUnit {
-        includeCategories 'org.apereo.cas.category.MySQLCategory'
-    }
-    onlyIf {
-        "MYSQL".equalsIgnoreCase(rootProject.testCategoryType)
-    }
-}
-
-task testPostgres(type: Test) {
-    useJUnit {
-        includeCategories 'org.apereo.cas.category.PostgresCategory'
-    }
-    onlyIf {
-        "POSTGRES".equalsIgnoreCase(rootProject.testCategoryType)
+if (project.name =~ /couchbase/) {
+    task testCouchbase(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.CouchbaseCategory'
+        }
     }
 }
 
-task testDynamoDb(type: Test) {
-    useJUnit {
-        includeCategories 'org.apereo.cas.category.DynamoDbCategory'
-    }
-    onlyIf {
-        "DYNAMODB".equalsIgnoreCase(rootProject.testCategoryType)
-    }
-}
-
-task testFileSystem(type: Test) {
-    useJUnit {
-        includeCategories 'org.apereo.cas.category.FileSystemCategory'
-    }
-    onlyIf {
-        "FILESYSTEM".equalsIgnoreCase(rootProject.testCategoryType)
+if (project.name =~ /couchdb/) {
+    task testCouchDb(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.CouchDbCategory'
+        }
     }
 }
 
-task testIgnite(type: Test) {
-    useJUnit {
-        includeCategories 'org.apereo.cas.category.IgniteCategory'
+if (project.name =~ /jpa/) {
+    if ("MYSQL".equalsIgnoreCase(rootProject.testCategoryType)) {
+        task testMySQL(type: Test) {
+            useJUnit {
+                includeCategories 'org.apereo.cas.category.MySQLCategory'
+            }
+        }
     }
-    def list = []
-    list.add("--add-exports")
-    list.add("java.base/jdk.internal.misc=ALL-UNNAMED")
-    list.add("--add-exports")
-    list.add("java.base/sun.nio.ch=ALL-UNNAMED")
-    jvmArgs = list
-    onlyIf {
-        "IGNITE".equalsIgnoreCase(rootProject.testCategoryType)
+
+    if ("POSTGRES".equalsIgnoreCase(rootProject.testCategoryType)) {
+        task testPostgres(type: Test) {
+            useJUnit {
+                includeCategories 'org.apereo.cas.category.PostgresCategory'
+            }
+        }
+    }
+
+    if ("MSSQLSERVER".equalsIgnoreCase(rootProject.testCategoryType)) {
+        task testMsSqlServer(type: Test) {
+            useJUnit {
+                includeCategories 'org.apereo.cas.category.MsSqlServerCategory'
+            }
+        }
     }
 }
 
-task testInfluxDb(type: Test) {
-    useJUnit {
-        includeCategories 'org.apereo.cas.category.InfluxDbCategory'
-    }
-    onlyIf {
-        "INFLUXDB".equalsIgnoreCase(rootProject.testCategoryType)
-    }
-}
-
-task testLdap(type: Test) {
-    useJUnit {
-        includeCategories 'org.apereo.cas.category.LdapCategory'
-    }
-    onlyIf {
-        "LDAP".equalsIgnoreCase(rootProject.testCategoryType)
+if (project.name =~ /dynamodb/) {
+    task testDynamoDb(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.DynamoDbCategory'
+        }
     }
 }
 
-task testMail(type: Test) {
-    useJUnit {
-        includeCategories 'org.apereo.cas.category.MailCategory'
-    }
-    onlyIf {
-        "MAIL".equalsIgnoreCase(rootProject.testCategoryType)
-    }
-}
-
-task testMemcached(type: Test) {
-    useJUnit {
-        includeCategories 'org.apereo.cas.category.MemcachedCategory'
-    }
-    onlyIf {
-        "MEMCACHED".equalsIgnoreCase(rootProject.testCategoryType)
+if ("FILESYSTEM".equalsIgnoreCase(rootProject.testCategoryType)) {
+    task testFileSystem(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.FileSystemCategory'
+        }
     }
 }
 
-task testMsSqlServer(type: Test) {
-    useJUnit {
-        includeCategories 'org.apereo.cas.category.MsSqlServerCategory'
-    }
-    onlyIf {
-        "MSSQLSERVER".equalsIgnoreCase(rootProject.testCategoryType)
+
+if (project.name =~ /ignite/) {
+    task testIgnite(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.IgniteCategory'
+        }
+        def list = []
+        list.add("--add-exports")
+        list.add("java.base/jdk.internal.misc=ALL-UNNAMED")
+        list.add("--add-exports")
+        list.add("java.base/sun.nio.ch=ALL-UNNAMED")
+        jvmArgs = list
     }
 }
 
-task testMongoDb(type: Test) {
-    useJUnit {
-        includeCategories 'org.apereo.cas.category.MongoDbCategory'
-    }
-    onlyIf {
-        "MONGODB".equalsIgnoreCase(rootProject.testCategoryType)
+if (project.name =~ /influxdb/) {
+    task testInfluxDb(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.InfluxDbCategory'
+        }
     }
 }
 
-task testRedis(type: Test) {
-    useJUnit {
-        includeCategories 'org.apereo.cas.category.RedisCategory'
+
+if ("LDAP".equalsIgnoreCase(rootProject.testCategoryType)) {
+    task testLdap(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.LdapCategory'
+        }
     }
-    onlyIf {
-        "REDIS".equalsIgnoreCase(rootProject.testCategoryType)
+}
+
+if ("MAIL".equalsIgnoreCase(rootProject.testCategoryType)) {
+    task testMail(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.MailCategory'
+        }
+    }
+}
+
+if (project.name =~ /memcached/) {
+    task testMemcached(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.MemcachedCategory'
+        }
+    }
+}
+
+if (project.name =~ /mongo/) {
+    task testMongoDb(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.MongoDbCategory'
+        }
+    }
+}
+
+if (project.name =~ /redis/) {
+    task testRedis(type: Test) {
+        useJUnit {
+            includeCategories 'org.apereo.cas.category.RedisCategory'
+        }
     }
 }
 
@@ -188,5 +176,4 @@ tasks.withType(Test) {
         showExceptions = true
         showCauses = true
     }
-    enabled = rootProject.testCategoryType != null
 }
