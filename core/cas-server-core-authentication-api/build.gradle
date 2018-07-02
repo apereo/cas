@@ -9,7 +9,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-mfa")
     
-    implementation libraries.groovy
+
     implementation libraries.springsecurity
     implementation libraries.caffein
     implementation libraries.metrics

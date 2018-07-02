@@ -1,6 +1,6 @@
 description = "Apereo CAS Core Webflow"
 dependencies {
-    implementation libraries.groovy
+
     implementation libraries.bouncycastle
     
     implementation project(":core:cas-server-core-authentication-api")
