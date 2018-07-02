@@ -21,13 +21,18 @@ There are is a wide range of servlet containers and servers on the menu. The sel
 ## Production Quality
 
 All servlet containers presented here, embedded or otherwise, aim to be production ready. This means that CAS ships with useful defaults out of the box that 
-may be overridden, if necessary and by default, CAS configures everything for you from development to production in today’s platforms. In terms of their production quality, there is almost no difference between using an embedded container vs. an external one.
+may be overridden, if necessary and by default, CAS configures everything for you from development to production 
+in today’s platforms. In terms of their production quality, there is almost no difference between using an embedded container vs. an external one.
 
 ## Embedded
 
-Note that CAS itself ships with a number of embedded containers that allow the platform to be self-contained as much as possible. These embedded containers are an integral part of the CAS software, are maintained and updated usually for every release and surely are meant to and can be used in production deployments. You **DO NOT** need to, but can if you want to, configure and deploy to an externally configured container. 
+Note that CAS itself ships with a number of embedded containers that allow the platform to be self-contained 
+as much as possible. These embedded containers are an integral part of the CAS software, are maintained and 
+updated usually for every release and surely are meant to and can be used in production deployments. 
+You **DO NOT** need to, but can if you want to, configure and deploy to an externally configured container. 
 
-<div class="alert alert-info"><strong>Do Less</strong><p>Remember that most if not all aspects of the embedded container can be controlled via the CAS properties. See <a href="Configuration-Properties.html#embedded-tomcat">this guide</a> for more info.</p></div>
+<div class="alert alert-info"><strong>Do Less</strong><p>Remember that most if not all aspects of the embedded 
+container can be controlled via the CAS properties. See <a href="Configuration-Properties.html#embedded-tomcat">this guide</a> for more info.</p></div>
 
 To see the relevant list of CAS properties, 
 please [review this guide](Configuration-Properties.html#embedded-container).
@@ -55,7 +60,8 @@ This is achieved via the build process of the deployment overlay where a launch 
  head -n X /path/to.cas.war
  ```
  
-Note that running CAS as a standalone and fully executable web application is supported on most Linux and OS X distributions. Other platforms such as Windows may require custom configuration.
+Note that running CAS as a standalone and fully executable web application is supported on most Linux and OS X distributions. 
+Other platforms such as Windows may require custom configuration.
 
 ### Apache Tomcat
 
@@ -81,13 +87,17 @@ The same sort of configuration needs to be applied to your `$CATALINA_OPTS` envi
 
 #### Faster Startup
 
-[This guide](https://wiki.apache.org/tomcat/HowTo/FasterStartUp) provides several recommendations on how to make web applications and Apache Tomcat as a whole to start up faster.
+[This guide](https://wiki.apache.org/tomcat/HowTo/FasterStartUp) provides several recommendations on how to make 
+web applications and Apache Tomcat as a whole to start up faster.
 
 #### Logging
 
-The embedded Apache Tomcat container is presently unable to display any log messages below `INFO` even if your CAS log configuration explicitly asks for `DEBUG` or `TRACE` level data. See [this bug report](https://github.com/spring-projects/spring-boot/issues/2923) to learn more.
+The embedded Apache Tomcat container is presently unable to display any log messages below `INFO` even if your CAS log 
+configuration explicitly asks for `DEBUG` or `TRACE` level data. See [this bug report](https://github.com/spring-projects/spring-boot/issues/2923) to learn more.
 
-While workarounds and fixes may become available in the future, for the time being, you may execute the following changes to get `DEBUG` level log data from the embedded Apache Tomcat. This is specially useful if you are troubleshooting the behavior of Tomcat's internal components such as valves, etc.
+While workarounds and fixes may become available in the future, for the time being, you may execute the following 
+changes to get `DEBUG` level log data from the embedded Apache Tomcat. This is specially useful if you are troubleshooting the behavior 
+of Tomcat's internal components such as valves, etc.
 
 - Design a `logging.properties` file as such:
 
@@ -98,7 +108,8 @@ java.util.logging.ConsoleHandler.level = DEBUG
 java.util.logging.ConsoleHandler.formatter = java.util.logging.SimpleFormatter
 ```
 
-- Design a`java.util.logging.config.file` setting as a system/environment variable or command-line argument whose value is set to the `logging.properties` path. Use the setting when you launch and deploy CAS.
+- Design a`java.util.logging.config.file` setting as a system/environment variable or command-line 
+argument whose value is set to the `logging.properties` path. Use the setting when you launch and deploy CAS.
 
 For instance:
 
@@ -129,7 +140,7 @@ java -jar /path/to/cas.war -Djava.util.logging.config.file=/path/to/logging.prop
 ## External
 
 A CAS deployment may be deployed to any number of external servlet containers. The container **MUST** support
-the servlet specification `v3.1.x` at a minimum. In these scenarios, the following vanilla CAS web application
+the servlet specification `v4.0.0` at a minimum. In these scenarios, the following vanilla CAS web application
 may be used, in the [WAR Overlay](Maven-Overlay-Installation.html) :
 
 ```xml
@@ -142,15 +153,18 @@ may be used, in the [WAR Overlay](Maven-Overlay-Installation.html) :
 
 While there is no official project support, the following containers should be compatible with a CAS deployment:
 
-* [Apache Tomcat](http://tomcat.apache.org/) (At a minimum, Apache Tomcat 8+ is required)
+* [Apache Tomcat](http://tomcat.apache.org/) (At a minimum, Apache Tomcat 9 is required)
 * [JBoss](http://www.jboss.org/)
 * [Wildfly](http://wildfly.org/)
 * [Undertow](http://undertow.io/)
-* [Jetty](http://www.eclipse.org/jetty/)
+* [Jetty](http://www.eclipse.org/jetty/) (At a minimum, Jetty 9.4 is required)
 * [GlassFish](http://glassfish.java.net/)
 * [WebSphere](http://www.ibm.com/software/websphere/)
 
-Remember that an external container's configuration is **NEVER** automated by CAS in any way which means you are responsible for upgrades, maintenance and all other manners of configuration such as logging, SSL, etc. CAS does not provide official support and troubleshooting guidelines, etc for an external container's configuration or issues. Refer to the servlet container's own documentation for more info.
+Remember that an external container's configuration is **NEVER** automated by CAS in any way which means you are 
+responsible for upgrades, maintenance and all other manners of configuration such as logging, SSL, etc. CAS does 
+not provide official support and troubleshooting guidelines, etc for an external container's configuration or issues. 
+Refer to the servlet container's own documentation for more info.
 
 ### Configuration
 
@@ -166,7 +180,10 @@ Support for external containers is enabled by including the following module in 
 
 ### Async Support
 
-In the event that an external servlet container is used, you MAY need to make sure it's configured correctly to support asynchronous requests in the event you get related errors and your container requires this. This is typically handled by setting `<async-supported>true</async-supported>` inside the container's main `web.xml`  file (i.e. For Apache Tomcat, that would be `$CATALINA_HOME/conf/web.xml`).
+In the event that an external servlet container is used, you MAY need to make sure it's configured correctly to 
+support asynchronous requests in the event you get related errors and your container requires this. This is 
+typically handled by setting `<async-supported>true</async-supported>` inside the container's main `web.xml`  
+file (i.e. For Apache Tomcat, that would be `$CATALINA_HOME/conf/web.xml`).
 
 ### Logging
 
@@ -195,7 +212,10 @@ The above configuration will turn the logging initialization moot, allowing the 
 ### Async Logging
 
 CAS logging automatically inserts itself into the runtime application context and will clean up
-the logging context once the container is instructed to shut down. However, Apache Tomcat in particular seems to by default ignore all JAR files named `log4j*.jar`, which prevents this feature from working. You may need to change the `catalina.properties` and remove `log4j*.jar` from the `jarsToSkip` property. Failure to do so will prevent the container to gracefully shut down and causes logger context threads to hang.
+the logging context once the container is instructed to shut down. However, Apache Tomcat in particular 
+seems to by default ignore all JAR files named `log4j*.jar`, which prevents this feature from working. 
+You may need to change the `catalina.properties` and remove `log4j*.jar` from the `jarsToSkip` property. Failure 
+to do so will prevent the container to gracefully shut down and causes logger context threads to hang.
 
 You may need to do something similar on other containers if they skip scanning Log4j JAR files.
 
@@ -206,4 +226,5 @@ See [this guide](Docker-Installation.html) for more info.
 
 ## System Service
 
-CAS can be easily started as Unix/Linux services using either `init.d` or `systemd`. To learn more, please [visit this guide](Configuring-Deployment-System-Service.html).
+CAS can be easily started as Unix/Linux services using either `init.d` or `systemd`. To learn 
+more, please [visit this guide](Configuring-Deployment-System-Service.html).

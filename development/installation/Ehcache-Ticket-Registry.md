@@ -24,7 +24,7 @@ across the cluster of nodes that are defined in the configuration.
 
 
 ### RMI Replication
-Ehcache supports [RMI](http://docs.oracle.com/javase/6/docs/technotes/guides/rmi/index.html)
+Ehcache supports [RMI](https://docs.oracle.com/javase/tutorial/rmi/index.html)
 replication for distributed caches composed of two or more nodes. To learn more about RMI
 replication with Ehcache, [see this resource](http://ehcache.org/documentation/user-guide/rmi-replicated-caching).
 

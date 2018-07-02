@@ -129,8 +129,14 @@ def Boolean write(final Object... args) {
 
 def Boolean delete(final Object... args) {
     def decisionId = args[0]
-    def principal = args[1]
-    def logger = args[2]
+    def logger = args[1]
+    ...
+    return true;
+}
+
+def Boolean deleteAll(final Object... args) {
+    def principal = args[0]
+    def logger = args[1]
     ...
     return true;
 }
@@ -189,6 +195,7 @@ Endpoints must be designed to accept/process `application/json`.
 | Locate all consent decisions  | `GET`     | N/A    | `200`. The consent decisions object in the body.
 | Store consent decision    | `POST`    |  Consent decision object in the body | `200`.
 | Delete consent decision   | `DELETE`  | `/<decisionId>` appended to URL      | `200`.
+| Delete consent decisions   | `DELETE`  | `principal` as header      | `200`.
 
 The consent decision object in transit will and must match the JSON structure above.
 
