@@ -1,4 +1,4 @@
-if (project.name =~ /cassandra/) {
+if (project.name =~ /cassandra/ && "CASSANDRA".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testCassandra(type: Test) {
         useJUnit {
             includeCategories 'org.apereo.cas.category.CassandraCategory'
@@ -6,7 +6,7 @@ if (project.name =~ /cassandra/) {
     }
 }
 
-if (project.name =~ /cosmos/) {
+if (project.name =~ /cosmos/ && "COSMOSDB".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testCosmosDb(type: Test) {
         useJUnit {
             includeCategories 'org.apereo.cas.category.CosmosDbCategory'
@@ -14,7 +14,7 @@ if (project.name =~ /cosmos/) {
     }
 }
 
-if (project.name =~ /couchbase/) {
+if (project.name =~ /couchbase/ && "COUCHBASE".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testCouchbase(type: Test) {
         useJUnit {
             includeCategories 'org.apereo.cas.category.CouchbaseCategory'
@@ -22,7 +22,7 @@ if (project.name =~ /couchbase/) {
     }
 }
 
-if (project.name =~ /couchdb/) {
+if (project.name =~ /couchdb/ && "COUCHDB".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testCouchDb(type: Test) {
         useJUnit {
             includeCategories 'org.apereo.cas.category.CouchDbCategory'
@@ -56,7 +56,7 @@ if (project.name =~ /jpa/) {
     }
 }
 
-if (project.name =~ /dynamodb/) {
+if (project.name =~ /dynamodb/ && "DYNAMODB".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testDynamoDb(type: Test) {
         useJUnit {
             includeCategories 'org.apereo.cas.category.DynamoDbCategory'
@@ -73,7 +73,7 @@ if ("FILESYSTEM".equalsIgnoreCase(rootProject.testCategoryType)) {
 }
 
 
-if (project.name =~ /ignite/) {
+if (project.name =~ /ignite/ && "IGNITE".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testIgnite(type: Test) {
         useJUnit {
             includeCategories 'org.apereo.cas.category.IgniteCategory'
@@ -87,7 +87,7 @@ if (project.name =~ /ignite/) {
     }
 }
 
-if (project.name =~ /influxdb/) {
+if (project.name =~ /influxdb/ && "INFLUXDB".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testInfluxDb(type: Test) {
         useJUnit {
             includeCategories 'org.apereo.cas.category.InfluxDbCategory'
@@ -112,7 +112,7 @@ if ("MAIL".equalsIgnoreCase(rootProject.testCategoryType)) {
     }
 }
 
-if (project.name =~ /memcached/) {
+if (project.name =~ /memcached/ && "MEMCACHED".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testMemcached(type: Test) {
         useJUnit {
             includeCategories 'org.apereo.cas.category.MemcachedCategory'
@@ -120,7 +120,7 @@ if (project.name =~ /memcached/) {
     }
 }
 
-if (project.name =~ /mongo/) {
+if (project.name =~ /mongo/ && "MONGODB".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testMongoDb(type: Test) {
         useJUnit {
             includeCategories 'org.apereo.cas.category.MongoDbCategory'
@@ -128,7 +128,7 @@ if (project.name =~ /mongo/) {
     }
 }
 
-if (project.name =~ /redis/) {
+if (project.name =~ /redis/ && "REDIS".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testRedis(type: Test) {
         useJUnit {
             includeCategories 'org.apereo.cas.category.RedisCategory'
