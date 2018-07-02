@@ -343,6 +343,7 @@ subprojects {
         api libraries.httpclient
         api libraries.quartz
         api libraries.hibernate
+        api libraries.groovy
         api libraries.springcloud
         api libraries.springboot
 
@@ -360,12 +361,13 @@ subprojects {
             errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
         }
         testImplementation libraries.tests
+        testImplementation libraries.groovy
         compileOnly libraries.findbugsannotations
     }
 
     if (project.name != 'cas-server-core-api-test-category') {
         dependencies {
-            testImplementation project(path: ':api:cas-server-core-api-test-category', configuration: "tests")
+            testImplementation project(path: ":api:cas-server-core-api-test-category", configuration: "tests")
         }
     }
 }
