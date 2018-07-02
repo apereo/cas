@@ -1371,14 +1371,6 @@ ext.libraries = [
                     exclude(group: "junit", module: "junit")
                     force = true
                 },
-                dependencies.create("org.spockframework:spock-core:$spockVersion") {
-                    exclude(group: "junit", module: "junit")
-                    force = true
-                },
-                dependencies.create("org.spockframework:spock-spring:$spockVersion") {
-                    exclude(group: "junit", module: "junit")
-                    force = true
-                },
                 dependencies.create("org.json:json:$jsonVersion") {
                     force = true
                 }

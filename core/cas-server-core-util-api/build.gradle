@@ -10,7 +10,7 @@ dependencies {
     implementation libraries.springsecurity
     implementation libraries.zxingbarcode
     implementation libraries.bouncycastle
-    implementation libraries.groovy
+
     implementation libraries.semver
     implementation libraries.oshi
 }

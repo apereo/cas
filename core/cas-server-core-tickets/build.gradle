@@ -1,13 +1,13 @@
 description = "Apereo CAS Core Tickets"
 dependencies {
     api project(":api:cas-server-core-api-ticket")
+    api project(":core:cas-server-core-tickets-api")
+
     implementation libraries.casclient
     implementation libraries.caffein
 
-    api project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
-    
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-configuration-api")

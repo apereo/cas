@@ -48,7 +48,7 @@ dependencies {
 
     implementation libraries.pac4j
     implementation libraries.thymeleaf
-    implementation libraries.groovy
+
     implementation libraries.cassecurityfilter
     implementation libraries.metrics
     implementation libraries.bouncycastle

@@ -5,7 +5,7 @@ dependencies {
     implementation libraries.springsecurity
     implementation libraries.mongo
     implementation libraries.jasypt
-    implementation libraries.groovy
+
     implementation libraries.bouncycastle
 
     compile libraries.springbootconfigmetadata
