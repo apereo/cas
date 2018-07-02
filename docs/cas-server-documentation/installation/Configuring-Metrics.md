@@ -43,11 +43,11 @@ To register custom metrics, inject `MeterRegistry` into your component, as shown
 
 ```java
 public class Dictionary {
-	private final List<String> words = new CopyOnWriteArrayList<>();
+    private final List<String> words = new CopyOnWriteArrayList<>();
 
-	Dictionary(final MeterRegistry registry) {
-		registry.gaugeCollectionSize("dictionary.size", Tags.empty(), this.words);
-	}
+    Dictionary(final MeterRegistry registry) {
+        registry.gaugeCollectionSize("dictionary.size", Tags.empty(), this.words);
+    }
 }
 ```
 
@@ -65,7 +65,7 @@ For example, if you want to rename the `mytag.region` tag to `mytag.area` for al
 ```java
 @Bean
 public MeterFilter renameRegionTagMeterFilter() {
-	return MeterFilter.renameTag("com.example", "mytag.region", "mytag.area");
+    return MeterFilter.renameTag("com.example", "mytag.region", "mytag.area");
 }
 ```
 
