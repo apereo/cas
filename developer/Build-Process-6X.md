@@ -84,10 +84,9 @@ CAS development may be carried out using any modern IDE.
 
 The following IDEA settings for Gradle may also be useful:
 
-![image](https://user-images.githubusercontent.com/1205228/33073158-33b20b64-ce7f-11e7-91d9-3b9f867201f4.png)
+![image](https://user-images.githubusercontent.com/1205228/42181347-5e55351a-7def-11e8-8204-f681c36eed2c.png)
 
 - Note how 'Use auto-import' is turned off. To resolve Gradle modules and dependencies, you are required to force refresh the project rather than have IDEA auto-refresh the project as you make changes to the build script. Disabling auto-import usually results in much better performance.
-- Note how 'Offline work' is enabled. This is equivalent to Gradle's own `--offline` flag, forcing the build to not contact Maven/Gradle repositories for resolving dependencies. Working offline usually results in much better performance.
 - You must also decide to use the 'default gradle wrapper' option as opposed to your own local Gradle installation. 
 
 You may also need to adjust the 'Compiler' settings so modules are built in parallel and automatically:
