@@ -4,7 +4,7 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":support:cas-server-support-geolocation")
     api project(":api:cas-server-core-api-authentication")
-    implementation libraries.groovy
+
     implementation libraries.googlegeocoding
     implementation libraries.userinfogeocoding
     implementation libraries.okhttp

@@ -12,7 +12,7 @@ dependencies {
     implementation libraries.pac4j
     implementation libraries.zxingbarcode
     implementation libraries.bouncycastle
-    implementation libraries.groovy
+
     implementation libraries.semver
 
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
