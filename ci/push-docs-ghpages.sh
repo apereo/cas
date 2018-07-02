@@ -18,7 +18,7 @@ if [ "$runBuild" = false ]; then
     exit 0
 fi
 
-branchVersion="5.3.x"
+branchVersion="development"
 
 echo -e "Copying project documentation over to $HOME/docs-latest...\n"
 cp -R docs/cas-server-documentation $HOME/docs-latest
