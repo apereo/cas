@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.support;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -73,18 +74,18 @@ public class RememberMeDelegatingExpirationPolicyTests {
 
     @Test
     public void verifyTicketTTLWithRememberMe() {
-        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication(
+        final var authentication = CoreAuthenticationTestUtils.getAuthentication(
                 this.principalFactory.createPrincipal("test"),
                 Collections.singletonMap(
                         RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
-        final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
+        final var t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertEquals(REMEMBER_ME_TTL, p.getTimeToLive(t));
     }
 
     @Test
     public void verifyTicketTTLWithoutRememberMe() {
-        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication();
-        final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
+        final var authentication = CoreAuthenticationTestUtils.getAuthentication();
+        final var t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertEquals(DEFAULT_TTL, p.getTimeToLive(t));
     }
 
