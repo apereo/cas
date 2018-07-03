@@ -1,9 +1,11 @@
 package org.apereo.cas.services;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.couchdb.services.RegisteredServiceDocument;
 import org.apereo.cas.couchdb.services.RegisteredServiceRepository;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.ektorp.UpdateConflictException;
 
 import java.util.List;
@@ -74,7 +76,7 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceByExactServiceId(final String id) {
-        final var doc = dbClient.findByServiceId(id);
+        val doc = dbClient.findByServiceId(id);
         if (doc == null) {
             return null;
         }
@@ -83,7 +85,7 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceByExactServiceName(final String name) {
-        final var doc = dbClient.findByServiceName(name);
+        val doc = dbClient.findByServiceName(name);
         if (doc == null) {
             return null;
         }
