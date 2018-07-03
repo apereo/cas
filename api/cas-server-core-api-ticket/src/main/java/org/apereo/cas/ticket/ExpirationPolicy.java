@@ -25,6 +25,16 @@ public interface ExpirationPolicy extends Serializable {
     boolean isExpired(TicketState ticketState);
 
     /**
+     * Method to determine the actual TTL of a ticket, based on the policy.
+     *
+     * @param ticketState The snapshot of the current ticket state
+     * @return The time to live in seconds. A zero value indicates the time duration is not supported or is inactive.
+     */
+    default Long getTimeToLive(final TicketState ticketState) {
+        return getTimeToLive();
+    }
+
+    /**
      * Describes the time duration where this policy should consider the item alive.
      * Once this time passes, the item is considered expired and dead.
      *
