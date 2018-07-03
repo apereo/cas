@@ -17,10 +17,9 @@ import java.net.URL;
  */
 @Slf4j
 public class URLSerializer extends Serializer<URL> {
-
     @Override
     @SneakyThrows
-    public URL read(final Kryo kryo, final Input input, final Class<URL> type) {
+    public URL read(final Kryo kryo, final Input input, final Class<? extends URL> aClass) {
         final var url = kryo.readObject(input, String.class);
         return new URL(url);
     }
@@ -29,4 +28,5 @@ public class URLSerializer extends Serializer<URL> {
     public void write(final Kryo kryo, final Output output, final URL url) {
         kryo.writeObject(output, url.toExternalForm());
     }
+
 }

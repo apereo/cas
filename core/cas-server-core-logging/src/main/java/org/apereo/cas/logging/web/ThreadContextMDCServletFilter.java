@@ -1,6 +1,6 @@
 package org.apereo.cas.logging.web;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -26,7 +26,7 @@ import java.util.TimeZone;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ThreadContextMDCServletFilter implements Filter {
 
     private final TicketRegistrySupport ticketRegistrySupport;

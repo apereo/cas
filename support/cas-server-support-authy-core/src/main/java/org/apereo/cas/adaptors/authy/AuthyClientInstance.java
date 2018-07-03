@@ -84,6 +84,7 @@ public class AuthyClientInstance {
      * @param principal the principal
      * @return the or create user
      */
+    @SneakyThrows
     public User getOrCreateUser(final Principal principal) {
         final var email = (String) principal.getAttributes().get(this.mailAttribute);
         if (StringUtils.isBlank(email)) {
