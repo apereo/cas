@@ -1,6 +1,6 @@
 package org.apereo.cas.util.crypto;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -17,7 +17,7 @@ import java.nio.charset.Charset;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultPasswordEncoder implements PasswordEncoder {
     private final String encodingAlgorithm;
     private final String characterEncoding;
@@ -34,7 +34,7 @@ public class DefaultPasswordEncoder implements PasswordEncoder {
         }
 
         final var encodingCharToUse = StringUtils.isNotBlank(this.characterEncoding)
-                ? this.characterEncoding : Charset.defaultCharset().name();
+            ? this.characterEncoding : Charset.defaultCharset().name();
 
         LOGGER.debug("Using [{}] as the character encoding algorithm to update the digest", encodingCharToUse);
 
@@ -42,7 +42,7 @@ public class DefaultPasswordEncoder implements PasswordEncoder {
             final var pswBytes = password.toString().getBytes(encodingCharToUse);
             final var encoded = Hex.encodeHexString(DigestUtils.getDigest(this.encodingAlgorithm).digest(pswBytes));
             LOGGER.debug("Encoded password via algorithm [{}] and character-encoding [{}] is [{}]", this.encodingAlgorithm,
-                    encodingCharToUse, encoded);
+                encodingCharToUse, encoded);
             return encoded;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
