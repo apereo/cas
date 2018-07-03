@@ -32,6 +32,9 @@ public class RememberMeDelegatingExpirationPolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "rememberMeDelegatingExpirationPolicy.json");
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
+    private static final Long REMEMBER_ME_TTL = 20000L;
+    private static final Long DEFAULT_TTL = 10000L;
+
     /**
      * Factory to create the principal type.
      **/
@@ -41,11 +44,11 @@ public class RememberMeDelegatingExpirationPolicyTests {
 
     @Before
     public void setUp() {
-        final MultiTimeUseOrTimeoutExpirationPolicy rememberMe = new MultiTimeUseOrTimeoutExpirationPolicy(1, 20000);
+        final MultiTimeUseOrTimeoutExpirationPolicy rememberMe = new MultiTimeUseOrTimeoutExpirationPolicy(1, REMEMBER_ME_TTL);
         p = new RememberMeDelegatingExpirationPolicy(rememberMe);
         p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.REMEMBER_ME, rememberMe);
         p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.DEFAULT,
-                new MultiTimeUseOrTimeoutExpirationPolicy(5, 20000));
+                new MultiTimeUseOrTimeoutExpirationPolicy(5, DEFAULT_TTL));
     }
 
     @Test
@@ -67,6 +70,23 @@ public class RememberMeDelegatingExpirationPolicyTests {
         assertFalse(t.isExpired());
         t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(), this.p, false, true);
         assertFalse(t.isExpired());
+    }
+
+    @Test
+    public void verifyTicketTTLWithRememberMe() {
+        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication(
+                this.principalFactory.createPrincipal("test"),
+                Collections.singletonMap(
+                        RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
+        final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
+        assertEquals(REMEMBER_ME_TTL, p.getTimeToLive(t));
+    }
+
+    @Test
+    public void verifyTicketTTLWithoutRememberMe() {
+        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication();
+        final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
+        assertEquals(DEFAULT_TTL, p.getTimeToLive(t));
     }
 
     @Test
