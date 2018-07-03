@@ -15,7 +15,8 @@ branches:
   only:
   - master
 jdk:
-- oraclejdk11
+#- oraclejdk11
+- oraclejdk10
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
 - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
