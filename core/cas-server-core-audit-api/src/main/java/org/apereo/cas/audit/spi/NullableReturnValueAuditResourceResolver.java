@@ -1,6 +1,6 @@
 package org.apereo.cas.audit.spi;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -17,7 +17,7 @@ import java.util.Date;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class NullableReturnValueAuditResourceResolver implements AuditResourceResolver {
     private final AuditResourceResolver delegate;
 
@@ -31,11 +31,11 @@ public class NullableReturnValueAuditResourceResolver implements AuditResourceRe
 
             final var sourceName = event.getSource().getClass().getSimpleName();
             final var result =
-                    new ToStringBuilder(event, ToStringStyle.NO_CLASS_NAME_STYLE)
-                            .append("event", event.getId())
-                            .append("timestamp", new Date(event.getTimestamp()))
-                            .append("source", sourceName)
-                            .toString();
+                new ToStringBuilder(event, ToStringStyle.NO_CLASS_NAME_STYLE)
+                    .append("event", event.getId())
+                    .append("timestamp", new Date(event.getTimestamp()))
+                    .append("source", sourceName)
+                    .toString();
             return new String[]{result};
         }
         return this.delegate.resolveFrom(joinPoint, o);

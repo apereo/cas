@@ -1,6 +1,6 @@
 package org.apereo.cas.services.replication;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.DistributedCacheObject;
@@ -21,7 +21,7 @@ import java.util.function.Predicate;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultRegisteredServiceReplicationStrategy implements RegisteredServiceReplicationStrategy, DisposableBean {
     private final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> distributedCacheManager;
     private final StreamingServiceRegistryProperties properties;
@@ -104,7 +104,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
                                                                            final ServiceRegistry serviceRegistry) {
         final var cachedServices = this.distributedCacheManager.getAll();
 
-        for (final var entry : cachedServices) {
+        for (final var entry: cachedServices) {
             final var cachedService = entry.getValue();
             LOGGER.debug("Found cached service definition [{}] in the replication cache [{}]", cachedService, distributedCacheManager.getName());
 

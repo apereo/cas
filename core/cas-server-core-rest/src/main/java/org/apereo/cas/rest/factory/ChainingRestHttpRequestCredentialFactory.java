@@ -1,7 +1,7 @@
 package org.apereo.cas.rest.factory;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.springframework.core.OrderComparator;
@@ -19,7 +19,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ChainingRestHttpRequestCredentialFactory implements RestHttpRequestCredentialFactory {
     private final List<RestHttpRequestCredentialFactory> chain;
 

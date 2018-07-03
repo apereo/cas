@@ -17,7 +17,6 @@ import org.apereo.cas.authentication.AuthenticationPolicy;
 @AllArgsConstructor
 public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy {
 
-
     /**
      * Authentication handler name that is required to satisfy policy.
      */

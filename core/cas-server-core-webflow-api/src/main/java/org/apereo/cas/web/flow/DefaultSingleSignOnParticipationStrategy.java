@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
@@ -16,11 +16,11 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnParticipationStrategy {
     private final ServicesManager servicesManager;
-    private boolean createSsoSessionCookieOnRenewAuthentications = true;
-    private boolean renewEnabled=true;
+    private final boolean createSsoSessionCookieOnRenewAuthentications;
+    private final boolean renewEnabled;
 
     @Override
     public boolean isParticipating(final RequestContext ctx) {

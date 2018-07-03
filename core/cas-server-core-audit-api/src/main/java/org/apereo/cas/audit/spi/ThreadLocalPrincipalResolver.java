@@ -1,6 +1,6 @@
 package org.apereo.cas.audit.spi;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
@@ -15,7 +15,7 @@ import org.aspectj.lang.JoinPoint;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ThreadLocalPrincipalResolver implements PrincipalResolver {
     private final AuditPrincipalIdProvider auditPrincipalIdProvider;
 
