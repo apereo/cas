@@ -14,6 +14,6 @@ public class CouchDbServiceRegistryProperties extends BaseCouchDbProperties {
     private static final long serialVersionUID = -5101551655756163621L;
 
     public CouchDbServiceRegistryProperties() {
-        this.setDbName("serviceRegistry");
+        this.setDbName("service_registry");
     }
 }
