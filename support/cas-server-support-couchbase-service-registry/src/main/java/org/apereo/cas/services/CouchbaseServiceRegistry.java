@@ -51,7 +51,6 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
      */
     public static final Collection<View> ALL_VIEWS = CollectionUtils.wrap(ALL_SERVICES_VIEW);
 
-
     private final CouchbaseClientFactory couchbase;
     private final StringSerializer<RegisteredService> registeredServiceJsonSerializer;
 
