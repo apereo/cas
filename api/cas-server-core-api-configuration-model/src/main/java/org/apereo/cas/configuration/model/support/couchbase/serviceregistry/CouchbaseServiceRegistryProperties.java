@@ -12,10 +12,8 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-couchbase-service-registry")
-
 @Getter
 @Setter
 public class CouchbaseServiceRegistryProperties extends BaseCouchbaseProperties {
-
     private static final long serialVersionUID = -4975171412161962007L;
 }

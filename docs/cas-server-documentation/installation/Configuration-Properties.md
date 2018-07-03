@@ -2857,7 +2857,15 @@ and any number of log appenders that might push data to a variety of systems.</p
 
 Store audit logs inside a MongoDb database.
 
- Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.audit`.
+Common configuration settings for this feature are available 
+[here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.audit`.
+
+### Couchbase Audits
+
+Store audit logs inside a Couchbase database.
+
+Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) 
+under the configuration key `cas.audit.couchbase`.
 
 ### Database Audits
 
@@ -2874,7 +2882,8 @@ under the configuration key `cas.audit.jdbc`.
 
 ### REST Audits
 
-Store audit logs inside a database. RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.audit.rest`.
+Store audit logs inside a database. RESTful settings for this feature are 
+available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.audit.rest`.
 
 ## Sleuth Distributed Tracing
 
@@ -2921,16 +2930,21 @@ Decide how CAS should monitor the internal state of various cache storage servic
 
 ### Memcached Monitors
 
-Decide how CAS should monitor the internal state of a memcached connection pool. Integration settings for this registry are available [here](Configuration-Properties-Common.html#memcached-integration-settings) under the configuration key `cas.monitor.memcached`.
+Decide how CAS should monitor the internal state of a memcached connection pool. 
+Integration settings for this registry are available [here](Configuration-Properties-Common.html#memcached-integration-settings) 
+under the configuration key `cas.monitor.memcached`.
 
 ### MongoDb Monitors
 
-Decide how CAS should monitor the internal state of a MongoDb instance.  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.monitor`.
+Decide how CAS should monitor the internal state of a MongoDb instance.  
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) 
+under the configuration key `cas.monitor`.
 
 ### Database Monitoring
 
 Decide how CAS should monitor the internal state of JDBC connections used
-for authentication or attribute retrieval. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.monitor.jdbc`.
+for authentication or attribute retrieval. Database settings for this feature are 
+available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.monitor.jdbc`.
 
 ```properties
 # cas.monitor.jdbc.validationQuery=SELECT 1
@@ -2940,7 +2954,8 @@ for authentication or attribute retrieval. Database settings for this feature ar
 ### LDAP Connection Pool
 
 Decide how CAS should monitor the internal state of LDAP connections
-used for authentication, etc.  LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.monitor.ldap`.
+used for authentication, etc.  LDAP settings for this feature are 
+available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.monitor.ldap`.
 
 ```properties
 # cas.monitor.ldap.maxWait=5000
@@ -2979,15 +2994,18 @@ To learn more about this topic, [please review this guide](Configuring-Authentic
 
 ### InfluxDb Events
 
-Decide how CAS should store authentication events inside an InfluxDb instance. Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#influxdb-configuration) under the configuration key `cas.events.influxDb`.
+Decide how CAS should store authentication events inside an InfluxDb instance. Common 
+configuration settings for this feature are available [here](Configuration-Properties-Common.html#influxdb-configuration) under the configuration key `cas.events.influxDb`.
 
 ### Database Events
 
-Decide how CAS should store authentication events inside a database instance. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.events.jpa`.
+Decide how CAS should store authentication events inside a database instance. Database 
+settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.events.jpa`.
 
 ### MongoDb Events
 
-Decide how CAS should store authentication events inside a MongoDb instance.  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.events`.
+Decide how CAS should store authentication events inside a MongoDb instance. Common 
+configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.events`.
 
 ## Http Web Requests
 
@@ -3164,12 +3182,16 @@ To learn more about this topic, [please review this guide](LDAP-Service-Manageme
 ### Couchbase Service Registry
 
 Control how CAS services should be found inside a Couchbase instance.
-To learn more about this topic, [please review this guide](Couchbase-Service-Management.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.serviceRegistry.couchbase`.
+To learn more about this topic, [please review this guide](Couchbase-Service-Management.html). 
+Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) 
+under the configuration key `cas.serviceRegistry.couchbase`.
 
 ### Database Service Registry
 
 Control how CAS services should be found inside a database instance.
-To learn more about this topic, [please review this guide](JPA-Service-Management.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.serviceRegistry.jpa`.
+To learn more about this topic, [please review this guide](JPA-Service-Management.html). 
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
+under the configuration key `cas.serviceRegistry.jpa`.
 
 ## Service Registry Replication
 
@@ -3396,17 +3418,24 @@ under the configuration key `cas.ticket.registry.dynamoDb`.
 
 ### MongoDb Ticket Registry
 
-To learn more about this topic, [please review this guide](MongoDb-Ticket-Registry.html). Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.mongo`.  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.ticket.registry`.
+To learn more about this topic, [please review this guide](MongoDb-Ticket-Registry.html). 
+Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) 
+under the configuration key `cas.ticket.registry.mongo`.  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.ticket.registry`.
 
 ### Redis Ticket Registry
 
-To learn more about this topic, [please review this guide](Redis-Ticket-Registry.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.ticket.registry`. Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.redis`.
+To learn more about this topic, [please review this guide](Redis-Ticket-Registry.html). 
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
+under the configuration key `cas.ticket.registry`. Signing & encryption settings for this registry are 
+available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.redis`.
 
 ## Protocol Ticket Security
 
 Controls whether tickets issued by the CAS server should be secured via signing and encryption
-when shared with client applications on outgoing calls. The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
-The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket`.
+when shared with client applications on outgoing calls. The signing and encryption 
+keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this 
+feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket`.
 
 ## Service Tickets Behavior
 
@@ -3454,7 +3483,10 @@ Ticket expiration policies are activated in the following conditions:
 - Disabling a policy requires that all its timeout settings be set to a value equal or less than zero.
 - If not ticket expiration policy is determined, CAS shall ensure the ticket are *always* considered expired.
 
-<div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a particular policy. It is <strong>UNNECESSARY</strong> to grab a copy of all fields or keeping a copy as a reference while leaving them commented out. This strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy deployment at that.</p></div>
+<div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain 
+properties and settings needed for a particular policy. It is <strong>UNNECESSARY</strong> to grab a copy of all 
+fields or keeping a copy as a reference while leaving them commented out. This strategy would ultimately lead to 
+poor upgrades increasing chances of breaking changes and a messy deployment at that.</p></div>
 
 Ticket expiration policies are activated in the following order:
 
