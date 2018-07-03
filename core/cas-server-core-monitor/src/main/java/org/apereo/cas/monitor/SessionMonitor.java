@@ -1,6 +1,6 @@
 package org.apereo.cas.monitor;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
@@ -15,7 +15,7 @@ import org.springframework.boot.actuate.health.Health;
  * @since 3.5.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SessionMonitor extends AbstractHealthIndicator {
 
     /**
