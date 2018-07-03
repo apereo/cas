@@ -249,7 +249,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             .filter(r -> r.supports(handlers, transaction))
             .map(r -> r.resolve(handlers, transaction))
             .flatMap(Set::stream)
-            .collect(Collectors.toSet());
+            .collect(Collectors.toCollection(LinkedHashSet::new));
 
         if (resolvedHandlers.isEmpty()) {
             LOGGER.debug("Authentication handler resolvers produced no candidate authentication handler. Using the default handler resolver instead...");
