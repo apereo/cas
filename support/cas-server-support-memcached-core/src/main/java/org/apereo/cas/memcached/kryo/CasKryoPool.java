@@ -1,6 +1,5 @@
 package org.apereo.cas.memcached.kryo;
 
-import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.util.Pool;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
