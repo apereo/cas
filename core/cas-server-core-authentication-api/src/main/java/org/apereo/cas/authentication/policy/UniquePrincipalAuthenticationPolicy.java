@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.policy;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationPolicy;
@@ -20,7 +20,7 @@ import java.security.GeneralSecurityException;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UniquePrincipalAuthenticationPolicy implements AuthenticationPolicy {
     private final TicketRegistry ticketRegistry;
 
@@ -41,7 +41,7 @@ public class UniquePrincipalAuthenticationPolicy implements AuthenticationPolicy
                 return true;
             }
             LOGGER.warn("Authentication policy cannot be satisfied for principal [{}] because [{}] sessions currently exist",
-                    authPrincipal.getId(), count);
+                authPrincipal.getId(), count);
             return false;
         } catch (final Exception e) {
             throw new GeneralSecurityException(e);

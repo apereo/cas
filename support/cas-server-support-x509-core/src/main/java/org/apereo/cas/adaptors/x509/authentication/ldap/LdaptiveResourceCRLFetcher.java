@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.ldap;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.util.EncodingUtils;
@@ -31,7 +31,7 @@ import java.security.cert.X509CRL;
  * @since 4.1
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
 
     /**
