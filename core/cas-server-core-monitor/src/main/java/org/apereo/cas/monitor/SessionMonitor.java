@@ -26,12 +26,12 @@ public class SessionMonitor extends AbstractHealthIndicator {
     /**
      * Threshold above which warnings are issued for service ticket count.
      */
-    private int serviceTicketCountWarnThreshold = -1;
+    private final int serviceTicketCountWarnThreshold;
 
     /**
      * Threshold above which warnings are issued for session count.
      */
-    private int sessionCountWarnThreshold = -1;
+    private final int sessionCountWarnThreshold;
 
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
