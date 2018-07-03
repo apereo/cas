@@ -1,4 +1,4 @@
-package org.apereo.cas.audit;
+package org.apereo.cas.audit.spi;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;

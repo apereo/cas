@@ -89,6 +89,12 @@ public class AuditProperties implements Serializable {
     private AuditSlf4jLogProperties slf4j = new AuditSlf4jLogProperties();
 
     /**
+     * Family of sub-properties pertaining to couchbase-based audit destinations.
+     */
+    @NestedConfigurationProperty
+    private AuditCouchbaseProperties couchbase = new AuditCouchbaseProperties();
+
+    /**
      * Indicates whether catastrophic audit failures should simply be logged
      * or whether errors should bubble up and thrown back.
      */

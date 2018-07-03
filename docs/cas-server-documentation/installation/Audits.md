@@ -68,6 +68,20 @@ If you intend to use a MongoDb database for auditing functionality, enable the f
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#mongodb-audits).
 
+## Couchbase Audits
+
+If you intend to use a Couchbase database for auditing functionality, enable the following module in your configuration:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-audit-couchbase</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#couchbase-audits).
+
 ## REST Audits
 
 Audit events may also be `POST`ed to an endpoint of your choosing. To activate this feature, enable the following module in your configuration:

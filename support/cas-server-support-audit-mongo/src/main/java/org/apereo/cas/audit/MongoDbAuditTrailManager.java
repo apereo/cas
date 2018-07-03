@@ -1,5 +1,6 @@
 package org.apereo.cas.audit;
 
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.DateTimeUtils;
@@ -23,20 +24,17 @@ import java.util.concurrent.Executors;
  */
 @Slf4j
 @Setter
+@RequiredArgsConstructor
 public class MongoDbAuditTrailManager implements AuditTrailManager {
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
+    @Setter
     private boolean asynchronous = true;
 
+    private final transient MongoTemplate mongoTemplate;
     private final String collectionName;
 
-    private final transient MongoTemplate mongoTemplate;
-
-    public MongoDbAuditTrailManager(final MongoTemplate mongoTemplate, final String collectionName) {
-        this.mongoTemplate = mongoTemplate;
-        this.collectionName = collectionName;
-    }
 
     @Override
     public void record(final AuditActionContext audit) {
