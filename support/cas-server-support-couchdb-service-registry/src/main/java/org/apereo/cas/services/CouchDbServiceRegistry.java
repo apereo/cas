@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.couchdb.services.RegisteredServiceCouchDbRepository;
 import org.apereo.cas.couchdb.services.RegisteredServiceDocument;
-import org.apereo.cas.couchdb.services.RegisteredServiceRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,8 +10,6 @@ import org.ektorp.UpdateConflictException;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link CouchDbServiceRegistry}.
@@ -23,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class CouchDbServiceRegistry extends AbstractServiceRegistry {
 
-    private final RegisteredServiceRepository dbClient;
+    private final RegisteredServiceCouchDbRepository dbClient;
     private final int conflictRetries;
 
     @Override

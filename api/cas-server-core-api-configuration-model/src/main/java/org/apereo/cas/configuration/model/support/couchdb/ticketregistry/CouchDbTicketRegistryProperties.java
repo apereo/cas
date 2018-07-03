@@ -32,6 +32,6 @@ public class CouchDbTicketRegistryProperties extends BaseCouchDbProperties {
 
     public CouchDbTicketRegistryProperties() {
         this.crypto.setEnabled(false);
-        this.setDbName("ticketRegistry");
+        this.setDbName("ticket_registry");
     }
 }
