@@ -1,8 +1,8 @@
 package org.apereo.cas.memcached.kryo;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.pool.KryoCallback;
-import com.esotericsoftware.kryo.pool.KryoPool;
+import com.esotericsoftware.kryo.util.Pool;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -15,48 +15,55 @@ import java.util.Collection;
  * @since 5.2.0
  */
 @Slf4j
-public class CasKryoPool implements KryoPool {
+public class CasKryoPool extends Pool<CloseableKryo> {
+    private static final int POOL_MAX_CAPACITY = 8;
 
-    
-    private final KryoPool kryoPoolRef;
+    private final CloseableKryoFactory factory;
 
-    public CasKryoPool() {
-        this(new ArrayList<>(), true, true, false, false);
-    }
-    
-    public CasKryoPool(final Collection<Class> classesToRegister) {
-        this(classesToRegister, true, true, false, false);
-    }
-    
     public CasKryoPool(final Collection<Class> classesToRegister,
                        final boolean warnUnregisteredClasses,
                        final boolean registrationRequired,
                        final boolean replaceObjectsByReferences,
                        final boolean autoReset) {
-        
-        final var factory = new CloseableKryoFactory(this);
+        super(true, false, POOL_MAX_CAPACITY);
+
+        factory = new CloseableKryoFactory(this);
         factory.setWarnUnregisteredClasses(warnUnregisteredClasses);
         factory.setReplaceObjectsByReferences(replaceObjectsByReferences);
         factory.setAutoReset(autoReset);
         factory.setRegistrationRequired(registrationRequired);
         factory.setClassesToRegister(classesToRegister);
-        this.kryoPoolRef = new KryoPool.Builder(factory).softReferences().build();
     }
 
-    @Override
+    public CasKryoPool() {
+        this(new ArrayList<>(), true, true, false, false);
+    }
+
+    public CasKryoPool(final Collection<Class> classesToRegister) {
+        this(classesToRegister, true, true, false, false);
+    }
+
+    /**
+     * Borrow kryo.
+     *
+     * @return the kryo
+     */
     public CloseableKryo borrow() {
-        return (CloseableKryo) kryoPoolRef.borrow();
+        return super.obtain();
+    }
+
+    /**
+     * Release.
+     *
+     * @param kryo the kryo
+     */
+    public void release(final CloseableKryo kryo) {
+        free(kryo);
     }
 
     @Override
-    public void release(final Kryo kryo) {
-        kryoPoolRef.release(kryo);
-    }
-
-    @Override
-    public <T> T run(final KryoCallback<T> callback) {
-        try (var kryo = borrow()) {
-            return callback.execute(kryo);
-        }
+    @SneakyThrows
+    protected CloseableKryo create() {
+        return this.factory.createInstance();
     }
 }

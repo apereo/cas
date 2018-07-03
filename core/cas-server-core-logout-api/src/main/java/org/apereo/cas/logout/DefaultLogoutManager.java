@@ -1,6 +1,6 @@
 package org.apereo.cas.logout;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -22,7 +22,7 @@ import java.util.stream.Stream;
  * @since 4.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultLogoutManager implements LogoutManager {
     private final LogoutMessageCreator logoutMessageBuilder;
     private final SingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler;

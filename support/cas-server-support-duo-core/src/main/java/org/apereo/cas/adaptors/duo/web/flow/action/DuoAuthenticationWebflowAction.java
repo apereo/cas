@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.webflow.action.AbstractAction;
@@ -14,7 +14,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DuoAuthenticationWebflowAction extends AbstractAction {
 
     private final CasWebflowEventResolver duoAuthenticationWebflowEventResolver;

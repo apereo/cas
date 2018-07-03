@@ -1,18 +1,18 @@
 ext.libraries = [
         jaxb                    : [
-                dependencies.create("javax.xml.bind:jaxb-api:$jaxbVersion") {
+                dependencies.create("javax.xml.bind:jaxb-api:$jaxbApiVersion") {
                     force = true
                     transitive = false
                 },
-                dependencies.create("javax.xml.ws:jaxws-api:$jaxbVersion") {
+                dependencies.create("javax.xml.ws:jaxws-api:$jaxbApiVersion") {
                     force = true
                     transitive = false
                 },
-                dependencies.create("org.glassfish.jaxb:jaxb-runtime:$jaxbVersion") {
+                dependencies.create("org.glassfish.jaxb:jaxb-runtime:$jaxbGlassfishVersion") {
                     force = true
                     transitive = false
                 },
-                dependencies.create("org.glassfish.jaxb:jaxb-core:$jaxbVersion") {
+                dependencies.create("org.glassfish.jaxb:jaxb-core:$jaxbGlassfishVersion") {
                     force = true
                 }
         ],
@@ -2446,7 +2446,7 @@ ext.libraries = [
                 }
         ],
         ribbon                  : [
-                dependencies.create("org.springframework.cloud:spring-cloud-starter-ribbon:$springCloudEurekaVersion") {
+                dependencies.create("org.springframework.cloud:spring-cloud-starter-netflix-ribbon:$springCloudEurekaVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "javax.servlet", module: "servlet-api")
                     exclude(group: "commons-logging", module: "commons-logging")

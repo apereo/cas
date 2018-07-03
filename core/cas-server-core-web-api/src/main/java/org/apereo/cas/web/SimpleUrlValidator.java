@@ -1,6 +1,6 @@
 package org.apereo.cas.web;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.validator.routines.DomainValidator;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -13,7 +13,7 @@ import org.apache.commons.validator.routines.UrlValidator;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SimpleUrlValidator implements org.apereo.cas.web.UrlValidator {
     private static org.apereo.cas.web.UrlValidator INSTANCE;
 

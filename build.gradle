@@ -83,6 +83,10 @@ allprojects {
         apply from: rootProject.file("gradle/maven.gradle")
     }
 
+    jacoco {
+        toolVersion = "$gradleJacocoVersion"
+    }
+
     signing {
         required = isArtifactSigningRequired
         sign configurations.archives
@@ -184,7 +188,7 @@ subprojects {
                     details.useTarget group: "gnu.getopt", name: "java-getopt", version: details.requested.version
                 }
 
-                if (details.requested.group == 'org.ow2.asm') {
+                if (details.requested.group == "org.ow2.asm") {
                     details.useVersion "6.2"
                 }
             }

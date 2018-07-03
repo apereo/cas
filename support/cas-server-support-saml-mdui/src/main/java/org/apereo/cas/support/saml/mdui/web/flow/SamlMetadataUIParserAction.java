@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -29,7 +29,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 4.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SamlMetadataUIParserAction extends AbstractAction {
 
     private final String entityIdParameterName;
@@ -46,7 +46,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
         }
 
         LOGGER.debug("Located entity id [{}] from request", entityId);
-        
+
         if (!MetadataUIUtils.isMetadataFoundForEntityId(metadataAdapter, entityId)) {
             LOGGER.debug("Metadata is not found for entity [{}] and CAS service registry is consulted for the entity definition", entityId);
             final var registeredService = getRegisteredServiceFromRequest(requestContext, entityId);
@@ -113,7 +113,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
         LOGGER.debug("Located service definition [{}]", registeredService);
         return registeredService;
     }
-    
+
     /**
      * Gets registered service from request.
      *

@@ -1,7 +1,6 @@
 package org.apereo.cas.memcached.kryo;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.pool.KryoFactory;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 import de.javakaffee.kryoserializers.ArraysAsListSerializer;
 import de.javakaffee.kryoserializers.CollectionsEmptyListSerializer;
@@ -17,14 +16,15 @@ import de.javakaffee.kryoserializers.guava.ImmutableListSerializer;
 import de.javakaffee.kryoserializers.guava.ImmutableMapSerializer;
 import de.javakaffee.kryoserializers.guava.ImmutableMultimapSerializer;
 import de.javakaffee.kryoserializers.guava.ImmutableSetSerializer;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.DefaultAuthentication;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
+import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
@@ -72,6 +72,8 @@ import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.objenesis.strategy.StdInstantiatorStrategy;
+import org.springframework.beans.factory.config.AbstractFactoryBean;
+
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
@@ -95,7 +97,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import lombok.Setter;
 
 /**
  * This is {@link CloseableKryoFactory}.
@@ -105,7 +106,7 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
-public class CloseableKryoFactory implements KryoFactory {
+public class CloseableKryoFactory extends AbstractFactoryBean<CloseableKryo> {
 
     private Collection<Class> classesToRegister = new ArrayList<>();
 
@@ -121,32 +122,6 @@ public class CloseableKryoFactory implements KryoFactory {
 
     public CloseableKryoFactory(final CasKryoPool kryoPool) {
         this.kryoPool = kryoPool;
-    }
-
-    @Override
-    public Kryo create() {
-        final Kryo kryo = new CloseableKryo(this.kryoPool);
-        kryo.setInstantiatorStrategy(new Kryo.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
-        kryo.setWarnUnregisteredClasses(this.warnUnregisteredClasses);
-        kryo.setAutoReset(this.autoReset);
-        kryo.setReferences(this.replaceObjectsByReferences);
-        kryo.setRegistrationRequired(this.registrationRequired);
-        LOGGER.debug("Constructing a kryo instance with the following settings:");
-        LOGGER.debug("warnUnregisteredClasses: [{}]", this.warnUnregisteredClasses);
-        LOGGER.debug("autoReset: [{}]", this.autoReset);
-        LOGGER.debug("replaceObjectsByReferences: [{}]", this.replaceObjectsByReferences);
-        LOGGER.debug("registrationRequired: [{}]", this.registrationRequired);
-        registerCasAuthenticationWithKryo(kryo);
-        registerExpirationPoliciesWithKryo(kryo);
-        registerCasTicketsWithKryo(kryo);
-        registerNativeJdkComponentsWithKryo(kryo);
-        registerCasServicesWithKryo(kryo);
-        registerImmutableOrEmptyCollectionsWithKryo(kryo);
-        classesToRegister.forEach(c -> {
-            LOGGER.debug("Registering serializable class [{}] with Kryo", c.getName());
-            kryo.register(c);
-        });
-        return kryo;
     }
 
     private void registerImmutableOrEmptyCollectionsWithKryo(final Kryo kryo) {
@@ -251,5 +226,36 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(ThrottledUseAndTimeoutExpirationPolicy.class);
         kryo.register(TicketGrantingTicketExpirationPolicy.class);
         kryo.register(BaseDelegatingExpirationPolicy.class);
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return CloseableKryo.class;
+    }
+
+    @Override
+    protected CloseableKryo createInstance() throws Exception {
+        final var kryo = new CloseableKryo(this.kryoPool);
+        kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
+        kryo.setWarnUnregisteredClasses(this.warnUnregisteredClasses);
+        kryo.setAutoReset(this.autoReset);
+        kryo.setReferences(this.replaceObjectsByReferences);
+        kryo.setRegistrationRequired(this.registrationRequired);
+        LOGGER.debug("Constructing a kryo instance with the following settings:");
+        LOGGER.debug("warnUnregisteredClasses: [{}]", this.warnUnregisteredClasses);
+        LOGGER.debug("autoReset: [{}]", this.autoReset);
+        LOGGER.debug("replaceObjectsByReferences: [{}]", this.replaceObjectsByReferences);
+        LOGGER.debug("registrationRequired: [{}]", this.registrationRequired);
+        registerCasAuthenticationWithKryo(kryo);
+        registerExpirationPoliciesWithKryo(kryo);
+        registerCasTicketsWithKryo(kryo);
+        registerNativeJdkComponentsWithKryo(kryo);
+        registerCasServicesWithKryo(kryo);
+        registerImmutableOrEmptyCollectionsWithKryo(kryo);
+        classesToRegister.forEach(c -> {
+            LOGGER.debug("Registering serializable class [{}] with Kryo", c.getName());
+            kryo.register(c);
+        });
+        return kryo;
     }
 }

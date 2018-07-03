@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +33,7 @@ import java.util.Optional;
  */
 @Slf4j
 @ToString
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 

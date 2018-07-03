@@ -1,5 +1,8 @@
 package org.apereo.cas.adaptors.authy;
 
+import com.authy.api.Token;
+import com.authy.api.User;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
@@ -51,15 +54,20 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
         final Map<String, String> options = new HashMap<>(1);
         options.put("force", Boolean.toString(this.forceVerification));
 
-        final var verification = this.instance.getAuthyTokens().verify(user.getId(), tokenCredential.getToken(), options);
-
+        final var verification = verifyAuthyToken(tokenCredential, user, options);
         if (!verification.isOk()) {
             throw new FailedLoginException(AuthyClientInstance.getErrorMessage(verification.getError()));
         }
 
         return createHandlerResult(tokenCredential, principal, new ArrayList<>());
     }
-    
+
+    @SneakyThrows
+    private Token verifyAuthyToken(final AuthyTokenCredential tokenCredential, final User user, final Map<String, String> options) {
+        return this.instance.getAuthyTokens()
+            .verify(user.getId(), tokenCredential.getToken(), options);
+    }
+
     @Override
     public boolean supports(final Credential credential) {
         return AuthyTokenCredential.class.isAssignableFrom(credential.getClass());

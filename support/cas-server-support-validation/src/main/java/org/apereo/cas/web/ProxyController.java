@@ -1,7 +1,8 @@
 package org.apereo.cas.web;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -21,8 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
-import lombok.Setter;
-
 /**
  * The ProxyController is involved with returning a Proxy Ticket (in CAS 2
  * terms) to the calling application. In CAS 3, a Proxy Ticket is just a Service
@@ -41,7 +40,7 @@ import lombok.Setter;
 @Slf4j
 @Setter
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProxyController extends AbstractDelegateController {
 
     /**

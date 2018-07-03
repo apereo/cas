@@ -32,7 +32,7 @@ public class ZonedDateTimeSerializer extends Serializer<ZonedDateTime> {
     }
 
     @Override
-    public ZonedDateTime read(final Kryo kryo, final Input input, final Class<ZonedDateTime> type) {
+    public ZonedDateTime read(final Kryo kryo, final Input input, final Class<? extends ZonedDateTime> type) {
         final long time = kryo.readObject(input, Long.class);
         final var zoneId = StringUtils.removeAll(input.readString().trim(), "\\p{C}");
         try {

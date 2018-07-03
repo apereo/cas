@@ -1,9 +1,10 @@
 package org.apereo.cas.adaptors.u2f;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import java.io.Serializable;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.Serializable;
 
 /**
  * This is {@link U2FRegistration}.
@@ -13,7 +14,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class U2FRegistration implements Serializable {
     private static final long serialVersionUID = 8478965906212939618L;
 

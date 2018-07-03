@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.proxy.support;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Credential;
@@ -22,7 +22,7 @@ import org.apereo.cas.util.http.HttpClient;
  * @since 3.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class Cas20ProxyHandler implements ProxyHandler {
     private static final int BUFFER_LENGTH_ADDITIONAL_CHARGE = 15;
 
@@ -37,10 +37,10 @@ public class Cas20ProxyHandler implements ProxyHandler {
         final var callbackUrl = serviceCredentials.getCallbackUrl();
         final var serviceCredentialsAsString = callbackUrl.toExternalForm();
         final var bufferLength = serviceCredentialsAsString.length() + proxyIou.length()
-                + proxyGrantingTicketId.getId().length() + BUFFER_LENGTH_ADDITIONAL_CHARGE;
+            + proxyGrantingTicketId.getId().length() + BUFFER_LENGTH_ADDITIONAL_CHARGE;
 
         final var stringBuffer = new StringBuilder(bufferLength)
-                .append(serviceCredentialsAsString);
+            .append(serviceCredentialsAsString);
 
         if (callbackUrl.getQuery() != null) {
             stringBuffer.append('&');
@@ -49,12 +49,12 @@ public class Cas20ProxyHandler implements ProxyHandler {
         }
 
         stringBuffer.append(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_IOU)
-                .append('=')
-                .append(proxyIou)
-                .append('&')
-                .append(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_ID)
-                .append('=')
-                .append(proxyGrantingTicketId);
+            .append('=')
+            .append(proxyIou)
+            .append('&')
+            .append(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_ID)
+            .append('=')
+            .append(proxyGrantingTicketId);
 
         if (this.httpClient.isValidEndPoint(stringBuffer.toString())) {
             LOGGER.debug("Sent ProxyIou of [{}] for service: [{}]", proxyIou, serviceCredentials);
@@ -64,7 +64,7 @@ public class Cas20ProxyHandler implements ProxyHandler {
         LOGGER.debug("Failed to send ProxyIou of [{}] for service: [{}]", proxyIou, serviceCredentials);
         return null;
     }
-    
+
     @Override
     public boolean canHandle(final Credential credential) {
         return true;

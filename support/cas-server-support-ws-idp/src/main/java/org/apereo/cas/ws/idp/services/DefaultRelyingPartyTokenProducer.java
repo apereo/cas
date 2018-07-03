@@ -1,6 +1,6 @@
 package org.apereo.cas.ws.idp.services;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -35,7 +35,7 @@ import java.util.Collection;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPartyTokenProducer {
     private final SecurityTokenServiceClientBuilder clientBuilder;
     private final CipherExecutor<String, String> credentialCipherExecutor;
@@ -78,7 +78,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
                         writer.writeAttribute("Optional", Boolean.TRUE.toString());
 
                         final Collection vv = CollectionUtils.toCollection(v);
-                        for (final var value : vv) {
+                        for (final var value: vv) {
                             if (value instanceof String) {
                                 writer.writeStartElement("ic", "Value", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
                                 writer.writeCharacters((String) value);
