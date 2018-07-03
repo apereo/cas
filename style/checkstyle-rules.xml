@@ -9,6 +9,9 @@
     <module name="TreeWalker">
         <property name="tabWidth" value="4"/>
         <module name="SuppressionCommentFilter"/>
+        <module name="SuppressionXpathFilter">
+            <property name="file" value="${checkstyle.suppressions.file}"/>
+        </module>
         <module name="NonEmptyAtclauseDescription">
             <property name="severity" value="error"/>
         </module>

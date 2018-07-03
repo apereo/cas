@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE suppressions PUBLIC "-//Puppy Crawl//DTD Suppressions 1.1//EN" "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
+<!DOCTYPE suppressions PUBLIC
+"-//Checkstyle//DTD SuppressionXpathFilter Experimental Configuration 1.2//EN"
+"https://checkstyle.org/dtds/suppressions_1_2_xpath_experimental.dtd">
 
 <suppressions>
     <suppress id="javadocForPropertyFields" files=".*(?&lt;!Properties\.java)$" />
@@ -22,4 +24,5 @@
     <suppress checks="\w+" files="(\.(crt|crl|class|keystore))|rebel.xml"/>
     <suppress id="finalNonUtilClass" files="(.*(Utils|Constants|Facade|Support|Beans|Tickets))\.java" />
     <suppress checks="." files="com[\\/]duosecurity[\\/]duoweb[\\/]"/>
+    <suppress-xpath checks="FinalLocalVariableCheck" query="//VARIABLE_DEF/TYPE[@text='val']/../IDENT"/>
 </suppressions>
