@@ -3,6 +3,7 @@ package org.apereo.cas.services.resource;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -143,11 +144,11 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                                                 final ApplicationEventPublisher eventPublisher,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                                 final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) throws Exception {
-        final var servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, getExtension());
+        val servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, getExtension());
         if (servicesDirectory == null) {
             throw new IllegalArgumentException("Could not determine the services configuration directory from " + configDirectory);
         }
-        final var file = servicesDirectory.getFile();
+        val file = servicesDirectory.getFile();
         initializeRegistry(Paths.get(file.getCanonicalPath()), serializers, enableWatcher, eventPublisher,
             registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
@@ -164,7 +165,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         this.registeredServiceSerializers = serializers;
         this.serviceFileNamePattern = RegexUtils.createPattern(PATTERN_REGISTERED_SERVICE_FILE_NAME + getExtension());
         this.serviceRegistryDirectory = configDirectory;
-        final var file = this.serviceRegistryDirectory.toFile();
+        val file = this.serviceRegistryDirectory.toFile();
         Assert.isTrue(file.exists(), this.serviceRegistryDirectory + " does not exist");
         Assert.isTrue(file.isDirectory(), this.serviceRegistryDirectory + " is not a directory");
         if (enableWatcher) {
@@ -199,13 +200,13 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        final var service = this.serviceMap.get(id);
+        val service = this.serviceMap.get(id);
         return this.registeredServiceReplicationStrategy.getRegisteredServiceFromCacheIfAny(service, id, this);
     }
 
     @Override
     public RegisteredService findServiceById(final String id) {
-        final var service = this.serviceMap.values().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
+        val service = this.serviceMap.values().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
         return this.registeredServiceReplicationStrategy.getRegisteredServiceFromCacheIfAny(service, id, this);
     }
 
@@ -213,9 +214,9 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     @SneakyThrows
     public synchronized boolean delete(final RegisteredService service) {
 
-        final var f = getRegisteredServiceFileName(service);
+        val f = getRegisteredServiceFileName(service);
         publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
-        final var result = f.exists() ? f.delete() : true;
+        val result = !f.exists() || f.delete();
         if (!result) {
             LOGGER.warn("Failed to delete service definition file [{}]", f.getCanonicalPath());
         } else {
@@ -238,7 +239,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     @Override
     public synchronized List<RegisteredService> load() {
-        final var files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true);
+        val files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true);
         this.serviceMap = files
             .stream()
             .map(this::load)
@@ -248,7 +249,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             .collect(Collectors.toMap(RegisteredService::getId, Function.identity(),
                 LOG_DUPLICATE_AND_RETURN_FIRST_ONE, LinkedHashMap::new));
         final List<RegisteredService> services = new ArrayList<>(this.serviceMap.values());
-        final var results =
+        val results =
             this.registeredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache(services, this);
         results.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)));
         return results;
@@ -262,7 +263,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      */
     @Override
     public Collection<RegisteredService> load(final File file) {
-        final var fileName = file.getName();
+        val fileName = file.getName();
         if (!file.canRead()) {
             LOGGER.warn("[{}] is not readable. Check file permissions", fileName);
             return new ArrayList<>(0);
@@ -302,9 +303,9 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             LOGGER.debug("Service id not set. Calculating id based on system time...");
             service.setId(System.currentTimeMillis());
         }
-        final var f = getRegisteredServiceFileName(service);
+        val f = getRegisteredServiceFileName(service);
         try (var out = Files.newOutputStream(f.toPath())) {
-            final var result = this.registeredServiceSerializers.stream().anyMatch(s -> {
+            val result = this.registeredServiceSerializers.stream().anyMatch(s -> {
                 try {
                     s.to(out, service);
                     return true;
@@ -339,14 +340,14 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      * @return the registered service from file
      */
     protected RegisteredService getRegisteredServiceFromFile(final File file) {
-        final var matcher = this.serviceFileNamePattern.matcher(file.getName());
+        val matcher = this.serviceFileNamePattern.matcher(file.getName());
         if (matcher.find()) {
-            final var serviceId = matcher.group(2);
+            val serviceId = matcher.group(2);
             if (NumberUtils.isCreatable(serviceId)) {
-                final var id = Long.parseLong(serviceId);
+                val id = Long.parseLong(serviceId);
                 return findServiceById(id);
             }
-            final var serviceName = matcher.group(1);
+            val serviceName = matcher.group(1);
             return findServiceByExactServiceName(serviceName);
         }
         LOGGER.warn("Provided file [{}} does not match the recommended service definition file pattern [{}]",
@@ -365,9 +366,9 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      */
     @SneakyThrows
     protected File getRegisteredServiceFileName(final RegisteredService service) {
-        final var fileName = resourceNamingStrategy.build(service, getExtension());
+        val fileName = resourceNamingStrategy.build(service, getExtension());
 
-        final var svcFile = new File(this.serviceRegistryDirectory.toFile(), fileName);
+        val svcFile = new File(this.serviceRegistryDirectory.toFile(), fileName);
         LOGGER.debug("Using [{}] as the service definition file", svcFile.getCanonicalPath());
         return svcFile;
 

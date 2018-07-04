@@ -46,11 +46,11 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
         if (url == null) {
             return null;
         }
-        final var jsessionPosition = url.indexOf(";jsession");
+        val jsessionPosition = url.indexOf(";jsession");
         if (jsessionPosition == -1) {
             return url;
         }
-        final var questionMarkPosition = url.indexOf('?');
+        val questionMarkPosition = url.indexOf('?');
         if (questionMarkPosition < jsessionPosition) {
             return url.substring(0, url.indexOf(";jsession"));
         }
@@ -66,8 +66,8 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
      */
     protected static String getSourceParameter(final HttpServletRequest request, final String... paramNames) {
         if (request != null) {
-            final var parameterMap = request.getParameterMap();
-            final var param = Stream.of(paramNames)
+            val parameterMap = request.getParameterMap();
+            val param = Stream.of(paramNames)
                 .filter(p -> parameterMap.containsKey(p) || request.getAttribute(p) != null)
                 .findFirst()
                 .orElse(null);
