@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.util.DigestUtils;
@@ -31,7 +32,7 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
     @Override
     public WebApplicationService extractService(final HttpServletRequest request) {
-        final var service = extractServiceInternal(request);
+        val service = extractServiceInternal(request);
 
         if (service == null) {
             LOGGER.trace("Extractor did not generate service.");

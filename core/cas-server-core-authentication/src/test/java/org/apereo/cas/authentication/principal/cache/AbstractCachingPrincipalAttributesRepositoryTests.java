@@ -53,7 +53,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
         attributes.put("username", Arrays.asList("uid"));
 
         this.dao = mock(IPersonAttributeDao.class);
-        final var person = mock(IPersonAttributes.class);
+        val person = mock(IPersonAttributes.class);
         when(person.getName()).thenReturn("uid");
         when(person.getAttributes()).thenReturn(attributes);
         when(dao.getPerson(any(String.class))).thenReturn(person);
@@ -113,7 +113,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
         try (var repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.MULTIVALUED);
 
-            final var mailAttr = repository.getAttributes(this.principal).get(MAIL);
+            val mailAttr = repository.getAttributes(this.principal).get(MAIL);
             assertTrue(mailAttr instanceof List);
             final List<?> values = (List) mailAttr;
             assertTrue(values.contains("final@example.com"));
