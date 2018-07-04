@@ -1,8 +1,9 @@
 package org.apereo.cas.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public abstract class AbstractServicesManagerTests {
     protected final List<RegisteredService> listOfDefaultServices = new ArrayList<>();
 
     public AbstractServicesManagerTests() {
-        final var r = new RegexRegisteredService();
+        val r = new RegexRegisteredService();
         r.setId(2500);
         r.setServiceId("serviceId");
         r.setName("serviceName");
@@ -52,7 +53,7 @@ public abstract class AbstractServicesManagerTests {
 
     @Test
     public void verifySaveAndGet() {
-        final var r = new RegexRegisteredService();
+        val r = new RegexRegisteredService();
         r.setId(1000);
         r.setName(TEST);
         r.setServiceId(TEST);

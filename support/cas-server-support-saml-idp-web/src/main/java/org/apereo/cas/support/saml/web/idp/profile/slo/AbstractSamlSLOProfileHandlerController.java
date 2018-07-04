@@ -69,7 +69,7 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
     protected void handleSloProfileRequest(final HttpServletResponse response,
                                            final HttpServletRequest request,
                                            final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
-        final var logout = casProperties.getAuthn().getSamlIdp().getLogout();
+        val logout = casProperties.getAuthn().getSamlIdp().getLogout();
         if (logout.isSingleLogoutCallbacksDisabled()) {
             LOGGER.info("Processing SAML IdP SLO requests is disabled");
             return;
@@ -77,17 +77,17 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
 
         final Pair<? extends SignableSAMLObject, MessageContext> pair =
             this.samlHttpRequestExtractor.extract(request, decoder, LogoutRequest.class);
-        final var logoutRequest = LogoutRequest.class.cast(pair.getKey());
-        final var ctx = pair.getValue();
+        val logoutRequest = (LogoutRequest) pair.getKey();
+        val ctx = pair.getValue();
 
         if (logout.isForceSignedLogoutRequests() && !SAMLBindingSupport.isMessageSigned(ctx)) {
             throw new SAMLException("Logout request is not signed but should be.");
         }
 
         if (SAMLBindingSupport.isMessageSigned(ctx)) {
-            final var entityId = SamlIdPUtils.getIssuerFromSamlRequest(logoutRequest);
-            final var registeredService = this.servicesManager.findServiceBy(entityId, SamlRegisteredService.class);
-            final var facade = SamlRegisteredServiceServiceProviderMetadataFacade
+            val entityId = SamlIdPUtils.getIssuerFromSamlRequest(logoutRequest);
+            val registeredService = this.servicesManager.findServiceBy(entityId, SamlRegisteredService.class);
+            val facade = SamlRegisteredServiceServiceProviderMetadataFacade
                 .get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, entityId).get();
             this.samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(logoutRequest, facade, request, ctx);
         }

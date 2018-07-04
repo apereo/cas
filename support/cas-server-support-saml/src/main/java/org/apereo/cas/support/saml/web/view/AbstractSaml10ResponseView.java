@@ -2,9 +2,9 @@ package org.apereo.cas.support.saml.web.view;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.services.web.view.AbstractCasView;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -108,7 +108,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         String serviceId = null;
         try {
             response.setCharacterEncoding(this.encoding);
-            final var service = this.samlArgumentExtractor.extractService(request);
+            val service = this.samlArgumentExtractor.extractService(request);
             if (service == null || StringUtils.isBlank(service.getId())) {
                 serviceId = "UNKNOWN";
             } else {
@@ -120,7 +120,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
             }
 
             LOGGER.debug("Using [{}] as the recipient of the SAML response for [{}]", serviceId, service);
-            final var samlResponse = this.samlObjectBuilder.newResponse(
+            val samlResponse = this.samlObjectBuilder.newResponse(
                     this.samlObjectBuilder.generateSecureRandomId(),
                     ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(this.skewAllowance), serviceId, service);
             LOGGER.debug("Created SAML response for service [{}]", serviceId);

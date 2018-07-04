@@ -2,18 +2,21 @@ package org.apereo.cas.services;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import lombok.Setter;
 
 /**
  * Unit test for {@link AbstractRegisteredService}.
@@ -75,9 +78,9 @@ public class AbstractRegisteredServiceTests {
 
     @Test
     public void verifyAllowToProxyIsFalseByDefault() {
-        final var regexRegisteredService = new RegexRegisteredService();
+        val regexRegisteredService = new RegexRegisteredService();
         assertFalse(regexRegisteredService.getProxyPolicy().isAllowedToProxy());
-        final var service = new RegexRegisteredService();
+        val service = new RegexRegisteredService();
         assertFalse(service.getProxyPolicy().isAllowedToProxy());
     }
 
@@ -111,14 +114,14 @@ public class AbstractRegisteredServiceTests {
     public void verifyServiceAttributeFilterAllAttributes() {
         prepareService();
         this.r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        final var p = mock(Principal.class);
+        val p = mock(Principal.class);
         final Map<String, Object> map = new HashMap<>();
         map.put(ATTR_1, "value1");
         map.put(ATTR_2, "value2");
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        final var attr = this.r.getAttributeReleasePolicy().getAttributes(p,
+        val attr = this.r.getAttributeReleasePolicy().getAttributes(p,
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
         assertEquals(attr.size(), map.size());
     }
@@ -126,17 +129,17 @@ public class AbstractRegisteredServiceTests {
     @Test
     public void verifyServiceAttributeFilterAllowedAttributes() {
         prepareService();
-        final var policy = new ReturnAllowedAttributeReleasePolicy();
+        val policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList(ATTR_1, ATTR_3));
         this.r.setAttributeReleasePolicy(policy);
-        final var p = mock(Principal.class);
+        val p = mock(Principal.class);
         final Map<String, Object> map = new HashMap<>();
         map.put(ATTR_1, "value1");
         map.put(ATTR_2, "value2");
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        final var attr = this.r.getAttributeReleasePolicy().getAttributes(p,
+        val attr = this.r.getAttributeReleasePolicy().getAttributes(p,
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
         assertEquals(2, attr.size());
         assertTrue(attr.containsKey(ATTR_1));
@@ -146,19 +149,19 @@ public class AbstractRegisteredServiceTests {
     @Test
     public void verifyServiceAttributeFilterMappedAttributes() {
         prepareService();
-        final var policy = new ReturnMappedAttributeReleasePolicy();
+        val policy = new ReturnMappedAttributeReleasePolicy();
         final Multimap<String, Object> mappedAttr = ArrayListMultimap.create();
         mappedAttr.put(ATTR_1, "newAttr1");
         policy.setAllowedAttributes(CollectionUtils.wrap(mappedAttr));
         this.r.setAttributeReleasePolicy(policy);
-        final var p = mock(Principal.class);
+        val p = mock(Principal.class);
         final Map<String, Object> map = new HashMap<>();
         map.put(ATTR_1, "value1");
         map.put(ATTR_2, "value2");
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        final var attr = this.r.getAttributeReleasePolicy().getAttributes(p,
+        val attr = this.r.getAttributeReleasePolicy().getAttributes(p,
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
         assertEquals(1, attr.size());
         assertTrue(attr.containsKey("newAttr1"));
@@ -173,8 +176,8 @@ public class AbstractRegisteredServiceTests {
 
     @Test
     public void verifyServiceWithInvalidIdStillHasTheSameIdAfterCallingMatches() {
-        final var invalidId = "***";
-        final var service = RegisteredServiceTestUtils.getRegisteredService(invalidId);
+        val invalidId = "***";
+        val service = RegisteredServiceTestUtils.getRegisteredService(invalidId);
         service.matches("notRelevant");
         assertEquals(invalidId, service.getServiceId());
     }
