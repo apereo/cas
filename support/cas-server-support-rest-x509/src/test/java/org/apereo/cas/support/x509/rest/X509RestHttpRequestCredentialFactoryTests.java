@@ -1,5 +1,7 @@
 package org.apereo.cas.support.x509.rest;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.junit.Rule;
@@ -38,12 +40,12 @@ public class X509RestHttpRequestCredentialFactoryTests {
     @Test
     public void createX509Credential() throws IOException {
         final MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        final var scan = new Scanner(new ClassPathResource("ldap-crl.crt").getFile(), StandardCharsets.UTF_8.name());
-        final var certStr = scan.useDelimiter("\\Z").next();
+        val scan = new Scanner(new ClassPathResource("ldap-crl.crt").getFile(), StandardCharsets.UTF_8.name());
+        val certStr = scan.useDelimiter("\\Z").next();
         scan.close();
         requestBody.add("cert", certStr);
 
-        final var cred = factory.fromRequestBody(requestBody).iterator().next();
+        val cred = factory.fromRequestBody(requestBody).iterator().next();
         assertTrue(cred instanceof X509CertificateCredential);
     }
 

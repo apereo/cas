@@ -1,5 +1,7 @@
 package org.apereo.cas.web.report;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -41,10 +43,10 @@ public class StatisticsEndpoint extends BaseCasMvcEndpoint {
     public Map<String, Object> handle() {
         final Map<String, Object> model = new HashMap<>();
 
-        final var diff = Duration.between(this.upTimeStartDate, ZonedDateTime.now(ZoneOffset.UTC));
+        val diff = Duration.between(this.upTimeStartDate, ZonedDateTime.now(ZoneOffset.UTC));
         model.put("upTime", diff.getSeconds());
 
-        final var runtime = Runtime.getRuntime();
+        val runtime = Runtime.getRuntime();
         model.put("totalMemory", FileUtils.byteCountToDisplaySize(runtime.totalMemory()));
         model.put("maxMemory", FileUtils.byteCountToDisplaySize(runtime.maxMemory()));
         model.put("freeMemory", FileUtils.byteCountToDisplaySize(runtime.freeMemory()));
@@ -54,9 +56,9 @@ public class StatisticsEndpoint extends BaseCasMvcEndpoint {
         var expiredTgts = 0;
         var expiredSts = 0;
 
-        final var tickets = this.centralAuthenticationService.getTickets(ticket -> true);
+        val tickets = this.centralAuthenticationService.getTickets(ticket -> true);
 
-        for (final var ticket : tickets) {
+        for (val ticket : tickets) {
             if (ticket instanceof ServiceTicket) {
                 if (ticket.isExpired()) {
                     this.centralAuthenticationService.deleteTicket(ticket.getId());

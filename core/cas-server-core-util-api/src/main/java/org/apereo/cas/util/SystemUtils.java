@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vdurmont.semver4j.Semver;
 import lombok.SneakyThrows;
@@ -40,7 +42,7 @@ public class SystemUtils {
      * @return the system info
      */
     public static Map<String, Object> getSystemInfo() {
-        final var properties = System.getProperties();
+        val properties = System.getProperties();
 
         final Map<String, Object> info = new LinkedHashMap<>(SYSTEM_INFO_DEFAULT_SIZE);
 
@@ -54,7 +56,7 @@ public class SystemUtils {
         info.put("Java Vendor", properties.get("java.vendor"));
         info.put("Java Version", properties.get("java.version"));
 
-        final var runtime = Runtime.getRuntime();
+        val runtime = Runtime.getRuntime();
         info.put("JVM Free Memory", FileUtils.byteCountToDisplaySize(runtime.freeMemory()));
         info.put("JVM Maximum Memory", FileUtils.byteCountToDisplaySize(runtime.maxMemory()));
         info.put("JVM Total Memory", FileUtils.byteCountToDisplaySize(runtime.totalMemory()));
@@ -77,35 +79,35 @@ public class SystemUtils {
 
     @SneakyThrows
     private static void injectUpdateInfoIntoBannerIfNeeded(final Map<String, Object> info) {
-        final var properties = System.getProperties();
+        val properties = System.getProperties();
         if (!properties.containsKey("CAS_UPDATE_CHECK_ENABLED")) {
             return;
         }
 
-        final var url = new URL(UPDATE_CHECK_MAVEN_URL);
-        final var results = MAPPER.readValue(url, Map.class);
+        val url = new URL(UPDATE_CHECK_MAVEN_URL);
+        val results = MAPPER.readValue(url, Map.class);
         if (!results.containsKey("response")) {
             return;
         }
-        final var response = (Map) results.get("response");
+        val response = (Map) results.get("response");
         if (!response.containsKey("numFound") && (int) response.get("numFound") != 1) {
             return;
         }
 
-        final var docs = (List) response.get("docs");
+        val docs = (List) response.get("docs");
         if (docs.isEmpty()) {
             return;
         }
 
-        final var entry = (Map) docs.get(0);
-        final var latestVersion = (String) entry.get("latestVersion");
+        val entry = (Map) docs.get(0);
+        val latestVersion = (String) entry.get("latestVersion");
         if (StringUtils.isNotBlank(latestVersion)) {
-            final var currentVersion = CasVersion.getVersion();
-            final var latestSem = new Semver(latestVersion);
-            final var currentSem = new Semver(currentVersion);
+            val currentVersion = CasVersion.getVersion();
+            val latestSem = new Semver(latestVersion);
+            val currentSem = new Semver(currentVersion);
 
             if (currentSem.isLowerThan(latestSem)) {
-                final var updateString = String.format("[Latest Version: %s / Stable: %s]", latestVersion,
+                val updateString = String.format("[Latest Version: %s / Stable: %s]", latestVersion,
                     StringUtils.capitalize(BooleanUtils.toStringYesNo(latestSem.isStable())));
                 info.put("Update Availability", updateString);
             }
@@ -120,8 +122,8 @@ public class SystemUtils {
     @SneakyThrows
     public static String getNodeVersion() {
         try {
-            final var pb = new ProcessBuilder("node", "--version");
-            final var p = pb.start();
+            val pb = new ProcessBuilder("node", "--version");
+            val p = pb.start();
             return IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8).trim();
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
@@ -137,8 +139,8 @@ public class SystemUtils {
     @SneakyThrows
     public static String getNpmVersion() {
         try {
-            final var pb = new ProcessBuilder("npm", "--version");
-            final var p = pb.start();
+            val pb = new ProcessBuilder("npm", "--version");
+            val p = pb.start();
             return IOUtils.toString(p.getInputStream(), StandardCharsets.UTF_8).trim();
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import org.apereo.cas.category.CouchbaseCategory;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
@@ -80,11 +82,11 @@ public class CouchbaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAccount() throws Exception {
-        final var c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
-        final var result = couchbaseAuthenticationHandler.authenticate(c);
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
+        val result = couchbaseAuthenticationHandler.authenticate(c);
         assertNotNull(result);
         assertEquals("casuser", result.getPrincipal().getId());
-        final var attributes = result.getPrincipal().getAttributes();
+        val attributes = result.getPrincipal().getAttributes();
         assertEquals(2, attributes.size());
         assertTrue(attributes.containsKey("firstname"));
         assertTrue(attributes.containsKey("lastname"));

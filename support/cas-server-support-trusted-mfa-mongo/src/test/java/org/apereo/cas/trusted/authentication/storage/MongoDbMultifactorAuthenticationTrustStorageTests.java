@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import lombok.val;
+
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
@@ -55,7 +57,7 @@ public class MongoDbMultifactorAuthenticationTrustStorageTests {
     @Test
     public void verifySetAnExpireByKey() {
         mfaTrustEngine.set(MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint"));
-        final var records = mfaTrustEngine.get("casuser");
+        val records = mfaTrustEngine.get("casuser");
         assertEquals(1, records.size());
         mfaTrustEngine.expire(records.stream().findFirst().get().getRecordKey());
         assertTrue(mfaTrustEngine.get("casuser").isEmpty());
@@ -63,7 +65,7 @@ public class MongoDbMultifactorAuthenticationTrustStorageTests {
 
     @Test
     public void verifyExpireByDate() {
-        final var r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
+        val r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
         r.setRecordDate(LocalDateTime.now().minusDays(2));
         mfaTrustEngine.set(r);
 

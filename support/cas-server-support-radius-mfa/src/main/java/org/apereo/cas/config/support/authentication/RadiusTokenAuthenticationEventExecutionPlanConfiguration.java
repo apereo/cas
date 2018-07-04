@@ -1,5 +1,7 @@
 package org.apereo.cas.config.support.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
@@ -52,7 +54,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     public MultifactorAuthenticationProvider radiusAuthenticationProvider() {
-        final var p = new RadiusMultifactorAuthenticationProvider(radiusTokenServers());
+        val p = new RadiusMultifactorAuthenticationProvider(radiusTokenServers());
         p.setBypassEvaluator(radiusBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getRadius().getRank());
@@ -70,14 +72,14 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public List<RadiusServer> radiusTokenServers() {
         final List<RadiusServer> list = new ArrayList<>();
-        final var client = casProperties.getAuthn().getMfa().getRadius().getClient();
-        final var server = casProperties.getAuthn().getMfa().getRadius().getServer();
+        val client = casProperties.getAuthn().getMfa().getRadius().getClient();
+        val server = casProperties.getAuthn().getMfa().getRadius().getServer();
 
-        final var factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(), client.getSocketTimeout(),
+        val factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(), client.getSocketTimeout(),
                 client.getInetAddress(), client.getSharedSecret());
 
-        final var protocol = RadiusProtocol.valueOf(server.getProtocol());
-        final var impl = new JRadiusServerImpl(protocol, factory, server.getRetries(),
+        val protocol = RadiusProtocol.valueOf(server.getProtocol());
+        val impl = new JRadiusServerImpl(protocol, factory, server.getRetries(),
                 server.getNasIpAddress(), server.getNasIpv6Address(),
                 server.getNasPort(), server.getNasPortId(), server.getNasIdentifier(), server.getNasRealPort());
 
@@ -94,7 +96,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     public RadiusTokenAuthenticationHandler radiusTokenAuthenticationHandler() {
-        final var radius = casProperties.getAuthn().getMfa().getRadius();
+        val radius = casProperties.getAuthn().getMfa().getRadius();
         return new RadiusTokenAuthenticationHandler(radius.getName(), servicesManager, radiusTokenPrincipalFactory(), radiusTokenServers(),
                 radius.isFailoverOnException(), radius.isFailoverOnAuthenticationFailure());
     }
@@ -102,7 +104,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator() {
-        final var attribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        val attribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(attribute, radiusTokenAuthenticationHandler(), radiusAuthenticationProvider());
     }
 

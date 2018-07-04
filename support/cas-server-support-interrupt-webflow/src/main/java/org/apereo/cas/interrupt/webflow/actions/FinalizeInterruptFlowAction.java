@@ -1,5 +1,7 @@
 package org.apereo.cas.interrupt.webflow.actions;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.interrupt.webflow.InterruptUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -18,14 +20,14 @@ import org.springframework.webflow.execution.RequestContext;
 public class FinalizeInterruptFlowAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final var registeredService = WebUtils.getRegisteredService(requestContext);
-        final var response = InterruptUtils.getInterruptFrom(requestContext);
+        val registeredService = WebUtils.getRegisteredService(requestContext);
+        val response = InterruptUtils.getInterruptFrom(requestContext);
         
         if (response.isBlock()) {
-            final var accessUrl = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl();
+            val accessUrl = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl();
             if (registeredService != null && accessUrl != null) {
-                final var url = accessUrl.toURL().toExternalForm();
-                final var externalContext = requestContext.getExternalContext();
+                val url = accessUrl.toURL().toExternalForm();
+                val externalContext = requestContext.getExternalContext();
                 externalContext.requestExternalRedirect(url);
                 externalContext.recordResponseComplete();
                 return no();

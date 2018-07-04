@@ -1,5 +1,7 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -23,19 +25,19 @@ public class InitPasswordResetAction extends AbstractAction {
     
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final var token = requestContext.getFlowScope().getString("token");
+        val token = requestContext.getFlowScope().getString("token");
 
         if (StringUtils.isBlank(token)) {
             LOGGER.error("Password reset token is missing");
             return error();
         }
 
-        final var username = passwordManagementService.parseToken(token);
+        val username = passwordManagementService.parseToken(token);
         if (StringUtils.isBlank(username)) {
             LOGGER.error("Password reset token could not be verified");
             return error();
         }
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
         c.setUsername(username);
         WebUtils.putCredential(requestContext, c);
         return success();

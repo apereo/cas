@@ -1,5 +1,7 @@
 package org.apereo.cas.support.wsfederation;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -93,7 +95,7 @@ public class WsFederationConfiguration implements Serializable {
     public void initialize() {
         this.signingCertificateResources.forEach(Unchecked.consumer(r -> {
             try {
-                final var watcher = new FileWatcherService(r.getFile(), file -> createSigningWallet(this.signingCertificateResources));
+                val watcher = new FileWatcherService(r.getFile(), file -> createSigningWallet(this.signingCertificateResources));
                 watcher.start(getClass().getSimpleName());
             } catch (final Exception e) {
                 LOGGER.trace(e.getMessage(), e);
@@ -136,8 +138,8 @@ public class WsFederationConfiguration implements Serializable {
      */
     private static Credential getSigningCredential(final Resource resource) {
         try (var inputStream = resource.getInputStream()) {
-            final var certificateFactory = CertificateFactory.getInstance("X.509");
-            final var certificate = (X509Certificate) certificateFactory.generateCertificate(inputStream);
+            val certificateFactory = CertificateFactory.getInstance("X.509");
+            val certificate = (X509Certificate) certificateFactory.generateCertificate(inputStream);
             final Credential publicCredential = new BasicX509Credential(certificate);
             LOGGER.debug("Signing credential key retrieved from [{}].", resource);
             return publicCredential;

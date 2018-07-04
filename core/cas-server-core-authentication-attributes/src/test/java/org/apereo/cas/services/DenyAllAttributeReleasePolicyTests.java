@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -25,7 +27,7 @@ public class DenyAllAttributeReleasePolicyTests {
 
     @Test
     public void verifySerializeADenyAllAttributeReleasePolicyToJson() throws IOException {
-        final var policyWritten = new DenyAllAttributeReleasePolicy();
+        val policyWritten = new DenyAllAttributeReleasePolicy();
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
 

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -75,8 +77,8 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
                                                       final RegisteredService registeredService) {
 
         if (cachedAttributesToEncode.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL)) {
-            final var value = cachedAttributesToEncode.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
-            final var decodedValue = this.cacheCredentialCipherExecutor.decode(value, new Object[] {});
+            val value = cachedAttributesToEncode.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
+            val decodedValue = this.cacheCredentialCipherExecutor.decode(value, new Object[] {});
             cachedAttributesToEncode.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
             if (StringUtils.isNotBlank(decodedValue)) {
                 cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, decodedValue);
@@ -118,10 +120,10 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
                                                            final String cachedAttributeName,
                                                            final RegisteredServiceCipherExecutor cipher,
                                                            final RegisteredService registeredService) {
-        final var cachedAttribute = cachedAttributesToEncode.remove(cachedAttributeName);
+        val cachedAttribute = cachedAttributesToEncode.remove(cachedAttributeName);
         if (StringUtils.isNotBlank(cachedAttribute)) {
             LOGGER.debug("Retrieved [{}] as a cached model attribute...", cachedAttributeName);
-            final var encodedValue = cipher.encode(cachedAttribute, Optional.of(registeredService));
+            val encodedValue = cipher.encode(cachedAttribute, Optional.of(registeredService));
             if (StringUtils.isNotBlank(encodedValue)) {
                 attributes.put(cachedAttributeName, encodedValue);
                 LOGGER.debug("Encrypted and encoded [{}] as an attribute to [{}].", cachedAttributeName, encodedValue);
@@ -147,7 +149,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
                                                            final RegisteredService registeredService) {
         LOGGER.debug("Sanitizing attribute names in preparation of the final validation response");
 
-        final var attrs = attributes.keySet().stream()
+        val attrs = attributes.keySet().stream()
             .filter(getSanitizingAttributeNamePredicate())
             .map(s -> Pair.of(EncodingUtils.hexEncode(s.getBytes(StandardCharsets.UTF_8)), attributes.get(s)))
             .collect(Collectors.toSet());
@@ -155,7 +157,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
             LOGGER.warn("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
             attributes.keySet().removeIf(getSanitizingAttributeNamePredicate());
             attrs.forEach(p -> {
-                final var key = p.getKey();
+                val key = p.getKey();
                 LOGGER.debug("Sanitized attribute name to be [{}]", key);
                 attributes.put(key, p.getValue());
             });

@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.web.controllers;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -85,7 +87,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                                                                                 final HttpServletRequest request,
                                                                                 final HttpServletResponse response) {
         try {
-            final var registrationRequest = this.clientRegistrationRequestSerializer.from(jsonInput);
+            val registrationRequest = this.clientRegistrationRequestSerializer.from(jsonInput);
             LOGGER.debug("Received client registration request [{}]", registrationRequest);
 
             if (registrationRequest.getScopes().isEmpty()) {
@@ -95,7 +97,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                 throw new Exception("Registration request scopes do not contain " + OidcConstants.StandardScopes.OPENID.getScope());
             }
 
-            final var registeredService = new OidcRegisteredService();
+            val registeredService = new OidcRegisteredService();
             registeredService.setName(registrationRequest.getClientName());
             
             registeredService.setSectorIdentifierUri(registrationRequest.getSectorIdentifierUri());
@@ -108,7 +110,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
                 registeredService.setJwks(registrationRequest.getJwksUri());
                 registeredService.setSignIdToken(true);
             }
-            final var uri = registrationRequest.getRedirectUris().stream().findFirst().get();
+            val uri = registrationRequest.getRedirectUris().stream().findFirst().get();
             registeredService.setServiceId(uri);
 
             registeredService.setClientId(clientIdGenerator.getNewString());
@@ -118,7 +120,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             final Set<String> supportedScopes = new HashSet<>(casProperties.getAuthn().getOidc().getScopes());
             supportedScopes.retainAll(registrationRequest.getScopes());
 
-            final var clientResponse = getClientRegistrationResponse(registrationRequest, registeredService);
+            val clientResponse = getClientRegistrationResponse(registrationRequest, registeredService);
             registeredService.setScopes(supportedScopes);
             final Set<String> processedScopes = new LinkedHashSet<>(supportedScopes);
             registeredService.setScopes(processedScopes);
@@ -152,7 +154,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
      */
     protected OidcClientRegistrationResponse getClientRegistrationResponse(final OidcClientRegistrationRequest registrationRequest,
                                                                            final OidcRegisteredService registeredService) {
-        final var clientResponse = new OidcClientRegistrationResponse();
+        val clientResponse = new OidcClientRegistrationResponse();
         clientResponse.setApplicationType("web");
         clientResponse.setClientId(registeredService.getClientId());
         clientResponse.setClientSecret(registeredService.getClientSecret());

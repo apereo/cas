@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.gauth.repository.credentials;
 
+import lombok.val;
+
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -42,13 +44,13 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
 
     @Override
     public OneTimeTokenAccount get(final String username) {
-        final var rest = gauth.getRest();
-        final var headers = new HttpHeaders();
+        val rest = gauth.getRest();
+        val headers = new HttpHeaders();
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         headers.put("username", CollectionUtils.wrap(username));
 
         final HttpEntity<String> entity = new HttpEntity<>(headers);
-        final var result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.GET, entity, OneTimeTokenAccount.class);
+        val result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.GET, entity, OneTimeTokenAccount.class);
         if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
             return decode(result.getBody());
         }
@@ -57,28 +59,28 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
 
     @Override
     public void save(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
-        final var account = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
+        val account = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
         update(account);
     }
 
     @Override
     public OneTimeTokenAccount create(final String username) {
-        final var key = this.googleAuthenticator.createCredentials();
+        val key = this.googleAuthenticator.createCredentials();
         return new GoogleAuthenticatorAccount(username, key.getKey(), key.getVerificationCode(), key.getScratchCodes());
     }
 
     @Override
     public void deleteAll() {
-        final var rest = gauth.getRest();
+        val rest = gauth.getRest();
         restTemplate.delete(rest.getEndpointUrl());
     }
 
     @Override
     public OneTimeTokenAccount update(final OneTimeTokenAccount accountToUpdate) {
-        final var rest = gauth.getRest();
-        final var account = encode(accountToUpdate);
+        val rest = gauth.getRest();
+        val account = encode(accountToUpdate);
 
-        final var headers = new HttpHeaders();
+        val headers = new HttpHeaders();
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         headers.put("username", CollectionUtils.wrap(account.getUsername()));
         headers.put("validationCode", CollectionUtils.wrap(String.valueOf(account.getValidationCode())));
@@ -86,7 +88,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
         headers.put("scratchCodes", account.getScratchCodes().stream().map(String::valueOf).collect(Collectors.toList()));
 
         final HttpEntity<String> entity = new HttpEntity<>(headers);
-        final var result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.POST, entity, Object.class);
+        val result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.POST, entity, Object.class);
         if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
             LOGGER.debug("Posted google authenticator account successfully");
             return account;

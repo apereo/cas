@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.util;
 
+import lombok.val;
+
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
@@ -28,7 +30,7 @@ public class MultifactorAuthenticationTrustUtils {
      * @return the key for this trust record
      */
     public static String generateKey(final MultifactorAuthenticationTrustRecord r) {
-        final var builder = new StringBuilder(r.getPrincipal());
+        val builder = new StringBuilder(r.getPrincipal());
         return builder.append('@')
                 .append(r.getRecordDate())
                 .append('@')
@@ -42,8 +44,8 @@ public class MultifactorAuthenticationTrustUtils {
      * @return the geography
      */
     public static String generateGeography() {
-        final var clientInfo = ClientInfoHolder.getClientInfo();
-        final var geography = clientInfo.getClientIpAddress().concat("@").concat(WebUtils.getHttpServletRequestUserAgentFromRequestContext());
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        val geography = clientInfo.getClientIpAddress().concat("@").concat(WebUtils.getHttpServletRequestUserAgentFromRequestContext());
         return geography;
     }
 
@@ -57,7 +59,7 @@ public class MultifactorAuthenticationTrustUtils {
             final Authentication authn,
             final String attributeName) {
 
-        final var newAuthn = DefaultAuthenticationBuilder.newInstance(authn)
+        val newAuthn = DefaultAuthenticationBuilder.newInstance(authn)
                 .addAttribute(attributeName, Boolean.TRUE)
                 .build();
         LOGGER.debug("Updated authentication session to remember trusted multifactor record via [{}]", attributeName);

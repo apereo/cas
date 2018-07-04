@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
@@ -37,14 +39,14 @@ public class CasAcceptableUsagePolicyJdbcConfiguration {
 
     @Bean
     public DataSource acceptableUsagePolicyDataSource() {
-        final var jdbc = casProperties.getAcceptableUsagePolicy().getJdbc();
+        val jdbc = casProperties.getAcceptableUsagePolicy().getJdbc();
         return JpaBeans.newDataSource(jdbc);
     }
 
     @RefreshScope
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
-        final var jdbc = casProperties.getAcceptableUsagePolicy().getJdbc();
+        val jdbc = casProperties.getAcceptableUsagePolicy().getJdbc();
 
         if (StringUtils.isBlank(jdbc.getTableName())) {
             throw new BeanCreationException("Database table for acceptable usage policy must be specified.");

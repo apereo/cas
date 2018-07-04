@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -19,7 +21,7 @@ public class UnrecognizableServiceForServiceTicketValidationExceptionTests {
 
     @Test
     public void verifyThrowableConstructor() {
-        final var t =
+        val t =
             new UnrecognizableServiceForServiceTicketValidationException(this.service);
 
         assertSame(UnrecognizableServiceForServiceTicketValidationException.CODE, t.getCode());

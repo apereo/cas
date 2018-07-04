@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
@@ -47,9 +49,9 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @Bean
     @RefreshScope
     public DeviceFingerprintComponentExtractor deviceFingerprintClientIpComponent() {
-        final var properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getClientIp();
+        val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getClientIp();
         if (properties.isEnabled()) {
-            final var component = new ClientIpDeviceFingerprintComponentExtractor();
+            val component = new ClientIpDeviceFingerprintComponentExtractor();
             component.setOrder(properties.getOrder());
             return component;
         }
@@ -61,9 +63,9 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @Bean
     @RefreshScope
     public DeviceFingerprintComponentExtractor deviceFingerprintCookieComponent() {
-        final var properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
+        val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
         if (properties.isEnabled()) {
-            final var component = new CookieDeviceFingerprintComponentExtractor(
+            val component = new CookieDeviceFingerprintComponentExtractor(
                 deviceFingerprintCookieGenerator(), deviceFingerprintCookieRandomStringGenerator());
             component.setOrder(properties.getOrder());
             return component;
@@ -76,9 +78,9 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @Bean
     @RefreshScope
     public DeviceFingerprintComponentExtractor deviceFingerprintUserAgentComponent() {
-        final var properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getUserAgent();
+        val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getUserAgent();
         if (properties.isEnabled()) {
-            final var component = new UserAgentDeviceFingerprintComponentExtractor();
+            val component = new UserAgentDeviceFingerprintComponentExtractor();
             component.setOrder(properties.getOrder());
             return component;
         }
@@ -91,7 +93,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @Bean(BEAN_DEVICE_FINGERPRINT_STRATEGY)
     @RefreshScope
     public DeviceFingerprintStrategy deviceFingerprintStrategy(final List<DeviceFingerprintComponentExtractor> extractors) {
-        final var properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint();
+        val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint();
         return new DefaultDeviceFingerprintStrategy(extractors, properties.getComponentSeparator());
     }
 
@@ -99,7 +101,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @Bean(BEAN_DEVICE_FINGERPRINT_COOKIE_GENERATOR)
     @RefreshScope
     public CookieRetrievingCookieGenerator deviceFingerprintCookieGenerator() {
-        final var cookie = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
+        val cookie = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
         return new TrustedDeviceCookieRetrievingCookieGenerator(
             cookie.getName(),
             cookie.getPath(),
@@ -126,7 +128,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @Bean(BEAN_DEVICE_FINGERPRINT_COOKIE_CIPHER_EXECUTOR)
     @RefreshScope
     public CipherExecutor deviceFingerprintCookieCipherExecutor() {
-        final var crypto =
+        val crypto =
             casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie().getCrypto();
 
         var enabled = crypto.isEnabled();

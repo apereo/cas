@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -35,54 +37,54 @@ public class AuthenticationExceptionHandlerActionTests {
  
     @Test
     public void handleAccountNotFoundExceptionByDefault() {
-        final var handler = new AuthenticationExceptionHandlerAction(
+        val handler = new AuthenticationExceptionHandlerAction(
                 CollectionUtils.wrapSet(AccountLockedException.class, AccountNotFoundException.class)
         );
-        final var req = getMockRequestContext();
+        val req = getMockRequestContext();
 
         final Map<String, Throwable> map = new HashMap<>();
         map.put("notFound", new AccountNotFoundException());
-        final var id = handler.handle(new AuthenticationException(map), req);
+        val id = handler.handle(new AuthenticationException(map), req);
         assertEquals(AccountNotFoundException.class.getSimpleName(), id);
     }
 
     private RequestContext getMockRequestContext() {
-        final var ctx = mock(RequestContext.class);
+        val ctx = mock(RequestContext.class);
         when(ctx.getMessageContext()).thenReturn(mock(MessageContext.class));
         return ctx;
     }
 
     @Test
     public void handleUnknownExceptionByDefault() {
-        final var handler = new AuthenticationExceptionHandlerAction();
-        final var req = getMockRequestContext();
+        val handler = new AuthenticationExceptionHandlerAction();
+        val req = getMockRequestContext();
         final Map<String, Throwable> map = new HashMap<>();
         map.put("unknown", new GeneralSecurityException());
-        final var id = handler.handle(new AuthenticationException(map), req);
+        val id = handler.handle(new AuthenticationException(map), req);
         assertEquals("UNKNOWN", id);
     }
 
     @Test
     public void handleUnknownTicketExceptionByDefault() {
-        final var handler = new AuthenticationExceptionHandlerAction();
-        final var req = getMockRequestContext();
+        val handler = new AuthenticationExceptionHandlerAction();
+        val req = getMockRequestContext();
 
-        final var id = handler.handle(new InvalidTicketException("TGT"), req);
+        val id = handler.handle(new InvalidTicketException("TGT"), req);
         assertEquals("UNKNOWN", id);
     }
     
     @Test
     public void handleUnsatisfiedAuthenticationPolicyExceptionByDefault() {
-        final var handler = new AuthenticationExceptionHandlerAction(
+        val handler = new AuthenticationExceptionHandlerAction(
                 CollectionUtils.wrapSet(UnsatisfiedAuthenticationPolicyException.class,
                         AccountNotFoundException.class)
         );
-        final var req = getMockRequestContext();
+        val req = getMockRequestContext();
 
         final ContextualAuthenticationPolicy<?> policy = new TestContextualAuthenticationPolicy();
-        final var id = handler.handle(new UnsatisfiedAuthenticationPolicyException(policy), req);
+        val id = handler.handle(new UnsatisfiedAuthenticationPolicyException(policy), req);
         assertEquals("UnsatisfiedAuthenticationPolicyException", id);
-        final var message = ArgumentCaptor.forClass(DefaultMessageResolver.class);
+        val message = ArgumentCaptor.forClass(DefaultMessageResolver.class);
         verify(req.getMessageContext(), times(1)).addMessage(message.capture());
         assertArrayEquals(new String[]{policy.getCode().get()}, message.getValue().getCodes());
     }

@@ -1,5 +1,7 @@
 package org.apereo.cas.util.crypto;
 
+import lombok.val;
+
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
@@ -32,10 +34,10 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
     protected PublicKey createInstance() throws Exception {
         LOGGER.debug("Creating public key instance from [{}] using [{}]", this.resource.getFilename(), this.algorithm);
         try (var pubKey = this.resource.getInputStream()) {
-            final var bytes = new byte[(int) this.resource.contentLength()];
+            val bytes = new byte[(int) this.resource.contentLength()];
             pubKey.read(bytes);
-            final var pubSpec = new X509EncodedKeySpec(bytes);
-            final var factory = KeyFactory.getInstance(this.algorithm);
+            val pubSpec = new X509EncodedKeySpec(bytes);
+            val factory = KeyFactory.getInstance(this.algorithm);
             return factory.generatePublic(pubSpec);
         }
     }

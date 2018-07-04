@@ -1,5 +1,7 @@
 package org.apereo.cas.support.openid.authentication.handler.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -49,8 +51,8 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
 
     @Test
     public void verifyTGTWithSameId() throws Exception {
-        final var c = new OpenIdCredential(TGT_ID, USERNAME);
-        final var t = getTicketGrantingTicket();
+        val c = new OpenIdCredential(TGT_ID, USERNAME);
+        val t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
 
         assertEquals(TGT_ID, this.openIdCredentialsAuthenticationHandler.authenticate(c).getPrincipal().getId());
@@ -58,8 +60,8 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
 
     @Test
     public void verifyTGTThatIsExpired() throws Exception {
-        final var c = new OpenIdCredential(TGT_ID, USERNAME);
-        final var t = getTicketGrantingTicket();
+        val c = new OpenIdCredential(TGT_ID, USERNAME);
+        val t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
         t.markTicketExpired();
         this.ticketRegistry.updateTicket(t);
@@ -69,8 +71,8 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
 
     @Test
     public void verifyTGTWithDifferentId() throws Exception {
-        final var c = new OpenIdCredential(TGT_ID, "test1");
-        final var t = getTicketGrantingTicket();
+        val c = new OpenIdCredential(TGT_ID, "test1");
+        val t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
 
         this.thrown.expect(FailedLoginException.class);

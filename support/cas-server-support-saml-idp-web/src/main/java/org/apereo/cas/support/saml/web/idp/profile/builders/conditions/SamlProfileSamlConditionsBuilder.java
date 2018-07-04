@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.conditions;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -63,7 +65,7 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
                                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                          final MessageContext messageContext) throws SamlException {
 
-        final var currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
+        val currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
         var skewAllowance = casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance();
         if (skewAllowance <= 0) {
             skewAllowance = casProperties.getSamlCore().getSkewAllowance();
@@ -72,10 +74,10 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
         final List<String> audienceUrls = new ArrayList<>();
         audienceUrls.add(adaptor.getEntityId());
         if (StringUtils.isNotBlank(service.getAssertionAudiences())) {
-            final var audiences = org.springframework.util.StringUtils.commaDelimitedListToSet(service.getAssertionAudiences());
+            val audiences = org.springframework.util.StringUtils.commaDelimitedListToSet(service.getAssertionAudiences());
             audienceUrls.addAll(audiences);
         }
-        final var conditions = newConditions(currentDateTime,
+        val conditions = newConditions(currentDateTime,
             currentDateTime.plusSeconds(skewAllowance),
             audienceUrls.toArray(new String[]{}));
         return conditions;

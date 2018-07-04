@@ -58,8 +58,9 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         LOGGER.debug("Decrementing counts for throttler.  Starting key count: [{}]", keys.size());
 
         val now = ZonedDateTime.now(ZoneOffset.UTC);
-        for (val iter = keys.iterator(); iter.hasNext(); ) {
-            val entry = iter.next();
+        val iter = keys.iterator();
+        while (iter.hasNext()) {
+            final var entry = iter.next();
             if (submissionRate(now, entry.getValue()) < getThresholdRate()) {
                 LOGGER.trace("Removing entry for key [{}]", entry.getKey());
                 iter.remove();

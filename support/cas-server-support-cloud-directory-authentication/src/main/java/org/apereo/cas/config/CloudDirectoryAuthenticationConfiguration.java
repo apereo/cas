@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectory;
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectoryClientBuilder;
@@ -59,9 +61,9 @@ public class CloudDirectoryAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationHandler cloudDirectoryAuthenticationHandler() {
 
-        final var cloud = casProperties.getAuthn().getCloudDirectory();
+        val cloud = casProperties.getAuthn().getCloudDirectory();
 
-        final var handler = new CloudDirectoryAuthenticationHandler(cloud.getName(), servicesManager,
+        val handler = new CloudDirectoryAuthenticationHandler(cloud.getName(), servicesManager,
             cloudDirectoryPrincipalFactory(), cloudDirectoryRepository(), cloud);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(cloud.getPrincipalTransformation()));
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(cloud.getPasswordEncoder()));
@@ -72,7 +74,7 @@ public class CloudDirectoryAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public CloudDirectoryRepository cloudDirectoryRepository() {
-        final var cloud = casProperties.getAuthn().getCloudDirectory();
+        val cloud = casProperties.getAuthn().getCloudDirectory();
         return new DefaultCloudDirectoryRepository(amazonCloudDirectory(), cloud);
     }
 
@@ -80,9 +82,9 @@ public class CloudDirectoryAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AmazonCloudDirectory amazonCloudDirectory() {
-        final var cloud = casProperties.getAuthn().getCloudDirectory();
+        val cloud = casProperties.getAuthn().getCloudDirectory();
 
-        final var endpoint = new AwsClientBuilder.EndpointConfiguration(
+        val endpoint = new AwsClientBuilder.EndpointConfiguration(
             cloud.getEndpoint(), cloud.getRegion());
         return AmazonCloudDirectoryClientBuilder
             .standard()

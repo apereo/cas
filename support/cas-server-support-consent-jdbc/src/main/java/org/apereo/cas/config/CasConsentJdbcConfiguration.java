@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
@@ -64,7 +66,7 @@ public class CasConsentJdbcConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean consentEntityManagerFactory() {
-        final var bean =
+        val bean =
                 JpaBeans.newHibernateEntityManagerFactoryBean(
                         new JpaConfigDataHolder(
                                 jpaConsentVendorAdapter(),
@@ -79,7 +81,7 @@ public class CasConsentJdbcConfiguration {
     @Bean
     public PlatformTransactionManager transactionManagerConsent(
             @Qualifier("consentEntityManagerFactory") final EntityManagerFactory emf) {
-        final var mgmr = new JpaTransactionManager();
+        val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }

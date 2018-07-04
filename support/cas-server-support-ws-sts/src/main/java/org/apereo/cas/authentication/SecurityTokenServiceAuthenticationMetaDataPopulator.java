@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -35,16 +37,16 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
                                                     final AuthenticationBuilder builder,
                                                     final WSFederationRegisteredService rp,
                                                     final SecurityTokenServiceClient sts) {
-        final var up = getCredential(transaction);
+        val up = getCredential(transaction);
         if (up != null) {
             try {
-                final var properties = sts.getProperties();
+                val properties = sts.getProperties();
                 properties.put(SecurityConstants.USERNAME, up.getUsername());
 
-                final var uid = credentialCipherExecutor.encode(up.getUsername());
+                val uid = credentialCipherExecutor.encode(up.getUsername());
                 properties.put(SecurityConstants.PASSWORD, uid);
-                final var token = sts.requestSecurityToken(rp.getAppliesTo());
-                final var tokenStr = EncodingUtils.encodeBase64(SerializationUtils.serialize(token));
+                val token = sts.requestSecurityToken(rp.getAppliesTo());
+                val tokenStr = EncodingUtils.encodeBase64(SerializationUtils.serialize(token));
                 builder.addAttribute(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE, tokenStr);
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
@@ -72,14 +74,14 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
         if (!this.selectionStrategy.supports(transaction.getService())) {
             return;
         }
-        final var service = this.selectionStrategy.resolveServiceFrom(transaction.getService());
+        val service = this.selectionStrategy.resolveServiceFrom(transaction.getService());
         if (service != null) {
-            final var rp = this.servicesManager.findServiceBy(service, WSFederationRegisteredService.class);
+            val rp = this.servicesManager.findServiceBy(service, WSFederationRegisteredService.class);
             if (rp == null || !rp.getAccessStrategy().isServiceAccessAllowed()) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO.", rp);
                 throw new UnauthorizedSsoServiceException();
             }
-            final var sts = clientBuilder.buildClientForSecurityTokenRequests(rp);
+            val sts = clientBuilder.buildClientForSecurityTokenRequests(rp);
             invokeSecurityTokenServiceForToken(transaction, builder, rp, sts);
         }
     }

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.artifact;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -55,24 +57,24 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
                                      final HttpServletResponse response,
                                      final String binding,
                                      final MessageContext messageContext) throws SamlException {
-        final var castedAssertion = org.jasig.cas.client.validation.Assertion.class.cast(casAssertion);
-        final var ticket = (SamlArtifactTicket) castedAssertion.getAttributes().get("artifact");
-        final var artifactResponse = new ArtifactResponseBuilder().buildObject();
+        val castedAssertion = org.jasig.cas.client.validation.Assertion.class.cast(casAssertion);
+        val ticket = (SamlArtifactTicket) castedAssertion.getAttributes().get("artifact");
+        val artifactResponse = new ArtifactResponseBuilder().buildObject();
         artifactResponse.setIssueInstant(DateTime.now());
         artifactResponse.setIssuer(newIssuer(ticket.getIssuer()));
         artifactResponse.setInResponseTo(ticket.getRelyingPartyId());
         artifactResponse.setID(ticket.getId());
         artifactResponse.setStatus(newStatus(StatusCode.SUCCESS, "Success"));
         
-        final var samlResponse = SamlUtils.transformSamlObject(configBean, ticket.getObject(), SAMLObject.class);
+        val samlResponse = SamlUtils.transformSamlObject(configBean, ticket.getObject(), SAMLObject.class);
         artifactResponse.setMessage(samlResponse);
         
-        final var header = newSoapObject(Header.class);
+        val header = newSoapObject(Header.class);
         
-        final var body = newSoapObject(Body.class);
+        val body = newSoapObject(Body.class);
         body.getUnknownXMLObjects().add(artifactResponse);
         
-        final var envelope = newSoapObject(Envelope.class);
+        val envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
         SamlUtils.logSamlObject(this.configBean, envelope);

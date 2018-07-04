@@ -1,5 +1,7 @@
 package org.apereo.cas.redis.core;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
@@ -40,7 +42,7 @@ public class RedisObjectFactory {
                                                        final Class<K> keyClass, final Class<V> valueClass) {
         final RedisTemplate<K, V> template = new RedisTemplate();
         final RedisSerializer<String> string = new StringRedisSerializer();
-        final var jdk = new JdkSerializationRedisSerializer();
+        val jdk = new JdkSerializationRedisSerializer();
         template.setKeySerializer(string);
         template.setValueSerializer(jdk);
         template.setHashValueSerializer(jdk);
@@ -56,11 +58,11 @@ public class RedisObjectFactory {
      * @return the redis connection factory
      */
     public RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis) {
-        final var poolConfig = redis.getPool() != null
+        val poolConfig = redis.getPool() != null
             ? redisPoolConfig(redis)
             : LettucePoolingClientConfiguration.defaultConfiguration();
 
-        final var factory = new LettuceConnectionFactory(potentiallyGetSentinelConfig(redis), poolConfig);
+        val factory = new LettuceConnectionFactory(potentiallyGetSentinelConfig(redis), poolConfig);
         factory.setHostName(redis.getHost());
         factory.setPort(redis.getPort());
         if (redis.getPassword() != null) {
@@ -76,8 +78,8 @@ public class RedisObjectFactory {
     }
 
     private LettucePoolingClientConfiguration redisPoolConfig(final BaseRedisProperties redis) {
-        final var config = new GenericObjectPoolConfig();
-        final var props = redis.getPool();
+        val config = new GenericObjectPoolConfig();
+        val props = redis.getPool();
         config.setMaxTotal(props.getMaxActive());
         config.setMaxIdle(props.getMaxIdle());
         config.setMinIdle(props.getMinIdle());
@@ -118,9 +120,9 @@ public class RedisObjectFactory {
     private List<RedisNode> createRedisNodesForProperties(final BaseRedisProperties redis) {
         final List<RedisNode> redisNodes = new ArrayList<>();
         if (redis.getSentinel().getNode() != null) {
-            final var nodes = redis.getSentinel().getNode();
-            for (final var hostAndPort: nodes) {
-                final var args = StringUtils.split(hostAndPort, ":");
+            val nodes = redis.getSentinel().getNode();
+            for (val hostAndPort: nodes) {
+                val args = StringUtils.split(hostAndPort, ":");
                 redisNodes.add(new RedisNode(args[0], Integer.parseInt(args[1])));
             }
         }

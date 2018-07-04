@@ -1,5 +1,7 @@
 package org.apereo.cas.services.web.support;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -88,11 +90,11 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
 
     private boolean shouldHttpHeaderBeInjectedIntoResponse(final HttpServletRequest request,
                                                            final RegisteredServiceProperties property) {
-        final var result = getRegisteredServiceFromRequest(request);
+        val result = getRegisteredServiceFromRequest(request);
         if (result.isPresent()) {
-            final var properties = result.get().getProperties();
+            val properties = result.get().getProperties();
             if (properties.containsKey(property.getPropertyName())) {
-                final var prop = properties.get(property.getPropertyName());
+                val prop = properties.get(property.getPropertyName());
                 return BooleanUtils.toBoolean(prop.getValue());
             }
         }
@@ -112,7 +114,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
      * @return the registered service from request
      */
     private Optional<RegisteredService> getRegisteredServiceFromRequest(final HttpServletRequest request) {
-        final var service = this.argumentExtractor.extractService(request);
+        val service = this.argumentExtractor.extractService(request);
         if (service != null) {
             return Optional.ofNullable(this.servicesManager.findServiceBy(service));
         }

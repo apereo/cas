@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -90,9 +92,9 @@ public class CasCoreConfiguration {
     @Autowired
     @Bean
     public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan(final List<AuthenticationServiceSelectionStrategyConfigurer> configurers) {
-        final var plan = new DefaultAuthenticationServiceSelectionPlan();
+        val plan = new DefaultAuthenticationServiceSelectionPlan();
         configurers.forEach(c -> {
-            final var name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            val name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Configuring authentication request service selection strategy plan [{}]", name);
             c.configureAuthenticationServiceSelectionStrategy(plan);
         });

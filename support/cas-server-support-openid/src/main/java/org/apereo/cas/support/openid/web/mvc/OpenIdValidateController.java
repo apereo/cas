@@ -1,5 +1,7 @@
 package org.apereo.cas.support.openid.web.mvc;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -58,10 +60,10 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
     @Override
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
-        final var openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
+        val openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
         if (StringUtils.equals(openIdMode, OpenIdProtocolConstants.CHECK_AUTHENTICATION)) {
 
-            final var message = (VerifyResponse) this.serverManager.verify(new ParameterList(request.getParameterMap()));
+            val message = (VerifyResponse) this.serverManager.verify(new ParameterList(request.getParameterMap()));
 
             final Map<String, String> parameters = new HashMap<>(message.getParameterMap());
             if (message.isSignatureVerified()) {
@@ -78,7 +80,7 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
 
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
-        final var openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
+        val openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
         if (StringUtils.equals(openIdMode, OpenIdProtocolConstants.CHECK_AUTHENTICATION)) {
             LOGGER.info("Handling request. openid.mode : [{}]", openIdMode);
             return true;

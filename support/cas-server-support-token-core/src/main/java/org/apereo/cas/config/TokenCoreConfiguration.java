@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
@@ -50,7 +52,7 @@ public class TokenCoreConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "tokenCipherExecutor")
     public CipherExecutor tokenCipherExecutor() {
-        final var crypto = casProperties.getAuthn().getToken().getCrypto();
+        val crypto = casProperties.getAuthn().getToken().getCrypto();
         var enabled = crypto.isEnabled();
         if (!enabled && (StringUtils.isNotBlank(crypto.getEncryption().getKey())) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
             LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "

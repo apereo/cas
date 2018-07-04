@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -56,11 +58,11 @@ public class JpaServiceRegistryConfiguration implements ServiceRegistryExecution
 
     @Bean
     public List<String> jpaServicePackagesToScan() {
-        final var reflections =
+        val reflections =
             new Reflections(new ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE))
                 .setScanners(new SubTypesScanner(false)));
-        final var subTypes = reflections.getSubTypesOf(AbstractRegisteredService.class);
+        val subTypes = reflections.getSubTypesOf(AbstractRegisteredService.class);
         return subTypes.stream().map(t -> t.getPackage().getName()).collect(Collectors.toList());
     }
 
@@ -79,7 +81,7 @@ public class JpaServiceRegistryConfiguration implements ServiceRegistryExecution
     @Autowired
     @Bean
     public PlatformTransactionManager transactionManagerServiceReg(@Qualifier("serviceEntityManagerFactory") final EntityManagerFactory emf) {
-        final var mgmr = new JpaTransactionManager();
+        val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -44,18 +46,18 @@ public class RedirectToServiceActionTests {
 
     @Test
     public void verifyAction() throws Exception {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
-        final var locator = mock(ResponseBuilderLocator.class);
+        val locator = mock(ResponseBuilderLocator.class);
         when(locator.locate(any(WebApplicationService.class))).thenReturn(new WebApplicationServiceResponseBuilder(this.servicesManager));
 
-        final var redirectToServiceAction = new RedirectToServiceAction(locator);
-        final var event = redirectToServiceAction.execute(context);
+        val redirectToServiceAction = new RedirectToServiceAction(locator);
+        val event = redirectToServiceAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_REDIRECT, event.getId());
     }
 }

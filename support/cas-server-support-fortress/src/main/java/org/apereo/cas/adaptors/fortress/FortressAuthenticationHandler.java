@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.fortress;
 
+import lombok.val;
+
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.directory.fortress.core.AccessMgr;
@@ -45,7 +47,7 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
         super(name, servicesManager, principalFactory, order);
         this.accessManager = accessManager;
         try {
-            final var jaxbContext = JAXBContext.newInstance(Session.class);
+            val jaxbContext = JAXBContext.newInstance(Session.class);
             this.marshaller = jaxbContext.createMarshaller();
         } catch (final Exception e) {
             LOGGER.error("Failed initialize fortress context", e);
@@ -55,17 +57,17 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c,
                                                                                         final String originalPassword) throws GeneralSecurityException, PreventedException {
-        final var username = c.getUsername();
-        final var password = c.getPassword();
+        val username = c.getUsername();
+        val password = c.getPassword();
         Session fortressSession = null;
         try {
             LOGGER.debug("Trying to delegate authentication for [{}] to fortress", new Object[]{username});
-            final var user = new User(username, password);
+            val user = new User(username, password);
             fortressSession = accessManager.createSession(user, false);
             if (fortressSession != null && fortressSession.isAuthenticated()) {
-                final var writer = new StringWriter();
+                val writer = new StringWriter();
                 marshaller.marshal(fortressSession, writer);
-                final var fortressXmlSession = writer.toString();
+                val fortressXmlSession = writer.toString();
                 LOGGER.debug("Fortress session result: [{}]", fortressXmlSession);
                 final Map<String, Object> attributes = new HashMap<>();
                 attributes.put(FORTRESS_SESSION_KEY, fortressXmlSession);
@@ -73,11 +75,11 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
             }
             LOGGER.warn("Could not establish a fortress session or session cannot authenticate");
         } catch (final org.apache.directory.fortress.core.SecurityException e) {
-            final var errorMessage = String.format("Fortress authentication failed for [%s]", username);
+            val errorMessage = String.format("Fortress authentication failed for [%s]", username);
             LOGGER.error(errorMessage, e);
             throw new FailedLoginException(errorMessage);
         } catch (final JAXBException e) {
-            final var errorMessage = String.format("Cannot marshal fortress session with value: %s", fortressSession);
+            val errorMessage = String.format("Cannot marshal fortress session with value: %s", fortressSession);
             LOGGER.warn(errorMessage);
             throw new PreventedException(e);
         }

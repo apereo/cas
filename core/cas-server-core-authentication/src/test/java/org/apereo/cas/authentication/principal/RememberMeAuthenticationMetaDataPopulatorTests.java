@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -30,28 +32,28 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
 
     @Test
     public void verifyWithTrueRememberMeCredentials() {
-        final var c = new RememberMeUsernamePasswordCredential();
+        val c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(true);
-        final var builder = newBuilder(c);
-        final var auth = builder.build();
+        val builder = newBuilder(c);
+        val auth = builder.build();
 
         assertEquals(true, auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
     }
 
     @Test
     public void verifyWithFalseRememberMeCredentials() {
-        final var c = new RememberMeUsernamePasswordCredential();
+        val c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(false);
-        final var builder = newBuilder(c);
-        final var auth = builder.build();
+        val builder = newBuilder(c);
+        val auth = builder.build();
 
         assertNull(auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
     }
 
     @Test
     public void verifyWithoutRememberMeCredentials() {
-        final var builder = newBuilder(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-        final var auth = builder.build();
+        val builder = newBuilder(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        val auth = builder.build();
 
         assertNull(auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
     }
@@ -59,7 +61,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
     private AuthenticationBuilder newBuilder(final Credential credential) {
         final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        final var builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal())
+        val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal())
                 .addCredential(meta)
                 .addSuccess("test", new DefaultAuthenticationHandlerExecutionResult(handler, meta));
 

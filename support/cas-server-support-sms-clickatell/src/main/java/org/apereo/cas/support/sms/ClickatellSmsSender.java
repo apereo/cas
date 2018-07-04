@@ -1,5 +1,7 @@
 package org.apereo.cas.support.sms;
 
+import lombok.val;
+
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -49,28 +51,28 @@ public class ClickatellSmsSender implements SmsSender {
             map.put("to", CollectionUtils.wrap(to));
             map.put("from", from);
 
-            final var stringify = new StringWriter();
+            val stringify = new StringWriter();
             mapper.writeValue(stringify, map);
 
             final HttpEntity<String> request = new HttpEntity<>(stringify.toString(), headers);
-            final var response = restTemplate.postForEntity(new URI(this.serverUrl), request, Map.class);
+            val response = restTemplate.postForEntity(new URI(this.serverUrl), request, Map.class);
             if (response.hasBody()) {
-                final var body = response.getBody();
+                val body = response.getBody();
                 LOGGER.debug("Received response [{}]", body);
 
                 if (!body.containsKey("messages")) {
                     LOGGER.error("Response body does not contain any messages");
                     return false;
                 }
-                final var messages = (List<Map>) body.get("messages");
+                val messages = (List<Map>) body.get("messages");
 
-                final var error = (String) body.get("error");
+                val error = (String) body.get("error");
                 if (StringUtils.isNotBlank(error)) {
                     LOGGER.error(error);
                     return false;
                 }
 
-                final var errors = messages.stream()
+                val errors = messages.stream()
                     .filter(m -> m.containsKey("accepted") && !Boolean.parseBoolean(m.get("accepted").toString()) && m.containsKey("error"))
                     .map(m -> (String) m.get("error"))
                     .collect(Collectors.toList());

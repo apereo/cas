@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apereo.cas.util.http.HttpClient;
@@ -34,7 +36,7 @@ public class FileTrustStoreSslSocketFactoryTests {
 
     @Test
     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() {
-        final var clientFactory = new SimpleHttpClientFactoryBean();
+        val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory());
         final HttpClient client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://self-signed.badssl.com"));
@@ -42,7 +44,7 @@ public class FileTrustStoreSslSocketFactoryTests {
 
     @Test
     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable2() {
-        final var clientFactory = new SimpleHttpClientFactoryBean();
+        val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory());
         final HttpClient client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://untrusted-root.badssl.com"));
@@ -62,7 +64,7 @@ public class FileTrustStoreSslSocketFactoryTests {
 
     @Test
     public void verifyTrustStoreLoadingSuccessfullyForValidEndpointWithNoCert() {
-        final var clientFactory = new SimpleHttpClientFactoryBean();
+        val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory());
         final HttpClient client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://www.google.com"));
@@ -70,7 +72,7 @@ public class FileTrustStoreSslSocketFactoryTests {
 
     @Test
     public void verifyTrustStoreLoadingSuccessfullyWihInsecureEndpoint() {
-        final var clientFactory = new SimpleHttpClientFactoryBean();
+        val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory());
         final HttpClient client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("http://wikipedia.org"));

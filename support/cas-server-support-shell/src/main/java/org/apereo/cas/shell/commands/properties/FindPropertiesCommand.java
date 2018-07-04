@@ -1,5 +1,7 @@
 package org.apereo.cas.shell.commands.properties;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -49,7 +51,7 @@ public class FindPropertiesCommand {
         @ShellOption(value = {"summary"},
             help = "Whether results should be presented in summarized mode") final boolean summary) {
 
-        final var results = find(strict, RegexUtils.createPattern(name));
+        val results = find(strict, RegexUtils.createPattern(name));
 
         if (results.isEmpty()) {
             LOGGER.info("Could not find any results matching the criteria");
@@ -59,7 +61,7 @@ public class FindPropertiesCommand {
         results.forEach((k, v) -> {
             if (summary) {
                 LOGGER.info("{}={}", k, v.getDefaultValue());
-                final var value = StringUtils.normalizeSpace(v.getShortDescription());
+                val value = StringUtils.normalizeSpace(v.getShortDescription());
                 if (StringUtils.isNotBlank(value)) {
                     LOGGER.info("{}", value);
                 }
@@ -92,8 +94,8 @@ public class FindPropertiesCommand {
     public Map<String, ConfigurationMetadataProperty> find(final boolean strict, final Pattern propertyPattern) {
         final Map<String, ConfigurationMetadataProperty> results = new LinkedHashMap<>();
 
-        final var repository = new CasConfigurationMetadataRepository();
-        final var props = repository.getRepository().getAllProperties();
+        val repository = new CasConfigurationMetadataRepository();
+        val props = repository.getRepository().getAllProperties();
 
         props.forEach((k, v) -> {
             final var matched = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(k).spliterator(), false)

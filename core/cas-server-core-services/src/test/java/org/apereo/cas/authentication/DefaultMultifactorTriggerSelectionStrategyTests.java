@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
@@ -158,22 +160,22 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     }
 
     private static HttpServletRequest mockRequest(final String provider) {
-        final var request = mockRequest();
+        val request = mockRequest();
         when(request.getParameter(REQUEST_PARAM)).thenReturn(provider);
         return request;
     }
 
     private static RegexRegisteredService mockService(final String... providers) {
-        final var policy = new DefaultRegisteredServiceMultifactorPolicy();
+        val policy = new DefaultRegisteredServiceMultifactorPolicy();
         policy.setMultifactorAuthenticationProviders(Stream.of(providers).collect(Collectors.toCollection(LinkedHashSet::new)));
-        final var service = new RegexRegisteredService();
+        val service = new RegexRegisteredService();
         service.setMultifactorPolicy(policy);
         return service;
     }
 
     private static RegexRegisteredService mockPrincipalService(final String provider, final String attrName, final String attrValue) {
-        final var service = mockService(provider);
-        final var policy = (DefaultRegisteredServiceMultifactorPolicy) service.getMultifactorPolicy();
+        val service = mockService(provider);
+        val policy = (DefaultRegisteredServiceMultifactorPolicy) service.getMultifactorPolicy();
         policy.setPrincipalAttributeNameTrigger(attrName);
         policy.setPrincipalAttributeValueToMatch(attrValue);
 

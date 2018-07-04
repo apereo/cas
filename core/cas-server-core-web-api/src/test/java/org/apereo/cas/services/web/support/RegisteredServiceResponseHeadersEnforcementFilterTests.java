@@ -1,5 +1,7 @@
 package org.apereo.cas.services.web.support;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
@@ -35,17 +37,17 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
 
     @Test
     public void verifyCacheControl() throws Exception {
-        final var filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL);
-        final var response = new MockHttpServletResponse();
+        val filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL);
+        val response = new MockHttpServletResponse();
         filter.doFilter(new MockHttpServletRequest(), response, new MockFilterChain());
         assertNotNull(response.getHeader("Cache-Control"));
     }
 
     @Test
     public void verifyContentSecurityPolicy() throws Exception {
-        final var filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY);
-        final var response = new MockHttpServletResponse();
-        final var request = new MockHttpServletRequest();
+        val filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY);
+        val response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
         request.setRequestURI("/cas/login");
         filter.setContentSecurityPolicy("sample-policy");
         filter.doFilter(request, response, new MockFilterChain());
@@ -54,9 +56,9 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
 
     @Test
     public void verifyStrictTransport() throws Exception {
-        final var filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_STRICT_TRANSPORT_SECURITY);
-        final var response = new MockHttpServletResponse();
-        final var request = new MockHttpServletRequest();
+        val filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_STRICT_TRANSPORT_SECURITY);
+        val response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
         request.setSecure(true);
         filter.doFilter(request, response, new MockFilterChain());
         assertNotNull(response.getHeader("Strict-Transport-Security"));
@@ -64,37 +66,37 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
 
     @Test
     public void verifyXContentOptions() throws Exception {
-        final var filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XCONTENT_OPTIONS);
-        final var response = new MockHttpServletResponse();
+        val filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XCONTENT_OPTIONS);
+        val response = new MockHttpServletResponse();
         filter.doFilter(new MockHttpServletRequest(), response, new MockFilterChain());
         assertNotNull(response.getHeader("X-Content-Type-Options"));
     }
 
     @Test
     public void verifyXframeOptions() throws Exception {
-        final var filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS);
-        final var response = new MockHttpServletResponse();
+        val filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS);
+        val response = new MockHttpServletResponse();
         filter.doFilter(new MockHttpServletRequest(), response, new MockFilterChain());
         assertNotNull(response.getHeader("X-Frame-Options"));
     }
 
     @Test
     public void verifyXssProtection() throws Exception {
-        final var filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XSS_PROTECTION);
-        final var response = new MockHttpServletResponse();
+        val filter = getFilterForProperty(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XSS_PROTECTION);
+        val response = new MockHttpServletResponse();
         filter.doFilter(new MockHttpServletRequest(), response, new MockFilterChain());
         assertNotNull(response.getHeader("X-XSS-Protection"));
     }
 
     private RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final RegisteredServiceProperties p) {
-        final var servicesManager = mock(ServicesManager.class);
-        final var argumentExtractor = mock(ArgumentExtractor.class);
-        final var webApplicationService = mock(WebApplicationService.class);
+        val servicesManager = mock(ServicesManager.class);
+        val argumentExtractor = mock(ArgumentExtractor.class);
+        val webApplicationService = mock(WebApplicationService.class);
         when(argumentExtractor.extractService(any(HttpServletRequest.class))).thenReturn(webApplicationService);
 
-        final var registeredService = mock(RegisteredService.class);
+        val registeredService = mock(RegisteredService.class);
         final Map<String, RegisteredServiceProperty> props = new LinkedHashMap<>();
-        final var prop = mock(RegisteredServiceProperty.class);
+        val prop = mock(RegisteredServiceProperty.class);
         when(prop.getValue()).thenReturn(Boolean.TRUE.toString());
         props.put(p.getPropertyName(), prop);
         when(registeredService.getProperties()).thenReturn(props);

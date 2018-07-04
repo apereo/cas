@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
@@ -45,8 +47,8 @@ public class ServiceAuthorizationCheckTests {
 
     @Before
     public void setUpMocks() {
-        final var authorizedRegisteredService = new RegexRegisteredService();
-        final var unauthorizedRegisteredService = new RegexRegisteredService();
+        val authorizedRegisteredService = new RegexRegisteredService();
+        val unauthorizedRegisteredService = new RegexRegisteredService();
         unauthorizedRegisteredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(false, false));
 
         final List<RegisteredService> list = new ArrayList<>();
@@ -64,22 +66,22 @@ public class ServiceAuthorizationCheckTests {
 
     @Test
     public void noServiceProvided() {
-        final var mockRequestContext = new MockRequestContext();
-        final var event = this.serviceAuthorizationCheck.doExecute(mockRequestContext);
+        val mockRequestContext = new MockRequestContext();
+        val event = this.serviceAuthorizationCheck.doExecute(mockRequestContext);
         assertEquals("success", event.getId());
     }
 
     @Test
     public void authorizedServiceProvided() {
-        final var mockRequestContext = new MockRequestContext();
+        val mockRequestContext = new MockRequestContext();
         mockRequestContext.getFlowScope().put("service", this.authorizedService);
-        final var event = this.serviceAuthorizationCheck.doExecute(mockRequestContext);
+        val event = this.serviceAuthorizationCheck.doExecute(mockRequestContext);
         assertEquals("success", event.getId());
     }
 
     @Test
     public void unauthorizedServiceProvided() {
-        final var mockRequestContext = new MockRequestContext();
+        val mockRequestContext = new MockRequestContext();
         mockRequestContext.getFlowScope().put("service", this.unauthorizedService);
 
         this.thrown.expect(UnauthorizedServiceException.class);
@@ -91,7 +93,7 @@ public class ServiceAuthorizationCheckTests {
 
     @Test
     public void serviceThatIsNotRegisteredProvided() {
-        final var mockRequestContext = new MockRequestContext();
+        val mockRequestContext = new MockRequestContext();
         mockRequestContext.getFlowScope().put("service", this.undefinedService);
 
         this.thrown.expect(UnauthorizedServiceException.class);

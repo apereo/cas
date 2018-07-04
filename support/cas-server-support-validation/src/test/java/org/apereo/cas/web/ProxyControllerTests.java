@@ -1,5 +1,7 @@
 package org.apereo.cas.web;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
@@ -47,7 +49,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
 
     @Test
     public void verifyNonExistentPGT() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, "TestService");
         request.addParameter("targetService", "testDefault");
 
@@ -61,7 +63,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
             WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, CoreAuthenticationTestUtils.getAuthentication(),
             new NeverExpiresExpirationPolicy());
         getTicketRegistry().addTicket(ticket);
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, ticket.getId());
         request.addParameter("targetService", "testDefault");
 
@@ -76,11 +78,11 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
             CoreAuthenticationTestUtils.getAuthentication(),
             new NeverExpiresExpirationPolicy());
         getTicketRegistry().addTicket(ticket);
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, ticket.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "service");
 
-        final var map = this.proxyController.handleRequestInternal(request, new MockHttpServletResponse()).getModel();
+        val map = this.proxyController.handleRequestInternal(request, new MockHttpServletResponse()).getModel();
         assertFalse(map.containsKey(CasProtocolConstants.PARAMETER_TICKET));
     }
 

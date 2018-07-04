@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -38,10 +40,10 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
     @SneakyThrows
     public View build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
 
-        final var redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
+        val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
         LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
-        final var accessToken = accessTokenGenerator.generate(holder);
-        final var key = accessToken.getKey();
+        val accessToken = accessTokenGenerator.generate(holder);
+        val key = accessToken.getKey();
         LOGGER.debug("Generated OAuth access token: [{}]", key);
         return buildCallbackUrlResponseType(holder, redirectUri, key, new ArrayList<>(), accessToken.getValue(), context);
 
@@ -66,11 +68,11 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
                                                 final List<NameValuePair> params,
                                                 final RefreshToken refreshToken,
                                                 final J2EContext context) throws Exception {
-        final var state = holder.getAuthentication().getAttributes().get(OAuth20Constants.STATE).toString();
-        final var nonce = holder.getAuthentication().getAttributes().get(OAuth20Constants.NONCE).toString();
+        val state = holder.getAuthentication().getAttributes().get(OAuth20Constants.STATE).toString();
+        val nonce = holder.getAuthentication().getAttributes().get(OAuth20Constants.NONCE).toString();
 
-        final var builder = new URIBuilder(redirectUri);
-        final var stringBuilder = new StringBuilder();
+        val builder = new URIBuilder(redirectUri);
+        val stringBuilder = new StringBuilder();
         stringBuilder.append(OAuth20Constants.ACCESS_TOKEN)
             .append('=')
             .append(accessToken.getId())
@@ -108,7 +110,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
                 .append(EncodingUtils.urlEncode(nonce));
         }
         builder.setFragment(stringBuilder.toString());
-        final var url = builder.toString();
+        val url = builder.toString();
 
         LOGGER.debug("Redirecting to URL [{}]", url);
         return new RedirectView(url);
@@ -116,7 +118,7 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
 
     @Override
     public boolean supports(final J2EContext context) {
-        final var responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
+        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
         return StringUtils.equalsIgnoreCase(responseType, OAuth20ResponseTypes.TOKEN.getType());
     }
 }

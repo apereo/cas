@@ -1,5 +1,7 @@
 package org.apereo.cas.pm.rest;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
@@ -40,21 +42,21 @@ public class RestPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public boolean changeInternal(final Credential c, final PasswordChangeBean bean) {
-        final var rest = properties.getRest();
+        val rest = properties.getRest();
         if (StringUtils.isBlank(rest.getEndpointUrlChange())) {
             return false;
         }
 
-        final var upc = (UsernamePasswordCredential) c;
+        val upc = (UsernamePasswordCredential) c;
 
-        final var headers = new HttpHeaders();
+        val headers = new HttpHeaders();
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         headers.put("username", CollectionUtils.wrap(upc.getUsername()));
         headers.put("password", CollectionUtils.wrap(bean.getPassword()));
         headers.put("oldPassword", CollectionUtils.wrap(upc.getPassword()));
 
         final HttpEntity<String> entity = new HttpEntity<>(headers);
-        final var result = restTemplate.exchange(rest.getEndpointUrlChange(), HttpMethod.POST, entity, Boolean.class);
+        val result = restTemplate.exchange(rest.getEndpointUrlChange(), HttpMethod.POST, entity, Boolean.class);
         if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
             return result.getBody();
         }
@@ -63,16 +65,16 @@ public class RestPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findEmail(final String username) {
-        final var rest = properties.getRest();
+        val rest = properties.getRest();
         if (StringUtils.isBlank(rest.getEndpointUrlEmail())) {
             return null;
         }
 
-        final var headers = new HttpHeaders();
+        val headers = new HttpHeaders();
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         headers.put("username", CollectionUtils.wrap(username));
         final HttpEntity<String> entity = new HttpEntity<>(headers);
-        final var result = restTemplate.exchange(rest.getEndpointUrlEmail(), HttpMethod.GET, entity, String.class);
+        val result = restTemplate.exchange(rest.getEndpointUrlEmail(), HttpMethod.GET, entity, String.class);
 
         if (result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()) {
             return result.getBody();
@@ -82,15 +84,15 @@ public class RestPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public Map<String, String> getSecurityQuestions(final String username) {
-        final var rest = properties.getRest();
+        val rest = properties.getRest();
         if (StringUtils.isBlank(rest.getEndpointUrlSecurityQuestions())) {
             return null;
         }
-        final var headers = new HttpHeaders();
+        val headers = new HttpHeaders();
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         headers.put("username", CollectionUtils.wrap(username));
         final HttpEntity<String> entity = new HttpEntity<>(headers);
-        final var result = restTemplate.exchange(rest.getEndpointUrlSecurityQuestions(),
+        val result = restTemplate.exchange(rest.getEndpointUrlSecurityQuestions(),
             HttpMethod.GET, entity, Map.class);
 
         if (result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()) {

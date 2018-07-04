@@ -1,5 +1,7 @@
 package org.apereo.cas.web.support.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
@@ -51,7 +53,7 @@ public class CasThrottlingConfiguration {
     @Bean
     @Lazy
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle() {
-        final var throttle = casProperties.getAuthn().getThrottle();
+        val throttle = casProperties.getAuthn().getThrottle();
 
         if (throttle.getFailure().getRangeSeconds() <= 0 && throttle.getFailure().getThreshold() <= 0) {
             LOGGER.debug("Authentication throttling is disabled since no range-seconds or failure-threshold is defined");
@@ -80,9 +82,9 @@ public class CasThrottlingConfiguration {
     @ConditionalOnMissingBean(name = "authenticationThrottlingExecutionPlan")
     @Bean
     public AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan(final List<AuthenticationThrottlingExecutionPlanConfigurer> configurers) {
-        final var plan = new DefaultAuthenticationThrottlingExecutionPlan();
+        val plan = new DefaultAuthenticationThrottlingExecutionPlan();
         configurers.forEach(c -> {
-            final var name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            val name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Registering authentication throttler [{}]", name);
             c.configureAuthenticationThrottlingExecutionPlan(plan);
         });

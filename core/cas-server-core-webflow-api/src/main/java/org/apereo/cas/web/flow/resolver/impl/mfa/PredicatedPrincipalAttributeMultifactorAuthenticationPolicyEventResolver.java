@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
@@ -77,7 +79,7 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventRes
             return null;
         }
 
-        final var provider = providers
+        val provider = providers
             .stream()
             .filter(predicate)
             .sorted(Comparator.comparingInt(MultifactorAuthenticationProvider::getOrder))

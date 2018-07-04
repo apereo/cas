@@ -1,5 +1,7 @@
 package org.apereo.cas.memcached.kryo;
 
+import lombok.val;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 import de.javakaffee.kryoserializers.ArraysAsListSerializer;
@@ -235,7 +237,7 @@ public class CloseableKryoFactory extends AbstractFactoryBean<CloseableKryo> {
 
     @Override
     protected CloseableKryo createInstance() throws Exception {
-        final var kryo = new CloseableKryo(this.kryoPool);
+        val kryo = new CloseableKryo(this.kryoPool);
         kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
         kryo.setWarnUnregisteredClasses(this.warnUnregisteredClasses);
         kryo.setAutoReset(this.autoReset);

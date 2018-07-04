@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -38,23 +40,23 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
             return service.getRequiredAuthenticationContextClass();
         }
 
-        final var defClass = StringUtils.defaultIfBlank(
+        val defClass = StringUtils.defaultIfBlank(
                 casProperties.getAuthn().getSamlIdp().getResponse().getDefaultAuthenticationContextClass(),
                 AuthnContext.PPT_AUTHN_CTX);
 
-        final var requestedAuthnContext = (authnRequest instanceof AuthnRequest)
+        val requestedAuthnContext = (authnRequest instanceof AuthnRequest)
                 ? AuthnRequest.class.cast(authnRequest).getRequestedAuthnContext() : null;
         if (requestedAuthnContext == null) {
             LOGGER.debug("No specific authN context is requested. Returning [{}]", defClass);
             return defClass;
         }
-        final var authnContextClassRefs = requestedAuthnContext.getAuthnContextClassRefs();
+        val authnContextClassRefs = requestedAuthnContext.getAuthnContextClassRefs();
         if (authnContextClassRefs == null || authnContextClassRefs.isEmpty()) {
             LOGGER.debug("Requested authN context class ref is unspecified. Returning [{}]", defClass);
             return defClass;
         }
 
-        final var finalCtx = StringUtils.defaultIfBlank(getAuthenticationContextByAssertion(assertion,
+        val finalCtx = StringUtils.defaultIfBlank(getAuthenticationContextByAssertion(assertion,
                 requestedAuthnContext, authnContextClassRefs), defClass);
         LOGGER.debug("Returning authN context [{}]", finalCtx);
         return finalCtx;

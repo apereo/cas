@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.jradius.exception.TimeoutException;
@@ -47,8 +49,8 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
      * @return true/false
      */
     public boolean canPing() {
-        final var uidPsw = getClass().getSimpleName();
-        for (final var server : this.servers) {
+        val uidPsw = getClass().getSimpleName();
+        for (val server : this.servers) {
             LOGGER.debug("Attempting to ping RADIUS server [{}] via simulating an authentication request. If the server responds "
                 + "successfully, mock authentication will fail correctly.", server);
             try {

@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.refreshtoken;
 
+import lombok.val;
+
 import org.apereo.cas.ticket.BaseOAuthExpirationPolicyTests;
 import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
@@ -15,9 +17,9 @@ import static org.junit.Assert.*;
 public class OAuthRefreshTokenSovereignExpirationPolicyTests extends BaseOAuthExpirationPolicyTests {
     @Test
     public void verifyRefreshTokenExpiryWhenTgtIsExpired() {
-        final var tgt = newTicketGrantingTicket();
-        final var at = newAccessToken(tgt);
-        final var rt = newRefreshToken(at);
+        val tgt = newTicketGrantingTicket();
+        val at = newAccessToken(tgt);
+        val rt = newRefreshToken(at);
         assertFalse("Refresh token should not be expired", rt.isExpired());
         tgt.markTicketExpired();
         assertFalse("Refresh token must not expired when TGT is expired", rt.isExpired());

@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.proxy.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -24,7 +26,7 @@ public class Cas10ProxyHandlerTests {
 
     @Test
     public void verifyCredentialsAndProxy() {
-        final var proxyGrantingTicket = mock(TicketGrantingTicket.class);
+        val proxyGrantingTicket = mock(TicketGrantingTicket.class);
         when(proxyGrantingTicket.getId()).thenReturn("proxyGrantingTicket");
         assertNull(this.proxyHandler.handle(
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), proxyGrantingTicket));

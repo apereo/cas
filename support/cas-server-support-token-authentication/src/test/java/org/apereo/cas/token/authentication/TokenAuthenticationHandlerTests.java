@@ -1,5 +1,7 @@
 package org.apereo.cas.token.authentication;
 
+import lombok.val;
+
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -89,11 +91,11 @@ public class TokenAuthenticationHandlerTests {
         g.setSignatureConfiguration(new SecretSignatureConfiguration(SIGNING_SECRET, JWSAlgorithm.HS256));
         g.setEncryptionConfiguration(new SecretEncryptionConfiguration(ENCRYPTION_SECRET, JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
 
-        final var profile = new CommonProfile();
+        val profile = new CommonProfile();
         profile.setId("casuser");
-        final var token = g.generate(profile);
-        final var c = new TokenCredential(token, RegisteredServiceTestUtils.getService());
-        final var result = this.tokenAuthenticationHandler.authenticate(c);
+        val token = g.generate(profile);
+        val c = new TokenCredential(token, RegisteredServiceTestUtils.getService());
+        val result = this.tokenAuthenticationHandler.authenticate(c);
         assertNotNull(result);
         assertEquals(result.getPrincipal().getId(), profile.getId());
     }
@@ -102,7 +104,7 @@ public class TokenAuthenticationHandlerTests {
     public static class TestTokenAuthenticationConfiguration {
         @Bean
         public List inMemoryRegisteredServices() {
-            final var svc = RegisteredServiceTestUtils.getRegisteredService(".*");
+            val svc = RegisteredServiceTestUtils.getRegisteredService(".*");
             svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
 
             var p = new DefaultRegisteredServiceProperty();

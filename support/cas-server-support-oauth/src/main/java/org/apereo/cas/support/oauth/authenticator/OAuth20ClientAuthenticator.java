@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableContext;
@@ -31,26 +33,26 @@ public class OAuth20ClientAuthenticator implements Authenticator<UsernamePasswor
     public void validate(final UsernamePasswordCredentials credentials, final WebContext context) throws CredentialsException {
         LOGGER.debug("Authenticating credential [{}]", credentials);
 
-        final var id = credentials.getUsername();
-        final var secret = credentials.getPassword();
-        final var registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
+        val id = credentials.getUsername();
+        val secret = credentials.getPassword();
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
         if (registeredService == null) {
             throw new CredentialsException("Unable to locate registered service for " + id);
         }
 
-        final var service = this.webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
-        final var audit = AuditableContext.builder()
+        val service = this.webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+        val audit = AuditableContext.builder()
             .service(service)
             .registeredService(registeredService)
             .build();
-        final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();
 
         if (!OAuth20Utils.checkClientSecret(registeredService, secret)) {
             throw new CredentialsException("Bad secret for client identifier: " + id);
         }
 
-        final var profile = new CommonProfile();
+        val profile = new CommonProfile();
         profile.setId(id);
         credentials.setUserProfile(profile);
         LOGGER.debug("Authenticated user profile [{}]", profile);

@@ -1,5 +1,7 @@
 package org.apereo.cas.audit.spi;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.AopUtils;
@@ -28,18 +30,18 @@ public class TicketValidationResourceResolver extends TicketAsFirstParameterReso
     public String[] resolveFrom(final JoinPoint joinPoint, final Object object) {
         final List<String> auditResourceResults = new ArrayList<>();
 
-        final var args = AopUtils.unWrapJoinPoint(joinPoint).getArgs();
+        val args = AopUtils.unWrapJoinPoint(joinPoint).getArgs();
         if (args != null && args.length > 0) {
-            final var ticketId = args[0].toString();
+            val ticketId = args[0].toString();
             auditResourceResults.add(ticketId);
         }
 
         if (object instanceof Assertion) {
-            final var assertion = Assertion.class.cast(object);
-            final var authn = assertion.getPrimaryAuthentication();
+            val assertion = Assertion.class.cast(object);
+            val authn = assertion.getPrimaryAuthentication();
 
             try (var writer = new StringWriter()) {
-                final var objectWriter = mapper.writer();
+                val objectWriter = mapper.writer();
 
                 final Map<String, Object> results = new LinkedHashMap<>();
                 results.put("principal", authn.getPrincipal().getId());

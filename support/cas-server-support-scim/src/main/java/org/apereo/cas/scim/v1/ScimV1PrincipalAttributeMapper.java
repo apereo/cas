@@ -1,5 +1,7 @@
 package org.apereo.cas.scim.v1;
 
+import lombok.val;
+
 import com.unboundid.scim.data.Entry;
 import com.unboundid.scim.data.Name;
 import com.unboundid.scim.data.UserResource;
@@ -26,7 +28,7 @@ public class ScimV1PrincipalAttributeMapper {
      * @return the principal attribute value
      */
     public String getPrincipalAttributeValue(final Principal p, final String attributeName) {
-        final var attributes = p.getAttributes();
+        val attributes = p.getAttributes();
         if (attributes.containsKey(attributeName)) {
             return CollectionUtils.toCollection(attributes.get(attributeName)).iterator().next().toString();
         }
@@ -51,7 +53,7 @@ public class ScimV1PrincipalAttributeMapper {
         user.setNickName(getPrincipalAttributeValue(p, "nickName"));
         user.setDisplayName(getPrincipalAttributeValue(p, "displayName"));
 
-        final var name = new Name(getPrincipalAttributeValue(p, "formattedName"),
+        val name = new Name(getPrincipalAttributeValue(p, "formattedName"),
             getPrincipalAttributeValue(p, "familyName"),
             getPrincipalAttributeValue(p, "middleName"),
             getPrincipalAttributeValue(p, "givenName"),

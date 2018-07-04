@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.transcoders.Transcoder;
@@ -37,13 +39,13 @@ public class MemcachedMonitorConfiguration {
 
     @Bean
     public Transcoder memcachedMonitorTranscoder() {
-        final var memcached = casProperties.getMonitor().getMemcached();
+        val memcached = casProperties.getMonitor().getMemcached();
         return MemcachedUtils.newTranscoder(memcached, componentSerializationPlan.getRegisteredClasses());
     }
 
     @Bean
     public HealthIndicator memcachedHealthIndicator() {
-        final var warn = casProperties.getMonitor().getWarn();
+        val warn = casProperties.getMonitor().getWarn();
         return new MemcachedHealthIndicator(memcachedHealthClientPool(),
             warn.getEvictionThreshold(),
             warn.getThreshold());
@@ -51,8 +53,8 @@ public class MemcachedMonitorConfiguration {
 
     @Bean
     public ObjectPool<MemcachedClientIF> memcachedHealthClientPool() {
-        final var memcached = casProperties.getMonitor().getMemcached();
-        final var factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedMonitorTranscoder());
+        val memcached = casProperties.getMonitor().getMemcached();
+        val factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedMonitorTranscoder());
         return new GenericObjectPool<>(factory);
     }
 }

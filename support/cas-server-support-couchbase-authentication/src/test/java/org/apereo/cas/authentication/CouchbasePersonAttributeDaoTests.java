@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import org.apereo.cas.category.CouchbaseCategory;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
@@ -83,7 +85,7 @@ public class CouchbasePersonAttributeDaoTests {
 
     @Test
     public void verifyAttributes() {
-        final var person = attributeRepository.getPerson("casuser");
+        val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
         final Map attributes = person.getAttributes();
         assertTrue(attributes.containsKey("firstname"));

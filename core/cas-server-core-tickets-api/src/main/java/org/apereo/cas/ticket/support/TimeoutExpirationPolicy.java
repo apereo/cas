@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.support;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -57,9 +59,9 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
         if (ticketState == null) {
             return true;
         }
-        final var now = ZonedDateTime.now(ZoneOffset.UTC);
-        final var expirationTime = ticketState.getLastTimeUsed().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-        final var expired = now.isAfter(expirationTime);
+        val now = ZonedDateTime.now(ZoneOffset.UTC);
+        val expirationTime = ticketState.getLastTimeUsed().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        val expired = now.isAfter(expirationTime);
         if (!expired) {
             return super.isExpired(ticketState);
         }

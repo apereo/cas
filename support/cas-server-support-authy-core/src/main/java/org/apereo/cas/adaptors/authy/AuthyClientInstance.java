@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.authy;
 
+import lombok.val;
+
 import com.authy.AuthyApiClient;
 import com.authy.api.Tokens;
 import com.authy.api.User;
@@ -39,9 +41,9 @@ public class AuthyClientInstance {
         this.phoneAttribute = phoneAttribute;
         this.countryCode = countryCode;
 
-        final var authyUrl = StringUtils.defaultIfBlank(apiUrl, AuthyApiClient.DEFAULT_API_URI);
-        final var url = new URL(authyUrl);
-        final var testFlag = url.getProtocol().equalsIgnoreCase("http");
+        val authyUrl = StringUtils.defaultIfBlank(apiUrl, AuthyApiClient.DEFAULT_API_URI);
+        val url = new URL(authyUrl);
+        val testFlag = url.getProtocol().equalsIgnoreCase("http");
         this.authyClient = new AuthyApiClient(apiKey, authyUrl, testFlag);
         this.authyUsers = this.authyClient.getUsers();
         this.authyTokens = this.authyClient.getTokens();
@@ -63,7 +65,7 @@ public class AuthyClientInstance {
      * @return the authy error message
      */
     public static String getErrorMessage(final com.authy.api.Error err) {
-        final var builder = new StringBuilder();
+        val builder = new StringBuilder();
         if (err != null) {
             builder.append("Authy Error");
             if (StringUtils.isNotBlank(err.getCountryCode())) {
@@ -86,11 +88,11 @@ public class AuthyClientInstance {
      */
     @SneakyThrows
     public User getOrCreateUser(final Principal principal) {
-        final var email = (String) principal.getAttributes().get(this.mailAttribute);
+        val email = (String) principal.getAttributes().get(this.mailAttribute);
         if (StringUtils.isBlank(email)) {
             throw new IllegalArgumentException("No email address found for " + principal.getId());
         }
-        final var phone = (String) principal.getAttributes().get(this.phoneAttribute);
+        val phone = (String) principal.getAttributes().get(this.phoneAttribute);
         if (StringUtils.isBlank(phone)) {
             throw new IllegalArgumentException("No phone number found for " + principal.getId());
         }

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.report;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +67,7 @@ public class LoggingOutputTailingService extends TailerListenerAdapter implement
      */
     @SneakyThrows
     public void initialize() {
-        final var pair = ControllerUtils.buildLoggerContext(environment, resourceLoader);
+        val pair = ControllerUtils.buildLoggerContext(environment, resourceLoader);
         pair.ifPresent(it -> registerLogFileTailersForExecution(it.getValue()));
     }
 
@@ -93,7 +95,7 @@ public class LoggingOutputTailingService extends TailerListenerAdapter implement
 
     private void registerLogFileTailersForExecution(final LoggerContext loggerContext) {
         final Collection<String> outputFileNames = new HashSet<>();
-        final var loggerAppenders = loggerContext.getConfiguration().getAppenders().values();
+        val loggerAppenders = loggerContext.getConfiguration().getAppenders().values();
         loggerAppenders.forEach(appender -> {
             if (appender instanceof FileAppender) {
                 outputFileNames.add(FileAppender.class.cast(appender).getFileName());
@@ -109,7 +111,7 @@ public class LoggingOutputTailingService extends TailerListenerAdapter implement
         });
 
         outputFileNames.forEach(f -> {
-            final var t = new Tailer(new File(f), this, 100L, false, true);
+            val t = new Tailer(new File(f), this, 100L, false, true);
             this.tailers.add(t);
             this.taskExecutor.execute(t);
         });

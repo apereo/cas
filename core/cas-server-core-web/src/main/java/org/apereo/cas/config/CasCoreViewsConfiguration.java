@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -36,27 +38,27 @@ public class CasCoreViewsConfiguration {
 
     @Bean
     public AbstractTemplateResolver chainingTemplateViewResolver() {
-        final var chain = new ChainingTemplateViewResolver();
+        val chain = new ChainingTemplateViewResolver();
 
-        final var templatePrefixes = casProperties.getView().getTemplatePrefixes();
+        val templatePrefixes = casProperties.getView().getTemplatePrefixes();
         templatePrefixes.forEach(Unchecked.consumer(prefix -> {
-            final var prefixPath = ResourceUtils.getFile(prefix).getCanonicalPath();
-            final var viewPath = StringUtils.appendIfMissing(prefixPath, "/");
+            val prefixPath = ResourceUtils.getFile(prefix).getCanonicalPath();
+            val viewPath = StringUtils.appendIfMissing(prefixPath, "/");
 
-            final var rest = casProperties.getView().getRest();
+            val rest = casProperties.getView().getRest();
             if (StringUtils.isNotBlank(rest.getUrl())) {
-                final var url = new RestfulUrlTemplateResolver(casProperties);
+                val url = new RestfulUrlTemplateResolver(casProperties);
                 configureTemplateViewResolver(url);
                 chain.addResolver(url);
             }
 
-            final var theme = new ThemeFileTemplateResolver(casProperties);
+            val theme = new ThemeFileTemplateResolver(casProperties);
             configureTemplateViewResolver(theme);
             theme.setPrefix(viewPath + "themes/%s/");
             chain.addResolver(theme);
 
 
-            final var file = new FileTemplateResolver();
+            val file = new FileTemplateResolver();
             configureTemplateViewResolver(file);
             file.setPrefix(viewPath);
             chain.addResolver(file);

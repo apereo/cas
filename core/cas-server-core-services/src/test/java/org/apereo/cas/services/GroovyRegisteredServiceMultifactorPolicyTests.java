@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -24,7 +26,7 @@ public class GroovyRegisteredServiceMultifactorPolicyTests {
 
     @Test
     public void checkDefaultPolicyConfig() {
-        final var authz = new GroovyRegisteredServiceMultifactorPolicy();
+        val authz = new GroovyRegisteredServiceMultifactorPolicy();
         authz.setGroovyScript("classpath:mfapolicy.groovy");
 
         assertEquals(RegisteredServiceMultifactorPolicy.FailureModes.OPEN, authz.getFailureMode());
@@ -36,7 +38,7 @@ public class GroovyRegisteredServiceMultifactorPolicyTests {
 
     @Test
     public void verifySerializationToJson() throws IOException {
-        final var authz = new GroovyRegisteredServiceMultifactorPolicy();
+        val authz = new GroovyRegisteredServiceMultifactorPolicy();
         authz.setGroovyScript("classpath:mfapolicy.groovy");
         MAPPER.writeValue(JSON_FILE, authz);
         final RegisteredServiceMultifactorPolicy strategyRead = MAPPER.readValue(JSON_FILE, GroovyRegisteredServiceMultifactorPolicy.class);

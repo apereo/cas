@@ -1,5 +1,7 @@
 package org.apereo.cas.support.pac4j.authentication.handler.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
@@ -45,18 +47,18 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         try {
-            final var clientCredentials = (ClientCredential) credential;
+            val clientCredentials = (ClientCredential) credential;
             LOGGER.debug("Located client credentials as [{}]", clientCredentials);
 
-            final var credentials = clientCredentials.getCredentials();
+            val credentials = clientCredentials.getCredentials();
             LOGGER.debug("Client name: [{}]", clientCredentials.getClientName());
 
             // get client
-            final var client = this.clients.findClient(clientCredentials.getClientName());
+            val client = this.clients.findClient(clientCredentials.getClientName());
             LOGGER.debug("Delegated client is: [{}]", client);
 
-            final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
-            final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
             final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
 
             final UserProfile userProfile = client.getUserProfile(credentials, webContext);

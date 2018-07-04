@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.factory;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
@@ -57,7 +59,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
      */
     protected <T extends Ticket> T produceTicket(final TicketGrantingTicket ticketGrantingTicket, final Service service,
                                                  final boolean credentialProvided, final String ticketId, final Class<T> clazz) {
-        final var result = ticketGrantingTicket.grantServiceTicket(
+        val result = ticketGrantingTicket.grantServiceTicket(
             ticketId,
             service,
             this.serviceTicketExpirationPolicy,
@@ -82,7 +84,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
      */
     protected String produceTicketIdentifier(final Service service, final TicketGrantingTicket ticketGrantingTicket,
                                              final boolean credentialProvided) {
-        final var uniqueTicketIdGenKey = service.getClass().getName();
+        val uniqueTicketIdGenKey = service.getClass().getName();
         UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator = null;
         if (this.uniqueTicketIdGeneratorsForService != null && !this.uniqueTicketIdGeneratorsForService.isEmpty()) {
             LOGGER.debug("Looking up service ticket id generator for [{}]", uniqueTicketIdGenKey);

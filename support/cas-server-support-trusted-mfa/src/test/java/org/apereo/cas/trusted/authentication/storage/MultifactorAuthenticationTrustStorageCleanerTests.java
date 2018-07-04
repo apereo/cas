@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import lombok.val;
+
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,7 +23,7 @@ public class MultifactorAuthenticationTrustStorageCleanerTests extends AbstractM
     @Test
     public void verifyAction() {
         try {
-            final var record = getMultifactorAuthenticationTrustRecord();
+            val record = getMultifactorAuthenticationTrustRecord();
             record.setRecordDate(LocalDateTime.now().minusDays(1));
             mfaTrustEngine.set(record);
             mfaTrustStorageCleaner.clean();

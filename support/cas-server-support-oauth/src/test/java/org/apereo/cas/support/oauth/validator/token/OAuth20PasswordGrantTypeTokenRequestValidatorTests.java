@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.validator.token;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -32,9 +34,9 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
 
     @Before
     public void before() {
-        final var service = RegisteredServiceTestUtils.getService();
+        val service = RegisteredServiceTestUtils.getService();
 
-        final var serviceManager = mock(ServicesManager.class);
+        val serviceManager = mock(ServicesManager.class);
         registeredService = new OAuthRegisteredService();
         registeredService.setName("OAuth");
         registeredService.setClientId("client");
@@ -49,16 +51,16 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
 
     @Test
     public void verifyOperation() {
-        final var request = new MockHttpServletRequest();
-        final var response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, "unsupported");
         assertFalse(this.validator.validate(new J2EContext(request, response)));
 
-        final var profile = new CommonProfile();
+        val profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
         profile.setId("client");
-        final var session = request.getSession(true);
+        val session = request.getSession(true);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, getGrantType().getType());

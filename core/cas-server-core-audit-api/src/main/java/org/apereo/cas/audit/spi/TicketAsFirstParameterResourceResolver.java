@@ -1,5 +1,7 @@
 package org.apereo.cas.audit.spi;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.AopUtils;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
@@ -21,7 +23,7 @@ public class TicketAsFirstParameterResourceResolver implements AuditResourceReso
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object object) {
-        final var jp = AopUtils.unWrapJoinPoint(joinPoint);
+        val jp = AopUtils.unWrapJoinPoint(joinPoint);
         if (jp != null && jp.getArgs() != null) {
             return new String[]{jp.getArgs()[0].toString()};
         }

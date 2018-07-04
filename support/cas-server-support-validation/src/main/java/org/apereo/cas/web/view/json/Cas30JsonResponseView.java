@@ -1,5 +1,7 @@
 package org.apereo.cas.web.view.json;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
@@ -70,7 +72,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
     }
 
     private static MappingJackson2JsonView createDelegatedView() {
-        final var view = new MappingJackson2JsonView();
+        val view = new MappingJackson2JsonView();
         view.setPrettyPrint(true);
         view.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).findAndRegisterModules();
         return view;
@@ -78,18 +80,18 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
 
     @Override
     protected void prepareMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request, final HttpServletResponse response) {
-        final var casResponse = new CasJsonServiceResponse();
+        val casResponse = new CasJsonServiceResponse();
         try {
             super.prepareMergedOutputModel(model, request, response);
             if (getAssertionFrom(model) != null) {
-                final var success = createAuthenticationSuccess(model);
+                val success = createAuthenticationSuccess(model);
                 casResponse.setAuthenticationSuccess(success);
             } else {
-                final var failure = createAuthenticationFailure(model);
+                val failure = createAuthenticationFailure(model);
                 casResponse.setAuthenticationFailure(failure);
             }
         } catch (final Exception e) {
-            final var failure = createAuthenticationFailure(model);
+            val failure = createAuthenticationFailure(model);
             casResponse.setAuthenticationFailure(failure);
         } finally {
             final Map<String, Object> casModel = new HashMap<>();
@@ -100,21 +102,21 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
     }
 
     private CasJsonServiceResponseAuthenticationFailure createAuthenticationFailure(final Map<String, Object> model) {
-        final var failure = new CasJsonServiceResponseAuthenticationFailure();
+        val failure = new CasJsonServiceResponseAuthenticationFailure();
         failure.setCode(getErrorCodeFrom(model));
         failure.setDescription(getErrorDescriptionFrom(model));
         return failure;
     }
 
     private CasJsonServiceResponseAuthenticationSuccess createAuthenticationSuccess(final Map<String, Object> model) {
-        final var success = new CasJsonServiceResponseAuthenticationSuccess();
+        val success = new CasJsonServiceResponseAuthenticationSuccess();
         success.setAttributes(getModelAttributes(model));
-        final var principal = getPrincipal(model);
+        val principal = getPrincipal(model);
         success.setUser(principal.getId());
         success.setProxyGrantingTicket(getProxyGrantingTicketIou(model));
-        final var chainedAuthentications = getChainedAuthentications(model);
+        val chainedAuthentications = getChainedAuthentications(model);
         if (chainedAuthentications != null && !chainedAuthentications.isEmpty()) {
-            final var proxies = chainedAuthentications.stream().map(authn -> authn.getPrincipal().getId()).collect(Collectors.toList());
+            val proxies = chainedAuthentications.stream().map(authn -> authn.getPrincipal().getId()).collect(Collectors.toList());
             success.setProxies(proxies);
         }
         return success;

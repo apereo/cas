@@ -1,5 +1,7 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
@@ -18,28 +20,28 @@ public class OpenIdServiceFactoryTests {
 
     @Test
     public void verifyServiceCreationSuccessfullyById() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addParameter(OpenIdProtocolConstants.OPENID_RETURNTO, "test");
         request.addParameter(OpenIdProtocolConstants.OPENID_IDENTITY, "identity");
-        final var factory = new OpenIdServiceFactory("");
+        val factory = new OpenIdServiceFactory("");
         final WebApplicationService service = factory.createService(request);
         assertNotNull(service);
     }
 
     @Test
     public void verifyServiceCreationMissingReturn() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addParameter(OpenIdProtocolConstants.OPENID_IDENTITY, "identity");
-        final var factory = new OpenIdServiceFactory("");
+        val factory = new OpenIdServiceFactory("");
         final WebApplicationService service = factory.createService(request);
         assertNull(service);
     }
 
     @Test
     public void verifyServiceCreationMissingId() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addParameter(OpenIdProtocolConstants.OPENID_RETURNTO, "test");
-        final var factory = new OpenIdServiceFactory("");
+        val factory = new OpenIdServiceFactory("");
         final WebApplicationService service = factory.createService(request);
         assertNull(service);
     }

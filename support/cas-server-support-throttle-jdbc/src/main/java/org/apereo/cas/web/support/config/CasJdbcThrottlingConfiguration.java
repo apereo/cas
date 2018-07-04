@@ -1,5 +1,7 @@
 package org.apereo.cas.web.support.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -43,8 +45,8 @@ public class CasJdbcThrottlingConfiguration {
     @Bean
     @RefreshScope
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle() {
-        final var throttle = casProperties.getAuthn().getThrottle();
-        final var failure = throttle.getFailure();
+        val throttle = casProperties.getAuthn().getThrottle();
+        val failure = throttle.getFailure();
         return new JdbcThrottledSubmissionHandlerInterceptorAdapter(failure.getThreshold(),
             failure.getRangeSeconds(),
             throttle.getUsernameParameter(),

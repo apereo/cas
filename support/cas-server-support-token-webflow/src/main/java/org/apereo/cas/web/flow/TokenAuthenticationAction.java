@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
@@ -41,13 +43,13 @@ public class TokenAuthenticationAction extends AbstractNonInteractiveCredentials
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext requestContext) {
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        final var authTokenValue = this.tokenRequestExtractor.extract(request);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val authTokenValue = this.tokenRequestExtractor.extract(request);
         final Service service = WebUtils.getService(requestContext);
 
         if (service != null && StringUtils.isNotBlank(authTokenValue)) {
             try {
-                final var registeredService = this.servicesManager.findServiceBy(service);
+                val registeredService = this.servicesManager.findServiceBy(service);
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
 
                 final Credential credential = new TokenCredential(authTokenValue, service);

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.view;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
@@ -39,7 +41,7 @@ public class Cas30JsonResponseViewTests extends Cas30ResponseViewTests {
 
     @Override
     protected Map getRenderedViewModelMap(final MockHttpServletRequest req) {
-        final var response = (CasJsonServiceResponse)
+        val response = (CasJsonServiceResponse)
             req.getAttribute(Cas30JsonResponseView.ATTRIBUTE_NAME_MODEL_SERVICE_RESPONSE);
         return response.getAuthenticationSuccess().getAttributes();
     }

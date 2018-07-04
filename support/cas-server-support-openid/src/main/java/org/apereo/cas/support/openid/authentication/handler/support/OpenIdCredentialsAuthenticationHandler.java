@@ -1,5 +1,7 @@
 package org.apereo.cas.support.openid.authentication.handler.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
@@ -35,14 +37,14 @@ public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticati
 
     @Override
     public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
-        final var c = (OpenIdCredential) credential;
+        val c = (OpenIdCredential) credential;
 
-        final var t = this.ticketRegistry.getTicket(c.getTicketGrantingTicketId(), TicketGrantingTicket.class);
+        val t = this.ticketRegistry.getTicket(c.getTicketGrantingTicketId(), TicketGrantingTicket.class);
 
         if (t == null || t.isExpired()) {
             throw new FailedLoginException("TGT is null or expired.");
         }
-        final var principal = t.getAuthentication().getPrincipal();
+        val principal = t.getAuthentication().getPrincipal();
         if (!principal.getId().equals(c.getUsername())) {
             throw new FailedLoginException("Principal ID mismatch");
         }

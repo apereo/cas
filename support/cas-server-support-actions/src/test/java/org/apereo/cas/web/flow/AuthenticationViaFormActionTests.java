@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
@@ -49,8 +51,8 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
 
     @Test
     public void verifySuccessfulAuthenticationWithNoService() throws Exception {
-        final var request = new MockHttpServletRequest();
-        final var context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
 
         request.addParameter(USERNAME_PARAM, TEST);
         request.addParameter(PASSWORD_PARAM, TEST);
@@ -64,9 +66,9 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
 
     @Test
     public void verifySuccessfulAuthenticationWithNoServiceAndWarn() throws Exception {
-        final var request = new MockHttpServletRequest();
-        final var response = new MockHttpServletResponse();
-        final var context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val context = new MockRequestContext();
 
         request.addParameter(USERNAME_PARAM, TEST);
         request.addParameter(PASSWORD_PARAM, TEST);
@@ -81,9 +83,9 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
 
     @Test
     public void verifySuccessfulAuthenticationWithServiceAndWarn() throws Exception {
-        final var request = new MockHttpServletRequest();
-        final var response = new MockHttpServletResponse();
-        final var context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val context = new MockRequestContext();
 
         request.addParameter(USERNAME_PARAM, TEST);
         request.addParameter(PASSWORD_PARAM, TEST);
@@ -100,8 +102,8 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
 
     @Test
     public void verifyFailedAuthenticationWithNoService() throws Exception {
-        final var request = new MockHttpServletRequest();
-        final var context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
 
         request.addParameter(USERNAME_PARAM, TEST);
         request.addParameter(PASSWORD_PARAM, "test2");
@@ -119,12 +121,12 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     public void verifyRenewWithServiceAndSameCredentials() throws Exception {
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         final Service service = RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL);
-        final var ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
+        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
                 getAuthenticationSystemSupport(), service, c);
 
-        final var ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        final var request = new MockHttpServletRequest();
-        final var context = new MockRequestContext();
+        val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
 
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
 
@@ -136,7 +138,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService());
 
-        final var ev = this.action.execute(context);
+        val ev = this.action.execute(context);
         assertEquals(CasWebflowConstants.STATE_ID_WARN, ev.getId());
     }
 
@@ -144,12 +146,12 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     public void verifyRenewWithServiceAndDifferentCredentials() throws Exception {
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
 
-        final var ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
+        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
                 getAuthenticationSystemSupport(), RegisteredServiceTestUtils.getService(TEST), c);
 
-        final var ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        final var request = new MockHttpServletRequest();
-        final var context = new MockRequestContext();
+        val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
 
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
@@ -166,12 +168,12 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     public void verifyRenewWithServiceAndBadCredentials() throws Exception {
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         final Service service = RegisteredServiceTestUtils.getService(TEST);
-        final var ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
+        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
                 getAuthenticationSystemSupport(), service, c);
 
-        final var ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-        final var request = new MockHttpServletRequest();
-        final var context = new MockRequestContext();
+        val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
 
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");

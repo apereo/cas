@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import lombok.val;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -37,9 +39,9 @@ public class SamlRegisteredServiceCacheKey implements Serializable {
      * @return the string
      */
     public static String buildRegisteredServiceCacheKey(final SamlRegisteredService service) {
-        final var key = String.valueOf(service.getId()).concat("@").concat(service.getName());
+        val key = String.valueOf(service.getId()).concat("@").concat(service.getName());
         LOGGER.debug("Determined cache key for service [{}] as [{}]", service.getName(), key);
-        final var hashedKey = DigestUtils.sha512(key);
+        val hashedKey = DigestUtils.sha512(key);
         LOGGER.debug("Hashed service cache key as [{}]", hashedKey);
         return hashedKey;
     }

@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry.queue;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -24,7 +26,7 @@ public class AddTicketMessageQueueCommandTests extends AbstractTicketMessageQueu
         TicketGrantingTicket ticket = new TicketGrantingTicketImpl("TGT", CoreAuthenticationTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         ticketRegistry.addTicket(ticket);
-        final var cmd = new AddTicketMessageQueueCommand(new StringBean(), ticket);
+        val cmd = new AddTicketMessageQueueCommand(new StringBean(), ticket);
         cmd.execute(ticketRegistry);
         ticket = ticketRegistry.getTicket(ticket.getId(), ticket.getClass());
         assertNotNull(ticket);

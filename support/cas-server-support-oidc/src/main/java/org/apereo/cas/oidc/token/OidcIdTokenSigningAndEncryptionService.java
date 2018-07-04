@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.token;
 
+import lombok.val;
+
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -38,8 +40,8 @@ public class OidcIdTokenSigningAndEncryptionService {
     @SneakyThrows
     public String encode(final OidcRegisteredService svc, final JwtClaims claims) {
         LOGGER.debug("Attempting to produce id token generated for service [{}]", svc);
-        final var jws = new JsonWebSignature();
-        final var jsonClaims = claims.toJson();
+        val jws = new JsonWebSignature();
+        val jsonClaims = claims.toJson();
         jws.setPayload(jsonClaims);
         LOGGER.debug("Generated claims to put into id token are [{}]", jsonClaims);
 
@@ -56,17 +58,17 @@ public class OidcIdTokenSigningAndEncryptionService {
 
     private String encryptIdToken(final OidcRegisteredService svc, final JsonWebSignature jws, final String innerJwt) throws Exception {
         LOGGER.debug("Service [{}] is set to encrypt id tokens", svc);
-        final var jwe = new JsonWebEncryption();
+        val jwe = new JsonWebEncryption();
         jwe.setAlgorithmHeaderValue(svc.getIdTokenEncryptionAlg());
         jwe.setEncryptionMethodHeaderParameter(svc.getIdTokenEncryptionEncoding());
 
-        final var jwks = this.serviceJsonWebKeystoreCache.get(svc);
+        val jwks = this.serviceJsonWebKeystoreCache.get(svc);
         if (!jwks.isPresent()) {
             throw new IllegalArgumentException("Service " + svc.getServiceId()
                 + " with client id " + svc.getClientId()
                 + " is configured to encrypt id tokens, yet no JSON web key is available");
         }
-        final var jsonWebKey = jwks.get();
+        val jsonWebKey = jwks.get();
         LOGGER.debug("Found JSON web key to encrypt the id token: [{}]", jsonWebKey);
         if (jsonWebKey.getPublicKey() == null) {
             throw new IllegalArgumentException("JSON web key used to sign the id token has no associated public key");
@@ -80,13 +82,13 @@ public class OidcIdTokenSigningAndEncryptionService {
     }
 
     private String signIdToken(final OidcRegisteredService svc, final JsonWebSignature jws) throws Exception {
-        final var jwks = defaultJsonWebKeystoreCache.get(this.issuer);
+        val jwks = defaultJsonWebKeystoreCache.get(this.issuer);
         if (!jwks.isPresent()) {
             throw new IllegalArgumentException("Service " + svc.getServiceId()
                 + " with client id " + svc.getClientId()
                 + " is configured to sign id tokens, yet no JSON web key is available");
         }
-        final var jsonWebKey = jwks.get();
+        val jsonWebKey = jwks.get();
         LOGGER.debug("Found JSON web key to sign the id token: [{}]", jsonWebKey);
         if (jsonWebKey.getPrivateKey() == null) {
             throw new IllegalArgumentException("JSON web key used to sign the id token has no associated private key");

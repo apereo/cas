@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
@@ -107,9 +109,9 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     public List<IPersonAttributeDao> jsonAttributeRepositories() {
         final List<IPersonAttributeDao> list = new ArrayList<>();
         casProperties.getAuthn().getAttributeRepository().getJson().forEach(Unchecked.consumer(json -> {
-            final var r = json.getLocation();
+            val r = json.getLocation();
             if (r != null) {
-                final var dao = new JsonBackedComplexStubPersonAttributeDao(r);
+                val dao = new JsonBackedComplexStubPersonAttributeDao(r);
                 dao.setOrder(json.getOrder());
                 dao.init();
                 LOGGER.debug("Configured JSON attribute sources from [{}]", r);
@@ -126,7 +128,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         final List<IPersonAttributeDao> list = new ArrayList<>();
         casProperties.getAuthn().getAttributeRepository().getGroovy().forEach(groovy -> {
             if (groovy.getLocation() != null) {
-                final var dao = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties));
+                val dao = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties));
                 dao.setCaseInsensitiveUsername(groovy.isCaseInsensitive());
                 dao.setOrder(groovy.getOrder());
 
@@ -142,10 +144,10 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @RefreshScope
     public List<IPersonAttributeDao> grouperAttributeRepositories() {
         final List<IPersonAttributeDao> list = new ArrayList<>();
-        final var gp = casProperties.getAuthn().getAttributeRepository().getGrouper();
+        val gp = casProperties.getAuthn().getAttributeRepository().getGrouper();
 
         if (gp.isEnabled()) {
-            final var dao = new GrouperPersonAttributeDao();
+            val dao = new GrouperPersonAttributeDao();
             dao.setOrder(gp.getOrder());
             LOGGER.debug("Configured Grouper attribute source");
             list.add(dao);
@@ -158,7 +160,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @RefreshScope
     public List<IPersonAttributeDao> stubAttributeRepositories() {
         final List<IPersonAttributeDao> list = new ArrayList<>();
-        final var attrs = casProperties.getAuthn().getAttributeRepository().getStub().getAttributes();
+        val attrs = casProperties.getAuthn().getAttributeRepository().getStub().getAttributes();
         if (!attrs.isEmpty() && list.isEmpty()) {
             LOGGER.info("Found and added static attributes [{}] to the list of candidate attribute repositories", attrs.keySet());
             list.add(Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository()));
@@ -171,7 +173,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @RefreshScope
     public List<IPersonAttributeDao> jdbcAttributeRepositories() {
         final List<IPersonAttributeDao> list = new ArrayList<>();
-        final var attrs = casProperties.getAuthn().getAttributeRepository();
+        val attrs = casProperties.getAuthn().getAttributeRepository();
         attrs.getJdbc().forEach(jdbc -> {
             if (StringUtils.isNotBlank(jdbc.getSql()) && StringUtils.isNotBlank(jdbc.getUrl())) {
                 final AbstractJdbcPersonAttributeDao jdbcDao;
@@ -193,7 +195,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
                 }
 
                 jdbcDao.setQueryAttributeMapping(CollectionUtils.wrap("username", jdbc.getUsername()));
-                final var mapping = jdbc.getAttributes();
+                val mapping = jdbc.getAttributes();
                 if (mapping != null && !mapping.isEmpty()) {
                     LOGGER.debug("Configured result attribute mapping for [{}] to be [{}]", jdbc.getUrl(), jdbc.getAttributes());
                     jdbcDao.setResultAttributeMapping(mapping);
@@ -214,10 +216,10 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @RefreshScope
     public List<IPersonAttributeDao> ldapAttributeRepositories() {
         final List<IPersonAttributeDao> list = new ArrayList<>();
-        final var attrs = casProperties.getAuthn().getAttributeRepository();
+        val attrs = casProperties.getAuthn().getAttributeRepository();
         attrs.getLdap().forEach(ldap -> {
             if (StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl())) {
-                final var ldapDao = new LdaptivePersonAttributeDao();
+                val ldapDao = new LdaptivePersonAttributeDao();
 
                 LOGGER.debug("Configured LDAP attribute source for [{}] and baseDn [{}]", ldap.getLdapUrl(), ldap.getBaseDn());
                 ldapDao.setConnectionFactory(LdapUtils.newLdaptivePooledConnectionFactory(ldap));
@@ -226,11 +228,11 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
                 LOGGER.debug("LDAP attributes are fetched from [{}] via filter [{}]", ldap.getLdapUrl(), ldap.getSearchFilter());
                 ldapDao.setSearchFilter(ldap.getSearchFilter());
 
-                final var constraints = new SearchControls();
+                val constraints = new SearchControls();
                 if (ldap.getAttributes() != null && !ldap.getAttributes().isEmpty()) {
                     LOGGER.debug("Configured result attribute mapping for [{}] to be [{}]", ldap.getLdapUrl(), ldap.getAttributes());
                     ldapDao.setResultAttributeMapping(ldap.getAttributes());
-                    final var attributes = ldap.getAttributes().keySet().toArray(new String[ldap.getAttributes().keySet().size()]);
+                    val attributes = ldap.getAttributes().keySet().toArray(new String[ldap.getAttributes().keySet().size()]);
                     constraints.setReturningAttributes(attributes);
                 } else {
                     LOGGER.debug("Retrieving all attributes as no explicit attribute mappings are defined for [{}]", ldap.getLdapUrl());
@@ -263,8 +265,8 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         final List<IPersonAttributeDao> list = new ArrayList<>();
         casProperties.getAuthn().getAttributeRepository().getScript()
             .forEach(Unchecked.consumer(script -> {
-                final var dao = new ScriptEnginePersonAttributeDao();
-                final var scriptFile = IOUtils.toString(script.getLocation().getInputStream(), StandardCharsets.UTF_8);
+                val dao = new ScriptEnginePersonAttributeDao();
+                val scriptFile = IOUtils.toString(script.getLocation().getInputStream(), StandardCharsets.UTF_8);
                 dao.setScriptFile(scriptFile);
                 dao.setCaseInsensitiveUsername(script.isCaseInsensitive());
                 dao.setOrder(script.getOrder());
@@ -282,7 +284,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         casProperties.getAuthn().getAttributeRepository().getRest().forEach(rest -> {
             if (StringUtils.isNotBlank(rest.getUrl())) {
 
-                final var dao = new RestfulPersonAttributeDao();
+                val dao = new RestfulPersonAttributeDao();
                 dao.setCaseInsensitiveUsername(rest.isCaseInsensitive());
                 dao.setOrder(rest.getOrder());
                 dao.setUrl(rest.getUrl());
@@ -307,10 +309,10 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @Bean
     @ConditionalOnMissingBean(name = "cachingAttributeRepository")
     public IPersonAttributeDao cachingAttributeRepository() {
-        final var impl = new CachingPersonAttributeDaoImpl();
+        val impl = new CachingPersonAttributeDaoImpl();
         impl.setCacheNullResults(false);
 
-        final var props = casProperties.getAuthn().getAttributeRepository();
+        val props = casProperties.getAuthn().getAttributeRepository();
         final Cache graphs = Caffeine.newBuilder()
             .maximumSize(props.getMaximumCacheSize())
             .expireAfterWrite(props.getExpirationTime(), TimeUnit.valueOf(props.getExpirationTimeUnit().toUpperCase()))
@@ -326,12 +328,12 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @Bean
     @ConditionalOnMissingBean(name = "aggregatingAttributeRepository")
     public IPersonAttributeDao aggregatingAttributeRepository() {
-        final var mergingDao = new MergingPersonAttributeDaoImpl();
-        final var merger = StringUtils.defaultIfBlank(casProperties.getAuthn().getAttributeRepository().getMerger(), "replace".trim());
+        val mergingDao = new MergingPersonAttributeDaoImpl();
+        val merger = StringUtils.defaultIfBlank(casProperties.getAuthn().getAttributeRepository().getMerger(), "replace".trim());
         LOGGER.debug("Configured merging strategy for attribute sources is [{}]", merger);
         mergingDao.setMerger(getAttributeMerger(merger));
 
-        final var list = attributeRepositories();
+        val list = attributeRepositories();
         mergingDao.setPersonAttributeDaos(list);
 
         if (list.isEmpty()) {

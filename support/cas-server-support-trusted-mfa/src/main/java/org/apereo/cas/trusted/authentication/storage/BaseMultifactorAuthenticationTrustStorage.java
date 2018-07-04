@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
@@ -42,13 +44,13 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
 
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal, final LocalDateTime onOrAfterDate) {
-        final var res = get(principal);
+        val res = get(principal);
         res.removeIf(entry -> {
             if (entry.getRecordDate().isBefore(onOrAfterDate)) {
                 return true;
             }
-            final var decodedKey = this.cipherExecutor.decode(entry.getRecordKey());
-            final var currentKey = MultifactorAuthenticationTrustUtils.generateKey(entry);
+            val decodedKey = this.cipherExecutor.decode(entry.getRecordKey());
+            val currentKey = MultifactorAuthenticationTrustUtils.generateKey(entry);
             if (StringUtils.isBlank(decodedKey)) {
                 return true;
             }

@@ -1,5 +1,7 @@
 package org.apereo.cas.token.authentication.principal;
 
+import lombok.val;
+
 import com.nimbusds.jwt.JWTParser;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
@@ -100,11 +102,11 @@ public class TokenWebApplicationServiceResponseBuilderTests {
 
     @Test
     public void verifyDecrypt() {
-        final var signingSecret = "EihBwA3OuDQMm4gdWzkqRJ87596G7o7a_naJAJipxFoRJbXK7APRcnCA91Y30rJdh4q-C2dmpfV6eNhQT0bR5A";
-        final var encryptionSecret = "dJ2YpUd-r_Qd7e3nDm79WiIHkqaLT8yZt6nN5eG0YnE";
+        val signingSecret = "EihBwA3OuDQMm4gdWzkqRJ87596G7o7a_naJAJipxFoRJbXK7APRcnCA91Y30rJdh4q-C2dmpfV6eNhQT0bR5A";
+        val encryptionSecret = "dJ2YpUd-r_Qd7e3nDm79WiIHkqaLT8yZt6nN5eG0YnE";
 
-        final var cipher = new TokenTicketCipherExecutor(encryptionSecret, signingSecret, true);
-        final var result = cipher.decode(cipher.encode("ThisIsValue"));
+        val cipher = new TokenTicketCipherExecutor(encryptionSecret, signingSecret, true);
+        val result = cipher.decode(cipher.encode("ThisIsValue"));
         assertEquals("ThisIsValue", result);
     }
 
@@ -115,17 +117,17 @@ public class TokenWebApplicationServiceResponseBuilderTests {
 
     @Test
     public void verifyTokenBuilder() {
-        final var data = "yes\ncasuser";
+        val data = "yes\ncasuser";
         try (var webServer = new MockWebServer(8281,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
 
-            final var result = responseBuilder.build(CoreAuthenticationTestUtils.getWebApplicationService("jwtservice"),
+            val result = responseBuilder.build(CoreAuthenticationTestUtils.getWebApplicationService("jwtservice"),
                 "ST-123456",
                 CoreAuthenticationTestUtils.getAuthentication());
             assertNotNull(result);
             assertTrue(result.getAttributes().containsKey(CasProtocolConstants.PARAMETER_TICKET));
-            final var ticket = result.getAttributes().get(CasProtocolConstants.PARAMETER_TICKET);
+            val ticket = result.getAttributes().get(CasProtocolConstants.PARAMETER_TICKET);
             assertNotNull(JWTParser.parse(ticket));
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);

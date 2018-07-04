@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import org.apereo.cas.category.CosmosDbCategory;
 import org.apereo.cas.config.CosmosDbServiceRegistryConfiguration;
 import org.junit.ClassRule;
@@ -47,7 +49,7 @@ public class CosmosDbServiceRegistryTests {
     private ServiceRegistry serviceRegistry;
 
     private void deleteAll() {
-        final var services = this.serviceRegistry.load();
+        val services = this.serviceRegistry.load();
         services.forEach(service -> this.serviceRegistry.delete(service));
     }
 
@@ -62,11 +64,11 @@ public class CosmosDbServiceRegistryTests {
             list.add(buildService(i));
             this.serviceRegistry.save(list.get(i));
         });
-        final var results = this.serviceRegistry.load();
+        val results = this.serviceRegistry.load();
         assertEquals(results.size(), list.size());
         results.forEach(r -> {
-            final var s1 = this.serviceRegistry.findServiceById(r.getId());
-            final var s2 = this.serviceRegistry.findServiceById(r.getServiceId());
+            val s1 = this.serviceRegistry.findServiceById(r.getId());
+            val s2 = this.serviceRegistry.findServiceById(r.getServiceId());
             assertEquals(s1, s2);
         });
         deleteAll();

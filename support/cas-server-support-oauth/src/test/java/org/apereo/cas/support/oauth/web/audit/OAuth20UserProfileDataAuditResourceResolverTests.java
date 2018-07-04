@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.audit;
 
+import lombok.val;
+
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -22,20 +24,20 @@ import static org.mockito.Mockito.*;
 public class OAuth20UserProfileDataAuditResourceResolverTests {
     @Test
     public void verifyAction() {
-        final var r = new OAuth20UserProfileDataAuditResourceResolver();
-        final var token = mock(AccessToken.class);
+        val r = new OAuth20UserProfileDataAuditResourceResolver();
+        val token = mock(AccessToken.class);
         when(token.getId()).thenReturn("CODE");
         when(token.getService()).thenReturn(RegisteredServiceTestUtils.getService());
 
-        final var service = new OAuthRegisteredService();
+        val service = new OAuthRegisteredService();
         service.setClientId("CLIENTID");
         service.setName("OAUTH");
         service.setId(123);
 
-        final var jp = mock(JoinPoint.class);
+        val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{token});
 
-        final var result = r.resolveFrom(jp, CollectionUtils.wrap(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, "id",
+        val result = r.resolveFrom(jp, CollectionUtils.wrap(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, "id",
             OAuth20Constants.CLIENT_ID, "clientid",
             CasProtocolConstants.PARAMETER_SERVICE, "service",
             "scopes", CollectionUtils.wrapSet("email"),

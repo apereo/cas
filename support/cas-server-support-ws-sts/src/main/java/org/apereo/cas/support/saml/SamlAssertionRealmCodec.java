@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.sts.token.realm.SAMLRealmCodec;
@@ -21,9 +23,9 @@ public class SamlAssertionRealmCodec implements SAMLRealmCodec {
 
     @Override
     public String getRealmFromToken(final SamlAssertionWrapper assertion) {
-        final var ki = assertion.getSignatureKeyInfo();
-        final var certs = ki.getCerts();
-        final var parsed = parseCNValue(certs[0].getSubjectX500Principal().getName());
+        val ki = assertion.getSignatureKeyInfo();
+        val certs = ki.getCerts();
+        val parsed = parseCNValue(certs[0].getSubjectX500Principal().getName());
         LOGGER.debug("Realm parsed from certificate CN of the SAML assertion: [{}]", parsed);
         if (parsed.equals(realm)) {
             return parsed;
@@ -35,8 +37,8 @@ public class SamlAssertionRealmCodec implements SAMLRealmCodec {
     }
 
     private String parseCNValue(final String name) {
-        final var index = name.indexOf(',');
-        final var len = index > 0 ? index : name.length();
+        val index = name.indexOf(',');
+        val len = index > 0 ? index : name.length();
         var realm = name.substring(name.indexOf("CN=") + "CN=".length(), len);
         if (uppercase) {
             realm = realm.toUpperCase();

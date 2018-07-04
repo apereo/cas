@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import lombok.val;
+
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +38,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
         MetadataResolver resolver = null;
         try {
             LOGGER.debug("Resolving metadata for [{}] at [{}].", service.getName(), service.getMetadataLocation());
-            final var k = new SamlRegisteredServiceCacheKey(service);
+            val k = new SamlRegisteredServiceCacheKey(service);
             LOGGER.debug("Locating cached metadata resolver using key [{}] for service [{}]", k.getId(), service.getName());
             resolver = this.cache.get(k);
             return resolver;

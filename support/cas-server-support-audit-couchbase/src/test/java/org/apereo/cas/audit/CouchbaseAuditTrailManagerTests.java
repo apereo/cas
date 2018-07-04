@@ -1,5 +1,7 @@
 package org.apereo.cas.audit;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.category.CouchbaseCategory;
@@ -61,9 +63,9 @@ public class CouchbaseAuditTrailManagerTests {
 
     @Test
     public void verify() {
-        final var fiveDaysAgo = LocalDate.now().minusDays(5);
-        final var since = DateTimeUtils.dateOf(fiveDaysAgo);
-        final var ctx = new AuditActionContext("casuser", "resource",
+        val fiveDaysAgo = LocalDate.now().minusDays(5);
+        val since = DateTimeUtils.dateOf(fiveDaysAgo);
+        val ctx = new AuditActionContext("casuser", "resource",
             "action", "appcode", since, "clientIp",
             "serverIp");
         auditTrailExecutionPlan.record(ctx);

@@ -1,5 +1,7 @@
 package org.apereo.cas.audit.spi;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -27,10 +29,10 @@ public class NullableReturnValueAuditResourceResolver implements AuditResourceRe
             return new String[0];
         }
         if (o instanceof Event) {
-            final var event = Event.class.cast(o);
+            val event = Event.class.cast(o);
 
-            final var sourceName = event.getSource().getClass().getSimpleName();
-            final var result =
+            val sourceName = event.getSource().getClass().getSimpleName();
+            val result =
                 new ToStringBuilder(event, ToStringStyle.NO_CLASS_NAME_STYLE)
                     .append("event", event.getId())
                     .append("timestamp", new Date(event.getTimestamp()))

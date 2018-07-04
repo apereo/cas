@@ -1,5 +1,7 @@
 package org.apereo.cas.support.rest;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -51,7 +53,7 @@ public class TicketStatusResourceTests {
 
     @Test
     public void verifyStatus() throws Exception {
-        final var tgt = new MockTicketGrantingTicket("casuser");
+        val tgt = new MockTicketGrantingTicket("casuser");
         when(casMock.getTicket(anyString())).thenReturn(tgt);
         this.mockMvc.perform(get(TICKETS_RESOURCE_URL + "/TGT-1"))
             .andExpect(status().isOk())

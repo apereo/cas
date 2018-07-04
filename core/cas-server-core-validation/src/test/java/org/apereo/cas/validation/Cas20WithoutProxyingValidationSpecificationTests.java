@@ -1,5 +1,7 @@
 package org.apereo.cas.validation;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.Before;
@@ -45,7 +47,7 @@ public class Cas20WithoutProxyingValidationSpecificationTests {
 
     @Test
     public void verifySettingRenew() {
-        final var validation = new Cas20WithoutProxyingValidationSpecification(
+        val validation = new Cas20WithoutProxyingValidationSpecification(
                 true);
         assertTrue(validation.isRenew());
     }

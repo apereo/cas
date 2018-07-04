@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
@@ -31,8 +33,8 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
     @Override
     public Principal nominate(final Collection<Authentication> authentications,
                               final Map<String, Object> principalAttributes) {
-        final var principal = getPrincipalFromAuthentication(authentications);
-        final var finalPrincipal = this.principalFactory.createPrincipal(principal.getId(), principalAttributes);
+        val principal = getPrincipalFromAuthentication(authentications);
+        val finalPrincipal = this.principalFactory.createPrincipal(principal.getId(), principalAttributes);
         LOGGER.debug("Nominated [{}] as the primary principal", finalPrincipal);
         return finalPrincipal;
     }

@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +45,7 @@ public class MultifactorAuthenticationTrustStorageCleaner {
         try {
             LOGGER.debug("Proceeding to clean up expired trusted authentication records...");
             SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-            final var validDate = LocalDateTime.now().minus(trustedProperties.getExpiration(),
+            val validDate = LocalDateTime.now().minus(trustedProperties.getExpiration(),
                 DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit()));
             LOGGER.info("Expiring records that are on/before [{}]", validDate);
             this.storage.expire(validDate);

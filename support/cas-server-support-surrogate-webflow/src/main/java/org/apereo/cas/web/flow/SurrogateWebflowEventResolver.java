@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -58,10 +60,10 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
     }
 
     private boolean loadSurrogates(final RequestContext requestContext) {
-        final var c = WebUtils.getCredential(requestContext);
+        val c = WebUtils.getCredential(requestContext);
         if (c instanceof UsernamePasswordCredential) {
-            final var username = c.getId();
-            final var surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
+            val username = c.getId();
+            val surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
             if (!surrogates.isEmpty()) {
                 surrogates.add(username);
                 requestContext.getFlowScope().put("surrogates", surrogates);

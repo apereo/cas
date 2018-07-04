@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
@@ -37,8 +39,8 @@ public class TerminateSessionConfirmingActionTests extends AbstractCentralAuthen
 
     @Test
     public void verifyTerminateActionConfirmed() throws Exception {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         request.addParameter(TerminateSessionAction.REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED, "true");
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         WebUtils.putTicketGrantingTicketInScopes(context, "TGT-123456-something");
@@ -48,8 +50,8 @@ public class TerminateSessionConfirmingActionTests extends AbstractCentralAuthen
 
     @Test
     public void verifyTerminateActionConfirming() throws Exception {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         WebUtils.putTicketGrantingTicketInScopes(context, "TGT-123456-something");
         assertEquals(CasWebflowConstants.STATE_ID_WARN, action.execute(context).getId());

@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.gauth.rest;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorTokenCredential;
@@ -28,7 +30,7 @@ public class GoogleAuthenticatorRestHttpRequestCredentialFactory implements Rest
     
     @Override
     public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
-        final var token = requestBody.getFirst(PARAMETER_NAME_GAUTH_OTP);
+        val token = requestBody.getFirst(PARAMETER_NAME_GAUTH_OTP);
         LOGGER.debug("Google authenticator token in the request body: [{}]", token);
         if (StringUtils.isBlank(token)) {
             return new ArrayList<>(0);

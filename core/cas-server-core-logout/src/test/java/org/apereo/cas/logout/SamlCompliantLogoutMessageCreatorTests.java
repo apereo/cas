@@ -1,5 +1,7 @@
 package org.apereo.cas.logout;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.junit.Test;
@@ -29,20 +31,20 @@ public class SamlCompliantLogoutMessageCreatorTests {
     @Test
     public void verifyMessageBuilding() throws Exception {
 
-        final var service = mock(WebApplicationService.class);
+        val service = mock(WebApplicationService.class);
         when(service.getOriginalUrl()).thenReturn(CONST_TEST_URL);
-        final var logoutUrl = new URL(service.getOriginalUrl());
-        final var request = new DefaultLogoutRequest("TICKET-ID", service, logoutUrl);
+        val logoutUrl = new URL(service.getOriginalUrl());
+        val request = new DefaultLogoutRequest("TICKET-ID", service, logoutUrl);
 
-        final var msg = builder.create(request);
+        val msg = builder.create(request);
 
-        final var factory = DocumentBuilderFactory.newInstance();
-        final var builder = factory.newDocumentBuilder();
+        val factory = DocumentBuilderFactory.newInstance();
+        val builder = factory.newDocumentBuilder();
 
         final InputStream is = new ByteArrayInputStream(msg.getBytes(StandardCharsets.UTF_8));
-        final var document = builder.parse(is);
+        val document = builder.parse(is);
         
-        final var list = document.getDocumentElement().getElementsByTagName("samlp:SessionIndex");
+        val list = document.getDocumentElement().getElementsByTagName("samlp:SessionIndex");
         assertEquals(1, list.getLength());
         
         assertEquals(list.item(0).getTextContent(), request.getTicketId());

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
@@ -35,21 +37,21 @@ public class GraphicalUserAuthenticationWebflowConfigurer extends AbstractCasWeb
 
     @Override
     protected void doInitialize() {
-        final var flow = getLoginFlow();
+        val flow = getLoginFlow();
         if (flow != null) {
-            final var state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
-            final var transition = (Transition) state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-            final var targetStateId = transition.getTargetStateId();
+            val state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
+            val transition = (Transition) state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+            val targetStateId = transition.getTargetStateId();
 
             createTransitionForState(state, TRANSITION_ID_GUA_GET_USERID, STATE_ID_GUA_GET_USERID);
-            final var viewState = createViewState(flow, STATE_ID_GUA_GET_USERID, "casGuaGetUserIdView");
+            val viewState = createViewState(flow, STATE_ID_GUA_GET_USERID, "casGuaGetUserIdView");
             createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, STATE_ID_GUA_DISPLAY_USER_GFX);
 
-            final var viewStateGfx = createViewState(flow, STATE_ID_GUA_DISPLAY_USER_GFX, "casGuaDisplayUserGraphicsView");
+            val viewStateGfx = createViewState(flow, STATE_ID_GUA_DISPLAY_USER_GFX, "casGuaDisplayUserGraphicsView");
             viewStateGfx.getRenderActionList().add(createEvaluateAction("displayUserGraphicsBeforeAuthenticationAction"));
             createTransitionForState(viewStateGfx, CasWebflowConstants.TRANSITION_ID_SUBMIT, STATE_ID_ACCEPT_GUA);
 
-            final var acceptState = createActionState(flow, STATE_ID_ACCEPT_GUA,
+            val acceptState = createActionState(flow, STATE_ID_ACCEPT_GUA,
                     createEvaluateAction("acceptUserGraphicsForAuthenticationAction"));
             createStateDefaultTransition(acceptState, targetStateId);
         }

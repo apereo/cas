@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.logout;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -60,8 +62,8 @@ public class TerminateSessionAction extends AbstractAction {
      */
     @SneakyThrows
     public Event terminate(final RequestContext context) {
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
         var tgtId = WebUtils.getTicketGrantingTicketId(context);
         if (StringUtils.isBlank(tgtId)) {
@@ -69,7 +71,7 @@ public class TerminateSessionAction extends AbstractAction {
         }
         if (StringUtils.isNotBlank(tgtId)) {
             LOGGER.debug("Destroying SSO session linked to ticket-granting ticket [{}]", tgtId);
-            final var logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
+            val logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
             WebUtils.putLogoutRequests(context, logoutRequests);
         }
         LOGGER.debug("Removing CAS cookies");
@@ -96,12 +98,12 @@ public class TerminateSessionAction extends AbstractAction {
      */
     protected void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.debug("Destroying application session");
-        final var manager = Pac4jUtils.getPac4jProfileManager(request, response);
+        val manager = Pac4jUtils.getPac4jProfileManager(request, response);
         manager.logout();
 
-        final var session = request.getSession(false);
+        val session = request.getSession(false);
         if (session != null) {
-            final var requestedUrl = session.getAttribute(Pac4jConstants.REQUESTED_URL);
+            val requestedUrl = session.getAttribute(Pac4jConstants.REQUESTED_URL);
             session.invalidate();
             if (requestedUrl != null && !requestedUrl.equals("")) {
                 request.getSession(true).setAttribute(Pac4jConstants.REQUESTED_URL, requestedUrl);
@@ -110,7 +112,7 @@ public class TerminateSessionAction extends AbstractAction {
     }
 
     private static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         return request.getParameterMap().containsKey(REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED);
     }
 }

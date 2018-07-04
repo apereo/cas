@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -22,7 +24,7 @@ public class OneTimePasswordCredentialTests {
 
     @Test
     public void verifySerializeAnOneTimePasswordCredentialToJson() throws IOException {
-        final var credentialWritten = new OneTimePasswordCredential("id", "password");
+        val credentialWritten = new OneTimePasswordCredential("id", "password");
         MAPPER.writeValue(JSON_FILE, credentialWritten);
         final CredentialMetaData credentialRead = MAPPER.readValue(JSON_FILE, OneTimePasswordCredential.class);
         assertEquals(credentialWritten, credentialRead);

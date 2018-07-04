@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import lombok.val;
+
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +32,8 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
 
     @Override
     public SamlService createService(final HttpServletRequest request) {
-        final var service = request.getParameter(SamlProtocolConstants.CONST_PARAM_TARGET);
-        final var requestBody = request.getMethod().equalsIgnoreCase(HttpMethod.POST.name()) ? getRequestBody(request) : null;
+        val service = request.getParameter(SamlProtocolConstants.CONST_PARAM_TARGET);
+        val requestBody = request.getMethod().equalsIgnoreCase(HttpMethod.POST.name()) ? getRequestBody(request) : null;
         final String artifactId;
         final String requestId;
 
@@ -39,25 +41,25 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             LOGGER.trace("Request does not specify a [{}] or request body is empty", SamlProtocolConstants.CONST_PARAM_TARGET);
             return null;
         }
-        final var id = cleanupUrl(service);
+        val id = cleanupUrl(service);
 
         if (StringUtils.hasText(requestBody)) {
             request.setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, requestBody);
 
-            final var document = saml10ObjectBuilder.constructDocumentFromXml(requestBody);
-            final var root = document.getRootElement();
+            val document = saml10ObjectBuilder.constructDocumentFromXml(requestBody);
+            val root = document.getRootElement();
 
             @NonNull
-            final var body = root.getChild("Body", NAMESPACE_ENVELOPE);
+            val body = root.getChild("Body", NAMESPACE_ENVELOPE);
             @NonNull
-            final var requestChild = body.getChild("Request", NAMESPACE_SAML1);
+            val requestChild = body.getChild("Request", NAMESPACE_SAML1);
 
             @NonNull
-            final var artifactElement = requestChild.getChild("AssertionArtifact", NAMESPACE_SAML1);
+            val artifactElement = requestChild.getChild("AssertionArtifact", NAMESPACE_SAML1);
             artifactId = artifactElement.getValue();
 
             @NonNull
-            final var requestIdAttribute = requestChild.getAttribute("RequestID");
+            val requestIdAttribute = requestChild.getAttribute("RequestID");
             requestId = requestIdAttribute.getValue();
         } else {
             artifactId = null;
@@ -65,7 +67,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
         }
 
         LOGGER.debug("Request Body: [{}]\n\"Extracted ArtifactId: [{}]. Extracted Request Id: [{}]", requestBody, artifactId, requestId);
-        final var samlService = new SamlService(id, service, artifactId, requestId);
+        val samlService = new SamlService(id, service, artifactId, requestId);
         samlService.setSource(SamlProtocolConstants.CONST_PARAM_TARGET);
         return samlService;
     }

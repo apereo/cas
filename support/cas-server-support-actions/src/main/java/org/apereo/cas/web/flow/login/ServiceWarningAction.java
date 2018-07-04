@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.login;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -42,26 +44,26 @@ public class ServiceWarningAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext context) {
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
         final Service service = WebUtils.getService(context);
-        final var ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
+        val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
         if (StringUtils.isBlank(ticketGrantingTicket)) {
             throw new InvalidTicketException(new AuthenticationException("No ticket-granting ticket could be found in the context"), ticketGrantingTicket);
         }
 
-        final var authentication = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
+        val authentication = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
         if (authentication == null) {
             throw new InvalidTicketException(new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket), ticketGrantingTicket);
         }
 
-        final var credential = WebUtils.getCredential(context);
-        final var authenticationResultBuilder =
+        val credential = WebUtils.getCredential(context);
+        val authenticationResultBuilder =
             authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
-        final var authenticationResult = authenticationResultBuilder.build(principalElectionStrategy, service);
+        val authenticationResult = authenticationResultBuilder.build(principalElectionStrategy, service);
 
-        final var serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
+        val serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
         WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
 
         if (request.getParameterMap().containsKey(PARAMETER_NAME_IGNORE_WARNING)) {

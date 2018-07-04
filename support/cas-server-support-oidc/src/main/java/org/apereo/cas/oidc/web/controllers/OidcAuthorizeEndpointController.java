@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.web.controllers;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
@@ -65,7 +67,7 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
     @Override
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final var scopes = OAuth20Utils.getRequestedScopes(request);
+        val scopes = OAuth20Utils.getRequestedScopes(request);
         if (scopes.isEmpty() || !scopes.contains(OidcConstants.StandardScopes.OPENID.getScope())) {
             LOGGER.warn("Provided scopes [{}] are undefined by OpenID Connect, which requires that scope [{}] MUST be specified, "
                     + "or the behavior is unspecified. CAS MAY allow this request to be processed for now.",

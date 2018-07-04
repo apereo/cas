@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
@@ -25,24 +27,24 @@ public class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyTicketGrantingRemovalDoesNotRemoveAccessToken() throws Exception {
-        final var service = addRegisteredService();
+        val service = addRegisteredService();
         service.setGenerateRefreshToken(true);
         service.setJsonFormat(true);
 
-        final var result = internalVerifyClientOK(service, true, true);
+        val result = internalVerifyClientOK(service, true, true);
 
-        final var at = this.ticketRegistry.getTicket(result.getKey(), AccessToken.class);
+        val at = this.ticketRegistry.getTicket(result.getKey(), AccessToken.class);
         assertNotNull(at);
         assertNotNull(at.getTicketGrantingTicket());
 
         this.ticketRegistry.deleteTicket(at.getTicketGrantingTicket().getId());
-        final var at2 = this.ticketRegistry.getTicket(at.getId(), AccessToken.class);
+        val at2 = this.ticketRegistry.getTicket(at.getId(), AccessToken.class);
         assertNotNull(at2);
 
-        final var rt = this.ticketRegistry.getTicket(result.getRight(), RefreshToken.class);
+        val rt = this.ticketRegistry.getTicket(result.getRight(), RefreshToken.class);
         assertNotNull(rt);
 
-        final var result2 = internalVerifyRefreshTokenOk(service, true, rt, createPrincipal());
+        val result2 = internalVerifyRefreshTokenOk(service, true, rt, createPrincipal());
         assertNotNull(result2.getKey());
     }
 

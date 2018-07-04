@@ -1,5 +1,7 @@
 package org.apereo.cas.cosmosdb;
 
+import lombok.val;
+
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,8 +31,8 @@ public class CosmosDbObjectFactoryTests {
 
     @Test
     public void verifyClient() {
-        final var factory = new CosmosDbObjectFactory(applicationContext);
-        final var properties = new CosmosDbServiceRegistryProperties();
+        val factory = new CosmosDbObjectFactory(applicationContext);
+        val properties = new CosmosDbServiceRegistryProperties();
         properties.setUri("http://localhost:1234");
         properties.setKey("123456");
         assertNotNull(factory.createDocumentClient(properties));
@@ -38,8 +40,8 @@ public class CosmosDbObjectFactoryTests {
 
     @Test
     public void verifyDocumentDb() {
-        final var factory = new CosmosDbObjectFactory(applicationContext);
-        final var properties = new CosmosDbServiceRegistryProperties();
+        val factory = new CosmosDbObjectFactory(applicationContext);
+        val properties = new CosmosDbServiceRegistryProperties();
         properties.setUri("http://localhost:1234");
         properties.setKey("123456");
         assertNotNull(factory.createDocumentDbFactory(properties));
@@ -47,8 +49,8 @@ public class CosmosDbObjectFactoryTests {
 
     @Test
     public void verifyDocumentDbTemplate() {
-        final var factory = new CosmosDbObjectFactory(applicationContext);
-        final var properties = new CosmosDbServiceRegistryProperties();
+        val factory = new CosmosDbObjectFactory(applicationContext);
+        val properties = new CosmosDbServiceRegistryProperties();
         properties.setUri("http://localhost:1234");
         properties.setKey("123456");
         assertNotNull(factory.createDocumentDbTemplate(factory.createDocumentDbFactory(properties), properties));

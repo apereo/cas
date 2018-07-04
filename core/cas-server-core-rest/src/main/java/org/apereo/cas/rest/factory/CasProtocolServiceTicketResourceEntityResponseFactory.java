@@ -1,5 +1,7 @@
 package org.apereo.cas.rest.factory;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
@@ -25,7 +27,7 @@ public class CasProtocolServiceTicketResourceEntityResponseFactory implements Se
 
     @Override
     public ResponseEntity<String> build(final String ticketGrantingTicket, final Service service, final AuthenticationResult authenticationResult) {
-        final var serviceTicketId = grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
+        val serviceTicketId = grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
         return new ResponseEntity<>(serviceTicketId, HttpStatus.OK);
     }
 
@@ -38,7 +40,7 @@ public class CasProtocolServiceTicketResourceEntityResponseFactory implements Se
      * @return the service ticket
      */
     protected String grantServiceTicket(final String ticketGrantingTicket, final Service service, final AuthenticationResult authenticationResult) {
-        final var ticket = centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
+        val ticket = centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
 
         LOGGER.debug("Generated service ticket [{}]", ticket.getId());
         return ticket.getId();

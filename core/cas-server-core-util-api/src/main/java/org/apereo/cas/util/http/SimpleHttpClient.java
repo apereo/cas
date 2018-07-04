@@ -1,5 +1,7 @@
 package org.apereo.cas.util.http;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -63,15 +65,15 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
     @Override
     public boolean sendMessageToEndPoint(final HttpMessage message) {
         try {
-            final var request = new HttpPost(message.getUrl().toURI());
+            val request = new HttpPost(message.getUrl().toURI());
             request.addHeader("Content-Type", message.getContentType());
 
-            final var entity = new StringEntity(message.getMessage(), ContentType.create(message.getContentType()));
+            val entity = new StringEntity(message.getMessage(), ContentType.create(message.getContentType()));
             request.setEntity(entity);
 
             final ResponseHandler<Boolean> handler = response -> response.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
             LOGGER.debug("Created HTTP post message payload [{}]", request);
-            final var task = this.requestExecutorService.execute(request, HttpClientContext.create(), handler);
+            val task = this.requestExecutorService.execute(request, HttpClientContext.create(), handler);
             if (message.isAsynchronous()) {
                 return true;
             }
@@ -90,13 +92,13 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
         HttpEntity entity = null;
 
         try (var response = this.wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
-            final var responseCode = response.getStatusLine().getStatusCode();
+            val responseCode = response.getStatusLine().getStatusCode();
 
             for (final int acceptableCode : this.acceptableCodes) {
                 if (responseCode == acceptableCode) {
                     LOGGER.debug("Response code received from server matched [{}].", responseCode);
                     entity = response.getEntity();
-                    final var msg = new HttpMessage(url, IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8));
+                    val msg = new HttpMessage(url, IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8));
                     msg.setContentType(entity.getContentType().getValue());
                     msg.setResponseCode(responseCode);
                     return msg;
@@ -104,7 +106,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
             }
             LOGGER.warn("Response code [{}] from [{}] did not match any of the acceptable response codes.", responseCode, url);
             if (responseCode == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-                final var value = response.getStatusLine().getReasonPhrase();
+                val value = response.getStatusLine().getReasonPhrase();
                 LOGGER.error("There was an error contacting the endpoint: [{}]; The error:\n[{}]", url.toExternalForm(), value);
             }
         } catch (final Exception e) {
@@ -118,7 +120,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
     @Override
     public boolean isValidEndPoint(final String url) {
         try {
-            final var u = new URL(url);
+            val u = new URL(url);
             return isValidEndPoint(u);
         } catch (final MalformedURLException e) {
             LOGGER.error("Unable to build URL", e);
@@ -131,9 +133,9 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
         HttpEntity entity = null;
 
         try (var response = this.wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
-            final var responseCode = response.getStatusLine().getStatusCode();
+            val responseCode = response.getStatusLine().getStatusCode();
 
-            final var idx = Collections.binarySearch(this.acceptableCodes, responseCode);
+            val idx = Collections.binarySearch(this.acceptableCodes, responseCode);
             if (idx >= 0) {
                 LOGGER.debug("Response code from server matched [{}].", responseCode);
                 return true;
@@ -142,7 +144,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
             LOGGER.debug("Response code did not match any of the acceptable response codes. Code returned was [{}]", responseCode);
 
             if (responseCode == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-                final var value = response.getStatusLine().getReasonPhrase();
+                val value = response.getStatusLine().getReasonPhrase();
                 LOGGER.error("There was an error contacting the endpoint: [{}]; The error was:\n[{}]", url.toExternalForm(), value);
             }
 

@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import lombok.val;
+
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -40,7 +42,7 @@ public class RestfulPersonAttributeDaoTests {
 
     @Before
     public void initialize() {
-        final var data = '{'
+        val data = '{'
             + "   \"name\" :\"casuser\","
             + "\"age\" : 29,"
             + "\"messages\": [\"msg 1\", \"msg 2\", \"msg 3\"]      "
@@ -59,7 +61,7 @@ public class RestfulPersonAttributeDaoTests {
     @Test
     public void verifyRestAttributeRepository() {
         assertNotNull(attributeRepository);
-        final var person = attributeRepository.getPerson("casuser");
+        val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
         assertNotNull(person.getAttributes());
         assertFalse(person.getAttributes().isEmpty());

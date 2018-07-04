@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
@@ -15,9 +17,9 @@ import static org.junit.Assert.*;
 public class ScriptedRegisteredServiceUsernameProviderTests {
     @Test
     public void verifyUsernameProvider() {
-        final var p = new ScriptedRegisteredServiceUsernameProvider();
+        val p = new ScriptedRegisteredServiceUsernameProvider();
         p.setScript("file:src/test/resources/uidscript.groovy");
-        final var id =
+        val id =
                 p.resolveUsername(RegisteredServiceTestUtils.getPrincipal(), RegisteredServiceTestUtils.getService(),
                     RegisteredServiceTestUtils.getRegisteredService());
         assertEquals("test", id);

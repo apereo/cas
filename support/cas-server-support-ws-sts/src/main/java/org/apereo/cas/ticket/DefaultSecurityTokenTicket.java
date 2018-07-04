@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
@@ -58,7 +60,7 @@ public class DefaultSecurityTokenTicket extends AbstractTicket implements Securi
 
     @Override
     public SecurityToken getSecurityToken() {
-        final var securityTokenBin = EncodingUtils.decodeBase64(this.securityToken);
+        val securityTokenBin = EncodingUtils.decodeBase64(this.securityToken);
         return SerializationUtils.deserialize(securityTokenBin);
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
@@ -29,11 +31,11 @@ public class PasswordlessTokenAuthenticationHandler extends AbstractPreAndPostPr
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
-        final var c = (OneTimePasswordCredential) credential;
-        final var token = passwordlessTokenRepository.findToken(c.getId());
+        val c = (OneTimePasswordCredential) credential;
+        val token = passwordlessTokenRepository.findToken(c.getId());
 
         if (token.isPresent() && token.get().equalsIgnoreCase(c.getPassword())) {
-            final var principal = principalFactory.createPrincipal(c.getId());
+            val principal = principalFactory.createPrincipal(c.getId());
             return createHandlerResult(credential, principal, new ArrayList<>());
         }
         throw new FailedLoginException("Passwordless authentication has failed");

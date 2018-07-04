@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.gauth;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -81,7 +83,7 @@ public class GoogleAuthenticatorJpaTokenRepositoryTests {
 
     @Test
     public void verifyTokenSave() {
-        final var token = new GoogleAuthenticatorToken(1234, "casuser");
+        val token = new GoogleAuthenticatorToken(1234, "casuser");
         repository.store(token);
         assertTrue(repository.exists("casuser", 1234));
     }

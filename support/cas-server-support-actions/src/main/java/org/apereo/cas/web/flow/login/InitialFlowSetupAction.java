@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.login;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -54,15 +56,15 @@ public class InitialFlowSetupAction extends AbstractAction {
         if (service != null) {
             LOGGER.debug("Placing service in context scope: [{}]", service.getId());
 
-            final var selectedService = authenticationRequestServiceSelectionStrategies.resolveService(service);
-            final var registeredService = this.servicesManager.findServiceBy(selectedService);
+            val selectedService = authenticationRequestServiceSelectionStrategies.resolveService(service);
+            val registeredService = this.servicesManager.findServiceBy(selectedService);
             if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
                 LOGGER.debug("Placing registered service [{}] with id [{}] in context scope",
                         registeredService.getServiceId(),
                         registeredService.getId());
                 WebUtils.putRegisteredService(context, registeredService);
 
-                final var accessStrategy = registeredService.getAccessStrategy();
+                val accessStrategy = registeredService.getAccessStrategy();
                 if (accessStrategy.getUnauthorizedRedirectUrl() != null) {
                     LOGGER.debug("Placing registered service's unauthorized redirect url [{}] with id [{}] in context scope",
                             accessStrategy.getUnauthorizedRedirectUrl(),
@@ -80,7 +82,7 @@ public class InitialFlowSetupAction extends AbstractAction {
     }
 
     private void configureWebflowContext(final RequestContext context) {
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         WebUtils.putTicketGrantingTicketInScopes(context, this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
         WebUtils.putWarningCookie(context, Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
         
@@ -94,8 +96,8 @@ public class InitialFlowSetupAction extends AbstractAction {
     }
 
     private void configureCookieGenerators(final RequestContext context) {
-        final var contextPath = context.getExternalContext().getContextPath();
-        final var cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
+        val contextPath = context.getExternalContext().getContextPath();
+        val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
 
         if (StringUtils.isBlank(this.warnCookieGenerator.getCookiePath())) {
             LOGGER.info("Setting path for cookies for warn cookie generator to: [{}] ", cookiePath);

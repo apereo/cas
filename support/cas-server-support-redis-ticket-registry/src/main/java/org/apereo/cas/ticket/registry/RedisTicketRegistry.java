@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.Ticket;
@@ -25,8 +27,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
-        final var redisKeys = this.client.keys(getPatternTicketRedisKey());
-        final var size = redisKeys.size();
+        val redisKeys = this.client.keys(getPatternTicketRedisKey());
+        val size = redisKeys.size();
         this.client.delete(redisKeys);
         return size;
     }
@@ -34,7 +36,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         try {
-            final var redisKey = getTicketRedisKey(ticketId);
+            val redisKey = getTicketRedisKey(ticketId);
             this.client.delete(redisKey);
             return true;
         } catch (final Exception e) {
@@ -47,9 +49,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     public void addTicket(final Ticket ticket) {
         try {
             LOGGER.debug("Adding ticket [{}]", ticket);
-            final var redisKey = getTicketRedisKey(ticket.getId());
+            val redisKey = getTicketRedisKey(ticket.getId());
             // Encode first, then add
-            final var encodeTicket = this.encodeTicket(ticket);
+            val encodeTicket = this.encodeTicket(ticket);
             this.client.boundValueOps(redisKey)
                 .set(encodeTicket, getTimeout(ticket), TimeUnit.SECONDS);
         } catch (final Exception e) {
@@ -60,10 +62,10 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Ticket getTicket(final String ticketId) {
         try {
-            final var redisKey = getTicketRedisKey(ticketId);
-            final var t = this.client.boundValueOps(redisKey).get();
+            val redisKey = getTicketRedisKey(ticketId);
+            val t = this.client.boundValueOps(redisKey).get();
             if (t != null) {
-                final var result = decodeTicket(t);
+                val result = decodeTicket(t);
                 if (result != null && result.isExpired()) {
                     LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
                     deleteSingleTicket(ticketId);
@@ -81,7 +83,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     public Collection<Ticket> getTickets() {
         return this.client.keys(getPatternTicketRedisKey()).stream()
             .map(redisKey -> {
-                final var ticket = this.client.boundValueOps(redisKey).get();
+                val ticket = this.client.boundValueOps(redisKey).get();
                 if (ticket == null) {
                     this.client.delete(redisKey);
                     return null;
@@ -97,8 +99,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     public Ticket updateTicket(final Ticket ticket) {
         try {
             LOGGER.debug("Updating ticket [{}]", ticket);
-            final var encodeTicket = this.encodeTicket(ticket);
-            final var redisKey = getTicketRedisKey(ticket.getId());
+            val encodeTicket = this.encodeTicket(ticket);
+            val redisKey = getTicketRedisKey(ticket.getId());
             this.client.boundValueOps(redisKey).set(encodeTicket, getTimeout(ticket), TimeUnit.SECONDS);
             return encodeTicket;
         } catch (final Exception e) {
@@ -114,7 +116,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
      * @return timeout
      */
     private static int getTimeout(final Ticket ticket) {
-        final var ttl = ticket.getExpirationPolicy().getTimeToLive().intValue();
+        val ttl = ticket.getExpirationPolicy().getTimeToLive().intValue();
         if (ttl == 0) {
             return 1;
         }

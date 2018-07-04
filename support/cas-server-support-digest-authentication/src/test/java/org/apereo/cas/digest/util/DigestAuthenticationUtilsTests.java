@@ -1,5 +1,7 @@
 package org.apereo.cas.digest.util;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +36,7 @@ public class DigestAuthenticationUtilsTests {
 
     @Test
     public void verifyHeader() {
-        final var header = DigestAuthenticationUtils.createAuthenticateHeader("domain",
+        val header = DigestAuthenticationUtils.createAuthenticateHeader("domain",
                 "authMethod", DigestAuthenticationUtils.createNonce());
         assertNotNull(header);
 

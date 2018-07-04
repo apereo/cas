@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.rest;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
@@ -42,15 +44,15 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         throws GeneralSecurityException {
 
         try {
-            final var creds = new UsernamePasswordCredential(c.getUsername(), c.getPassword());
+            val creds = new UsernamePasswordCredential(c.getUsername(), c.getPassword());
 
-            final var authenticationResponse = api.authenticate(creds);
+            val authenticationResponse = api.authenticate(creds);
             if (authenticationResponse.getStatusCode() == HttpStatus.OK) {
-                final var principalFromRest = authenticationResponse.getBody();
+                val principalFromRest = authenticationResponse.getBody();
                 if (principalFromRest == null || StringUtils.isBlank(principalFromRest.getId())) {
                     throw new FailedLoginException("Could not determine authentication response from rest endpoint for " + c.getUsername());
                 }
-                final var principal = this.principalFactory.createPrincipal(principalFromRest.getId(), principalFromRest.getAttributes());
+                val principal = this.principalFactory.createPrincipal(principalFromRest.getId(), principalFromRest.getAttributes());
                 return createHandlerResult(c, principal, new ArrayList<>());
             }
         } catch (final HttpClientErrorException e) {

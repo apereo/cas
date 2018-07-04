@@ -1,5 +1,7 @@
 package org.apereo.cas.util.io;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -48,7 +50,7 @@ public class CommunicationsManager {
                          final String subject,
                          final String cc, final String bcc) {
         if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isMailSenderDefined()) {
-            final var to = getFirstAttributeByName(principal, attribute);
+            val to = getFirstAttributeByName(principal, attribute);
             if (to.isPresent()) {
                 return email(text, from, subject, to.get().toString(), cc, bcc);
             }
@@ -91,8 +93,8 @@ public class CommunicationsManager {
                 return false;
             }
 
-            final var message = this.mailSender.createMimeMessage();
-            final var helper = new MimeMessageHelper(message);
+            val message = this.mailSender.createMimeMessage();
+            val helper = new MimeMessageHelper(message);
             helper.setTo(to);
             helper.setText(text);
             helper.setSubject(subject);
@@ -127,7 +129,7 @@ public class CommunicationsManager {
                        final String attribute,
                        final String text, final String from) {
         if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isSmsSenderDefined()) {
-            final var to = getFirstAttributeByName(principal, attribute);
+            val to = getFirstAttributeByName(principal, attribute);
             if (to.isPresent()) {
                 return sms(from, to.get().toString(), text);
             }
@@ -152,7 +154,7 @@ public class CommunicationsManager {
     }
 
     private Optional<Object> getFirstAttributeByName(final Principal principal, final String attribute) {
-        final var value = principal.getAttributes().get(attribute);
+        val value = principal.getAttributes().get(attribute);
         return CollectionUtils.firstElement(value);
     }
 

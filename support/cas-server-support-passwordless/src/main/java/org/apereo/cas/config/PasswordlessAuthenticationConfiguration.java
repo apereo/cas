@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -113,7 +115,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
     @RefreshScope
     @ConditionalOnMissingBean(name = "passwordlessUserAccountStore")
     public PasswordlessUserAccountStore passwordlessUserAccountStore() {
-        final var accounts = casProperties.getAuthn().getPasswordless().getAccounts();
+        val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
 
         if (accounts.getGroovy().getLocation() != null) {
             return new GroovyPasswordlessUserAccountStore(accounts.getGroovy().getLocation());
@@ -127,7 +129,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
             .entrySet()
             .stream()
             .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-                final var account = new PasswordlessUserAccount();
+                val account = new PasswordlessUserAccount();
                 account.setUsername(entry.getKey());
                 account.setName(entry.getKey());
                 if (EmailValidator.getInstance().isValid(entry.getValue())) {
@@ -144,8 +146,8 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
     @RefreshScope
     @ConditionalOnMissingBean(name = "passwordlessCipherExecutor")
     public CipherExecutor passwordlessCipherExecutor() {
-        final var tokens = casProperties.getAuthn().getPasswordless().getTokens();
-        final var crypto = tokens.getRest().getCrypto();
+        val tokens = casProperties.getAuthn().getPasswordless().getTokens();
+        val crypto = tokens.getRest().getCrypto();
         final CipherExecutor cipher;
         if (crypto.isEnabled()) {
             cipher = new PasswordlessTokenCipherExecutor(
@@ -162,7 +164,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
     @RefreshScope
     @ConditionalOnMissingBean(name = "passwordlessTokenRepository")
     public PasswordlessTokenRepository passwordlessTokenRepository() {
-        final var tokens = casProperties.getAuthn().getPasswordless().getTokens();
+        val tokens = casProperties.getAuthn().getPasswordless().getTokens();
         if (StringUtils.isNotBlank(tokens.getRest().getUrl())) {
             return new RestfulPasswordlessTokenRepository(tokens.getExpireInSeconds(), tokens.getRest(), passwordlessCipherExecutor());
         }

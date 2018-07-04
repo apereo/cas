@@ -1,5 +1,7 @@
 package org.apereo.cas.digest;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,19 +24,19 @@ public class DefaultDigestHashedCredentialRetrieverTests {
 
     @Test
     public void verifyCanFindAnExistingUser() throws Exception {
-        final var expectedPassword = "password";
-        final var credentialRetriever = new DefaultDigestHashedCredentialRetriever(
+        val expectedPassword = "password";
+        val credentialRetriever = new DefaultDigestHashedCredentialRetriever(
                 Collections.singletonMap("user", expectedPassword));
 
-        final var credential = credentialRetriever.findCredential("user", "ignored");
+        val credential = credentialRetriever.findCredential("user", "ignored");
 
         assertEquals(expectedPassword, credential);
     }
 
     @Test
     public void verifyAnExceptionIsThrownIfUsedDoesNotExist() throws Exception {
-        final var username = "user";
-        final var credentialRetriever = new DefaultDigestHashedCredentialRetriever(
+        val username = "user";
+        val credentialRetriever = new DefaultDigestHashedCredentialRetriever(
                 Collections.singletonMap("anotherUsername", "password"));
 
         thrown.expect(AccountNotFoundException.class);

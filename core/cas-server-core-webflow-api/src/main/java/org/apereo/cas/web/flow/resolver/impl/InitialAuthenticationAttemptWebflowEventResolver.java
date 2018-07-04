@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
+import lombok.val;
+
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
@@ -68,22 +70,22 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         try {
-            final var credential = getCredentialFromContext(context);
+            val credential = getCredentialFromContext(context);
             final Service service = WebUtils.getService(context);
             if (credential != null) {
-                final var builder = this.authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credential);
+                val builder = this.authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credential);
                 if (builder.getInitialAuthentication().isPresent()) {
                     WebUtils.putAuthenticationResultBuilder(builder, context);
                     WebUtils.putAuthentication(builder.getInitialAuthentication().get(), context);
                 }
             }
-            final var registeredService = determineRegisteredServiceForEvent(context, service);
+            val registeredService = determineRegisteredServiceForEvent(context, service);
             LOGGER.debug("Attempting to resolve candidate authentication events for service [{}]", service);
-            final var resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
+            val resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
             if (!resolvedEvents.isEmpty()) {
                 LOGGER.debug("The set of authentication events resolved for [{}] are [{}]. Beginning to select the final event...", service, resolvedEvents);
                 putResolvedEventsAsAttribute(context, resolvedEvents);
-                final var finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
+                val finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
                 LOGGER.debug("The final authentication event resolved for [{}] is [{}]", service, finalResolvedEvent);
                 if (finalResolvedEvent != null) {
                     return CollectionUtils.wrapSet(finalResolvedEvent);
@@ -92,7 +94,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                 LOGGER.debug("No candidate authentication events were resolved for service [{}]", service);
             }
 
-            final var builder = WebUtils.getAuthenticationResultBuilder(context);
+            val builder = WebUtils.getAuthenticationResultBuilder(context);
             if (builder == null) {
                 throw new IllegalArgumentException("No authentication result builder can be located in the context");
             }
@@ -103,7 +105,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                 LOGGER.warn(e.getMessage(), e);
                 event = newEvent(CasWebflowConstants.TRANSITION_ID_ERROR, e);
             }
-            final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return CollectionUtils.wrapSet(event);
         }
@@ -115,16 +117,16 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             LOGGER.debug("Locating service [{}] in service registry to determine authentication policy", service);
             registeredService = this.servicesManager.findServiceBy(service);
             LOGGER.debug("Locating authentication event in the request context...");
-            final var authn = WebUtils.getAuthentication(context);
+            val authn = WebUtils.getAuthentication(context);
 
             LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
 
-            final var audit = AuditableContext.builder().service(service)
+            val audit = AuditableContext.builder().service(service)
                 .authentication(authn)
                 .registeredService(registeredService)
                 .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
                 .build();
-            final var result = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            val result = this.registeredServiceAccessStrategyEnforcer.execute(audit);
             result.throwExceptionIfNeeded();
         }
         return registeredService;
@@ -142,7 +144,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                                                               final Service service,
                                                               final RegisteredService registeredService) {
 
-        final var byEventId = Comparator.comparing(Event::getId);
+        val byEventId = Comparator.comparing(Event::getId);
         final Supplier<TreeSet<Event>> supplier = () -> new TreeSet<>(byEventId);
 
         return this.orderedResolvers

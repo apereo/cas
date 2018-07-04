@@ -1,5 +1,7 @@
 package org.apereo.cas.support.pac4j.authentication.handler.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
@@ -50,24 +52,24 @@ public class ClientAuthenticationHandlerTests {
     @Before
     public void initialize() {
         this.fbClient = new FacebookClient();
-        final var clients = new Clients(CALLBACK_URL, fbClient);
+        val clients = new Clients(CALLBACK_URL, fbClient);
         this.handler = new ClientAuthenticationHandler("", mock(ServicesManager.class), null, clients);
         this.handler.setTypedIdUsed(true);
 
         final Credentials credentials = new OAuth20Credentials(null);
         this.clientCredential = new ClientCredential(credentials, fbClient.getName());
-        final var mock = new ServletExternalContext(new MockServletContext(),
+        val mock = new ServletExternalContext(new MockServletContext(),
             new MockHttpServletRequest(), new MockHttpServletResponse());
         ExternalContextHolder.setExternalContext(mock);
     }
 
     @Test
     public void verifyOk() throws GeneralSecurityException, PreventedException {
-        final var facebookProfile = new FacebookProfile();
+        val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> facebookProfile);
-        final var result = this.handler.authenticate(this.clientCredential);
-        final var principal = result.getPrincipal();
+        val result = this.handler.authenticate(this.clientCredential);
+        val principal = result.getPrincipal();
         assertEquals(FacebookProfile.class.getName() + '#' + ID, principal.getId());
     }
 
@@ -75,11 +77,11 @@ public class ClientAuthenticationHandlerTests {
     public void verifyOkWithSimpleIdentifier() throws GeneralSecurityException, PreventedException {
         this.handler.setTypedIdUsed(false);
 
-        final var facebookProfile = new FacebookProfile();
+        val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> facebookProfile);
-        final var result = this.handler.authenticate(this.clientCredential);
-        final var principal = result.getPrincipal();
+        val result = this.handler.authenticate(this.clientCredential);
+        val principal = result.getPrincipal();
         assertEquals(ID, principal.getId());
     }
 

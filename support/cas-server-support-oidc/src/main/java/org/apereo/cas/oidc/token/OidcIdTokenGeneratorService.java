@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.token;
 
+import lombok.val;
+
 import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -84,9 +86,9 @@ public class OidcIdTokenGeneratorService {
             throw new IllegalArgumentException("Registered service instance is not an OIDC service");
         }
 
-        final var oidcRegisteredService = (OidcRegisteredService) registeredService;
-        final var context = Pac4jUtils.getPac4jJ2EContext(request, response);
-        final var manager = Pac4jUtils.getPac4jProfileManager(request, response);
+        val oidcRegisteredService = (OidcRegisteredService) registeredService;
+        val context = Pac4jUtils.getPac4jJ2EContext(request, response);
+        val manager = Pac4jUtils.getPac4jProfileManager(request, response);
         final Optional<UserProfile> profile = manager.get(true);
 
         if (!profile.isPresent()) {
@@ -94,7 +96,7 @@ public class OidcIdTokenGeneratorService {
         }
 
         LOGGER.debug("Attempting to produce claims for the id token [{}]", accessTokenId);
-        final var claims = produceIdTokenClaims(request, accessTokenId, timeoutInSeconds,
+        val claims = produceIdTokenClaims(request, accessTokenId, timeoutInSeconds,
             oidcRegisteredService, profile.get(), context, responseType);
         LOGGER.debug("Produce claims for the id token [{}] as [{}]", accessTokenId, claims);
 
@@ -120,24 +122,24 @@ public class OidcIdTokenGeneratorService {
                                              final UserProfile profile,
                                              final J2EContext context,
                                              final OAuth20ResponseTypes responseType) {
-        final var authentication = accessTokenId.getAuthentication();
-        final var principal = authentication.getPrincipal();
-        final var oidc = casProperties.getAuthn().getOidc();
+        val authentication = accessTokenId.getAuthentication();
+        val principal = authentication.getPrincipal();
+        val oidc = casProperties.getAuthn().getOidc();
 
-        final var claims = new JwtClaims();
+        val claims = new JwtClaims();
         claims.setJwtId(getOAuthServiceTicket(accessTokenId.getTicketGrantingTicket()).getKey());
         claims.setIssuer(oidc.getIssuer());
         claims.setAudience(service.getClientId());
 
-        final var expirationDate = NumericDate.now();
+        val expirationDate = NumericDate.now();
         expirationDate.addSeconds(timeoutInSeconds);
         claims.setExpirationTime(expirationDate);
         claims.setIssuedAtToNow();
         claims.setNotBeforeMinutesInThePast(oidc.getSkew());
         claims.setSubject(principal.getId());
 
-        final var mfa = casProperties.getAuthn().getMfa();
-        final var attributes = authentication.getAttributes();
+        val mfa = casProperties.getAuthn().getMfa();
+        val attributes = authentication.getAttributes();
 
         if (attributes.containsKey(mfa.getAuthenticationContextAttribute())) {
             final Collection<Object> val = CollectionUtils.toCollection(attributes.get(mfa.getAuthenticationContextAttribute()));
@@ -164,7 +166,7 @@ public class OidcIdTokenGeneratorService {
     }
 
     private Entry<String, Service> getOAuthServiceTicket(final TicketGrantingTicket tgt) {
-        final var oAuthServiceTicket = Stream.concat(
+        val oAuthServiceTicket = Stream.concat(
             tgt.getServices().entrySet().stream(),
             tgt.getProxyGrantingTickets().entrySet().stream())
             .filter(e -> servicesManager.findServiceBy(e.getValue()).getServiceId().equals(oAuthCallbackUrl))
@@ -176,7 +178,7 @@ public class OidcIdTokenGeneratorService {
 
     private String generateAccessTokenHash(final AccessToken accessTokenId,
                                            final OidcRegisteredService service) {
-        final var tokenBytes = accessTokenId.getId().getBytes(StandardCharsets.UTF_8);
+        val tokenBytes = accessTokenId.getId().getBytes(StandardCharsets.UTF_8);
         final String hashAlg;
 
         switch (signingService.getJsonWebKeySigningAlgorithm()) {
@@ -189,8 +191,8 @@ public class OidcIdTokenGeneratorService {
         }
 
         LOGGER.debug("Digesting access token hash via algorithm [{}]", hashAlg);
-        final var digested = DigestUtils.rawDigest(hashAlg, tokenBytes);
-        final var hashBytesLeftHalf = Arrays.copyOf(digested, digested.length / 2);
+        val digested = DigestUtils.rawDigest(hashAlg, tokenBytes);
+        val hashBytesLeftHalf = Arrays.copyOf(digested, digested.length / 2);
         return EncodingUtils.encodeUrlSafeBase64(hashBytesLeftHalf);
     }
 }

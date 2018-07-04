@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.factory;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -34,7 +36,7 @@ public class DefaultTransientSessionTicketFactory implements TransientSessionTic
      */
     @Override
     public TransientSessionTicket create(final Service service, final Map<String, Serializable> properties) {
-        final var id = ticketIdGenerator.getNewTicketId(TransientSessionTicket.PREFIX);
+        val id = ticketIdGenerator.getNewTicketId(TransientSessionTicket.PREFIX);
         return new TransientSessionTicketImpl(id, expirationPolicy, service, properties);
     }
 

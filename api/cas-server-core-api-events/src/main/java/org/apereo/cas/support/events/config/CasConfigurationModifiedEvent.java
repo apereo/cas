@@ -1,5 +1,7 @@
 package org.apereo.cas.support.events.config;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -70,7 +72,7 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
             return true;
         }
         if (getFile() != null) {
-            final var file = getFile().toFile();
+            val file = getFile().toFile();
             return CONFIG_FILE_PATTERN.matcher(file.getName()).find();
         }
         return false;

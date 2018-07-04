@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -39,15 +41,15 @@ public class RegisteredServicesEventListener {
      */
     @EventListener
     public void handleRegisteredServiceExpiredEvent(final CasRegisteredServiceExpiredEvent event) {
-        final var registeredService = event.getRegisteredService();
-        final var contacts = registeredService.getContacts();
+        val registeredService = event.getRegisteredService();
+        val contacts = registeredService.getContacts();
 
-        final var mail = casProperties.getServiceRegistry().getMail();
-        final var sms = casProperties.getServiceRegistry().getSms();
+        val mail = casProperties.getServiceRegistry().getMail();
+        val sms = casProperties.getServiceRegistry().getSms();
 
-        final var serviceName = StringUtils.defaultIfBlank(registeredService.getName(), registeredService.getServiceId());
+        val serviceName = StringUtils.defaultIfBlank(registeredService.getName(), registeredService.getServiceId());
         if (communicationsManager.isMailSenderDefined()) {
-            final var message = String.format(mail.getText(), serviceName);
+            val message = String.format(mail.getText(), serviceName);
             contacts
                     .stream()
                     .filter(c -> StringUtils.isNotBlank(c.getEmail()))
@@ -59,7 +61,7 @@ public class RegisteredServicesEventListener {
                             mail.getBcc()));
         }
         if (communicationsManager.isSmsSenderDefined()) {
-            final var message = String.format(sms.getText(), serviceName);
+            val message = String.format(sms.getText(), serviceName);
             contacts
                     .stream()
                     .filter(c -> StringUtils.isNotBlank(c.getPhone()))

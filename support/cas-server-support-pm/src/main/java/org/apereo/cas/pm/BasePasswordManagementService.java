@@ -1,5 +1,7 @@
 package org.apereo.cas.pm;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -39,8 +41,8 @@ public class BasePasswordManagementService implements PasswordManagementService 
     @Override
     public String parseToken(final String token) {
         try {
-            final var json = this.cipherExecutor.decode(token);
-            final var claims = JwtClaims.parse(json);
+            val json = this.cipherExecutor.decode(token);
+            val claims = JwtClaims.parse(json);
 
             if (!claims.getIssuer().equals(issuer)) {
                 LOGGER.error("Token issuer does not match CAS");
@@ -55,7 +57,7 @@ public class BasePasswordManagementService implements PasswordManagementService 
                 return null;
             }
 
-            final var holder = ClientInfoHolder.getClientInfo();
+            val holder = ClientInfoHolder.getClientInfo();
             if (!claims.getStringClaimValue("origin").equals(holder.getServerIpAddress())) {
                 LOGGER.error("Token origin server IP address does not match CAS");
                 return null;
@@ -80,21 +82,21 @@ public class BasePasswordManagementService implements PasswordManagementService 
     @Override
     public String createToken(final String to) {
         try {
-            final var token = UUID.randomUUID().toString();
-            final var claims = new JwtClaims();
+            val token = UUID.randomUUID().toString();
+            val claims = new JwtClaims();
             claims.setJwtId(token);
             claims.setIssuer(issuer);
             claims.setAudience(issuer);
             claims.setExpirationTimeMinutesInTheFuture(properties.getReset().getExpirationMinutes());
             claims.setIssuedAtToNow();
 
-            final var holder = ClientInfoHolder.getClientInfo();
+            val holder = ClientInfoHolder.getClientInfo();
             if (holder != null) {
                 claims.setStringClaim("origin", holder.getServerIpAddress());
                 claims.setStringClaim("client", holder.getClientIpAddress());
             }
             claims.setSubject(to);
-            final var json = claims.toJson();
+            val json = claims.toJson();
             return this.cipherExecutor.encode(json);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

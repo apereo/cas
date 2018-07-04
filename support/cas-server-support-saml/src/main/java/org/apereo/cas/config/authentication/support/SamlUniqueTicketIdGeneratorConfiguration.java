@@ -1,5 +1,7 @@
 package org.apereo.cas.config.authentication.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -30,7 +32,7 @@ public class SamlUniqueTicketIdGeneratorConfiguration implements UniqueTicketIdG
 
     @Bean
     public UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator() {
-        final var gen = new SamlCompliantUniqueTicketIdGenerator(casProperties.getServer().getName());
+        val gen = new SamlCompliantUniqueTicketIdGenerator(casProperties.getServer().getName());
         gen.setSaml2compliant(casProperties.getSamlCore().isTicketidSaml2());
         return gen;
     }
