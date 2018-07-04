@@ -3,6 +3,7 @@ package org.apereo.cas.monitor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
@@ -31,13 +32,13 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
         try {
-            final var statistics = getStatistics();
+            val statistics = getStatistics();
             if (statistics == null || statistics.length == 0) {
                 builder.outOfService().withDetail("message", "Cache statistics are not available.");
                 return;
             }
 
-            final var statuses = Arrays.stream(statistics)
+            val statuses = Arrays.stream(statistics)
                 .map(this::status)
                 .collect(Collectors.toSet());
 
