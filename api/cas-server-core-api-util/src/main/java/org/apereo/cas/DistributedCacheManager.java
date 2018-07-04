@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import lombok.val;
+
 import java.io.Closeable;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -103,7 +105,7 @@ public interface DistributedCacheManager<K extends Serializable, V extends Distr
      * @return the collection
      */
     default Optional<V> find(final Predicate<V> filter) {
-        final var results = findAll(filter);
+        val results = findAll(filter);
         if (results.isEmpty()) {
             return Optional.empty();
         }

@@ -1,12 +1,14 @@
 package org.apereo.cas;
 
+import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import lombok.ToString;
-import lombok.Getter;
 
 /**
  * This is {@link DistributedCacheObject}.
@@ -46,7 +48,7 @@ public class DistributedCacheObject<V extends Serializable> implements Serializa
      */
     public <T> T getProperty(final String name, final Class<T> clazz) {
         if (containsProperty(name)) {
-            final var item = this.properties.get(name);
+            val item = this.properties.get(name);
             if (item == null) {
                 return null;
             }
