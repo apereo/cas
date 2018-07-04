@@ -330,11 +330,11 @@
         </module>
         <module name="FinalParameters">
             <property name="severity" value="error"/>
-            <property name="tokens" value="METHOD_DEF, CTOR_DEF, LITERAL_CATCH, FOR_EACH_CLAUSE"/>
+            <property name="tokens" value="METHOD_DEF,CTOR_DEF,LITERAL_CATCH,FOR_EACH_CLAUSE"/>
         </module>
         <module name="FinalLocalVariable">
             <property name="severity" value="error"/>
-            <property name="tokens" value="PARAMETER_DEF, VARIABLE_DEF"/>
+            <property name="tokens" value="PARAMETER_DEF"/>
             <property name="validateEnhancedForLoopVariable" value="true"/>
         </module>
         <module name="TodoComment">
@@ -487,6 +487,18 @@
             <property name="message"
                       value="Consider not checking for logging levels. Let the logging framework handle that."/>
         </module>
+        <module name="RegexpSinglelineJava">
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="(final\s+)*var\s"/>
+            <property name="message" value="Use lombok.val when declaring variable definitions."/>
+        </module>
+        <module name="RegexpSinglelineJava">
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="^\s*(?!return|private|public|protected|val)(final\s+)*\w+\s+\w+(\s+=.+)*;"/>
+            <property name="message" value="Use lombok.val when declaring variable definitions."/>
+        </module>
     </module>
 
     <!-- Checker module checks -->
@@ -551,14 +563,12 @@
         <property name="format" value="import\s+static\s+org\.junit\.Assert\.\w+"/>
         <property name="message" value="JUnit Assert methods MUST be imported statically with a *"/>
     </module>
-
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Arrays.asList() method call"/>
         <property name="severity" value="error"/>
         <property name="format" value="Lists\.newArrayList\(.+"/>
         <property name="message" value="Use Arrays.asList() or Collections.singletonList() instead."/>
     </module>
-
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Mockito static import"/>
         <property name="severity" value="error"/>
