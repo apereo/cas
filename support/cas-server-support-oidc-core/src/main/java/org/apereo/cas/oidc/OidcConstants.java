@@ -1,7 +1,9 @@
 package org.apereo.cas.oidc;
 
-import lombok.Getter;
 import org.apache.commons.text.WordUtils;
+import org.apereo.cas.support.oauth.OAuth20Constants;
+
+import lombok.Getter;
 
 /**
  * This is {@link OidcConstants}.
@@ -170,4 +172,21 @@ public interface OidcConstants {
      * The confirm/consent view.
      */
     String CONFIRM_VIEW = "oidcConfirmView";
+    
+    
+    /**
+     * The .well-known url including base oidc prefix.
+     */
+    String FULL_WELL_KNOWN_URL = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known";
+    
+    /**
+     * The profile url including base oidc prefix.
+     */
+    String FULL_PROFILE_URL = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.PROFILE_URL;
+    
+    /**
+     * JWKS Endpoint url including base oidc prefix.
+     */
+    String FULL_JWKS_URL = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.JWKS_URL;
+
 }

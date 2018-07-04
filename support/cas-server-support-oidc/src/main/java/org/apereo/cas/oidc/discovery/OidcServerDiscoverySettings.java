@@ -73,12 +73,12 @@ public class OidcServerDiscoverySettings {
 
     @JsonProperty("userinfo_endpoint")
     public String getUserinfoEndpoint() {
-        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.PROFILE_URL);
+        return this.serverPrefix.concat(OidcConstants.FULL_PROFILE_URL);
     }
 
     @JsonProperty("jwks_uri")
     public String getJwksUri() {
-        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.JWKS_URL);
+        return this.serverPrefix.concat(OidcConstants.FULL_JWKS_URL);
     }
 
     @JsonProperty("registration_endpoint")
