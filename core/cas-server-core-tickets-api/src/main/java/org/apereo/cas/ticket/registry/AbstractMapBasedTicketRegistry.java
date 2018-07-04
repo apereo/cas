@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.ticket.Ticket;
@@ -31,24 +32,24 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
 
     @Override
     public void addTicket(@NonNull final Ticket ticket) {
-        final var encTicket = encodeTicket(ticket);
+        val encTicket = encodeTicket(ticket);
         LOGGER.debug("Added ticket [{}] to registry.", ticket.getId());
         getMapInstance().put(encTicket.getId(), encTicket);
     }
 
     @Override
     public Ticket getTicket(final String ticketId) {
-        final var encTicketId = encodeTicketId(ticketId);
+        val encTicketId = encodeTicketId(ticketId);
         if (StringUtils.isBlank(ticketId)) {
             return null;
         }
-        final var found = getMapInstance().get(encTicketId);
+        val found = getMapInstance().get(encTicketId);
         if (found == null) {
             LOGGER.debug("Ticket  [{}] could not be found", encTicketId);
             return null;
         }
 
-        final var result = decodeTicket(found);
+        val result = decodeTicket(found);
         if (result != null && result.isExpired()) {
             LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
             getMapInstance().remove(encTicketId);
@@ -59,7 +60,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        final var encTicketId = encodeTicketId(ticketId);
+        val encTicketId = encodeTicketId(ticketId);
         if (StringUtils.isBlank(encTicketId)) {
             return false;
         }
@@ -68,7 +69,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
 
     @Override
     public long deleteAll() {
-        final var size = getMapInstance().size();
+        val size = getMapInstance().size();
         getMapInstance().clear();
         return size;
     }
