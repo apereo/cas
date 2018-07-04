@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.Ticket;
@@ -24,14 +26,14 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        final var encodedTicket = encodeTicket(ticket);
+        val encodedTicket = encodeTicket(ticket);
         this.cache.put(encodedTicket.getId(), encodedTicket);
         return ticket;
     }
 
     @Override
     public void addTicket(final Ticket ticketToAdd) {
-        final var ticket = encodeTicket(ticketToAdd);
+        val ticket = encodeTicket(ticketToAdd);
 
         final long idleTime = ticketToAdd.getExpirationPolicy().getTimeToIdle() <= 0
                 ? ticketToAdd.getExpirationPolicy().getTimeToLive()
@@ -47,11 +49,11 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket getTicket(final String ticketId) {
-        final var encTicketId = encodeTicketId(ticketId);
+        val encTicketId = encodeTicketId(ticketId);
         if (ticketId == null) {
             return null;
         }
-        final var result = decodeTicket(Ticket.class.cast(cache.get(encTicketId)));
+        val result = decodeTicket(Ticket.class.cast(cache.get(encTicketId)));
         if (result != null && result.isExpired()) {
             LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
             this.cache.remove(encTicketId);
@@ -68,7 +70,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
-        final var size = this.cache.size();
+        val size = this.cache.size();
         this.cache.clear();
         return size;
     }

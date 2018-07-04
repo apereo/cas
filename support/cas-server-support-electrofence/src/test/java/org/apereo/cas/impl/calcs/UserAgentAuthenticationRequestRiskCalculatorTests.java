@@ -1,5 +1,7 @@
 package org.apereo.cas.impl.calcs;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -23,24 +25,24 @@ public class UserAgentAuthenticationRequestRiskCalculatorTests extends BaseAuthe
 
     @Test
     public void verifyTestWhenNoAuthnEventsFoundForUser() {
-        final var authentication = CoreAuthenticationTestUtils.getAuthentication("nobody1");
+        val authentication = CoreAuthenticationTestUtils.getAuthentication("nobody1");
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
-        final var request = new MockHttpServletRequest();
-        final var score = authenticationRiskEvaluator.eval(authentication, service, request);
+        val request = new MockHttpServletRequest();
+        val score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isHighestRisk());
     }
 
     @Test
     public void verifyTestWhenAuthnEventsFoundForUser() {
-        final var authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
+        val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)");
 
         request.setRemoteAddr("107.181.69.221");
         request.setLocalAddr("127.0.0.1");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
-        final var score = authenticationRiskEvaluator.eval(authentication, service, request);
+        val score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isRiskGreaterThan(casProperties.getAuthn().getAdaptive().getRisk().getThreshold()));
     }
 }

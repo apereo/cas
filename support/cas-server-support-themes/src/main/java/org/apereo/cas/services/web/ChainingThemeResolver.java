@@ -1,5 +1,7 @@
 package org.apereo.cas.services.web;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
@@ -34,11 +36,11 @@ public class ChainingThemeResolver extends AbstractThemeResolver {
 
     @Override
     public String resolveThemeName(final HttpServletRequest httpServletRequest) {
-        final var it = chain.iterator();
+        val it = chain.iterator();
         while (it.hasNext()) {
-            final var r = it.next();
+            val r = it.next();
             LOGGER.trace("Attempting to resolve theme via [{}]", r.getClass().getSimpleName());
-            final var resolverTheme = r.resolveThemeName(httpServletRequest);
+            val resolverTheme = r.resolveThemeName(httpServletRequest);
             if (!resolverTheme.equalsIgnoreCase(getDefaultThemeName())) {
                 LOGGER.trace("Resolved theme [{}]", resolverTheme);
                 return resolverTheme;

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
@@ -86,13 +88,13 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends
 
     @Override
     protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress) throws Exception {
-        final var request = new MockHttpServletRequest();
-        final var response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
         request.setMethod("POST");
         request.setParameter("username", username);
         request.setRemoteAddr(fromAddress);
         request.setRequestURI("/cas/login");
-        final var context = new MockRequestContext();
+        val context = new MockRequestContext();
         context.setCurrentEvent(new Event(StringUtils.EMPTY, "error"));
         request.setAttribute("flowRequestContext", context);
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
@@ -109,7 +111,7 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends
     }
 
     private static UsernamePasswordCredential badCredentials(final String username) {
-        final var credentials = new UsernamePasswordCredential();
+        val credentials = new UsernamePasswordCredential();
         credentials.setUsername(username);
         credentials.setPassword("badpassword");
         return credentials;

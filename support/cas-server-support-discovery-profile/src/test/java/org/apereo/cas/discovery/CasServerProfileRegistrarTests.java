@@ -1,5 +1,7 @@
 package org.apereo.cas.discovery;
 
+import lombok.val;
+
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
@@ -49,7 +51,7 @@ public class CasServerProfileRegistrarTests {
     @Test
     public void verifyAction() {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        final var profile = casServerProfileRegistrar.getProfile();
+        val profile = casServerProfileRegistrar.getProfile();
         assertNotNull(profile);
         assertNotNull(profile.getAvailableAttributes());
         assertNotNull(profile.getDelegatedClientTypes());

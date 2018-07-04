@@ -1,5 +1,7 @@
 package org.apereo.cas.aws;
 
+import lombok.val;
+
 import com.amazonaws.auth.BasicAWSCredentials;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,10 +26,10 @@ public class ChainingAWSCredentialsProviderTests {
 
     @Test
     public void verifyInstance() {
-        final var p = (ChainingAWSCredentialsProvider) ChainingAWSCredentialsProvider.getInstance("accesskey", "secretKey",
+        val p = (ChainingAWSCredentialsProvider) ChainingAWSCredentialsProvider.getInstance("accesskey", "secretKey",
             new FileSystemResource("credentials.properties"), "profilePath", "profileName");
         assertFalse(p.getChain().isEmpty());
-        final var credentials = p.getCredentials();
+        val credentials = p.getCredentials();
         assertNotNull(credentials);
         assertTrue(credentials instanceof BasicAWSCredentials);
     }

@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.web;
 
+import lombok.val;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +42,8 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
 
         super.generateJsonInternal(request, response, jsonGenerator, accessTokenId,
                 refreshTokenId, timeout, service, registeredService, responseType);
-        final var oidcRegisteredService = (OidcRegisteredService) registeredService;
-        final var idToken = this.idTokenGenerator.generate(request, response, accessTokenId,
+        val oidcRegisteredService = (OidcRegisteredService) registeredService;
+        val idToken = this.idTokenGenerator.generate(request, response, accessTokenId,
                 timeout, responseType, oidcRegisteredService);
         jsonGenerator.writeStringField(OidcConstants.ID_TOKEN, idToken);
     }

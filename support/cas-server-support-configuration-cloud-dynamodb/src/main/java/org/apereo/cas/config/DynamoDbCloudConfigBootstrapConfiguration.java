@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
@@ -57,18 +59,18 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
-        final var props = new Properties();
+        val props = new Properties();
 
         try {
-            final var builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
-            final var amazonDynamoDBClient = builder.build(AmazonDynamoDBClient.builder(), AmazonDynamoDB.class);
-            final var preventTableCreationOnStartup = builder.getSetting("preventTableCreationOnStartup", Boolean.class);
+            val builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
+            val amazonDynamoDBClient = builder.build(AmazonDynamoDBClient.builder(), AmazonDynamoDB.class);
+            val preventTableCreationOnStartup = builder.getSetting("preventTableCreationOnStartup", Boolean.class);
             if (!preventTableCreationOnStartup) {
                 createSettingsTable(amazonDynamoDBClient, false);
             }
-            final var scan = new ScanRequest(TABLE_NAME);
+            val scan = new ScanRequest(TABLE_NAME);
             LOGGER.debug("Scanning table with request [{}]", scan);
-            final var result = amazonDynamoDBClient.scan(scan);
+            val result = amazonDynamoDBClient.scan(scan);
             LOGGER.debug("Scanned table with result [{}]", scan);
 
             result.getItems()
@@ -83,16 +85,16 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
     }
 
     private static Pair<String, Object> retrieveSetting(final Map<String, AttributeValue> entry) {
-        final var name = entry.get(ColumnNames.NAME.getColumnName()).getS();
-        final var value = entry.get(ColumnNames.VALUE.getColumnName()).getS();
+        val name = entry.get(ColumnNames.NAME.getColumnName()).getS();
+        val value = entry.get(ColumnNames.VALUE.getColumnName()).getS();
         return Pair.of(name, value);
     }
 
     @SneakyThrows
     private static void createSettingsTable(final AmazonDynamoDB amazonDynamoDBClient, final boolean deleteTables) {
-        final var request = createCreateTableRequest();
+        val request = createCreateTableRequest();
         if (deleteTables) {
-            final var delete = new DeleteTableRequest(request.getTableName());
+            val delete = new DeleteTableRequest(request.getTableName());
             LOGGER.debug("Sending delete request [{}] to remove table if necessary", delete);
             TableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
         }
@@ -100,15 +102,15 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         TableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
         LOGGER.debug("Waiting until table [{}] becomes active...", request.getTableName());
         TableUtils.waitUntilActive(amazonDynamoDBClient, request.getTableName());
-        final var describeTableRequest = new DescribeTableRequest().withTableName(request.getTableName());
+        val describeTableRequest = new DescribeTableRequest().withTableName(request.getTableName());
         LOGGER.debug("Sending request [{}] to obtain table description...", describeTableRequest);
-        final var tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
+        val tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
         LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
     }
 
     @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     private static CreateTableRequest createCreateTableRequest() {
-        final var name = ColumnNames.ID.getColumnName();
+        val name = ColumnNames.ID.getColumnName();
         return new CreateTableRequest()
             .withAttributeDefinitions(new AttributeDefinition(name, ScalarAttributeType.S))
             .withKeySchema(new KeySchemaElement(name, KeyType.HASH))

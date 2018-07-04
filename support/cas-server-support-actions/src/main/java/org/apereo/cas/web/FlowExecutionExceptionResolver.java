@@ -1,5 +1,7 @@
 package org.apereo.cas.web;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +54,7 @@ public class FlowExecutionExceptionResolver implements HandlerExceptionResolver 
             return null;
         }
 
-        final var urlToRedirectTo = request.getRequestURI()
+        val urlToRedirectTo = request.getRequestURI()
                 + (request.getQueryString() != null ? '?'
                 + request.getQueryString() : StringUtils.EMPTY);
 

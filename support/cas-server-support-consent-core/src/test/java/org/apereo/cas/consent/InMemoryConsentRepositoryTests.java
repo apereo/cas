@@ -1,5 +1,7 @@
 package org.apereo.cas.consent;
 
+import lombok.val;
+
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
@@ -16,17 +18,17 @@ import static org.junit.Assert.*;
 public class InMemoryConsentRepositoryTests {
     @Test
     public void verifyConsentDecisionStored() {
-        final var builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
-        final var regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
-        final var svc = RegisteredServiceTestUtils.getService();
-        final var decision = builder.build(svc,
+        val builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
+        val regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
+        val svc = RegisteredServiceTestUtils.getService();
+        val decision = builder.build(svc,
             regSvc, "casuser",
             CollectionUtils.wrap("attribute", "value"));
-        final var repo = new InMemoryConsentRepository();
+        val repo = new InMemoryConsentRepository();
         assertTrue(repo.storeConsentDecision(decision));
 
         assertTrue(repo.getConsentDecisions().size() == 1);
-        final var b = repo.deleteConsentDecision(decision.getId(), "casuser");
+        val b = repo.deleteConsentDecision(decision.getId(), "casuser");
         assertTrue(b);
     }
 }

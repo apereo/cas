@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry.support;
 
+import lombok.val;
+
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,12 +73,12 @@ public class JpaLockingStrategy implements LockingStrategy {
 
     @Override
     public void release() {
-        final var lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.OPTIMISTIC);
+        val lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.OPTIMISTIC);
         if (lock == null) {
             return;
         }
         // Only the current owner can release the lock
-        final var owner = lock.getUniqueId();
+        val owner = lock.getUniqueId();
         if (!this.uniqueId.equals(owner)) {
             throw new IllegalStateException("Cannot release lock owned by " + owner);
         }
@@ -130,7 +132,7 @@ public class JpaLockingStrategy implements LockingStrategy {
         }
         var result = false;
         if (lock != null) {
-            final var expDate = lock.getExpirationDate();
+            val expDate = lock.getExpirationDate();
             if (lock.getUniqueId() == null) {
                 // No one currently possesses lock
                 LOGGER.debug("[{}] trying to acquire [{}] lock.", this.uniqueId, this.applicationId);

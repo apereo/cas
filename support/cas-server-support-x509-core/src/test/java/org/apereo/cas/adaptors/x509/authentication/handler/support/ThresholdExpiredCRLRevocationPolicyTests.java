@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
@@ -51,15 +53,15 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
     public static Collection<Object[]> getTestParameters() {
         final Collection<Object[]> params = new ArrayList<>();
 
-        final var now = ZonedDateTime.now(ZoneOffset.UTC);
-        final var twoHoursAgo = now.minusHours(2);
-        final var oneHourAgo = now.minusHours(1);
-        final var halfHourAgo = now.minusMinutes(30);
-        final var issuer = new X500Principal("CN=CAS");
+        val now = ZonedDateTime.now(ZoneOffset.UTC);
+        val twoHoursAgo = now.minusHours(2);
+        val oneHourAgo = now.minusHours(1);
+        val halfHourAgo = now.minusMinutes(30);
+        val issuer = new X500Principal("CN=CAS");
 
         // Test case #1
         // Expect expired for zero leniency on CRL expiring 1ms ago
-        final var zeroThreshold = new ThresholdExpiredCRLRevocationPolicy(0);
+        val zeroThreshold = new ThresholdExpiredCRLRevocationPolicy(0);
         params.add(new Object[] {
                 zeroThreshold,
                 new MockX509CRL(issuer, DateTimeUtils.dateOf(oneHourAgo), DateTimeUtils.dateOf(now.minusSeconds(1))),
@@ -68,7 +70,7 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
 
         // Test case #2
         // Expect expired for 1h leniency on CRL expired 1 hour 1ms ago
-        final var oneHourThreshold = new ThresholdExpiredCRLRevocationPolicy(3600);
+        val oneHourThreshold = new ThresholdExpiredCRLRevocationPolicy(3600);
         params.add(new Object[] {
                 oneHourThreshold,
                 new MockX509CRL(issuer, DateTimeUtils.dateOf(twoHoursAgo), DateTimeUtils.dateOf(oneHourAgo.minusSeconds(1))),

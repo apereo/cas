@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -75,8 +77,8 @@ public class SamlIdPMetadataConfiguration {
     @SneakyThrows
     @Autowired
     public MetadataResolver casSamlIdPMetadataResolver(@Qualifier("samlMetadataLocator") final SamlIdPMetadataLocator samlMetadataLocator) {
-        final var idp = casProperties.getAuthn().getSamlIdp();
-        final var resolver = new InMemoryResourceMetadataResolver(samlMetadataLocator.getMetadata(), openSamlConfigBean);
+        val idp = casProperties.getAuthn().getSamlIdp();
+        val resolver = new InMemoryResourceMetadataResolver(samlMetadataLocator.getMetadata(), openSamlConfigBean);
         resolver.setParserPool(this.openSamlConfigBean.getParserPool());
         resolver.setFailFastInitialization(idp.getMetadata().isFailFast());
         resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
@@ -94,7 +96,7 @@ public class SamlIdPMetadataConfiguration {
     @Bean
     @SneakyThrows
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
-        final var idp = casProperties.getAuthn().getSamlIdp();
+        val idp = casProperties.getAuthn().getSamlIdp();
         return new FileSystemSamlIdPMetadataGenerator(idp.getEntityId(), this.resourceLoader,
             casProperties.getServer().getPrefix(), idp.getScope(),
             samlMetadataLocator(), samlSelfSignedCertificateWriter());
@@ -104,8 +106,8 @@ public class SamlIdPMetadataConfiguration {
     @Bean
     @SneakyThrows
     public SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter() {
-        final var url = new URL(casProperties.getServer().getPrefix());
-        final var generator = new DefaultSamlIdPCertificateAndKeyWriter();
+        val url = new URL(casProperties.getServer().getPrefix());
+        val generator = new DefaultSamlIdPCertificateAndKeyWriter();
         generator.setHostname(url.getHost());
         generator.setUriSubjectAltNames(CollectionUtils.wrap(url.getHost().concat("/idp/metadata")));
         return generator;
@@ -115,7 +117,7 @@ public class SamlIdPMetadataConfiguration {
     @Bean
     @SneakyThrows
     public SamlIdPMetadataLocator samlMetadataLocator() {
-        final var idp = casProperties.getAuthn().getSamlIdp();
+        val idp = casProperties.getAuthn().getSamlIdp();
         return new DefaultSamlIdPMetadataLocator(idp.getMetadata().getLocation());
     }
 
@@ -131,20 +133,20 @@ public class SamlIdPMetadataConfiguration {
     @ConditionalOnMissingBean(name = "samlRegisteredServiceMetadataResolvers")
     @Bean
     public SamlRegisteredServiceMetadataResolutionPlan samlRegisteredServiceMetadataResolvers() {
-        final var plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
+        val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
 
-        final var samlIdp = casProperties.getAuthn().getSamlIdp();
+        val samlIdp = casProperties.getAuthn().getSamlIdp();
         plan.registerMetadataResolver(new DynamicMetadataResolver(samlIdp, openSamlConfigBean));
         plan.registerMetadataResolver(new FileSystemResourceMetadataResolver(samlIdp, openSamlConfigBean));
         plan.registerMetadataResolver(new UrlResourceMetadataResolver(samlIdp, openSamlConfigBean));
         plan.registerMetadataResolver(new ClasspathResourceMetadataResolver(samlIdp, openSamlConfigBean));
         plan.registerMetadataResolver(new GroovyResourceMetadataResolver(samlIdp, openSamlConfigBean));
 
-        final var configurers =
+        val configurers =
             this.applicationContext.getBeansOfType(SamlRegisteredServiceMetadataResolutionPlanConfigurator.class, false, true);
 
         configurers.values().forEach(c -> {
-            final var name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            val name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Configuring saml metadata resolution plan [{}]", name);
             c.configureMetadataResolutionPlan(plan);
         });

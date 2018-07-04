@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPolicy;
@@ -57,7 +59,7 @@ public class CasCoreAuthenticationPolicyConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer authenticationPolicyExecutionPlanConfigurer() {
         return plan -> {
-            final var police = casProperties.getAuthn().getPolicy();
+            val police = casProperties.getAuthn().getPolicy();
 
             if (police.getReq().isEnabled()) {
                 LOGGER.debug("Activating authentication policy [{}]", RequiredHandlerAuthenticationPolicy.class.getSimpleName());

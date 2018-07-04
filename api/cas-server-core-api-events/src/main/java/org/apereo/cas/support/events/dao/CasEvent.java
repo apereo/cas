@@ -1,5 +1,7 @@
 package org.apereo.cas.support.events.dao;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
@@ -75,11 +77,11 @@ public class CasEvent {
      * @return the creation time
      */
     public ZonedDateTime getCreationTime() {
-        final var dt = DateTimeUtils.zonedDateTimeOf(this.creationTime);
+        val dt = DateTimeUtils.zonedDateTimeOf(this.creationTime);
         if (dt != null) {
             return dt;
         }
-        final var lt = DateTimeUtils.localDateTimeOf(this.creationTime);
+        val lt = DateTimeUtils.localDateTimeOf(this.creationTime);
         return DateTimeUtils.zonedDateTimeOf(lt.atZone(ZoneId.systemDefault()));
     }
 
@@ -226,7 +228,7 @@ public class CasEvent {
      * @return the geo location
      */
     public GeoLocationRequest getGeoLocation() {
-        final var request = new GeoLocationRequest();
+        val request = new GeoLocationRequest();
         request.setAccuracy(get("geoAccuracy"));
         request.setTimestamp(get("geoTimestamp"));
         request.setLongitude(get("geoLongitude"));

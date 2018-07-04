@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
@@ -49,7 +51,7 @@ public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMet
 
     @Bean
     public SamlRegisteredServiceMetadataResolver jpaSamlRegisteredServiceMetadataResolver() {
-        final var idp = casProperties.getAuthn().getSamlIdp();
+        val idp = casProperties.getAuthn().getSamlIdp();
         return new JpaSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean);
     }
 
@@ -67,7 +69,7 @@ public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMet
     
     @Bean
     public DataSource dataSourceSamlMetadata() {
-        final var idp = casProperties.getAuthn().getSamlIdp().getMetadata();
+        val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
         return JpaBeans.newDataSource(idp.getJpa());
     }
 
@@ -79,8 +81,8 @@ public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMet
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean samlMetadataEntityManagerFactory() {
-        final var idp = casProperties.getAuthn().getSamlIdp().getMetadata();
-        final var bean =
+        val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
+        val bean =
             JpaBeans.newHibernateEntityManagerFactoryBean(
                 new JpaConfigDataHolder(
                     jpaSamlMetadataVendorAdapter(),
@@ -94,7 +96,7 @@ public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMet
     @Bean
     public PlatformTransactionManager transactionManagerSamlMetadata(
         @Qualifier("samlMetadataEntityManagerFactory") final EntityManagerFactory emf) {
-        final var mgmr = new JpaTransactionManager();
+        val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }

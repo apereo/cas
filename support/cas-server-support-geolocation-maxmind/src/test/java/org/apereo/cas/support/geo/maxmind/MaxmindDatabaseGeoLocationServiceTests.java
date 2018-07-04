@@ -1,5 +1,7 @@
 package org.apereo.cas.support.geo.maxmind;
 
+import lombok.val;
+
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.model.CityResponse;
 import com.maxmind.geoip2.model.CountryResponse;
@@ -29,19 +31,19 @@ public class MaxmindDatabaseGeoLocationServiceTests {
 
     @Test
     public void verifyOperation() throws Exception {
-        final var city = mock(DatabaseReader.class);
-        final var cityResponse = new CityResponse(new City(), new Continent(), new Country(),
+        val city = mock(DatabaseReader.class);
+        val cityResponse = new CityResponse(new City(), new Continent(), new Country(),
             new Location(), new MaxMind(), new Postal(),
             new Country(), new RepresentedCountry(), new ArrayList<>(), new Traits());
         when(city.city(any(InetAddress.class))).thenReturn(cityResponse);
 
-        final var country = mock(DatabaseReader.class);
-        final var countryResponse = new CountryResponse(new Continent(), new Country(),
+        val country = mock(DatabaseReader.class);
+        val countryResponse = new CountryResponse(new Continent(), new Country(),
             new MaxMind(), new Country(),
             new RepresentedCountry(), new Traits());
         when(country.country(any(InetAddress.class))).thenReturn(countryResponse);
 
-        final var service = new MaxmindDatabaseGeoLocationService(city, country);
+        val service = new MaxmindDatabaseGeoLocationService(city, country);
         var response = service.locate("127.0.0.1");
         assertNotNull(response);
         response = service.locate(100D, 100D);

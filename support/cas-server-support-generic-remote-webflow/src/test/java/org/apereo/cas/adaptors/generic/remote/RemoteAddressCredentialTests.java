@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.generic.remote;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -23,7 +25,7 @@ public class RemoteAddressCredentialTests {
 
     @Test
     public void verifySerializeARemoteAddressCredentialToJson() throws IOException {
-        final var credentialWritten = new RemoteAddressCredential("80.123.456.78");
+        val credentialWritten = new RemoteAddressCredential("80.123.456.78");
         MAPPER.writeValue(JSON_FILE, credentialWritten);
         final CredentialMetaData credentialRead = MAPPER.readValue(JSON_FILE, RemoteAddressCredential.class);
         assertEquals(credentialWritten, credentialRead);

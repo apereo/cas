@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -49,7 +51,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
         LOGGER.debug("Attributes resolved by the release policy available for selection of username attribute [{}] are [{}].", this.usernameAttribute, releasePolicyAttributes);
         if (releasePolicyAttributes.containsKey(this.usernameAttribute)) {
             LOGGER.debug("Attribute release policy for registered service [{}] contains an attribute for [{}]", registeredService.getServiceId(), this.usernameAttribute);
-            final var value = releasePolicyAttributes.get(this.usernameAttribute);
+            val value = releasePolicyAttributes.get(this.usernameAttribute);
             principalId = CollectionUtils.wrap(value).get(0).toString();
         } else if (originalPrincipalAttributes.containsKey(this.usernameAttribute)) {
             LOGGER.debug("The selected username attribute [{}] was retrieved as a direct "
@@ -57,7 +59,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
                 + "CAS is unable to detect new attribute values for [{}] after authentication unless the attribute "
                 + "is explicitly authorized for release via the service attribute release policy.",
                 this.usernameAttribute, service, this.usernameAttribute);
-            final var value = originalPrincipalAttributes.get(this.usernameAttribute);
+            val value = originalPrincipalAttributes.get(this.usernameAttribute);
             principalId = CollectionUtils.wrap(value).get(0).toString();
         } else {
             LOGGER.warn("Principal [{}] does not have an attribute [{}] among attributes [{}] so CAS cannot "

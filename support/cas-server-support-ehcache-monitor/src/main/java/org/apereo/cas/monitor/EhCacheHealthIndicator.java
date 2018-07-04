@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -33,7 +35,7 @@ public class EhCacheHealthIndicator extends AbstractCacheHealthIndicator {
     protected CacheStatistics[] getStatistics() {
         final List<CacheStatistics> list = Arrays.stream(this.ehcacheTicketsCache.getCacheNames())
             .map(c -> {
-                final var cache = this.ehcacheTicketsCache.getCache(c);
+                val cache = this.ehcacheTicketsCache.getCache(c);
                 return new EhCacheStatistics(cache);
             })
             .collect(Collectors.toList());

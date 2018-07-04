@@ -1,5 +1,7 @@
 package org.apereo.cas.ws.idp.metadata;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.wss4j.common.util.DOM2Writer;
@@ -37,10 +39,10 @@ public class WSFederationMetadataController {
     public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         try {
             response.setContentType(MediaType.TEXT_HTML_VALUE);
-            final var out = response.getWriter();
-            final var mw = new WSFederationMetadataWriter();
+            val out = response.getWriter();
+            val mw = new WSFederationMetadataWriter();
 
-            final var metadata = mw.produceMetadataDocument(casProperties);
+            val metadata = mw.produceMetadataDocument(casProperties);
             out.write(DOM2Writer.nodeToString(metadata));
         } catch (final Exception ex) {
             LOGGER.error("Failed to get metadata document", ex);

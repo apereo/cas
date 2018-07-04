@@ -1,5 +1,7 @@
 package org.apereo.cas.services.util;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,20 +24,20 @@ public class CasAddonsRegisteredServicesJsonSerializerTests {
 
     @Test
     public void verifySupports() {
-        final var s = new CasAddonsRegisteredServicesJsonSerializer();
+        val s = new CasAddonsRegisteredServicesJsonSerializer();
         assertTrue(s.supports(new File("servicesRegistry.conf")));
     }
 
     @Test
     public void verifyLoad() {
-        final var s = new CasAddonsRegisteredServicesJsonSerializer();
-        final var services = s.load(getServiceRegistryResource());
+        val s = new CasAddonsRegisteredServicesJsonSerializer();
+        val services = s.load(getServiceRegistryResource());
         assertEquals(3, services.size());
     }
 
     @SneakyThrows
     private InputStream getServiceRegistryResource() {
-        final var file = new File("servicesRegistry.conf");
+        val file = new File("servicesRegistry.conf");
         return new ClassPathResource(file.getPath()).getInputStream();
     }
 }

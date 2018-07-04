@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import lombok.val;
+
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
 import lombok.SneakyThrows;
@@ -35,7 +37,7 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     @SneakyThrows
     public List<DeviceRegistration> getRegisteredDevices(final String username) {
-        final var registrations = userStorage.get(username).values()
+        val registrations = userStorage.get(username).values()
             .stream()
             .map(r -> {
                 try {

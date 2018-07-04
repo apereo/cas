@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -28,20 +30,20 @@ public class CoreAttributesTestUtils {
     }
 
     public static Service getService() {
-        final var svc = mock(Service.class);
+        val svc = mock(Service.class);
         when(svc.getId()).thenReturn(CONST_TEST_URL);
         when(svc.matches(any(Service.class))).thenReturn(true);
         return svc;
     }
 
     public static RegisteredService getRegisteredService() {
-        final var service = mock(RegisteredService.class);
+        val service = mock(RegisteredService.class);
         when(service.getServiceId()).thenReturn(CONST_TEST_URL);
         when(service.getName()).thenReturn("service");
         when(service.getId()).thenReturn(Long.MAX_VALUE);
         when(service.getDescription()).thenReturn("description");
 
-        final var access = mock(RegisteredServiceAccessStrategy.class);
+        val access = mock(RegisteredServiceAccessStrategy.class);
         when(access.isServiceAccessAllowed()).thenReturn(true);
         when(service.getAccessStrategy()).thenReturn(access);
         return service;

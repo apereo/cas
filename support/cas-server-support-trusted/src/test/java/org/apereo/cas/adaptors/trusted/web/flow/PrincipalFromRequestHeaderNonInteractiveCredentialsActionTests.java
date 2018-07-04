@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.adaptors.trusted.config.TrustedAuthenticationConfiguration;
@@ -34,11 +36,11 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests exte
 
     @Test
     public void verifyRemoteUserExists() throws Exception {
-        final var request = new MockHttpServletRequest();
-        final var context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        final var principal = mock(Principal.class);
+        val principal = mock(Principal.class);
         when(principal.getName()).thenReturn("casuser");
         request.setUserPrincipal(principal);
         assertEquals("success", this.action.execute(context).getId());

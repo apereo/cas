@@ -1,5 +1,7 @@
 package org.apereo.cas.web.view;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -51,8 +53,8 @@ public class ChainingTemplateViewResolver extends AbstractConfigurableTemplateRe
                                                         final String resourceName,
                                                         final String characterEncoding,
                                                         final Map<String, Object> templateResolutionAttributes) {
-        for (final var r : this.resolvers) {
-            final var resource = r.resolveTemplate(configuration, ownerTemplate, template, templateResolutionAttributes);
+        for (val r : this.resolvers) {
+            val resource = r.resolveTemplate(configuration, ownerTemplate, template, templateResolutionAttributes);
             if (resource != null && resource.isTemplateResourceExistenceVerified()) {
                 return resource.getTemplateResource();
             }

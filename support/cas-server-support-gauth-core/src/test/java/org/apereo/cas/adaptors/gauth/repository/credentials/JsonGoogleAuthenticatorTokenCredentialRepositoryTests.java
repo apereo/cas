@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.gauth.repository.credentials;
 
+import lombok.val;
+
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
@@ -39,7 +41,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Before
     public void initialize() {
-        final var bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
+        val bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
         this.google = new GoogleAuthenticator(bldr.build());
     }
 
@@ -48,9 +50,9 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests {
         if (JSON_FILE.exists()) {
             FileUtils.forceDelete(JSON_FILE.getFile());
         }
-        final var repo =
+        val repo =
             new JsonGoogleAuthenticatorTokenCredentialRepository(JSON_FILE, google, CipherExecutor.noOpOfStringToString());
-        final var acct = repo.create("casuser");
+        val acct = repo.create("casuser");
         assertNotNull(acct);
     }
 
@@ -59,7 +61,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests {
         if (JSON_FILE.exists()) {
             FileUtils.forceDelete(JSON_FILE.getFile());
         }
-        final var repo =
+        val repo =
             new JsonGoogleAuthenticatorTokenCredentialRepository(JSON_FILE, google, CipherExecutor.noOpOfStringToString());
         var acct = repo.get("casuser");
         assertNull(acct);

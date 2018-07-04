@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.services;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -46,7 +48,7 @@ public class OAuthRegisteredServiceTests {
 
     @Test
     public void checkSaveMethod() {
-        final var r = new OAuthRegisteredService();
+        val r = new OAuthRegisteredService();
         r.setName("checkSaveMethod");
         r.setServiceId("testId");
         r.setTheme("theme");
@@ -54,10 +56,10 @@ public class OAuthRegisteredServiceTests {
         r.setClientId("clientid");
         r.setServiceId("secret");
         r.setBypassApprovalPrompt(true);
-        final var r2 = this.dao.save(r);
+        val r2 = this.dao.save(r);
         assertTrue(r2 instanceof OAuthRegisteredService);
         this.dao.load();
-        final var r3 = this.dao.findServiceById(r2.getId());
+        val r3 = this.dao.findServiceById(r2.getId());
         assertTrue(r3 instanceof OAuthRegisteredService);
         assertEquals(r, r2);
         assertEquals(r2, r3);
@@ -65,7 +67,7 @@ public class OAuthRegisteredServiceTests {
 
     @Test
     public void verifySerializeAOAuthRegisteredServiceToJson() throws IOException {
-        final var serviceWritten = new OAuthRegisteredService();
+        val serviceWritten = new OAuthRegisteredService();
         serviceWritten.setName("checkSaveMethod");
         serviceWritten.setServiceId("testId");
         serviceWritten.setTheme("theme");

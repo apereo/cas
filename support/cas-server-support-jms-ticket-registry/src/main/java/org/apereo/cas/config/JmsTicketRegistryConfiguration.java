@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -49,8 +51,8 @@ public class JmsTicketRegistryConfiguration {
     @Lazy
     @Bean
     public TicketRegistry ticketRegistry() {
-        final var jms = casProperties.getTicket().getRegistry().getJms();
-        final var cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(jms.getCrypto(), "jms");
+        val jms = casProperties.getTicket().getRegistry().getJms();
+        val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(jms.getCrypto(), "jms");
         return new JmsTicketRegistry(this.jmsTemplate.getIfAvailable(), messageQueueTicketRegistryIdentifier(), cipher);
     }
 
@@ -58,7 +60,7 @@ public class JmsTicketRegistryConfiguration {
     @Bean
     public JmsListenerContainerFactory<?> messageQueueTicketRegistryFactory(final ConnectionFactory connectionFactory,
                                                                             final DefaultJmsListenerContainerFactoryConfigurer configurer) {
-        final var factory = new DefaultJmsListenerContainerFactory();
+        val factory = new DefaultJmsListenerContainerFactory();
         configurer.configure(factory, connectionFactory);
         return factory;
     }

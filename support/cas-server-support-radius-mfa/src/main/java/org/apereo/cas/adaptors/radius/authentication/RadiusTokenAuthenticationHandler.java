@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.RadiusUtils;
@@ -50,21 +52,21 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         try {
-            final var radiusCredential = (RadiusTokenCredential) credential;
-            final var password = radiusCredential.getToken();
+            val radiusCredential = (RadiusTokenCredential) credential;
+            val password = radiusCredential.getToken();
 
-            final var authentication = WebUtils.getInProgressAuthentication();
+            val authentication = WebUtils.getInProgressAuthentication();
             if (authentication == null) {
                 throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
             }
-            final var principal = authentication.getPrincipal();
-            final var username = principal.getId();
+            val principal = authentication.getPrincipal();
+            val username = principal.getId();
 
-            final var result =
+            val result =
                 RadiusUtils.authenticate(username, password, this.servers,
                     this.failoverOnAuthenticationFailure, this.failoverOnException);
             if (result.getKey()) {
-                final var finalPrincipal = this.principalFactory.createPrincipal(username, result.getValue().get());
+                val finalPrincipal = this.principalFactory.createPrincipal(username, result.getValue().get());
                 return createHandlerResult(credential, finalPrincipal, new ArrayList<>());
             }
             throw new FailedLoginException("Radius authentication failed for user " + username);

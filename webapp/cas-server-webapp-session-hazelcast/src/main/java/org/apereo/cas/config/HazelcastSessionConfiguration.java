@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
@@ -37,9 +39,9 @@ public class HazelcastSessionConfiguration {
     @Bean
     @SneakyThrows
     public HazelcastInstance hazelcastInstance() {
-        final var hzConfigResource = casProperties.getWebflow().getSession().getHzLocation();
-        final var configUrl = hzConfigResource.getURL();
-        final var config = new XmlConfigBuilder(hzConfigResource.getInputStream()).build();
+        val hzConfigResource = casProperties.getWebflow().getSession().getHzLocation();
+        val configUrl = hzConfigResource.getURL();
+        val config = new XmlConfigBuilder(hzConfigResource.getInputStream()).build();
         config.setConfigurationUrl(configUrl);
         config.setInstanceName(this.getClass().getSimpleName())
             .setProperty("hazelcast.logging.type", "slf4j")

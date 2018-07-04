@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.jwks;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -55,9 +57,9 @@ public class OidcJsonWebKeystoreGeneratorService {
     @SneakyThrows
     protected void generate(final Resource file, final int bits) {
         if (!ResourceUtils.doesResourceExist(file)) {
-            final var rsaJsonWebKey = RsaJwkGenerator.generateJwk(bits);
-            final var jsonWebKeySet = new JsonWebKeySet(rsaJsonWebKey);
-            final var data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
+            val rsaJsonWebKey = RsaJwkGenerator.generateJwk(bits);
+            val jsonWebKeySet = new JsonWebKeySet(rsaJsonWebKey);
+            val data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
             final File location;
             if (file instanceof FileSystemResource) {
                 location = FileSystemResource.class.cast(file).getFile();

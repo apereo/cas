@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.ldap;
 
+import lombok.val;
+
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.LdapTestUtils;
@@ -30,11 +32,11 @@ public class LdapIntegrationTestsOperations {
      */
     public static synchronized void initDirectoryServer(final InputStream ldifFile, final int port) {
         try {
-            final var directory = DIRECTORY_MAP.get(port);
-            final var createInstance = directory == null || !directory.isAlive();
+            val directory = DIRECTORY_MAP.get(port);
+            val createInstance = directory == null || !directory.isAlive();
             if (createInstance) {
-                final var properties = new ClassPathResource("ldapserver.properties");
-                final var schema = new ClassPathResource("schema/standard-ldap.schema");
+                val properties = new ClassPathResource("ldapserver.properties");
+                val schema = new ClassPathResource("schema/standard-ldap.schema");
                 DIRECTORY_MAP.put(port, new InMemoryTestLdapDirectoryServer(properties.getInputStream(), ldifFile, schema.getInputStream(), port));
             }
         } catch (final Exception e) {

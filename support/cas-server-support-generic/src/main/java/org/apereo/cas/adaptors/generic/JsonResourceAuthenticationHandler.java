@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.generic;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -65,13 +67,13 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
             LOGGER.error(e.getMessage(), e);
             throw new PreventedException(e);
         }
-        final var username = credential.getUsername();
-        final var password = credential.getPassword();
+        val username = credential.getUsername();
+        val password = credential.getPassword();
         if (!map.containsKey(username)) {
             throw new AccountNotFoundException();
         }
 
-        final var account = map.get(username);
+        val account = map.get(username);
         if (matches(password, account.getPassword())) {
             switch (account.getStatus()) {
                 case DISABLED:
@@ -89,15 +91,15 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
 
             final List<MessageDescriptor> warnings = new ArrayList<>();
             if (account.getExpirationDate() != null) {
-                final var now = LocalDate.now(ZoneOffset.UTC);
+                val now = LocalDate.now(ZoneOffset.UTC);
                 if (now.isEqual(account.getExpirationDate()) || now.isAfter(account.getExpirationDate())) {
                     throw new AccountExpiredException();
                 }
                 if (getPasswordPolicyConfiguration() != null) {
-                    final var warningPeriod = account.getExpirationDate()
+                    val warningPeriod = account.getExpirationDate()
                         .minusDays(getPasswordPolicyConfiguration().getPasswordWarningNumberOfDays());
                     if (now.isAfter(warningPeriod) || now.isEqual(warningPeriod)) {
-                        final var daysRemaining = ChronoUnit.DAYS.between(now, account.getExpirationDate());
+                        val daysRemaining = ChronoUnit.DAYS.between(now, account.getExpirationDate());
                         warnings.add(new DefaultMessageDescriptor(
                             "password.expiration.loginsRemaining",
                             "You have {0} logins remaining before you MUST change your password.",
@@ -105,7 +107,7 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
                     }
                 }
             }
-            final var principal = this.principalFactory.createPrincipal(username, account.getAttributes());
+            val principal = this.principalFactory.createPrincipal(username, account.getAttributes());
             return createHandlerResult(credential, principal, warnings);
         }
 

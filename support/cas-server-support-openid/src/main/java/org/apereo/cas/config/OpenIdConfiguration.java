@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
@@ -130,7 +132,7 @@ public class OpenIdConfiguration {
     @RefreshScope
     @Bean
     public ServerManager serverManager() {
-        final var manager = new ServerManager();
+        val manager = new ServerManager();
         manager.setOPEndpointUrl(casProperties.getServer().getLoginUrl());
         manager.setEnforceRpId(casProperties.getAuthn().getOpenid().isEnforceRpId());
         manager.setSharedAssociations(new InMemoryServerAssociationStore());
@@ -141,7 +143,7 @@ public class OpenIdConfiguration {
     @ConditionalOnMissingBean(name = "openIdServiceResponseBuilder")
     @Bean
     public ResponseBuilder openIdServiceResponseBuilder() {
-        final var openIdPrefixUrl = casProperties.getServer().getPrefix().concat("/openid");
+        val openIdPrefixUrl = casProperties.getServer().getPrefix().concat("/openid");
         return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager(), centralAuthenticationService, servicesManager);
     }
 
@@ -173,7 +175,7 @@ public class OpenIdConfiguration {
     @Autowired
     @Bean
     public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
-        final var c = new OpenIdValidateController(cas20WithoutProxyProtocolValidationSpecification,
+        val c = new OpenIdValidateController(cas20WithoutProxyProtocolValidationSpecification,
             authenticationSystemSupport, servicesManager,
             centralAuthenticationService, proxy20Handler,
             argumentExtractor, multifactorTriggerSelectionStrategy,
@@ -182,12 +184,12 @@ public class OpenIdConfiguration {
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             serverManager(), validationAuthorizers, casProperties.getSso().isRenewAuthnEnabled());
 
-        final var controller = new DelegatingController();
+        val controller = new DelegatingController();
         controller.setDelegates(CollectionUtils.wrapList(smartOpenIdAssociationController(), c));
 
-        final var m = new OpenIdPostUrlHandlerMapping();
+        val m = new OpenIdPostUrlHandlerMapping();
         m.setOrder(1);
-        final var mappings = new Properties();
+        val mappings = new Properties();
         mappings.put("/login", controller);
         m.setMappings(mappings);
         return m;

@@ -1,5 +1,7 @@
 package org.apereo.cas.consent;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -31,7 +33,7 @@ public class DefaultConsentEngine implements ConsentEngine {
     public Pair<Boolean, ConsentDecision> isConsentRequiredFor(final Service service,
                                                                final RegisteredService registeredService,
                                                                final Authentication authentication) {
-        final var attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
+        val attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
 
         if (attributes == null || attributes.isEmpty()) {
             LOGGER.debug("Consent is conditionally ignored for service [{}] given no consentable attributes are found", registeredService.getName());
@@ -39,7 +41,7 @@ public class DefaultConsentEngine implements ConsentEngine {
         }
 
         LOGGER.debug("Locating consent decision for service [{}]", service);
-        final var decision = findConsentDecision(service, registeredService, authentication);
+        val decision = findConsentDecision(service, registeredService, authentication);
         if (decision == null) {
             LOGGER.debug("No consent decision found; thus attribute consent is required");
             return Pair.of(Boolean.TRUE, null);
@@ -53,9 +55,9 @@ public class DefaultConsentEngine implements ConsentEngine {
         }
 
         LOGGER.debug("Consent is not required yet for [{}]; checking for reminder options", service);
-        final var unit = decision.getReminderTimeUnit();
-        final var dt = decision.getCreatedDate().plus(decision.getReminder(), unit);
-        final var now = LocalDateTime.now();
+        val unit = decision.getReminderTimeUnit();
+        val dt = decision.getCreatedDate().plus(decision.getReminder(), unit);
+        val now = LocalDateTime.now();
 
         LOGGER.debug("Reminder threshold date/time is calculated as [{}]", dt);
         if (now.isAfter(dt)) {
@@ -77,8 +79,8 @@ public class DefaultConsentEngine implements ConsentEngine {
                                                 final long reminder,
                                                 final ChronoUnit reminderTimeUnit,
                                                 final ConsentReminderOptions options) {
-        final var attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
-        final var principalId = authentication.getPrincipal().getId();
+        val attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
+        val principalId = authentication.getPrincipal().getId();
 
         var decision = findConsentDecision(service, registeredService, authentication);
         if (decision == null) {
@@ -115,7 +117,7 @@ public class DefaultConsentEngine implements ConsentEngine {
                                                                 final Service service,
                                                                 final RegisteredService registeredService) {
         LOGGER.debug("Retrieving consentable attributes for [{}]", registeredService);
-        final var policy = registeredService.getAttributeReleasePolicy();
+        val policy = registeredService.getAttributeReleasePolicy();
         if (policy != null) {
             return policy.getConsentableAttributes(authentication.getPrincipal(), service, registeredService);
         }

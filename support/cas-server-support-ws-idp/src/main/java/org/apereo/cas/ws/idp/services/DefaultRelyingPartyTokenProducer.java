@@ -1,5 +1,7 @@
 package org.apereo.cas.ws.idp.services;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -44,16 +46,16 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
     public String produce(final SecurityToken securityToken, final WSFederationRegisteredService service,
                           final WSFederationRequest fedRequest, final HttpServletRequest request,
                           final Assertion assertion) {
-        final var sts = clientBuilder.buildClientForRelyingPartyTokenResponses(securityToken, service);
+        val sts = clientBuilder.buildClientForRelyingPartyTokenResponses(securityToken, service);
         mapAttributesToRequestedClaims(service, sts, assertion);
-        final var rpToken = requestSecurityTokenResponse(service, sts, assertion);
+        val rpToken = requestSecurityTokenResponse(service, sts, assertion);
         return serializeRelyingPartyToken(rpToken);
     }
 
     @SneakyThrows
     private static String serializeRelyingPartyToken(final Element rpToken) {
-        final var sw = new StringWriter();
-        final var t = TransformerFactory.newInstance().newTransformer();
+        val sw = new StringWriter();
+        val t = TransformerFactory.newInstance().newTransformer();
         t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, BooleanUtils.toStringYesNo(Boolean.TRUE));
         t.transform(new DOMSource(rpToken), new StreamResult(sw));
         return sw.toString();
@@ -62,7 +64,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
     private static void mapAttributesToRequestedClaims(final WSFederationRegisteredService service, final SecurityTokenServiceClient sts,
                                                        final Assertion assertion) {
         try {
-            final var writer = new W3CDOMStreamWriter();
+            val writer = new W3CDOMStreamWriter();
             writer.writeStartElement("wst", "Claims", STSUtils.WST_NS_05_12);
             writer.writeNamespace("wst", STSUtils.WST_NS_05_12);
             writer.writeNamespace("ic", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
@@ -71,14 +73,14 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
             assertion.getPrincipal().getAttributes().forEach((k, v) -> {
                 try {
                     if (WSFederationClaims.contains(k)) {
-                        final var uri = WSFederationClaims.valueOf(k).getUri();
+                        val uri = WSFederationClaims.valueOf(k).getUri();
                         LOGGER.debug("Requesting claim [{}] mapped to [{}]", k, uri);
                         writer.writeStartElement("ic", "ClaimValue", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
                         writer.writeAttribute("Uri", uri);
                         writer.writeAttribute("Optional", Boolean.TRUE.toString());
 
                         final Collection vv = CollectionUtils.toCollection(v);
-                        for (final var value: vv) {
+                        for (val value: vv) {
                             if (value instanceof String) {
                                 writer.writeStartElement("ic", "Value", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
                                 writer.writeCharacters((String) value);
@@ -95,7 +97,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
 
             writer.writeEndElement();
 
-            final var claims = writer.getDocument().getDocumentElement();
+            val claims = writer.getDocument().getDocumentElement();
             sts.setClaims(claims);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -108,7 +110,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
                                                  final Assertion assertion) {
         try {
             sts.getProperties().put(SecurityConstants.USERNAME, assertion.getPrincipal().getName());
-            final var uid = credentialCipherExecutor.encode(assertion.getPrincipal().getName());
+            val uid = credentialCipherExecutor.encode(assertion.getPrincipal().getName());
             sts.getProperties().put(SecurityConstants.PASSWORD, uid);
 
             return sts.requestSecurityTokenResponse(service.getAppliesTo());

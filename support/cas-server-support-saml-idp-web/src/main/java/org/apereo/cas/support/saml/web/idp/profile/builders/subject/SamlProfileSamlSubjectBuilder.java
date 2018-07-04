@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.subject;
 
+import lombok.val;
+
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -62,18 +64,18 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
                                  final String binding,
                                  final MessageContext messageContext) throws SamlException {
 
-        final var assertion = Assertion.class.cast(casAssertion);
-        final var validFromDate = ZonedDateTime.ofInstant(assertion.getValidFromDate().toInstant(), ZoneOffset.UTC);
+        val assertion = Assertion.class.cast(casAssertion);
+        val validFromDate = ZonedDateTime.ofInstant(assertion.getValidFromDate().toInstant(), ZoneOffset.UTC);
         LOGGER.debug("Locating the assertion consumer service url for binding [{}]", binding);
         @NonNull
-        final var acs = SamlIdPUtils.determineAssertionConsumerService(authnRequest, adaptor, binding);
-        final var location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
+        val acs = SamlIdPUtils.determineAssertionConsumerService(authnRequest, adaptor, binding);
+        val location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
         if (StringUtils.isBlank(location)) {
             LOGGER.warn("Subject recipient is not defined from either authentication request or metadata for [{}]", adaptor.getEntityId());
         }
 
-        final var nameId = getNameIdForService(request, response, authnRequest, service, adaptor, binding, assertion, messageContext);
-        final var subject = newSubject(nameId,
+        val nameId = getNameIdForService(request, response, authnRequest, service, adaptor, binding, assertion, messageContext);
+        val subject = newSubject(nameId,
             service.isSkipGeneratingSubjectConfirmationRecipient() ? null : location,
             service.isSkipGeneratingSubjectConfirmationNotOnOrAfter() ? null : validFromDate.plusSeconds(this.skewAllowance),
             service.isSkipGeneratingSubjectConfirmationInResponseTo() ? null : authnRequest.getID(),

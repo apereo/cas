@@ -1,5 +1,7 @@
 package org.apereo.cas.support.spnego.util;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -42,7 +44,7 @@ public class ReverseDNSRunnable implements Runnable {
     public void run() {
         try {
             LOGGER.debug("Attempting to resolve [{}]", this.ipAddress);
-            final var address = InetAddress.getByName(this.ipAddress);
+            val address = InetAddress.getByName(this.ipAddress);
             set(address.getCanonicalHostName());
         } catch (final UnknownHostException e) {
             /* N/A -- Default to IP address, but that's already done. **/

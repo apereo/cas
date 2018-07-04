@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.policy;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +41,7 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
     @Override
     public boolean isSatisfiedBy(final Authentication authn) {
         var credsOk = true;
-        final var sum = authn.getSuccesses().size() + authn.getFailures().size();
+        val sum = authn.getSuccesses().size() + authn.getFailures().size();
         if (this.tryAll) {
             credsOk = authn.getCredentials().size() == sum;
         }

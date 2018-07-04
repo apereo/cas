@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.surrogate;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -97,7 +99,7 @@ public class SurrogateRestAuthenticationServiceTests {
 
     @Test
     public void verifyAccountsQualifying() throws Exception {
-        final var data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
+        val data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
         try (var webServer = new MockWebServer(9293,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
@@ -110,7 +112,7 @@ public class SurrogateRestAuthenticationServiceTests {
         try (var webServer = new MockWebServer(9293,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            final var result = surrogateAuthenticationService.canAuthenticateAs("cassurrogate",
+            val result = surrogateAuthenticationService.canAuthenticateAs("cassurrogate",
                 CoreAuthenticationTestUtils.getPrincipal("casuser"),
                 CoreAuthenticationTestUtils.getService());
             assertTrue(result);

@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.factory;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
@@ -54,7 +56,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
     @Override
     public <T extends Ticket> T create(final ProxyGrantingTicket proxyGrantingTicket, final Service service,
                                        final Class<T> clazz) {
-        final var ticketId = produceTicketIdentifier(service);
+        val ticketId = produceTicketIdentifier(service);
         return produceTicket(proxyGrantingTicket, service, ticketId, clazz);
     }
 
@@ -70,7 +72,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
      */
     protected <T extends Ticket> T produceTicket(final ProxyGrantingTicket proxyGrantingTicket,
                                                  final Service service, final String ticketId, final Class<T> clazz) {
-        final var result = proxyGrantingTicket.grantProxyTicket(
+        val result = proxyGrantingTicket.grantProxyTicket(
             ticketId,
             service,
             this.proxyTicketExpirationPolicy,
@@ -91,7 +93,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
      * @return the ticket id
      */
     protected String produceTicketIdentifier(final Service service) {
-        final var uniqueTicketIdGenKey = service.getClass().getName();
+        val uniqueTicketIdGenKey = service.getClass().getName();
         LOGGER.debug("Looking up ticket id generator for [{}]", uniqueTicketIdGenKey);
         var generator = this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
         if (generator == null) {

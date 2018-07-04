@@ -1,5 +1,7 @@
 package org.apereo.cas.digest.util;
 
+import lombok.val;
+
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -25,8 +27,8 @@ public class DigestAuthenticationUtils {
      * @return the nonce
      */
     public static String createNonce() {
-        final var fmtDate = ZonedDateTime.now().toString();
-        final var rand = RandomUtils.getNativeInstance();
+        val fmtDate = ZonedDateTime.now().toString();
+        val rand = RandomUtils.getNativeInstance();
         final Integer randomInt = rand.nextInt();
         return DigestUtils.md5Hex(fmtDate + randomInt);
     }
@@ -60,7 +62,7 @@ public class DigestAuthenticationUtils {
      * @return the header string
      */
     public static String createAuthenticateHeader(final String realm, final String authMethod, final String nonce) {
-        final var stringBuilder = new StringBuilder("Digest realm=\"")
+        val stringBuilder = new StringBuilder("Digest realm=\"")
             .append(realm).append("\",");
         if (StringUtils.isNotBlank(authMethod)) {
             stringBuilder.append("qop=").append(authMethod).append(',');

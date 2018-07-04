@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
@@ -82,7 +84,7 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     @Bean
     @RefreshScope
     public AuthenticationRiskContingencyPlan blockAuthenticationContingencyPlan() {
-        final var b = new BlockAuthenticationContingencyPlan();
+        val b = new BlockAuthenticationContingencyPlan();
         configureContingencyPlan(b);
         return b;
     }
@@ -91,7 +93,7 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     @Bean
     @RefreshScope
     public AuthenticationRiskContingencyPlan multifactorAuthenticationContingencyPlan() {
-        final var b = new MultifactorAuthenticationContingencyPlan();
+        val b = new MultifactorAuthenticationContingencyPlan();
         configureContingencyPlan(b);
         return b;
     }
@@ -139,7 +141,7 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     @Bean
     @RefreshScope
     public AuthenticationRiskEvaluator authenticationRiskEvaluator() {
-        final var risk = casProperties.getAuthn().getAdaptive().getRisk();
+        val risk = casProperties.getAuthn().getAdaptive().getRisk();
         final Set<AuthenticationRequestRiskCalculator> calculators = new HashSet<>();
 
         if (risk.getIp().isEnabled()) {
@@ -163,12 +165,12 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     }
 
     private void configureContingencyPlan(final BaseAuthenticationRiskContingencyPlan b) {
-        final var mail = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getMail();
+        val mail = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getMail();
         if (StringUtils.isNotBlank(mail.getText()) && StringUtils.isNotBlank(mail.getFrom()) && StringUtils.isNotBlank(mail.getSubject())) {
             b.getNotifiers().add(authenticationRiskEmailNotifier());
         }
 
-        final var sms = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getSms();
+        val sms = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getSms();
         if (StringUtils.isNotBlank(sms.getText()) && StringUtils.isNotBlank(sms.getFrom())) {
             b.getNotifiers().add(authenticationRiskSmsNotifier());
         }

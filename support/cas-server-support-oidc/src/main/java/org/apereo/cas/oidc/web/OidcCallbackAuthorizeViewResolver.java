@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.web;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.oidc.OidcConstants;
@@ -28,7 +30,7 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
 
     @Override
     public ModelAndView resolve(final J2EContext ctx, final ProfileManager manager, final String url) {
-        final var prompt = authorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
+        val prompt = authorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
         if (prompt.contains(OidcConstants.PROMPT_NONE)) {
             if (manager.get(true) != null) {
                 return new ModelAndView(url);

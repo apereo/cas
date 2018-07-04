@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -55,11 +57,11 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      * @return the boolean
      */
     protected boolean isAccessTokenRequestRequest(final HttpServletRequest request, final HttpServletResponse response) {
-        final var requestPath = request.getRequestURI();
-        final var value = doesUriMatchPattern(requestPath, OAuth20Constants.ACCESS_TOKEN_URL)
+        val requestPath = request.getRequestURI();
+        val value = doesUriMatchPattern(requestPath, OAuth20Constants.ACCESS_TOKEN_URL)
                 || doesUriMatchPattern(requestPath, OAuth20Constants.TOKEN_URL);
         if (!value) {
-            final var extractor = this.accessTokenGrantRequestExtractors
+            val extractor = this.accessTokenGrantRequestExtractors
                     .stream()
                     .filter(ext -> ext.supports(request))
                     .findFirst()
@@ -80,7 +82,7 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      * @return the boolean
      */
     protected boolean isAuthorizationRequest(final HttpServletRequest request, final HttpServletResponse response) {
-        final var requestPath = request.getRequestURI();
+        val requestPath = request.getRequestURI();
         return doesUriMatchPattern(requestPath, OAuth20Constants.AUTHORIZE_URL);
     }
 
@@ -92,7 +94,7 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      * @return the boolean
      */
     protected boolean doesUriMatchPattern(final String requestPath, final String patternUrl) {
-        final var pattern = Pattern.compile('/' + patternUrl + "(/)*$");
+        val pattern = Pattern.compile('/' + patternUrl + "(/)*$");
         return pattern.matcher(requestPath).find();
     }
 }

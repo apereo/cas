@@ -1,5 +1,7 @@
 package org.apereo.cas.web.support;
 
+import lombok.val;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -54,12 +56,12 @@ public class DefaultCasCookieValueManagerTests {
         whenGettingUserAgent().thenReturn(USER_AGENT);
 
         // test encoding first
-        final var encoded = cookieValueManager.buildCookieValue(VALUE, request);
+        val encoded = cookieValueManager.buildCookieValue(VALUE, request);
         assertEquals(VALUE + '@' + CLIENT_IP + '@' + USER_AGENT, encoded);
 
         // now test decoding the cookie
         when(cookie.getValue()).thenReturn(encoded);
-        final var decoded = cookieValueManager.obtainCookieValue(cookie, request);
+        val decoded = cookieValueManager.obtainCookieValue(cookie, request);
         assertEquals(VALUE, decoded);
     }
 

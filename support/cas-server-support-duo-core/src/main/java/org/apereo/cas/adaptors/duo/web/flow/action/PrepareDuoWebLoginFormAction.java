@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
@@ -27,19 +29,19 @@ public class PrepareDuoWebLoginFormAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final var p = WebUtils.getAuthentication(requestContext).getPrincipal();
+        val p = WebUtils.getAuthentication(requestContext).getPrincipal();
 
-        final var c = requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoCredential.class);
+        val c = requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoCredential.class);
         c.setUsername(p.getId());
 
-        final var providerIds = WebUtils.getResolvedMultifactorAuthenticationProviders(requestContext);
-        final var providers =
+        val providerIds = WebUtils.getResolvedMultifactorAuthenticationProviders(requestContext);
+        val providers =
             MultifactorAuthenticationUtils.getMultifactorAuthenticationProvidersByIds(providerIds, applicationContext);
 
         providers.forEach(pr -> {
-            final var duoAuthenticationService =
+            val duoAuthenticationService =
                 provider.findProvider(pr.getId(), DuoMultifactorAuthenticationProvider.class).getDuoAuthenticationService();
-            final var viewScope = requestContext.getViewScope();
+            val viewScope = requestContext.getViewScope();
             viewScope.put("sigRequest", duoAuthenticationService.signRequestToken(p.getId()));
             viewScope.put("apiHost", duoAuthenticationService.getApiHost());
             viewScope.put("commandName", "credential");

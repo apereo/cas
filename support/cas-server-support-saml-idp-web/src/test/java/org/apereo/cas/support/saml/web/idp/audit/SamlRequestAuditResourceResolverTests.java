@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
+import lombok.val;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.aspectj.lang.JoinPoint;
 import org.junit.Test;
@@ -25,9 +27,9 @@ import static org.mockito.Mockito.*;
 public class SamlRequestAuditResourceResolverTests {
     @Test
     public void verifyAction() {
-        final var r = new SamlRequestAuditResourceResolver();
-        final var authnRequest = mock(AuthnRequest.class);
-        final var issuer = mock(Issuer.class);
+        val r = new SamlRequestAuditResourceResolver();
+        val authnRequest = mock(AuthnRequest.class);
+        val issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");
         when(authnRequest.getIssuer()).thenReturn(issuer);
         when(authnRequest.getProtocolBinding()).thenReturn("ProtocolBinding");
@@ -36,7 +38,7 @@ public class SamlRequestAuditResourceResolverTests {
         assertNotNull(result);
         assertTrue(result.length > 0);
 
-        final var logoutRequest = mock(LogoutRequest.class);
+        val logoutRequest = mock(LogoutRequest.class);
         when(logoutRequest.getIssuer()).thenReturn(issuer);
         pair = Pair.of(authnRequest, null);
         result = r.resolveFrom(mock(JoinPoint.class), pair);

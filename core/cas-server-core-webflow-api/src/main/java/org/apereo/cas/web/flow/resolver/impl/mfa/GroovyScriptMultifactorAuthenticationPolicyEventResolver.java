@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -51,9 +53,9 @@ public class GroovyScriptMultifactorAuthenticationPolicyEventResolver extends Ba
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final var service = resolveServiceFromAuthenticationRequest(context);
-        final var registeredService = resolveRegisteredServiceInRequestContext(context);
-        final var authentication = WebUtils.getAuthentication(context);
+        val service = resolveServiceFromAuthenticationRequest(context);
+        val registeredService = resolveRegisteredServiceInRequestContext(context);
+        val authentication = WebUtils.getAuthentication(context);
 
         if (groovyScript == null) {
             LOGGER.debug("No groovy script is configured for multifactor authentication");
@@ -74,7 +76,7 @@ public class GroovyScriptMultifactorAuthenticationPolicyEventResolver extends Ba
             return null;
         }
 
-        final var providerMap =
+        val providerMap =
                 MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
@@ -83,17 +85,17 @@ public class GroovyScriptMultifactorAuthenticationPolicyEventResolver extends Ba
 
         try {
             final Object[] args = {service, registeredService, authentication, LOGGER};
-            final var provider = ScriptingUtils.executeGroovyScript(groovyScript, args, String.class);
+            val provider = ScriptingUtils.executeGroovyScript(groovyScript, args, String.class);
             LOGGER.debug("Groovy script run for [{}] returned the provider id [{}]", service, provider);
             if (StringUtils.isBlank(provider)) {
                 return null;
             }
 
-            final var providerFound = resolveProvider(providerMap, provider);
+            val providerFound = resolveProvider(providerMap, provider);
             if (providerFound.isPresent()) {
-                final var multifactorAuthenticationProvider = providerFound.get();
+                val multifactorAuthenticationProvider = providerFound.get();
                 if (multifactorAuthenticationProvider.isAvailable(registeredService)) {
-                    final var event = validateEventIdForMatchingTransitionInContext(multifactorAuthenticationProvider.getId(), context,
+                    val event = validateEventIdForMatchingTransitionInContext(multifactorAuthenticationProvider.getId(), context,
                             buildEventAttributeMap(authentication.getPrincipal(), registeredService, multifactorAuthenticationProvider));
                     return CollectionUtils.wrapSet(event);
                 }

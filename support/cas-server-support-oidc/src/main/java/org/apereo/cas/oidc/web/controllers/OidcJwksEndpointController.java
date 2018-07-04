@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.web.controllers;
 
+import lombok.val;
+
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -76,20 +78,20 @@ public class OidcJwksEndpointController extends BaseOAuth20Controller {
                                                         final HttpServletResponse response,
                                                         final Model model) {
         try {
-            final var jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), StandardCharsets.UTF_8);
-            final var jsonWebKeySet = new JsonWebKeySet(jsonJwks);
+            val jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), StandardCharsets.UTF_8);
+            val jsonWebKeySet = new JsonWebKeySet(jsonJwks);
 
             this.servicesManager.getAllServices()
                     .stream()
                     .filter(s -> s instanceof OidcRegisteredService && StringUtils.isNotBlank(((OidcRegisteredService) s).getJwks()))
                     .forEach(
                             Unchecked.consumer(s -> {
-                                final var service = (OidcRegisteredService) s;
-                                final var resource = this.resourceLoader.getResource(service.getJwks());
-                                final var set = new JsonWebKeySet(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
+                                val service = (OidcRegisteredService) s;
+                                val resource = this.resourceLoader.getResource(service.getJwks());
+                                val set = new JsonWebKeySet(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
                                 set.getJsonWebKeys().forEach(jsonWebKeySet::addJsonWebKey);
                             }));
-            final var body = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
+            val body = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             return new ResponseEntity<>(body, HttpStatus.OK);
         } catch (final Exception e) {

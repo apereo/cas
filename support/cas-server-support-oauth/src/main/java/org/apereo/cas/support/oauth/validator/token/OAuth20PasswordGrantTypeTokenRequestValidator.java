@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.validator.token;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
@@ -41,18 +43,18 @@ public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20To
     @Override
     protected boolean validateInternal(final J2EContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) {
-        final var request = context.getRequest();
-        final var clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+        val request = context.getRequest();
+        val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
         LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
-        final var registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
 
         if (HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CLIENT_ID)) {
-            final var service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
-            final var audit = AuditableContext.builder()
+            val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+            val audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)
                 .build();
-            final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
             return !accessResult.isExecutionFailure();
         }
         return false;

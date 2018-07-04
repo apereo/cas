@@ -1,5 +1,7 @@
 package org.apereo.cas.token;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -77,14 +79,14 @@ public abstract class BaseJWTTokenTicketBuilderTests {
         @Override
         public void afterPropertiesSet() {
             inMemoryRegisteredServices.add(RegisteredServiceTestUtils.getRegisteredService("https://cas.example.org.+"));
-            final var registeredService = RegisteredServiceTestUtils.getRegisteredService("https://jwt.example.org/cas.*");
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://jwt.example.org/cas.*");
 
-            final var signingKey = new DefaultRegisteredServiceProperty();
+            val signingKey = new DefaultRegisteredServiceProperty();
             signingKey.addValue("pR3Vizkn5FSY5xCg84cIS4m-b6jomamZD68C8ash-TlNmgGPcoLgbgquxHPoi24tRmGpqHgM4mEykctcQzZ-Xg");
             registeredService.getProperties().put(
                 RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY.getPropertyName(), signingKey);
 
-            final var encKey = new DefaultRegisteredServiceProperty();
+            val encKey = new DefaultRegisteredServiceProperty();
             encKey.addValue("0KVXaN-nlXafRUwgsr3H_l6hkufY7lzoTy7OVI5pN0E");
             registeredService.getProperties().put(
                 RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY.getPropertyName(), encKey);

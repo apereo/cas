@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.ldap.services.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.ldap.services.DefaultLdapRegisteredServiceMapper;
 import org.apereo.cas.adaptors.ldap.services.LdapRegisteredServiceMapper;
@@ -41,7 +43,7 @@ public class LdapServiceRegistryConfiguration implements ServiceRegistryExecutio
     @Bean
     @RefreshScope
     public ServiceRegistry ldapServiceRegistry() {
-        final var ldap = casProperties.getServiceRegistry().getLdap();
+        val ldap = casProperties.getServiceRegistry().getLdap();
         final ConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new LdapServiceRegistry(connectionFactory, ldap.getBaseDn(), ldapServiceRegistryMapper(), ldap);
     }

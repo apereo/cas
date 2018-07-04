@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,8 +41,8 @@ public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServic
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         try {
             if (super.doPrincipalAttributesAllowServiceAccess(principal, principalAttributes)) {
-                final var response = HttpUtils.executeGet(this.endpointUrl, CollectionUtils.wrap("username", principal));
-                final var currentCodes = StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes);
+                val response = HttpUtils.executeGet(this.endpointUrl, CollectionUtils.wrap("username", principal));
+                val currentCodes = StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes);
                 return response != null && currentCodes.contains(String.valueOf(response.getStatusLine().getStatusCode()));
             }
         } catch (final Exception e) {

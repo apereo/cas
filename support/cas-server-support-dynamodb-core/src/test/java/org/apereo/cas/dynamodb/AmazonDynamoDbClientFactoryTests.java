@@ -1,5 +1,7 @@
 package org.apereo.cas.dynamodb;
 
+import lombok.val;
+
 import org.apereo.cas.category.DynamoDbCategory;
 import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
 import org.junit.Test;
@@ -18,11 +20,11 @@ public class AmazonDynamoDbClientFactoryTests {
 
     @Test
     public void verifyAction() {
-        final var factory = new AmazonDynamoDbClientFactory();
+        val factory = new AmazonDynamoDbClientFactory();
         final AbstractDynamoDbProperties properties = new AbstractDynamoDbProperties() {
             private static final long serialVersionUID = -3599433486448467450L;
         };
-        final var client = factory.createAmazonDynamoDb(properties);
+        val client = factory.createAmazonDynamoDb(properties);
         assertNotNull(client);
     }
 }

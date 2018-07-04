@@ -1,5 +1,7 @@
 package org.apereo.cas.support.rest;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationManager;
@@ -62,11 +64,11 @@ public class ServiceTicketResourceTests {
 
     @Before
     public void initialize() {
-        final var mgmr = mock(AuthenticationManager.class);
+        val mgmr = mock(AuthenticationManager.class);
         when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
-        final var publisher = mock(ApplicationEventPublisher.class);
+        val publisher = mock(ApplicationEventPublisher.class);
         this.serviceTicketResource = new ServiceTicketResource(
             new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(publisher, mgmr),
                 new DefaultPrincipalElectionStrategy()),
@@ -115,7 +117,7 @@ public class ServiceTicketResourceTests {
     }
 
     private void configureCasMockToCreateValidST() {
-        final var st = mock(ServiceTicket.class);
+        val st = mock(ServiceTicket.class);
         when(st.getId()).thenReturn("ST-1");
         when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationResult.class))).thenReturn(st);
     }

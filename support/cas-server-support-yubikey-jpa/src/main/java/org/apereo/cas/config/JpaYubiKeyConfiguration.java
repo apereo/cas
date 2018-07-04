@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
@@ -68,7 +70,7 @@ public class JpaYubiKeyConfiguration {
     @Autowired
     @Bean
     public PlatformTransactionManager transactionManagerYubiKey(@Qualifier("yubiKeyEntityManagerFactory") final EntityManagerFactory emf) {
-        final var mgmr = new JpaTransactionManager();
+        val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }
@@ -76,7 +78,7 @@ public class JpaYubiKeyConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean yubiKeyEntityManagerFactory() {
-        final var bean =
+        val bean =
             JpaBeans.newHibernateEntityManagerFactoryBean(
                 new JpaConfigDataHolder(
                     jpaYubiKeyVendorAdapter(),
@@ -90,7 +92,7 @@ public class JpaYubiKeyConfiguration {
 
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
-        final var registry = new JpaYubiKeyAccountRegistry(yubiKeyAccountValidator);
+        val registry = new JpaYubiKeyAccountRegistry(yubiKeyAccountValidator);
         registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
         return registry;
     }

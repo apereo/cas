@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Rule;
@@ -43,7 +45,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifySupportsSpecialCharacters() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
         c.setUsername("brian");
         c.setPassword("t�st");
         assertEquals("brian", this.authenticationHandler.authenticate(c).getPrincipal().getId());
@@ -51,7 +53,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifySupportsProperUserCredentials() {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         c.setUsername(SCOTT);
         c.setPassword(RUTGERS);
@@ -71,7 +73,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticatesUserInMap() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         c.setUsername(SCOTT);
         c.setPassword(RUTGERS);
@@ -85,7 +87,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsUserNotInMap() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
         c.setPassword(RUTGERS);
@@ -98,7 +100,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsNullUserName() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword("user");
@@ -109,7 +111,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsNullUserNameAndPassword() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword(null);
@@ -122,7 +124,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsNullPassword() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         c.setUsername(SCOTT);
         c.setPassword(null);

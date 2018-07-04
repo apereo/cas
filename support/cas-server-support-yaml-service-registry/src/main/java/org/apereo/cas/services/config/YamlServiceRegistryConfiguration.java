@@ -1,5 +1,7 @@
 package org.apereo.cas.services.config;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -47,7 +49,7 @@ public class YamlServiceRegistryConfiguration implements ServiceRegistryExecutio
     @RefreshScope
     @SneakyThrows
     public ServiceRegistry yamlServiceRegistry() {
-        final var registry = casProperties.getServiceRegistry();
+        val registry = casProperties.getServiceRegistry();
         return new YamlServiceRegistry(registry.getYaml().getLocation(),
             registry.isWatcherEnabled(), eventPublisher,
             registeredServiceReplicationStrategy, resourceNamingStrategy);

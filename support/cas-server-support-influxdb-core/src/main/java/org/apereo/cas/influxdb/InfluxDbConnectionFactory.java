@@ -1,5 +1,7 @@
 package org.apereo.cas.influxdb;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +54,7 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
             throw new IllegalArgumentException("Database name/url cannot be blank and must be specified");
         }
 
-        final var builder = new OkHttpClient.Builder();
+        val builder = new OkHttpClient.Builder();
         this.influxDb = InfluxDBFactory.connect(url, uid, psw, builder);
         this.influxDb.enableGzip();
 
@@ -91,7 +93,7 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
         influxDb.setConsistency(InfluxDB.ConsistencyLevel.valueOf(props.getConsistencyLevel().toUpperCase()));
 
         if (props.getPointsToFlush() > 0 && StringUtils.isNotBlank(props.getBatchInterval())) {
-            final var interval = (int) Beans.newDuration(props.getBatchInterval()).toMillis();
+            val interval = (int) Beans.newDuration(props.getBatchInterval()).toMillis();
             this.influxDb.enableBatch(props.getPointsToFlush(), interval, TimeUnit.MILLISECONDS);
         }
 
@@ -124,7 +126,7 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
      * @param point the points to write immediately in sync fashion
      */
     public void writeBatch(final Point... point) {
-        final var batchPoints = BatchPoints
+        val batchPoints = BatchPoints
             .database(influxDbProperties.getDatabase())
             .retentionPolicy(influxDbProperties.getRetentionPolicy())
             .consistency(InfluxDB.ConsistencyLevel.valueOf(influxDbProperties.getConsistencyLevel()))
@@ -163,8 +165,8 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
      * @return the query result
      */
     public QueryResult query(final String fields, final String measurement, final String dbName) {
-        final var filter = String.format("SELECT %s FROM %s", fields, measurement);
-        final var query = new Query(filter, dbName);
+        val filter = String.format("SELECT %s FROM %s", fields, measurement);
+        val query = new Query(filter, dbName);
 
         return this.influxDb.query(query);
     }

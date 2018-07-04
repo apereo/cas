@@ -1,5 +1,7 @@
 package org.apereo.cas.support.geo.config;
 
+import lombok.val;
+
 import com.google.maps.GaeRequestHandler;
 import com.google.maps.GeoApiContext;
 import lombok.extern.slf4j.Slf4j;
@@ -35,8 +37,8 @@ public class GoogleMapsGeoCodingConfiguration {
     @Bean
     @RefreshScope
     public GeoLocationService geoLocationService() {
-        final var builder = new GeoApiContext.Builder();
-        final var properties = casProperties.getGoogleMaps();
+        val builder = new GeoApiContext.Builder();
+        val properties = casProperties.getGoogleMaps();
         if (properties.isGoogleAppsEngine()) {
             builder.requestHandlerBuilder(new GaeRequestHandler.Builder());
         }
@@ -47,7 +49,7 @@ public class GoogleMapsGeoCodingConfiguration {
         builder.apiKey(properties.getApiKey())
             .connectTimeout(Beans.newDuration(properties.getConnectTimeout()).toMillis(), TimeUnit.MILLISECONDS);
 
-        final var svc = new GoogleMapsGeoLocationService(builder.build());
+        val svc = new GoogleMapsGeoLocationService(builder.build());
         svc.setIpStackAccessKey(properties.getIpStackApiAccessKey());
         return svc;
     }

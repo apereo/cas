@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.web;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.oidc.OidcConstants;
@@ -24,7 +26,7 @@ public class OidcCasClientRedirectActionBuilder extends OAuth20DefaultCasClientR
         var renew = casClient.getConfiguration().isRenew();
         var gateway = casClient.getConfiguration().isGateway();
 
-        final var prompts = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(context);
+        val prompts = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(context);
         if (prompts.contains(OidcConstants.PROMPT_NONE)) {
             renew = false;
             gateway = true;
@@ -33,7 +35,7 @@ public class OidcCasClientRedirectActionBuilder extends OAuth20DefaultCasClientR
             renew = true;
         }
 
-        final var action = super.build(casClient, context, renew, gateway);
+        val action = super.build(casClient, context, renew, gateway);
         LOGGER.debug("Final redirect action is [{}]", action);
         return action;
     }

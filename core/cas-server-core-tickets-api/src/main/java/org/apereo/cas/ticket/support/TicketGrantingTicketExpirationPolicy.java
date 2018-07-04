@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.support;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -60,9 +62,9 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
             "maxTimeToLiveInSeconds must be greater than or equal to timeToKillInSeconds.");
 
         // Ticket has been used, check maxTimeToLive (hard window)
-        final var currentSystemTime = getCurrentSystemTime();
-        final var creationTime = ticketState.getCreationTime();
-        final var lastTimeUsed = ticketState.getLastTimeUsed();
+        val currentSystemTime = getCurrentSystemTime();
+        val creationTime = ticketState.getCreationTime();
+        val lastTimeUsed = ticketState.getLastTimeUsed();
         var expirationTime = creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
         if (currentSystemTime.isAfter(expirationTime)) {
             LOGGER.debug("Ticket is expired because the time since creation [{}] is greater than current system time [{}]", expirationTime, currentSystemTime);

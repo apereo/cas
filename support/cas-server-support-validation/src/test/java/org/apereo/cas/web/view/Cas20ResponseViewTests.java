@@ -1,5 +1,7 @@
 package org.apereo.cas.web.view;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
@@ -72,11 +74,11 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
 
     @Test
     public void verifyView() throws Exception {
-        final var modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
-        final var req = new MockHttpServletRequest(new MockServletContext());
+        val modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
+        val req = new MockHttpServletRequest(new MockServletContext());
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
-        final var resp = new MockHttpServletResponse();
+        val resp = new MockHttpServletResponse();
         final View delegatedView = new View() {
             @Override
             public String getContentType() {
@@ -88,7 +90,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
                 map.forEach(request::setAttribute);
             }
         };
-        final var view = new Cas20ResponseView(true, null,
+        val view = new Cas20ResponseView(true, null,
             null, "attribute", delegatedView, new DefaultAuthenticationAttributeReleasePolicy(),
             new DefaultAuthenticationServiceSelectionPlan());
         view.render(modelAndView.getModel(), req, resp);

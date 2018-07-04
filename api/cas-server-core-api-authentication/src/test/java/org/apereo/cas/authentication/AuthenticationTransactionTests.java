@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -10,7 +11,7 @@ import static org.junit.Assert.*;
 public class AuthenticationTransactionTests {
     @Test
     public void verifyHasCredentialOfTypeSingle() {
-        final var transaction = DefaultAuthenticationTransaction.of(new TestCredentialType1());
+        val transaction = DefaultAuthenticationTransaction.of(new TestCredentialType1());
         assertTrue(transaction.hasCredentialOfType(BaseTestCredential.class));
         assertTrue(transaction.hasCredentialOfType(TestCredentialType1.class));
         assertFalse(transaction.hasCredentialOfType(TestCredentialType2.class));
@@ -18,7 +19,7 @@ public class AuthenticationTransactionTests {
 
     @Test
     public void verifyHasCredentialOfTypeMultiple() {
-        final var transaction = DefaultAuthenticationTransaction.of(new TestCredentialType2(), new TestCredentialType1());
+        val transaction = DefaultAuthenticationTransaction.of(new TestCredentialType2(), new TestCredentialType1());
         assertTrue(transaction.hasCredentialOfType(BaseTestCredential.class));
         assertTrue(transaction.hasCredentialOfType(TestCredentialType1.class));
         assertTrue(transaction.hasCredentialOfType(TestCredentialType2.class));

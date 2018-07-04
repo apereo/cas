@@ -1,5 +1,7 @@
 package org.apereo.cas.support.openid.web.mvc;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -40,9 +42,9 @@ public class SmartOpenIdController extends AbstractDelegateController implements
      * @return the association response
      */
     public Map<String, String> getAssociationResponse(final HttpServletRequest request) {
-        final var parameters = new ParameterList(request.getParameterMap());
+        val parameters = new ParameterList(request.getParameterMap());
 
-        final var mode = parameters.hasParameter(OpenIdProtocolConstants.OPENID_MODE)
+        val mode = parameters.hasParameter(OpenIdProtocolConstants.OPENID_MODE)
             ? parameters.getParameterValue(OpenIdProtocolConstants.OPENID_MODE)
             : null;
 
@@ -68,7 +70,7 @@ public class SmartOpenIdController extends AbstractDelegateController implements
 
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
-        final var openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
+        val openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
         if (StringUtils.equals(openIdMode, OpenIdProtocolConstants.ASSOCIATE)) {
             LOGGER.info("Handling request. openid.mode : [{}]", openIdMode);
             return true;

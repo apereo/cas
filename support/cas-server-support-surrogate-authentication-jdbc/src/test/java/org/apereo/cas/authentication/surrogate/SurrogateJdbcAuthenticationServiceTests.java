@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.surrogate;
 
+import lombok.val;
+
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -94,8 +96,8 @@ public class SurrogateJdbcAuthenticationServiceTests {
 
     @Test
     public void verifyAccountQualifying() {
-        final var casuser = CoreAuthenticationTestUtils.getPrincipal("casuser");
-        final var service = CoreAuthenticationTestUtils.getService();
+        val casuser = CoreAuthenticationTestUtils.getPrincipal("casuser");
+        val service = CoreAuthenticationTestUtils.getService();
         assertTrue(surrogateAuthenticationService.canAuthenticateAs("surrogate1", casuser, service));
         assertTrue(surrogateAuthenticationService.canAuthenticateAs("surrogate2", casuser, service));
         assertTrue(surrogateAuthenticationService.canAuthenticateAs("surrogate3", casuser, service));

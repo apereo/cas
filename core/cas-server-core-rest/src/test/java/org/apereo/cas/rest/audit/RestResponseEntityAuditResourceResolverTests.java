@@ -1,5 +1,7 @@
 package org.apereo.cas.rest.audit;
 
+import lombok.val;
+
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.aspectj.lang.JoinPoint;
@@ -21,13 +23,13 @@ import static org.mockito.Mockito.*;
 public class RestResponseEntityAuditResourceResolverTests {
     @Test
     public void verifyAction() {
-        final var r = new RestResponseEntityAuditResourceResolver(true);
+        val r = new RestResponseEntityAuditResourceResolver(true);
         try (var webServer = new MockWebServer(9193)) {
             webServer.start();
             final MultiValueMap headers = new LinkedMultiValueMap();
             headers.put("header", CollectionUtils.wrapList("value"));
             headers.put("location", CollectionUtils.wrapList("someplace"));
-            final var entity = new ResponseEntity("The Response Body", headers, HttpStatus.OK);
+            val entity = new ResponseEntity("The Response Body", headers, HttpStatus.OK);
             assertTrue(r.resolveFrom(mock(JoinPoint.class), entity).length > 0);
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);

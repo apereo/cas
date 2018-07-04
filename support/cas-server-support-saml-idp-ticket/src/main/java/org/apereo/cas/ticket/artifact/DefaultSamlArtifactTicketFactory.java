@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.artifact;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +49,7 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
                                      final TicketGrantingTicket ticketGrantingTicket, final String issuer,
                                      final String relyingParty, final SAMLObject samlObject) {
         try (var w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
-            final var codeId = createTicketIdFor(artifactId);
+            val codeId = createTicketIdFor(artifactId);
             
             final Service service = this.webApplicationServiceFactory.createService(relyingParty);
             final SamlArtifactTicket at = new SamlArtifactTicketImpl(codeId, service, authentication,

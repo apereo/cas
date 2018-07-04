@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.util;
 
+import lombok.val;
+
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Optional;
@@ -66,13 +68,13 @@ public class OidcAuthorizationRequestSupport {
      * @return the oidc max age from authorization request
      */
     public static Optional<Long> getOidcMaxAgeFromAuthorizationRequest(final WebContext context) {
-        final var builderContext = new URIBuilder(context.getFullRequestURL());
-        final var parameter = builderContext.getQueryParams()
+        val builderContext = new URIBuilder(context.getFullRequestURL());
+        val parameter = builderContext.getQueryParams()
             .stream().filter(p -> OidcConstants.MAX_AGE.equals(p.getName()))
             .findFirst();
 
         if (parameter.isPresent()) {
-            final var maxAge = NumberUtils.toLong(parameter.get().getValue(), -1);
+            val maxAge = NumberUtils.toLong(parameter.get().getValue(), -1);
             return Optional.of(maxAge);
         }
         return Optional.empty();
@@ -85,7 +87,7 @@ public class OidcAuthorizationRequestSupport {
      * @return the optional user profile
      */
     public static Optional<UserProfile> isAuthenticationProfileAvailable(final WebContext context) {
-        final var manager = Pac4jUtils.getPac4jProfileManager(context);
+        val manager = Pac4jUtils.getPac4jProfileManager(context);
         return manager.get(true);
     }
 
@@ -96,12 +98,12 @@ public class OidcAuthorizationRequestSupport {
      * @return the optional authn
      */
     public Optional<Authentication> isCasAuthenticationAvailable(final WebContext context) {
-        final var j2EContext = (J2EContext) context;
+        val j2EContext = (J2EContext) context;
         if (j2EContext != null) {
-            final var tgtId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(j2EContext.getRequest());
+            val tgtId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(j2EContext.getRequest());
 
             if (StringUtils.isNotBlank(tgtId)) {
-                final var authentication = ticketRegistrySupport.getAuthenticationFrom(tgtId);
+                val authentication = ticketRegistrySupport.getAuthenticationFrom(tgtId);
                 if (authentication != null) {
                     return Optional.of(authentication);
                 }
@@ -119,11 +121,11 @@ public class OidcAuthorizationRequestSupport {
      */
     public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
                                                                        final ZonedDateTime authenticationDate) {
-        final var maxAge = getOidcMaxAgeFromAuthorizationRequest(context);
+        val maxAge = getOidcMaxAgeFromAuthorizationRequest(context);
         if (maxAge.isPresent() && maxAge.get() > 0) {
-            final var now = ZonedDateTime.now().toEpochSecond();
-            final var authTime = authenticationDate.toEpochSecond();
-            final var diffInSeconds = now - authTime;
+            val now = ZonedDateTime.now().toEpochSecond();
+            val authTime = authenticationDate.toEpochSecond();
+            val diffInSeconds = now - authTime;
             if (diffInSeconds > maxAge.get()) {
                 LOGGER.info("Authentication is too old: [{}] and was created [{}] seconds ago.",
                     authTime, diffInSeconds);
@@ -168,11 +170,11 @@ public class OidcAuthorizationRequestSupport {
     public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
                                                                        final UserProfile profile) {
 
-        final var authTime = profile.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
+        val authTime = profile.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
         if (authTime == null) {
             return false;
         }
-        final var dt = ZonedDateTime.parse(authTime.toString());
+        val dt = ZonedDateTime.parse(authTime.toString());
         return isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, dt);
     }
 }

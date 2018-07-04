@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.support.password;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
@@ -28,7 +30,7 @@ public class PasswordEncoderUtils {
      * @return the password encoder
      */
     public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties) {
-        final var type = properties.getType();
+        val type = properties.getType();
         if (StringUtils.isBlank(type)) {
             LOGGER.debug("No password encoder type is defined, and so none shall be created");
             return NoOpPasswordEncoder.getInstance();
@@ -42,7 +44,7 @@ public class PasswordEncoderUtils {
         if (type.contains(".")) {
             try {
                 LOGGER.debug("Configuration indicates use of a custom password encoder [{}]", type);
-                final var clazz = (Class<PasswordEncoder>) Class.forName(type);
+                val clazz = (Class<PasswordEncoder>) Class.forName(type);
                 return clazz.getDeclaredConstructor().newInstance();
             } catch (final Exception e) {
                 LOGGER.error("Falling back to a no-op password encoder as CAS has failed to create "
@@ -51,7 +53,7 @@ public class PasswordEncoderUtils {
             }
         }
 
-        final var encoderType = PasswordEncoderProperties.PasswordEncoderTypes.valueOf(type);
+        val encoderType = PasswordEncoderProperties.PasswordEncoderTypes.valueOf(type);
         switch (encoderType) {
             case DEFAULT:
                 LOGGER.debug("Creating default password encoder with encoding alg [{}] and character encoding [{}]",
@@ -77,7 +79,7 @@ public class PasswordEncoderUtils {
                     LOGGER.debug("Creating PBKDF2 encoder without secret");
                     return new Pbkdf2PasswordEncoder();
                 }
-                final var hashWidth = 256;
+                val hashWidth = 256;
                 return new Pbkdf2PasswordEncoder(properties.getSecret(), properties.getStrength(), hashWidth);
             case NONE:
             default:

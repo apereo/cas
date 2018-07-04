@@ -1,5 +1,7 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
+import lombok.val;
+
 import jcifs.Config;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -91,25 +93,25 @@ public class JcifsConfig implements InitializingBean {
     @SneakyThrows
     protected void configureJaasLoginConfig() {
 
-        final var propValue = System.getProperty(SYS_PROP_LOGIN_CONF);
+        val propValue = System.getProperty(SYS_PROP_LOGIN_CONF);
         if (StringUtils.isNotBlank(propValue)) {
             LOGGER.info("Found login config [{}] in system property [{}]", propValue, SYS_PROP_LOGIN_CONF);
             if (StringUtils.isNotBlank(this.loginConf)) {
                 LOGGER.warn("Configured login config for CAS under [{}] will be ignored", this.loginConf);
             }
         } else {
-            final var loginConf = StringUtils.isBlank(this.loginConf) ? DEFAULT_LOGIN_CONFIG : this.loginConf;
+            val loginConf = StringUtils.isBlank(this.loginConf) ? DEFAULT_LOGIN_CONFIG : this.loginConf;
             LOGGER.debug("Attempting to load login config from [{}]", loginConf);
 
-            final var res = this.resourceLoader.getResource(loginConf);
+            val res = this.resourceLoader.getResource(loginConf);
             if (res != null && res.exists()) {
-                final var urlPath = res.getURL().toExternalForm();
+                val urlPath = res.getURL().toExternalForm();
                 LOGGER.debug("Located login config [{}] and configured it under [{}]", urlPath, SYS_PROP_LOGIN_CONF);
                 System.setProperty(SYS_PROP_LOGIN_CONF, urlPath);
             } else {
-                final var url = getClass().getResource("/jcifs/http/login.conf");
+                val url = getClass().getResource("/jcifs/http/login.conf");
                 if (url != null) {
-                    final var fullUrl = url.toExternalForm();
+                    val fullUrl = url.toExternalForm();
                     LOGGER.debug("Falling back unto default login config [{}] under [{}]", fullUrl, SYS_PROP_LOGIN_CONF);
                     System.setProperty(SYS_PROP_LOGIN_CONF, fullUrl);
                 }

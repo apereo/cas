@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
@@ -52,11 +54,11 @@ public class SyncopeAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "syncopeAuthenticationHandler")
     @Bean
     public AuthenticationHandler syncopeAuthenticationHandler() {
-        final var syncope = casProperties.getAuthn().getSyncope();
+        val syncope = casProperties.getAuthn().getSyncope();
         if (StringUtils.isBlank(syncope.getUrl())) {
             throw new BeanCreationException("Syncope URL must be defined");
         }
-        final var h = new SyncopeAuthenticationHandler(syncope.getName(), servicesManager,
+        val h = new SyncopeAuthenticationHandler(syncope.getName(), servicesManager,
             syncopePrincipalFactory(), syncope.getUrl(), syncope.getDomain());
 
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(syncope.getPasswordEncoder()));

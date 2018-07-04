@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.jdbc;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
@@ -40,10 +42,10 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
         throws GeneralSecurityException, PreventedException {
         Connection connection = null;
         try {
-            final var username = credential.getUsername();
-            final var password = credential.getPassword();
+            val username = credential.getUsername();
+            val password = credential.getPassword();
             connection = getDataSource().getConnection(username, password);
-            final var principal = this.principalFactory.createPrincipal(username);
+            val principal = this.principalFactory.createPrincipal(username);
             return createHandlerResult(credential, principal, new ArrayList<>(0));
         } catch (final SQLException e) {
             throw new FailedLoginException(e.getMessage());

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.rest.resources;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -60,8 +62,8 @@ public class UserAuthenticationResource {
             if (credential == null || credential.isEmpty()) {
                 throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
             }
-            final var service = this.serviceFactory.createService(request);
-            final var authenticationResult =
+            val service = this.serviceFactory.createService(request);
+            val authenticationResult =
                 authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
             if (authenticationResult == null) {
                 throw new FailedLoginException("Authentication failed");

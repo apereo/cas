@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.RestAcceptableUsagePolicyRepository;
@@ -35,7 +37,7 @@ public class CasAcceptableUsagePolicyRestConfiguration {
     @RefreshScope
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
-        final var aup = casProperties.getAcceptableUsagePolicy();
+        val aup = casProperties.getAcceptableUsagePolicy();
         return new RestAcceptableUsagePolicyRepository(ticketRegistrySupport, aup.getAupAttributeName(), aup.getRest());
     }
 }

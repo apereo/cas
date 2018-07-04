@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -89,10 +91,10 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
         LOGGER.debug("Resolving principal for [{}]", certificate);
-        final var sb = new StringBuffer();
-        final var m = ATTR_PATTERN.matcher(this.descriptor);
+        val sb = new StringBuffer();
+        val m = ATTR_PATTERN.matcher(this.descriptor);
         final Map<String, AttributeContext> attrMap = new HashMap<>();
-        final var rdnSequence = new NameReader(certificate).readSubject();
+        val rdnSequence = new NameReader(certificate).readSubject();
         String name;
         String[] values;
         AttributeContext context;
@@ -126,8 +128,8 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
     private static String[] getAttributeValues(final RDNSequence rdnSequence, final AttributeType attribute) {
         // Iterates sequence in reverse order as specified in section 2.1 of RFC 2253
         final List<String> values = new ArrayList<>();
-        for (final var rdn : rdnSequence.backward()) {
-            for (final var attr : rdn.getAttributes()) {
+        for (val rdn : rdnSequence.backward()) {
+            for (val attr : rdn.getAttributes()) {
                 if (attr.getType().equals(attribute)) {
                     values.add(attr.getValue());
                 }

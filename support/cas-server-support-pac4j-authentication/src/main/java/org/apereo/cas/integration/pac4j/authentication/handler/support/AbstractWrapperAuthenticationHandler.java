@@ -1,5 +1,7 @@
 package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
+import lombok.val;
+
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -50,11 +52,11 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
-        final var credentials = convertToPac4jCredentials((I) credential);
+        val credentials = convertToPac4jCredentials((I) credential);
         LOGGER.debug("credentials: [{}]", credentials);
         try {
             @NonNull
-            final var authenticator = getAuthenticator(credential);
+            val authenticator = getAuthenticator(credential);
             if (authenticator instanceof InitializableObject) {
                 ((InitializableObject) authenticator).init();
             }

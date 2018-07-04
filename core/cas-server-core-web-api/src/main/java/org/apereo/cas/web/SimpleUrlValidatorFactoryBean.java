@@ -1,5 +1,7 @@
 package org.apereo.cas.web;
 
+import lombok.val;
+
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -39,8 +41,8 @@ public class SimpleUrlValidatorFactoryBean implements FactoryBean<org.apereo.cas
             return null;
         }
         
-        final var authorityValidator = new RegexValidator(authorityValidationRegEx, authorityValidationRegExCaseSensitive);
-        final var options = allowLocalUrls ? UrlValidator.ALLOW_LOCAL_URLS : 0;
+        val authorityValidator = new RegexValidator(authorityValidationRegEx, authorityValidationRegExCaseSensitive);
+        val options = allowLocalUrls ? UrlValidator.ALLOW_LOCAL_URLS : 0;
         return new UrlValidator(authorityValidator, options);
     }
 

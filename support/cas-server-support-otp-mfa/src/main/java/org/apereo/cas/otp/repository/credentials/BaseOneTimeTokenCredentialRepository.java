@@ -1,5 +1,7 @@
 package org.apereo.cas.otp.repository.credentials;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
@@ -37,8 +39,8 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
      * @return the one time token account
      */
     protected OneTimeTokenAccount decode(final OneTimeTokenAccount account) {
-        final var decodedSecret = tokenCredentialCipher.decode(account.getSecretKey());
-        final var newAccount = account.clone();
+        val decodedSecret = tokenCredentialCipher.decode(account.getSecretKey());
+        val newAccount = account.clone();
         newAccount.setSecretKey(decodedSecret);
         return account;
     }

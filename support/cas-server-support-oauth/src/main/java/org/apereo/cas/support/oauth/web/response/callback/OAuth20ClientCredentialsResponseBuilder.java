@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -27,7 +29,7 @@ public class OAuth20ClientCredentialsResponseBuilder extends OAuth20ResourceOwne
 
     @Override
     public boolean supports(final J2EContext context) {
-        final var grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.CLIENT_CREDENTIALS);
     }
 }

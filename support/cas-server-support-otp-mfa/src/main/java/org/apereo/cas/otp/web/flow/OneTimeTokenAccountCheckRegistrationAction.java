@@ -1,5 +1,7 @@
 package org.apereo.cas.otp.web.flow;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -26,12 +28,12 @@ public class OneTimeTokenAccountCheckRegistrationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final var uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
+        val uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
 
-        final var acct = repository.get(uid);
+        val acct = repository.get(uid);
         if (acct == null || StringUtils.isBlank(acct.getSecretKey())) {
-            final var keyAccount = this.repository.create(uid);
-            final var keyUri = "otpauth://totp/" + this.label + ':' + uid + "?secret=" + keyAccount.getSecretKey() + "&issuer=" + this.issuer;
+            val keyAccount = this.repository.create(uid);
+            val keyUri = "otpauth://totp/" + this.label + ':' + uid + "?secret=" + keyAccount.getSecretKey() + "&issuer=" + this.issuer;
             requestContext.getFlowScope().put("key", keyAccount);
             requestContext.getFlowScope().put("keyUri", keyUri);
             LOGGER.debug("Registration key URI is [{}]", keyUri);

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Test;
@@ -19,14 +21,14 @@ public class SpnegoCredentialsTests {
 
     @Test
     public void verifyToStringWithNoPrincipal() {
-        final var credentials = new SpnegoCredential(new byte[] {});
+        val credentials = new SpnegoCredential(new byte[] {});
         assertTrue(credentials.getId().contains("unknown"));
     }
 
     @Test
     public void verifyToStringWithPrincipal() {
-        final var credentials = new SpnegoCredential(new byte[] {});
-        final var principal = new DefaultPrincipalFactory().createPrincipal("test");
+        val credentials = new SpnegoCredential(new byte[] {});
+        val principal = new DefaultPrincipalFactory().createPrincipal("test");
         credentials.setPrincipal(principal);
         assertEquals("test", credentials.getId());
     }
@@ -36,7 +38,7 @@ public class SpnegoCredentialsTests {
      */
     @Test
     public void verifyCredentialsHashSafelyWithoutPrincipal() {
-        final var credential = new SpnegoCredential(new byte[] {});
+        val credential = new SpnegoCredential(new byte[] {});
         final Set<SpnegoCredential> set = new HashSet<>();
         try {
             set.add(credential);
@@ -50,11 +52,11 @@ public class SpnegoCredentialsTests {
      */
     @Test
     public void verifyPrincipalAffectsHash(){
-        final var credential = new SpnegoCredential(new byte[] {});
-        final var hash1 = credential.hashCode();
-        final var principal = new DefaultPrincipalFactory().createPrincipal("test");
+        val credential = new SpnegoCredential(new byte[] {});
+        val hash1 = credential.hashCode();
+        val principal = new DefaultPrincipalFactory().createPrincipal("test");
         credential.setPrincipal(principal);
-        final var hash2 = credential.hashCode();
+        val hash2 = credential.hashCode();
         assertNotEquals(hash1, hash2);
     }
 }

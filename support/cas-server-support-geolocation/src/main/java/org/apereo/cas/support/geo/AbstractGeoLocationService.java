@@ -1,5 +1,7 @@
 package org.apereo.cas.support.geo;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.userinfo.client.UserInfo;
 import lombok.Getter;

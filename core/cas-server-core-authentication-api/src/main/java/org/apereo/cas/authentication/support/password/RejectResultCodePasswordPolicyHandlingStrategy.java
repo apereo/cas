@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.support.password;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.CollectionUtils;
@@ -37,8 +39,8 @@ public class RejectResultCodePasswordPolicyHandlingStrategy<AuthnResponse> exten
             return false;
         }
 
-        final var currentCodes = getAuthenticationResponseResultCodes(response);
-        final var result = this.resultCodes.stream().filter(currentCodes::contains).findAny();
+        val currentCodes = getAuthenticationResponseResultCodes(response);
+        val result = this.resultCodes.stream().filter(currentCodes::contains).findAny();
 
         if (result.isPresent()) {
             LOGGER.debug("Unable to support authentication response [{}] with a blacklisted authentication result code [{}]", response, result.get());

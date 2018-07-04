@@ -1,5 +1,7 @@
 package org.apereo.cas.ws.idp.services;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredService;
@@ -22,22 +24,22 @@ public class WSFederationClaimsReleasePolicyTests {
     @Test
     public void verifyAttributeReleaseNone() {
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
-        final var policy = new WSFederationClaimsReleasePolicy(
+        val policy = new WSFederationClaimsReleasePolicy(
                 CollectionUtils.wrap("uid", "casuser", "cn", "CAS"));
-        final var principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("uid", "casuser", "cn", "CAS", "givenName", "CAS User"));
-        final var results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), service);
+        val results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), service);
         assertTrue(results.isEmpty());
     }
 
     @Test
     public void verifyAttributeRelease() {
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
-        final var policy = new WSFederationClaimsReleasePolicy(
+        val policy = new WSFederationClaimsReleasePolicy(
                 CollectionUtils.wrap(WSFederationClaims.COMMON_NAME.name(), "cn", WSFederationClaims.EMAIL_ADDRESS.name(), "email"));
-        final var principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("cn", "casuser", "email", "cas@example.org"));
-        final var results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), service);
+        val results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), service);
         assertSame(2, results.size());
         assertTrue(results.containsKey(WSFederationClaims.COMMON_NAME.getUri()));
         assertTrue(results.containsKey(WSFederationClaims.EMAIL_ADDRESS.getUri()));

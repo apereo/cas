@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.fortress;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.directory.fortress.core.AccessMgr;
 import org.apache.directory.fortress.core.GlobalErrIds;
@@ -59,18 +61,18 @@ public class FortressAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticateSuccessfully() throws Exception {
-        final var sessionId = UUID.randomUUID();
-        final var session = new Session(new User(CoreAuthenticationTestUtils.CONST_USERNAME), sessionId.toString());
+        val sessionId = UUID.randomUUID();
+        val session = new Session(new User(CoreAuthenticationTestUtils.CONST_USERNAME), sessionId.toString());
         session.setAuthenticated(true);
         Mockito.when(accessManager.createSession(ArgumentMatchers.any(User.class), ArgumentMatchers.anyBoolean())).thenReturn(session);
         try {
-            final var handlerResult = fortressAuthenticationHandler.authenticateUsernamePasswordInternal(
+            val handlerResult = fortressAuthenticationHandler.authenticateUsernamePasswordInternal(
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), null);
             Assert.assertEquals(CoreAuthenticationTestUtils.CONST_USERNAME,
                 handlerResult.getPrincipal().getId());
-            final var jaxbContext = JAXBContext.newInstance(Session.class);
-            final var marshaller = jaxbContext.createMarshaller();
-            final var writer = new StringWriter();
+            val jaxbContext = JAXBContext.newInstance(Session.class);
+            val marshaller = jaxbContext.createMarshaller();
+            val writer = new StringWriter();
             marshaller.marshal(session, writer);
             Assert.assertEquals(writer.toString(), handlerResult.getPrincipal()
                 .getAttributes().get(FortressAuthenticationHandler.FORTRESS_SESSION_KEY));

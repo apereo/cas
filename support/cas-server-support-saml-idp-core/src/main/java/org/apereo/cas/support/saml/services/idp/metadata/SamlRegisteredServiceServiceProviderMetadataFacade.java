@@ -1,6 +1,8 @@
 
 package org.apereo.cas.support.saml.services.idp.metadata;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -87,11 +89,11 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
 
         criterions.add(new EntityIdCriterion(entityID), true);
         LOGGER.debug("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
-        final var chainingMetadataResolver = resolver.resolve(registeredService);
+        val chainingMetadataResolver = resolver.resolve(registeredService);
         LOGGER.info("Resolved metadata chain for service [{}]. Filtering the chain by entity ID [{}]",
             registeredService.getServiceId(), entityID);
 
-        final var entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
+        val entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
         if (entityDescriptor == null) {
             LOGGER.warn("Cannot find entity [{}] in metadata provider Ensure the metadata is valid and has not expired.", entityID);
             return Optional.empty();
@@ -110,7 +112,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
     private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getServiceProviderSsoDescriptor(final String entityID,
                                                                                                                 final MetadataResolver chainingMetadataResolver,
                                                                                                                 final EntityDescriptor entityDescriptor) {
-        final var ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
+        val ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
         if (ssoDescriptor != null) {
             LOGGER.debug("Located SP SSODescriptor in metadata for [{}]. Metadata is valid until [{}]", entityID,
                 ObjectUtils.defaultIfNull(ssoDescriptor.getValidUntil(), "forever"));
@@ -191,7 +193,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
      */
     public List<String> getSupportedNameIdFormats() {
         final List<String> nameIdFormats = new ArrayList<>();
-        final var children = this.ssoDescriptor.getOrderedChildren();
+        val children = this.ssoDescriptor.getOrderedChildren();
         if (children != null) {
             nameIdFormats.addAll(children.stream().filter(NameIDFormat.class::isInstance)
                 .map(child -> ((NameIDFormat) child).getFormat()).collect(Collectors.toList()));

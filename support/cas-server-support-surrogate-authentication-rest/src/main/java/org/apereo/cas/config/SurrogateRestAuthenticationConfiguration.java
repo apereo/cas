@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateRestAuthenticationService;
@@ -34,7 +36,7 @@ public class SurrogateRestAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public SurrogateAuthenticationService surrogateAuthenticationService() {
-        final var su = casProperties.getAuthn().getSurrogate();
+        val su = casProperties.getAuthn().getSurrogate();
         LOGGER.debug("Using REST endpoint [{}] with method [{}] to locate surrogate accounts",
                 su.getRest().getUrl(), su.getRest().getMethod());
         return new SurrogateRestAuthenticationService(su.getRest(), servicesManager);

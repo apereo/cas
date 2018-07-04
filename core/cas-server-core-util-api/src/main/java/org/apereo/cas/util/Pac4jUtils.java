@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.val;
+
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
@@ -29,13 +31,13 @@ public class Pac4jUtils {
      * @return the authenticated username.
      */
     public static String getPac4jAuthenticatedUsername() {
-        final var request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-        final var response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
+        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+        val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
         if (request != null && response != null) {
-            final var manager = getPac4jProfileManager(request, response);
+            val manager = getPac4jProfileManager(request, response);
             final Optional<UserProfile> profile = manager.get(true);
             if (profile != null && profile.isPresent()) {
-                final var id = profile.get().getId();
+                val id = profile.get().getId();
                 if (id != null) {
                     return id;
                 }
@@ -53,7 +55,7 @@ public class Pac4jUtils {
      */
     public static ProfileManager getPac4jProfileManager(final HttpServletRequest request,
                                                         final HttpServletResponse response) {
-        final var context = getPac4jJ2EContext(request, response, new J2ESessionStore());
+        val context = getPac4jJ2EContext(request, response, new J2ESessionStore());
         return getPac4jProfileManager(context);
     }
 
@@ -68,7 +70,7 @@ public class Pac4jUtils {
     public static ProfileManager getPac4jProfileManager(final HttpServletRequest request,
                                                         final HttpServletResponse response,
                                                         final SessionStore sessionStore) {
-        final var context = getPac4jJ2EContext(request, response, sessionStore);
+        val context = getPac4jJ2EContext(request, response, sessionStore);
         return getPac4jProfileManager(context);
     }
 

@@ -1,5 +1,7 @@
 package org.apereo.cas.grouper.services;
 
+import lombok.val;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -39,13 +41,13 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         final Map<String, Object> allAttributes = new HashMap<>(principalAttributes);
         final List<String> grouperGroups = new ArrayList<>();
-        final var facade = new GrouperFacade();
-        final var results = facade.getGroupsForSubjectId(principal);
+        val facade = new GrouperFacade();
+        val results = facade.getGroupsForSubjectId(principal);
         if (results.isEmpty()) {
             LOGGER.warn("Subject id [{}] could not be located. Access denied", principal);
             return false;
         }
-        final var denied = results
+        val denied = results
             .stream()
             .anyMatch(groupsResult -> {
                 if (groupsResult.getWsGroups() == null || groupsResult.getWsGroups().length == 0) {

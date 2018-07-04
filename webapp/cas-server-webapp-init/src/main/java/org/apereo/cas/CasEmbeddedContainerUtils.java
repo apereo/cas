@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import lombok.val;
+
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.spring.boot.AbstractCasBanner;
@@ -46,14 +48,14 @@ public class CasEmbeddedContainerUtils {
      * @return the cas banner instance
      */
     public static Banner getCasBannerInstance() {
-        final var packageName = CasEmbeddedContainerUtils.class.getPackage().getName();
-        final var reflections =
+        val packageName = CasEmbeddedContainerUtils.class.getPackage().getName();
+        val reflections =
             new Reflections(new ConfigurationBuilder()
                 .filterInputsBy(new FilterBuilder().includePackage(packageName))
                 .setUrls(ClasspathHelper.forPackage(packageName))
                 .setScanners(new SubTypesScanner(true)));
 
-        final var subTypes = reflections.getSubTypesOf(AbstractCasBanner.class);
+        val subTypes = reflections.getSubTypesOf(AbstractCasBanner.class);
         subTypes.remove(DefaultCasBanner.class);
 
         if (subTypes.isEmpty()) {

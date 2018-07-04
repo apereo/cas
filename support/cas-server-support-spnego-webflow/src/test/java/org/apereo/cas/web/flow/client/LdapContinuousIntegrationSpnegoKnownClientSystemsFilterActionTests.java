@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.client;
 
+import lombok.val;
+
 import com.unboundid.ldap.sdk.LDAPConnection;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.category.LdapCategory;
@@ -26,7 +28,7 @@ public class LdapContinuousIntegrationSpnegoKnownClientSystemsFilterActionTests
 
     @BeforeClass
     public static void bootstrap() throws Exception {
-        final var c = new LDAPConnection("localhost", 10389,
+        val c = new LDAPConnection("localhost", 10389,
             "cn=Directory Manager", "password");
         LdapIntegrationTestsOperations.populateDefaultEntries(c, "ou=people,dc=example,dc=org");
     }

@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.claims;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Maps;
 import lombok.EqualsAndHashCode;
@@ -48,7 +50,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
 
     @Override
     public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes, final RegisteredService service) {
-        final var applicationContext = ApplicationContextProvider.getApplicationContext();
+        val applicationContext = ApplicationContextProvider.getApplicationContext();
         if (applicationContext == null) {
             LOGGER.warn("Could not locate the application context to process attributes");
             return new HashMap<>();
@@ -57,8 +59,8 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         resolvedAttributes.putAll(attributes);
         final Map<String, Object> attributesToRelease = Maps.newHashMapWithExpectedSize(attributes.size());
         LOGGER.debug("Attempting to map and filter claims based on resolved attributes [{}]", resolvedAttributes);
-        final var properties = applicationContext.getBean(CasConfigurationProperties.class);
-        final var supportedClaims = properties.getAuthn().getOidc().getClaims();
+        val properties = applicationContext.getBean(CasConfigurationProperties.class);
+        val supportedClaims = properties.getAuthn().getOidc().getClaims();
         final Set<String> allowedClaims = new LinkedHashSet<>(getAllowedAttributes());
         allowedClaims.retainAll(supportedClaims);
         LOGGER.debug("[{}] is designed to allow claims [{}] for scope [{}]. After cross-checking with "
@@ -72,17 +74,17 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
     }
 
     private Pair<String, Object> mapClaimToAttribute(final String claim, final Map<String, Object> resolvedAttributes) {
-        final var applicationContext = ApplicationContextProvider.getApplicationContext();
-        final var attributeToScopeClaimMapper =
+        val applicationContext = ApplicationContextProvider.getApplicationContext();
+        val attributeToScopeClaimMapper =
             applicationContext.getBean("oidcAttributeToScopeClaimMapper", OidcAttributeToScopeClaimMapper.class);
         LOGGER.debug("Attempting to process claim [{}]", claim);
         if (attributeToScopeClaimMapper.containsMappedAttribute(claim)) {
-            final var mappedAttr = attributeToScopeClaimMapper.getMappedAttribute(claim);
-            final var value = resolvedAttributes.get(mappedAttr);
+            val mappedAttr = attributeToScopeClaimMapper.getMappedAttribute(claim);
+            val value = resolvedAttributes.get(mappedAttr);
             LOGGER.debug("Found mapped attribute [{}] with value [{}] for claim [{}]", mappedAttr, value, claim);
             return Pair.of(claim, value);
         }
-        final var value = resolvedAttributes.get(claim);
+        val value = resolvedAttributes.get(claim);
         LOGGER.debug("No mapped attribute is defined for claim [{}]; Used [{}] to locate value [{}]", claim, claim, value);
         return Pair.of(claim, value);
     }

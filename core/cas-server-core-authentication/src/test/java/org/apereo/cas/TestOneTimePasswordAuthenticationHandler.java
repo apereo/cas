@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
@@ -37,8 +39,8 @@ public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthentica
     @Override
     public AuthenticationHandlerExecutionResult authenticate(final Credential credential)
             throws GeneralSecurityException {
-        final var otp = (OneTimePasswordCredential) credential;
-        final var valueOnRecord = credentialMap.get(otp.getId());
+        val otp = (OneTimePasswordCredential) credential;
+        val valueOnRecord = credentialMap.get(otp.getId());
         if (otp.getPassword().equals(valueOnRecord)) {
             return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(otp),
                     new DefaultPrincipalFactory().createPrincipal(otp.getId()));

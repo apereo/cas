@@ -1,5 +1,7 @@
 package org.apereo.cas.support.wsfederation.authentication.principal;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -63,12 +65,12 @@ public class WsFederationCredential implements Credential {
             LOGGER.warn("Issuer [{}] is invalid since the expected issuer should be [{}]", this.issuer, expectedIssuer);
             return false;
         }
-        final var retrievedOnTimeDrift = this.getRetrievedOn().minus(timeDrift, ChronoUnit.MILLIS);
+        val retrievedOnTimeDrift = this.getRetrievedOn().minus(timeDrift, ChronoUnit.MILLIS);
         if (this.issuedOn.isBefore(retrievedOnTimeDrift)) {
             LOGGER.warn("Ticket is issued before the allowed drift. Issued on [{}] while allowed drift is [{}]", this.issuedOn, retrievedOnTimeDrift);
             return false;
         }
-        final var retrievedOnTimeAfterDrift = this.retrievedOn.plus(timeDrift, ChronoUnit.MILLIS);
+        val retrievedOnTimeAfterDrift = this.retrievedOn.plus(timeDrift, ChronoUnit.MILLIS);
         if (this.issuedOn.isAfter(retrievedOnTimeAfterDrift)) {
             LOGGER.warn("Ticket is issued after the allowed drift. Issued on [{}] while allowed drift is [{}]", this.issuedOn, retrievedOnTimeAfterDrift);
             return false;

@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -124,9 +126,9 @@ public class JpaLockingStrategyTests {
     @Test
     public void verifyAcquireAndRelease() {
         try {
-            final var appId = "basic";
-            final var uniqueId = appId + "-1";
-            final var lock = newLockTxProxy(appId, uniqueId, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT);
+            val appId = "basic";
+            val uniqueId = appId + "-1";
+            val lock = newLockTxProxy(appId, uniqueId, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT);
             assertTrue(lock.acquire());
             assertEquals(uniqueId, getOwner(appId));
             lock.release();
@@ -140,9 +142,9 @@ public class JpaLockingStrategyTests {
     @Test
     public void verifyLockExpiration() {
         try {
-            final var appId = "expquick";
-            final var uniqueId = appId + "-1";
-            final var lock = newLockTxProxy(appId, uniqueId, "1");
+            val appId = "expquick";
+            val uniqueId = appId + "-1";
+            val lock = newLockTxProxy(appId, uniqueId, "1");
             assertTrue(lock.acquire());
             assertEquals(uniqueId, getOwner(appId));
             lock.release();
@@ -161,9 +163,9 @@ public class JpaLockingStrategyTests {
     @Test
     public void verifyNonReentrantBehavior() {
         try {
-            final var appId = "reentrant";
-            final var uniqueId = appId + "-1";
-            final var lock = newLockTxProxy(appId, uniqueId, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT);
+            val appId = "reentrant";
+            val uniqueId = appId + "-1";
+            val lock = newLockTxProxy(appId, uniqueId, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT);
             assertTrue(lock.acquire());
             assertEquals(uniqueId, getOwner(appId));
             assertFalse(lock.acquire());
@@ -179,7 +181,7 @@ public class JpaLockingStrategyTests {
      */
     @Test
     public void verifyConcurrentAcquireAndRelease() {
-        final var executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
+        val executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
             testConcurrency(executor, Arrays.asList(getConcurrentLocks("concurrent-new")));
         } catch (final Exception e) {
@@ -194,10 +196,10 @@ public class JpaLockingStrategyTests {
      */
     @Test
     public void verifyConcurrentAcquireAndReleaseOnExistingLock() {
-        final var locks = getConcurrentLocks("concurrent-exists");
+        val locks = getConcurrentLocks("concurrent-exists");
         locks[0].acquire();
         locks[0].release();
-        final var executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
+        val executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
             testConcurrency(executor, Arrays.asList(locks));
         } catch (final Exception e) {
@@ -208,14 +210,14 @@ public class JpaLockingStrategyTests {
     }
 
     private LockingStrategy[] getConcurrentLocks(final String appId) {
-        final var locks = new LockingStrategy[CONCURRENT_SIZE];
+        val locks = new LockingStrategy[CONCURRENT_SIZE];
         IntStream.rangeClosed(1, locks.length)
             .forEach(i -> locks[i - 1] = newLockTxProxy(appId, appId + '-' + i, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT));
         return locks;
     }
 
     private LockingStrategy newLockTxProxy(final String appId, final String uniqueId, final String ttl) {
-        final var lock = new JpaLockingStrategy(appId, uniqueId, Beans.newDuration(ttl).getSeconds());
+        val lock = new JpaLockingStrategy(appId, uniqueId, Beans.newDuration(ttl).getSeconds());
         lock.entityManager = SharedEntityManagerCreator.createSharedEntityManager(factory);
         return (LockingStrategy) Proxy.newProxyInstance(
             JpaLockingStrategy.class.getClassLoader(),
@@ -224,8 +226,8 @@ public class JpaLockingStrategyTests {
     }
 
     private String getOwner(final String appId) {
-        final var simpleJdbcTemplate = new JdbcTemplate(dataSource);
-        final var results = simpleJdbcTemplate.queryForList(
+        val simpleJdbcTemplate = new JdbcTemplate(dataSource);
+        val results = simpleJdbcTemplate.queryForList(
             "SELECT unique_id FROM locks WHERE application_id=?", appId);
         if (results.isEmpty()) {
             return null;
@@ -238,7 +240,7 @@ public class JpaLockingStrategyTests {
         final List<Locker> lockers = new ArrayList<>(locks.size());
         lockers.addAll(locks.stream().map(Locker::new).collect(Collectors.toList()));
 
-        final var lockCount = executor.invokeAll(lockers).stream().filter(result -> {
+        val lockCount = executor.invokeAll(lockers).stream().filter(result -> {
             try {
                 return result.get();
             } catch (final InterruptedException | ExecutionException e) {
@@ -250,7 +252,7 @@ public class JpaLockingStrategyTests {
         final List<Releaser> releasers = new ArrayList<>(locks.size());
 
         releasers.addAll(locks.stream().map(Releaser::new).collect(Collectors.toList()));
-        final var releaseCount = executor.invokeAll(lockers).stream().filter(result -> {
+        val releaseCount = executor.invokeAll(lockers).stream().filter(result -> {
             try {
                 return result.get();
             } catch (final InterruptedException | ExecutionException e) {
@@ -280,7 +282,7 @@ public class JpaLockingStrategyTests {
         public Object invoke(final Object proxy, final Method method, final Object[] args) {
             return new TransactionTemplate(txManager).execute(status -> {
                 try {
-                    final var result = method.invoke(jpaLock, args);
+                    val result = method.invoke(jpaLock, args);
                     jpaLock.entityManager.flush();
                     LOGGER.debug("Performed [{}] on [{}]", method.getName(), jpaLock);
                     return result;

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.validator.token;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
@@ -42,34 +44,34 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
     @Override
     protected boolean validateInternal(final J2EContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) {
-        final var request = context.getRequest();
-        final var clientId = uProfile.getId();
-        final var redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
-        final var clientRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+        val request = context.getRequest();
+        val clientId = uProfile.getId();
+        val redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
+        val clientRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
 
         LOGGER.debug("Received grant type [{}] with client id [{}] and redirect URI [{}]", grantType, clientId, redirectUri);
-        final var valid = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REDIRECT_URI)
+        val valid = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REDIRECT_URI)
             && HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CODE)
             && OAuth20Utils.checkCallbackValid(clientRegisteredService, redirectUri);
 
         if (valid) {
-            final var code = context.getRequestParameter(OAuth20Constants.CODE);
+            val code = context.getRequestParameter(OAuth20Constants.CODE);
             final OAuthToken token = ticketRegistry.getTicket(code, OAuthCode.class);
             if (token == null || token.isExpired()) {
                 LOGGER.warn("Request OAuth code [{}] is not found or has expired", code);
                 return false;
             }
             
-            final var id = token.getService().getId();
-            final var codeRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
+            val id = token.getService().getId();
+            val codeRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
 
-            final var audit = AuditableContext.builder()
+            val audit = AuditableContext.builder()
                 .service(token.getService())
                 .authentication(token.getAuthentication())
                 .registeredService(codeRegisteredService)
                 .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                 .build();
-            final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
 
             if (!clientRegisteredService.equals(codeRegisteredService)) {

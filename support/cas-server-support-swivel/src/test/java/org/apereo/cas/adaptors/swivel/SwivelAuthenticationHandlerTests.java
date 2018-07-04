@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.swivel;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -100,7 +102,7 @@ public class SwivelAuthenticationHandlerTests {
 
     @Before
     public void initialize() {
-        final var data = "<?xml version=\"1.0\" ?>"
+        val data = "<?xml version=\"1.0\" ?>"
             + "<SASResponse secret=\"MyAdminAgent\" version=\"3.4\">"
             + "<Version>3.6</Version>\n"
             + "<Result>PASS</Result>\n"
@@ -125,8 +127,8 @@ public class SwivelAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthn() throws Exception {
-        final var c = new SwivelTokenCredential("123456");
-        final var context = new MockRequestContext();
+        val c = new SwivelTokenCredential("123456");
+        val context = new MockRequestContext();
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         RequestContextHolder.setRequestContext(context);

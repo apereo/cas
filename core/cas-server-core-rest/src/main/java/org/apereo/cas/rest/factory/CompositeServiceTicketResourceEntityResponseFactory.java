@@ -1,5 +1,7 @@
 package org.apereo.cas.rest.factory;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -26,7 +28,7 @@ public class CompositeServiceTicketResourceEntityResponseFactory implements Serv
         resourceResolverName = "REST_API_SERVICE_TICKET_RESOURCE_RESOLVER")
     @Override
     public ResponseEntity<String> build(final String ticketGrantingTicket, final Service service, final AuthenticationResult authenticationResult) {
-        final var factory = chain.stream()
+        val factory = chain.stream()
             .filter(f -> f.supports(service, authenticationResult))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Unable to locate a response entity factory to build a service ticket. "

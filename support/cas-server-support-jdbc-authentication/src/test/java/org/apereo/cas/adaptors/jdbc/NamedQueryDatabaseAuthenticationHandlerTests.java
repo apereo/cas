@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.jdbc;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
@@ -53,8 +55,8 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
 
     @Before
     public void initialize() throws Exception {
-        final var c = this.dataSource.getConnection();
-        final var s = c.createStatement();
+        val c = this.dataSource.getConnection();
+        val s = c.createStatement();
         c.setAutoCommit(true);
         s.execute(getSqlInsertStatementToCreateUserAccount(0, Boolean.FALSE.toString(), Boolean.FALSE.toString()));
         c.close();
@@ -62,8 +64,8 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
 
     @After
     public void afterEachTest() throws Exception {
-        final var c = this.dataSource.getConnection();
-        final var s = c.createStatement();
+        val c = this.dataSource.getConnection();
+        val s = c.createStatement();
         c.setAutoCommit(true);
         s.execute("delete from casusers;");
         c.close();
@@ -98,14 +100,14 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifySuccess() throws Exception {
-        final var sql = "SELECT * FROM casusers where username=:username";
-        final var map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Arrays.asList("phone:phoneNumber"));
-        final var q = new QueryDatabaseAuthenticationHandler("namedHandler",
+        val sql = "SELECT * FROM casusers where username=:username";
+        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Arrays.asList("phone:phoneNumber"));
+        val q = new QueryDatabaseAuthenticationHandler("namedHandler",
             null, PrincipalFactoryUtils.newPrincipalFactory(), 0,
             this.dataSource, sql, "password",
             null, null,
             CollectionUtils.wrap(map));
-        final var result = q.authenticate(
+        val result = q.authenticate(
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
         assertNotNull(result);
         assertNotNull(result.getPrincipal());
@@ -114,14 +116,14 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifySuccessWithCount() throws Exception {
-        final var sql = "SELECT count(*) as total FROM casusers where username=:username AND password=:password";
-        final var map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Arrays.asList("phone:phoneNumber"));
-        final var q = new QueryDatabaseAuthenticationHandler("namedHandler",
+        val sql = "SELECT count(*) as total FROM casusers where username=:username AND password=:password";
+        val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Arrays.asList("phone:phoneNumber"));
+        val q = new QueryDatabaseAuthenticationHandler("namedHandler",
             null, PrincipalFactoryUtils.newPrincipalFactory(), 0,
             this.dataSource, sql, null,
             null, null,
             CollectionUtils.wrap(map));
-        final var result = q.authenticate(
+        val result = q.authenticate(
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
         assertNotNull(result);
         assertNotNull(result.getPrincipal());
@@ -130,8 +132,8 @@ public class NamedQueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsWithMissingTotalField() throws Exception {
-        final var sql = "SELECT count(*) FROM casusers where username=:username AND password=:password";
-        final var q = new QueryDatabaseAuthenticationHandler("namedHandler",
+        val sql = "SELECT count(*) FROM casusers where username=:username AND password=:password";
+        val q = new QueryDatabaseAuthenticationHandler("namedHandler",
             null, PrincipalFactoryUtils.newPrincipalFactory(), 0,
             this.dataSource, sql, null,
             null, null,

@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
@@ -35,8 +37,8 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     @Override
     public boolean registerAccountFor(final String uid, final String token) {
         if (getAccountValidator().isValid(uid, token)) {
-            final var yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
-            final var account = new YubiKeyAccount();
+            val yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
+            val account = new YubiKeyAccount();
             account.setPublicId(getCipherExecutor().encode(yubikeyPublicId));
             account.setUsername(uid);
             this.mongoTemplate.save(account, this.collectionName);
@@ -58,9 +60,9 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public Optional<YubiKeyAccount> getAccount(final String uid) {
-        final var query = new Query();
+        val query = new Query();
         query.addCriteria(Criteria.where("username").is(uid));
-        final var account = this.mongoTemplate.findOne(query, YubiKeyAccount.class, this.collectionName);
+        val account = this.mongoTemplate.findOne(query, YubiKeyAccount.class, this.collectionName);
         if (account != null) {
             return Optional.of(new YubiKeyAccount(account.getId(), getCipherExecutor().decode(account.getPublicId()), account.getUsername()));
         }

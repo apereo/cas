@@ -1,8 +1,9 @@
 package org.apereo.cas.support.saml;
 
 import com.google.common.base.Splitter;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.client.utils.URIBuilder;
@@ -22,7 +23,7 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = -2059445756475980894L;
 
@@ -30,12 +31,11 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
     private final transient ServiceFactory webApplicationServiceFactory;
     private final String idpServerPrefix;
 
-
     @Override
     public Service resolveServiceFrom(final Service service) {
-        final var result = getEntityIdAsParameter(service);
+        val result = getEntityIdAsParameter(service);
         if (result.isPresent()) {
-            final var entityId = result.get();
+            val entityId = result.get();
             LOGGER.debug("Located entity id [{}] from service authentication request at [{}]", entityId, service.getId());
             return this.webApplicationServiceFactory.createService(entityId);
         }
@@ -45,9 +45,9 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
 
     @Override
     public boolean supports(final Service service) {
-        final var casPattern = "^".concat(idpServerPrefix).concat(".*");
+        val casPattern = "^".concat(idpServerPrefix).concat(".*");
         return service != null && service.getId().matches(casPattern)
-                && getEntityIdAsParameter(service).isPresent();
+            && getEntityIdAsParameter(service).isPresent();
     }
 
     /**
@@ -58,26 +58,26 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
      */
     protected static Optional<String> getEntityIdAsParameter(final Service service) {
         try {
-            final var builder = new URIBuilder(service.getId());
-            final var param = builder.getQueryParams()
-                    .stream()
-                    .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
-                    .findFirst();
+            val builder = new URIBuilder(service.getId());
+            val param = builder.getQueryParams()
+                .stream()
+                .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
+                .findFirst();
 
             if (param.isPresent()) {
                 return Optional.of(param.get().getValue());
             }
-            final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
             if (request != null && StringUtils.isNotBlank(request.getQueryString())) {
-                final var query = request.getQueryString().split("&");
+                val query = request.getQueryString().split("&");
                 final var paramRequest = Arrays.stream(query)
-                        .map(p -> {
-                            final var params = Splitter.on("=").splitToList(p);
-                            return Pair.of(params.get(0), params.get(1));
-                        })
-                        .filter(p -> p.getKey().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
-                        .map(Pair::getValue)
-                        .findFirst();
+                    .map(p -> {
+                        val params = Splitter.on("=").splitToList(p);
+                        return Pair.of(params.get(0), params.get(1));
+                    })
+                    .filter(p -> p.getKey().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
+                    .map(Pair::getValue)
+                    .findFirst();
                 return paramRequest;
             }
         } catch (final Exception e) {

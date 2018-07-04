@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -58,12 +60,12 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
          * Then process the array to populate the map for allowed attributes
          */
         this.allowedAttributes.entrySet().forEach(entry -> {
-            final var attributeName = entry.getKey();
+            val attributeName = entry.getKey();
             final Collection mappedAttributes = CollectionUtils.wrap(entry.getValue());
             LOGGER.debug("Attempting to map allowed attribute name [{}]", attributeName);
-            final var attributeValue = resolvedAttributes.get(attributeName);
+            val attributeValue = resolvedAttributes.get(attributeName);
             mappedAttributes.forEach(mapped -> {
-                final var mappedAttributeName = mapped.toString();
+                val mappedAttributeName = mapped.toString();
                 LOGGER.debug("Mapping attribute [{}] to [{}] with value [{}]", attributeName, mappedAttributeName, attributeValue);
                 mapSingleAttributeDefinition(attributeName, mappedAttributeName, attributeValue, resolvedAttributes, attributesToRelease);
             });
@@ -74,8 +76,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     private static void mapSingleAttributeDefinition(final String attributeName, final String mappedAttributeName,
                                                      final Object attributeValue, final Map<String, Object> resolvedAttributes,
                                                      final Map<String, Object> attributesToRelease) {
-        final var matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(mappedAttributeName);
-        final var matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(mappedAttributeName);
+        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(mappedAttributeName);
+        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(mappedAttributeName);
         if (matcherInline.find()) {
             LOGGER.debug("Mapped attribute [{}] is an inlined groovy script", mappedAttributeName);
             processInlineGroovyAttribute(resolvedAttributes, attributesToRelease, matcherInline, attributeName);
@@ -101,9 +103,9 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                                                          final Matcher matcherFile, final String key) {
         try {
             LOGGER.debug("Found groovy script to execute for attribute mapping [{}]", key);
-            final var file = new File(matcherFile.group(2));
-            final var script = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-            final var result = getGroovyAttributeValue(script, resolvedAttributes);
+            val file = new File(matcherFile.group(2));
+            val script = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+            val result = getGroovyAttributeValue(script, resolvedAttributes);
             if (result != null) {
                 LOGGER.debug("Mapped attribute [{}] to [{}] from script", key, result);
                 attributesToRelease.put(key, result);
@@ -119,7 +121,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                                                      final Map<String, Object> attributesToRelease,
                                                      final Matcher matcherInline, final String attributeName) {
         LOGGER.debug("Found inline groovy script to execute for attribute mapping [{}]", attributeName);
-        final var result = getGroovyAttributeValue(matcherInline.group(1), resolvedAttributes);
+        val result = getGroovyAttributeValue(matcherInline.group(1), resolvedAttributes);
         if (result != null) {
             LOGGER.debug("Mapped attribute [{}] to [{}] from script", attributeName, result);
             attributesToRelease.put(attributeName, result);
@@ -129,7 +131,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     }
 
     private static Object getGroovyAttributeValue(final String groovyScript, final Map<String, Object> resolvedAttributes) {
-        final var args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
+        val args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
         return ScriptingUtils.executeGroovyShellScript(groovyScript, args, Object.class);
     }
 

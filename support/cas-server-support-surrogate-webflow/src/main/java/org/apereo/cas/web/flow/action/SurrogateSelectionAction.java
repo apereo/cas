@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.action;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -28,14 +30,14 @@ public class SurrogateSelectionAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final var credential = WebUtils.getCredential(requestContext);
+        val credential = WebUtils.getCredential(requestContext);
         if (credential instanceof UsernamePasswordCredential) {
-            final var target = requestContext.getExternalContext().getRequestParameterMap().get("surrogateTarget");
+            val target = requestContext.getExternalContext().getRequestParameterMap().get("surrogateTarget");
 
             LOGGER.debug("Located surrogate target as [{}]", target);
             if (StringUtils.isNotBlank(target)) {
-                final var authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
-                final var result =
+                val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
+                val result =
                     surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(authenticationResultBuilder, credential, target);
                 if (result.isPresent()) {
                     WebUtils.putAuthenticationResultBuilder(result.get(), requestContext);

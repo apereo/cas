@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.surrogate;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -40,10 +42,10 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
     @Override
     public boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Service service) {
         try {
-            final var response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
+            val response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
                 properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
                 CollectionUtils.wrap("surrogate", surrogate, "principal", principal.getId()), new HashMap<>());
-            final var statusCode = response.getStatusLine().getStatusCode();
+            val statusCode = response.getStatusLine().getStatusCode();
             return HttpStatus.valueOf(statusCode).is2xxSuccessful();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -54,7 +56,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
     @Override
     public List<String> getEligibleAccountsForSurrogateToProxy(final String username) {
         try {
-            final var response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
+            val response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
                 properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
                 CollectionUtils.wrap("principal", username), new HashMap<>());
             return MAPPER.readValue(response.getEntity().getContent(), List.class);

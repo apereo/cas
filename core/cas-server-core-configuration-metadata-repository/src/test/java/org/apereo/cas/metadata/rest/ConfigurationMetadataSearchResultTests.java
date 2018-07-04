@@ -1,5 +1,7 @@
 package org.apereo.cas.metadata.rest;
 
+import lombok.val;
+
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.junit.Test;
 
@@ -14,11 +16,11 @@ import static org.junit.Assert.*;
 public class ConfigurationMetadataSearchResultTests {
     @Test
     public void verifyAction() {
-        final var repository = new CasConfigurationMetadataRepository();
-        final var properties = repository.getRepository().getAllProperties();
-        final var prop = properties.get("server.port");
+        val repository = new CasConfigurationMetadataRepository();
+        val properties = repository.getRepository().getAllProperties();
+        val prop = properties.get("server.port");
         assertNotNull(prop);
-        final var r = new ConfigurationMetadataSearchResult(prop, repository);
+        val r = new ConfigurationMetadataSearchResult(prop, repository);
         assertEquals(prop.getDefaultValue(), r.getDefaultValue());
         assertEquals(prop.getId(), r.getId());
         assertEquals(prop.getName(), r.getName());

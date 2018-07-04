@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.sms.TextMagicSmsSender;
@@ -31,7 +33,7 @@ public class TextMagicSmsConfiguration {
 
     @Bean
     public SmsSender smsSender() {
-        final var textMagic = casProperties.getSmsProvider().getTextMagic();
+        val textMagic = casProperties.getSmsProvider().getTextMagic();
         return new TextMagicSmsSender(textMagic.getUsername(), textMagic.getToken(),
             textMagic.getUrl(), httpClient);
     }

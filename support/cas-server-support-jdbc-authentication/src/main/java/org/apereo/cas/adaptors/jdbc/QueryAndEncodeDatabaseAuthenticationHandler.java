@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.jdbc;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -128,22 +130,22 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
             throw new GeneralSecurityException("Authentication handler is not configured correctly");
         }
 
-        final var username = transformedCredential.getUsername();
+        val username = transformedCredential.getUsername();
         try {
-            final var values = getJdbcTemplate().queryForMap(this.sql, username);
-            final var digestedPassword = digestEncodedPassword(transformedCredential.getPassword(), values);
+            val values = getJdbcTemplate().queryForMap(this.sql, username);
+            val digestedPassword = digestEncodedPassword(transformedCredential.getPassword(), values);
 
             if (!values.get(this.passwordFieldName).equals(digestedPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
             if (StringUtils.isNotBlank(this.expiredFieldName) && values.containsKey(this.expiredFieldName)) {
-                final var dbExpired = values.get(this.expiredFieldName).toString();
+                val dbExpired = values.get(this.expiredFieldName).toString();
                 if (BooleanUtils.toBoolean(dbExpired) || "1".equals(dbExpired)) {
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }
             }
             if (StringUtils.isNotBlank(this.disabledFieldName) && values.containsKey(this.disabledFieldName)) {
-                final var dbDisabled = values.get(this.disabledFieldName).toString();
+                val dbDisabled = values.get(this.disabledFieldName).toString();
                 if (BooleanUtils.toBoolean(dbDisabled) || "1".equals(dbDisabled)) {
                     throw new AccountDisabledException("Account has been disabled");
                 }
@@ -176,7 +178,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
 
         Long numOfIterations = this.numberOfIterations;
         if (values.containsKey(this.numberOfIterationsFieldName)) {
-            final var longAsStr = values.get(this.numberOfIterationsFieldName).toString();
+            val longAsStr = values.get(this.numberOfIterationsFieldName).toString();
             numOfIterations = Long.valueOf(longAsStr);
         }
 
@@ -185,8 +187,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
             throw new IllegalArgumentException("Specified field name for salt does not exist in the results");
         }
 
-        final var dynaSalt = values.get(this.saltFieldName).toString();
-        final var request = new HashRequest.Builder()
+        val dynaSalt = values.get(this.saltFieldName).toString();
+        val request = new HashRequest.Builder()
             .setSalt(dynaSalt)
             .setSource(encodedPassword)
             .build();

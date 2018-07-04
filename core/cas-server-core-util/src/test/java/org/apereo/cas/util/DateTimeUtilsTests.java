@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
@@ -52,7 +54,7 @@ public class DateTimeUtilsTests {
 
     @Test
     public void verifyParsingCalendar() {
-        final var calendar = Calendar.getInstance();
+        val calendar = Calendar.getInstance();
         assertNotNull(DateTimeUtils.zonedDateTimeOf(calendar));
     }
 

@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasEmbeddedValueResolver;
 import org.apereo.cas.util.SchedulingUtils;
@@ -92,13 +94,13 @@ public class CasCoreUtilConfiguration implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        final var ctx = applicationContextProvider().getConfigurableApplicationContext();
-        final var conversionService = new DefaultFormattingConversionService(true);
+        val ctx = applicationContextProvider().getConfigurableApplicationContext();
+        val conversionService = new DefaultFormattingConversionService(true);
         conversionService.setEmbeddedValueResolver(new CasEmbeddedValueResolver(ctx));
         ctx.getEnvironment().setConversionService(conversionService);
-        final var env = (ConfigurableEnvironment) ctx.getParent().getEnvironment();
+        val env = (ConfigurableEnvironment) ctx.getParent().getEnvironment();
         env.setConversionService(conversionService);
-        final var registry = (ConverterRegistry) DefaultConversionService.getSharedInstance();
+        val registry = (ConverterRegistry) DefaultConversionService.getSharedInstance();
         registry.addConverter(zonedDateTimeToStringConverter());
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.aup;
 
+import lombok.val;
+
 import com.unboundid.ldap.sdk.LDAPConnection;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -107,8 +109,8 @@ public class LdapAcceptableUsagePolicyRepositoryTests {
 
     @Test
     public void verifyAction() {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casaup");
@@ -124,7 +126,7 @@ public class LdapAcceptableUsagePolicyRepositoryTests {
     @SneakyThrows
     public static void bootstrap() {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
-        final var localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
+        val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
         LdapIntegrationTestsOperations.populateEntries(localhost,
             new ClassPathResource("ldif/ldap-aup.ldif").getInputStream(), "ou=people,dc=example,dc=org");
     }

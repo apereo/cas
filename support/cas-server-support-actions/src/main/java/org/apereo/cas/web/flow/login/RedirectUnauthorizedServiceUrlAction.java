@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.login;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.ServicesManager;
@@ -24,7 +26,7 @@ public class RedirectUnauthorizedServiceUrlAction extends AbstractAction {
 
     @Override
     public Event doExecute(final RequestContext context) {
-        final var redirectUrl = determineUnauthorizedServiceRedirectUrl(context);
+        val redirectUrl = determineUnauthorizedServiceRedirectUrl(context);
         WebUtils.putUnauthorizedRedirectUrl(context, redirectUrl);
         return null;
     }
@@ -36,8 +38,8 @@ public class RedirectUnauthorizedServiceUrlAction extends AbstractAction {
      * @return the uri
      */
     protected URI determineUnauthorizedServiceRedirectUrl(final RequestContext context) {
-        final var redirectUrl = WebUtils.getUnauthorizedRedirectUrlIntoFlowScope(context);
-        final var currentEvent = context.getCurrentEvent();
+        val redirectUrl = WebUtils.getUnauthorizedRedirectUrlIntoFlowScope(context);
+        val currentEvent = context.getCurrentEvent();
         final AttributeMap eventAttributes = currentEvent.getAttributes();
         LOGGER.debug("Finalizing the unauthorized redirect URL [{}] when processing event [{}] with attributes [{}]",
             redirectUrl, currentEvent.getId(), eventAttributes);

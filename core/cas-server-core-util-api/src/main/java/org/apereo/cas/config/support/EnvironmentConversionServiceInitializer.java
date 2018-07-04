@@ -1,5 +1,7 @@
 package org.apereo.cas.config.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasEmbeddedValueResolver;
 import org.springframework.context.ApplicationContextInitializer;
@@ -16,7 +18,7 @@ import org.springframework.format.support.DefaultFormattingConversionService;
 public class EnvironmentConversionServiceInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
     @Override
     public void initialize(final ConfigurableApplicationContext ctx) {
-        final var conversionService = new DefaultFormattingConversionService(true);
+        val conversionService = new DefaultFormattingConversionService(true);
         conversionService.setEmbeddedValueResolver(new CasEmbeddedValueResolver(ctx));
         ctx.getEnvironment().setConversionService(conversionService);
 

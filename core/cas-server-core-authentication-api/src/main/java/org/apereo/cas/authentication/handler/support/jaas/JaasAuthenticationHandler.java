@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.handler.support.jaas;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -120,8 +122,8 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             System.setProperty(SYS_PROP_KRB5_REALM, this.kerberosRealmSystemProperty);
         }
 
-        final var principal = authenticateAndGetPrincipal(credential);
-        final var strategy = getPasswordPolicyHandlingStrategy();
+        val principal = authenticateAndGetPrincipal(credential);
+        val strategy = getPasswordPolicyHandlingStrategy();
         if (principal != null && strategy != null) {
             LOGGER.debug("Attempting to examine and handle password policy via [{}]", strategy.getClass().getSimpleName());
             final List<MessageDescriptor> messageList = strategy.handle(principal, getPasswordPolicyConfiguration());
@@ -143,10 +145,10 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         try {
             lc = getLoginContext(credential);
             lc.login();
-            final var principals = lc.getSubject().getPrincipals();
+            val principals = lc.getSubject().getPrincipals();
             LOGGER.debug("JAAS principals extracted from subject are [{}}", principals);
             if (principals != null && !principals.isEmpty()) {
-                final var secPrincipal = principals.iterator().next();
+                val secPrincipal = principals.iterator().next();
                 LOGGER.debug("JAAS principal detected from subject login context is [{}}", secPrincipal.getName());
                 principal = this.principalFactory.createPrincipal(secPrincipal.getName());
             }
@@ -166,11 +168,11 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws GeneralSecurityException the general security exception
      */
     protected LoginContext getLoginContext(final UsernamePasswordCredential credential) throws GeneralSecurityException {
-        final var callbackHandler = new UsernamePasswordCallbackHandler(credential.getUsername(), credential.getPassword());
+        val callbackHandler = new UsernamePasswordCallbackHandler(credential.getUsername(), credential.getPassword());
         if (this.loginConfigurationFile != null && StringUtils.isNotBlank(this.loginConfigType)
             && this.loginConfigurationFile.exists() && this.loginConfigurationFile.canRead()) {
             final Configuration.Parameters parameters = new URIParameter(loginConfigurationFile.toURI());
-            final var loginConfig = Configuration.getInstance(this.loginConfigType, parameters);
+            val loginConfig = Configuration.getInstance(this.loginConfigType, parameters);
             return new LoginContext(this.realm, null, callbackHandler, loginConfig);
         }
         return new LoginContext(this.realm, callbackHandler);

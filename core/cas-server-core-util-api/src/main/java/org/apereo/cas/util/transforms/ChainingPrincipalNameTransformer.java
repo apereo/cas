@@ -1,5 +1,7 @@
 package org.apereo.cas.util.transforms;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
@@ -25,7 +27,7 @@ public class ChainingPrincipalNameTransformer implements PrincipalNameTransforme
     @Override
     public String transform(final String formUserId) {
         var idToTransform = formUserId;
-        for (final var t : this.transformers) {
+        for (val t : this.transformers) {
             idToTransform = t.transform(idToTransform);
         }
         return idToTransform;

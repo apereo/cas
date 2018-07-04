@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import lombok.val;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -85,10 +87,10 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     @Override
     public Response build(final WebApplicationService webApplicationService, final String serviceTicket,
                           final Authentication authentication) {
-        final var service = (GoogleAccountsService) webApplicationService;
+        val service = (GoogleAccountsService) webApplicationService;
         final Map<String, String> parameters = new HashMap<>();
-        final var samlResponse = constructSamlResponse(service, authentication);
-        final var signedResponse = this.samlObjectBuilder.signSamlResponse(samlResponse, this.privateKey, this.publicKey);
+        val samlResponse = constructSamlResponse(service, authentication);
+        val signedResponse = this.samlObjectBuilder.signSamlResponse(samlResponse, this.privateKey, this.publicKey);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, signedResponse);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, service.getRelayState());
         return buildPost(service, parameters);
@@ -104,37 +106,37 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
      */
     protected String constructSamlResponse(final GoogleAccountsService service,
                                            final Authentication authentication) {
-        final var currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
-        final var notBeforeIssueInstant = ZonedDateTime.parse("2003-04-17T00:46:02Z");
-        final var registeredService = servicesManager.findServiceBy(service);
+        val currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
+        val notBeforeIssueInstant = ZonedDateTime.parse("2003-04-17T00:46:02Z");
+        val registeredService = servicesManager.findServiceBy(service);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
 
-        final var principal = authentication.getPrincipal();
-        final var userId = registeredService.getUsernameAttributeProvider()
+        val principal = authentication.getPrincipal();
+        val userId = registeredService.getUsernameAttributeProvider()
             .resolveUsername(principal, service, registeredService);
 
-        final var response = this.samlObjectBuilder.newResponse(
+        val response = this.samlObjectBuilder.newResponse(
             this.samlObjectBuilder.generateSecureRandomId(), currentDateTime, null, service);
         response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
 
-        final var sessionIndex = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
-        final var authnStatement = this.samlObjectBuilder.newAuthnStatement(AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime, sessionIndex);
-        final var assertion = this.samlObjectBuilder.newAssertion(authnStatement, casServerPrefix,
+        val sessionIndex = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
+        val authnStatement = this.samlObjectBuilder.newAuthnStatement(AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime, sessionIndex);
+        val assertion = this.samlObjectBuilder.newAssertion(authnStatement, casServerPrefix,
             notBeforeIssueInstant, this.samlObjectBuilder.generateSecureRandomId());
 
-        final var conditions = this.samlObjectBuilder.newConditions(notBeforeIssueInstant,
+        val conditions = this.samlObjectBuilder.newConditions(notBeforeIssueInstant,
             currentDateTime.plusSeconds(this.skewAllowance), service.getId());
         assertion.setConditions(conditions);
 
-        final var subject = this.samlObjectBuilder.newSubject(NameID.EMAIL, userId,
+        val subject = this.samlObjectBuilder.newSubject(NameID.EMAIL, userId,
             service.getId(), currentDateTime.plusSeconds(this.skewAllowance), service.getRequestId(), null);
         assertion.setSubject(subject);
 
         response.getAssertions().add(assertion);
 
-        final var result = SamlUtils.transformSamlObject(this.samlObjectBuilder.getConfigBean(), response, true).toString();
+        val result = SamlUtils.transformSamlObject(this.samlObjectBuilder.getConfigBean(), response, true).toString();
         LOGGER.debug("Generated Google SAML response: [{}]", result);
         return result;
     }
@@ -150,7 +152,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             return;
         }
 
-        final var bean = new PrivateKeyFactoryBean();
+        val bean = new PrivateKeyFactoryBean();
 
         if (this.privateKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
             bean.setLocation(new ClassPathResource(StringUtils.removeStart(this.privateKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
@@ -179,7 +181,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             return;
         }
 
-        final var bean = new PublicKeyFactoryBean();
+        val bean = new PublicKeyFactoryBean();
         if (this.publicKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
             bean.setResource(new ClassPathResource(StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
         } else if (this.publicKeyLocation.startsWith(ResourceUtils.FILE_URL_PREFIX)) {

@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -31,7 +33,7 @@ public class CasInterruptConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "interruptInquirer")
     public InterruptInquirer interruptInquirer() {
-        final var ip = casProperties.getInterrupt();
+        val ip = casProperties.getInterrupt();
         if (StringUtils.isNotBlank(ip.getAttributeName()) && StringUtils.isNotBlank(ip.getAttributeValue())) {
             return new RegexAttributeInterruptInquirer(ip.getAttributeName(), ip.getAttributeValue());
         }

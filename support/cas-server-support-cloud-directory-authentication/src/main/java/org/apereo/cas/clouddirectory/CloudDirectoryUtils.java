@@ -1,5 +1,7 @@
 package org.apereo.cas.clouddirectory;
 
+import lombok.val;
+
 import com.amazonaws.services.clouddirectory.model.AttributeKey;
 import com.amazonaws.services.clouddirectory.model.AttributeKeyAndValue;
 import com.amazonaws.services.clouddirectory.model.ListIndexRequest;
@@ -90,7 +92,7 @@ public class CloudDirectoryUtils {
                                                         final String attributeValue,
                                                         final ObjectReference reference,
                                                         final CloudDirectoryProperties cloud) {
-        final var range = getObjectAttributeRanges(cloud.getSchemaArn(), cloud.getFacetName(),
+        val range = getObjectAttributeRanges(cloud.getSchemaArn(), cloud.getFacetName(),
                 attributeName, attributeValue);
 
         return new ListIndexRequest().withDirectoryArn(cloud.getDirectoryArn())
@@ -110,7 +112,7 @@ public class CloudDirectoryUtils {
     public static ObjectAttributeRange getObjectAttributeRanges(final String schemaArn, final String facetName,
                                                                  final String attributeName, final String attributeValue) {
 
-        final var attributeKey = getAttributeKey(schemaArn, facetName, attributeName);
+        val attributeKey = getAttributeKey(schemaArn, facetName, attributeName);
         return new ObjectAttributeRange().withAttributeKey(attributeKey)
                 .withRange(new TypedAttributeValueRange()
                         .withStartValue(getTypedAttributeValue(attributeValue))

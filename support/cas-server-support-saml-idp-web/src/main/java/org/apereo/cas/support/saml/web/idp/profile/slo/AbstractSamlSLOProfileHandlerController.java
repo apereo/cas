@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.tuple.Pair;

@@ -1,5 +1,7 @@
 package org.apereo.cas.audit.spi;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
@@ -37,7 +39,7 @@ public class ThreadLocalPrincipalResolver implements PrincipalResolver {
     }
 
     private String getCurrentPrincipal(final Object returnValue, final Exception exception) {
-        final var authn = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
+        val authn = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
         var principal = this.auditPrincipalIdProvider.getPrincipalIdFrom(authn, returnValue, exception);
         if (principal == null) {
             principal = AuthenticationCredentialsThreadLocalBinder.getCurrentCredentialIdsAsString();

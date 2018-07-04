@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
@@ -43,24 +45,24 @@ public class SessionHealthIndicatorTests {
     @Test
     public void verifyObserveOk() {
         addTicketsToRegistry(this.defaultRegistry, 5, 10);
-        final var monitor = new SessionMonitor(defaultRegistry, -1, -1);
-        final var status = monitor.health();
+        val monitor = new SessionMonitor(defaultRegistry, -1, -1);
+        val status = monitor.health();
         assertEquals(Status.UP, status.getStatus());
     }
 
     @Test
     public void verifyObserveWarnSessionsExceeded() {
         addTicketsToRegistry(this.defaultRegistry, 10, 1);
-        final var monitor = new SessionMonitor(defaultRegistry, 0, 5);
-        final var status = monitor.health();
+        val monitor = new SessionMonitor(defaultRegistry, 0, 5);
+        val status = monitor.health();
         assertEquals("WARN", status.getStatus().getCode());
     }
 
     @Test
     public void verifyObserveWarnServiceTicketsExceeded() {
         addTicketsToRegistry(this.defaultRegistry, 1, 10);
-        final var monitor = new SessionMonitor(defaultRegistry, 5, 0);
-        final var status = monitor.health();
+        val monitor = new SessionMonitor(defaultRegistry, 5, 0);
+        val status = monitor.health();
         assertEquals("WARN", status.getStatus().getCode());
     }
 
@@ -79,7 +81,7 @@ public class SessionHealthIndicatorTests {
     }
 
     public static AbstractWebApplicationService getService(final String name) {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addParameter("service", name);
         return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
     }

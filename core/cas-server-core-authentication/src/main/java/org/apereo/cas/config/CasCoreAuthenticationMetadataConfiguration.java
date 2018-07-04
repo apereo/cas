@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
@@ -45,7 +47,7 @@ public class CasCoreAuthenticationMetadataConfiguration {
     @ConditionalOnMissingBean(name = "cacheCredentialsCipherExecutor")
     @Bean
     public CipherExecutor cacheCredentialsCipherExecutor() {
-        final var cp = casProperties.getClearpass();
+        val cp = casProperties.getClearpass();
         if (cp.isCacheCredential()) {
             if (cp.getCrypto().isEnabled()) {
                 return new CacheCredentialsCipherExecutor(cp.getCrypto().getEncryption().getKey(),
@@ -72,7 +74,7 @@ public class CasCoreAuthenticationMetadataConfiguration {
             plan.registerMetadataPopulator(rememberMeAuthenticationMetaDataPopulator());
             plan.registerMetadataPopulator(authenticationCredentialTypeMetaDataPopulator());
 
-            final var cp = casProperties.getClearpass();
+            val cp = casProperties.getClearpass();
             if (cp.isCacheCredential()) {
                 LOGGER.warn("Cas is configured to capture and cache credentials via Clearpass. Sharing the user credential with other applications "
                     + "is generally NOT recommended, may lead to security vulnerabilities and MUST only be used as a last resort .");

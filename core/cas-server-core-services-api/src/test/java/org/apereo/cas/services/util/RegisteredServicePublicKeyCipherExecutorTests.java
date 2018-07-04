@@ -1,5 +1,7 @@
 package org.apereo.cas.services.util;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
@@ -28,17 +30,17 @@ public class RegisteredServicePublicKeyCipherExecutorTests {
     
     @Test
     public void verifyCipherUnableToEncodeForStringIsTooLong() {
-        final var svc = getService("classpath:keys/RSA1024Public.key");
+        val svc = getService("classpath:keys/RSA1024Public.key");
 
-        final var ticketId = RandomStringUtils.randomAlphanumeric(120);
+        val ticketId = RandomStringUtils.randomAlphanumeric(120);
         final RegisteredServiceCipherExecutor e = new RegisteredServicePublicKeyCipherExecutor();
         assertNull(e.encode(ticketId, Optional.of(svc)));
     }
 
     @Test
     public void verifyCipherAbleToEncode() {
-        final var svc = getService("classpath:keys/RSA4096Public.key");
-        final var ticketId = RandomStringUtils.randomAlphanumeric(120);
+        val svc = getService("classpath:keys/RSA4096Public.key");
+        val ticketId = RandomStringUtils.randomAlphanumeric(120);
         final RegisteredServiceCipherExecutor e = new RegisteredServicePublicKeyCipherExecutor();
         assertNotNull(e.encode(ticketId, Optional.of(svc)));
     }

@@ -1,5 +1,7 @@
 package org.apereo.cas.util.junit;
 
+import lombok.val;
+
 import org.junit.Assume;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
@@ -18,7 +20,7 @@ public class ConditionalIgnoreRule implements MethodRule {
     public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
         var result = base;
         if (hasConditionalIgnoreAnnotation(method)) {
-            final var condition = getIgnoreCondition(target, method);
+            val condition = getIgnoreCondition(target, method);
             if (condition.isSatisfied()) {
                 result = new IgnoreStatement(condition);
             }
@@ -44,7 +46,7 @@ public class ConditionalIgnoreRule implements MethodRule {
      * @return the ignore condition
      */
     private static IgnoreCondition getIgnoreCondition(final Object target, final FrameworkMethod method) {
-        final var annotation = method.getAnnotation(ConditionalIgnore.class);
+        val annotation = method.getAnnotation(ConditionalIgnore.class);
         return new IgnoreConditionCreator(target, annotation).create();
     }
 
@@ -101,7 +103,7 @@ public class ConditionalIgnoreRule implements MethodRule {
          */
         private void checkConditionType() {
             if (!isConditionTypeStandalone() && !isConditionTypeDeclaredInTarget()) {
-                final var msg
+                val msg
                     = "Conditional class '%s' is a member class "
                     + "but was not declared inside the test case using it.\n"
                     + "Either make this class a static class, "

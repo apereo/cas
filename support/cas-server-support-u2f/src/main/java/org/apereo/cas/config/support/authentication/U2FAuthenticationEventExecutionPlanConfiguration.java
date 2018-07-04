@@ -1,5 +1,7 @@
 package org.apereo.cas.config.support.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.u2f.U2FAuthenticationHandler;
 import org.apereo.cas.adaptors.u2f.U2FMultifactorAuthenticationProvider;
@@ -51,7 +53,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator u2fAuthenticationMetaDataPopulator() {
-        final var authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute,
                 u2fAuthenticationHandler(),
                 u2fAuthenticationProvider());
@@ -72,14 +74,14 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public U2FAuthenticationHandler u2fAuthenticationHandler() {
-        final var u2f = this.casProperties.getAuthn().getMfa().getU2f();
+        val u2f = this.casProperties.getAuthn().getMfa().getU2f();
         return new U2FAuthenticationHandler(u2f.getName(), servicesManager, u2fPrincipalFactory(), u2fDeviceRepository);
     }
 
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider u2fAuthenticationProvider() {
-        final var p = new U2FMultifactorAuthenticationProvider();
+        val p = new U2FMultifactorAuthenticationProvider();
         p.setBypassEvaluator(u2fBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getU2f().getRank());

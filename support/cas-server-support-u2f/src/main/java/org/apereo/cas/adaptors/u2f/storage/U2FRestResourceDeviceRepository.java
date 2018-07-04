@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
@@ -42,7 +44,7 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     @Override
     public Map<String, List<U2FDeviceRegistration>> readDevicesFromResource() {
         try {
-            final var response = HttpUtils.executeGet(restProperties.getUrl(),
+            val response = HttpUtils.executeGet(restProperties.getUrl(),
                     restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
             if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 final Map<String, List<U2FDeviceRegistration>> result = mapper.readValue(response.getEntity().getContent(),
