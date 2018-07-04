@@ -37,7 +37,7 @@ public abstract class AbstractCRLRevocationCheckerTests {
         this.expected = expected;
         this.certificates = new X509Certificate[certFiles.length];
         var i = 0;
-        for (final var file : certFiles) {
+        for (val file : certFiles) {
             this.certificates[i++] = CertUtils.readCertificate(new ClassPathResource(file));
         }
     }
@@ -48,7 +48,7 @@ public abstract class AbstractCRLRevocationCheckerTests {
     @Test
     public void checkCertificate() {
         try {
-            for (final var cert : this.certificates) {
+            for (val cert : this.certificates) {
                 getChecker().check(cert);
             }
             if (this.expected != null) {
