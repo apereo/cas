@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -29,7 +30,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAu
 
     @Override
     protected Event doPreExecute(final RequestContext context) throws Exception {
-        final var credential = constructCredentialsFromRequest(context);
+        val credential = constructCredentialsFromRequest(context);
         if (credential == null) {
             LOGGER.warn("No credentials detected. Navigating to error...");
             return error();
@@ -40,7 +41,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAu
 
     @Override
     protected void onError(final RequestContext requestContext) {
-        final var resolver = new MessageBuilder()
+        val resolver = new MessageBuilder()
                 .error()
                 .code(BAD_X509_CREDENTIALS_MSG_CODE)
                 .defaultText(BAD_X509_CREDENTIALS_MSG_CODE)

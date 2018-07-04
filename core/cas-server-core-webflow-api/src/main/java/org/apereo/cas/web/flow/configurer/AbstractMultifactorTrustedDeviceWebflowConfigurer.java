@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.configurer;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.context.ApplicationContext;
@@ -48,17 +49,17 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         validateFlowDefinitionConfiguration(flowDefinitionRegistry);
 
         LOGGER.debug("Flow definitions found in the registry are [{}]", (Object[]) flowDefinitionRegistry.getFlowDefinitionIds());
-        final var flowId = Arrays.stream(flowDefinitionRegistry.getFlowDefinitionIds()).findFirst().get();
+        val flowId = Arrays.stream(flowDefinitionRegistry.getFlowDefinitionIds()).findFirst().get();
         LOGGER.debug("Processing flow definition [{}]", flowId);
 
-        final var flow = (Flow) flowDefinitionRegistry.getFlowDefinition(flowId);
+        val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(flowId);
 
         // Set the verify action
-        final var state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
-        final var transition = (Transition) state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        final var targetStateId = transition.getTargetStateId();
+        val state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
+        val transition = (Transition) state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        val targetStateId = transition.getTargetStateId();
         transition.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_VERIFY_TRUSTED_DEVICE));
-        final var verifyAction = createActionState(flow,
+        val verifyAction = createActionState(flow,
                 CasWebflowConstants.STATE_ID_VERIFY_TRUSTED_DEVICE,
                 createEvaluateAction(MFA_VERIFY_TRUST_ACTION_BEAN_ID));
 
@@ -74,28 +75,28 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
                 isDeviceRegistrationRequired(),
                 CasWebflowConstants.VIEW_ID_REGISTER_DEVICE, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
 
-        final var submit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
-        final var success = (Transition) submit.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        val submit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
+        val success = (Transition) submit.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
         if (enableDeviceRegistration) {
             success.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.VIEW_ID_REGISTER_DEVICE));
         } else {
             success.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE));
         }
-        final var viewRegister = createViewState(flow, CasWebflowConstants.VIEW_ID_REGISTER_DEVICE, "casMfaRegisterDeviceView");
-        final var viewRegisterTransition = createTransition(CasWebflowConstants.TRANSITION_ID_SUBMIT,
+        val viewRegister = createViewState(flow, CasWebflowConstants.VIEW_ID_REGISTER_DEVICE, "casMfaRegisterDeviceView");
+        val viewRegisterTransition = createTransition(CasWebflowConstants.TRANSITION_ID_SUBMIT,
                 CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE);
         viewRegister.getTransitionSet().add(viewRegisterTransition);
 
-        final var registerAction = createActionState(flow,
+        val registerAction = createActionState(flow,
                 CasWebflowConstants.STATE_ID_REGISTER_TRUSTED_DEVICE, createEvaluateAction(MFA_SET_TRUST_ACTION_BEAN_ID));
         createStateDefaultTransition(registerAction, CasWebflowConstants.STATE_ID_SUCCESS);
 
         if (submit.getActionList().size() == 0) {
             throw new IllegalArgumentException("There are no actions defined for the final submission event of " + flowId);
         }
-        final var act = submit.getActionList().iterator().next();
-        final var finishMfaTrustedAuth = createActionState(flow, CasWebflowConstants.STATE_ID_FINISH_MFA_TRUSTED_AUTH, act);
-        final var finishedTransition = createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
+        val act = submit.getActionList().iterator().next();
+        val finishMfaTrustedAuth = createActionState(flow, CasWebflowConstants.STATE_ID_FINISH_MFA_TRUSTED_AUTH, act);
+        val finishedTransition = createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
         finishMfaTrustedAuth.getTransitionSet().add(finishedTransition);
         createStateDefaultTransition(finishMfaTrustedAuth, CasWebflowConstants.STATE_ID_SUCCESS);
     }
@@ -105,7 +106,7 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
             throw new IllegalArgumentException("Flow definition registry has no flow definitions");
         }
 
-        final var msg = "CAS application context cannot find bean [%s]. "
+        val msg = "CAS application context cannot find bean [%s]. "
                 + "This typically indicates that configuration is attempting to activate trusted-devices functionality for "
                 + "multifactor authentication, yet the configuration modules that auto-configure the webflow are absent "
                 + "from the CAS application runtime. If you have no need for trusted-devices functionality and wish to let the "
