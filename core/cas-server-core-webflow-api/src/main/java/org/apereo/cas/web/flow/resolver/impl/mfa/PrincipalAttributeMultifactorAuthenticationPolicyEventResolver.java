@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -57,8 +59,8 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final var service = resolveRegisteredServiceInRequestContext(context);
-        final var authentication = WebUtils.getAuthentication(context);
+        val service = resolveRegisteredServiceInRequestContext(context);
+        val authentication = WebUtils.getAuthentication(context);
 
         if (authentication == null) {
             LOGGER.debug("No authentication is available to determine event for principal");
@@ -66,7 +68,7 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
         }
         
 
-        final var principal = authentication.getPrincipal();
+        val principal = authentication.getPrincipal();
         return resolveMultifactorAuthenticationProvider(context, service, principal);
     }
 
@@ -80,9 +82,9 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
      */
     protected Set<Event> resolveMultifactorAuthenticationProvider(final RequestContext context, final RegisteredService service,
                                                                   final Principal principal) {
-        final var providerMap =
+        val providerMap =
                 MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        final var providers = flattenProviders(providerMap.values());
+        val providers = flattenProviders(providerMap.values());
         if (providers.size() == 1 && StringUtils.isNotBlank(globalPrincipalAttributeValueRegex)) {
             return resolveSingleMultifactorProvider(context, service, principal, providers);
         }
@@ -120,7 +122,7 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
     protected Set<Event> resolveSingleMultifactorProvider(final RequestContext context, final RegisteredService service,
                                                           final Principal principal,
                                                           final Collection<MultifactorAuthenticationProvider> providers) {
-        final var provider = providers.iterator().next();
+        val provider = providers.iterator().next();
         LOGGER.debug("Found a single multifactor provider [{}] in the application context", provider);
         return resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
             input -> input != null && input.matches(globalPrincipalAttributeValueRegex));

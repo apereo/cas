@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Response;
@@ -23,7 +25,7 @@ public class InjectResponseHeadersAction extends RedirectToServiceAction {
 
     @Override
     protected String getFinalResponseEventId(final WebApplicationService service, final Response response, final RequestContext requestContext) {
-        final var httpResponse = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+        val httpResponse = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         httpResponse.addHeader(CasProtocolConstants.PARAMETER_SERVICE, response.getUrl());
         response.getAttributes().forEach(httpResponse::addHeader);
         if (response.getAttributes().containsKey(Response.ResponseType.REDIRECT.name().toLowerCase())) {

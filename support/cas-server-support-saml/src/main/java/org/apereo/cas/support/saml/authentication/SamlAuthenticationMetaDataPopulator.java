@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.authentication;
 
+import lombok.val;
+
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -51,14 +53,14 @@ public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetaD
      * Instantiates a new SAML authentication meta data populator.
      */
     public SamlAuthenticationMetaDataPopulator() {
-        final var packageName = CentralAuthenticationService.NAMESPACE;
-        final var reflections =
+        val packageName = CentralAuthenticationService.NAMESPACE;
+        val reflections =
             new Reflections(new ConfigurationBuilder()
                 .filterInputsBy(new FilterBuilder().includePackage(packageName))
                 .setUrls(ClasspathHelper.forPackage(packageName))
                 .setScanners(new SubTypesScanner(true)));
 
-        final var subTypes = reflections.getSubTypesOf(Credential.class);
+        val subTypes = reflections.getSubTypesOf(Credential.class);
         subTypes.forEach(t -> this.authenticationMethods.put(t.getName(), AUTHN_METHOD_UNSPECIFIED));
         this.authenticationMethods.put(HttpBasedServiceCredential.class.getName(), AUTHN_METHOD_SSL_TLS_CLIENT);
         this.authenticationMethods.put(UsernamePasswordCredential.class.getName(), AUTHN_METHOD_PASSWORD);
@@ -68,8 +70,8 @@ public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetaD
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         transaction.getPrimaryCredential().ifPresent(c -> {
-            final var credentialsClass = c.getClass().getName();
-            final var authenticationMethod = this.authenticationMethods.get(credentialsClass);
+            val credentialsClass = c.getClass().getName();
+            val authenticationMethod = this.authenticationMethods.get(credentialsClass);
             builder.addAttribute(ATTRIBUTE_AUTHENTICATION_METHOD, authenticationMethod);
         });
 

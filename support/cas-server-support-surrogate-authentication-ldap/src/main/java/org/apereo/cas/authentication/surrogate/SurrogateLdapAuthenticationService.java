@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.surrogate;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
@@ -38,16 +40,16 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
     @Override
     public boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Service service) {
         try {
-            final var id = principal.getId();
+            val id = principal.getId();
             if (surrogate.equalsIgnoreCase(id)) {
                 return true;
             }
-            final var filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSurrogateSearchFilter(),
+            val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSurrogateSearchFilter(),
                 CollectionUtils.wrapList(LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, "surrogate"),
                 CollectionUtils.wrapList(id, surrogate));
             LOGGER.debug("Using search filter to locate surrogate accounts for [{}]: [{}]", id, filter);
 
-            final var response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter);
+            val response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter);
             LOGGER.debug("LDAP response: [{}]", response);
             return LdapUtils.containsResultEntry(response);
         } catch (final Exception e) {
@@ -60,10 +62,10 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
     public List<String> getEligibleAccountsForSurrogateToProxy(final String username) {
         final List<String> eligible = new ArrayList<>();
         try {
-            final var filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(), CollectionUtils.wrap(username));
+            val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(), CollectionUtils.wrap(username));
             LOGGER.debug("Using search filter to find eligible accounts: [{}]", filter);
 
-            final var response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter);
+            val response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(), filter);
             LOGGER.debug("LDAP response: [{}]", response);
 
             if (!LdapUtils.containsResultEntry(response)) {
@@ -71,8 +73,8 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
                 return eligible;
             }
 
-            final var ldapEntry = response.getResult().getEntry();
-            final var attribute = ldapEntry.getAttribute(ldapProperties.getMemberAttributeName());
+            val ldapEntry = response.getResult().getEntry();
+            val attribute = ldapEntry.getAttribute(ldapProperties.getMemberAttributeName());
             LOGGER.debug("Locating LDAP entry [{}] with attribute [{}]", ldapEntry, attribute);
 
             if (attribute == null || attribute.getStringValues().isEmpty()) {
@@ -80,7 +82,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
                 return eligible;
             }
 
-            final var pattern = RegexUtils.createPattern(ldapProperties.getMemberAttributeValueRegex());
+            val pattern = RegexUtils.createPattern(ldapProperties.getMemberAttributeValueRegex());
             LOGGER.debug("Constructed attribute value regex pattern [{}]", pattern.pattern());
             eligible.addAll(
                 attribute.getStringValues()

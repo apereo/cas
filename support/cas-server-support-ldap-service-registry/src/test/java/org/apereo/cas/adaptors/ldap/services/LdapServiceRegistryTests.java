@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.ldap.services;
 
+import lombok.val;
+
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.junit.ConditionalIgnore;
@@ -31,10 +33,10 @@ public class LdapServiceRegistryTests extends BaseLdapServiceRegistryTests {
     @Test
     public void verifySavingServiceChangesDn() {
         getServiceRegistry().save(buildRegisteredServiceInstance(8080));
-        final var services = getServiceRegistry().load();
+        val services = getServiceRegistry().load();
         assertFalse(services.isEmpty());
-        final var rs = getServiceRegistry().findServiceById(services.get(0).getId());
-        final var originalId = rs.getId();
+        val rs = getServiceRegistry().findServiceById(services.get(0).getId());
+        val originalId = rs.getId();
         assertNotNull(rs);
         rs.setId(666);
         assertNotNull(getServiceRegistry().save(rs));

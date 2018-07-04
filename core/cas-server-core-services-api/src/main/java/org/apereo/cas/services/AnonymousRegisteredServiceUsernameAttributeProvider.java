@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.Service;
@@ -38,7 +39,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProvider extends BaseReg
 
     @Override
     protected String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
-        final var id = this.persistentIdGenerator.generate(principal, service);
+        val id = this.persistentIdGenerator.generate(principal, service);
         LOGGER.debug("Resolved username [{}] for anonymous access", id);
         return id;
     }

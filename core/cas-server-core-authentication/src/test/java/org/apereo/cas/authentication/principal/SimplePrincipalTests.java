@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -26,20 +28,20 @@ public class SimplePrincipalTests {
     public void verifySerializeACompletePrincipalToJson() throws IOException {
         final HashMap<String, Object> attributes = new HashMap<>();
         attributes.put("attribute", "value");
-        final var principalWritten = new SimplePrincipal("id", attributes);
+        val principalWritten = new SimplePrincipal("id", attributes);
 
         MAPPER.writeValue(JSON_FILE, principalWritten);
 
-        final var principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);
+        val principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);
 
         assertEquals(principalWritten, principalRead);
     }
 
     @Test
     public void verifySerializeAPrincipalWithEmptyAttributesToJson() throws IOException {
-        final var principalWritten = new SimplePrincipal("id", new HashMap<>(0));
+        val principalWritten = new SimplePrincipal("id", new HashMap<>(0));
         MAPPER.writeValue(JSON_FILE, principalWritten);
-        final var principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);
+        val principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);
         assertEquals(principalWritten, principalRead);
     }
 

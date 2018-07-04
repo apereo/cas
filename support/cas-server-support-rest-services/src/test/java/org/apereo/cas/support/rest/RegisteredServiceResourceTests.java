@@ -1,5 +1,7 @@
 package org.apereo.cas.support.rest;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
@@ -72,8 +74,8 @@ public class RegisteredServiceResourceTests {
     }
 
     private MockMvc configureMockMvcFor(final RegisteredServiceResource registeredServiceResource) {
-        final var sz = new DefaultRegisteredServiceJsonSerializer();
-        final var converter = new MappingJackson2HttpMessageConverter(sz.getObjectMapper());
+        val sz = new DefaultRegisteredServiceJsonSerializer();
+        val converter = new MappingJackson2HttpMessageConverter(sz.getObjectMapper());
         return MockMvcBuilders.standaloneSetup(registeredServiceResource)
             .defaultRequest(get("/")
                 .contextPath("/cas")
@@ -83,11 +85,11 @@ public class RegisteredServiceResourceTests {
     }
 
     private RegisteredServiceResource getRegisteredServiceResource(final String attrName, final String attrValue) {
-        final var mgmr = mock(AuthenticationManager.class);
+        val mgmr = mock(AuthenticationManager.class);
         when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("test")))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("testfail")))).thenThrow(AuthenticationException.class);
 
-        final var publisher = mock(ApplicationEventPublisher.class);
+        val publisher = mock(ApplicationEventPublisher.class);
         return new RegisteredServiceResource(new DefaultAuthenticationSystemSupport(
             new DefaultAuthenticationTransactionManager(publisher, mgmr),
             new DefaultPrincipalElectionStrategy()),
@@ -96,9 +98,9 @@ public class RegisteredServiceResourceTests {
     }
 
     private void runTest(final String attrName, final String attrValue, final String credentials, final ResultMatcher result) throws Exception {
-        final var registeredServiceResource = getRegisteredServiceResource(attrName, attrValue);
+        val registeredServiceResource = getRegisteredServiceResource(attrName, attrValue);
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService();
-        final var sz = new DefaultRegisteredServiceJsonSerializer();
+        val sz = new DefaultRegisteredServiceJsonSerializer();
         try (var writer = new StringWriter()) {
             sz.to(writer, service);
             configureMockMvcFor(registeredServiceResource)

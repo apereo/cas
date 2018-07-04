@@ -1,5 +1,7 @@
 package org.apereo.cas.util.ldap.uboundid;
 
+import lombok.val;
+
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
@@ -45,24 +47,24 @@ public class InMemoryTestLdapDirectoryServer implements AutoCloseable, Disposabl
                                            final InputStream schemaFile,
                                            final int port) {
         LOGGER.debug("Loading properties...");
-        final var p = new Properties();
+        val p = new Properties();
         p.load(properties);
 
-        final var config =
+        val config =
             new InMemoryDirectoryServerConfig(p.getProperty("ldap.rootDn"));
         config.addAdditionalBindCredentials(p.getProperty("ldap.managerDn"), p.getProperty("ldap.managerPassword"));
 
         LOGGER.debug("Loading keystore file...");
-        final var keystoreFile = File.createTempFile("key", "store");
+        val keystoreFile = File.createTempFile("key", "store");
         try (OutputStream outputStream = new FileOutputStream(keystoreFile)) {
             IOUtils.copy(new ClassPathResource("/ldapServerTrustStore").getInputStream(), outputStream);
         }
 
-        final var serverKeyStorePath = keystoreFile.getCanonicalPath();
-        final var serverSSLUtil = new SSLUtil(
+        val serverKeyStorePath = keystoreFile.getCanonicalPath();
+        val serverSSLUtil = new SSLUtil(
             new KeyStoreKeyManager(serverKeyStorePath, "changeit".toCharArray()),
             new TrustStoreTrustManager(serverKeyStorePath));
-        final var clientSSLUtil = new SSLUtil(new TrustStoreTrustManager(serverKeyStorePath));
+        val clientSSLUtil = new SSLUtil(new TrustStoreTrustManager(serverKeyStorePath));
 
         LOGGER.debug("Loading LDAP listeners and ports...");
         config.setListenerConfigs(
@@ -81,20 +83,20 @@ public class InMemoryTestLdapDirectoryServer implements AutoCloseable, Disposabl
         config.setMaxConnections(-1);
 
         LOGGER.debug("Loading LDAP schema...");
-        final var file = File.createTempFile("ldap", "schema");
+        val file = File.createTempFile("ldap", "schema");
         try (OutputStream outputStream = new FileOutputStream(file)) {
             IOUtils.copy(schemaFile, outputStream);
         }
 
         LOGGER.debug("Setting LDAP schema...");
-        final var s = Schema.mergeSchemas(Schema.getSchema(file));
+        val s = Schema.mergeSchemas(Schema.getSchema(file));
         config.setSchema(s);
 
         this.directoryServer = new InMemoryDirectoryServer(config);
         LOGGER.debug("Populating directory...");
 
         LOGGER.debug("Loading LDIF file...");
-        final var ldif = File.createTempFile("ldiff", "file");
+        val ldif = File.createTempFile("ldiff", "file");
         try (OutputStream outputStream = new FileOutputStream(ldif)) {
             IOUtils.copy(ldifFile, outputStream);
         }

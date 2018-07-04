@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -36,8 +38,8 @@ public class SurrogateMultifactorAuthenticationPolicyEventResolver extends Princ
     @Override
     protected Map<String, Object> getPrincipalAttributesForMultifactorAuthentication(final Principal principal) {
         if (SurrogatePrincipal.class.isInstance(principal)) {
-            final var c = SurrogatePrincipal.class.cast(principal);
-            final var attributes = c.getPrimary().getAttributes();
+            val c = SurrogatePrincipal.class.cast(principal);
+            val attributes = c.getPrimary().getAttributes();
             attributes.putAll(c.getSurrogate().getAttributes());
             return attributes;
         }

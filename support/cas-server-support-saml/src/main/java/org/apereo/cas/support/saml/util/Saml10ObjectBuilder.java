@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.util;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -69,7 +71,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     public Response newResponse(final String id, final ZonedDateTime issueInstant,
                                 final String recipient, final WebApplicationService service) {
 
-        final var samlResponse = newSamlObject(Response.class);
+        val samlResponse = newSamlObject(Response.class);
         samlResponse.setID(id);
         samlResponse.setIssueInstant(DateTimeUtils.dateTimeOf(issueInstant));
         samlResponse.setVersion(SAMLVersion.VERSION_11);
@@ -86,8 +88,8 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      */
     private static void setInResponseToForSamlResponseIfNeeded(final Service service, final Response samlResponse) {
         if (service instanceof SamlService) {
-            final var samlService = (SamlService) service;
-            final var requestId = samlService.getRequestId();
+            val samlService = (SamlService) service;
+            val requestId = samlService.getRequestId();
             if (StringUtils.isNotBlank(requestId)) {
                 samlResponse.setInResponseTo(requestId);
             }
@@ -105,7 +107,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      */
     public Assertion newAssertion(final AuthenticationStatement authnStatement, final String issuer,
                                   final ZonedDateTime issuedAt, final String id) {
-        final var assertion = newSamlObject(Assertion.class);
+        val assertion = newSamlObject(Assertion.class);
 
         assertion.setID(id);
         assertion.setIssueInstant(DateTimeUtils.dateTimeOf(issuedAt));
@@ -123,11 +125,11 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      * @return the conditions
      */
     public Conditions newConditions(final ZonedDateTime issuedAt, final String audienceUri, final long issueLength) {
-        final var conditions = newSamlObject(Conditions.class);
+        val conditions = newSamlObject(Conditions.class);
         conditions.setNotBefore(DateTimeUtils.dateTimeOf(issuedAt));
         conditions.setNotOnOrAfter(DateTimeUtils.dateTimeOf(issuedAt.plus(issueLength, ChronoUnit.SECONDS)));
-        final var audienceRestriction = newSamlObject(AudienceRestrictionCondition.class);
-        final var audience = newSamlObject(Audience.class);
+        val audienceRestriction = newSamlObject(AudienceRestrictionCondition.class);
+        val audience = newSamlObject(Audience.class);
         audience.setUri(audienceUri);
         audienceRestriction.getAudiences().add(audience);
         conditions.getAudienceRestrictionConditions().add(audienceRestriction);
@@ -152,12 +154,12 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      * @return the status
      */
     public Status newStatus(final QName codeValue, final String statusMessage) {
-        final var status = newSamlObject(Status.class);
-        final var code = newSamlObject(StatusCode.class);
+        val status = newSamlObject(Status.class);
+        val code = newSamlObject(StatusCode.class);
         code.setValue(codeValue);
         status.setStatusCode(code);
         if (StringUtils.isNotBlank(statusMessage)) {
-            final var message = newSamlObject(StatusMessage.class);
+            val message = newSamlObject(StatusMessage.class);
             message.setMessage(statusMessage);
             status.setStatusMessage(message);
         }
@@ -176,7 +178,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
                                                               final Collection<Object> authenticationMethod,
                                                               final String subjectId) {
 
-        final var authnStatement = newSamlObject(AuthenticationStatement.class);
+        val authnStatement = newSamlObject(AuthenticationStatement.class);
         authnStatement.setAuthenticationInstant(DateTimeUtils.dateTimeOf(authenticationDate));
 
         authnStatement.setAuthenticationMethod(
@@ -206,13 +208,13 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      * @return the subject
      */
     public Subject newSubject(final String identifier, final String confirmationMethod) {
-        final var confirmation = newSamlObject(SubjectConfirmation.class);
-        final var method = newSamlObject(ConfirmationMethod.class);
+        val confirmation = newSamlObject(SubjectConfirmation.class);
+        val method = newSamlObject(ConfirmationMethod.class);
         method.setConfirmationMethod(confirmationMethod);
         confirmation.getConfirmationMethods().add(method);
-        final var nameIdentifier = newSamlObject(NameIdentifier.class);
+        val nameIdentifier = newSamlObject(NameIdentifier.class);
         nameIdentifier.setNameIdentifier(identifier);
-        final var subject = newSamlObject(Subject.class);
+        val subject = newSamlObject(Subject.class);
         subject.setNameIdentifier(nameIdentifier);
         subject.setSubjectConfirmation(confirmation);
         return subject;
@@ -243,14 +245,14 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
                                                     final Map<String, Object> attributes,
                                                     final String attributeNamespace) {
 
-        final var attrStatement = newSamlObject(AttributeStatement.class);
+        val attrStatement = newSamlObject(AttributeStatement.class);
         attrStatement.setSubject(subject);
-        for (final var e : attributes.entrySet()) {
+        for (val e : attributes.entrySet()) {
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
                 LOGGER.info("Skipping attribute [{}] because it does not have any values.", e.getKey());
                 continue;
             }
-            final var attribute = newSamlObject(Attribute.class);
+            val attribute = newSamlObject(Attribute.class);
             attribute.setAttributeName(e.getKey());
 
             if (StringUtils.isNotBlank(attributeNamespace)) {

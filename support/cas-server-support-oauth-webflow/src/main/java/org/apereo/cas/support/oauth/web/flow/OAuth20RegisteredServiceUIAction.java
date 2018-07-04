@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.flow;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
@@ -34,11 +36,11 @@ public class OAuth20RegisteredServiceUIAction extends AbstractAction implements 
         Service service = WebUtils.getService(requestContext);
         if (service != null) {
             service = serviceSelectionStrategy.resolveServiceFrom(service);
-            final var registeredService = this.servicesManager.findServiceBy(service);
+            val registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
 
             if (registeredService instanceof OAuthRegisteredService) {
-                final var oauthService = OAuthRegisteredService.class.cast(registeredService);
+                val oauthService = OAuthRegisteredService.class.cast(registeredService);
                 WebUtils.putServiceUserInterfaceMetadata(requestContext, new DefaultRegisteredServiceUserInterfaceInfo(oauthService));
             }
         }

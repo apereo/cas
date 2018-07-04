@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.web.flow;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
@@ -31,11 +33,11 @@ public class OidcRegisteredServiceUIAction extends AbstractAction {
         Service service = WebUtils.getService(requestContext);
         if (service != null) {
             service = serviceSelectionStrategy.resolveServiceFrom(service);
-            final var registeredService = this.servicesManager.findServiceBy(service);
+            val registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
 
             if (registeredService instanceof OidcRegisteredService) {
-                final var oauthService = OidcRegisteredService.class.cast(registeredService);
+                val oauthService = OidcRegisteredService.class.cast(registeredService);
                 WebUtils.putServiceUserInterfaceMetadata(requestContext, new DefaultRegisteredServiceUserInterfaceInfo(oauthService));
             }
         }

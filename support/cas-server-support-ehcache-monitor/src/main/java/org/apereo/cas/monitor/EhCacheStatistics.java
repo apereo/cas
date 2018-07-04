@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.Cache;
 import org.apache.commons.lang3.StringUtils;
@@ -46,7 +48,7 @@ public class EhCacheStatistics implements CacheStatistics {
      */
     @Override
     public long getSize() {
-        final var statistics = this.cache.getStatistics();
+        val statistics = this.cache.getStatistics();
         if (this.useBytes) {
             this.diskSize = statistics.getLocalDiskSizeInBytes();
             this.heapSize = statistics.getLocalHeapSizeInBytes();
@@ -65,7 +67,7 @@ public class EhCacheStatistics implements CacheStatistics {
      */
     @Override
     public long getCapacity() {
-        final var config = this.cache.getCacheConfiguration();
+        val config = this.cache.getCacheConfiguration();
         if (this.useBytes) {
             return config.getMaxBytesLocalDisk();
         }
@@ -79,7 +81,7 @@ public class EhCacheStatistics implements CacheStatistics {
 
     @Override
     public long getPercentFree() {
-        final var capacity = getCapacity();
+        val capacity = getCapacity();
         if (capacity == 0) {
             return 0;
         }
@@ -93,11 +95,11 @@ public class EhCacheStatistics implements CacheStatistics {
 
     @Override
     public String toString(final StringBuilder builder) {
-        final var name = this.getName();
+        val name = this.getName();
         if (StringUtils.isNotBlank(name)) {
             builder.append(name).append(':');
         }
-        final var free = getPercentFree();
+        val free = getPercentFree();
         try (var formatter = new Formatter(builder)) {
             if (this.useBytes) {
                 formatter.format("%.2f MB heap, ", this.heapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);

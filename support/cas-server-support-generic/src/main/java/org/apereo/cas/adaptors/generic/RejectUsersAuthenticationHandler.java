@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.generic;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -43,7 +45,7 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                                         final String originalPassword) throws GeneralSecurityException {
 
-        final var username = credential.getUsername();
+        val username = credential.getUsername();
         if (this.users.contains(username)) {
             throw new FailedLoginException();
         }

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.nameid;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -49,26 +51,26 @@ public class SamlProfileSamlNameIdBuilderTests {
 
     @Test
     public void verifyAction() {
-        final var b = new SamlProfileSamlNameIdBuilder(openSamlConfigBean, new ShibbolethCompatiblePersistentIdGenerator());
-        final var authnRequest = mock(AuthnRequest.class);
-        final var issuer = mock(Issuer.class);
+        val b = new SamlProfileSamlNameIdBuilder(openSamlConfigBean, new ShibbolethCompatiblePersistentIdGenerator());
+        val authnRequest = mock(AuthnRequest.class);
+        val issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");
         when(authnRequest.getIssuer()).thenReturn(issuer);
 
-        final var policy = mock(NameIDPolicy.class);
+        val policy = mock(NameIDPolicy.class);
         when(policy.getFormat()).thenReturn(NameID.EMAIL);
         when(authnRequest.getNameIDPolicy()).thenReturn(policy);
 
-        final var service = new SamlRegisteredService();
+        val service = new SamlRegisteredService();
         service.setServiceId("entity-id");
         service.setRequiredNameIdFormat(NameID.EMAIL);
-        final var facade = mock(SamlRegisteredServiceServiceProviderMetadataFacade.class);
+        val facade = mock(SamlRegisteredServiceServiceProviderMetadataFacade.class);
         when(facade.getEntityId()).thenReturn(service.getServiceId());
-        final var assertion = mock(Assertion.class);
+        val assertion = mock(Assertion.class);
         when(assertion.getPrincipal()).thenReturn(new AttributePrincipalImpl("casuser"));
 
         when(facade.getSupportedNameIdFormats()).thenReturn(CollectionUtils.wrapList(NameID.TRANSIENT, NameID.EMAIL));
-        final var result = b.build(authnRequest, new MockHttpServletRequest(), new MockHttpServletResponse(),
+        val result = b.build(authnRequest, new MockHttpServletRequest(), new MockHttpServletResponse(),
             assertion, service, facade, SAMLConstants.SAML2_POST_BINDING_URI, mock(MessageContext.class));
         assertNotNull(result);
         assertEquals(NameID.EMAIL, result.getFormat());

@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.web.controllers;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
@@ -64,24 +66,24 @@ public class OidcRevocationEndpointController extends BaseOAuth20Controller {
                                                         final HttpServletResponse response) {
         try {
             final CredentialsExtractor<UsernamePasswordCredentials> authExtractor = new BasicAuthExtractor();
-            final var credentials = authExtractor.extract(Pac4jUtils.getPac4jJ2EContext(request, response));
+            val credentials = authExtractor.extract(Pac4jUtils.getPac4jJ2EContext(request, response));
             if (credentials == null) {
                 throw new IllegalArgumentException("No credentials are provided to verify revocation of the token");
             }
 
-            final var registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, credentials.getUsername());
-            final var service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+            val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, credentials.getUsername());
+            val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
 
-            final var audit = AuditableContext.builder()
+            val audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)
                 .build();
-            final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
 
             if (!accessResult.isExecutionFailure()
                 && HttpRequestUtils.doesParameterExist(request, OidcConstants.TOKEN)
                 && OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword())) {
-                final var token = request.getParameter(OidcConstants.TOKEN);
+                val token = request.getParameter(OidcConstants.TOKEN);
                 LOGGER.debug("Located token [{}] in the revocation request", token);
                 this.ticketRegistry.deleteTicket(token);
             }

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.x509.rest;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
@@ -34,15 +36,15 @@ public class X509RestHttpRequestCredentialFactory implements RestHttpRequestCred
 
     @Override
     public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
-        final var cert = requestBody.getFirst(CERTIFICATE);
+        val cert = requestBody.getFirst(CERTIFICATE);
         LOGGER.debug("Certificate in the request body: [{}]", cert);
         if (StringUtils.isBlank(cert)) {
             return new ArrayList<>(0);
         }
         try (InputStream is = new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8))) {
             final InputStreamSource iso = new InputStreamResource(is);
-            final var certificate = CertUtils.readCertificate(iso);
-            final var credential = new X509CertificateCredential(new X509Certificate[]{certificate});
+            val certificate = CertUtils.readCertificate(iso);
+            val credential = new X509CertificateCredential(new X509Certificate[]{certificate});
             credential.setCertificate(certificate);
             return CollectionUtils.wrap(credential);
         } catch (final Exception e) {

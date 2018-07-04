@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.metadata;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -46,8 +48,8 @@ public class SamlIdPMetadataController implements InitializingBean {
     @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_METADATA)
     public void generateMetadataForIdp(final HttpServletResponse response) throws IOException {
         this.metadataAndCertificatesGenerationService.generate();
-        final var md = this.samlIdPMetadataLocator.getMetadata().getInputStream();
-        final var contents = IOUtils.toString(md, StandardCharsets.UTF_8);
+        val md = this.samlIdPMetadataLocator.getMetadata().getInputStream();
+        val contents = IOUtils.toString(md, StandardCharsets.UTF_8);
         response.setContentType(CONTENT_TYPE);
         response.setStatus(HttpServletResponse.SC_OK);
         try (var writer = response.getWriter()) {

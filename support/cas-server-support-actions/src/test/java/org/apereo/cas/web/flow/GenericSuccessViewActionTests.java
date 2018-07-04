@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
@@ -25,31 +27,31 @@ public class GenericSuccessViewActionTests {
 
     @Test
     public void verifyValidPrincipal() throws InvalidTicketException {
-        final var cas = mock(CentralAuthenticationService.class);
-        final var mgr = mock(ServicesManager.class);
-        final var factory = mock(ServiceFactory.class);
+        val cas = mock(CentralAuthenticationService.class);
+        val mgr = mock(ServicesManager.class);
+        val factory = mock(ServiceFactory.class);
         
-        final var authn = mock(Authentication.class);
+        val authn = mock(Authentication.class);
         when(authn.getPrincipal()).thenReturn(
                 CoreAuthenticationTestUtils.getPrincipal("cas"));
-        final var tgt = mock(TicketGrantingTicket.class);
+        val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getAuthentication()).thenReturn(authn);
         
         when(cas.getTicket(any(String.class), any())).thenReturn(tgt);
-        final var action = new GenericSuccessViewAction(cas, mgr, factory, "");
-        final var p = action.getAuthenticationPrincipal("TGT-1");
+        val action = new GenericSuccessViewAction(cas, mgr, factory, "");
+        val p = action.getAuthenticationPrincipal("TGT-1");
         assertNotNull(p);
         assertEquals("cas", p.getId());
     }
 
     @Test
     public void verifyPrincipalCanNotBeDetermined() throws InvalidTicketException {
-        final var cas = mock(CentralAuthenticationService.class);
-        final var mgr = mock(ServicesManager.class);
-        final var factory = mock(ServiceFactory.class);
+        val cas = mock(CentralAuthenticationService.class);
+        val mgr = mock(ServicesManager.class);
+        val factory = mock(ServiceFactory.class);
         when(cas.getTicket(any(String.class), any())).thenThrow(new InvalidTicketException("TGT-1"));
-        final var action = new GenericSuccessViewAction(cas, mgr, factory, "");
-        final var p = action.getAuthenticationPrincipal("TGT-1");
+        val action = new GenericSuccessViewAction(cas, mgr, factory, "");
+        val p = action.getAuthenticationPrincipal("TGT-1");
         assertNotNull(p);
         assertTrue(p instanceof NullPrincipal);
     }

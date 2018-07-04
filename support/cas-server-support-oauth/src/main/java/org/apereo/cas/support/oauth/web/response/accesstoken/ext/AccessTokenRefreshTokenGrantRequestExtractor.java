@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -43,7 +45,7 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
 
     @Override
     public boolean supports(final HttpServletRequest context) {
-        final var grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
+        val grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, getGrantType());
     }
 
@@ -54,8 +56,8 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
 
     @Override
     protected OAuthRegisteredService getOAuthRegisteredServiceBy(final HttpServletRequest request) {
-        final var clientId = getRegisteredServiceIdentifierFromRequest(request);
-        final var registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+        val clientId = getRegisteredServiceIdentifierFromRequest(request);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
         LOGGER.debug("Located registered service [{}]", registeredService);
         return registeredService;
     }

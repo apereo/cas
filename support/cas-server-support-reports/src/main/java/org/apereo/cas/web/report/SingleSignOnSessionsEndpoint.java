@@ -1,5 +1,7 @@
 package org.apereo.cas.web.report;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -97,12 +99,12 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
      */
     private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionReportOptions option) {
         final Collection<Map<String, Object>> activeSessions = new ArrayList<>();
-        final var dateFormat = new ISOStandardDateFormat();
+        val dateFormat = new ISOStandardDateFormat();
         getNonExpiredTicketGrantingTickets().stream().map(TicketGrantingTicket.class::cast)
             .filter(tgt -> !(option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null))
             .forEach(tgt -> {
-                final var authentication = tgt.getAuthentication();
-                final var principal = authentication.getPrincipal();
+                val authentication = tgt.getAuthentication();
+                val principal = authentication.getPrincipal();
                 final Map<String, Object> sso = new HashMap<>(SsoSessionAttributeKeys.values().length);
                 sso.put(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString(), principal.getId());
                 sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE.toString(), authentication.getAuthenticationDate());
@@ -144,26 +146,26 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
     @ReadOperation
     public Map<String, Object> getSsoSessions(final String type) {
         final Map<String, Object> sessionsMap = new HashMap<>(1);
-        final var option = SsoSessionReportOptions.valueOf(type);
-        final var activeSsoSessions = getActiveSsoSessions(option);
+        val option = SsoSessionReportOptions.valueOf(type);
+        val activeSsoSessions = getActiveSsoSessions(option);
         sessionsMap.put("activeSsoSessions", activeSsoSessions);
         long totalTicketGrantingTickets = 0;
         long totalProxyGrantingTickets = 0;
         long totalUsageCount = 0;
         final Set<String> uniquePrincipals = new HashSet<>();
-        for (final var activeSsoSession : activeSsoSessions) {
+        for (val activeSsoSession : activeSsoSessions) {
             if (activeSsoSession.containsKey(SsoSessionAttributeKeys.IS_PROXIED.toString())) {
-                final var isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.toString()).toString());
+                val isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.toString()).toString());
                 if (isProxied) {
                     totalProxyGrantingTickets++;
                 } else {
                     totalTicketGrantingTickets++;
-                    final var principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
+                    val principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
                     uniquePrincipals.add(principal);
                 }
             } else {
                 totalTicketGrantingTickets++;
-                final var principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
+                val principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
                 uniquePrincipals.add(principal);
             }
             totalUsageCount += Long.parseLong(activeSsoSession.get(SsoSessionAttributeKeys.NUMBER_OF_USES.toString()).toString());
@@ -210,8 +212,8 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
 
         final Map<String, Object> sessionsMap = new HashMap<>();
         final Map<String, String> failedTickets = new HashMap<>();
-        final var option = SsoSessionReportOptions.valueOf(type);
-        final var collection = getActiveSsoSessions(option);
+        val option = SsoSessionReportOptions.valueOf(type);
+        val collection = getActiveSsoSessions(option);
         collection
             .stream()
             .map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString()).toString())

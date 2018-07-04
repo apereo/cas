@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -110,7 +112,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
         this.lastTimeUsed = ZonedDateTime.now(ZoneOffset.UTC);
         this.countOfUses++;
         if (getTicketGrantingTicket() != null && !getTicketGrantingTicket().isExpired()) {
-            final var state = TicketState.class.cast(getTicketGrantingTicket());
+            val state = TicketState.class.cast(getTicketGrantingTicket());
             state.update();
         }
     }

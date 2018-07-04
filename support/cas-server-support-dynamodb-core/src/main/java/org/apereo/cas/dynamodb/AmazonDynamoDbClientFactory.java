@@ -1,5 +1,7 @@
 package org.apereo.cas.dynamodb;
 
+import lombok.val;
+
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
 import com.amazonaws.client.builder.AwsClientBuilder;
@@ -36,19 +38,19 @@ public class AmazonDynamoDbClientFactory {
         if (dynamoDbProperties.isLocalInstance()) {
             LOGGER.debug("Creating DynamoDb standard client with endpoint [{}] and region [{}]",
                 dynamoDbProperties.getEndpoint(), dynamoDbProperties.getRegion());
-            final var endpoint = new AwsClientBuilder.EndpointConfiguration(
+            val endpoint = new AwsClientBuilder.EndpointConfiguration(
                 dynamoDbProperties.getEndpoint(), dynamoDbProperties.getRegion());
             return AmazonDynamoDBClientBuilder.standard()
                 .withEndpointConfiguration(endpoint)
                 .build();
         }
 
-        final var provider =
+        val provider =
             ChainingAWSCredentialsProvider.getInstance(dynamoDbProperties.getCredentialAccessKey(),
                 dynamoDbProperties.getCredentialSecretKey(), dynamoDbProperties.getCredentialsPropertiesFile());
 
         LOGGER.debug("Creating DynamoDb client configuration...");
-        final var cfg = new ClientConfiguration();
+        val cfg = new ClientConfiguration();
         cfg.setConnectionTimeout(dynamoDbProperties.getConnectionTimeout());
         cfg.setMaxConnections(dynamoDbProperties.getMaxConnections());
         cfg.setRequestTimeout(dynamoDbProperties.getRequestTimeout());
@@ -68,7 +70,7 @@ public class AmazonDynamoDbClientFactory {
 
 
         LOGGER.debug("Creating DynamoDb client instance...");
-        final var client = new AmazonDynamoDBClient(provider, cfg);
+        val client = new AmazonDynamoDBClient(provider, cfg);
 
         if (StringUtils.isNotBlank(dynamoDbProperties.getEndpoint())) {
             LOGGER.debug("Setting DynamoDb client endpoint [{}]", dynamoDbProperties.getEndpoint());

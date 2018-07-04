@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.val;
+
 import static org.junit.Assert.*;
 
 import java.security.cert.X509Certificate;
@@ -24,11 +26,11 @@ public class X509SerialNumberAndIssuerDNPrincipalResolverTests extends AbstractX
 
     @Test
     public void verifyResolvePrincipalInternal() {
-        final var c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
+        val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
 
 
-        final var value = "SERIALNUMBER="
+        val value = "SERIALNUMBER="
             + VALID_CERTIFICATE.getSerialNumber().toString()
             + ", " + VALID_CERTIFICATE.getIssuerDN().getName();
 
@@ -38,7 +40,7 @@ public class X509SerialNumberAndIssuerDNPrincipalResolverTests extends AbstractX
 
     @Test
     public void verifySupport() {
-        final var c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
+        val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         assertTrue(this.resolver.supports(c));
     }
 

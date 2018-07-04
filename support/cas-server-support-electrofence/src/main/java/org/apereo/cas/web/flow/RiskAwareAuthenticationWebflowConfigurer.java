@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.impl.plans.BlockAuthenticationContingencyPlan;
@@ -29,9 +31,9 @@ public class RiskAwareAuthenticationWebflowConfigurer extends AbstractCasWebflow
 
     @Override
     protected void doInitialize() {
-        final var flow = getLoginFlow();
+        val flow = getLoginFlow();
         if (flow != null) {
-            final var submit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
+            val submit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
             createTransitionForState(submit, BlockAuthenticationContingencyPlan.EVENT_ID_BLOCK_AUTHN, VIEW_ID_BLOCKED_AUTHN);
             createViewState(flow, VIEW_ID_BLOCKED_AUTHN, VIEW_ID_BLOCKED_AUTHN);
         }

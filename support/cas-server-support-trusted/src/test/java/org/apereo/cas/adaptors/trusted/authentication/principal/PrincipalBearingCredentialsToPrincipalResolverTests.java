@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.trusted.authentication.principal;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -27,7 +29,7 @@ public class PrincipalBearingCredentialsToPrincipalResolverTests {
 
     @Test
     public void verifySupports() {
-        final var credential = new PrincipalBearingCredential(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test"));
+        val credential = new PrincipalBearingCredential(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test"));
         assertTrue(this.resolver.supports(credential));
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
         assertFalse(this.resolver.supports(null));
@@ -35,8 +37,8 @@ public class PrincipalBearingCredentialsToPrincipalResolverTests {
 
     @Test
     public void verifyReturnedPrincipal() {
-        final var credential = new PrincipalBearingCredential(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test"));
-        final var p = this.resolver.resolve(credential,
+        val credential = new PrincipalBearingCredential(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test"));
+        val p = this.resolver.resolve(credential,
             Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertEquals("test", p.getId());

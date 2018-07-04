@@ -1,5 +1,7 @@
 package org.apereo.cas.util.transforms;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +26,7 @@ public class PrefixSuffixPrincipalNameTransformer implements PrincipalNameTransf
 
     @Override
     public String transform(final String formUserId) {
-        final var stringBuilder = new StringBuilder();
+        val stringBuilder = new StringBuilder();
         if (this.prefix != null) {
             stringBuilder.append(this.prefix);
         }

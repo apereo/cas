@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.Pac4jUtils;
@@ -39,13 +41,13 @@ public class DelegatedAuthenticationSAML2ClientLogoutAction extends AbstractActi
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         try {
-            final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-            final var context = Pac4jUtils.getPac4jJ2EContext(request, response);
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+            val context = Pac4jUtils.getPac4jJ2EContext(request, response);
 
             Client<?, ?> client;
             try {
-                final var currentClientName = findCurrentClientName(context);
+                val currentClientName = findCurrentClientName(context);
                 client = (currentClientName == null) ? null : clients.findClient(currentClientName);
             } catch (final TechnicalException e) {
                 LOGGER.debug("No SAML2 client found: " + e.getMessage(), e);
@@ -53,9 +55,9 @@ public class DelegatedAuthenticationSAML2ClientLogoutAction extends AbstractActi
             }
 
             if (client instanceof SAML2Client) {
-                final var saml2Client = (SAML2Client) client;
+                val saml2Client = (SAML2Client) client;
                 LOGGER.debug("Located SAML2 client [{}]", saml2Client);
-                final var action = saml2Client.getLogoutAction(context, null, null);
+                val action = saml2Client.getLogoutAction(context, null, null);
                 LOGGER.debug("Preparing logout message to send is [{}]", action.getLocation());
                 action.perform(context);
             } else {

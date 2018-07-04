@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -36,10 +38,10 @@ public abstract class AbstractX509LdapTests extends LdapIntegrationTestsOperatio
      * @throws Exception the exception
      */
     private static void populateCertificateRevocationListAttribute(final int port) throws Exception {
-        final var col = getLdapDirectory(port).getLdapEntries();
-        for (final var ldapEntry : col) {
+        val col = getLdapDirectory(port).getLdapEntries();
+        for (val ldapEntry : col) {
             if (ldapEntry.getDn().equals(DN)) {
-                final var attr = new LdapAttribute(true);
+                val attr = new LdapAttribute(true);
 
                 var value = new byte[1024];
                 IOUtils.read(new ClassPathResource("userCA-valid.crl").getInputStream(), value);

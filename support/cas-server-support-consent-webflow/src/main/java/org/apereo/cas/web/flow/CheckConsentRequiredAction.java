@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
@@ -36,7 +38,7 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        final var consentEvent = determineConsentEvent(requestContext);
+        val consentEvent = determineConsentEvent(requestContext);
         if (StringUtils.isBlank(consentEvent)) {
             return null;
         }
@@ -52,14 +54,14 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
      */
     protected String determineConsentEvent(final RequestContext requestContext) {
         final Service webService = WebUtils.getService(requestContext);
-        final var service = this.authenticationRequestServiceSelectionStrategies.resolveService(webService);
+        val service = this.authenticationRequestServiceSelectionStrategies.resolveService(webService);
         if (service == null) {
             return null;
         }
 
-        final var registeredService = getRegisteredServiceForConsent(requestContext, service);
+        val registeredService = getRegisteredServiceForConsent(requestContext, service);
 
-        final var authentication = WebUtils.getAuthentication(requestContext);
+        val authentication = WebUtils.getAuthentication(requestContext);
         if (authentication == null) {
             return null;
         }

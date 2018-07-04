@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
@@ -96,7 +98,7 @@ public class U2FWebflowConfiguration implements CasWebflowExecutionPlanConfigure
 
     @Bean
     public FlowDefinitionRegistry u2fFlowRegistry() {
-        final var builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-u2f/*-webflow.xml");
         return builder.build();

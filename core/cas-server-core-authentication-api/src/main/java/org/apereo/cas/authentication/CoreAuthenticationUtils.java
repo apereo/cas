@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -45,7 +47,7 @@ public class CoreAuthenticationUtils {
      * @return the map
      */
     public static Map<String, Object> transformPrincipalAttributesListIntoMap(final List<String> list) {
-        final var map = transformPrincipalAttributesListIntoMultiMap(list);
+        val map = transformPrincipalAttributesListIntoMultiMap(list);
         return CollectionUtils.wrap(map);
     }
 
@@ -62,11 +64,11 @@ public class CoreAuthenticationUtils {
             LOGGER.debug("No principal attributes are defined");
         } else {
             list.forEach(a -> {
-                final var attributeName = a.trim();
+                val attributeName = a.trim();
                 if (attributeName.contains(":")) {
-                    final var attrCombo = Splitter.on(":").splitToList(attributeName);
-                    final var name = attrCombo.get(0).trim();
-                    final var value = attrCombo.get(1).trim();
+                    val attrCombo = Splitter.on(":").splitToList(attributeName);
+                    val name = attrCombo.get(0).trim();
+                    val value = attrCombo.get(1).trim();
                     LOGGER.debug("Mapped principal attribute name [{}] to [{}]", name, value);
                     multimap.put(name, value);
                 } else {
@@ -93,12 +95,12 @@ public class CoreAuthenticationUtils {
 
             if (selectionCriteria.endsWith(".groovy")) {
                 final ResourceLoader loader = new DefaultResourceLoader();
-                final var resource = loader.getResource(selectionCriteria);
+                val resource = loader.getResource(selectionCriteria);
                 if (resource != null) {
-                    final var script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+                    val script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
 
-                    final var clz = AccessController.doPrivileged((PrivilegedAction<Class<Predicate>>) () -> {
-                        final var classLoader = new GroovyClassLoader(Beans.class.getClassLoader(),
+                    val clz = AccessController.doPrivileged((PrivilegedAction<Class<Predicate>>) () -> {
+                        val classLoader = new GroovyClassLoader(Beans.class.getClassLoader(),
                             new CompilerConfiguration(), true);
                         return classLoader.parseClass(script);
                     });
@@ -109,7 +111,7 @@ public class CoreAuthenticationUtils {
             final Class predicateClazz = ClassUtils.getClass(selectionCriteria);
             return (Predicate<org.apereo.cas.authentication.Credential>) predicateClazz.getDeclaredConstructor().newInstance();
         } catch (final Exception e) {
-            final var predicate = Pattern.compile(selectionCriteria).asPredicate();
+            val predicate = Pattern.compile(selectionCriteria).asPredicate();
             return credential -> predicate.test(credential.getId());
         }
     }
@@ -126,7 +128,7 @@ public class CoreAuthenticationUtils {
             return new RejectResultCodePasswordPolicyHandlingStrategy();
         }
 
-        final var location = properties.getGroovy().getLocation();
+        val location = properties.getGroovy().getLocation();
         if (properties.getStrategy() == PasswordPolicyProperties.PasswordPolicyHandlingOptions.GROOVY && location != null) {
             LOGGER.debug("Created password policy handling strategy based on Groovy script [{}]", location);
             return new GroovyPasswordPolicyHandlingStrategy(location);

@@ -3,6 +3,7 @@ package org.apereo.cas.util.cipher;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
@@ -149,7 +150,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      * @throws Exception the exception
      */
     protected void configureEncryptionKeyFromPublicKeyResource(final String secretKeyToUse) throws Exception {
-        final var object = extractPublicKeyFromResource(secretKeyToUse);
+        val object = extractPublicKeyFromResource(secretKeyToUse);
         LOGGER.debug("Located encryption key resource [{}]", secretKeyToUse);
         setSecretKeyEncryptionKey(object);
         setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
@@ -166,7 +167,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         }
 
         if (this.signingEnabled) {
-            final var signed = sign(encoded.getBytes(StandardCharsets.UTF_8));
+            val signed = sign(encoded.getBytes(StandardCharsets.UTF_8));
             return new String(signed, StandardCharsets.UTF_8);
         }
         return encoded;
@@ -174,11 +175,11 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
     @Override
     public String decode(final Serializable value, final Object[] parameters) {
-        final var currentValue = value.toString().getBytes(StandardCharsets.UTF_8);
-        final var encoded = this.signingEnabled ? verifySignature(currentValue) : currentValue;
+        val currentValue = value.toString().getBytes(StandardCharsets.UTF_8);
+        val encoded = this.signingEnabled ? verifySignature(currentValue) : currentValue;
 
         if (encoded != null && encoded.length > 0) {
-            final var encodedObj = new String(encoded, StandardCharsets.UTF_8);
+            val encodedObj = new String(encoded, StandardCharsets.UTF_8);
 
             if (this.encryptionEnabled && this.secretKeyEncryptionKey != null) {
                 return EncodingUtils.decryptJwtValue(this.secretKeyEncryptionKey, encodedObj);

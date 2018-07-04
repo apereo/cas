@@ -1,5 +1,7 @@
 package org.apereo.cas.services.util;
 
+import lombok.val;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +28,7 @@ public class RegisteredServiceYamlSerializer extends DefaultRegisteredServiceJso
     @Override
     public boolean supports(final File file) {
         try {
-            final var contents = FileUtils.readFileToString(file, StandardCharsets.UTF_8.name()).trim();
+            val contents = FileUtils.readFileToString(file, StandardCharsets.UTF_8.name()).trim();
             return contents.startsWith("--- !<");
         } catch (final Exception e) {
             return false;

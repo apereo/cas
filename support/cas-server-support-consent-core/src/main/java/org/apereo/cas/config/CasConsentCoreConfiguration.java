@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
@@ -59,8 +61,8 @@ public class CasConsentCoreConfiguration implements AuditTrailRecordResolutionPl
     @Bean
     @RefreshScope
     public CipherExecutor consentCipherExecutor() {
-        final var consent = casProperties.getConsent();
-        final var crypto = consent.getCrypto();
+        val consent = casProperties.getConsent();
+        val crypto = consent.getCrypto();
         if (crypto.isEnabled()) {
             return new AttributeReleaseConsentCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey(), crypto.getAlg());
         }
@@ -79,14 +81,14 @@ public class CasConsentCoreConfiguration implements AuditTrailRecordResolutionPl
     @Bean
     @RefreshScope
     public ConsentRepository consentRepository() {
-        final var location = casProperties.getConsent().getJson().getLocation();
+        val location = casProperties.getConsent().getJson().getLocation();
         if (location != null) {
             LOGGER.warn("Storing consent records in [{}]. This MAY NOT be appropriate in production. "
                 + "Consider choosing an alternative repository format for storing consent decisions", location);
             return new JsonConsentRepository(location);
         }
 
-        final var groovy = casProperties.getConsent().getGroovy().getLocation();
+        val groovy = casProperties.getConsent().getGroovy().getLocation();
         if (groovy != null) {
             return new GroovyConsentRepository(groovy);
         }

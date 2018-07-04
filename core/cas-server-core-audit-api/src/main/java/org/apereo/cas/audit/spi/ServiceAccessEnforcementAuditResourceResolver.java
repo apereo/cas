@@ -1,5 +1,7 @@
 package org.apereo.cas.audit.spi;
 
+import lombok.val;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -24,11 +26,11 @@ public class ServiceAccessEnforcementAuditResourceResolver extends ReturnValueAs
     @Override
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object returnValue) {
         Objects.requireNonNull(returnValue, "AuditableExecutionResult must not be null");
-        final var serviceAccessCheckResult = AuditableExecutionResult.class.cast(returnValue);
-        final var accessCheckOutcome = "Service Access "
+        val serviceAccessCheckResult = AuditableExecutionResult.class.cast(returnValue);
+        val accessCheckOutcome = "Service Access "
             + BooleanUtils.toString(serviceAccessCheckResult.isExecutionFailure(), "Denied", "Granted");
 
-        final var builder = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
+        val builder = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
             .append("result", accessCheckOutcome);
         serviceAccessCheckResult.getService()
             .ifPresent(service -> builder.append("service", StringUtils.abbreviate(service.getId(), ABBREV_LENGTH)));

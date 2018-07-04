@@ -1,5 +1,7 @@
 package org.apereo.cas.support.rest.resources;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
@@ -55,7 +57,7 @@ public class ServiceTicketResource {
     public ResponseEntity<String> createServiceTicket(final HttpServletRequest httpServletRequest,
                                                       @PathVariable("tgtId") final String tgtId) {
         try {
-            final var authn = this.ticketRegistrySupport.getAuthenticationFrom(tgtId);
+            val authn = this.ticketRegistrySupport.getAuthenticationFrom(tgtId);
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(authn);
             if (authn == null) {
                 throw new InvalidTicketException(tgtId);
@@ -65,7 +67,7 @@ public class ServiceTicketResource {
             if (service == null) {
                 throw new IllegalArgumentException("Target service/application is unspecified or unrecognized in the request");
             }
-            final var authenticationResult = builder
+            val authenticationResult = builder
                 .collect(authn)
                 .build(this.authenticationSystemSupport.getPrincipalElectionStrategy(), service);
             return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);

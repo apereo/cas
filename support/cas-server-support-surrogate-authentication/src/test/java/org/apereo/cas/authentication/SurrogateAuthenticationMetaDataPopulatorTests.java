@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.junit.Test;
@@ -19,17 +21,17 @@ import static org.junit.Assert.*;
 public class SurrogateAuthenticationMetaDataPopulatorTests {
     @Test
     public void verifyAction() {
-        final var p = new SurrogateAuthenticationMetaDataPopulator();
+        val p = new SurrogateAuthenticationMetaDataPopulator();
         assertFalse(p.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
 
-        final var c = new SurrogateUsernamePasswordCredential();
+        val c = new SurrogateUsernamePasswordCredential();
         c.setSurrogateUsername("cassurrogate");
         c.setUsername("casuser");
         c.setPassword("password");
 
-        final var builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         p.populateAttributes(builder, DefaultAuthenticationTransaction.of(c));
-        final var auth = builder.build();
+        val auth = builder.build();
         assertTrue(auth.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED));
         assertTrue(auth.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL));
         assertTrue(auth.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER));

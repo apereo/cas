@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -45,9 +47,9 @@ public class RegexRegisteredServiceTests {
 
     @Parameterized.Parameters
     public static Collection<Object[]> getParameters() {
-        final var domainCatchallHttp = "https*://([A-Za-z0-9_-]+\\.)+vt\\.edu/.*";
-        final var domainCatchallHttpImap = "(https*|imaps*)://([A-Za-z0-9_-]+\\.)+vt\\.edu/.*";
-        final var globalCatchallHttpImap = "(https*|imaps*)://.*";
+        val domainCatchallHttp = "https*://([A-Za-z0-9_-]+\\.)+vt\\.edu/.*";
+        val domainCatchallHttpImap = "(https*|imaps*)://([A-Za-z0-9_-]+\\.)+vt\\.edu/.*";
+        val globalCatchallHttpImap = "(https*|imaps*)://.*";
         return Arrays.asList(new Object[][]{
                 // CAS-1071 domain-specific HTTP catch-all #1
                 {
@@ -110,14 +112,14 @@ public class RegexRegisteredServiceTests {
     }
 
     private static RegexRegisteredService newService(final String id) {
-        final var service = new RegexRegisteredService();
+        val service = new RegexRegisteredService();
         service.setServiceId(id);
         return service;
     }
 
     @Test
     public void verifySerializeARegexRegisteredServiceToJson() throws IOException {
-        final var serviceWritten = newService("serviceId");
+        val serviceWritten = newService("serviceId");
         serviceWritten.setLogoutType(RegisteredService.LogoutType.FRONT_CHANNEL);
         MAPPER.writeValue(JSON_FILE, serviceWritten);
         final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, RegexRegisteredService.class);

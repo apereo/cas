@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.util;
 
+import lombok.val;
+
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opensaml.core.xml.XMLObject;
@@ -24,16 +26,16 @@ public class CasHttpSoap11Encoder extends HTTPSOAP11Encoder {
 
     @Override
     protected void buildAndStoreSOAPMessage(final XMLObject payload) {
-        final var builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
+        val builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
 
-        final var envBuilder =
+        val envBuilder =
                 (SOAPObjectBuilder<Envelope>) builderFactory.getBuilder(Envelope.DEFAULT_ELEMENT_NAME);
-        final var envelope = envBuilder.buildObject(
+        val envelope = envBuilder.buildObject(
                 SOAPConstants.SOAP11_NS, Envelope.DEFAULT_ELEMENT_LOCAL_NAME, OPENSAML_11_SOAP_NS_PREFIX);
 
-        final var bodyBuilder =
+        val bodyBuilder =
                 (SOAPObjectBuilder<Body>) builderFactory.getBuilder(Body.DEFAULT_ELEMENT_NAME);
-        final var body = bodyBuilder.buildObject(
+        val body = bodyBuilder.buildObject(
                 SOAPConstants.SOAP11_NS, Body.DEFAULT_ELEMENT_LOCAL_NAME, OPENSAML_11_SOAP_NS_PREFIX);
 
         if (!body.getUnknownXMLObjects().isEmpty()) {

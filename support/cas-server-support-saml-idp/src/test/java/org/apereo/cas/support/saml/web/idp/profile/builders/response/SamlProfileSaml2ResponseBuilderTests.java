@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
+import lombok.val;
+
 import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -22,18 +24,18 @@ import static org.junit.Assert.*;
 public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests {
     @Test
     public void verifySamlResponseAllSigned() {
-        final var request = new MockHttpServletRequest();
-        final var response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
 
-        final var service = getSamlRegisteredServiceForTestShib(true, true);
-        final var adaptor =
+        val service = getSamlRegisteredServiceForTestShib(true, true);
+        val adaptor =
             SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
                 service, service.getServiceId()).get();
 
-        final var authnRequest = getAuthnRequestFor(service);
-        final var assertion = getAssertion();
+        val authnRequest = getAuthnRequestFor(service);
+        val assertion = getAssertion();
 
-        final var samlResponse = samlProfileSamlResponseBuilder.build(authnRequest, request, response,
+        val samlResponse = samlProfileSamlResponseBuilder.build(authnRequest, request, response,
             assertion, service, adaptor,
             SAMLConstants.SAML2_POST_BINDING_URI,
             new MessageContext());
@@ -42,18 +44,18 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
 
     @Test
     public void verifySamlResponseAllSignedEncrypted() {
-        final var request = new MockHttpServletRequest();
-        final var response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
 
-        final var service = getSamlRegisteredServiceForTestShib(true, true, true);
-        final var adaptor =
+        val service = getSamlRegisteredServiceForTestShib(true, true, true);
+        val adaptor =
             SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
                 service, service.getServiceId()).get();
 
-        final var authnRequest = getAuthnRequestFor(service);
-        final var assertion = getAssertion();
+        val authnRequest = getAuthnRequestFor(service);
+        val assertion = getAssertion();
 
-        final var samlResponse = samlProfileSamlResponseBuilder.build(authnRequest, request, response,
+        val samlResponse = samlProfileSamlResponseBuilder.build(authnRequest, request, response,
             assertion, service, adaptor,
             SAMLConstants.SAML2_POST_BINDING_URI,
             new MessageContext());
@@ -62,18 +64,18 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
 
     @Test
     public void verifySamlResponseAssertionSigned() {
-        final var request = new MockHttpServletRequest();
-        final var response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
 
-        final var service = getSamlRegisteredServiceForTestShib(false, true);
-        final var adaptor =
+        val service = getSamlRegisteredServiceForTestShib(false, true);
+        val adaptor =
             SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
                 service, service.getServiceId()).get();
 
-        final var authnRequest = getAuthnRequestFor(service);
-        final var assertion = getAssertion();
+        val authnRequest = getAuthnRequestFor(service);
+        val assertion = getAssertion();
 
-        final var samlResponse = samlProfileSamlResponseBuilder.build(authnRequest, request, response,
+        val samlResponse = samlProfileSamlResponseBuilder.build(authnRequest, request, response,
             assertion, service, adaptor,
             SAMLConstants.SAML2_POST_BINDING_URI,
             new MessageContext());
@@ -82,18 +84,18 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
 
     @Test
     public void verifySamlResponseResponseSigned() {
-        final var request = new MockHttpServletRequest();
-        final var response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
 
-        final var service = getSamlRegisteredServiceForTestShib(true, false);
-        final var adaptor =
+        val service = getSamlRegisteredServiceForTestShib(true, false);
+        val adaptor =
             SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
                 service, service.getServiceId()).get();
 
-        final var authnRequest = getAuthnRequestFor(service);
-        final var assertion = getAssertion();
+        val authnRequest = getAuthnRequestFor(service);
+        val assertion = getAssertion();
 
-        final var samlResponse = samlProfileSamlResponseBuilder.build(authnRequest, request, response,
+        val samlResponse = samlProfileSamlResponseBuilder.build(authnRequest, request, response,
             assertion, service, adaptor,
             SAMLConstants.SAML2_POST_BINDING_URI,
             new MessageContext());
@@ -102,18 +104,18 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
 
     @Test
     public void verifySamlResponseNothingSigned() {
-        final var request = new MockHttpServletRequest();
-        final var response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
 
-        final var service = getSamlRegisteredServiceForTestShib(false, false);
-        final var adaptor =
+        val service = getSamlRegisteredServiceForTestShib(false, false);
+        val adaptor =
             SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
                 service, service.getServiceId()).get();
 
-        final var authnRequest = getAuthnRequestFor(service);
-        final var assertion = getAssertion();
+        val authnRequest = getAuthnRequestFor(service);
+        val assertion = getAssertion();
 
-        final var samlResponse = samlProfileSamlResponseBuilder.build(authnRequest, request, response,
+        val samlResponse = samlProfileSamlResponseBuilder.build(authnRequest, request, response,
             assertion, service, adaptor,
             SAMLConstants.SAML2_POST_BINDING_URI,
             new MessageContext());

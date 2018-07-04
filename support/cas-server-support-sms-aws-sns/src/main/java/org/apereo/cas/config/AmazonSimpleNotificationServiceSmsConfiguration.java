@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +31,9 @@ public class AmazonSimpleNotificationServiceSmsConfiguration {
     @RefreshScope
     @Bean
     public SmsSender smsSender() {
-        final var sns = casProperties.getSmsProvider().getSns();
-        final var endpoint = new AwsClientBuilder.EndpointConfiguration(sns.getEndpoint(), sns.getRegion());
-        final var snsClient = AmazonSNSClient.builder()
+        val sns = casProperties.getSmsProvider().getSns();
+        val endpoint = new AwsClientBuilder.EndpointConfiguration(sns.getEndpoint(), sns.getRegion());
+        val snsClient = AmazonSNSClient.builder()
             .withCredentials(ChainingAWSCredentialsProvider.getInstance(sns.getCredentialAccessKey(),
                 sns.getCredentialSecretKey(), sns.getCredentialsPropertiesFile(),
                 sns.getProfilePath(), sns.getProfileName()))

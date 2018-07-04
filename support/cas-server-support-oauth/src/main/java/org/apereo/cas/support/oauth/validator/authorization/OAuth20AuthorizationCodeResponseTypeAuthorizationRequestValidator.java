@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.validator.authorization;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableContext;
@@ -29,8 +31,8 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
 
     @Override
     public boolean validate(final J2EContext context) {
-        final var request = context.getRequest();
-        final var checkParameterExist = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CLIENT_ID)
+        val request = context.getRequest();
+        val checkParameterExist = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CLIENT_ID)
             && HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REDIRECT_URI)
             && HttpRequestUtils.doesParameterExist(request, OAuth20Constants.RESPONSE_TYPE);
 
@@ -39,28 +41,28 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
             return false;
         }
 
-        final var responseType = request.getParameter(OAuth20Constants.RESPONSE_TYPE);
+        val responseType = request.getParameter(OAuth20Constants.RESPONSE_TYPE);
         if (!OAuth20Utils.checkResponseTypes(responseType, OAuth20ResponseTypes.values())) {
             LOGGER.warn("Response type [{}] is not supported.", responseType);
             return false;
         }
 
-        final var clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
-        final var registeredService = getRegisteredServiceByClientId(clientId);
+        val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+        val registeredService = getRegisteredServiceByClientId(clientId);
 
-        final var service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
-        final var audit = AuditableContext.builder()
+        val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+        val audit = AuditableContext.builder()
             .service(service)
             .registeredService(registeredService)
             .build();
-        final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
 
         if (accessResult.isExecutionFailure()) {
             LOGGER.warn("Registered service [{}] is not found or is not authorized for access.", registeredService);
             return false;
         }
 
-        final var redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
+        val redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
         if (!OAuth20Utils.checkCallbackValid(registeredService, redirectUri)) {
             LOGGER.warn("Callback URL [{}] is not authorized for registered service [{}].", redirectUri, registeredService);
             return false;
@@ -81,7 +83,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator i
 
     @Override
     public boolean supports(final J2EContext context) {
-        final var grantType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
+        val grantType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
         return OAuth20Utils.isResponseType(grantType, getResponseType());
     }
 

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
+import lombok.val;
+
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.category.FileSystemCategory;
@@ -30,10 +32,10 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends Base
 
     @Test
     public void verifyScriptReleasesSamlAttributes() {
-        final var filter = new GroovySamlRegisteredServiceAttributeReleasePolicy();
+        val filter = new GroovySamlRegisteredServiceAttributeReleasePolicy();
         filter.setGroovyScript("classpath:saml-groovy-attrs.groovy");
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
-        final var registeredService = getSamlRegisteredServiceForTestShib();
+        val registeredService = getSamlRegisteredServiceForTestShib();
         registeredService.setAttributeReleasePolicy(filter);
         final Map attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
             CoreAuthenticationTestUtils.getService(), registeredService);

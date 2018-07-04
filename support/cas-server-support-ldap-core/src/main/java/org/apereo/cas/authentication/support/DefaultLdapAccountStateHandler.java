@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.support;
 
+import lombok.val;
+
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -95,7 +97,7 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
             handlePolicyAttributes(response);
         }
 
-        final var state = response.getAccountState();
+        val state = response.getAccountState();
         if (state == null) {
             LOGGER.debug("Account state not defined. Returning empty list of messages.");
             return new ArrayList<>(0);
@@ -122,7 +124,7 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
                                final PasswordPolicyConfiguration configuration, final List<MessageDescriptor> messages) throws LoginException {
 
         LOGGER.debug("Handling LDAP account state error [{}]", error);
-        final var ex = this.errorMap.get(error);
+        val ex = this.errorMap.get(error);
         if (ex != null) {
             throw ex;
         }
@@ -151,8 +153,8 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
         }
 
         if (warning.getExpiration() != null) {
-            final var expDate = DateTimeUtils.zonedDateTimeOf(warning.getExpiration());
-            final var ttl = ZonedDateTime.now(ZoneOffset.UTC).until(expDate, ChronoUnit.DAYS);
+            val expDate = DateTimeUtils.zonedDateTimeOf(warning.getExpiration());
+            val ttl = ZonedDateTime.now(ZoneOffset.UTC).until(expDate, ChronoUnit.DAYS);
             LOGGER.debug(
                 "Password expires in [{}] days. Expiration warning threshold is [{}] days.",
                 ttl,
@@ -181,10 +183,10 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
      */
     @SneakyThrows
     protected void handlePolicyAttributes(final AuthenticationResponse response) {
-        final var attributes = response.getLdapEntry().getAttributes();
-        for (final var attr : attributes) {
+        val attributes = response.getLdapEntry().getAttributes();
+        for (val attr : attributes) {
             if (this.attributesToErrorMap.containsKey(attr.getName()) && Boolean.parseBoolean(attr.getStringValue())) {
-                final var clazz = this.attributesToErrorMap.get(attr.getName());
+                val clazz = this.attributesToErrorMap.get(attr.getName());
                 throw clazz.getDeclaredConstructor().newInstance();
             }
         }

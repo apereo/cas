@@ -1,5 +1,7 @@
 package org.apereo.cas.support.sms;
 
+import lombok.val;
+
 import org.apereo.cas.config.ClickatellSmsConfiguration;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.io.SmsSender;
@@ -41,7 +43,7 @@ public class ClickatellSmsSenderTests {
 
     @Before
     public void initialize() {
-        final var data = "{\n"
+        val data = "{\n"
             + "\"messages\": [\n"
             + "{\n"
             + "\"apiMessageId\": \"77fb29998253415fa5d66971d519d362\",\n"

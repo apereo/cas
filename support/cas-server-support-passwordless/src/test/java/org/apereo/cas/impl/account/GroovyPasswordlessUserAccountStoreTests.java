@@ -1,5 +1,7 @@
 package org.apereo.cas.impl.account;
 
+import lombok.val;
+
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -77,7 +79,7 @@ public class GroovyPasswordlessUserAccountStoreTests {
 
     @Test
     public void verifyAction() {
-        final var user = passwordlessUserAccountStore.findUser("casuser");
+        val user = passwordlessUserAccountStore.findUser("casuser");
         assertTrue(user.isPresent());
     }
 }

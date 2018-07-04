@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -57,14 +59,14 @@ public class CassandraAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public CassandraRepository cassandraRepository() {
-        final var cassandra = casProperties.getAuthn().getCassandra();
+        val cassandra = casProperties.getAuthn().getCassandra();
         return new DefaultCassandraRepository(cassandra, cassandraSessionFactory);
     }
     
     @Bean
     public AuthenticationHandler cassandraAuthenticationHandler() {
-        final var cassandra = casProperties.getAuthn().getCassandra();
-        final var handler = new CassandraAuthenticationHandler(cassandra.getName(), servicesManager,
+        val cassandra = casProperties.getAuthn().getCassandra();
+        val handler = new CassandraAuthenticationHandler(cassandra.getName(), servicesManager,
                 cassandraPrincipalFactory(),
                 cassandra.getOrder(), cassandra, cassandraRepository());
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(cassandra.getPrincipalTransformation()));

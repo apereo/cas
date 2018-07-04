@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.val;
+
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -53,11 +55,11 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
         LOGGER.debug("Resolving principal from Subject Alternative Name UPN for [{}]", certificate);
         try {
-            final var subjectAltNames = certificate.getSubjectAlternativeNames();
+            val subjectAltNames = certificate.getSubjectAlternativeNames();
             if (subjectAltNames != null) {
-                for (final var sanItem : subjectAltNames) {
-                    final var seq = getAltnameSequence(sanItem);
-                    final var upnString = getUPNStringFromSequence(seq);
+                for (val sanItem : subjectAltNames) {
+                    val seq = getAltnameSequence(sanItem);
+                    val upnString = getUPNStringFromSequence(seq);
                     if (upnString != null) {
                         return upnString;
                     }
@@ -82,9 +84,9 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
     private static String getUPNStringFromSequence(final ASN1Sequence seq) {
         if (seq != null) {
             // First in sequence is the object identifier, that we must check
-            final var id = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
+            val id = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
             if (id != null && UPN_OBJECTID.equals(id.getId())) {
-                final var obj = (ASN1TaggedObject) seq.getObjectAt(1);
+                val obj = (ASN1TaggedObject) seq.getObjectAt(1);
                 var prim = obj.getObject();
                 // Due to bug in java cert.getSubjectAltName, it can be tagged an extra time
                 if (prim instanceof ASN1TaggedObject) {
@@ -118,9 +120,9 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
         if (sanItem.size() < 2) {
             LOGGER.error("Subject Alternative Name List does not contain at least two required elements. Returning null principal id...");
         }
-        final var itemType = (Integer) sanItem.get(0);
+        val itemType = (Integer) sanItem.get(0);
         if (itemType == 0) {
-            final var altName = (byte[]) sanItem.get(1);
+            val altName = (byte[]) sanItem.get(1);
             return getAltnameSequence(altName);
         }
         return null;

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
@@ -28,9 +30,9 @@ public class GroovyPasswordPolicyHandlingStrategyTests {
 
     @Test
     public void verifyStrategySupportsDefault() {
-        final var resource = new ClassPathResource("lppe-strategy.groovy");
-        final var s = new GroovyPasswordPolicyHandlingStrategy(resource);
-        final var res = mock(AuthenticationResponse.class);
+        val resource = new ClassPathResource("lppe-strategy.groovy");
+        val s = new GroovyPasswordPolicyHandlingStrategy(resource);
+        val res = mock(AuthenticationResponse.class);
 
         when(res.getAuthenticationResultCode()).thenReturn(AuthenticationResultCode.INVALID_CREDENTIAL);
         assertFalse(s.supports(null));

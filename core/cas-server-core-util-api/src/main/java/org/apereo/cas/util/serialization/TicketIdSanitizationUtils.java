@@ -1,5 +1,7 @@
 package org.apereo.cas.util.serialization;
 
+import lombok.val;
+
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -45,16 +47,16 @@ public class TicketIdSanitizationUtils {
     public static String sanitize(final String msg) {
         var modifiedMessage = msg;
         if (StringUtils.isNotBlank(msg) && !Boolean.getBoolean("CAS_TICKET_ID_SANITIZE_SKIP")) {
-            final var matcher = TICKET_ID_PATTERN.matcher(msg);
+            val matcher = TICKET_ID_PATTERN.matcher(msg);
             while (matcher.find()) {
-                final var match = matcher.group();
-                final var group = matcher.group(1);
-                final var length = group.length();
+                val match = matcher.group();
+                val group = matcher.group(1);
+                val length = group.length();
                 var replaceLength = length - VISIBLE_TAIL_LENGTH - (HOST_NAME_LENGTH + 1);
                 if (replaceLength <= 0) {
                     replaceLength = length;
                 }
-                final var newId = match.replace(group.substring(0, replaceLength), StringUtils.repeat("*", replaceLength));
+                val newId = match.replace(group.substring(0, replaceLength), StringUtils.repeat("*", replaceLength));
                 modifiedMessage = modifiedMessage.replaceAll(match, newId);
             }
         }

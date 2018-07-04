@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -44,7 +46,7 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
     @Override
     public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
         try {
-            final var account = getAccount(uid);
+            val account = getAccount(uid);
             if (account.isPresent()) {
                 return account.get().getPublicId().equals(yubikeyPublicId);
             }

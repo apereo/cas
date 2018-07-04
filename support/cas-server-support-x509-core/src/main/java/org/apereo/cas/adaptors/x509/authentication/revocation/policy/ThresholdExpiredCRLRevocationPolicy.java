@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.policy;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
@@ -34,7 +36,7 @@ public class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X50
      */
     @Override
     public void apply(final X509CRL crl) throws ExpiredCRLException {
-        final var cutoff = ZonedDateTime.now(ZoneOffset.UTC);
+        val cutoff = ZonedDateTime.now(ZoneOffset.UTC);
         if (CertUtils.isExpired(crl, cutoff)) {
             if (CertUtils.isExpired(crl, cutoff.minusSeconds(this.threshold))) {
                 throw new ExpiredCRLException(crl.toString(), cutoff, this.threshold);

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -62,14 +64,14 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
 
     @Test
     public void verifyTgtToSet() throws Exception {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setRemoteAddr(LOCALHOST_IP);
         request.setLocalAddr(LOCALHOST_IP);
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-        final var response = new MockHttpServletResponse();
+        val response = new MockHttpServletResponse();
         request.addHeader("User-Agent", "Test");
-        final var tgt = mock(TicketGrantingTicket.class);
+        val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn(TEST_STRING);
 
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
@@ -82,15 +84,15 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
 
     @Test
     public void verifyTgtToSetRemovingOldTgt() throws Exception {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setRemoteAddr(LOCALHOST_IP);
         request.setLocalAddr(LOCALHOST_IP);
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-        final var response = new MockHttpServletResponse();
+        val response = new MockHttpServletResponse();
         request.addHeader("User-Agent", "Test");
 
-        final var tgt = mock(TicketGrantingTicket.class);
+        val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn(TEST_STRING);
 
         request.setCookies(new Cookie("TGT", "test5"));

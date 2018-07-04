@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.redis.services.RedisServiceRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -34,15 +36,15 @@ public class RedisServiceRegistryConfiguration implements ServiceRegistryExecuti
     @Bean
     @ConditionalOnMissingBean(name = "redisServiceConnectionFactory")
     public RedisConnectionFactory redisServiceConnectionFactory() {
-        final var redis = casProperties.getServiceRegistry().getRedis();
-        final var obj = new RedisObjectFactory();
+        val redis = casProperties.getServiceRegistry().getRedis();
+        val obj = new RedisObjectFactory();
         return obj.newRedisConnectionFactory(redis);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "registeredServiceRedisTemplate")
     public RedisTemplate registeredServiceRedisTemplate() {
-        final var obj = new RedisObjectFactory();
+        val obj = new RedisObjectFactory();
         return obj.newRedisTemplate(redisServiceConnectionFactory(), String.class, RegisteredService.class);
     }
 

@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -33,7 +35,7 @@ public class ReturnRestfulAttributeReleasePolicyTests {
 
     @Test
     public void verifySerializeAttributeReleasePolicyToJson() throws IOException {
-        final var policyWritten = new ReturnRestfulAttributeReleasePolicy("http://endpoint.example.org");
+        val policyWritten = new ReturnRestfulAttributeReleasePolicy("http://endpoint.example.org");
         MAPPER.writeValue(JSON_FILE, policyWritten);
         final RegisteredServiceAttributeReleasePolicy policyRead = MAPPER.readValue(JSON_FILE, ReturnRestfulAttributeReleasePolicy.class);
         assertEquals(policyWritten, policyRead);
@@ -41,12 +43,12 @@ public class ReturnRestfulAttributeReleasePolicyTests {
 
     @Test
     public void verifyPolicy() throws IOException {
-        final var data = MAPPER.writeValueAsString(CollectionUtils.wrap("givenName", "CASUSER", "familyName", "CAS"));
+        val data = MAPPER.writeValueAsString(CollectionUtils.wrap("givenName", "CASUSER", "familyName", "CAS"));
         try (var webServer = new MockWebServer(9299,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
 
-            final var policyWritten = new ReturnRestfulAttributeReleasePolicy("http://localhost:9299");
+            val policyWritten = new ReturnRestfulAttributeReleasePolicy("http://localhost:9299");
             final Map attributes = policyWritten.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
                 CoreAuthenticationTestUtils.getService(),
                 CoreAuthenticationTestUtils.getRegisteredService());

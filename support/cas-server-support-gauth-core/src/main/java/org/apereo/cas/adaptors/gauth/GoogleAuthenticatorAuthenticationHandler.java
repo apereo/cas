@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.gauth;
 
+import lombok.val;
+
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -49,21 +51,21 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
-        final var tokenCredential = (GoogleAuthenticatorTokenCredential) credential;
+        val tokenCredential = (GoogleAuthenticatorTokenCredential) credential;
 
         if (!StringUtils.isNumeric(tokenCredential.getToken())) {
             throw new PreventedException("Invalid non-numeric OTP format specified.",
                 new IllegalArgumentException("Invalid token " + tokenCredential.getToken()));
         }
-        final var otp = Integer.parseInt(tokenCredential.getToken());
+        val otp = Integer.parseInt(tokenCredential.getToken());
         LOGGER.debug("Received OTP [{}]", otp);
 
         @NonNull
-        final var authentication = WebUtils.getInProgressAuthentication();
-        final var uid = authentication.getPrincipal().getId();
+        val authentication = WebUtils.getInProgressAuthentication();
+        val uid = authentication.getPrincipal().getId();
 
         LOGGER.debug("Received principal id [{}]. Attempting to locate account in credential repository...", uid);
-        final var acct = this.credentialRepository.get(uid);
+        val acct = this.credentialRepository.get(uid);
         if (acct == null || StringUtils.isBlank(acct.getSecretKey())) {
             throw new AccountNotFoundException(uid + " cannot be found in the registry");
         }

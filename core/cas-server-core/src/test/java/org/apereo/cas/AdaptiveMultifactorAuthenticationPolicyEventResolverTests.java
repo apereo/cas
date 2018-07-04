@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
@@ -103,11 +105,11 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolverTests {
         request.setLocalAddr("195.88.151.11");
 
 
-        final var response = new MockHttpServletResponse();
+        val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        final var targetResolver = new DefaultTargetStateResolver(TestMultifactorAuthenticationProvider.ID);
-        final var transition = new Transition(new DefaultTransitionCriteria(
+        val targetResolver = new DefaultTargetStateResolver(TestMultifactorAuthenticationProvider.ID);
+        val transition = new Transition(new DefaultTransitionCriteria(
             new LiteralExpression(TestMultifactorAuthenticationProvider.ID)), targetResolver);
         context.getRootFlow().getGlobalTransitionSet().add(transition);
 
@@ -120,7 +122,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolverTests {
     public void verifyOperationNeedsMfa() {
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
-        final var event = resolver.resolve(context);
+        val event = resolver.resolve(context);
         assertEquals(1, event.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());
     }
@@ -130,7 +132,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolverTests {
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "FIREFOX");
         request.addParameter("geolocation", "1000,1000,1000,1000");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
-        final var event = resolver.resolve(context);
+        val event = resolver.resolve(context);
         assertEquals(1, event.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());
     }
@@ -139,8 +141,8 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolverTests {
     public static class GeoLocationServiceTestConfiguration {
         @Bean
         public GeoLocationService geoLocationService() {
-            final var service = mock(GeoLocationService.class);
-            final var response = new GeoLocationResponse();
+            val service = mock(GeoLocationService.class);
+            val response = new GeoLocationResponse();
             response.addAddress("MSIE");
             when(service.locate(anyString(), any(GeoLocationRequest.class))).thenReturn(response);
             return service;

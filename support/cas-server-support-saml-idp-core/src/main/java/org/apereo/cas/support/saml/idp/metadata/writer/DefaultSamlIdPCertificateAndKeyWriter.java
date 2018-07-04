@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata.writer;
 
+import lombok.val;
+
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -48,8 +50,8 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
     @SneakyThrows
     @Override
     public void writeCertificateAndKey(final Writer privateKeyWriter, final Writer certificateWriter) {
-        final var keypair = generateKeyPair();
-        final var certificate = generateCertificate(keypair);
+        val keypair = generateKeyPair();
+        val certificate = generateCertificate(keypair);
 
         try (var keyOut = new JcaPEMWriter(privateKeyWriter)) {
             keyOut.writeObject(keypair.getPrivate());
@@ -64,15 +66,15 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
 
     @SneakyThrows
     private KeyPair generateKeyPair() {
-        final var generator = KeyPairGenerator.getInstance(keyType);
+        val generator = KeyPairGenerator.getInstance(keyType);
         generator.initialize(keySize);
         return generator.generateKeyPair();
     }
 
     private X509Certificate generateCertificate(final KeyPair keypair) throws Exception {
-        final var dn = new X500Name("CN=" + hostname);
-        final var notBefore = new GregorianCalendar();
-        final var notOnOrAfter = new GregorianCalendar();
+        val dn = new X500Name("CN=" + hostname);
+        val notBefore = new GregorianCalendar();
+        val notOnOrAfter = new GregorianCalendar();
         notOnOrAfter.set(GregorianCalendar.YEAR, notOnOrAfter.get(GregorianCalendar.YEAR) + certificateLifetimeInYears);
 
         final X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(
@@ -84,12 +86,12 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
             keypair.getPublic()
         );
 
-        final var extUtils = new JcaX509ExtensionUtils();
+        val extUtils = new JcaX509ExtensionUtils();
         builder.addExtension(Extension.subjectKeyIdentifier, false, extUtils.createSubjectKeyIdentifier(keypair.getPublic()));
         builder.addExtension(Extension.subjectAlternativeName, false, GeneralNames.getInstance(new DERSequence(buildSubjectAltNames())));
 
-        final var certHldr = builder.build(new JcaContentSignerBuilder(certificateAlgorithm).build(keypair.getPrivate()));
-        final var cert = new JcaX509CertificateConverter().getCertificate(certHldr);
+        val certHldr = builder.build(new JcaContentSignerBuilder(certificateAlgorithm).build(keypair.getPrivate()));
+        val cert = new JcaX509CertificateConverter().getCertificate(certHldr);
         cert.checkValidity(new Date());
         cert.verify(keypair.getPublic());
 

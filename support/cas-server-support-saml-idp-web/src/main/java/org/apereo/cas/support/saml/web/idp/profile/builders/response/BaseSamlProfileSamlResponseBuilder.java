@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -81,9 +83,9 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                    final String binding,
                    final MessageContext messageContext) throws SamlException {
-        final var assertion = buildSamlAssertion(authnRequest, request, response,
+        val assertion = buildSamlAssertion(authnRequest, request, response,
             casAssertion, service, adaptor, binding, messageContext);
-        final var finalResponse = buildResponse(assertion, casAssertion, authnRequest,
+        val finalResponse = buildResponse(assertion, casAssertion, authnRequest,
             service, adaptor, request, response, binding, messageContext);
         return encodeFinalResponse(request, response, service, adaptor, finalResponse, binding, authnRequest, casAssertion);
     }
@@ -109,7 +111,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
                                     final String binding,
                                     final RequestAbstractType authnRequest,
                                     final Object assertion) {
-        final var relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
+        val relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
         LOGGER.debug("RelayState is [{}]", relayState);
         return encode(service, finalResponse, response, request, adaptor, relayState, binding, authnRequest, assertion);
     }
@@ -170,7 +172,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
      * @return the issuer
      */
     protected Issuer buildEntityIssuer() {
-        final var issuer = newIssuer(casProperties.getAuthn().getSamlIdp().getEntityId());
+        val issuer = newIssuer(casProperties.getAuthn().getSamlIdp().getEntityId());
         issuer.setFormat(Issuer.ENTITY);
         return issuer;
     }
@@ -218,7 +220,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
 
         if (service.isEncryptAssertions()) {
             LOGGER.debug("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
-            final var encryptedAssertion =
+            val encryptedAssertion =
                 this.samlObjectEncrypter.encode(assertion, service, adaptor, response, request);
             return encryptedAssertion;
         }

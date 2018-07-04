@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -57,8 +59,8 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
             }
             LOGGER.debug("Using principal [{}] to generate anonymous identifier for service [{}]", principal, service);
 
-            final var md = prepareMessageDigest(principal, service);
-            final var result = digestAndEncodeWithSalt(md);
+            val md = prepareMessageDigest(principal, service);
+            val result = digestAndEncodeWithSalt(md);
             LOGGER.debug("Generated persistent id for [{}] is [{}]", service, result);
             return result;
         } catch (final Exception e) {
@@ -69,11 +71,11 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
 
     @Override
     public String generate(final Principal principal, final Service service) {
-        final var attributes = principal.getAttributes();
+        val attributes = principal.getAttributes();
         LOGGER.debug("Found principal attributes [{}] to use when generating persistent identifiers", attributes);
         final String principalId;
         if (StringUtils.isNotBlank(this.attribute) && attributes.containsKey(this.attribute)) {
-            final var attributeValue = attributes.get(this.attribute);
+            val attributeValue = attributes.get(this.attribute);
             principalId = CollectionUtils.firstElement(attributeValue).get().toString();
             LOGGER.debug("Using attribute [{}] to establish principal id [{}] to generate persistent identifier", this.attribute, principalId);
         } else {
@@ -91,8 +93,8 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
      * @return the string
      */
     protected String digestAndEncodeWithSalt(final MessageDigest md) {
-        final var sanitizedSalt = StringUtils.replace(salt, "\n", " ");
-        final var digested = md.digest(sanitizedSalt.getBytes(StandardCharsets.UTF_8));
+        val sanitizedSalt = StringUtils.replace(salt, "\n", " ");
+        val digested = md.digest(sanitizedSalt.getBytes(StandardCharsets.UTF_8));
         return EncodingUtils.encodeBase64(digested, false);
     }
 
@@ -105,7 +107,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
      * @throws NoSuchAlgorithmException the no such algorithm exception
      */
     protected MessageDigest prepareMessageDigest(final String principal, final String service) throws NoSuchAlgorithmException {
-        final var md = MessageDigest.getInstance("SHA");
+        val md = MessageDigest.getInstance("SHA");
         if (StringUtils.isNotBlank(service)) {
             md.update(service.getBytes(StandardCharsets.UTF_8));
             md.update(CONST_SEPARATOR);

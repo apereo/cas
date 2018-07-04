@@ -1,5 +1,7 @@
 package org.apereo.cas.shell.commands.services;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.springframework.shell.standard.ShellCommandGroup;
@@ -32,8 +34,8 @@ public class AnonymousUsernameAttributeProviderCommand {
             help = "Service application URL for which CAS may generate the identifier") final String service,
         @ShellOption(value = {"salt"},
             help = "Salt used to generate and encode the anonymous identifier") final String salt) {
-        final var generator = new ShibbolethCompatiblePersistentIdGenerator(salt);
-        final var id = generator.generate(username, service);
+        val generator = new ShibbolethCompatiblePersistentIdGenerator(salt);
+        val id = generator.generate(username, service);
         LOGGER.info("Generated identifier:\n[{}]", id);
     }
 }

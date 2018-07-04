@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import lombok.val;
+
 import com.mongodb.CommandResult;
 import com.mongodb.DBCollection;
 import lombok.ToString;
@@ -49,8 +51,8 @@ public class MongoDbCacheStatistics implements CacheStatistics {
     @Override
     public String toString(final StringBuilder builder) {
         try {
-            final var json = JsonValue.readJSON(this.statistics.toString());
-            final var writer = new StringWriter();
+            val json = JsonValue.readJSON(this.statistics.toString());
+            val writer = new StringWriter();
             json.writeTo(writer, Stringify.FORMATTED);
             builder.append(writer.toString());
         } catch (final Exception e) {

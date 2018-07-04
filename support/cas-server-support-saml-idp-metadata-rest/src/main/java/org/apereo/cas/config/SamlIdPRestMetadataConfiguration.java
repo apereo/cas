@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -33,7 +35,7 @@ public class SamlIdPRestMetadataConfiguration implements SamlRegisteredServiceMe
 
     @Bean
     public SamlRegisteredServiceMetadataResolver restSamlRegisteredServiceMetadataResolver() {
-        final var idp = casProperties.getAuthn().getSamlIdp();
+        val idp = casProperties.getAuthn().getSamlIdp();
         return new RestSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean);
     }
 

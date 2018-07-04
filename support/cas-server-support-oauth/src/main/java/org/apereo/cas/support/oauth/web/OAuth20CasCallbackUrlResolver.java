@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -21,7 +23,7 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
     private final String callbackUrl;
 
     private static Optional<URIBuilder.BasicNameValuePair> getQueryParameter(final WebContext context, final String name) {
-        final var builderContext = new URIBuilder(context.getFullRequestURL());
+        val builderContext = new URIBuilder(context.getFullRequestURL());
         return builderContext.getQueryParams()
             .stream().filter(p -> p.getName().equalsIgnoreCase(name))
             .findFirst();
@@ -30,7 +32,7 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
     @Override
     public String compute(final String url, final WebContext context) {
         if (url.startsWith(callbackUrl)) {
-            final var builder = new URIBuilder(url, true);
+            val builder = new URIBuilder(url, true);
 
             var parameter = getQueryParameter(context, OAuth20Constants.CLIENT_ID);
             parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
@@ -47,7 +49,7 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
             parameter = getQueryParameter(context, OAuth20Constants.GRANT_TYPE);
             parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
 
-            final var callbackResolved = builder.build().toString();
+            val callbackResolved = builder.build().toString();
 
             LOGGER.debug("Final resolved callback URL is [{}]", callbackResolved);
             return callbackResolved;

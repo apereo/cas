@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -54,7 +56,7 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     @Override
     public boolean supports(final SamlRegisteredService service) {
         try {
-            final var metadataLocation = service.getMetadataLocation();
+            val metadataLocation = service.getMetadataLocation();
             return metadataLocation.trim().startsWith("jdbc://");
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

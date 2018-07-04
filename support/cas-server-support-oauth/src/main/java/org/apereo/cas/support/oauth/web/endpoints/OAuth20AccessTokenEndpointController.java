@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
+import lombok.val;
+
 import com.google.common.base.Supplier;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -113,8 +115,8 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             return;
         }
 
-        final var context = Pac4jUtils.getPac4jJ2EContext(request, response);
-        final var accessToken = accessTokenGenerator.generate(requestHolder);
+        val context = Pac4jUtils.getPac4jJ2EContext(request, response);
+        val accessToken = accessTokenGenerator.generate(requestHolder);
         LOGGER.debug("Access token generated is: [{}]. Refresh token generated is [{}]", accessToken.getKey(), accessToken.getValue());
         generateAccessTokenResponse(request, response, requestHolder, context, accessToken.getKey(), accessToken.getValue());
         response.setStatus(HttpServletResponse.SC_OK);
@@ -139,7 +141,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
                                              final J2EContext context, final AccessToken accessToken,
                                              final RefreshToken refreshToken) {
         LOGGER.debug("Generating access token response for [{}]", accessToken);
-        final var type = OAuth20Utils.getResponseType(context);
+        val type = OAuth20Utils.getResponseType(context);
         LOGGER.debug("Located response type as [{}]", type);
 
         this.accessTokenResponseGenerator.generate(request, response,
@@ -172,7 +174,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             LOGGER.warn("No validators are defined to examine the access token request for eligibility");
             return false;
         }
-        final var context = new J2EContext(request, response);
+        val context = new J2EContext(request, response);
         return this.accessTokenGrantRequestValidators.stream()
             .filter(ext -> ext.supports(context))
             .findFirst()

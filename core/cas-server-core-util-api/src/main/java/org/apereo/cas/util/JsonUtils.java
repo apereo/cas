@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +29,9 @@ public class JsonUtils {
      */
     @SneakyThrows
     public static void render(final Object model, final HttpServletResponse response) {
-        final var jsonConverter = new MappingJackson2HttpMessageConverter();
+        val jsonConverter = new MappingJackson2HttpMessageConverter();
         jsonConverter.setPrettyPrint(true);
-        final var jsonMimeType = MediaType.APPLICATION_JSON;
+        val jsonMimeType = MediaType.APPLICATION_JSON;
         jsonConverter.write(model, jsonMimeType, new ServletServerHttpResponse(response));
     }
 

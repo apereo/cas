@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
 import org.apereo.cas.adaptors.x509.config.X509AuthenticationConfiguration;
@@ -38,7 +40,7 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
 
     @Test
     public void verifyNoCredentialsResultsInError() throws Exception {
-        final var context = new MockRequestContext();
+        val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, this.action.execute(context).getId());
@@ -46,8 +48,8 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
 
     @Test
     public void verifyCredentialsResultsInSuccess() throws Exception {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         request.setAttribute(X509CertificateCredentialsNonInteractiveAction.REQUEST_ATTRIBUTE_X509_CERTIFICATE, new X509Certificate[]{VALID_CERTIFICATE});
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());

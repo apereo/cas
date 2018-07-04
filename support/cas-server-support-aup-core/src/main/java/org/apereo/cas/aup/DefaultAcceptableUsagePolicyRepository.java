@@ -1,5 +1,7 @@
 package org.apereo.cas.aup;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -31,12 +33,12 @@ public class DefaultAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
 
     @Override
     public Pair<Boolean, Principal> verify(final RequestContext requestContext, final Credential credential) {
-        final var key = credential.getId();
-        final var authentication = WebUtils.getAuthentication(requestContext);
+        val key = credential.getId();
+        val authentication = WebUtils.getAuthentication(requestContext);
         if (authentication == null) {
             throw new AuthenticationException("No authentication could be found in the current context");
         }
-        final var principal = authentication.getPrincipal();
+        val principal = authentication.getPrincipal();
         if (this.policyMap.containsKey(key)) {
             return Pair.of(this.policyMap.get(key), principal);
         }

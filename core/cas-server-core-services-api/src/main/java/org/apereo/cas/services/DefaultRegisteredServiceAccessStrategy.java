@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -278,14 +280,14 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * @return the boolean
      */
     protected boolean requiredAttributesFoundInMap(final Map<String, Object> principalAttributes, final Map<String, Set<String>> requiredAttributes) {
-        final var difference = requiredAttributes.keySet().stream().filter(a -> principalAttributes.keySet().contains(a)).collect(Collectors.toSet());
+        val difference = requiredAttributes.keySet().stream().filter(a -> principalAttributes.keySet().contains(a)).collect(Collectors.toSet());
         if (this.requireAllAttributes && difference.size() < requiredAttributes.size()) {
             return false;
         }
         return difference.stream().anyMatch(key -> {
-            final var values = requiredAttributes.get(key);
-            final var availableValues = CollectionUtils.toCollection(principalAttributes.get(key));
-            final var pattern = RegexUtils.concatenate(values, this.caseInsensitive);
+            val values = requiredAttributes.get(key);
+            val availableValues = CollectionUtils.toCollection(principalAttributes.get(key));
+            val pattern = RegexUtils.concatenate(values, this.caseInsensitive);
             if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
                 return availableValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
             }

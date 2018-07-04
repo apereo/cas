@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.logout;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.logout.LogoutHttpMessage;
@@ -33,7 +35,7 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
     protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
                                       final RequestContext context) {
 
-        final var logoutRequests = WebUtils.getLogoutRequests(context);
+        val logoutRequests = WebUtils.getLogoutRequests(context);
         final Map<LogoutRequest, LogoutHttpMessage> logoutUrls = new HashMap<>();
 
         if (logoutRequests != null) {
@@ -41,9 +43,9 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
                 .filter(r -> r.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED)
                 .forEach(r -> {
                     LOGGER.debug("Using logout url [{}] for front-channel logout requests", r.getLogoutUrl().toExternalForm());
-                    final var logoutMessage = this.logoutManager.createFrontChannelLogoutMessage(r);
+                    val logoutMessage = this.logoutManager.createFrontChannelLogoutMessage(r);
                     LOGGER.debug("Front-channel logout message to send is [{}]", logoutMessage);
-                    final var msg = new LogoutHttpMessage(r.getLogoutUrl(), logoutMessage, true);
+                    val msg = new LogoutHttpMessage(r.getLogoutUrl(), logoutMessage, true);
                     logoutUrls.put(r, msg);
                     r.setStatus(LogoutRequestStatus.SUCCESS);
                     r.getService().setLoggedOutAlready(true);

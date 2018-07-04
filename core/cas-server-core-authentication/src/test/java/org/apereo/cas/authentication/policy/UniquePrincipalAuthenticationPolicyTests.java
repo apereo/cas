@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.policy;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -57,7 +59,7 @@ public class UniquePrincipalAuthenticationPolicyTests {
     @Test
     public void verifyPolicyIsGoodUserNotFound() throws Exception {
         this.ticketRegistry.deleteAll();
-        final var p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
+        val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
         assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser")));
     }
 
@@ -66,7 +68,7 @@ public class UniquePrincipalAuthenticationPolicyTests {
         this.ticketRegistry.deleteAll();
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TGT-1", CoreAuthenticationTestUtils.getAuthentication("casuser"), 
                 new NeverExpiresExpirationPolicy()));
-        final var p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
+        val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
         assertFalse(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser")));
     }
 }

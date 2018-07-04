@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.val;
+
 import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -60,15 +62,15 @@ public class HttpRequestUtils {
      * @return the http servlet request geo location
      */
     public static GeoLocationRequest getHttpServletRequestGeoLocation(final HttpServletRequest request) {
-        final var latIndex = 0;
-        final var longIndex = 1;
-        final var accuracyIndex = 2;
-        final var timeIndex = 3;
-        final var loc = new GeoLocationRequest();
+        val latIndex = 0;
+        val longIndex = 1;
+        val accuracyIndex = 2;
+        val timeIndex = 3;
+        val loc = new GeoLocationRequest();
         if (request != null) {
-            final var geoLocationParam = request.getParameter("geolocation");
+            val geoLocationParam = request.getParameter("geolocation");
             if (StringUtils.isNotBlank(geoLocationParam)) {
-                final var geoLocation = Splitter.on(",").splitToList(geoLocationParam);
+                val geoLocation = Splitter.on(",").splitToList(geoLocationParam);
                 loc.setLatitude(geoLocation.get(latIndex));
                 loc.setLongitude(geoLocation.get(longIndex));
                 loc.setAccuracy(geoLocation.get(accuracyIndex));
@@ -86,11 +88,11 @@ public class HttpRequestUtils {
      */
     public static Map<String, String> getRequestHeaders(final HttpServletRequest request) {
         final Map<String, String> headers = new LinkedHashMap<>();
-        final var headerNames = request.getHeaderNames();
+        val headerNames = request.getHeaderNames();
         if (headerNames != null) {
             while (headerNames.hasMoreElements()) {
-                final var headerName = headerNames.nextElement();
-                final var headerValue = StringUtils.stripToEmpty(request.getHeader(headerName));
+                val headerName = headerNames.nextElement();
+                val headerValue = StringUtils.stripToEmpty(request.getHeader(headerName));
                 headers.put(headerName, headerValue);
             }
         }
@@ -130,7 +132,7 @@ public class HttpRequestUtils {
      * @return whether the parameter exists
      */
     public static boolean doesParameterExist(final HttpServletRequest request, final String name) {
-        final var parameter = request.getParameter(name);
+        val parameter = request.getParameter(name);
         if (StringUtils.isBlank(parameter)) {
             LOGGER.error("Missing request parameter: [{}]", name);
             return false;

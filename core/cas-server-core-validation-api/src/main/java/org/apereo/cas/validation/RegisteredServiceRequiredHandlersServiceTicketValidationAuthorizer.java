@@ -1,5 +1,7 @@
 package org.apereo.cas.validation;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -25,16 +27,16 @@ public class RegisteredServiceRequiredHandlersServiceTicketValidationAuthorizer 
 
     @Override
     public void authorize(final HttpServletRequest request, final Service service, final Assertion assertion) {
-        final var registeredService = this.servicesManager.findServiceBy(service);
+        val registeredService = this.servicesManager.findServiceBy(service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
 
         if (registeredService.getRequiredHandlers() != null && !registeredService.getRequiredHandlers().isEmpty()) {
             LOGGER.debug("Evaluating service [{}] to ensure required authentication handlers can satisfy assertion", service);
-            final var attributes = assertion.getPrimaryAuthentication().getAttributes();
+            val attributes = assertion.getPrimaryAuthentication().getAttributes();
             if (attributes.containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {
-                final var assertedHandlers = CollectionUtils.toCollection(
+                val assertedHandlers = CollectionUtils.toCollection(
                     attributes.get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
-                final var matchesAll = registeredService.getRequiredHandlers()
+                val matchesAll = registeredService.getRequiredHandlers()
                     .stream()
                     .allMatch(assertedHandlers::contains);
                 if (!matchesAll) {

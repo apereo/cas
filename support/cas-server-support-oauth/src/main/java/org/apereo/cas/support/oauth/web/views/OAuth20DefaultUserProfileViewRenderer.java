@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.views;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
@@ -31,7 +33,7 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
             case FLAT:
                 final Map<String, Object> flattened = new LinkedHashMap<>();
                 if (model.containsKey(MODEL_ATTRIBUTE_ATTRIBUTES)) {
-                    final var attributes = Map.class.cast(model.get(MODEL_ATTRIBUTE_ATTRIBUTES));
+                    val attributes = Map.class.cast(model.get(MODEL_ATTRIBUTE_ATTRIBUTES));
                     flattened.putAll(attributes);
                 }
                 model.keySet()

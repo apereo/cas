@@ -1,5 +1,7 @@
 package org.apereo.cas.support.pac4j.config;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -67,7 +69,7 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     @Bean
     @ConditionalOnMissingBean(name = "pac4jDelegatedSessionStoreCookieSerializer")
     public StringSerializer<Map<String, Object>> pac4jDelegatedSessionStoreCookieSerializer() {
-        final var serializer = new SessionStoreCookieSerializer();
+        val serializer = new SessionStoreCookieSerializer();
         serializer.getObjectMapper().registerModule(pac4jJacksonModule());
         return serializer;
     }
@@ -75,7 +77,7 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     @Bean
     @ConditionalOnMissingBean(name = "pac4jJacksonModule")
     public Module pac4jJacksonModule() {
-        final var module = new SimpleModule();
+        val module = new SimpleModule();
         module.setMixInAnnotation(OAuth1RequestToken.class, AbstractOAuth1RequestTokenMixin.class);
         return module;
     }
@@ -83,7 +85,7 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     @Bean
     @ConditionalOnMissingBean(name = "pac4jSessionStoreCookieGenerator")
     public CookieRetrievingCookieGenerator pac4jSessionStoreCookieGenerator() {
-        final var c = casProperties.getAuthn().getPac4j().getCookie();
+        val c = casProperties.getAuthn().getPac4j().getCookie();
         return new SessionStoreCookieGenerator(
             new DefaultCasCookieValueManager(pac4jDelegatedSessionStoreCookieCipherExecutor()),
             c.getName(), c.getPath(), c.getMaxAge(),
@@ -93,7 +95,7 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     @Bean
     @ConditionalOnMissingBean(name = "pac4jDelegatedSessionStoreCookieCipherExecutor")
     public CipherExecutor pac4jDelegatedSessionStoreCookieCipherExecutor() {
-        final var c = casProperties.getAuthn().getPac4j().getCookie().getCrypto();
+        val c = casProperties.getAuthn().getPac4j().getCookie().getCrypto();
         if (c.isEnabled()) {
             return new DelegatedSessionCookieCipherExecutor(c.getEncryption().getKey(),
                 c.getSigning().getKey(), c.getAlg());

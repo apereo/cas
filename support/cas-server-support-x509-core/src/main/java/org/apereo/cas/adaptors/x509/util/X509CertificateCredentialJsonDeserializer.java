@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.util;
 
+import lombok.val;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -29,16 +31,16 @@ public class X509CertificateCredentialJsonDeserializer extends JsonDeserializer<
     public X509CertificateCredential deserialize(final JsonParser jp, 
                                                  final DeserializationContext deserializationContext) 
             throws IOException {
-        final var oc = jp.getCodec();
+        val oc = jp.getCodec();
         final JsonNode node = oc.readTree(jp);
 
         final List<X509Certificate> certs = new ArrayList<>();
         node.findValues("certificates").forEach(n -> {
-            final var cert = n.get(0).textValue();
-            final var data = EncodingUtils.decodeBase64(cert);
+            val cert = n.get(0).textValue();
+            val data = EncodingUtils.decodeBase64(cert);
             certs.add(CertUtils.readCertificate(new InputStreamResource(new ByteArrayInputStream(data))));
         });
-        final var c = new X509CertificateCredential(certs.toArray(new X509Certificate[] {}));
+        val c = new X509CertificateCredential(certs.toArray(new X509Certificate[] {}));
         return c;
     }
 }

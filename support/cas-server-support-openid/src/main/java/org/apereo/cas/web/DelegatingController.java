@@ -1,5 +1,7 @@
 package org.apereo.cas.web;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -47,7 +49,7 @@ public class DelegatingController extends AbstractController {
      */
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        for (final var delegate : this.delegates) {
+        for (val delegate : this.delegates) {
             if (delegate.canHandle(request, response)) {
                 return delegate.handleRequestInternal(request, response);
             }
@@ -63,8 +65,8 @@ public class DelegatingController extends AbstractController {
      * @return the model and view
      */
     private ModelAndView generateErrorView(final String code, final Object[] args) {
-        final var modelAndView = new ModelAndView(this.failureView);
-        final var convertedDescription = getMessageSourceAccessor().getMessage(code, args, code);
+        val modelAndView = new ModelAndView(this.failureView);
+        val convertedDescription = getMessageSourceAccessor().getMessage(code, args, code);
         modelAndView.addObject("code", StringEscapeUtils.escapeHtml4(code));
         modelAndView.addObject("description", StringEscapeUtils.escapeHtml4(convertedDescription));
         return modelAndView;

@@ -3,6 +3,7 @@ package org.apereo.cas.util.spring;
 import com.google.common.base.Predicates;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.type.StandardMethodMetadata;
 
@@ -45,14 +46,14 @@ public class AnnotationUtils {
     public static List<String> getBeansWithAnnotation(final ConfigurableApplicationContext applicationContext,
                                                       final Class<? extends Annotation> type, final Predicate<Map<String, Object>> attributeFilter) {
         final List<String> result = new ArrayList<>();
-        final var factory = applicationContext.getBeanFactory();
-        for (final var name : factory.getBeanDefinitionNames()) {
-            final var bd = factory.getBeanDefinition(name);
+        val factory = applicationContext.getBeanFactory();
+        for (val name : factory.getBeanDefinitionNames()) {
+            val bd = factory.getBeanDefinition(name);
 
             if (bd.getSource() instanceof StandardMethodMetadata) {
-                final var metadata = (StandardMethodMetadata) bd.getSource();
+                val metadata = (StandardMethodMetadata) bd.getSource();
 
-                final var attributes = metadata.getAnnotationAttributes(type.getName());
+                val attributes = metadata.getAnnotationAttributes(type.getName());
                 if (null == attributes) {
                     continue;
                 }

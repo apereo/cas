@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.handler.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.auth.BasicUserPrincipal;
 
@@ -30,15 +32,15 @@ public class MockLoginModule implements LoginModule {
 
     @Override
     public boolean login() throws LoginException {
-        final var callbacks = new Callback[] {new NameCallback("f"), new PasswordCallback("f", false)};
+        val callbacks = new Callback[] {new NameCallback("f"), new PasswordCallback("f", false)};
         try {
             this.callbackHandler.handle(callbacks);
         } catch (final Exception e) {
             throw new LoginException();
         }
 
-        final var userName = ((NameCallback) callbacks[0]).getName();
-        final var password = new String(((PasswordCallback) callbacks[1]).getPassword());
+        val userName = ((NameCallback) callbacks[0]).getName();
+        val password = new String(((PasswordCallback) callbacks[1]).getPassword());
 
         if ("test".equals(userName) && "test".equals(password)) {
             this.subject.getPrincipals().add(new BasicUserPrincipal(userName));

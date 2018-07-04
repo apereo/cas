@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -109,8 +111,8 @@ public class SessionHealthIndicatorJpaTests {
     public void verifyObserveOkJpaTicketRegistry() {
         addTicketsToRegistry(jpaRegistry, 5, 5);
         assertEquals(10, jpaRegistry.getTickets().size());
-        final var monitor = new SessionMonitor(jpaRegistry, -1, -1);
-        final var status = monitor.health();
+        val monitor = new SessionMonitor(jpaRegistry, -1, -1);
+        val status = monitor.health();
         assertEquals(Status.UP, status.getStatus());
     }
 

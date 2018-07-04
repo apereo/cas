@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
@@ -27,16 +29,16 @@ public class OpenIdWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override
     protected void doInitialize() {
-        final var flow = getLoginFlow();
+        val flow = getLoginFlow();
 
         if (flow != null) {
-            final var condition = getOpenIdModeCondition();
+            val condition = getOpenIdModeCondition();
 
-            final var decisionState = createDecisionState(flow, "selectFirstAction",
+            val decisionState = createDecisionState(flow, "selectFirstAction",
                     condition, OPEN_ID_SINGLE_SIGN_ON_ACTION,
                     getStartState(flow).getId());
 
-            final var actionState = createActionState(flow, OPEN_ID_SINGLE_SIGN_ON_ACTION,
+            val actionState = createActionState(flow, OPEN_ID_SINGLE_SIGN_ON_ACTION,
                     createEvaluateAction(OPEN_ID_SINGLE_SIGN_ON_ACTION));
 
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,

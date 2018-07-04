@@ -1,5 +1,7 @@
 package org.apereo.cas.digest.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
@@ -26,9 +28,9 @@ public class DigestAuthenticationWebflowConfigurer extends AbstractCasWebflowCon
 
     @Override
     protected void doInitialize() {
-        final var flow = getLoginFlow();
+        val flow = getLoginFlow();
         if (flow != null) {
-            final var actionState = createActionState(flow, "digestAuthenticationCheck",
+            val actionState = createActionState(flow, "digestAuthenticationCheck",
                     createEvaluateAction("digestAuthenticationAction"));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                     CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));

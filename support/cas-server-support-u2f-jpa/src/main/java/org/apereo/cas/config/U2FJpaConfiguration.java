@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +68,7 @@ public class U2FJpaConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean u2fEntityManagerFactory() {
-        final var bean =
+        val bean =
                 JpaBeans.newHibernateEntityManagerFactoryBean(
                         new JpaConfigDataHolder(
                                 jpaU2fVendorAdapter(),
@@ -81,19 +83,19 @@ public class U2FJpaConfiguration {
     @Autowired
     @Bean
     public PlatformTransactionManager transactionManagerU2f(@Qualifier("u2fEntityManagerFactory") final EntityManagerFactory emf) {
-        final var mgmr = new JpaTransactionManager();
+        val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }
 
     @Bean
     public U2FDeviceRepository u2fDeviceRepository() {
-        final var u2f = casProperties.getAuthn().getMfa().getU2f();
+        val u2f = casProperties.getAuthn().getMfa().getU2f();
         final LoadingCache<String, String> requestStorage =
                 Caffeine.newBuilder()
                         .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
                         .build(key -> StringUtils.EMPTY);
-        final var repo = new U2FJpaDeviceRepository(requestStorage,
+        val repo = new U2FJpaDeviceRepository(requestStorage,
                 u2f.getExpireRegistrations(),
                 u2f.getExpireDevicesTimeUnit());
         repo.setCipherExecutor(this.u2fRegistrationRecordCipherExecutor);

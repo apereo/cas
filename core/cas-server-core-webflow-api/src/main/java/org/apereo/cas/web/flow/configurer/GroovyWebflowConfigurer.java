@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.configurer;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ScriptingUtils;
@@ -22,9 +24,9 @@ public class GroovyWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override
     public void doInitialize() {
-        final var script = casProperties.getWebflow().getGroovy().getLocation();
+        val script = casProperties.getWebflow().getGroovy().getLocation();
         if (script != null) {
-            final var args = new Object[]{this, applicationContext, LOGGER};
+            val args = new Object[]{this, applicationContext, LOGGER};
             LOGGER.debug("Executing Groovy script [{}] to auto-configure the webflow context", script);
             ScriptingUtils.executeGroovyScript(script, args, Object.class);
         }

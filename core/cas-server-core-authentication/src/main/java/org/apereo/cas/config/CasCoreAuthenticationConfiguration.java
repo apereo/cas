@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasViewConstants;
@@ -66,9 +68,9 @@ public class CasCoreAuthenticationConfiguration {
     @Autowired
     @Bean
     public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(final List<AuthenticationEventExecutionPlanConfigurer> configurers) {
-        final var plan = new DefaultAuthenticationEventExecutionPlan();
+        val plan = new DefaultAuthenticationEventExecutionPlan();
         configurers.forEach(c -> {
-            final var name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            val name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Configuring authentication execution plan [{}]", name);
             c.configureAuthenticationExecutionPlan(plan);
         });
@@ -79,11 +81,11 @@ public class CasCoreAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy() {
-        final var authenticationAttributeRelease =
+        val authenticationAttributeRelease =
             casProperties.getAuthn().getAuthenticationAttributeRelease();
-        final var policy = new DefaultAuthenticationAttributeReleasePolicy();
+        val policy = new DefaultAuthenticationAttributeReleasePolicy();
         policy.setAttributesToRelease(authenticationAttributeRelease.getOnlyRelease());
-        final var attributesToNeverRelease = CollectionUtils.wrapSet(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
+        val attributesToNeverRelease = CollectionUtils.wrapSet(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
             RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
         attributesToNeverRelease.addAll(authenticationAttributeRelease.getNeverRelease());
         policy.setAttributesToNeverRelease(attributesToNeverRelease);

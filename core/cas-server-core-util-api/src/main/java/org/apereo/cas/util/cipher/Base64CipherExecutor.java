@@ -1,5 +1,7 @@
 package org.apereo.cas.util.cipher;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
@@ -40,7 +42,7 @@ public class Base64CipherExecutor extends AbstractCipherExecutor<Serializable, S
 
     @Override
     public String decode(final Serializable value, final Object[] parameters) {
-        final var decoded = EncodingUtils.decodeBase64(value.toString());
+        val decoded = EncodingUtils.decodeBase64(value.toString());
         return new String(decoded, StandardCharsets.UTF_8);
     }
 }

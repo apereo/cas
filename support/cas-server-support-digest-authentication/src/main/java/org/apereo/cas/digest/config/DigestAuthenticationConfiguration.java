@@ -1,5 +1,7 @@
 package org.apereo.cas.digest.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -84,7 +86,7 @@ public class DigestAuthenticationConfiguration implements CasWebflowExecutionPla
     @Bean
     @RefreshScope
     public DigestHashedCredentialRetriever defaultDigestCredentialRetriever() {
-        final var digest = casProperties.getAuthn().getDigest();
+        val digest = casProperties.getAuthn().getDigest();
         return new DefaultDigestHashedCredentialRetriever(digest.getUsers());
     }
 

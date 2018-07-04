@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
+import lombok.val;
+
 import org.apereo.cas.util.CollectionUtils;
 import org.aspectj.lang.JoinPoint;
 import org.junit.Test;
@@ -29,9 +31,9 @@ import static org.mockito.Mockito.*;
 public class SamlResponseAuditResourceResolverTests {
     @Test
     public void verifyAction() {
-        final var r = new SamlResponseAuditResourceResolver();
-        final var response = mock(Response.class);
-        final var issuer = mock(Issuer.class);
+        val r = new SamlResponseAuditResourceResolver();
+        val response = mock(Response.class);
+        val issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");
         when(response.getIssuer()).thenReturn(issuer);
         when(response.getDestination()).thenReturn("https://sp.example.org");
@@ -40,8 +42,8 @@ public class SamlResponseAuditResourceResolverTests {
         assertNotNull(result);
         assertTrue(result.length > 0);
         
-        final var envelope = mock(Envelope.class);
-        final var body = mock(Body.class);
+        val envelope = mock(Envelope.class);
+        val body = mock(Body.class);
 
         when(body.getUnknownXMLObjects()).thenReturn(CollectionUtils.wrapList(response));
         when(envelope.getBody()).thenReturn(body);
@@ -49,10 +51,10 @@ public class SamlResponseAuditResourceResolverTests {
         assertNotNull(result);
         assertTrue(result.length > 0);
 
-        final var fault = mock(Fault.class);
-        final var actor = mock(FaultActor.class);
+        val fault = mock(Fault.class);
+        val actor = mock(FaultActor.class);
         when(actor.getValue()).thenReturn("actor");
-        final var msg = mock(FaultString.class);
+        val msg = mock(FaultString.class);
         when(msg.getValue()).thenReturn("message");
         when(fault.getMessage()).thenReturn(msg);
         when(fault.getActor()).thenReturn(actor);

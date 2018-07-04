@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -27,7 +29,7 @@ public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourc
     }
 
     private String[] getAuditResourceFromSamlRequest(final Pair result) {
-        final var returnValue = (XMLObject) result.getLeft();
+        val returnValue = (XMLObject) result.getLeft();
         if (returnValue instanceof AuthnRequest) {
             return getAuditResourceFromSamlAuthnRequest((AuthnRequest) returnValue);
         }
@@ -38,8 +40,8 @@ public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourc
     }
 
     private String[] getAuditResourceFromSamlLogoutRequest(final LogoutRequest returnValue) {
-        final var request = returnValue;
-        final var result =
+        val request = returnValue;
+        val result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append("issuer", request.getIssuer().getValue())
                 .toString();
@@ -47,8 +49,8 @@ public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourc
     }
 
     private String[] getAuditResourceFromSamlAuthnRequest(final AuthnRequest returnValue) {
-        final var request = returnValue;
-        final var result =
+        val request = returnValue;
+        val result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append("issuer", request.getIssuer().getValue())
                 .append("binding", request.getProtocolBinding())

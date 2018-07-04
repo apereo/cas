@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.category.MongoDbCategory;
@@ -122,9 +124,9 @@ public class MongoDbSamlRegisteredServiceMetadataResolverTests {
 
     @Before
     public void initialize() throws Exception {
-        final var mongo = casProperties.getAuthn().getSamlIdp().getMetadata().getMongo();
-        final var res = new ClassPathResource("sp-metadata.xml");
-        final var md = new SamlMetadataDocument();
+        val mongo = casProperties.getAuthn().getSamlIdp().getMetadata().getMongo();
+        val res = new ClassPathResource("sp-metadata.xml");
+        val md = new SamlMetadataDocument();
         md.setName("SP");
         md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
         mongoDbSamlMetadataResolverTemplate.save(md, mongo.getCollection());
@@ -132,13 +134,13 @@ public class MongoDbSamlRegisteredServiceMetadataResolverTests {
 
     @Test
     public void verifyResolver() {
-        final var service = new SamlRegisteredService();
+        val service = new SamlRegisteredService();
         service.setName("SAML Service");
         service.setServiceId("https://carmenwiki.osu.edu/shibboleth");
         service.setDescription("Testing");
         service.setMetadataLocation("mongodb://");
         assertTrue(resolver.supports(service));
-        final var resolvers = resolver.resolve(service);
+        val resolvers = resolver.resolve(service);
         assertTrue(resolvers.size() == 1);
     }
 }

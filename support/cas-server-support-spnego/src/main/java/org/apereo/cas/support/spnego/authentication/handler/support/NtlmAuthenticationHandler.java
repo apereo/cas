@@ -1,5 +1,7 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
+import lombok.val;
+
 import jcifs.Config;
 import jcifs.UniAddress;
 import jcifs.netbios.NbtAddress;
@@ -66,15 +68,15 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
-        final var ntlmCredential = (SpnegoCredential) credential;
-        final var src = ntlmCredential.getInitToken();
+        val ntlmCredential = (SpnegoCredential) credential;
+        val src = ntlmCredential.getInitToken();
 
         final UniAddress dc;
         var success = false;
         try {
             if (this.loadBalance) {
                 if (StringUtils.isNotBlank(this.includePattern)) {
-                    final var dcs = NbtAddress.getAllByName(this.domainController, NBT_ADDRESS_TYPE, null, null);
+                    val dcs = NbtAddress.getAllByName(this.domainController, NBT_ADDRESS_TYPE, null, null);
                     dc = Arrays.stream(dcs)
                             .filter(dc2 -> dc2.getHostAddress().matches(this.includePattern))
                             .findFirst()
@@ -86,23 +88,23 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
             } else {
                 dc = UniAddress.getByName(this.domainController, true);
             }
-            final var challenge = SmbSession.getChallenge(dc);
+            val challenge = SmbSession.getChallenge(dc);
 
             switch (src[NTLM_TOKEN_TYPE_FIELD_INDEX]) {
                 case NTLM_TOKEN_TYPE_ONE:
                     LOGGER.debug("Type 1 received");
-                    final var type1 = new Type1Message(src);
-                    final var type2 = new Type2Message(type1,
+                    val type1 = new Type1Message(src);
+                    val type2 = new Type2Message(type1,
                             challenge, null);
                     LOGGER.debug("Type 2 returned. Setting next token.");
                     ntlmCredential.setNextToken(type2.toByteArray());
                     break;
                 case NTLM_TOKEN_TYPE_THREE:
                     LOGGER.debug("Type 3 received");
-                    final var type3 = new Type3Message(src);
-                    final var lmResponse = type3.getLMResponse() == null ? new byte[0] : type3.getLMResponse();
-                    final var ntResponse = type3.getNTResponse() == null ? new byte[0] : type3.getNTResponse();
-                    final var ntlm = new NtlmPasswordAuthentication(
+                    val type3 = new Type3Message(src);
+                    val lmResponse = type3.getLMResponse() == null ? new byte[0] : type3.getLMResponse();
+                    val ntResponse = type3.getNTResponse() == null ? new byte[0] : type3.getNTResponse();
+                    val ntlm = new NtlmPasswordAuthentication(
                             type3.getDomain(), type3.getUser(), challenge,
                             lmResponse, ntResponse);
                     LOGGER.debug("Trying to authenticate [{}] with domain controller", type3.getUser());

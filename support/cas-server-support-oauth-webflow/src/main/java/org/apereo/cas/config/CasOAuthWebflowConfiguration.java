@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -61,7 +63,7 @@ public class CasOAuthWebflowConfiguration implements CasWebflowExecutionPlanConf
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer oauth20LogoutWebflowConfigurer() {
-        final var c = new OAuth20WebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+        val c = new OAuth20WebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
                 oauth20RegisteredServiceUIAction(), applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(this.logoutFlowDefinitionRegistry);
         return c;

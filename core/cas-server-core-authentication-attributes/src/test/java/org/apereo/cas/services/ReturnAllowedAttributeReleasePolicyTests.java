@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -29,7 +31,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
     public void verifySerializeAReturnAllowedAttributeReleasePolicyToJson() throws IOException {
         final List<String> allowedAttributes = new ArrayList<>();
         allowedAttributes.add("attributeOne");
-        final var policyWritten = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
+        val policyWritten = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
         MAPPER.writeValue(JSON_FILE, policyWritten);
         final RegisteredServiceAttributeReleasePolicy policyRead = MAPPER.readValue(JSON_FILE, ReturnAllowedAttributeReleasePolicy.class);
         assertEquals(policyWritten, policyRead);

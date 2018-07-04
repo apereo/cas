@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unboundid.scim2.common.types.Meta;
 import com.unboundid.scim2.common.types.Name;
@@ -64,26 +66,26 @@ public class PrincipalScimV2ProvisionerActionTests {
 
     @Test
     public void verifyAction() throws Exception {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        final var user = new UserResource();
+        val user = new UserResource();
         user.setActive(true);
         user.setDisplayName("CASUser");
         user.setId("casuser");
-        final var name = new Name();
+        val name = new Name();
         name.setGivenName("casuser");
         user.setName(name);
-        final var meta = new Meta();
+        val meta = new Meta();
         meta.setResourceType("User");
         meta.setCreated(Calendar.getInstance());
         meta.setLocation(new URI("http://localhost:8218"));
         user.setMeta(meta);
         
-        final var data = MAPPER.writeValueAsString(user);
+        val data = MAPPER.writeValueAsString(user);
         try (var webServer = new MockWebServer(8218,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CentralAuthenticationService;
@@ -47,10 +49,10 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final var resolvedEvents = getResolvedEventsAsAttribute(context);
-        final var authentication = WebUtils.getAuthentication(context);
-        final var registeredService = resolveRegisteredServiceInRequestContext(context);
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val resolvedEvents = getResolvedEventsAsAttribute(context);
+        val authentication = WebUtils.getAuthentication(context);
+        val registeredService = resolveRegisteredServiceInRequestContext(context);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         return resolveEventsInternal(resolvedEvents, authentication, registeredService, request, context);
     }
 
@@ -74,7 +76,7 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
         } else {
             LOGGER.debug("No events could be resolved for this authentication transaction [{}] and service [{}]", authentication, registeredService);
         }
-        final var pair = filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request);
+        val pair = filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request);
         WebUtils.putResolvedMultifactorAuthenticationProviders(context, pair.getValue());
         return pair.getKey();
     }
@@ -93,7 +95,7 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
         final RegisteredService registeredService,
         final HttpServletRequest request) {
         LOGGER.debug("Locating multifactor providers to determine support for this authentication sequence");
-        final var providers =
+        val providers =
             MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
 
         if (providers == null || providers.isEmpty()) {
@@ -101,7 +103,7 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
             return Pair.of(resolveEvents, new HashSet<>(0));
         }
 
-        final var flattenedProviders = flattenProviders(providers.values());
+        val flattenedProviders = flattenProviders(providers.values());
 
         // remove providers that don't support the event
         flattenedProviders.removeIf(p -> resolveEvents.stream()

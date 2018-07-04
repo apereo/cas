@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.web;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
@@ -34,8 +36,8 @@ public class MultifactorTrustedDevicesReportEndpoint {
      */
     @ReadOperation
     public Set<MultifactorAuthenticationTrustRecord> devices() {
-        final var unit = DateTimeUtils.toChronoUnit(properties.getTimeUnit());
-        final var onOrAfter = LocalDateTime.now().minus(properties.getExpiration(), unit);
+        val unit = DateTimeUtils.toChronoUnit(properties.getTimeUnit());
+        val onOrAfter = LocalDateTime.now().minus(properties.getExpiration(), unit);
         this.mfaTrustEngine.expire(onOrAfter);
         return this.mfaTrustEngine.get(onOrAfter);
     }

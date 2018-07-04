@@ -1,5 +1,7 @@
 package org.apereo.cas.web.report;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -56,17 +58,17 @@ public class SpringWebflowEndpoint extends BaseCasMvcEndpoint {
     @ReadOperation
     public Map<?, ?> getReport() {
         final Map<String, Object> jsonMap = new HashMap<>();
-        final var map =
+        val map =
             this.applicationContext.getBeansOfType(FlowDefinitionRegistry.class, false, true);
 
         map.forEach((k, v) -> Arrays.stream(v.getFlowDefinitionIds()).forEach(id -> {
             final Map<String, Object> flowDetails = new HashMap<>();
-            final var def = Flow.class.cast(v.getFlowDefinition(id));
+            val def = Flow.class.cast(v.getFlowDefinition(id));
 
             final Map<String, Map> states = new HashMap<>();
             Arrays.stream(def.getStateIds()).forEach(st -> {
 
-                final var state = (State) def.getState(st);
+                val state = (State) def.getState(st);
                 final Map<String, Object> stateMap = new HashMap<>();
 
                 if (!state.getAttributes().asMap().isEmpty()) {
@@ -107,10 +109,10 @@ public class SpringWebflowEndpoint extends BaseCasMvcEndpoint {
                         stateMap.put("viewVariables", acts);
                     }
 
-                    final var field = ReflectionUtils.findField(((ViewState) state).getViewFactory().getClass(), "viewId");
+                    val field = ReflectionUtils.findField(((ViewState) state).getViewFactory().getClass(), "viewId");
                     if (field != null) {
                         ReflectionUtils.makeAccessible(field);
-                        final var exp = (Expression) ReflectionUtils.getField(field, ((ViewState) state).getViewFactory());
+                        val exp = (Expression) ReflectionUtils.getField(field, ((ViewState) state).getViewFactory());
                         stateMap.put("viewId", StringUtils.defaultIfBlank(exp.getExpressionString(), exp.getValue(null).toString()));
                     } else {
                         LOGGER.warn("Field viewId cannot be located on view state [{}]", state);
@@ -118,7 +120,7 @@ public class SpringWebflowEndpoint extends BaseCasMvcEndpoint {
                 }
 
                 if (state instanceof TransitionableState) {
-                    final var stDef = TransitionableState.class.cast(state);
+                    val stDef = TransitionableState.class.cast(state);
 
                     acts = StreamSupport.stream(stDef.getExitActionList().spliterator(), false)
                         .map(Object::toString)

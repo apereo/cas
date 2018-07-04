@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +27,7 @@ public class MemoryHealthIndicatorTests {
 
     @Test
     public void verifyObserveWarn() {
-        final var monitor = new MemoryMonitor(100);
+        val monitor = new MemoryMonitor(100);
         assertEquals(Status.DOWN, monitor.health().getStatus());
     }
 }

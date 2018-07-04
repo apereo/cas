@@ -1,5 +1,7 @@
 package org.apereo.cas.web.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.inspektr.audit.AuditActionContext;
@@ -38,10 +40,10 @@ public class MongoDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
 
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
-        final var clientInfo = ClientInfoHolder.getClientInfo();
-        final var remoteAddress = clientInfo.getClientIpAddress();
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        val remoteAddress = clientInfo.getClientIpAddress();
 
-        final var query = new Query()
+        val query = new Query()
             .addCriteria(Criteria.where("clientIpAddress").is(remoteAddress)
                 .and("principal").is(getUsernameParameterFromRequest(request))
                 .and("actionPerformed").is(getAuthenticationFailureCode())
@@ -53,7 +55,7 @@ public class MongoDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
         query.fields().include("whenActionWasPerformed");
 
         LOGGER.debug("Executing MongoDb throttling query [{}]", query.toString());
-        final var failures = this.mongoTemplate.find(query, AuditActionContext.class, this.collectionName)
+        val failures = this.mongoTemplate.find(query, AuditActionContext.class, this.collectionName)
             .stream()
             .map(AuditActionContext::getWhenActionWasPerformed)
             .collect(Collectors.toList());

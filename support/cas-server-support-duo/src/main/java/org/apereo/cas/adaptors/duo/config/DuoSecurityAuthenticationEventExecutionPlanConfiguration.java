@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.duo.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.duo.DuoSecurityHealthIndicator;
@@ -84,7 +86,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @Bean
     @RefreshScope
     public VariegatedMultifactorAuthenticationProvider duoMultifactorAuthenticationProvider() {
-        final var provider = new DefaultVariegatedMultifactorAuthenticationProvider();
+        val provider = new DefaultVariegatedMultifactorAuthenticationProvider();
 
         casProperties.getAuthn().getMfa().getDuo()
             .stream()
@@ -93,8 +95,8 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
                 && StringUtils.isNotBlank(duo.getDuoSecretKey())
                 && StringUtils.isNotBlank(duo.getDuoApplicationKey()))
             .forEach(duo -> {
-                final var s = new BasicDuoSecurityAuthenticationService(duo, httpClient);
-                final var duoP =
+                val s = new BasicDuoSecurityAuthenticationService(duo, httpClient);
+                val duoP =
                     new DefaultDuoMultifactorAuthenticationProvider(duo.getRegistrationUrl(), s);
                 duoP.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
                 duoP.setBypassEvaluator(MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(duo.getBypass()));
@@ -122,7 +124,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator() {
-        final var authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute, duoAuthenticationHandler(),
             duoMultifactorAuthenticationProvider());
     }
@@ -130,15 +132,15 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @RefreshScope
     @Bean
     public AuthenticationHandler duoAuthenticationHandler() {
-        final var duos = casProperties.getAuthn().getMfa().getDuo();
+        val duos = casProperties.getAuthn().getMfa().getDuo();
         if (duos.isEmpty()) {
             throw new BeanCreationException("No configuration/settings could be found for Duo Security. Review settings and ensure the correct syntax is used");
         }
-        final var name = duos.get(0).getName();
+        val name = duos.get(0).getName();
         if (duos.size() > 1) {
             LOGGER.debug("Multiple Duo Security providers are available; Duo authentication handler is named after [{}]", name);
         }
-        final var h = new DuoAuthenticationHandler(name, servicesManager, duoPrincipalFactory(), duoMultifactorAuthenticationProvider());
+        val h = new DuoAuthenticationHandler(name, servicesManager, duoPrincipalFactory(), duoMultifactorAuthenticationProvider());
         return h;
     }
 
@@ -146,7 +148,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer duoMultifactorWebflowConfigurer() {
-        final var deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
+        val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
         return new DuoMultifactorWebflowConfigurer(flowBuilderServices,
             loginFlowDefinitionRegistry,
             deviceRegistrationEnabled,

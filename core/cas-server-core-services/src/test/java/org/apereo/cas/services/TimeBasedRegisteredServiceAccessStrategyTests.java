@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -27,7 +29,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkAuthorizationByRangePass() {
-        final var authz =
+        val authz =
                 new TimeBasedRegisteredServiceAccessStrategy(true, true);
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(10).toString());
@@ -37,7 +39,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkAuthorizationByRangeFailStartTime() {
-        final var authz =
+        val authz =
                 new TimeBasedRegisteredServiceAccessStrategy(true, true);
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(10).toString());
@@ -47,7 +49,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkAuthorizationByRangePassEndTime() {
-        final var authz =
+        val authz =
                 new TimeBasedRegisteredServiceAccessStrategy(true, true);
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(30).toString());
@@ -56,7 +58,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
 
     @Test
     public void verifySerializeATimeBasedRegisteredServiceAccessStrategyToJson() throws IOException {
-        final var authWritten =
+        val authWritten =
                 new TimeBasedRegisteredServiceAccessStrategy(true, true);
 
         MAPPER.writeValue(JSON_FILE, authWritten);

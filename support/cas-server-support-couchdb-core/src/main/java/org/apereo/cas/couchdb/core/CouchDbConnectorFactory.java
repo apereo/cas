@@ -1,5 +1,7 @@
 package org.apereo.cas.couchdb.core;
 
+import lombok.val;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.couchdb.AbstractCouchDbProperties;
 import org.ektorp.CouchDbConnector;
@@ -34,7 +36,7 @@ public class CouchDbConnectorFactory {
      */
     @SneakyThrows
     public CouchDbConnector create() {
-        final var builder = new StdHttpClient.Builder()
+        val builder = new StdHttpClient.Builder()
             .url(couchDbProperties.getUrl())
             .maxConnections(couchDbProperties.getMaxConnections())
             .maxCacheEntries(couchDbProperties.getMaxCacheEntries())
@@ -56,7 +58,7 @@ public class CouchDbConnectorFactory {
             builder.password(couchDbProperties.getPassword());
         }
 
-        final var httpClient = builder.build();
+        val httpClient = builder.build();
         couchDbInstance = new StdCouchDbInstance(httpClient);
         couchDbConnector = new StdCouchDbConnector(couchDbProperties.getDbName(), couchDbInstance);
         return couchDbConnector;

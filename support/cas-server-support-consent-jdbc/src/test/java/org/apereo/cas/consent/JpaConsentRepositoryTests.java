@@ -1,5 +1,7 @@
 package org.apereo.cas.consent;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -43,13 +45,13 @@ public class JpaConsentRepositoryTests {
 
     @Test
     public void verifyConsentDecisionIsNotFound() {
-        final var d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication());
+        val d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication());
         assertNull(d);
     }
 
     @Test
     public void verifyConsentDecisionIsSaved() {
-        final var decision = BUILDER.build(SVC, REG_SVC, "casuser", ATTR);
+        val decision = BUILDER.build(SVC, REG_SVC, "casuser", ATTR);
         decision.setId(100);
         repository.storeConsentDecision(decision);
 
@@ -57,7 +59,7 @@ public class JpaConsentRepositoryTests {
         assertNotNull(d);
         assertEquals("casuser", d.getPrincipal());
 
-        final var res = this.repository.deleteConsentDecision(d.getId(), d.getPrincipal());
+        val res = this.repository.deleteConsentDecision(d.getId(), d.getPrincipal());
         assertTrue(res);
         assertTrue(this.repository.findConsentDecisions().isEmpty());
         d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication("casuser"));

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -64,11 +66,11 @@ public class SurrogateAuthenticationPostProcessorTests {
 
     @Test
     public void verifySurrogateCredentialNotFound() {
-        final var c = new SurrogateUsernamePasswordCredential();
+        val c = new SurrogateUsernamePasswordCredential();
         c.setUsername("casuser");
         c.setPassword("Mellon");
         final AuthenticationTransaction transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("service"), c);
-        final var builder = mock(AuthenticationBuilder.class);
+        val builder = mock(AuthenticationBuilder.class);
         when(builder.build()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("casuser"));
         thrown.expect(AuthenticationException.class);
         surrogateAuthenticationPostProcessor.process(builder, transaction);
@@ -76,13 +78,13 @@ public class SurrogateAuthenticationPostProcessorTests {
 
     @Test
     public void verifyProcessorWorks() {
-        final var c = new SurrogateUsernamePasswordCredential();
+        val c = new SurrogateUsernamePasswordCredential();
         c.setUsername("casuser");
         c.setPassword("Mellon");
         c.setSurrogateUsername("cassurrogate");
         final AuthenticationTransaction transaction = DefaultAuthenticationTransaction.of(
             RegisteredServiceTestUtils.getService("https://localhost"), c);
-        final var builder = mock(AuthenticationBuilder.class);
+        val builder = mock(AuthenticationBuilder.class);
         when(builder.build()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("casuser"));
         surrogateAuthenticationPostProcessor.process(builder, transaction);
     }

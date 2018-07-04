@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.validator;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +37,7 @@ public class OAuth20Validator {
      * @return whether the parameter exists
      */
     public boolean checkParameterExist(final HttpServletRequest request, final String name) {
-        final var parameter = request.getParameter(name);
+        val parameter = request.getParameter(name);
         if (StringUtils.isBlank(parameter)) {
             LOGGER.error("Missing request parameter: [{}]", name);
             return false;
@@ -56,7 +58,7 @@ public class OAuth20Validator {
             return false;
         }
 
-        final var service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+        val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
         LOGGER.debug("Check registered service: [{}]", registeredService);
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
@@ -75,7 +77,7 @@ public class OAuth20Validator {
      * @return whether the callback url is valid
      */
     public boolean checkCallbackValid(final RegisteredService registeredService, final String redirectUri) {
-        final var registeredServiceId = registeredService.getServiceId();
+        val registeredServiceId = registeredService.getServiceId();
         LOGGER.debug("Found: [{}] vs redirectUri: [{}]", registeredService, redirectUri);
         if (!redirectUri.matches(registeredServiceId)) {
             LOGGER.error("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
@@ -112,7 +114,7 @@ public class OAuth20Validator {
      */
     public static boolean checkResponseTypes(final String type, final OAuth20ResponseTypes... expectedTypes) {
         LOGGER.debug("Response type: [{}]", type);
-        final var checked = Stream.of(expectedTypes).anyMatch(t -> OAuth20Utils.isResponseType(type, t));
+        val checked = Stream.of(expectedTypes).anyMatch(t -> OAuth20Utils.isResponseType(type, t));
         if (!checked) {
             LOGGER.error("Unsupported response type: [{}]", type);
         }

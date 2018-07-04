@@ -1,5 +1,7 @@
 package org.apereo.cas.web;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -64,7 +66,7 @@ public class DelegatedClientWebflowManager {
     public Ticket store(final J2EContext webContext, final BaseClient client) {
         final Map<String, Serializable> properties = new LinkedHashMap<>();
 
-        final var service = determineService(webContext);
+        val service = determineService(webContext);
         properties.put(CasProtocolConstants.PARAMETER_SERVICE, service);
 
         properties.put(this.themeParamName, StringUtils.defaultString(webContext.getRequestParameter(this.themeParamName)));
@@ -72,9 +74,9 @@ public class DelegatedClientWebflowManager {
         properties.put(CasProtocolConstants.PARAMETER_METHOD,
             StringUtils.defaultString(webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)));
 
-        final var transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
-        final var ticket = transientFactory.create(service, properties);
-        final var ticketId = ticket.getId();
+        val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
+        val ticket = transientFactory.create(service, properties);
+        val ticketId = ticket.getId();
         LOGGER.debug("Storing delegated authentication request ticket [{}] for service [{}] with properties [{}]",
             ticketId, ticket.getService(), ticket.getProperties());
         this.ticketRegistry.addTicket(ticket);
@@ -84,20 +86,20 @@ public class DelegatedClientWebflowManager {
             webContext.getSessionStore().set(webContext, SAML2Client.SAML_RELAY_STATE_ATTRIBUTE, ticketId);
         }
         if (client instanceof OAuth20Client) {
-            final var oauthClient = (OAuth20Client) client;
-            final var config = oauthClient.getConfiguration();
+            val oauthClient = (OAuth20Client) client;
+            val config = oauthClient.getConfiguration();
             config.setWithState(true);
             config.setStateData(ticketId);
         }
         if (client instanceof OidcClient) {
-            final var oidcClient = (OidcClient) client;
-            final var config = oidcClient.getConfiguration();
+            val oidcClient = (OidcClient) client;
+            val config = oidcClient.getConfiguration();
             config.setCustomParams(CollectionUtils.wrap(PARAMETER_CLIENT_ID, ticketId));
             config.setWithState(true);
             config.setStateData(ticketId);
         }
         if (client instanceof CasClient) {
-            final var casClient = (CasClient) client;
+            val casClient = (CasClient) client;
             casClient.getConfiguration().addCustomParam(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticketId);
         }
         if (client instanceof OAuth10Client) {
@@ -120,8 +122,8 @@ public class DelegatedClientWebflowManager {
      * @return the service
      */
     public Service retrieve(final RequestContext requestContext, final WebContext webContext, final BaseClient client) {
-        final var clientId = getDelegatedClientId(webContext, client);
-        final var ticket = this.ticketRegistry.getTicket(clientId, TransientSessionTicket.class);
+        val clientId = getDelegatedClientId(webContext, client);
+        val ticket = this.ticketRegistry.getTicket(clientId, TransientSessionTicket.class);
         if (ticket == null) {
             LOGGER.error("Delegated client identifier cannot be located in the authentication request [{}]", webContext.getFullRequestURL());
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
@@ -140,7 +142,7 @@ public class DelegatedClientWebflowManager {
 
     private Service restoreDelegatedAuthenticationRequest(final RequestContext requestContext, final WebContext webContext,
                                                           final TransientSessionTicket ticket) {
-        final var service = ticket.getService();
+        val service = ticket.getService();
         LOGGER.debug("Restoring requested service [{}] back in the authentication flow", service);
 
         WebUtils.putService(requestContext, service);

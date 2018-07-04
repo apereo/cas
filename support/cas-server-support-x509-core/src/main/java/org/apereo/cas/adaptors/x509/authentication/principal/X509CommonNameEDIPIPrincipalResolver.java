@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.val;
+
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -38,16 +40,16 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
 
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
-        final var subjectDn = certificate.getSubjectDN().getName();
+        val subjectDn = certificate.getSubjectDN().getName();
         LOGGER.debug("Creating principal based on subject DN [{}]", subjectDn);
         if (StringUtils.isBlank(subjectDn)) {
             return null;
         }
-        final var commonName = retrieveTheCommonName(subjectDn);
+        val commonName = retrieveTheCommonName(subjectDn);
         if (StringUtils.isBlank(commonName)) {
             return null;
         }
-        final var result = retrieveTheEDIPI(commonName);
+        val result = retrieveTheEDIPI(commonName);
         LOGGER.debug("Final principal id extracted from [{}] is [{}]", subjectDn, result);
         return result;
     }
@@ -55,9 +57,9 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
     private String retrieveTheCommonName(final String inSubjectDN) {
         var commonNameFound = false;
         String tempCommonName = null;
-        final var st = new StringTokenizer(inSubjectDN, ",");
+        val st = new StringTokenizer(inSubjectDN, ",");
         while (!commonNameFound && st.hasMoreTokens()) {
-            final var token = st.nextToken();
+            val token = st.nextToken();
             if (isTokenCommonName(token)) {
                 commonNameFound = true;
                 tempCommonName = token;
@@ -69,9 +71,9 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
     private String retrieveTheEDIPI(final String commonName) {
         var found = false;
         String tempEDIPI = null;
-        final var st = new StringTokenizer(commonName, ".");
+        val st = new StringTokenizer(commonName, ".");
         while (!found && st.hasMoreTokens()) {
-            final var token = st.nextToken();
+            val token = st.nextToken();
             if (isTokenEDIPI(token)) {
                 found = true;
                 tempEDIPI = token;
@@ -87,7 +89,7 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
      * @return Returns boolean value indicating whether or not the token string is the Common Name (CN) number
      */
     private boolean isTokenCommonName(final String inToken) {
-        final var st = new StringTokenizer(inToken, "=");
+        val st = new StringTokenizer(inToken, "=");
         return st.nextToken().equals(COMMON_NAME_VAR);
     }
 

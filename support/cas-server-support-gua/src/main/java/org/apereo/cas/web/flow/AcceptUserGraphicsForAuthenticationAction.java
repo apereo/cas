@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.web.support.WebUtils;
@@ -18,7 +20,7 @@ public class AcceptUserGraphicsForAuthenticationAction extends AbstractAction {
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        final var username = requestContext.getRequestParameters().get("username");
+        val username = requestContext.getRequestParameters().get("username");
         WebUtils.putCredential(requestContext, new UsernamePasswordCredential(username, null));
         WebUtils.putGraphicalUserAuthenticationUsername(requestContext, username);
         return success();

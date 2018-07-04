@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.jdbc;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -73,12 +75,12 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         }
 
         final Map<String, Object> attributes = new LinkedHashMap<>(this.principalAttributeMap.size());
-        final var username = credential.getUsername();
-        final var password = credential.getPassword();
+        val username = credential.getUsername();
+        val password = credential.getPassword();
         try {
-            final var dbFields = query(credential);
+            val dbFields = query(credential);
             if (dbFields.containsKey(this.fieldPassword)) {
-                final var dbPassword = (String) dbFields.get(this.fieldPassword);
+                val dbPassword = (String) dbFields.get(this.fieldPassword);
                 if ((StringUtils.isNotBlank(originalPassword) && !matches(originalPassword, dbPassword))
                     || (StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword))) {
                     throw new FailedLoginException("Password does not match value on record.");
@@ -89,25 +91,25 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                     throw new FailedLoginException("Missing field 'total' from the query results for " + username);
                 }
 
-                final var count = dbFields.get("total");
+                val count = dbFields.get("total");
                 if (count == null || !NumberUtils.isCreatable(count.toString())) {
                     throw new FailedLoginException("Missing field value 'total' from the query results for " + username + " or value not parseable as a number");
                 }
 
-                final var number = NumberUtils.createNumber(count.toString());
+                val number = NumberUtils.createNumber(count.toString());
                 if (number.longValue() != 1) {
                     throw new FailedLoginException("No records found for user " + username);
                 }
             }
 
             if (StringUtils.isNotBlank(this.fieldDisabled) && dbFields.containsKey(this.fieldDisabled)) {
-                final var dbDisabled = dbFields.get(this.fieldDisabled).toString();
+                val dbDisabled = dbFields.get(this.fieldDisabled).toString();
                 if (BooleanUtils.toBoolean(dbDisabled) || "1".equals(dbDisabled)) {
                     throw new AccountDisabledException("Account has been disabled");
                 }
             }
             if (StringUtils.isNotBlank(this.fieldExpired) && dbFields.containsKey(this.fieldExpired)) {
-                final var dbExpired = dbFields.get(this.fieldExpired).toString();
+                val dbExpired = dbFields.get(this.fieldExpired).toString();
                 if (BooleanUtils.toBoolean(dbExpired) || "1".equals(dbExpired)) {
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }
@@ -121,7 +123,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         } catch (final DataAccessException e) {
             throw new PreventedException("SQL exception while executing query for " + username, e);
         }
-        final var principal = this.principalFactory.createPrincipal(username, attributes);
+        val principal = this.principalFactory.createPrincipal(username, attributes);
         return createHandlerResult(credential, principal, new ArrayList<>(0));
     }
 
@@ -137,10 +139,10 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
 
     private void collectPrincipalAttributes(final Map<String, Object> attributes, final Map<String, Object> dbFields) {
         this.principalAttributeMap.forEach((key, names) -> {
-            final var attribute = dbFields.get(key);
+            val attribute = dbFields.get(key);
             if (attribute != null) {
                 LOGGER.debug("Found attribute [{}] from the query results", key);
-                final var attributeNames = (Collection<String>) names;
+                val attributeNames = (Collection<String>) names;
                 attributeNames.forEach(s -> {
                     LOGGER.debug("Principal attribute [{}] is virtually remapped/renamed to [{}]", key, s);
                     attributes.put(s, CollectionUtils.wrap(attribute.toString()));

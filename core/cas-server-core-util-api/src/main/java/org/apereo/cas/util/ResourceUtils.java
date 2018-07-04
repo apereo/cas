@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -72,7 +74,7 @@ public class ResourceUtils {
     public static boolean doesResourceExist(final String resource, final ResourceLoader resourceLoader) {
         try {
             if (StringUtils.isNotBlank(resource)) {
-                final var res = resourceLoader.getResource(resource);
+                val res = resourceLoader.getResource(resource);
                 return doesResourceExist(res);
             }
         } catch (final Exception e) {
@@ -123,7 +125,7 @@ public class ResourceUtils {
      * @throws IOException the exception
      */
     public static AbstractResource getResourceFrom(final String location) throws IOException {
-        final var metadataLocationResource = getRawResourceFrom(location);
+        val metadataLocationResource = getRawResourceFrom(location);
         if (!metadataLocationResource.exists() || !metadataLocationResource.isReadable()) {
             throw new FileNotFoundException("Resource " + location + " does not exist or is unreadable");
         }
@@ -171,11 +173,11 @@ public class ResourceUtils {
             return resource;
         }
 
-        final var url = org.springframework.util.ResourceUtils.extractArchiveURL(resource.getURL());
-        final var file = org.springframework.util.ResourceUtils.getFile(url);
+        val url = org.springframework.util.ResourceUtils.extractArchiveURL(resource.getURL());
+        val file = org.springframework.util.ResourceUtils.getFile(url);
 
-        final var casDirectory = new File(FileUtils.getTempDirectory(), "cas");
-        final var destination = new File(casDirectory, resource.getFilename());
+        val casDirectory = new File(FileUtils.getTempDirectory(), "cas");
+        val destination = new File(casDirectory, resource.getFilename());
         if (isDirectory) {
             FileUtils.forceMkdir(destination);
             FileUtils.cleanDirectory(destination);
@@ -186,12 +188,12 @@ public class ResourceUtils {
         try (var jFile = new JarFile(file)) {
             final Enumeration e = jFile.entries();
             while (e.hasMoreElements()) {
-                final var entry = (ZipEntry) e.nextElement();
+                val entry = (ZipEntry) e.nextElement();
                 if (entry.getName().contains(resource.getFilename()) && entry.getName().contains(containsName)) {
                     try (var stream = jFile.getInputStream(entry)) {
                         var copyDestination = destination;
                         if (isDirectory) {
-                            final var entryFileName = new File(entry.getName());
+                            val entryFileName = new File(entry.getName());
                             copyDestination = new File(destination, entryFileName.getName());
                         }
 
@@ -214,7 +216,7 @@ public class ResourceUtils {
      * @return the input stream resource
      */
     public static InputStreamResource buildInputStreamResourceFrom(final String value, final String description) {
-        final var reader = new StringReader(value);
+        val reader = new StringReader(value);
         final InputStream is = new ReaderInputStream(reader, StandardCharsets.UTF_8);
         return new InputStreamResource(is, description);
     }

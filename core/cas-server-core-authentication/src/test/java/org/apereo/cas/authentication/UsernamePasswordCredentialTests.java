@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
@@ -14,8 +16,8 @@ public class UsernamePasswordCredentialTests {
 
     @Test
     public void verifySetGetUsername() {
-        final var c = new UsernamePasswordCredential();
-        final var userName = "test";
+        val c = new UsernamePasswordCredential();
+        val userName = "test";
 
         c.setUsername(userName);
 
@@ -24,8 +26,8 @@ public class UsernamePasswordCredentialTests {
 
     @Test
     public void verifySetGetPassword() {
-        final var c = new UsernamePasswordCredential();
-        final var password = "test";
+        val c = new UsernamePasswordCredential();
+        val password = "test";
 
         c.setPassword(password);
 

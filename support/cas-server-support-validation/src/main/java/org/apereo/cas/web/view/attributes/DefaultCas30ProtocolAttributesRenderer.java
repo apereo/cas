@@ -1,5 +1,7 @@
 package org.apereo.cas.web.view.attributes;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.cas.util.CollectionUtils;
@@ -24,9 +26,9 @@ public class DefaultCas30ProtocolAttributesRenderer implements CasProtocolAttrib
         final List<String> formattedAttributes = new ArrayList<>(attributes.size());
         LOGGER.debug("Beginning to format/render attributes for the response");
         attributes.forEach((k, v) -> {
-            final var values = CollectionUtils.toCollection(v);
+            val values = CollectionUtils.toCollection(v);
             values.forEach(value -> {
-                final var fmt = buildSingleAttributeDefinitionLine(k, value);
+                val fmt = buildSingleAttributeDefinitionLine(k, value);
                 LOGGER.debug("Formatted attribute for the response: [{}]", fmt);
                 formattedAttributes.add(fmt);
             });

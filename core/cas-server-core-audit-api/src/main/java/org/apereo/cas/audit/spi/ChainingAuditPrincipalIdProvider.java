@@ -1,5 +1,7 @@
 package org.apereo.cas.audit.spi;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
@@ -34,7 +36,7 @@ public class ChainingAuditPrincipalIdProvider implements AuditPrincipalIdProvide
     @Override
     public String getPrincipalIdFrom(final Authentication authentication, final Object resultValue, final Exception exception) {
         AnnotationAwareOrderComparator.sort(this.providers);
-        final var result = providers.stream()
+        val result = providers.stream()
             .filter(p -> p.supports(authentication, resultValue, exception))
             .findFirst()
             .orElseGet(DefaultAuditPrincipalIdProvider::new);

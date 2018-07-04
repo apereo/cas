@@ -1,5 +1,7 @@
 package org.apereo.cas.services.web;
 
+import lombok.val;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -42,13 +44,13 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
     @Override
     @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     public View resolveViewName(final String viewName, final Locale locale) {
-        final var theme = Optional.of(RequestContextHolder.currentRequestAttributes())
+        val theme = Optional.of(RequestContextHolder.currentRequestAttributes())
             .filter(ServletRequestAttributes.class::isInstance)
             .map(ServletRequestAttributes.class::cast)
             .map(ServletRequestAttributes::getRequest)
             .map(themeResolver::resolveThemeName);
         try {
-            final var delegate = theme.map(this::getViewResolver);
+            val delegate = theme.map(this::getViewResolver);
             if (delegate.isPresent()) {
                 return delegate.get().resolveViewName(viewName, locale);
             }

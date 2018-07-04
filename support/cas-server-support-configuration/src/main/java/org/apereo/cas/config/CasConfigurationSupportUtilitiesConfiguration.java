@@ -1,6 +1,8 @@
 
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -70,10 +72,10 @@ public class CasConfigurationSupportUtilitiesConfiguration {
         @SneakyThrows
         public void runNativeConfigurationDirectoryPathWatchService() {
 
-            final var config = configurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
+            val config = configurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
             if (casProperties.getEvents().isTrackConfigurationModifications() && config.exists()) {
                 LOGGER.debug("Starting to watch configuration directory [{}]", config);
-                final var watcher = new PathWatcherService(config.toPath(),
+                val watcher = new PathWatcherService(config.toPath(),
                     createConfigurationCreatedEvent.andNext(publish),
                     createConfigurationModifiedEvent.andNext(publish),
                     createConfigurationDeletedEvent.andNext(publish));

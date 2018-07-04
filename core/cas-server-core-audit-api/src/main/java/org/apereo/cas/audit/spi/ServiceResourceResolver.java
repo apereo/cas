@@ -1,5 +1,7 @@
 package org.apereo.cas.audit.spi;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.AopUtils;
@@ -18,8 +20,8 @@ public class ServiceResourceResolver implements AuditResourceResolver {
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
-        final var service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
-        final var builder = new StringBuilder(retval.toString())
+        val service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
+        val builder = new StringBuilder(retval.toString())
                 .append(" for ")
                 .append(DigestUtils.abbreviate(service.getId()));
 
@@ -28,7 +30,7 @@ public class ServiceResourceResolver implements AuditResourceResolver {
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Exception ex) {
-        final var service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
+        val service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
         return new String[]{service.getId()};
     }
 }

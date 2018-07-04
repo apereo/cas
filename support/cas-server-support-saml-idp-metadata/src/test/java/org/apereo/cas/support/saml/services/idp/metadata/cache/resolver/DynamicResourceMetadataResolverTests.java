@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.category.FileSystemCategory;
@@ -44,10 +46,10 @@ public class DynamicResourceMetadataResolverTests {
 
     @Test
     public void verifyResolverSupports() {
-        final var props = new SamlIdPProperties();
+        val props = new SamlIdPProperties();
         props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
-        final var resolver = new DynamicMetadataResolver(props, openSamlConfigBean);
-        final var service = new SamlRegisteredService();
+        val resolver = new DynamicMetadataResolver(props, openSamlConfigBean);
+        val service = new SamlRegisteredService();
         service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
         assertFalse(resolver.supports(service));
         service.setMetadataLocation("http://mdq-beta.incommon.org/global/entities/{0}");
@@ -56,10 +58,10 @@ public class DynamicResourceMetadataResolverTests {
 
     @Test
     public void verifyResolverResolves() {
-        final var props = new SamlIdPProperties();
+        val props = new SamlIdPProperties();
         props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
-        final var resolver = new DynamicMetadataResolver(props, openSamlConfigBean);
-        final var service = new SamlRegisteredService();
+        val resolver = new DynamicMetadataResolver(props, openSamlConfigBean);
+        val service = new SamlRegisteredService();
         service.setId(100);
         service.setName("Dynamic");
         service.setMetadataLocation("http://mdq-beta.incommon.org/global/entities/{0}");

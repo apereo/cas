@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import lombok.val;
+
 import com.github.benmanes.caffeine.cache.Expiry;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -32,8 +34,8 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
     public long expireAfterCreate(@Nonnull final SamlRegisteredServiceCacheKey cacheKey,
                                   final MetadataResolver chainingMetadataResolver,
                                   final long currentTime) {
-        final var service = cacheKey.getRegisteredService();
-        final var duration = getCacheDurationForServiceProvider(service, chainingMetadataResolver);
+        val service = cacheKey.getRegisteredService();
+        val duration = getCacheDurationForServiceProvider(service, chainingMetadataResolver);
         if (duration >= 0) {
             return duration;
         }
@@ -48,10 +50,10 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
 
     private long getCacheDurationForServiceProvider(final SamlRegisteredService service, final MetadataResolver chainingMetadataResolver) {
         try {
-            final var set = new CriteriaSet();
+            val set = new CriteriaSet();
             set.add(new EntityIdCriterion(service.getServiceId()));
             set.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-            final var entitySp = chainingMetadataResolver.resolveSingle(set);
+            val entitySp = chainingMetadataResolver.resolveSingle(set);
             if (entitySp.getCacheDuration() != null) {
                 LOGGER.debug("Located cache duration [{}] specified in SP metadata for [{}]", entitySp.getCacheDuration(), entitySp.getEntityID());
                 return TimeUnit.MILLISECONDS.toNanos(entitySp.getCacheDuration());
@@ -59,7 +61,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
 
             set.clear();
             set.add(new EntityIdCriterion(service.getServiceId()));
-            final var entity = chainingMetadataResolver.resolveSingle(set);
+            val entity = chainingMetadataResolver.resolveSingle(set);
             if (entity.getCacheDuration() != null) {
                 LOGGER.debug("Located cache duration [{}] specified in entity metadata for [{}]", entity.getCacheDuration(), entity.getEntityID());
                 return TimeUnit.MILLISECONDS.toNanos(entity.getCacheDuration());

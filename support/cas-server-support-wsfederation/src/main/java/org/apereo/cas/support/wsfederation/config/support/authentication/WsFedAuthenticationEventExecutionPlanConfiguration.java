@@ -1,5 +1,7 @@
 package org.apereo.cas.support.wsfederation.config.support.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
@@ -63,7 +65,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
     private CasConfigurationProperties casProperties;
 
     private WsFederationConfiguration getWsFederationConfiguration(final WsFederationDelegationProperties wsfed) {
-        final var config = new WsFederationConfiguration();
+        val config = new WsFederationConfiguration();
         config.setAttributesType(WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.valueOf(wsfed.getAttributesType()));
         config.setIdentityAttribute(wsfed.getIdentityAttribute());
         config.setIdentityProviderIdentifier(wsfed.getIdentityProviderIdentifier());
@@ -85,8 +87,8 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         config.setAutoRedirect(wsfed.isAutoRedirect());
         config.setName(wsfed.getName());
 
-        final var cookie = wsfed.getCookie();
-        final var crypto = cookie.getCrypto();
+        val cookie = wsfed.getCookie();
+        val crypto = cookie.getCrypto();
         final CipherExecutor cipher;
         if (crypto.isEnabled()) {
             cipher = new WsFederationCookieCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey(), crypto.getAlg());
@@ -97,7 +99,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                 + "delegated authentication cookie.");
             cipher = CipherExecutor.noOp();
         }
-        final var cookieGen = new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher),
+        val cookieGen = new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher),
             cookie.getName(), cookie.getPath(), cookie.getMaxAge(),
             cookie.isSecure(), cookie.getDomain(), cookie.isHttpOnly());
         config.setCookieGenerator(cookieGen);
@@ -112,7 +114,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
     public Collection<WsFederationConfiguration> wsFederationConfigurations() {
         final Collection<WsFederationConfiguration> col = new HashSet<>();
         casProperties.getAuthn().getWsfed().forEach(wsfed -> {
-            final var cfg = getWsFederationConfiguration(wsfed);
+            val cfg = getWsFederationConfiguration(wsfed);
             col.add(cfg);
         });
         return col;
@@ -138,13 +140,13 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                 if (!wsfed.isAttributeResolverEnabled()) {
                     plan.registerAuthenticationHandler(handler);
                 } else {
-                    final var configurations = wsFederationConfigurations();
+                    val configurations = wsFederationConfigurations();
                     final var cfg = configurations.stream()
                         .filter(c -> c.getIdentityProviderUrl().equals(wsfed.getIdentityProviderUrl()))
                         .findFirst()
                         .orElseThrow(() -> new RuntimeException("Unable to find configuration for identity provider " + wsfed.getIdentityProviderUrl()));
 
-                    final var r = new WsFederationCredentialsToPrincipalResolver(attributeRepository, adfsPrincipalFactory(),
+                    val r = new WsFederationCredentialsToPrincipalResolver(attributeRepository, adfsPrincipalFactory(),
                         wsfed.getPrincipal().isReturnNull(),
                         wsfed.getPrincipal().getPrincipalAttribute(),
                         cfg);

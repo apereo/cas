@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import lombok.val;
+
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,7 +32,7 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
 
     @Override
     public void expire(final LocalDateTime onOrBefore) {
-        final var results = storage.asMap()
+        val results = storage.asMap()
                 .values()
                 .stream()
                 .filter(entry -> entry.getRecordDate().isEqual(onOrBefore) || entry.getRecordDate().isBefore(onOrBefore))

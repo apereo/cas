@@ -1,5 +1,7 @@
 package org.apereo.cas.impl.plans;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
@@ -29,7 +31,7 @@ public class MultifactorAuthenticationContingencyPlan extends BaseAuthentication
                                                                     final AuthenticationRiskScore score,
                                                                     final HttpServletRequest request) {
         
-        final var providerMap =
+        val providerMap =
                 MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.warn("No multifactor authentication providers are available in the application context");
@@ -46,8 +48,8 @@ public class MultifactorAuthenticationContingencyPlan extends BaseAuthentication
             }
         }
 
-        final var attributeName = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getRiskyAuthenticationAttribute();
-        final var newAuthn = DefaultAuthenticationBuilder.newInstance(authentication)
+        val attributeName = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getRiskyAuthenticationAttribute();
+        val newAuthn = DefaultAuthenticationBuilder.newInstance(authentication)
                 .addAttribute(attributeName, Boolean.TRUE)
                 .build();
         LOGGER.debug("Updated authentication to remember risk-based authn via [{}]", attributeName);

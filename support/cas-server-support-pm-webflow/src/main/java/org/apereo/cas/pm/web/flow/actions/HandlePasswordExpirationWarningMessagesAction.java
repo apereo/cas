@@ -1,5 +1,7 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -26,9 +28,9 @@ public class HandlePasswordExpirationWarningMessagesAction extends AbstractActio
     @Override
     public Event doExecute(final RequestContext context) {
         final AttributeMap attributes = context.getCurrentEvent().getAttributes();
-        final var warnings = (Collection<MessageDescriptor>)
+        val warnings = (Collection<MessageDescriptor>)
             attributes.get(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, Collection.class, new LinkedHashSet<>());
-        final var found = warnings
+        val found = warnings
             .stream()
             .filter(PasswordExpiringWarningMessageDescriptor.class::isInstance)
             .findAny();

@@ -1,5 +1,7 @@
 package org.apereo.cas.memcached.kryo.serial;
 
+import lombok.val;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
@@ -20,7 +22,7 @@ public class URLSerializer extends Serializer<URL> {
     @Override
     @SneakyThrows
     public URL read(final Kryo kryo, final Input input, final Class<? extends URL> aClass) {
-        final var url = kryo.readObject(input, String.class);
+        val url = kryo.readObject(input, String.class);
         return new URL(url);
     }
 

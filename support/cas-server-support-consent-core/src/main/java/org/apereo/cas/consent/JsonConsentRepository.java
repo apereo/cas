@@ -1,5 +1,7 @@
 package org.apereo.cas.consent;
 
+import lombok.val;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
@@ -34,14 +36,14 @@ public class JsonConsentRepository extends BaseConsentRepository {
 
     @Override
     public boolean storeConsentDecision(final ConsentDecision decision) {
-        final var result = super.storeConsentDecision(decision);
+        val result = super.storeConsentDecision(decision);
         writeAccountToJsonResource();
         return result;
     }
 
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
-        final var result = super.deleteConsentDecision(decisionId, principal);
+        val result = super.deleteConsentDecision(decisionId, principal);
         writeAccountToJsonResource();
         return result;
     }

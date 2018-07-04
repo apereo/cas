@@ -1,5 +1,7 @@
 package org.apereo.cas.metadata;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -38,8 +40,8 @@ public class CasConfigurationMetadataRepository {
      */
     @SneakyThrows
     public CasConfigurationMetadataRepository(final String resource) {
-        final var resources = new PathMatchingResourcePatternResolver().getResources(resource);
-        final var builder = ConfigurationMetadataRepositoryJsonBuilder.create();
+        val resources = new PathMatchingResourcePatternResolver().getResources(resource);
+        val builder = ConfigurationMetadataRepositoryJsonBuilder.create();
         Arrays.stream(resources).forEach(Unchecked.consumer(r -> {
             try (var in = r.getInputStream()) {
                 builder.withJsonResource(in);

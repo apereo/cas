@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml;
 
+import lombok.val;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -55,18 +57,18 @@ public class SamlIdPUtils {
                                                             final MessageContext outboundContext,
                                                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                             final String binding) throws SamlException {
-        final var entityId = adaptor.getEntityId();
+        val entityId = adaptor.getEntityId();
         if (!adaptor.containsAssertionConsumerServices()) {
             throw new SamlException("No assertion consumer service could be found for entity " + entityId);
         }
 
-        final var peerEntityContext = outboundContext.getSubcontext(SAMLPeerEntityContext.class, true);
+        val peerEntityContext = outboundContext.getSubcontext(SAMLPeerEntityContext.class, true);
         if (peerEntityContext == null) {
             throw new SamlException("SAMLPeerEntityContext could not be defined for entity " + entityId);
         }
         peerEntityContext.setEntityId(entityId);
 
-        final var endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
+        val endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
         if (endpointContext == null) {
             throw new SamlException("SAMLEndpointContext could not be defined for entity " + entityId);
         }
@@ -90,10 +92,10 @@ public class SamlIdPUtils {
         AssertionConsumerService endpoint = null;
 
         if (authnRequest instanceof AuthnRequest) {
-            final var acsUrl = AuthnRequest.class.cast(authnRequest).getAssertionConsumerServiceURL();
+            val acsUrl = AuthnRequest.class.cast(authnRequest).getAssertionConsumerServiceURL();
             if (StringUtils.isNotBlank(acsUrl)) {
                 LOGGER.debug("Using assertion consumer service url [{}] with binding [{}] provided by the authentication request", acsUrl, binding);
-                final var builder = new AssertionConsumerServiceBuilder();
+                val builder = new AssertionConsumerServiceBuilder();
                 endpoint = builder.buildObject(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
                 endpoint.setBinding(binding);
                 endpoint.setResponseLocation(acsUrl);
@@ -125,10 +127,10 @@ public class SamlIdPUtils {
                                                                          final String entityID,
                                                                          final SamlRegisteredServiceCachingMetadataResolver resolver) {
 
-        final var registeredServices = servicesManager.findServiceBy(SamlRegisteredService.class::isInstance);
-        final var chainingMetadataResolver = new ChainingMetadataResolver();
+        val registeredServices = servicesManager.findServiceBy(SamlRegisteredService.class::isInstance);
+        val chainingMetadataResolver = new ChainingMetadataResolver();
 
-        final var resolvers = registeredServices.stream()
+        val resolvers = registeredServices.stream()
             .filter(SamlRegisteredService.class::isInstance)
             .map(SamlRegisteredService.class::cast)
             .map(s -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, s, entityID))
@@ -157,19 +159,19 @@ public class SamlIdPUtils {
                                                                           final ServicesManager servicesManager,
                                                                           final SamlRegisteredServiceCachingMetadataResolver resolver) {
         try {
-            final var acs = new AssertionConsumerServiceBuilder().buildObject();
+            val acs = new AssertionConsumerServiceBuilder().buildObject();
             if (authnRequest.getAssertionConsumerServiceIndex() != null) {
-                final var issuer = getIssuerFromSamlRequest(authnRequest);
-                final var samlResolver = getMetadataResolverForAllSamlServices(servicesManager, issuer, resolver);
-                final var criteriaSet = new CriteriaSet();
+                val issuer = getIssuerFromSamlRequest(authnRequest);
+                val samlResolver = getMetadataResolverForAllSamlServices(servicesManager, issuer, resolver);
+                val criteriaSet = new CriteriaSet();
                 criteriaSet.add(new EntityIdCriterion(issuer));
                 criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
                 criteriaSet.add(new BindingCriterion(CollectionUtils.wrap(SAMLConstants.SAML2_POST_BINDING_URI)));
 
-                final var it = samlResolver.resolve(criteriaSet);
+                val it = samlResolver.resolve(criteriaSet);
                 it.forEach(entityDescriptor -> {
-                    final var spssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
-                    final var acsEndpoints = spssoDescriptor.getAssertionConsumerServices();
+                    val spssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
+                    val acsEndpoints = spssoDescriptor.getAssertionConsumerServices();
                     if (acsEndpoints.isEmpty()) {
                         throw new IllegalArgumentException("Metadata resolved for entity id " + issuer + " has no defined ACS endpoints");
                     }
@@ -178,7 +180,7 @@ public class SamlIdPUtils {
                         throw new IllegalArgumentException("AssertionConsumerService index specified in the request " + acsIndex + " is invalid "
                             + "since the total endpoints available to " + issuer + " is " + acsEndpoints.size());
                     }
-                    final var foundAcs = acsEndpoints.get(acsIndex);
+                    val foundAcs = acsEndpoints.get(acsIndex);
                     acs.setBinding(foundAcs.getBinding());
                     acs.setLocation(foundAcs.getLocation());
                     acs.setResponseLocation(foundAcs.getResponseLocation());
@@ -238,7 +240,7 @@ public class SamlIdPUtils {
      */
     public static RoleDescriptorResolver getRoleDescriptorResolver(final MetadataResolver metadata,
                                                                    final boolean requireValidMetadata) throws Exception {
-        final var roleDescriptorResolver = new PredicateRoleDescriptorResolver(metadata);
+        val roleDescriptorResolver = new PredicateRoleDescriptorResolver(metadata);
         roleDescriptorResolver.setSatisfyAnyPredicates(true);
         roleDescriptorResolver.setUseDefaultPredicateRegistry(true);
         roleDescriptorResolver.setRequireValidMetadata(requireValidMetadata);

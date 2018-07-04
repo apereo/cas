@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.gauth;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.authentication.OneTimeToken;
@@ -35,7 +37,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
 
     @Override
     public void cleanInternal() {
-        final var count = this.entityManager.createQuery("DELETE FROM " + GoogleAuthenticatorToken.class.getSimpleName()
+        val count = this.entityManager.createQuery("DELETE FROM " + GoogleAuthenticatorToken.class.getSimpleName()
             + " r where r.issuedDateTime>= :expired")
             .setParameter("expired", LocalDateTime.now().minusSeconds(this.expireTokensInSeconds))
             .executeUpdate();
@@ -50,7 +52,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     @Override
     public GoogleAuthenticatorToken get(final String uid, final Integer otp) {
         try {
-            final var r =
+            val r =
                 this.entityManager.createQuery("SELECT r FROM " + GoogleAuthenticatorToken.class.getSimpleName()
                     + " r where r.userId = :userId and r.token = :token", GoogleAuthenticatorToken.class)
                     .setParameter("userId", uid)

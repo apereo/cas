@@ -1,5 +1,7 @@
 package org.apereo.cas.hz;
 
+import lombok.val;
+
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
 import org.junit.Test;
 
@@ -14,9 +16,9 @@ import static org.junit.Assert.*;
 public class HazelcastAwsDiscoveryStrategyTests {
     @Test
     public void verifyAction() {
-        final var strategy = new HazelcastAwsDiscoveryStrategy();
-        final var properties = new HazelcastClusterProperties();
-        final var aws = properties.getDiscovery().getAws();
+        val strategy = new HazelcastAwsDiscoveryStrategy();
+        val properties = new HazelcastClusterProperties();
+        val aws = properties.getDiscovery().getAws();
 
         aws.setAccessKey("AccessKey");
         aws.setSecretKey("Secret");

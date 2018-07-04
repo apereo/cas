@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
@@ -25,7 +27,7 @@ public class YubiKeyRestHttpRequestCredentialFactory implements RestHttpRequestC
 
     @Override
     public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
-        final var otp = requestBody.getFirst(PARAMETER_NAME_YUBIKEY_OTP);
+        val otp = requestBody.getFirst(PARAMETER_NAME_YUBIKEY_OTP);
         LOGGER.debug("YubiKey token in the request body: [{}]", otp);
         if (StringUtils.isBlank(otp)) {
             return new ArrayList<>(0);

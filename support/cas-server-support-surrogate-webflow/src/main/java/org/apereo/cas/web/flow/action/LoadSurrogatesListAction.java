@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.action;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
@@ -36,11 +38,11 @@ public class LoadSurrogatesListAction extends AbstractAction {
             return error();
         }
 
-        final var c = WebUtils.getCredential(requestContext);
+        val c = WebUtils.getCredential(requestContext);
         if (c instanceof SurrogateUsernamePasswordCredential) {
-            final var authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
-            final var credential = (SurrogateUsernamePasswordCredential) c;
-            final var result =
+            val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
+            val credential = (SurrogateUsernamePasswordCredential) c;
+            val result =
                 surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(authenticationResultBuilder, c, credential.getSurrogateUsername());
             if (result.isPresent()) {
                 WebUtils.putAuthenticationResultBuilder(result.get(), requestContext);
@@ -50,11 +52,11 @@ public class LoadSurrogatesListAction extends AbstractAction {
     }
 
     private boolean loadSurrogates(final RequestContext requestContext) {
-        final var c = WebUtils.getCredential(requestContext);
+        val c = WebUtils.getCredential(requestContext);
         if (c instanceof UsernamePasswordCredential) {
-            final var username = c.getId();
+            val username = c.getId();
             LOGGER.debug("Loading eligible accounts for [{}] to proxy", username);
-            final var surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
+            val surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
             LOGGER.debug("Surrogate accounts found are [{}]", surrogates);
             if (surrogates != null && !surrogates.isEmpty()) {
                 surrogates.add(0, username);

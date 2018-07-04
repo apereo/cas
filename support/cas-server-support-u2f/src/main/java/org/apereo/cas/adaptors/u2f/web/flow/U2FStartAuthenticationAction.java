@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.u2f.web.flow;
 
+import lombok.val;
+
 import com.yubico.u2f.U2F;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.u2f.U2FAuthentication;
@@ -29,12 +31,12 @@ public class U2FStartAuthenticationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final var p = WebUtils.getAuthentication(requestContext).getPrincipal();
-        final var requestData = u2f.startSignature(this.serverAddress, u2FDeviceRepository.getRegisteredDevices(p.getId()));
+        val p = WebUtils.getAuthentication(requestContext).getPrincipal();
+        val requestData = u2f.startSignature(this.serverAddress, u2FDeviceRepository.getRegisteredDevices(p.getId()));
         u2FDeviceRepository.requestDeviceAuthentication(requestData.getRequestId(), p.getId(), requestData.toJson());
 
         if (!requestData.getSignRequests().isEmpty()) {
-            final var req = requestData.getSignRequests().get(0);
+            val req = requestData.getSignRequests().get(0);
             requestContext.getFlowScope().put("u2fAuth", new U2FAuthentication(req.getChallenge(), req.getAppId(), req.getKeyHandle()));
             return success();
         }

@@ -1,5 +1,7 @@
 package org.apereo.cas.digest.config.support.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -48,7 +50,7 @@ public class DigestAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler digestAuthenticationHandler() {
-        final var digest = casProperties.getAuthn().getDigest();
+        val digest = casProperties.getAuthn().getDigest();
         return new DigestAuthenticationHandler(digest.getName(), servicesManager, digestAuthenticationPrincipalFactory());
     }
 

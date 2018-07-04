@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.authy.config.support.authentication;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -51,7 +53,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     public AuthyClientInstance authyClientInstance() {
-        final var authy = casProperties.getAuthn().getMfa().getAuthy();
+        val authy = casProperties.getAuthn().getMfa().getAuthy();
         if (StringUtils.isBlank(authy.getApiKey())) {
             throw new IllegalArgumentException("Authy API key must be defined");
         }
@@ -64,8 +66,8 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @SneakyThrows
     public AuthenticationHandler authyAuthenticationHandler() {
-        final var authy = casProperties.getAuthn().getMfa().getAuthy();
-        final var forceVerification = authy.isForceVerification();
+        val authy = casProperties.getAuthn().getMfa().getAuthy();
+        val forceVerification = authy.isForceVerification();
         return new AuthyAuthenticationHandler(authy.getName(), servicesManager, authyPrincipalFactory(), authyClientInstance(), forceVerification);
     }
 
@@ -78,7 +80,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider authyAuthenticatorAuthenticationProvider() {
-        final var p = new AuthyMultifactorAuthenticationProvider();
+        val p = new AuthyMultifactorAuthenticationProvider();
         p.setBypassEvaluator(authyBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getAuthy().getRank());

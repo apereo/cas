@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.adaptors.trusted.config.TrustedAuthenticationConfiguration;
@@ -31,10 +33,10 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
     
     @Test
     public void verifyRemoteUserExists() throws Exception {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setRemoteUser("test");
 
-        final var context = new MockRequestContext();
+        val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
 
@@ -43,7 +45,7 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
 
     @Test
     public void verifyRemoteUserDoesntExists() throws Exception {
-        final var context = new MockRequestContext();
+        val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
 

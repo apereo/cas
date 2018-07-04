@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Service;
@@ -96,7 +98,7 @@ public class DefaultCasAttributeEncoderTests {
     public void checkNoPublicKeyDefined() {
         final Service service = RegisteredServiceTestUtils.getService("testDefault");
         final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
-        final var encoded = encoder.encodeAttributes(this.attributes, this.servicesManager.findServiceBy(service));
+        val encoded = encoder.encodeAttributes(this.attributes, this.servicesManager.findServiceBy(service));
         assertEquals(this.attributes.size() - 2, encoded.size());
     }
 
@@ -104,16 +106,16 @@ public class DefaultCasAttributeEncoderTests {
     public void checkAttributesEncodedCorrectly() {
         final Service service = RegisteredServiceTestUtils.getService("testencryption");
         final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
-        final var encoded = encoder.encodeAttributes(this.attributes, this.servicesManager.findServiceBy(service));
+        val encoded = encoder.encodeAttributes(this.attributes, this.servicesManager.findServiceBy(service));
         assertEquals(encoded.size(), this.attributes.size());
         checkEncryptedValues(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, encoded);
         checkEncryptedValues(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, encoded);
     }
 
     private void checkEncryptedValues(final String name, final Map<String, Object> encoded) {
-        final var v1 = ((Collection<?>) this.attributes.get(
+        val v1 = ((Collection<?>) this.attributes.get(
             name)).iterator().next().toString();
-        final var v2 = (String) encoded.get(name);
+        val v2 = (String) encoded.get(name);
         assertNotEquals(v1, v2);
     }
 }

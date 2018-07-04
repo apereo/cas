@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -79,7 +81,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                                   final HttpServletResponse response,
                                   final String binding,
                                   final MessageContext messageContext) throws SamlException {
-        final var id = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
+        val id = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
         var samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), authnRequest.getID(), null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
         samlResponse.setIssuer(buildEntityIssuer());
@@ -88,7 +90,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
             storeAttributeQueryTicketInRegistry(assertion, request, adaptor);
         }
 
-        final var finalAssertion = encryptAssertion(assertion, request, response, service, adaptor);
+        val finalAssertion = encryptAssertion(assertion, request, response, service, adaptor);
 
         if (finalAssertion instanceof EncryptedAssertion) {
             LOGGER.debug("Built assertion is encrypted, so the response will add it to the encrypted assertions collection");
@@ -98,7 +100,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
             samlResponse.getAssertions().add(Assertion.class.cast(finalAssertion));
         }
 
-        final var status = newStatus(StatusCode.SUCCESS, null);
+        val status = newStatus(StatusCode.SUCCESS, null);
         samlResponse.setStatus(status);
 
         SamlUtils.logSamlObject(this.configBean, samlResponse);
@@ -145,11 +147,11 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
     private void storeAttributeQueryTicketInRegistry(final Assertion assertion, final HttpServletRequest request,
                                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
 
-        final var value = assertion.getSubject().getNameID().getValue();
-        final var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
+        val value = assertion.getSubject().getNameID().getValue();
+        val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
             ticketGrantingTicketCookieGenerator, this.ticketRegistry, request);
 
-        final var ticket = samlAttributeQueryTicketFactory.create(value,
+        val ticket = samlAttributeQueryTicketFactory.create(value,
             assertion, adaptor.getEntityId(), ticketGrantingTicket);
         this.ticketRegistry.addTicket(ticket);
 

@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -48,7 +50,7 @@ public class TokenAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "tokenAuthenticationHandler")
     @Bean
     public AuthenticationHandler tokenAuthenticationHandler() {
-        final var token = casProperties.getAuthn().getToken();
+        val token = casProperties.getAuthn().getToken();
         return new TokenAuthenticationHandler(token.getName(), servicesManager, tokenPrincipalFactory(),
                 PrincipalNameTransformerUtils.newPrincipalNameTransformer(token.getPrincipalTransformation()));
     }

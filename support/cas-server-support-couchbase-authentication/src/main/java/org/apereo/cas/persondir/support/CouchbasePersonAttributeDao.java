@@ -1,5 +1,7 @@
 package org.apereo.cas.persondir.support;
 
+import lombok.val;
+
 import com.couchbase.client.java.document.json.JsonObject;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -38,7 +40,7 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
     @Override
     @SneakyThrows
     public IPersonAttributes getPerson(final String uid) {
-        final var result = couchbase.query(couchbaseProperties.getUsernameAttribute(), uid);
+        val result = couchbase.query(couchbaseProperties.getUsernameAttribute(), uid);
         final Map<String, ?> attributes;
         if (result.allRows().isEmpty()) {
             LOGGER.debug("Couchbase query did not return any results/rows.");
@@ -48,7 +50,7 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
                 .stream()
                 .filter(row -> row.value().containsKey(couchbase.getBucket().name()))
                 .filter(row -> {
-                    final var value = (JsonObject) row.value().get(couchbase.getBucket().name());
+                    val value = (JsonObject) row.value().get(couchbase.getBucket().name());
                     return value.containsKey(couchbaseProperties.getUsernameAttribute());
                 })
                 .map(row -> (JsonObject) row.value().get(couchbase.getBucket().name()))
@@ -67,8 +69,8 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
     @Override
     public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> map) {
         final Set<IPersonAttributes> people = new LinkedHashSet();
-        final var username = this.usernameAttributeProvider.getUsernameFromQuery(map);
-        final var person = this.getPerson(username);
+        val username = this.usernameAttributeProvider.getUsernameFromQuery(map);
+        val person = this.getPerson(username);
         if (person != null) {
             people.add(person);
         }

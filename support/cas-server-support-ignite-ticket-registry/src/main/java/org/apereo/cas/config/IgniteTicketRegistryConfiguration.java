@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ignite.cache.CacheAtomicityMode;
 import org.apache.ignite.cache.CacheMode;
@@ -56,10 +58,10 @@ public class IgniteTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public IgniteConfiguration igniteConfiguration(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        final var ignite = casProperties.getTicket().getRegistry().getIgnite();
+        val ignite = casProperties.getTicket().getRegistry().getIgnite();
 
-        final var config = new IgniteConfiguration();
-        final var spi = new TcpDiscoverySpi();
+        val config = new IgniteConfiguration();
+        val spi = new TcpDiscoverySpi();
 
         if (!StringUtils.isEmpty(ignite.getLocalAddress())) {
             spi.setLocalAddress(ignite.getLocalAddress());
@@ -74,21 +76,21 @@ public class IgniteTicketRegistryConfiguration {
         spi.setThreadPriority(ignite.getThreadPriority());
         spi.setForceServerMode(ignite.isForceServerMode());
 
-        final var finder = new TcpDiscoveryVmIpFinder();
+        val finder = new TcpDiscoveryVmIpFinder();
         finder.setAddresses(ignite.getIgniteAddress());
         spi.setIpFinder(finder);
         config.setDiscoverySpi(spi);
-        final var cacheConfigurations = buildIgniteTicketCaches(ignite, ticketCatalog);
+        val cacheConfigurations = buildIgniteTicketCaches(ignite, ticketCatalog);
         config.setCacheConfiguration(cacheConfigurations.toArray(new CacheConfiguration[]{}));
         config.setClientMode(ignite.isClientMode());
 
-        final var factory = buildSecureTransportForIgniteConfiguration();
+        val factory = buildSecureTransportForIgniteConfiguration();
         if (factory != null) {
             config.setSslContextFactory(factory);
         }
 
-        final var dataStorageConfiguration = new DataStorageConfiguration();
-        final var dataRegionConfiguration = new DataRegionConfiguration();
+        val dataStorageConfiguration = new DataStorageConfiguration();
+        val dataRegionConfiguration = new DataRegionConfiguration();
         dataRegionConfiguration.setName("DefaultRegion");
         dataRegionConfiguration.setMaxSize(ignite.getDefaultRegionMaxSize());
         dataRegionConfiguration.setPersistenceEnabled(ignite.isDefaultPersistenceEnabled());
@@ -110,9 +112,9 @@ public class IgniteTicketRegistryConfiguration {
     @Bean
     @RefreshScope
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        final var igniteProperties = casProperties.getTicket().getRegistry().getIgnite();
-        final var igniteConfiguration = igniteConfiguration(ticketCatalog);
-        final var r = new IgniteTicketRegistry(ticketCatalog, igniteConfiguration, igniteProperties);
+        val igniteProperties = casProperties.getTicket().getRegistry().getIgnite();
+        val igniteConfiguration = igniteConfiguration(ticketCatalog);
+        val r = new IgniteTicketRegistry(ticketCatalog, igniteConfiguration, igniteProperties);
         r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(igniteProperties.getCrypto(), "ignite"));
         r.initialize();
         return r;
@@ -120,18 +122,18 @@ public class IgniteTicketRegistryConfiguration {
 
     private static Collection<CacheConfiguration> buildIgniteTicketCaches(final IgniteProperties ignite,
                                                                           final TicketCatalog ticketCatalog) {
-        final var definitions = ticketCatalog.findAll();
+        val definitions = ticketCatalog.findAll();
         return definitions
             .stream()
             .map(t -> {
-                final var ticketsCache = new CacheConfiguration();
+                val ticketsCache = new CacheConfiguration();
                 ticketsCache.setName(t.getProperties().getStorageName());
                 ticketsCache.setCacheMode(CacheMode.valueOf(ignite.getTicketsCache().getCacheMode()));
                 ticketsCache.setAtomicityMode(CacheAtomicityMode.valueOf(ignite.getTicketsCache().getAtomicityMode()));
-                final var writeSync =
+                val writeSync =
                     CacheWriteSynchronizationMode.valueOf(ignite.getTicketsCache().getWriteSynchronizationMode());
                 ticketsCache.setWriteSynchronizationMode(writeSync);
-                final var duration = new Duration(TimeUnit.SECONDS, t.getProperties().getStorageTimeout());
+                val duration = new Duration(TimeUnit.SECONDS, t.getProperties().getStorageTimeout());
                 ticketsCache.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(duration));
                 return ticketsCache;
             })
@@ -139,11 +141,11 @@ public class IgniteTicketRegistryConfiguration {
     }
 
     private SslContextFactory buildSecureTransportForIgniteConfiguration() {
-        final var properties = casProperties.getTicket().getRegistry().getIgnite();
-        final var nullKey = "NULL";
+        val properties = casProperties.getTicket().getRegistry().getIgnite();
+        val nullKey = "NULL";
         if (StringUtils.hasText(properties.getKeyStoreFilePath()) && StringUtils.hasText(properties.getKeyStorePassword())
             && StringUtils.hasText(properties.getTrustStoreFilePath()) && StringUtils.hasText(properties.getTrustStorePassword())) {
-            final var sslContextFactory = new SslContextFactory();
+            val sslContextFactory = new SslContextFactory();
             sslContextFactory.setKeyStoreFilePath(properties.getKeyStoreFilePath());
             sslContextFactory.setKeyStorePassword(properties.getKeyStorePassword().toCharArray());
             if (nullKey.equals(properties.getTrustStoreFilePath()) && nullKey.equals(properties.getTrustStorePassword())) {

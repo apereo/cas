@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.swivel;
 
+import lombok.val;
+
 import com.swiveltechnologies.pinsafe.client.agent.AgentXmlRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -40,20 +42,20 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
-        final var swivelCredential = (SwivelTokenCredential) credential;
+        val swivelCredential = (SwivelTokenCredential) credential;
         if (swivelCredential == null || StringUtils.isBlank(swivelCredential.getToken())) {
             throw new IllegalArgumentException("No credential could be found or credential token is blank");
         }
-        final var context = RequestContextHolder.getRequestContext();
+        val context = RequestContextHolder.getRequestContext();
         if (context == null) {
             throw new IllegalArgumentException("No request context could be found to locate an authentication event");
         }
-        final var authentication = WebUtils.getInProgressAuthentication();
+        val authentication = WebUtils.getInProgressAuthentication();
         if (authentication == null) {
             throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
         }
-        final var principal = authentication.getPrincipal();
-        final var uid = principal.getId();
+        val principal = authentication.getPrincipal();
+        val uid = principal.getId();
         LOGGER.debug("Received principal id [{}]", uid);
         return sendAuthenticationRequestToSwivel(swivelCredential, uid);
     }
@@ -74,7 +76,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
          * one-time code.
          */
         LOGGER.debug("Preparing Swivel request to [{}]", swivelProperties.getSwivelUrl());
-        final var req = new AgentXmlRequest(swivelProperties.getSwivelUrl(), swivelProperties.getSharedSecret());
+        val req = new AgentXmlRequest(swivelProperties.getSwivelUrl(), swivelProperties.getSharedSecret());
         req.setIgnoreSSLErrors(swivelProperties.isIgnoreSslErrors());
 
         try {
@@ -103,7 +105,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
          * doesn't produce an agent error, so we fake one here to
          * give us something to throw.
          */
-        final var agentError = StringUtils.isBlank(req.getAgentError()) ? SWIVEL_ERR_CODE_AUTHN_FAIL : req.getAgentError();
+        val agentError = StringUtils.isBlank(req.getAgentError()) ? SWIVEL_ERR_CODE_AUTHN_FAIL : req.getAgentError();
         LOGGER.error("Failed Swivel MFA authentication for [{}] ([{}])", uid, agentError);
         throw new FailedLoginException(ERROR_MAP.getOrDefault(agentError, SWIVEL_ERR_CODE_AUTHN_FAIL));
     }

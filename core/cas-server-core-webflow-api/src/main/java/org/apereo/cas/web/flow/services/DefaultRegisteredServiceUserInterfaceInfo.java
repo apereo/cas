@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.services;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -37,7 +39,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      * @return the description
      */
     public String getDescription() {
-        final var items = getDescriptions();
+        val items = getDescriptions();
         if (items.isEmpty()) {
             return this.registeredService.getDescription();
         }
@@ -50,7 +52,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      * @return the display name
      */
     public String getDisplayName() {
-        final var items = getDisplayNames();
+        val items = getDisplayNames();
         if (items.isEmpty()) {
             return this.registeredService.getName();
         }
@@ -76,7 +78,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      * @return the information uRL
      */
     public String getInformationURL() {
-        final var items = getInformationURLs();
+        val items = getInformationURLs();
         if (items.isEmpty()) {
             return this.registeredService.getInformationUrl();
         }
@@ -98,7 +100,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      * @return the privacy statement uRL
      */
     public String getPrivacyStatementURL() {
-        final var items = getPrivacyStatementURLs();
+        val items = getPrivacyStatementURLs();
         if (items.isEmpty()) {
             return this.registeredService.getPrivacyUrl();
         }
@@ -121,7 +123,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      */
     public long getLogoWidth() {
         try {
-            final var items = getLogoUrls();
+            val items = getLogoUrls();
             if (!items.isEmpty()) {
                 return items.iterator().next().getWidth();
             }
@@ -138,7 +140,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      */
     public long getLogoHeight() {
         try {
-            final var items = getLogoUrls();
+            val items = getLogoUrls();
             if (!items.isEmpty()) {
                 return items.iterator().next().getHeight();
             }
@@ -155,7 +157,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
      */
     public String getLogoUrl() {
         try {
-            final var items = getLogoUrls();
+            val items = getLogoUrls();
             if (!items.isEmpty()) {
                 return items.iterator().next().getUrl();
             }

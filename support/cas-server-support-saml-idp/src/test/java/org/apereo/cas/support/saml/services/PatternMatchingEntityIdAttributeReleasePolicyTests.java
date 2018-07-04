@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
+import lombok.val;
+
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.category.FileSystemCategory;
@@ -30,8 +32,8 @@ public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSaml
 
     @Test
     public void verifyPatternDoesNotMatch() {
-        final var filter = new PatternMatchingEntityIdAttributeReleasePolicy();
-        final var registeredService = getSamlRegisteredServiceForTestShib();
+        val filter = new PatternMatchingEntityIdAttributeReleasePolicy();
+        val registeredService = getSamlRegisteredServiceForTestShib();
         registeredService.setAttributeReleasePolicy(filter);
         final Map attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
             CoreAuthenticationTestUtils.getService(), registeredService);
@@ -40,10 +42,10 @@ public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSaml
 
     @Test
     public void verifyPatternDoesMatch() {
-        final var filter = new PatternMatchingEntityIdAttributeReleasePolicy();
+        val filter = new PatternMatchingEntityIdAttributeReleasePolicy();
         filter.setEntityIds("https://sp.+");
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
-        final var registeredService = getSamlRegisteredServiceForTestShib();
+        val registeredService = getSamlRegisteredServiceForTestShib();
         registeredService.setAttributeReleasePolicy(filter);
         final Map attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
             CoreAuthenticationTestUtils.getService(), registeredService);

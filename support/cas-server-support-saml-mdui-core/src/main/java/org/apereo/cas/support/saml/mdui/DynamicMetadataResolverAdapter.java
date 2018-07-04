@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.mdui;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.ClosedInputStream;
 import org.apereo.cas.util.EncodingUtils;
@@ -44,10 +46,10 @@ public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdap
     @Override
     protected InputStream getResourceInputStream(final Resource resource, final String entityId) throws IOException {
         if (resource instanceof UrlResource && resource.getURL().toExternalForm().toLowerCase().endsWith("/entities/")) {
-            final var encodedId = EncodingUtils.urlEncode(entityId);
-            final var url = new URL(resource.getURL().toExternalForm().concat(encodedId));
+            val encodedId = EncodingUtils.urlEncode(entityId);
+            val url = new URL(resource.getURL().toExternalForm().concat(encodedId));
             LOGGER.debug("Locating metadata input stream for [{}] via [{}]", encodedId, url);
-            final var httpcon = (HttpURLConnection) url.openConnection();
+            val httpcon = (HttpURLConnection) url.openConnection();
             httpcon.setDoOutput(true);
             httpcon.addRequestProperty("Accept", "*/*");
             httpcon.setRequestMethod("GET");

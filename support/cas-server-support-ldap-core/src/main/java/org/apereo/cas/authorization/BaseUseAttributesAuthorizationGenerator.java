@@ -1,5 +1,7 @@
 package org.apereo.cas.authorization;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.CollectionUtils;
@@ -61,13 +63,13 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
 
     @Override
     public CommonProfile generate(final WebContext context, final CommonProfile profile) {
-        final var username = profile.getId();
+        val username = profile.getId();
         final SearchResult userResult;
         try {
             LOGGER.debug("Attempting to get details for user [{}].", username);
-            final var filter = LdapUtils.newLdaptiveSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(),
+            val filter = LdapUtils.newLdaptiveSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(),
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(username));
-            final var response = this.userSearchExecutor.search(this.connectionFactory, filter);
+            val response = this.userSearchExecutor.search(this.connectionFactory, filter);
 
             LOGGER.debug("LDAP user search response: [{}]", response);
             userResult = response.getResult();
@@ -79,7 +81,7 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
                 throw new IllegalStateException("Found multiple results for user which is not allowed.");
             }
 
-            final var userEntry = userResult.getEntry();
+            val userEntry = userResult.getEntry();
             return generateAuthorizationForLdapEntry(profile, userEntry);
         } catch (final LdapException e) {
             throw new IllegalArgumentException("LDAP error fetching details for user.", e);

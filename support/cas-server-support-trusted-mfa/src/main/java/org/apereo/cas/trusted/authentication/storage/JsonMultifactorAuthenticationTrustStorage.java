@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import lombok.val;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
@@ -47,7 +49,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     @Override
     public void expire(final LocalDateTime onOrBefore) {
-        final var results = storage
+        val results = storage
             .values()
             .stream()
             .filter(entry -> entry.getRecordDate().isEqual(onOrBefore) || entry.getRecordDate().isBefore(onOrBefore))
@@ -106,8 +108,8 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     @SneakyThrows
     private void writeTrustedRecordsToResource() {
-        final var file = this.location.getFile();
-        final var res = file.createNewFile();
+        val file = this.location.getFile();
+        val res = file.createNewFile();
         if (res) {
             LOGGER.debug("Created JSON resource @ [{}]", this.location);
         }

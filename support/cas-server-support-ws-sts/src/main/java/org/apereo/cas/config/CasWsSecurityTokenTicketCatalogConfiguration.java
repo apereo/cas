@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
@@ -28,7 +30,7 @@ public class CasWsSecurityTokenTicketCatalogConfiguration extends BaseTicketCata
     @Override
     public void configureTicketCatalog(final TicketCatalog plan) {
         LOGGER.debug("Registering core WS security token ticket definitions...");
-        final var defn = buildTicketDefinition(plan, SecurityTokenTicket.PREFIX, DefaultSecurityTokenTicket.class);
+        val defn = buildTicketDefinition(plan, SecurityTokenTicket.PREFIX, DefaultSecurityTokenTicket.class);
         defn.getProperties().setStorageName("wsSecurityTokenTicketsCache");
         defn.getProperties().setStorageTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
         registerTicketDefinition(plan, defn);

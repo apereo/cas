@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.category.DynamoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -116,7 +118,7 @@ public class DynamoDbTicketRegistryFacilitatorTests {
         dynamoDbTicketRegistryFacilitator.put(ticket, ticket);
         final Collection col = dynamoDbTicketRegistryFacilitator.getAll();
         assertFalse(col.isEmpty());
-        final var ticketFetched = dynamoDbTicketRegistryFacilitator.get(ticket.getId(), ticket.getId());
+        val ticketFetched = dynamoDbTicketRegistryFacilitator.get(ticket.getId(), ticket.getId());
         assertEquals(ticket, ticketFetched);
         assertFalse(dynamoDbTicketRegistryFacilitator.delete("badticket", "badticket"));
         assertTrue(dynamoDbTicketRegistryFacilitator.deleteAll() > 0);

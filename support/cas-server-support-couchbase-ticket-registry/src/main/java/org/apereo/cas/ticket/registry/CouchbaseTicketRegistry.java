@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.val;
+
 import com.couchbase.client.java.document.SerializableDocument;
 import com.couchbase.client.java.view.DefaultView;
 import com.couchbase.client.java.view.View;
@@ -77,9 +79,9 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     public void addTicket(final Ticket ticketToAdd) {
         LOGGER.debug("Adding ticket [{}]", ticketToAdd);
         try {
-            final var ticket = encodeTicket(ticketToAdd);
-            final var document = SerializableDocument.create(ticket.getId(), getTimeToLive(ticketToAdd), ticket);
-            final var bucket = this.couchbase.getBucket();
+            val ticket = encodeTicket(ticketToAdd);
+            val document = SerializableDocument.create(ticket.getId(), getTimeToLive(ticketToAdd), ticket);
+            val bucket = this.couchbase.getBucket();
             LOGGER.debug("Created document for ticket [{}]. Upserting into bucket [{}]", ticketToAdd, bucket.name());
             bucket.upsert(document);
         } catch (final Exception e) {
@@ -91,18 +93,18 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     public Ticket getTicket(final String ticketId) {
         try {
             LOGGER.debug("Locating ticket id [{}]", ticketId);
-            final var encTicketId = encodeTicketId(ticketId);
+            val encTicketId = encodeTicketId(ticketId);
             if (encTicketId == null) {
                 LOGGER.debug("Ticket id [{}] could not be found", ticketId);
                 return null;
             }
 
-            final var document = this.couchbase.getBucket().get(encTicketId, SerializableDocument.class);
+            val document = this.couchbase.getBucket().get(encTicketId, SerializableDocument.class);
             if (document != null) {
-                final var t = (Ticket) document.content();
+                val t = (Ticket) document.content();
                 LOGGER.debug("Got ticket [{}] from the registry.", t);
 
-                final var decoded = decodeTicket(t);
+                val decoded = decodeTicket(t);
                 if (decoded == null || decoded.isExpired()) {
                     LOGGER.warn("The expiration policy for ticket id [{}] has expired the ticket", ticketId);
                     return null;
@@ -131,15 +133,15 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     public Collection<Ticket> getTickets() {
         final List<Ticket> tickets = new ArrayList<>();
         this.ticketCatalog.findAll().forEach(t -> {
-            final var it = getViewResultIteratorForPrefixedTickets(t.getPrefix() + '-').iterator();
+            val it = getViewResultIteratorForPrefixedTickets(t.getPrefix() + '-').iterator();
             while (it.hasNext()) {
-                final var row = it.next();
+                val row = it.next();
                 if (StringUtils.isNotBlank(row.id())) {
-                    final var document = row.document();
-                    final var ticket = (Ticket) document.content();
+                    val document = row.document();
+                    val ticket = (Ticket) document.content();
                     LOGGER.debug("Got ticket [{}] from the registry.", ticket);
 
-                    final var decoded = decodeTicket(ticket);
+                    val decoded = decodeTicket(ticket);
                     if (decoded == null || decoded.isExpired()) {
                         LOGGER.warn("Ticket has expired or cannot be decoded");
                     } else {
@@ -163,7 +165,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
 
     @Override
     public boolean deleteSingleTicket(final String ticketIdToDelete) {
-        final var ticketId = encodeTicketId(ticketIdToDelete);
+        val ticketId = encodeTicketId(ticketIdToDelete);
         LOGGER.debug("Deleting ticket [{}]", ticketId);
         try {
             return this.couchbase.getBucket().remove(ticketId) != null;
@@ -179,8 +181,8 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
         return this.ticketCatalog.findAll()
             .stream()
             .mapToLong(t -> {
-                final var it = getViewResultIteratorForPrefixedTickets(t.getPrefix() + '-').iterator();
-                final var count = getViewRowCountFromViewResultIterator(it);
+                val it = getViewResultIteratorForPrefixedTickets(t.getPrefix() + '-').iterator();
+                val count = getViewRowCountFromViewResultIterator(it);
                 it.forEachRemaining(remove);
                 return count;
             })
@@ -188,14 +190,14 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     private int runQuery(final String prefix) {
-        final var iterator = getViewResultIteratorForPrefixedTickets(prefix).iterator();
+        val iterator = getViewResultIteratorForPrefixedTickets(prefix).iterator();
         return getViewRowCountFromViewResultIterator(iterator);
     }
 
     private static int getViewRowCountFromViewResultIterator(final Iterator<ViewRow> iterator) {
         if (iterator.hasNext()) {
-            final var res = iterator.next();
-            final var count = (Integer) res.value();
+            val res = iterator.next();
+            val count = (Integer) res.value();
             LOGGER.debug("Found [{}] rows", count);
             return count;
         }
@@ -221,7 +223,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
      * @see <a href="http://docs.couchbase.com/developer/java-2.0/documents-basics.html">Couchbase Docs</a>
      */
     private static int getTimeToLive(final Ticket ticket) {
-        final var expTime = ticket.getExpirationPolicy().getTimeToLive().intValue();
+        val expTime = ticket.getExpirationPolicy().getTimeToLive().intValue();
         if (TimeUnit.SECONDS.toDays(expTime) >= MAX_EXP_TIME_IN_DAYS) {
             LOGGER.warn("Any expiration time larger than [{}] days in seconds is considered absolute (as in a Unix time stamp) "
                 + "anything smaller is considered relative in seconds.", MAX_EXP_TIME_IN_DAYS);

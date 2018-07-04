@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -35,10 +37,10 @@ public class CassandraAuthenticationHandler extends AbstractUsernamePasswordAuth
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                                         final String originalPassword) throws GeneralSecurityException {
-        final var username = credential.getUsername();
-        final var password = credential.getPassword();
+        val username = credential.getUsername();
+        val password = credential.getPassword();
 
-        final var attributes = this.cassandraRepository.getUser(username);
+        val attributes = this.cassandraRepository.getUser(username);
 
         if (attributes == null || attributes.isEmpty()
                 || !attributes.containsKey(cassandraAuthenticationProperties.getUsernameAttribute())
@@ -48,7 +50,7 @@ public class CassandraAuthenticationHandler extends AbstractUsernamePasswordAuth
         }
 
         LOGGER.debug("Located account attributes [{}] for [{}]", attributes.keySet(), username);
-        final var userPassword = attributes.get(cassandraAuthenticationProperties.getPasswordAttribute()).toString();
+        val userPassword = attributes.get(cassandraAuthenticationProperties.getPasswordAttribute()).toString();
         if (!password.equals(userPassword)) {
             LOGGER.warn("Account password on record for [{}] does not match the given password", username);
             throw new FailedLoginException();

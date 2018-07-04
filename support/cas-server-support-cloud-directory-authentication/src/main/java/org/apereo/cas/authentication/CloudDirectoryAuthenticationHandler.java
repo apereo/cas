@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -36,9 +38,9 @@ public class CloudDirectoryAuthenticationHandler extends AbstractUsernamePasswor
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                                         final String originalPassword) throws GeneralSecurityException {
 
-        final var username = credential.getUsername();
+        val username = credential.getUsername();
 
-        final var attributes = repository.getUser(username);
+        val attributes = repository.getUser(username);
 
         if (attributes == null || attributes.isEmpty()
                 || !attributes.containsKey(cloudDirectoryProperties.getUsernameAttributeName())
@@ -49,7 +51,7 @@ public class CloudDirectoryAuthenticationHandler extends AbstractUsernamePasswor
 
         LOGGER.debug("Located account attributes [{}] for [{}]", attributes.keySet(), username);
 
-        final var userPassword = attributes.get(cloudDirectoryProperties.getPasswordAttributeName()).toString();
+        val userPassword = attributes.get(cloudDirectoryProperties.getPasswordAttributeName()).toString();
         if (!matches(originalPassword, userPassword)) {
             LOGGER.warn("Account password on record for [{}] does not match the given/encoded password", username);
             throw new FailedLoginException();

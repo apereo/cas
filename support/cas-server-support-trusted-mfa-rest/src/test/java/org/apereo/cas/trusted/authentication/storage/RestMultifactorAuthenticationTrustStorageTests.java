@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -59,15 +61,15 @@ public class RestMultifactorAuthenticationTrustStorageTests {
 
     @Test
     public void verifySetAnExpireByKey() throws Exception {
-        final var r =
+        val r =
             MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
-        final var data = MAPPER.writeValueAsString(CollectionUtils.wrap(r));
+        val data = MAPPER.writeValueAsString(CollectionUtils.wrap(r));
         try (var webServer = new MockWebServer(9297,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
 
             mfaTrustEngine.set(r);
-            final var records = mfaTrustEngine.get("casuser");
+            val records = mfaTrustEngine.get("casuser");
             assertNotNull(records);
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
@@ -76,16 +78,16 @@ public class RestMultifactorAuthenticationTrustStorageTests {
 
     @Test
     public void verifyExpireByDate() throws Exception {
-        final var r =
+        val r =
             MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
         r.setRecordDate(LocalDateTime.now().minusDays(2));
 
-        final var data = MAPPER.writeValueAsString(CollectionUtils.wrap(r));
+        val data = MAPPER.writeValueAsString(CollectionUtils.wrap(r));
         try (var webServer = new MockWebServer(9297,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             mfaTrustEngine.set(r);
-            final var records = mfaTrustEngine.get(r.getPrincipal());
+            val records = mfaTrustEngine.get(r.getPrincipal());
             assertNotNull(records);
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);

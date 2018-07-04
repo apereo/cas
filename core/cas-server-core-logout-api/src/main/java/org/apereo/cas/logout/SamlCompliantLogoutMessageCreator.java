@@ -1,5 +1,7 @@
 package org.apereo.cas.logout;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.ISOStandardDateFormat;
@@ -26,7 +28,7 @@ public class SamlCompliantLogoutMessageCreator implements LogoutMessageCreator {
 
     @Override
     public String create(final LogoutRequest request) {
-        final var logoutRequest = String.format(LOGOUT_REQUEST_TEMPLATE, GENERATOR.getNewTicketId("LR"),
+        val logoutRequest = String.format(LOGOUT_REQUEST_TEMPLATE, GENERATOR.getNewTicketId("LR"),
                 new ISOStandardDateFormat().getCurrentDateAndTime(), request.getTicketId());
         
         LOGGER.debug("Generated logout message: [{}]", logoutRequest);

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.policy;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
@@ -27,11 +29,11 @@ public class UniquePrincipalAuthenticationPolicy implements AuthenticationPolicy
     @Override
     public boolean isSatisfiedBy(final Authentication authentication) throws Exception {
         try {
-            final var authPrincipal = authentication.getPrincipal();
-            final var count = this.ticketRegistry.getTickets(t -> {
+            val authPrincipal = authentication.getPrincipal();
+            val count = this.ticketRegistry.getTickets(t -> {
                 var pass = TicketGrantingTicket.class.isInstance(t) && !t.isExpired();
                 if (pass) {
-                    final var principal = TicketGrantingTicket.class.cast(t).getAuthentication().getPrincipal();
+                    val principal = TicketGrantingTicket.class.cast(t).getAuthentication().getPrincipal();
                     pass = principal.getId().equalsIgnoreCase(authPrincipal.getId());
                 }
                 return pass;

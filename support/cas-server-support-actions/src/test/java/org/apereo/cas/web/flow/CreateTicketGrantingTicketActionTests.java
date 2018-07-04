@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.DefaultMessageDescriptor;
@@ -58,12 +60,12 @@ public class CreateTicketGrantingTicketActionTests extends AbstractCentralAuthen
     public void verifyCreateTgt() throws Exception {
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
 
-        final var builder = mock(AuthenticationResultBuilder.class);
-        final var authentication = CoreAuthenticationTestUtils.getAuthentication();
+        val builder = mock(AuthenticationResultBuilder.class);
+        val authentication = CoreAuthenticationTestUtils.getAuthentication();
         when(builder.getInitialAuthentication()).thenReturn(Optional.of(authentication));
         when(builder.collect(any(Authentication.class))).thenReturn(builder);
 
-        final var result = mock(AuthenticationResult.class);
+        val result = mock(AuthenticationResult.class);
         when(result.getAuthentication()).thenReturn(authentication);
 
         when(builder.build(any(PrincipalElectionStrategy.class))).thenReturn(result);
@@ -72,7 +74,7 @@ public class CreateTicketGrantingTicketActionTests extends AbstractCentralAuthen
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
-        final var tgt = mock(TicketGrantingTicket.class);
+        val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("TGT-123456");
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
 

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -29,8 +31,8 @@ public class SurrogatePrincipalResolverTests {
     @Test
     public void verifyResolverDefault() {
         final PrincipalResolver resolver = new SurrogatePrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository());
-        final var credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        final var p = resolver.resolve(credential);
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        val p = resolver.resolve(credential);
         assertNotNull(p);
         assertEquals(p.getId(), credential.getId());
     }
@@ -38,8 +40,8 @@ public class SurrogatePrincipalResolverTests {
     @Test
     public void verifyResolverAttribute() {
         final PrincipalResolver resolver = new SurrogatePrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository(), "cn");
-        final var credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        final var p = resolver.resolve(credential);
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        val p = resolver.resolve(credential);
         assertNotNull(p);
         assertTrue(p.getId().equals("TEST"));
     }
@@ -47,7 +49,7 @@ public class SurrogatePrincipalResolverTests {
     @Test
     public void verifyResolverSurrogateWithoutPrincipal() {
         final PrincipalResolver resolver = new SurrogatePrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository(), "cn");
-        final var credential = new SurrogateUsernamePasswordCredential();
+        val credential = new SurrogateUsernamePasswordCredential();
         thrown.expect(IllegalArgumentException.class);
         resolver.resolve(credential);
     }
@@ -55,10 +57,10 @@ public class SurrogatePrincipalResolverTests {
     @Test
     public void verifyResolverSurrogate() {
         final PrincipalResolver resolver = new SurrogatePrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository());
-        final var credential = new SurrogateUsernamePasswordCredential();
+        val credential = new SurrogateUsernamePasswordCredential();
         credential.setSurrogateUsername("surrogate");
         credential.setUsername("username");
-        final var p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal("casuser")),
+        val p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal("casuser")),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertNotNull(p);
         assertTrue(p.getId().equals("casuser"));

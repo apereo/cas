@@ -1,5 +1,7 @@
 package org.apereo.cas.consent;
 
+import lombok.val;
+
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.category.MongoDbCategory;
@@ -56,7 +58,7 @@ public class MongoDbConsentRepositoryTests {
     @Test
     public void verifyAction() {
         assertTrue(consentRepository.findConsentDecisions().isEmpty());
-        final var decision = consentDecisionBuilder.build(CoreAuthenticationTestUtils.getService(),
+        val decision = consentDecisionBuilder.build(CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService(), "casuser",
             CollectionUtils.wrap("givenName", "CAS"));
         consentRepository.storeConsentDecision(decision);

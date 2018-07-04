@@ -1,5 +1,7 @@
 package org.apereo.cas.ws.idp.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
@@ -31,9 +33,9 @@ public class WSFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
 
     @Override
     protected void doInitialize() {
-        final var loginFlow = getLoginFlow();
+        val loginFlow = getLoginFlow();
         if (loginFlow != null) {
-            final var state = getTransitionableState(loginFlow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
+            val state = getTransitionableState(loginFlow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
             state.getEntryActionList().add(this.wsfedAction);
         }
     }

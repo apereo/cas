@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -125,12 +127,12 @@ public class RestSamlRegisteredServiceMetadataResolverTests {
     @Before
     @SneakyThrows
     public void initialize() {
-        final var doc = new SamlMetadataDocument();
+        val doc = new SamlMetadataDocument();
         doc.setId(1);
         doc.setName("SAML Document");
         doc.setSignature(null);
         doc.setValue(IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8));
-        final var data = MAPPER.writeValueAsString(doc);
+        val data = MAPPER.writeValueAsString(doc);
 
         this.webServer = new MockWebServer(8078,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
@@ -146,13 +148,13 @@ public class RestSamlRegisteredServiceMetadataResolverTests {
 
     @Test
     public void verifyRestEndpointProducesMetadata() {
-        final var service = new SamlRegisteredService();
+        val service = new SamlRegisteredService();
         service.setName("SAML Wiki Service");
         service.setServiceId("https://carmenwiki.osu.edu/shibboleth");
         service.setDescription("Testing");
         service.setMetadataLocation("rest://");
         assertTrue(resolver.supports(service));
-        final var resolvers = resolver.resolve(service);
+        val resolvers = resolver.resolve(service);
         assertTrue(resolvers.size() == 1);
     }
 }

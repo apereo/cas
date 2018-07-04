@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.factory;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
@@ -41,7 +43,7 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
 
     @Override
     public <T extends TicketGrantingTicket> T create(final Authentication authentication, final Class<T> clazz) {
-        final var tgtId = produceTicketIdentifier(authentication);
+        val tgtId = produceTicketIdentifier(authentication);
         return produceTicket(authentication, tgtId, clazz);
     }
 

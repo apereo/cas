@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.soap;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -58,25 +60,25 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
                           final String binding,
                           final MessageContext messageContext) throws SamlException {
 
-        final var body = newSoapObject(Body.class);
-        final var fault = newSoapObject(Fault.class);
+        val body = newSoapObject(Body.class);
+        val fault = newSoapObject(Fault.class);
 
-        final var faultCode = newSoapObject(FaultCode.class);
+        val faultCode = newSoapObject(FaultCode.class);
         faultCode.setValue(FaultCode.SERVER);
         fault.setCode(faultCode);
 
-        final var faultActor = newSoapObject(FaultActor.class);
+        val faultActor = newSoapObject(FaultActor.class);
         faultActor.setValue(SamlIdPUtils.getIssuerFromSamlRequest(authnRequest));
         fault.setActor(faultActor);
 
-        final var faultString = newSoapObject(FaultString.class);
+        val faultString = newSoapObject(FaultString.class);
         faultString.setValue(request.getAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR).toString());
         fault.setMessage(faultString);
 
         body.getUnknownXMLObjects().add(fault);
 
-        final var envelope = newSoapObject(Envelope.class);
-        final var header = newSoapObject(Header.class);
+        val envelope = newSoapObject(Envelope.class);
+        val header = newSoapObject(Header.class);
         envelope.setHeader(header);
         envelope.setBody(body);
         encodeFinalResponse(request, response, service, adaptor, envelope, binding, authnRequest, casAssertion);

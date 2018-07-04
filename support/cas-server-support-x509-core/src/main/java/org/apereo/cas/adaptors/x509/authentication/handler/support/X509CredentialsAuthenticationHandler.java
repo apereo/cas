@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import lombok.val;
+
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -149,13 +151,13 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
 
-        final var x509Credential = (X509CertificateCredential) credential;
-        final var certificates = x509Credential.getCertificates();
+        val x509Credential = (X509CertificateCredential) credential;
+        val certificates = x509Credential.getCertificates();
 
         X509Certificate clientCert = null;
         var hasTrustedIssuer = false;
         for (var i = certificates.length - 1; i >= 0; i--) {
-            final var certificate = certificates[i];
+            val certificate = certificates[i];
             LOGGER.debug("Evaluating [{}]", CertUtils.toString(certificate));
 
             validate(certificate);
@@ -166,7 +168,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
 
             // getBasicConstraints returns pathLenConstraints which is generally
             // >=0 when this is a CA cert and -1 when it's not
-            final var pathLength = certificate.getBasicConstraints();
+            val pathLength = certificate.getBasicConstraints();
             if (pathLength < 0) {
                 LOGGER.debug("Found valid client certificate");
                 clientCert = certificate;
@@ -193,7 +195,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         cert.checkValidity();
         this.revocationChecker.check(cert);
 
-        final var pathLength = cert.getBasicConstraints();
+        val pathLength = cert.getBasicConstraints();
         if (pathLength < 0) {
             if (!isCertificateAllowed(cert)) {
                 throw new FailedLoginException("Certificate subject does not match pattern " + this.regExSubjectDnPattern.pattern());
@@ -223,7 +225,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      */
     private boolean isValidKeyUsage(final X509Certificate certificate) {
         LOGGER.debug("Checking certificate keyUsage extension");
-        final var keyUsage = certificate.getKeyUsage();
+        val keyUsage = certificate.getKeyUsage();
         if (keyUsage == null) {
             LOGGER.warn("Configuration specifies checkKeyUsage but keyUsage extension not found in certificate.");
             return !this.requireKeyUsage;
@@ -248,7 +250,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      * @return true, if  critical
      */
     private static boolean isCritical(final X509Certificate certificate, final String extensionOid) {
-        final var criticalOids = certificate.getCriticalExtensionOIDs();
+        val criticalOids = certificate.getCriticalExtensionOIDs();
         if (criticalOids == null || criticalOids.isEmpty()) {
             return false;
         }
@@ -284,8 +286,8 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      */
     private static boolean doesNameMatchPattern(final Principal principal, final Pattern pattern) {
         if (pattern != null) {
-            final var name = principal.getName();
-            final var result = pattern.matcher(name).matches();
+            val name = principal.getName();
+            val result = pattern.matcher(name).matches();
             LOGGER.debug("[{}] matches [{}] == [{}]", pattern.pattern(), name, result);
             return result;
         }

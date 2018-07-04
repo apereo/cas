@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.val;
+
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -29,20 +31,20 @@ public class PrincipalNameTransformerUtils {
      * @return the principal name transformer
      */
     public static PrincipalNameTransformer newPrincipalNameTransformer(final PrincipalTransformationProperties p) {
-        final var chain = new ChainingPrincipalNameTransformer();
+        val chain = new ChainingPrincipalNameTransformer();
 
         if (p.getGroovy().getLocation() != null) {
-            final var t = new GroovyPrincipalNameTransformer(p.getGroovy().getLocation());
+            val t = new GroovyPrincipalNameTransformer(p.getGroovy().getLocation());
             chain.addTransformer(t);
         }
         
         if (StringUtils.isNotBlank(p.getPattern())) {
-            final var t = new RegexPrincipalNameTransformer(p.getPattern());
+            val t = new RegexPrincipalNameTransformer(p.getPattern());
             chain.addTransformer(t);
         }
 
         if (StringUtils.isNotBlank(p.getPrefix()) || StringUtils.isNotBlank(p.getSuffix())) {
-            final var t = new PrefixSuffixPrincipalNameTransformer();
+            val t = new PrefixSuffixPrincipalNameTransformer();
             t.setPrefix(p.getPrefix());
             t.setSuffix(p.getSuffix());
             chain.addTransformer(t);
@@ -51,13 +53,13 @@ public class PrincipalNameTransformerUtils {
         }
 
         if (p.getCaseConversion() == PrincipalTransformationProperties.CaseConversion.UPPERCASE) {
-            final var t = new ConvertCasePrincipalNameTransformer();
+            val t = new ConvertCasePrincipalNameTransformer();
             t.setToUpperCase(true);
             chain.addTransformer(t);
         }
 
         if (p.getCaseConversion() == PrincipalTransformationProperties.CaseConversion.LOWERCASE) {
-            final var t = new ConvertCasePrincipalNameTransformer();
+            val t = new ConvertCasePrincipalNameTransformer();
             t.setToUpperCase(false);
             chain.addTransformer(t);
         }

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
@@ -45,7 +47,7 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
 
         try {
             if (registeredService instanceof SamlRegisteredService) {
-                final var location = buildLogoutUrl(registeredService, singleLogoutService);
+                val location = buildLogoutUrl(registeredService, singleLogoutService);
                 if (location != null) {
                     LOGGER.info("Final logout URL built for [{}] is [{}]", registeredService, location);
                     return CollectionUtils.wrap(location);
@@ -60,10 +62,10 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
 
     private URL buildLogoutUrl(final RegisteredService registeredService, final WebApplicationService singleLogoutService) throws Exception {
         LOGGER.debug("Building logout url for SAML service [{}]", registeredService);
-        final var entityID = singleLogoutService.getId();
+        val entityID = singleLogoutService.getId();
         LOGGER.debug("Located entity id [{}]", entityID);
 
-        final var adaptor =
+        val adaptor =
                 SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
                         SamlRegisteredService.class.cast(registeredService), entityID);
 
@@ -71,7 +73,7 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
             LOGGER.warn("Cannot find metadata linked to [{}]", entityID);
             return null;
         }
-        final var location = adaptor.get().getSingleLogoutService().getLocation();
+        val location = adaptor.get().getSingleLogoutService().getLocation();
         return new URL(location);
     }
 }

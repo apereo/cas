@@ -1,5 +1,7 @@
 package org.apereo.cas.shell.commands.cipher;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,23 +46,23 @@ public class GenerateCryptoKeysCommand {
             return;
         }
 
-        final var repository = new CasConfigurationMetadataRepository();
-        final var cryptoGroup = name.concat(".crypto");
+        val repository = new CasConfigurationMetadataRepository();
+        val cryptoGroup = name.concat(".crypto");
         repository.getRepository().getAllGroups()
             .entrySet()
             .stream()
             .filter(e -> e.getKey().startsWith(cryptoGroup))
             .forEach(e -> {
-                final var grp = e.getValue();
+                val grp = e.getValue();
                 grp.getSources().forEach(Unchecked.biConsumer((k, v) -> {
                     final Object obj = ClassUtils.getClass(k, true).getDeclaredConstructor().newInstance();
                     if (obj instanceof EncryptionJwtSigningJwtCryptographyProperties) {
-                        final var crypto = (EncryptionJwtSigningJwtCryptographyProperties) obj;
+                        val crypto = (EncryptionJwtSigningJwtCryptographyProperties) obj;
                         LOGGER.info(cryptoGroup.concat(".encryption.key=" + EncodingUtils.generateJsonWebKey(crypto.getEncryption().getKeySize())));
                         LOGGER.info(cryptoGroup.concat(".signing.key=" + EncodingUtils.generateJsonWebKey(crypto.getSigning().getKeySize())));
                     } else if (obj instanceof EncryptionRandomizedSigningJwtCryptographyProperties) {
-                        final var crypto = (EncryptionRandomizedSigningJwtCryptographyProperties) obj;
-                        final var encKey = new Base64RandomStringGenerator(crypto.getEncryption().getKeySize()).getNewString();
+                        val crypto = (EncryptionRandomizedSigningJwtCryptographyProperties) obj;
+                        val encKey = new Base64RandomStringGenerator(crypto.getEncryption().getKeySize()).getNewString();
                         LOGGER.info(cryptoGroup.concat(".encryption.key=" + encKey));
                         LOGGER.info(cryptoGroup.concat(".signing.key=" + EncodingUtils.generateJsonWebKey(crypto.getSigning().getKeySize())));
                     }

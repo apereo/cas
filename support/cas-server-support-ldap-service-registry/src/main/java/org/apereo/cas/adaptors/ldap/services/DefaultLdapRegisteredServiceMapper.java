@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.ldap.services;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
@@ -42,7 +44,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
         if (svc.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             svc.setId(System.currentTimeMillis());
         }
-        final var newDn = getDnForRegisteredService(dn, svc);
+        val newDn = getDnForRegisteredService(dn, svc);
         LOGGER.debug("Creating entry DN [{}]", newDn);
 
         final Collection<LdapAttribute> attrs = new ArrayList<>();
@@ -55,7 +57,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
         }
         LOGGER.debug("LDAP attributes assigned to the DN [{}] are [{}]", newDn, attrs);
 
-        final var entry = new LdapEntry(newDn, attrs);
+        val entry = new LdapEntry(newDn, attrs);
         LOGGER.debug("Created LDAP entry [{}]", entry);
         return entry;
 
@@ -65,7 +67,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
     @SneakyThrows
     public RegisteredService mapToRegisteredService(final LdapEntry entry) {
 
-        final var value = LdapUtils.getString(entry, ldap.getServiceDefinitionAttribute());
+        val value = LdapUtils.getString(entry, ldap.getServiceDefinitionAttribute());
         if (StringUtils.hasText(value)) {
             LOGGER.debug("Transforming LDAP entry [{}] into registered service definition", entry);
             return this.jsonSerializer.from(value);

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
@@ -37,7 +39,7 @@ public class AcceptableUsagePolicyVerifyAction extends AbstractAction {
      * @return success if policy is accepted. {@link #EVENT_ID_MUST_ACCEPT} otherwise.
      */
     private Event verify(final RequestContext context, final Credential credential, final MessageContext messageContext) {
-        final var res = repository.verify(context, credential);
+        val res = repository.verify(context, credential);
         context.getFlowScope().put("principal", res.getValue());
         if (res.getKey()) {
             return success();

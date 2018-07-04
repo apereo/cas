@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.mfa;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
@@ -29,7 +31,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
     public void verifyContextFailsValidationWithNoProviders() {
         final AuthenticationContextValidator v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "OPEN", "trusted_authn", applicationContext);
-        final var result = v.validate(
+        val result = v.validate(
             MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
             "invalid-context", MultifactorAuthenticationTestUtils.getRegisteredService());
         assertFalse(result.getKey());
@@ -40,7 +42,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         final AuthenticationContextValidator v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "OPEN", "trusted_authn", applicationContext);
-        final var result = v.validate(
+        val result = v.validate(
             MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
             "invalid-context",
             MultifactorAuthenticationTestUtils.getRegisteredService());
@@ -52,10 +54,10 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         final AuthenticationContextValidator v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "OPEN", "trusted_authn", applicationContext);
-        final var authentication = MultifactorAuthenticationTestUtils.getAuthentication(
+        val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
             CollectionUtils.wrap("authn_method", "mfa-dummy"));
-        final var result = v.validate(authentication,
+        val result = v.validate(authentication,
             "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
         assertTrue(result.getKey());
     }
@@ -65,10 +67,10 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         final AuthenticationContextValidator v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "OPEN", "trusted_authn", applicationContext);
-        final var authentication = MultifactorAuthenticationTestUtils.getAuthentication(
+        val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
             CollectionUtils.wrap("authn_method", "mfa-other", "trusted_authn", "mfa-dummy"));
-        final var result = v.validate(authentication,
+        val result = v.validate(authentication,
             "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
         assertTrue(result.getKey());
     }
@@ -78,12 +80,12 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         final AuthenticationContextValidator v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "OPEN", "trusted_authn", applicationContext);
-        final var authentication = MultifactorAuthenticationTestUtils.getAuthentication(
+        val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
             CollectionUtils.wrap("authn_method", "mfa-other",
                 MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, true,
                 MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, "mfa-dummy"));
-        final var result = v.validate(authentication,
+        val result = v.validate(authentication,
             "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
         assertTrue(result.getKey());
     }
@@ -93,12 +95,12 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         final AuthenticationContextValidator v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "OPEN", "trusted_authn", applicationContext);
-        final var authentication = MultifactorAuthenticationTestUtils.getAuthentication(
+        val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
             CollectionUtils.wrap("authn_method", "mfa-other",
                 MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, true,
                 MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, "mfa-other"));
-        final var result = v.validate(authentication,
+        val result = v.validate(authentication,
             "mfa-dummy", MultifactorAuthenticationTestUtils.getRegisteredService());
         assertFalse(result.getKey());
     }

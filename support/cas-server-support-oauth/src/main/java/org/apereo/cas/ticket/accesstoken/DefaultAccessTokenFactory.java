@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.accesstoken;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
@@ -36,7 +38,7 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     @Override
     public AccessToken create(final Service service, final Authentication authentication,
                               final TicketGrantingTicket ticketGrantingTicket, final Collection<String> scopes) {
-        final var codeId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
+        val codeId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
         final AccessToken at = new AccessTokenImpl(codeId, service, authentication, 
                 this.expirationPolicy, ticketGrantingTicket, scopes);
         if (ticketGrantingTicket != null) {

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.events;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -56,7 +58,7 @@ public class DefaultCasEventListenerTests {
 
     @Before
     public void initialize() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setRemoteAddr("123.456.789.000");
         request.setLocalAddr("123.456.789.000");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
@@ -65,7 +67,7 @@ public class DefaultCasEventListenerTests {
 
     @Test
     public void verifyCasAuthenticationTransactionFailureEvent() {
-        final var event = new CasAuthenticationTransactionFailureEvent(this,
+        val event = new CasAuthenticationTransactionFailureEvent(this,
             CollectionUtils.wrap("error", new FailedLoginException()),
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
         eventPublisher.publishEvent(event);
@@ -74,15 +76,15 @@ public class DefaultCasEventListenerTests {
 
     @Test
     public void verifyTicketGrantingTicketCreated() {
-        final var tgt = new MockTicketGrantingTicket("casuser");
-        final var event = new CasTicketGrantingTicketCreatedEvent(this, tgt);
+        val tgt = new MockTicketGrantingTicket("casuser");
+        val event = new CasTicketGrantingTicketCreatedEvent(this, tgt);
         eventPublisher.publishEvent(event);
         assertFalse(casEventRepository.load().isEmpty());
     }
 
     @Test
     public void verifyCasAuthenticationPolicyFailureEvent() {
-        final var event = new CasAuthenticationPolicyFailureEvent(this,
+        val event = new CasAuthenticationPolicyFailureEvent(this,
             CollectionUtils.wrap("error", new FailedLoginException()),
             new DefaultAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
                 CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())),
@@ -93,7 +95,7 @@ public class DefaultCasEventListenerTests {
 
     @Test
     public void verifyCasRiskyAuthenticationDetectedEvent() {
-        final var event = new CasRiskyAuthenticationDetectedEvent(this,
+        val event = new CasRiskyAuthenticationDetectedEvent(this,
             CoreAuthenticationTestUtils.getAuthentication(),
             CoreAuthenticationTestUtils.getRegisteredService(),
             new Object());

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.report.util;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -33,13 +35,13 @@ public class ControllerUtils {
     @SneakyThrows
     public static Optional<Pair<Resource, LoggerContext>> buildLoggerContext(final Environment environment, final ResourceLoader
         resourceLoader) {
-        final var logFile = environment.getProperty("logging.config", "classpath:/log4j2.xml");
+        val logFile = environment.getProperty("logging.config", "classpath:/log4j2.xml");
         LOGGER.debug("Located logging configuration reference in the environment as [{}]", logFile);
 
         if (ResourceUtils.doesResourceExist(logFile, resourceLoader)) {
-            final var logConfigurationFile = resourceLoader.getResource(logFile);
+            val logConfigurationFile = resourceLoader.getResource(logFile);
             LOGGER.debug("Loaded logging configuration resource [{}]. Initializing logger context...", logConfigurationFile);
-            final var loggerContext = Configurator.initialize("CAS", null, logConfigurationFile.getURI());
+            val loggerContext = Configurator.initialize("CAS", null, logConfigurationFile.getURI());
             LOGGER.debug("Installing log configuration listener to detect changes and update");
             loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
             return Optional.of(Pair.of(logConfigurationFile, loggerContext));

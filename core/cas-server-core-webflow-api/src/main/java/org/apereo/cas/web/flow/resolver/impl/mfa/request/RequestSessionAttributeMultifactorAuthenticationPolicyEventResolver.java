@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa.request;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -43,7 +45,7 @@ public class RequestSessionAttributeMultifactorAuthenticationPolicyEventResolver
 
     @Override
     protected List<String> resolveEventFromHttpRequest(final HttpServletRequest request) {
-        final var session = request.getSession(false);
+        val session = request.getSession(false);
         var attributeValue = session != null ? session.getAttribute(attributeName) : null;
         if (attributeValue == null) {
             LOGGER.debug("No value could be found for session attribute [{}]. Checking request attributes...", this.attributeName);
@@ -55,7 +57,7 @@ public class RequestSessionAttributeMultifactorAuthenticationPolicyEventResolver
             return null;
         }
 
-        final var values = CollectionUtils.toCollection(attributeValue);
+        val values = CollectionUtils.toCollection(attributeValue);
         LOGGER.debug("Found values [{}] mapped to attribute name [{}]", values, this.attributeName);
         return values.stream().map(Object::toString).collect(Collectors.toList());
     }

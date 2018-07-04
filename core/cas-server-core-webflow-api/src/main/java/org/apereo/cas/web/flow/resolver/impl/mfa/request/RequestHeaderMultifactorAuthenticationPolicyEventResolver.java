@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa.request;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -42,7 +44,7 @@ public class RequestHeaderMultifactorAuthenticationPolicyEventResolver extends B
 
     @Override
     protected List<String> resolveEventFromHttpRequest(final HttpServletRequest request) {
-        final var values = request.getHeaders(mfaRequestHeader);
+        val values = request.getHeaders(mfaRequestHeader);
         if (values != null) {
             LOGGER.debug("Received request header [{}] as [{}]", mfaRequestHeader, values);
             return Collections.list(values);

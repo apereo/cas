@@ -1,5 +1,7 @@
 package org.apereo.cas.web.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -27,9 +29,9 @@ public class CookieUtils {
      */
     public static TicketGrantingTicket getTicketGrantingTicketFromRequest(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                                                           final TicketRegistry ticketRegistry, final HttpServletRequest request) {
-        final var cookieValue = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+        val cookieValue = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         if (StringUtils.isNotBlank(cookieValue)) {
-            final var tgt = ticketRegistry.getTicket(cookieValue, TicketGrantingTicket.class);
+            val tgt = ticketRegistry.getTicket(cookieValue, TicketGrantingTicket.class);
             if (tgt != null && !tgt.isExpired()) {
                 return tgt;
             }

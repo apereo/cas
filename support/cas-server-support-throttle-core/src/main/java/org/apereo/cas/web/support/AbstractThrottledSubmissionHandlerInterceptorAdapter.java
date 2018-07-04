@@ -1,5 +1,7 @@
 package org.apereo.cas.web.support;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -93,7 +95,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             LOGGER.trace("Skipping authentication throttling for requests other than POST");
             return;
         }
-        final var recordEvent = shouldResponseBeRecordedAsFailure(response);
+        val recordEvent = shouldResponseBeRecordedAsFailure(response);
         if (recordEvent) {
             LOGGER.debug("Recording submission failure for [{}]", request.getRequestURI());
             recordSubmissionFailure(request);
@@ -110,7 +112,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * @return the boolean
      */
     protected boolean shouldResponseBeRecordedAsFailure(final HttpServletResponse response) {
-        final var status = response.getStatus();
+        val status = response.getStatus();
         return status != HttpStatus.SC_CREATED && status != HttpStatus.SC_OK && status != HttpStatus.SC_MOVED_TEMPORARILY;
     }
 
@@ -141,10 +143,10 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
         if (failures.size() < 2) {
             return false;
         }
-        final var lastTime = failures.get(0).getTime();
-        final var secondToLastTime = failures.get(1).getTime();
-        final var difference = lastTime - secondToLastTime;
-        final var rate = NUMBER_OF_MILLISECONDS_IN_SECOND / difference;
+        val lastTime = failures.get(0).getTime();
+        val secondToLastTime = failures.get(1).getTime();
+        val difference = lastTime - secondToLastTime;
+        val rate = NUMBER_OF_MILLISECONDS_IN_SECOND / difference;
         LOGGER.debug("Last attempt was at [{}] and the one before that was at [{}]. Difference is [{}] calculated as rate of [{}]",
             lastTime, secondToLastTime, difference, rate);
         if (rate > getThresholdRate()) {
@@ -170,7 +172,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * @return the failure in range cut off date
      */
     protected Date getFailureInRangeCutOffDate() {
-        final var cutoff = ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(getFailureRangeInSeconds());
+        val cutoff = ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(getFailureRangeInSeconds());
         return DateTimeUtils.timestampOf(cutoff);
     }
 
@@ -181,10 +183,10 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * @param actionName Name of the action to be recorded.
      */
     protected void recordAuditAction(final HttpServletRequest request, final String actionName) {
-        final var userToUse = getUsernameParameterFromRequest(request);
-        final var clientInfo = ClientInfoHolder.getClientInfo();
-        final var resource = StringUtils.defaultString(request.getParameter(CasProtocolConstants.PARAMETER_SERVICE), "N/A");
-        final var context = new AuditActionContext(
+        val userToUse = getUsernameParameterFromRequest(request);
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        val resource = StringUtils.defaultString(request.getParameter(CasProtocolConstants.PARAMETER_SERVICE), "N/A");
+        val context = new AuditActionContext(
             userToUse,
             resource,
             actionName,

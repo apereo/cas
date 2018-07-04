@@ -1,5 +1,7 @@
 package org.apereo.cas.cosmosdb;
 
+import lombok.val;
+
 import com.microsoft.azure.documentdb.ConnectionPolicy;
 import com.microsoft.azure.documentdb.ConsistencyLevel;
 import com.microsoft.azure.documentdb.DocumentClient;
@@ -37,7 +39,7 @@ public class CosmosDbObjectFactory {
      * @return the document client
      */
     public DocumentClient createDocumentClient(final BaseCosmosDbProperties properties) {
-        final var policy = ConnectionPolicy.GetDefault();
+        val policy = ConnectionPolicy.GetDefault();
         var userAgent = (policy.getUserAgentSuffix() == null
             ? StringUtils.EMPTY
             : ';' + policy.getUserAgentSuffix()) + ';' + USER_AGENT_SUFFIX;
@@ -56,7 +58,7 @@ public class CosmosDbObjectFactory {
      * @return the document db factory
      */
     public DocumentDbFactory createDocumentDbFactory(final BaseCosmosDbProperties properties) {
-        final var documentClient = createDocumentClient(properties);
+        val documentClient = createDocumentClient(properties);
         return new DocumentDbFactory(documentClient);
     }
 
@@ -69,8 +71,8 @@ public class CosmosDbObjectFactory {
      */
     public DocumentDbTemplate createDocumentDbTemplate(final DocumentDbFactory documentDbFactory,
                                                        final BaseCosmosDbProperties properties) {
-        final var documentDbMappingContext = createDocumentDbMappingContext();
-        final var mappingDocumentDbConverter = createMappingDocumentDbConverter(documentDbMappingContext);
+        val documentDbMappingContext = createDocumentDbMappingContext();
+        val mappingDocumentDbConverter = createMappingDocumentDbConverter(documentDbMappingContext);
         return new DocumentDbTemplate(documentDbFactory, mappingDocumentDbConverter, properties.getDatabase());
     }
 
@@ -81,7 +83,7 @@ public class CosmosDbObjectFactory {
      */
     @SneakyThrows
     public DocumentDbMappingContext createDocumentDbMappingContext() {
-        final var documentDbMappingContext = new DocumentDbMappingContext();
+        val documentDbMappingContext = new DocumentDbMappingContext();
         documentDbMappingContext.setInitialEntitySet(new EntityScanner(applicationContext).scan(Persistent.class));
         return documentDbMappingContext;
     }

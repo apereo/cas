@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ComponentSerializationPlan;
@@ -31,9 +33,9 @@ public class CasCoreUtilSerializationConfiguration implements ComponentSerializa
     @Autowired
     @Bean
     public ComponentSerializationPlan componentSerializationPlan(final List<ComponentSerializationPlanConfigurator> configurers) {
-        final var plan = new DefaultComponentSerializationPlan();
+        val plan = new DefaultComponentSerializationPlan();
         configurers.forEach(c -> {
-            final var name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            val name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Configuring component serialization plan [{}]", name);
             c.configureComponentSerializationPlan(plan);
         });

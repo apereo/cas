@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.generic.remote;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
@@ -28,8 +30,8 @@ public class RemoteAddressNonInteractiveCredentialsAction extends AbstractNonInt
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final var remoteAddress = request.getRemoteAddr();
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val remoteAddress = request.getRemoteAddr();
 
         if (StringUtils.hasText(remoteAddress)) {
             return new RemoteAddressCredential(remoteAddress);

@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.config;
 
+import lombok.val;
+
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +62,7 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     @Bean
     @RefreshScope
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
-        final var trusted = casProperties.getAuthn().getMfa().getTrusted();
+        val trusted = casProperties.getAuthn().getMfa().getTrusted();
         final LoadingCache<String, MultifactorAuthenticationTrustRecord> storage = Caffeine.newBuilder()
             .initialCapacity(INITIAL_CACHE_SIZE)
             .maximumSize(MAX_CACHE_SIZE)
@@ -92,7 +94,7 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     @Bean
     @RefreshScope
     public CipherExecutor mfaTrustCipherExecutor() {
-        final var crypto = casProperties.getAuthn().getMfa().getTrusted().getCrypto();
+        val crypto = casProperties.getAuthn().getMfa().getTrusted().getCrypto();
         if (crypto.isEnabled()) {
             return new MultifactorAuthenticationTrustCipherExecutor(
                 crypto.getEncryption().getKey(),

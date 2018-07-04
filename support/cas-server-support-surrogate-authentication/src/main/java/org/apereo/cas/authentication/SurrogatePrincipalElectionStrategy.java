@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apereo.cas.authentication.principal.Principal;
 
@@ -17,7 +19,7 @@ public class SurrogatePrincipalElectionStrategy extends DefaultPrincipalElection
     @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     @Override
     protected Principal getPrincipalFromAuthentication(final Collection<Authentication> authentications) {
-        final var result = authentications
+        val result = authentications
             .stream()
             .map(Authentication::getPrincipal)
             .filter(SurrogatePrincipal.class::isInstance)

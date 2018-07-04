@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -48,7 +50,7 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
 
     @Override
     public boolean isAvailable(final RegisteredService service) throws AuthenticationException {
-        final var count = this.providers.stream().filter(p -> p.isAvailable(service)).count();
+        val count = this.providers.stream().filter(p -> p.isAvailable(service)).count();
         return count == providers.size();
     }
 
@@ -73,7 +75,7 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
     @Override
     public <T extends MultifactorAuthenticationProvider> T findProvider(final String identifier, @NonNull final Class<T> clazz) {
 
-        final var provider = findProvider(identifier);
+        val provider = findProvider(identifier);
         if (provider == null) {
             return null;
         }

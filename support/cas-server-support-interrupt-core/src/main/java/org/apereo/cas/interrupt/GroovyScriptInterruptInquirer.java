@@ -1,5 +1,7 @@
 package org.apereo.cas.interrupt;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
@@ -28,7 +30,7 @@ public class GroovyScriptInterruptInquirer extends BaseInterruptInquirer {
     public InterruptResponse inquireInternal(final Authentication authentication, final RegisteredService registeredService,
                                              final Service service, final Credential credential) {
         if (ResourceUtils.doesResourceExist(resource)) {
-            final var principal = authentication.getPrincipal();
+            val principal = authentication.getPrincipal();
             final Map<String, Object> attributes = new LinkedHashMap<>(principal.getAttributes());
             attributes.putAll(authentication.getAttributes());
             final Object[] args = {principal.getId(), attributes, service != null ? service.getId() : null, LOGGER};

@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +62,7 @@ public class RegisteredServiceTestUtils {
     }
 
     public static UsernamePasswordCredential getCredentialsWithSameUsernameAndPassword(final String username) {
-        final var usernamePasswordCredentials = new UsernamePasswordCredential();
+        val usernamePasswordCredentials = new UsernamePasswordCredential();
         usernamePasswordCredentials.setUsername(username);
         usernamePasswordCredentials.setPassword(username);
 
@@ -68,7 +70,7 @@ public class RegisteredServiceTestUtils {
     }
 
     public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword(final String username, final String password) {
-        final var usernamePasswordCredentials = new UsernamePasswordCredential();
+        val usernamePasswordCredentials = new UsernamePasswordCredential();
         usernamePasswordCredentials.setUsername(username);
         usernamePasswordCredentials.setPassword(password);
 
@@ -80,7 +82,7 @@ public class RegisteredServiceTestUtils {
     }
 
     public static AbstractWebApplicationService getService(final String name) {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addParameter("service", name);
         return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
     }
@@ -116,7 +118,7 @@ public class RegisteredServiceTestUtils {
 
     @SneakyThrows
     public static AbstractRegisteredService getRegisteredService(final String id, final Class<? extends RegisteredService> clazz) {
-        final var s = (AbstractRegisteredService) clazz.getDeclaredConstructor().newInstance();
+        val s = (AbstractRegisteredService) clazz.getDeclaredConstructor().newInstance();
         s.setServiceId(id);
         s.setEvaluationOrder(1);
         s.setName("TestService" + UUID.randomUUID().toString());
@@ -125,7 +127,7 @@ public class RegisteredServiceTestUtils {
         s.setId(RandomUtils.getNativeInstance().nextInt(Math.abs(s.hashCode())));
         s.setTheme("exampleTheme");
         s.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("uid"));
-        final var accessStrategy =
+        val accessStrategy =
             new DefaultRegisteredServiceAccessStrategy(true, true);
         accessStrategy.setRequireAllAttributes(true);
         accessStrategy.setRequiredAttributes(getTestAttributes());
@@ -137,11 +139,11 @@ public class RegisteredServiceTestUtils {
 
         s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA"));
 
-        final var policy = new ReturnAllowedAttributeReleasePolicy();
+        val policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAuthorizedToReleaseCredentialPassword(true);
         policy.setAuthorizedToReleaseProxyGrantingTicket(true);
 
-        final var repo =
+        val repo =
             new CachingPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 10);
         repo.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
         policy.setPrincipalAttributesRepository(repo);

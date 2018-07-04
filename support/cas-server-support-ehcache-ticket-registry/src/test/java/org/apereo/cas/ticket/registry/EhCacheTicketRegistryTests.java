@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.distribution.CacheReplicator;
@@ -95,7 +97,7 @@ public class EhCacheTicketRegistryTests extends BaseSpringRunnableTicketRegistry
         @Bean
         @SneakyThrows
         public CacheReplicator ticketRMISynchronousCacheReplicator() {
-            final var replicator = mock(CacheReplicator.class);
+            val replicator = mock(CacheReplicator.class);
             when(replicator.isReplicateUpdatesViaCopy()).thenReturn(false);
             when(replicator.notAlive()).thenReturn(false);
             when(replicator.alive()).thenReturn(false);

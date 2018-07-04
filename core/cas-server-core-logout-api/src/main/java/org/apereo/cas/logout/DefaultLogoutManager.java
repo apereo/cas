@@ -1,5 +1,7 @@
 package org.apereo.cas.logout;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -42,7 +44,7 @@ public class DefaultLogoutManager implements LogoutManager {
             LOGGER.info("Single logout callbacks are disabled");
             return new ArrayList<>(0);
         }
-        final var logoutRequests = performLogoutForTicket(ticket);
+        val logoutRequests = performLogoutForTicket(ticket);
         this.logoutExecutionPlan.getLogoutHandlers().forEach(h -> {
             LOGGER.debug("Invoking logout handler [{}] to process ticket [{}]", h.getClass().getSimpleName(), ticket.getId());
             h.handle(ticket);
@@ -52,14 +54,14 @@ public class DefaultLogoutManager implements LogoutManager {
     }
 
     private List<LogoutRequest> performLogoutForTicket(final TicketGrantingTicket ticketToBeLoggedOut) {
-        final var streamServices = Stream.concat(Stream.of(ticketToBeLoggedOut.getServices()),
+        val streamServices = Stream.concat(Stream.of(ticketToBeLoggedOut.getServices()),
             Stream.of(ticketToBeLoggedOut.getProxyGrantingTickets()));
         return streamServices
             .map(Map::entrySet)
             .flatMap(Set::stream)
             .filter(entry -> entry.getValue() instanceof WebApplicationService)
             .map(entry -> {
-                final var service = (WebApplicationService) entry.getValue();
+                val service = (WebApplicationService) entry.getValue();
                 LOGGER.debug("Handling single logout callback for [{}]", service);
                 return this.singleLogoutServiceMessageHandler.handle(service, entry.getKey());
             })
@@ -76,7 +78,7 @@ public class DefaultLogoutManager implements LogoutManager {
      */
     @Override
     public String createFrontChannelLogoutMessage(final LogoutRequest logoutRequest) {
-        final var logoutMessage = this.logoutMessageBuilder.create(logoutRequest);
+        val logoutMessage = this.logoutMessageBuilder.create(logoutRequest);
         LOGGER.trace("Attempting to deflate the logout message [{}]", logoutMessage);
         return CompressionUtils.deflate(logoutMessage);
     }

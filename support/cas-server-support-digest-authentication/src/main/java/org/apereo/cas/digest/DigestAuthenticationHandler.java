@@ -1,5 +1,7 @@
 package org.apereo.cas.digest;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
@@ -27,7 +29,7 @@ public class DigestAuthenticationHandler extends AbstractAuthenticationHandler {
 
     @Override
     public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
-        final var c = (DigestCredential) credential;
+        val c = (DigestCredential) credential;
         if (StringUtils.isNotBlank(c.getId()) && StringUtils.isNotBlank(c.getHash())) {
             return new DefaultAuthenticationHandlerExecutionResult(this, c, this.principalFactory.createPrincipal(c.getId()));
         }

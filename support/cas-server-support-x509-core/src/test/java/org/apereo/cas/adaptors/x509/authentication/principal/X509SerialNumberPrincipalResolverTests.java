@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -25,7 +27,7 @@ public class X509SerialNumberPrincipalResolverTests extends AbstractX509Certific
 
     @Test
     public void verifyResolvePrincipalInternal() {
-        final var c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
+        val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
 
         assertEquals(VALID_CERTIFICATE.getSerialNumber().toString(),
@@ -35,7 +37,7 @@ public class X509SerialNumberPrincipalResolverTests extends AbstractX509Certific
 
     @Test
     public void verifySupport() {
-        final var c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
+        val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         assertTrue(this.resolver.supports(c));
     }
 
@@ -46,31 +48,31 @@ public class X509SerialNumberPrincipalResolverTests extends AbstractX509Certific
 
     @Test
     public void verifyHexPrincipalOdd() {
-        final var r = new X509SerialNumberPrincipalResolver(16, true);
-        final var mockCert = mock(X509Certificate.class);
+        val r = new X509SerialNumberPrincipalResolver(16, true);
+        val mockCert = mock(X509Certificate.class);
         when(mockCert.getSerialNumber()).thenReturn(BigInteger.valueOf(300L));
 
-        final var principal = r.resolvePrincipalInternal(mockCert);
+        val principal = r.resolvePrincipalInternal(mockCert);
         assertEquals("012c", principal);
     }
 
     @Test
     public void verifyHexPrincipalOddFalse() {
-        final var r = new X509SerialNumberPrincipalResolver(16, false);
-        final var mockCert = mock(X509Certificate.class);
+        val r = new X509SerialNumberPrincipalResolver(16, false);
+        val mockCert = mock(X509Certificate.class);
         when(mockCert.getSerialNumber()).thenReturn(BigInteger.valueOf(300L));
 
-        final var principal = r.resolvePrincipalInternal(mockCert);
+        val principal = r.resolvePrincipalInternal(mockCert);
         assertEquals("12c", principal);
     }
 
     @Test
     public void verifyHexPrincipalEven() {
-        final var r = new X509SerialNumberPrincipalResolver(16, true);
-        final var mockCert = mock(X509Certificate.class);
+        val r = new X509SerialNumberPrincipalResolver(16, true);
+        val mockCert = mock(X509Certificate.class);
         when(mockCert.getSerialNumber()).thenReturn(BigInteger.valueOf(60300L));
 
-        final var principal = r.resolvePrincipalInternal(mockCert);
+        val principal = r.resolvePrincipalInternal(mockCert);
         assertEquals("eb8c", principal);
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.ldap;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -93,14 +95,14 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests imple
     @Test
     public void getCrlFromLdap() throws Exception {
         CacheManager.getInstance().removeAllCaches();
-        final var cache = new Cache("crlCache-1", 100, false, false, 20, 10);
+        val cache = new Cache("crlCache-1", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
 
         for (var i = 0; i < 10; i++) {
-            final var checker =
+            val checker =
                 new CRLDistributionPointRevocationChecker(false, new AllowRevocationPolicy(), null,
                     cache, fetcher, true);
-            final var cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
+            val cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
             checker.check(cert);
         }
     }
@@ -109,12 +111,12 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests imple
     public void getCrlFromLdapWithNoCaching() throws Exception {
         for (var i = 0; i < 10; i++) {
             CacheManager.getInstance().removeAllCaches();
-            final var cache = new Cache("crlCache-1", 100, false, false, 20, 10);
+            val cache = new Cache("crlCache-1", 100, false, false, 20, 10);
             CacheManager.getInstance().addCache(cache);
-            final var checker = new CRLDistributionPointRevocationChecker(
+            val checker = new CRLDistributionPointRevocationChecker(
                 false, new AllowRevocationPolicy(), null,
                 cache, fetcher, true);
-            final var cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
+            val cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
             checker.check(cert);
         }
     }

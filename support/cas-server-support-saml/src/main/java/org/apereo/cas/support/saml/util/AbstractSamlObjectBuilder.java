@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.util;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.config.CasMongoAuthenticationConfiguration;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -88,7 +90,7 @@ public class MongoDbAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthentication() throws Exception {
-        final var result = this.authenticationHandler.authenticate(CoreAuthenticationTestUtils
+        val result = this.authenticationHandler.authenticate(CoreAuthenticationTestUtils
             .getCredentialsWithDifferentUsernameAndPassword("u1", "p1"));
         assertEquals("u1", result.getPrincipal().getId());
         assertTrue(result.getPrincipal().getAttributes().containsKey("loc"));

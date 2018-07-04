@@ -38,7 +38,7 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
                 return;
             }
 
-            val statuses = Arrays.stream(statistics)
+            final var statuses = Arrays.stream(statistics)
                 .map(this::status)
                 .collect(Collectors.toSet());
 

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.geo.config;
 
+import lombok.val;
+
 import com.maxmind.db.CHMCache;
 import com.maxmind.geoip2.DatabaseReader;
 import lombok.SneakyThrows;
@@ -31,7 +33,7 @@ public class CasGeoLocationConfiguration {
     @RefreshScope
     @SneakyThrows
     public GeoLocationService geoLocationService() {
-        final var properties = casProperties.getMaxmind();
+        val properties = casProperties.getMaxmind();
 
         final DatabaseReader cityDatabase;
         final DatabaseReader countryDatabase;
@@ -52,7 +54,7 @@ public class CasGeoLocationConfiguration {
             throw new IllegalArgumentException("No geolocation services have been defined for Maxmind");
         }
 
-        final var svc = new MaxmindDatabaseGeoLocationService(cityDatabase, countryDatabase);
+        val svc = new MaxmindDatabaseGeoLocationService(cityDatabase, countryDatabase);
         svc.setIpStackAccessKey(properties.getIpStackApiAccessKey());
         return svc;
     }

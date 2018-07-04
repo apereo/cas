@@ -1,5 +1,7 @@
 package org.apereo.cas.logging;
 
+import lombok.val;
+
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -36,10 +38,10 @@ public class SplunkAppender extends AbstractAppender {
 
     @Override
     public void append(final LogEvent logEvent) {
-        final var newLogEvent = LoggingUtils.prepareLogEvent(logEvent);
-        final var refName = this.appenderRef.getRef();
+        val newLogEvent = LoggingUtils.prepareLogEvent(logEvent);
+        val refName = this.appenderRef.getRef();
         if (StringUtils.isNotBlank(refName)) {
-            final var appender = this.config.getAppender(refName);
+            val appender = this.config.getAppender(refName);
             if (appender != null) {
                 appender.append(newLogEvent);
             } else {

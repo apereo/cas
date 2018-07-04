@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -29,17 +31,17 @@ public class DetermineDuoUserAccountAction extends AbstractAction {
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        final var authentication = WebUtils.getAuthentication(requestContext);
-        final var principal = authentication.getPrincipal();
+        val authentication = WebUtils.getAuthentication(requestContext);
+        val principal = authentication.getPrincipal();
 
-        final var enrollEvent = new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
-        final var providerIds = WebUtils.getResolvedMultifactorAuthenticationProviders(requestContext);
-        final var providers = MultifactorAuthenticationUtils.getMultifactorAuthenticationProvidersByIds(providerIds, applicationContext);
+        val enrollEvent = new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
+        val providerIds = WebUtils.getResolvedMultifactorAuthenticationProviders(requestContext);
+        val providers = MultifactorAuthenticationUtils.getMultifactorAuthenticationProvidersByIds(providerIds, applicationContext);
 
-        for (final var pr : providers) {
-            final var duoProvider = this.provider.findProvider(pr.getId(), DuoMultifactorAuthenticationProvider.class);
-            final var duoAuthenticationService = duoProvider.getDuoAuthenticationService();
-            final var account = duoAuthenticationService.getDuoUserAccount(principal.getId());
+        for (val pr : providers) {
+            val duoProvider = this.provider.findProvider(pr.getId(), DuoMultifactorAuthenticationProvider.class);
+            val duoAuthenticationService = duoProvider.getDuoAuthenticationService();
+            val account = duoAuthenticationService.getDuoUserAccount(principal.getId());
             if (account.getStatus() == DuoUserAccountAuthStatus.ENROLL && StringUtils.isNotBlank(duoProvider.getRegistrationUrl())) {
                 requestContext.getFlowScope().put("duoRegistrationUrl", duoProvider.getRegistrationUrl());
                 return enrollEvent;

@@ -1,5 +1,7 @@
 package org.apereo.cas.memcached;
 
+import lombok.val;
+
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.transcoders.SerializingTranscoder;
@@ -45,27 +47,27 @@ public class MemcachedUtils {
                                            final Collection<Class> kryoSerializableClasses) {
         switch (StringUtils.trimToEmpty(memcachedProperties.getTranscoder()).toLowerCase()) {
             case "serial":
-                final var serial = new SerializingTranscoder();
+                val serial = new SerializingTranscoder();
                 serial.setCompressionThreshold(memcachedProperties.getTranscoderCompressionThreshold());
                 LOGGER.debug("Creating memcached transcoder [{}]", serial.getClass().getName());
                 return serial;
             case "whalin":
-                final var whalin = new WhalinTranscoder();
+                val whalin = new WhalinTranscoder();
                 whalin.setCompressionThreshold(memcachedProperties.getTranscoderCompressionThreshold());
                 LOGGER.debug("Creating memcached transcoder [{}]", whalin.getClass().getName());
                 return whalin;
             case "whalinv1":
-                final var whalinv1 = new WhalinV1Transcoder();
+                val whalinv1 = new WhalinV1Transcoder();
                 whalinv1.setCompressionThreshold(memcachedProperties.getTranscoderCompressionThreshold());
                 LOGGER.debug("Creating memcached transcoder [{}]", whalinv1.getClass().getName());
                 return whalinv1;
             case "kryo":
             default:
-                final var kryoPool = new CasKryoPool(kryoSerializableClasses, true,
+                val kryoPool = new CasKryoPool(kryoSerializableClasses, true,
                         memcachedProperties.isKryoRegistrationRequired(),
                         memcachedProperties.isKryoObjectsByReference(),
                         memcachedProperties.isKryoAutoReset());
-                final var kryo = new CasKryoTranscoder(kryoPool);
+                val kryo = new CasKryoTranscoder(kryoPool);
                 LOGGER.debug("Creating memcached transcoder [{}]", kryo.getClass().getName());
                 return kryo;
         }

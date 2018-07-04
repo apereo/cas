@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apereo.cas.DistributedCacheObject;
@@ -30,10 +32,10 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
 
     @Before
     public void initialize() {
-        final var factory = new HazelcastConfigurationFactory();
-        final var properties = new BaseHazelcastProperties();
+        val factory = new HazelcastConfigurationFactory();
+        val properties = new BaseHazelcastProperties();
         properties.getCluster().setInstanceName(getClass().getSimpleName());
-        final var config = factory.build(properties, factory.buildMapConfig(properties, "cache", 10));
+        val config = factory.build(properties, factory.buildMapConfig(properties, "cache", 10));
         this.hz = Hazelcast.newHazelcastInstance(config);
         mgr = new RegisteredServiceHazelcastDistributedCacheManager(this.hz);
     }
@@ -51,7 +53,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
         assertNull(obj);
         assertFalse(mgr.contains(registeredService));
 
-        final var cache = new DistributedCacheObject(registeredService);
+        val cache = new DistributedCacheObject(registeredService);
         mgr.set(registeredService, cache);
         assertFalse(mgr.getAll().isEmpty());
         obj = mgr.get(registeredService);
@@ -65,7 +67,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
     @Test
     public void verifyPublisher() {
         final RegisteredService registeredService = RegisteredServiceTestUtils.getRegisteredService();
-        final var publisher = new CasRegisteredServiceHazelcastStreamPublisher(mgr, new StringBean("123456"));
+        val publisher = new CasRegisteredServiceHazelcastStreamPublisher(mgr, new StringBean("123456"));
         publisher.publish(registeredService, new CasRegisteredServiceDeletedEvent(this, registeredService));
         publisher.publish(registeredService, new CasRegisteredServiceSavedEvent(this, registeredService));
         publisher.publish(registeredService, new CasRegisteredServiceLoadedEvent(this, registeredService));

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
@@ -34,7 +36,7 @@ public class InMemoryResourceMetadataResolver extends DOMMetadataResolver {
 
     @SneakyThrows
     private static Element getMetadataRootElement(final InputStream metadataResource, final OpenSamlConfigBean configBean) {
-        final var document = configBean.getParserPool().parse(metadataResource);
+        val document = configBean.getParserPool().parse(metadataResource);
         return document.getDocumentElement();
     }
 }

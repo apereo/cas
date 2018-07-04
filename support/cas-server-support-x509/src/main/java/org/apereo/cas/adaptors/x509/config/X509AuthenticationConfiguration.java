@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.Cache;
 import org.apache.commons.lang3.StringUtils;
@@ -89,8 +91,8 @@ public class X509AuthenticationConfiguration {
 
     @Bean
     public RevocationChecker crlDistributionPointRevocationChecker() {
-        final var x509 = casProperties.getAuthn().getX509();
-        final var cache = new Cache("CRL".concat(UUID.randomUUID().toString()),
+        val x509 = casProperties.getAuthn().getX509();
+        val cache = new Cache("CRL".concat(UUID.randomUUID().toString()),
                 x509.getCacheMaxElementsInMemory(),
                 x509.isCacheDiskOverflow(),
                 x509.isCacheEternal(),
@@ -118,8 +120,8 @@ public class X509AuthenticationConfiguration {
 
     @Bean
     public RevocationChecker resourceCrlRevocationChecker() {
-        final var x509 = casProperties.getAuthn().getX509();
-        final var x509CrlResources = x509.getCrlResources()
+        val x509 = casProperties.getAuthn().getX509();
+        val x509CrlResources = x509.getCrlResources()
                 .stream()
                 .map(s -> this.resourceLoader.getResource(s))
                 .collect(Collectors.toSet());
@@ -147,7 +149,7 @@ public class X509AuthenticationConfiguration {
 
     @Bean
     public CRLFetcher crlFetcher() {
-        final var x509 = casProperties.getAuthn().getX509();
+        val x509 = casProperties.getAuthn().getX509();
         switch (x509.getCrlFetcher().toLowerCase()) {
             case "ldap":
                 return ldaptiveResourceCRLFetcher();
@@ -160,7 +162,7 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler x509CredentialsAuthenticationHandler() {
-        final var x509 = casProperties.getAuthn().getX509();
+        val x509 = casProperties.getAuthn().getX509();
         final RevocationChecker revChecker;
         switch (x509.getRevocationChecker().trim().toLowerCase()) {
             case "resource":
@@ -192,7 +194,7 @@ public class X509AuthenticationConfiguration {
 
     @Bean
     public CRLFetcher ldaptiveResourceCRLFetcher() {
-        final var x509 = casProperties.getAuthn().getX509();
+        val x509 = casProperties.getAuthn().getX509();
         return new LdaptiveResourceCRLFetcher(LdapUtils.newLdaptiveConnectionConfig(x509.getLdap()),
                 LdapUtils.newLdaptiveSearchExecutor(x509.getLdap().getBaseDn(), x509.getLdap().getSearchFilter()),
                 x509.getLdap().getCertificateAttribute());
@@ -201,8 +203,8 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectPrincipalResolver() {
-        final var x509 = casProperties.getAuthn().getX509();
-        final var r = new X509SubjectPrincipalResolver(attributeRepository,
+        val x509 = casProperties.getAuthn().getX509();
+        val r = new X509SubjectPrincipalResolver(attributeRepository,
                 x509PrincipalFactory(),
                 x509.getPrincipal().isReturnNull(),
                 x509.getPrincipal().getPrincipalAttribute(),
@@ -213,8 +215,8 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectDNPrincipalResolver() {
-        final var x509 = casProperties.getAuthn().getX509();
-        final var r = new X509SubjectDNPrincipalResolver(attributeRepository,
+        val x509 = casProperties.getAuthn().getX509();
+        val r = new X509SubjectDNPrincipalResolver(attributeRepository,
                 x509PrincipalFactory(),
                 x509.getPrincipal().isReturnNull(),
                 x509.getPrincipal().getPrincipalAttribute());
@@ -224,8 +226,8 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectAlternativeNameUPNPrincipalResolver() {
-        final var x509 = casProperties.getAuthn().getX509();
-        final var r = new X509SubjectAlternativeNameUPNPrincipalResolver(attributeRepository,
+        val x509 = casProperties.getAuthn().getX509();
+        val r = new X509SubjectAlternativeNameUPNPrincipalResolver(attributeRepository,
                 x509PrincipalFactory(),
                 x509.getPrincipal().isReturnNull(),
                 x509.getPrincipal().getPrincipalAttribute());
@@ -235,9 +237,9 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope
     public PrincipalResolver x509SerialNumberPrincipalResolver() {
-        final var x509 = casProperties.getAuthn().getX509();
+        val x509 = casProperties.getAuthn().getX509();
         final X509SerialNumberPrincipalResolver r;
-        final var radix = x509.getPrincipalSNRadix();
+        val radix = x509.getPrincipalSNRadix();
         if (Character.MIN_RADIX <= radix && radix <= Character.MAX_RADIX) {
             if (radix == HEX) {
                 r = new X509SerialNumberPrincipalResolver(attributeRepository,
@@ -270,7 +272,7 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope
     public PrincipalResolver x509SerialNumberAndIssuerDNPrincipalResolver() {
-        final var x509 = casProperties.getAuthn().getX509();
+        val x509 = casProperties.getAuthn().getX509();
         return new X509SerialNumberAndIssuerDNPrincipalResolver(attributeRepository,
                 x509PrincipalFactory(),
                 x509.getPrincipal().isReturnNull(),
@@ -281,7 +283,7 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope
     public PrincipalResolver x509CommonNameEDIPIPrincipalResolver() {
-        final var x509 = casProperties.getAuthn().getX509();
+        val x509 = casProperties.getAuthn().getX509();
         return new X509CommonNameEDIPIPrincipalResolver(attributeRepository,
                 x509PrincipalFactory(),
                 x509.getPrincipal().isReturnNull(),

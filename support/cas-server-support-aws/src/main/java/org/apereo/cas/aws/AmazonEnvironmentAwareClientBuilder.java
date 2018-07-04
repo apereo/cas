@@ -1,5 +1,7 @@
 package org.apereo.cas.aws;
 
+import lombok.val;
+
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
@@ -40,7 +42,7 @@ public class AmazonEnvironmentAwareClientBuilder {
      * @return the setting
      */
     public String getSetting(final String key, final String defaultValue) {
-        final var result = environment.getProperty(this.propertyPrefix + '.' + key);
+        val result = environment.getProperty(this.propertyPrefix + '.' + key);
         return StringUtils.defaultIfBlank(result, defaultValue);
     }
 
@@ -65,9 +67,9 @@ public class AmazonEnvironmentAwareClientBuilder {
      * @return the client instance
      */
     public <T> T build(final AwsClientBuilder builder, final Class<T> clientType) {
-        final var cfg = new ClientConfiguration();
+        val cfg = new ClientConfiguration();
         try {
-            final var localAddress = getSetting("localAddress");
+            val localAddress = getSetting("localAddress");
             if (StringUtils.isNotBlank(localAddress)) {
                 cfg.setLocalAddress(InetAddress.getByName(localAddress));
             }
@@ -76,13 +78,13 @@ public class AmazonEnvironmentAwareClientBuilder {
         }
         builder.withClientConfiguration(cfg);
 
-        final var key = getSetting("credentialAccessKey");
-        final var secret = getSetting("credentialSecretKey");
-        final var credentials = ChainingAWSCredentialsProvider.getInstance(key, secret);
+        val key = getSetting("credentialAccessKey");
+        val secret = getSetting("credentialSecretKey");
+        val credentials = ChainingAWSCredentialsProvider.getInstance(key, secret);
         builder.withCredentials(credentials);
 
         var region = getSetting("region");
-        final var currentRegion = Regions.getCurrentRegion();
+        val currentRegion = Regions.getCurrentRegion();
         if (currentRegion != null && StringUtils.isBlank(region)) {
             region = currentRegion.getName();
         }
@@ -90,17 +92,17 @@ public class AmazonEnvironmentAwareClientBuilder {
         if (StringUtils.isNotBlank(regionOverride)) {
             regionOverride = currentRegion.getName();
         }
-        final var finalRegion = StringUtils.defaultIfBlank(regionOverride, region);
+        val finalRegion = StringUtils.defaultIfBlank(regionOverride, region);
         if (StringUtils.isNotBlank(finalRegion)) {
             builder.withRegion(finalRegion);
         }
 
-        final var endpoint = getSetting("endpoint");
+        val endpoint = getSetting("endpoint");
         if (StringUtils.isNotBlank(endpoint) && StringUtils.isNotBlank(finalRegion)) {
             builder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, finalRegion));
         }
 
-        final var result = builder.build();
+        val result = builder.build();
         return clientType.cast(result);
     }
 }

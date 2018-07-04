@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.client;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -64,7 +66,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      */
     protected Connection createConnection() throws LdapException {
         LOGGER.debug("Establishing a connection...");
-        final var connection = this.connectionFactory.getConnection();
+        val connection = this.connectionFactory.getConnection();
         connection.open();
         return connection;
     }
@@ -87,7 +89,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
             return false;
         }
 
-        final var ipCheck = ipPatternCanBeChecked(remoteIp);
+        val ipCheck = ipPatternCanBeChecked(remoteIp);
         if (ipCheck && !ipPatternMatches(remoteIp)) {
             return false;
         }
@@ -112,7 +114,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
     @SneakyThrows
     protected boolean executeSearchForSpnegoAttribute(final String remoteIp) {
         Connection connection = null;
-        final var remoteHostName = getRemoteHostName(remoteIp);
+        val remoteHostName = getRemoteHostName(remoteIp);
         LOGGER.debug("Resolved remote hostname [{}] based on ip [{}]", remoteHostName, remoteIp);
 
         try {
@@ -143,14 +145,14 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      * @return true if attribute value exists and has a value
      */
     protected boolean processSpnegoAttribute(final Response<SearchResult> searchResult) {
-        final var result = searchResult.getResult();
+        val result = searchResult.getResult();
 
         if (result == null || result.getEntries().isEmpty()) {
             LOGGER.debug("Spnego attribute is not found in the search results");
             return false;
         }
-        final var entry = result.getEntry();
-        final var attribute = entry.getAttribute(this.spnegoAttributeName);
+        val entry = result.getEntry();
+        val attribute = entry.getAttribute(this.spnegoAttributeName);
         LOGGER.debug("Spnego attribute [{}] found as [{}] for [{}]", attribute.getName(), attribute.getStringValue(), entry.getDn());
         return verifySpnegoAttributeValue(attribute);
     }

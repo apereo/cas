@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.validator.token;
 
+import lombok.val;
+
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -30,7 +32,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
 
     @Before
     public void before() {
-        final var oauthCode = mock(RefreshToken.class);
+        val oauthCode = mock(RefreshToken.class);
         when(oauthCode.getId()).thenReturn("RT-12345678");
         when(oauthCode.isExpired()).thenReturn(false);
         when(oauthCode.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
@@ -44,15 +46,15 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
 
     @Test
     public void verifyOperation() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
 
-        final var profile = new CommonProfile();
+        val profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
         profile.setId("client");
-        final var session = request.getSession(true);
+        val session = request.getSession(true);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
         
-        final var response = new MockHttpServletResponse();
+        val response = new MockHttpServletResponse();
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.getType());
         request.setParameter(OAuth20Constants.CLIENT_ID, "client");
         request.setParameter(OAuth20Constants.CLIENT_SECRET, "secret");

@@ -1,5 +1,7 @@
 package org.apereo.cas.util.http;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.junit.Test;
@@ -34,9 +36,9 @@ public class HttpClientMultiThreadedDownloaderTests {
 
     @Test
     public void verify() throws Exception {
-        final var resource = resourceLoader.getResource("https://raw.githubusercontent.com/apereo/cas/master/NOTICE");
-        final var target = File.createTempFile("notice", ".md");
-        final var downloader = new HttpClientMultiThreadedDownloader(resource, target);
+        val resource = resourceLoader.getResource("https://raw.githubusercontent.com/apereo/cas/master/NOTICE");
+        val target = File.createTempFile("notice", ".md");
+        val downloader = new HttpClientMultiThreadedDownloader(resource, target);
         downloader.download();
         assertTrue(target.exists());
     }

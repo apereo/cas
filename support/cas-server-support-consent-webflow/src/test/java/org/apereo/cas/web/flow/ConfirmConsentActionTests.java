@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.consent.ConsentReminderOptions;
 import org.apereo.cas.web.support.WebUtils;
@@ -24,8 +26,8 @@ public class ConfirmConsentActionTests extends BaseConsentActionTests {
 
     @Test
     public void verifyOperation() throws Exception {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         request.addParameter("reminder", "10");
         request.addParameter("reminderTimeUnit", ChronoUnit.DAYS.name());
         request.addParameter("option", String.valueOf(ConsentReminderOptions.ALWAYS.getValue()));

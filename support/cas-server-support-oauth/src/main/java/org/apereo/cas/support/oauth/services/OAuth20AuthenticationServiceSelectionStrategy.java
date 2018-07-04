@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.services;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -38,9 +40,9 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
 
     @Override
     public Service resolveServiceFrom(final Service service) {
-        final var clientId = resolveClientIdFromService(service);
-        final var redirectUri = resolveRedirectUri(service);
-        final var grantType = resolveGrantType(service);
+        val clientId = resolveClientIdFromService(service);
+        val redirectUri = resolveRedirectUri(service);
+        val grantType = resolveGrantType(service);
 
         if (clientId.isPresent()) {
             if (redirectUri.isPresent()) {
@@ -48,10 +50,10 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
             }
             if (grantType.isPresent()) {
                 String id = null;
-                final var grantValue = grantType.get().getValue();
+                val grantValue = grantType.get().getValue();
                 if (OAuth20Utils.isGrantType(grantValue, OAuth20GrantTypes.CLIENT_CREDENTIALS)) {
                     LOGGER.debug("Located grant type [{}]; checking for service headers", grantValue);
-                    final var request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+                    val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
                     id = OAuth20Utils.getServiceRequestHeaderIfAny(request);
                 }
                 if (StringUtils.isBlank(id)) {
@@ -66,7 +68,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
 
     private static Optional<NameValuePair> resolveClientIdFromService(final Service service) {
         try {
-            final var builder = new URIBuilder(service.getId());
+            val builder = new URIBuilder(service.getId());
             return builder.getQueryParams()
                     .stream()
                     .filter(p -> p.getName()
@@ -80,7 +82,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
 
     private static Optional<NameValuePair> resolveRedirectUri(final Service service) {
         try {
-            final var builder = new URIBuilder(service.getId());
+            val builder = new URIBuilder(service.getId());
             return builder.getQueryParams()
                     .stream()
                     .filter(p -> p.getName().equals(OAuth20Constants.REDIRECT_URI))
@@ -93,7 +95,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
 
     private static Optional<NameValuePair> resolveGrantType(final Service service) {
         try {
-            final var builder = new URIBuilder(service.getId());
+            val builder = new URIBuilder(service.getId());
             return builder.getQueryParams()
                     .stream()
                     .filter(p -> p.getName()
@@ -107,8 +109,8 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
 
     @Override
     public boolean supports(final Service service) {
-        final var svc = this.servicesManager.findServiceBy(service);
-        final var res = svc != null && service.getId().startsWith(this.callbackUrl);
+        val svc = this.servicesManager.findServiceBy(service);
+        val res = svc != null && service.getId().startsWith(this.callbackUrl);
         LOGGER.debug("Authentication request is{} identified as an OAuth request",
                 BooleanUtils.toString(res, StringUtils.EMPTY, " not"));
         return res;

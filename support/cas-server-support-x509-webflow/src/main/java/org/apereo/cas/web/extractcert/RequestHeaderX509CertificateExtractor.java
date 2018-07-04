@@ -1,5 +1,7 @@
 package org.apereo.cas.web.extractcert;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +60,7 @@ public class RequestHeaderX509CertificateExtractor implements X509CertificateExt
      * @return Base64 encoded certificate
      */
     private String getCertFromHeader(final HttpServletRequest request) {
-        final var certHeaderValue = request.getHeader(sslClientCertHeader);
+        val certHeaderValue = request.getHeader(sslClientCertHeader);
         if (StringUtils.isBlank(certHeaderValue)) {
             return null;
         }
@@ -84,7 +86,7 @@ public class RequestHeaderX509CertificateExtractor implements X509CertificateExt
      */
     @Override
     public X509Certificate[] extract(final HttpServletRequest request) {
-        final var certHeaderValue = getCertFromHeader(request);
+        val certHeaderValue = getCertFromHeader(request);
         if (StringUtils.isBlank(certHeaderValue)) {
             LOGGER.debug("No header [{}] found in request (or value was null)", sslClientCertHeader);
             return null;
@@ -95,9 +97,9 @@ public class RequestHeaderX509CertificateExtractor implements X509CertificateExt
             return null;
         }
 
-        final var body = sanitizeCertificateBody(certHeaderValue);
+        val body = sanitizeCertificateBody(certHeaderValue);
         try (InputStream input = new ByteArrayInputStream(body.getBytes(StandardCharsets.ISO_8859_1))) {
-            final var cert = CertUtils.readCertificate(input);
+            val cert = CertUtils.readCertificate(input);
             LOGGER.debug("Certificate extracted from header [{}] with subject: [{}]", sslClientCertHeader, cert.getSubjectDN());
             return new X509Certificate[]{cert};
         } catch (final Exception e) {

@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.generic;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.junit.Rule;
@@ -26,10 +28,10 @@ public class ShiroAuthenticationHandlerTests {
 
     @Test
     public void checkAuthenticationSuccessful() throws Exception {
-        final var shiro = new ShiroAuthenticationHandler("", null, null, new HashSet<>(0), new HashSet<>(0));
+        val shiro = new ShiroAuthenticationHandler("", null, null, new HashSet<>(0), new HashSet<>(0));
         shiro.loadShiroConfiguration(new ClassPathResource("shiro.ini"));
 
-        final var creds = new RememberMeUsernamePasswordCredential();
+        val creds = new RememberMeUsernamePasswordCredential();
         creds.setRememberMe(true);
         creds.setUsername("casuser");
         creds.setPassword("Mellon");
@@ -39,11 +41,11 @@ public class ShiroAuthenticationHandlerTests {
 
     @Test
     public void checkAuthenticationSuccessfulRolesAndPermissions() throws Exception {
-        final var shiro = new ShiroAuthenticationHandler("", null, null, Collections.singleton("admin"),
+        val shiro = new ShiroAuthenticationHandler("", null, null, Collections.singleton("admin"),
                 Collections.singleton("superuser:deleteAll"));
         shiro.loadShiroConfiguration(new ClassPathResource("shiro.ini"));
 
-        final var creds = new RememberMeUsernamePasswordCredential();
+        val creds = new RememberMeUsernamePasswordCredential();
         creds.setRememberMe(true);
         creds.setUsername("casuser");
         creds.setPassword("Mellon");
@@ -53,10 +55,10 @@ public class ShiroAuthenticationHandlerTests {
 
     @Test
     public void checkAuthenticationSuccessfulMissingRole() throws Exception {
-        final var shiro = new ShiroAuthenticationHandler("", null, null, Collections.singleton("student"), new HashSet<>(0));
+        val shiro = new ShiroAuthenticationHandler("", null, null, Collections.singleton("student"), new HashSet<>(0));
         shiro.loadShiroConfiguration(new ClassPathResource("shiro.ini"));
 
-        final var creds = new RememberMeUsernamePasswordCredential();
+        val creds = new RememberMeUsernamePasswordCredential();
         creds.setRememberMe(true);
         creds.setUsername("casuser");
         creds.setPassword("Mellon");
@@ -69,10 +71,10 @@ public class ShiroAuthenticationHandlerTests {
 
     @Test
     public void checkAuthenticationSuccessfulMissingPermission() throws Exception {
-        final var shiro = new ShiroAuthenticationHandler("", null, null, new HashSet<>(0), Collections.singleton("dosomething"));
+        val shiro = new ShiroAuthenticationHandler("", null, null, new HashSet<>(0), Collections.singleton("dosomething"));
         shiro.loadShiroConfiguration(new ClassPathResource("shiro.ini"));
 
-        final var creds = new RememberMeUsernamePasswordCredential();
+        val creds = new RememberMeUsernamePasswordCredential();
         creds.setRememberMe(true);
         creds.setUsername("casuser");
         creds.setPassword("Mellon");

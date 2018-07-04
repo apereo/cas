@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.factory;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
@@ -43,7 +45,7 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
     @Override
     public <T extends ProxyGrantingTicket> T create(final ServiceTicket serviceTicket,
                                                     final Authentication authentication, final Class<T> clazz) throws AbstractTicketException {
-        final var pgtId = produceTicketIdentifier();
+        val pgtId = produceTicketIdentifier();
         return produceTicket(serviceTicket, authentication, pgtId, clazz);
     }
 
@@ -59,7 +61,7 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      */
     protected <T extends ProxyGrantingTicket> T produceTicket(final ServiceTicket serviceTicket, final Authentication authentication,
                                                               final String pgtId, final Class<T> clazz) {
-        final var result = serviceTicket.grantProxyGrantingTicket(pgtId,
+        val result = serviceTicket.grantProxyGrantingTicket(pgtId,
                 authentication, this.ticketGrantingTicketExpirationPolicy);
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [" + result

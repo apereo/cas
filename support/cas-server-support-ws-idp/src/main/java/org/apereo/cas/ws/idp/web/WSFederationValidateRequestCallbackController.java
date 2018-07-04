@@ -1,5 +1,7 @@
 package org.apereo.cas.ws.idp.web;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -78,38 +80,38 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
      */
     @GetMapping(path = WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK)
     protected ModelAndView handleFederationRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
-        final var fedRequest = WSFederationRequest.of(request);
+        val fedRequest = WSFederationRequest.of(request);
         LOGGER.debug("Received callback profile request [{}]", request.getRequestURI());
-        final var service = findAndValidateFederationRequestForRegisteredService(response, request, fedRequest);
+        val service = findAndValidateFederationRequestForRegisteredService(response, request, fedRequest);
         LOGGER.debug("Located matching service [{}]", service);
 
-        final var ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
+        val ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
         if (StringUtils.isBlank(ticket)) {
             LOGGER.error("Can not validate the request because no [{}] is provided via the request", CasProtocolConstants.PARAMETER_TICKET);
             return new ModelAndView(CasWebflowConstants.VIEW_ID_ERROR, new HashMap<>(), HttpStatus.FORBIDDEN);
         }
 
-        final var assertion = validateRequestAndBuildCasAssertion(response, request, fedRequest);
+        val assertion = validateRequestAndBuildCasAssertion(response, request, fedRequest);
         var securityToken = getSecurityTokenFromRequest(request);
         if (securityToken == null) {
             LOGGER.debug("No security token is yet available. Invoking security token service to issue token");
             securityToken = validateSecurityTokenInAssertion(assertion, request, response);
         }
         addSecurityTokenTicketToRegistry(request, securityToken);
-        final var rpToken = produceRelyingPartyToken(response, request, fedRequest, securityToken, assertion);
+        val rpToken = produceRelyingPartyToken(response, request, fedRequest, securityToken, assertion);
         return postResponseBackToRelyingParty(rpToken, fedRequest);
     }
 
     private void addSecurityTokenTicketToRegistry(final HttpServletRequest request, final SecurityToken securityToken) {
         LOGGER.debug("Adding security token as a ticket to CAS ticket registry...");
-        final var tgt = CookieUtils.getTicketGrantingTicketFromRequest(ticketGrantingTicketCookieGenerator, ticketRegistry, request);
+        val tgt = CookieUtils.getTicketGrantingTicketFromRequest(ticketGrantingTicketCookieGenerator, ticketRegistry, request);
         this.ticketRegistry.addTicket(securityTokenTicketFactory.create(tgt, securityToken));
         this.ticketRegistry.updateTicket(tgt);
     }
 
     private static ModelAndView postResponseBackToRelyingParty(final String rpToken,
                                                                final WSFederationRequest fedRequest) {
-        final var postUrl = StringUtils.isNotBlank(fedRequest.getWreply()) ? fedRequest.getWreply() : fedRequest.getWtrealm();
+        val postUrl = StringUtils.isNotBlank(fedRequest.getWreply()) ? fedRequest.getWreply() : fedRequest.getWtrealm();
 
         final Map model = new HashMap<>();
         model.put("originalUrl", postUrl);
@@ -131,7 +133,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
     private String produceRelyingPartyToken(final HttpServletResponse response, final HttpServletRequest request,
                                             final WSFederationRequest fedRequest, final SecurityToken securityToken,
                                             final Assertion assertion) {
-        final var service = findAndValidateFederationRequestForRegisteredService(response, request, fedRequest);
+        val service = findAndValidateFederationRequestForRegisteredService(response, request, fedRequest);
         return relyingPartyTokenProducer.produce(securityToken, service, fedRequest, request, assertion);
     }
 
@@ -140,22 +142,22 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
                                                                   final HttpServletResponse response) {
         LOGGER.debug("Validating security token in CAS assertion...");
 
-        final var principal = assertion.getPrincipal();
+        val principal = assertion.getPrincipal();
         if (!principal.getAttributes().containsKey(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE)) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
-        final var token = (String) principal.getAttributes().get(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE);
-        final var securityTokenBin = EncodingUtils.decodeBase64(token);
+        val token = (String) principal.getAttributes().get(WSFederationConstants.SECURITY_TOKEN_ATTRIBUTE);
+        val securityTokenBin = EncodingUtils.decodeBase64(token);
         return SerializationUtils.deserialize(securityTokenBin);
     }
 
     private Assertion validateRequestAndBuildCasAssertion(final HttpServletResponse response,
                                                           final HttpServletRequest request,
                                                           final WSFederationRequest fedRequest) throws Exception {
-        final var ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
-        final var serviceUrl = constructServiceUrl(request, response, fedRequest);
+        val ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
+        val serviceUrl = constructServiceUrl(request, response, fedRequest);
         LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
-        final var assertion = this.ticketValidator.validate(ticket, serviceUrl);
+        val assertion = this.ticketValidator.validate(ticket, serviceUrl);
         LOGGER.debug("Located CAS assertion [{}]", assertion);
         return assertion;
     }

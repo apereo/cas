@@ -1,5 +1,7 @@
 package org.apereo.cas.ws.idp.services;
 
+import lombok.val;
+
 import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,11 +52,11 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
         resolvedAttributes.putAll(attrs);
         final Map<String, Object> attributesToRelease = Maps.newHashMapWithExpectedSize(resolvedAttributes.size());
         getAllowedAttributes().entrySet().stream().filter(entry -> WSFederationClaims.contains(entry.getKey().toUpperCase())).forEach(entry -> {
-            final var claimName = entry.getKey();
-            final var attributeName = entry.getValue();
-            final var claim = WSFederationClaims.valueOf(claimName.toUpperCase());
+            val claimName = entry.getKey();
+            val attributeName = entry.getValue();
+            val claim = WSFederationClaims.valueOf(claimName.toUpperCase());
             LOGGER.debug("Evaluating claimName [{}] mapped to attribute name [{}]", claim.getUri(), attributeName);
-            final var value = resolvedAttributes.get(attributeName);
+            val value = resolvedAttributes.get(attributeName);
             if (value != null) {
                 LOGGER.debug("Adding claimName [{}] to the collection of released attributes", claim.getUri());
                 attributesToRelease.put(claim.getUri(), value);

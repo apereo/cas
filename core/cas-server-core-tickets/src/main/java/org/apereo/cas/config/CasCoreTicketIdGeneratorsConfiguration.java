@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
@@ -30,7 +32,7 @@ public class CasCoreTicketIdGeneratorsConfiguration {
         final Map<String, UniqueTicketIdGenerator> map = new HashMap<>();
         if (configurers != null) {
             configurers.forEach(c -> {
-                final var pair = c.buildUniqueTicketIdGenerators();
+                val pair = c.buildUniqueTicketIdGenerators();
                 pair.forEach(p -> map.put(p.getKey(), p.getValue()));
             });
         }

@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -77,7 +79,7 @@ public class CasScimConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Bean
     @ConditionalOnMissingBean(name = "scimProvisioner")
     public PrincipalProvisioner scimProvisioner() {
-        final var scim = casProperties.getScim();
+        val scim = casProperties.getScim();
         if (StringUtils.isBlank(scim.getTarget())) {
             throw new BeanCreationException("Scim target cannot be blank");
         }

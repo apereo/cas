@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -46,13 +48,13 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceById(final String id) {
-        final var pattern = Pattern.compile(id, Pattern.CASE_INSENSITIVE);
+        val pattern = Pattern.compile(id, Pattern.CASE_INSENSITIVE);
         return this.mongoTemplate.findOne(new Query(Criteria.where("serviceId").regex(pattern)), RegisteredService.class, this.collectionName);
     }
 
     @Override
     public List<RegisteredService> load() {
-        final var list = this.mongoTemplate.findAll(RegisteredService.class, this.collectionName);
+        val list = this.mongoTemplate.findAll(RegisteredService.class, this.collectionName);
         list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
         return list;
     }

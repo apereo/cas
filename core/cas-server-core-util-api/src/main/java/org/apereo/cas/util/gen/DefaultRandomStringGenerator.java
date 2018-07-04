@@ -1,5 +1,7 @@
 package org.apereo.cas.util.gen;
 
+import lombok.val;
+
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,9 +35,9 @@ public class DefaultRandomStringGenerator extends AbstractRandomStringGenerator 
      */
     @Override
     protected String convertBytesToString(final byte[] random) {
-        final var output = new char[random.length];
+        val output = new char[random.length];
         IntStream.range(0, random.length).forEach(i -> {
-            final var index = Math.abs(random[i] % PRINTABLE_CHARACTERS.length);
+            val index = Math.abs(random[i] % PRINTABLE_CHARACTERS.length);
             output[i] = getPrintableCharacters()[index];
         });
         return new String(output);

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -22,7 +24,7 @@ public class CasDefaultFlowUrlHandlerTests {
         setupRequest("/cas", "/app", "/foo");
         request.setParameter("bar", "baz");
         request.setParameter("qux", "quux");
-        final var url = urlHandler.createFlowExecutionUrl("foo", "12345", request);
+        val url = urlHandler.createFlowExecutionUrl("foo", "12345", request);
 
         assertEquals("/cas/app/foo?bar=baz&qux=quux&execution=12345", url);
     }
@@ -32,7 +34,7 @@ public class CasDefaultFlowUrlHandlerTests {
         setupRequest("/cas", "/app", "/foo");
         request.setParameter("bar", "baz1", "baz2");
         request.setParameter("qux", "quux");
-        final var url = urlHandler.createFlowExecutionUrl("foo", "12345", request);
+        val url = urlHandler.createFlowExecutionUrl("foo", "12345", request);
 
         assertEquals("/cas/app/foo?bar=baz1&bar=baz2&qux=quux&execution=12345", url);
     }

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.mdui;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredService;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -63,7 +65,7 @@ public class MetadataUIUtils {
      */
     public static SamlMetadataUIInfo locateMetadataUserInterfaceForEntityId(final MetadataResolverAdapter metadataAdapter,
                                                                             final String entityId, final RegisteredService registeredService, final HttpServletRequest requestContext) {
-        final var entityDescriptor = metadataAdapter.getEntityDescriptorForEntityId(entityId);
+        val entityDescriptor = metadataAdapter.getEntityDescriptorForEntityId(entityId);
         return locateMetadataUserInterfaceForEntityId(entityDescriptor, entityId, registeredService, requestContext);
     }
 
@@ -78,28 +80,28 @@ public class MetadataUIUtils {
      */
     public static SamlMetadataUIInfo locateMetadataUserInterfaceForEntityId(final EntityDescriptor entityDescriptor, final String entityId,
                                                                             final RegisteredService registeredService, final HttpServletRequest requestContext) {
-        final var mdui = new SamlMetadataUIInfo(registeredService, requestContext.getLocale().getLanguage());
+        val mdui = new SamlMetadataUIInfo(registeredService, requestContext.getLocale().getLanguage());
         if (entityDescriptor == null) {
             LOGGER.trace("Entity descriptor not found for [{}]", entityId);
             return mdui;
         }
-        final var spssoDescriptor = getSPSsoDescriptor(entityDescriptor);
+        val spssoDescriptor = getSPSsoDescriptor(entityDescriptor);
         if (spssoDescriptor == null) {
             LOGGER.trace("SP SSO descriptor not found for [{}]", entityId);
             return mdui;
         }
-        final var extensions = spssoDescriptor.getExtensions();
+        val extensions = spssoDescriptor.getExtensions();
         if (extensions == null) {
             LOGGER.trace("No extensions in the SP SSO descriptor are found for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
             return mdui;
         }
-        final var spExtensions = extensions.getUnknownXMLObjects(UIInfo.DEFAULT_ELEMENT_NAME);
+        val spExtensions = extensions.getUnknownXMLObjects(UIInfo.DEFAULT_ELEMENT_NAME);
         if (spExtensions.isEmpty()) {
             LOGGER.trace("No extensions in the SP SSO descriptor are located for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
             return mdui;
         }
         spExtensions.stream().filter(UIInfo.class::isInstance).forEach(obj -> {
-            final var uiInfo = (UIInfo) obj;
+            val uiInfo = (UIInfo) obj;
             LOGGER.trace("Found MDUI info for [{}]", entityId);
             mdui.setUiInfo(uiInfo);
         });

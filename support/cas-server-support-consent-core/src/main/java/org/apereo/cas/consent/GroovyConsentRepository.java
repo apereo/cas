@@ -1,5 +1,7 @@
 package org.apereo.cas.consent;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.ScriptingUtils;
 import org.springframework.core.io.Resource;
@@ -24,7 +26,7 @@ public class GroovyConsentRepository extends BaseConsentRepository {
 
     @Override
     public boolean storeConsentDecision(final ConsentDecision decision) {
-        final var result = super.storeConsentDecision(decision);
+        val result = super.storeConsentDecision(decision);
         writeAccountToGroovyResource(decision);
         return result;
     }

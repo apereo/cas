@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.generic.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.generic.RejectUsersAuthenticationHandler;
@@ -54,9 +56,9 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler rejectUsersAuthenticationHandler() {
-        final var rejectProperties = casProperties.getAuthn().getReject();
-        final var users = org.springframework.util.StringUtils.commaDelimitedListToSet(rejectProperties.getUsers());
-        final var h = new RejectUsersAuthenticationHandler(rejectProperties.getName(), servicesManager,
+        val rejectProperties = casProperties.getAuthn().getReject();
+        val users = org.springframework.util.StringUtils.commaDelimitedListToSet(rejectProperties.getUsers());
+        val h = new RejectUsersAuthenticationHandler(rejectProperties.getName(), servicesManager,
             rejectUsersPrincipalFactory(), users);
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rejectProperties.getPasswordEncoder()));
         h.setPasswordPolicyConfiguration(rejectPasswordPolicyConfiguration());
@@ -68,7 +70,7 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer rejectUsersAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            final var users = casProperties.getAuthn().getReject().getUsers();
+            val users = casProperties.getAuthn().getReject().getUsers();
             if (StringUtils.isNotBlank(users)) {
                 plan.registerAuthenticationHandlerWithPrincipalResolver(rejectUsersAuthenticationHandler(), personDirectoryPrincipalResolver);
                 LOGGER.debug("Added rejecting authentication handler with the following users [{}]", users);

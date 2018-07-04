@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.support;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -52,12 +54,12 @@ public class TicketGrantingTicketExpirationPolicyTests {
     @Test
     public void verifyTgtIsExpiredByHardTimeOut() {
         // keep tgt alive via sliding window until within SLIDING_TIME / 2 of the HARD_TIMEOUT
-        final var creationTime = ticketGrantingTicket.getCreationTime();
+        val creationTime = ticketGrantingTicket.getCreationTime();
         while (creationTime.plus(HARD_TIMEOUT - SLIDING_TIMEOUT / 2, ChronoUnit.SECONDS)
                 .isAfter(org.apereo.cas.util.DateTimeUtils.zonedDateTimeOf(DateTimeUtils.currentTimeMillis()))) {
             ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
 
-            final var tt = DateTimeUtils.currentTimeMillis() + ((SLIDING_TIMEOUT - TIMEOUT_BUFFER) * 1_000);
+            val tt = DateTimeUtils.currentTimeMillis() + ((SLIDING_TIMEOUT - TIMEOUT_BUFFER) * 1_000);
             DateTimeUtils.setCurrentMillisFixed(tt);
 
             assertFalse(this.ticketGrantingTicket.isExpired());
@@ -66,7 +68,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
         // final sliding window extension past the HARD_TIMEOUT
         ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
 
-        final var tt = DateTimeUtils.currentTimeMillis() + ((SLIDING_TIMEOUT / 2 + TIMEOUT_BUFFER) * 1_000);
+        val tt = DateTimeUtils.currentTimeMillis() + ((SLIDING_TIMEOUT / 2 + TIMEOUT_BUFFER) * 1_000);
         DateTimeUtils.setCurrentMillisFixed(tt);
 
         assertTrue(ticketGrantingTicket.isExpired());
@@ -93,7 +95,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
 
     @Test
     public void verifySerializeAnExpirationPolicyToJson() throws IOException {
-        final var policy = new TicketGrantingTicketExpirationPolicy(100, 100);
+        val policy = new TicketGrantingTicketExpirationPolicy(100, 100);
         MAPPER.writeValue(JSON_FILE, policy);
         final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, TicketGrantingTicketExpirationPolicy.class);
         assertEquals(policy, policyRead);

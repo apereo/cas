@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.support.password;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.ScriptingUtils;
@@ -20,9 +22,9 @@ public class GroovyPasswordEncoder extends AbstractPasswordEncoder {
 
     @Override
     protected byte[] encode(final CharSequence rawPassword, final byte[] salt) {
-        final var resource = ApplicationContextProvider.getResourceLoader().getResource(this.scriptFile);
+        val resource = ApplicationContextProvider.getResourceLoader().getResource(this.scriptFile);
         final Object[] args = {rawPassword, salt, LOGGER, ApplicationContextProvider.getApplicationContext()};
-        final var result = ScriptingUtils.executeGroovyScript(resource, args, byte[].class);
+        val result = ScriptingUtils.executeGroovyScript(resource, args, byte[].class);
         return result;
     }
 }

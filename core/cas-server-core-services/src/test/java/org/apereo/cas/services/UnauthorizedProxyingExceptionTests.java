@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
@@ -16,21 +18,21 @@ public class UnauthorizedProxyingExceptionTests {
 
     @Test
     public void verifyGetCode() {
-        final var e = new UnauthorizedProxyingException();
+        val e = new UnauthorizedProxyingException();
         assertEquals(UnauthorizedProxyingException.CODE, e.getMessage());
     }
 
     @Test
     public void verifyCodeConstructor() {
-        final var e = new UnauthorizedProxyingException(MESSAGE);
+        val e = new UnauthorizedProxyingException(MESSAGE);
 
         assertEquals(MESSAGE, e.getMessage());
     }
 
     @Test
     public void verifyThrowableConstructorWithCode() {
-        final var r = new RuntimeException();
-        final var e = new UnauthorizedProxyingException(MESSAGE, r);
+        val r = new RuntimeException();
+        val e = new UnauthorizedProxyingException(MESSAGE, r);
 
         assertEquals(MESSAGE, e.getMessage());
         assertEquals(r, e.getCause());

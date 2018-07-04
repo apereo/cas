@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -61,7 +63,7 @@ public class U2FConfiguration {
     @ConditionalOnMissingBean(name = "u2fDeviceRepository")
     @Bean
     public U2FDeviceRepository u2fDeviceRepository() {
-        final var u2f = casProperties.getAuthn().getMfa().getU2f();
+        val u2f = casProperties.getAuthn().getMfa().getU2f();
 
         final LoadingCache<String, String> requestStorage =
                 Caffeine.newBuilder()
@@ -113,7 +115,7 @@ public class U2FConfiguration {
     @Bean
     @RefreshScope
     public CipherExecutor u2fRegistrationRecordCipherExecutor() {
-        final var crypto = casProperties.getAuthn().getMfa().getU2f().getCrypto();
+        val crypto = casProperties.getAuthn().getMfa().getU2f().getCrypto();
         if (crypto.isEnabled()) {
             return new U2FAuthenticationRegistrationRecordCipherExecutor(
                     crypto.getEncryption().getKey(),

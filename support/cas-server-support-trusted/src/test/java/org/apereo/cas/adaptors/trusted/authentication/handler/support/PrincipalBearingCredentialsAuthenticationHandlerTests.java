@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.trusted.authentication.handler.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -21,13 +23,13 @@ public class PrincipalBearingCredentialsAuthenticationHandlerTests {
      */
     @Test
     public void verifyNonNullPrincipal() {
-        final var credentials = new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("scott"));
+        val credentials = new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("scott"));
         assertNotNull(this.handler.authenticate(credentials));
     }
 
     @Test
     public void verifySupports() {
-        final var credentials = new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("scott"));
+        val credentials = new PrincipalBearingCredential(new DefaultPrincipalFactory().createPrincipal("scott"));
         assertTrue(this.handler.supports(credentials));
         assertFalse(this.handler.supports(new UsernamePasswordCredential()));
     }

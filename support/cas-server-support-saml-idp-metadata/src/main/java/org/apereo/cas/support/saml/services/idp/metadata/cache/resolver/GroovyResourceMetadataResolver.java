@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -30,11 +32,11 @@ public class GroovyResourceMetadataResolver extends BaseSamlRegisteredServiceMet
     @Override
     public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
         try {
-            final var metadataLocation = service.getMetadataLocation();
+            val metadataLocation = service.getMetadataLocation();
             LOGGER.info("Loading SAML metadata via [{}]", metadataLocation);
-            final var metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
+            val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             final Object[] args = {service, this.configBean, this.samlIdPProperties, LOGGER};
-            final var metadataResolver =
+            val metadataResolver =
                 ScriptingUtils.executeGroovyScript(metadataResource, args, MetadataResolver.class);
             if (metadataResolver != null) {
                 return CollectionUtils.wrap(metadataResolver);
@@ -47,7 +49,7 @@ public class GroovyResourceMetadataResolver extends BaseSamlRegisteredServiceMet
 
     @Override
     public boolean supports(final SamlRegisteredService service) {
-        final var metadataLocation = service.getMetadataLocation();
+        val metadataLocation = service.getMetadataLocation();
         return ScriptingUtils.isExternalGroovyScript(metadataLocation);
     }
 }

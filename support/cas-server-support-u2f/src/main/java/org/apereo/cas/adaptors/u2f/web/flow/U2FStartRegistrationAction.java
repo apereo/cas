@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.u2f.web.flow;
 
+import lombok.val;
+
 import com.yubico.u2f.U2F;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -32,11 +34,11 @@ public class U2FStartRegistrationAction extends AbstractAction {
     @Override
     @SneakyThrows
     protected Event doExecute(final RequestContext requestContext) {
-        final var p = WebUtils.getAuthentication(requestContext).getPrincipal();
-        final var registerRequestData = u2f.startRegistration(this.serverAddress, u2FDeviceRepository.getRegisteredDevices(p.getId()));
+        val p = WebUtils.getAuthentication(requestContext).getPrincipal();
+        val registerRequestData = u2f.startRegistration(this.serverAddress, u2FDeviceRepository.getRegisteredDevices(p.getId()));
         u2FDeviceRepository.requestDeviceRegistration(registerRequestData.getRequestId(), p.getId(), registerRequestData.toJson());
         if (!registerRequestData.getRegisterRequests().isEmpty()) {
-            final var req = registerRequestData.getRegisterRequests().get(0);
+            val req = registerRequestData.getRegisterRequests().get(0);
             requestContext.getFlowScope().put("u2fReg", new U2FRegistration(req.getChallenge(), req.getAppId()));
             return success();
         }

@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
 import org.apereo.cas.adaptors.trusted.authentication.principal.RemoteRequestPrincipalAttributesExtractor;
@@ -38,7 +40,7 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction ex
 
     @Override
     protected String getRemotePrincipalId(final HttpServletRequest request) {
-        final var principal = request.getUserPrincipal();
+        val principal = request.getUserPrincipal();
 
         if (principal != null) {
             LOGGER.debug("Principal [{}] found in HttpServletRequest", principal.getName());

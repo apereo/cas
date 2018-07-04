@@ -1,5 +1,7 @@
 package org.apereo.cas.web.report;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -62,25 +64,25 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasMvcEndpoint {
 
 
         final Service selectedService = this.serviceFactory.createService(service);
-        final var registeredService = this.servicesManager.findServiceBy(selectedService);
+        val registeredService = this.servicesManager.findServiceBy(selectedService);
 
-        final var credential = new UsernamePasswordCredential(username, password);
-        final var result = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(selectedService, credential);
-        final var authentication = result.getAuthentication();
+        val credential = new UsernamePasswordCredential(username, password);
+        val result = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(selectedService, credential);
+        val authentication = result.getAuthentication();
 
-        final var principal = authentication.getPrincipal();
-        final var attributesToRelease = registeredService.getAttributeReleasePolicy().getAttributes(principal, selectedService, registeredService);
-        final var principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, selectedService, registeredService);
-        final var modifiedPrincipal = this.principalFactory.createPrincipal(principalId, attributesToRelease);
-        final var builder = DefaultAuthenticationBuilder.newInstance(authentication);
+        val principal = authentication.getPrincipal();
+        val attributesToRelease = registeredService.getAttributeReleasePolicy().getAttributes(principal, selectedService, registeredService);
+        val principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, selectedService, registeredService);
+        val modifiedPrincipal = this.principalFactory.createPrincipal(principalId, attributesToRelease);
+        val builder = DefaultAuthenticationBuilder.newInstance(authentication);
         builder.setPrincipal(modifiedPrincipal);
-        final var finalAuthentication = builder.build();
-        final var assertion = new DefaultAssertionBuilder(finalAuthentication)
+        val finalAuthentication = builder.build();
+        val assertion = new DefaultAssertionBuilder(finalAuthentication)
             .with(selectedService)
             .with(CollectionUtils.wrap(finalAuthentication))
             .build();
 
-        final var resValidation = new LinkedHashMap<String, Object>();
+        val resValidation = new LinkedHashMap<String, Object>();
         resValidation.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION, assertion);
         resValidation.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE, selectedService);
         resValidation.put("registeredService", registeredService);

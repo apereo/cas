@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -43,7 +45,7 @@ public class SamlIdPAmazonS3MetadataConfiguration implements SamlRegisteredServi
 
     @Bean
     public SamlRegisteredServiceMetadataResolver amazonS3SamlRegisteredServiceMetadataResolver() {
-        final var idp = casProperties.getAuthn().getSamlIdp();
+        val idp = casProperties.getAuthn().getSamlIdp();
         return new AmazonS3SamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean, amazonS3Client());
     }
 
@@ -51,9 +53,9 @@ public class SamlIdPAmazonS3MetadataConfiguration implements SamlRegisteredServi
     @Bean
     @RefreshScope
     public AmazonS3 amazonS3Client() {
-        final var amz = casProperties.getAuthn().getSamlIdp().getMetadata().getAmazonS3();
-        final var endpoint = new AwsClientBuilder.EndpointConfiguration(amz.getEndpoint(), amz.getRegion());
-        final var credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(),
+        val amz = casProperties.getAuthn().getSamlIdp().getMetadata().getAmazonS3();
+        val endpoint = new AwsClientBuilder.EndpointConfiguration(amz.getEndpoint(), amz.getRegion());
+        val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(),
             amz.getCredentialSecretKey(),
             amz.getCredentialsPropertiesFile(),
             amz.getProfilePath(),

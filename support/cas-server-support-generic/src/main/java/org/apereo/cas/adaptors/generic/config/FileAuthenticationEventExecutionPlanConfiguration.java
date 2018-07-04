@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.generic.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.generic.FileAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
@@ -53,8 +55,8 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler fileAuthenticationHandler() {
-        final var fileProperties = casProperties.getAuthn().getFile();
-        final var h = new FileAuthenticationHandler(fileProperties.getName(), servicesManager, filePrincipalFactory(),
+        val fileProperties = casProperties.getAuthn().getFile();
+        val h = new FileAuthenticationHandler(fileProperties.getName(), servicesManager, filePrincipalFactory(),
             fileProperties.getFilename(), fileProperties.getSeparator());
 
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(fileProperties.getPasswordEncoder()));
@@ -68,7 +70,7 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer fileAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            final var file = casProperties.getAuthn().getFile().getFilename();
+            val file = casProperties.getAuthn().getFile().getFilename();
             if (file != null) {
                 LOGGER.debug("Added file-based authentication handler for the target file [{}]", file.getDescription());
                 plan.registerAuthenticationHandlerWithPrincipalResolver(fileAuthenticationHandler(), personDirectoryPrincipalResolver);

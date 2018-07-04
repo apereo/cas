@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.discovery;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -24,8 +26,8 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
 
     @Override
     public OidcServerDiscoverySettings getObject() {
-        final var oidc = casProperties.getAuthn().getOidc();
-        final var discoveryProperties =
+        val oidc = casProperties.getAuthn().getOidc();
+        val discoveryProperties =
             new OidcServerDiscoverySettings(casProperties, oidc.getIssuer());
 
         discoveryProperties.setClaimsSupported(oidc.getClaims());

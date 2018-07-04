@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -60,9 +62,9 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     private GoogleAccountsService googleAccountsService;
 
     public GoogleAccountsService getGoogleAccountsService() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
 
-        final var samlRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        val samlRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
             + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
             + "ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" "
             + "ProtocolBinding=\"urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\" "
@@ -70,10 +72,10 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
         request.setParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, encodeMessage(samlRequest));
         request.setParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "RelayStateAddedHere");
 
-        final var regSvc = mock(RegisteredService.class);
+        val regSvc = mock(RegisteredService.class);
         when(regSvc.getUsernameAttributeProvider()).thenReturn(new DefaultRegisteredServiceUsernameProvider());
 
-        final var servicesManager = mock(ServicesManager.class);
+        val servicesManager = mock(ServicesManager.class);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(regSvc);
 
         return (GoogleAccountsService) factory.createService(request);
@@ -86,20 +88,20 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyResponse() {
-        final var resp = googleAccountsServiceResponseBuilder.build(googleAccountsService, "SAMPLE_TICKET",
+        val resp = googleAccountsServiceResponseBuilder.build(googleAccountsService, "SAMPLE_TICKET",
             CoreAuthenticationTestUtils.getAuthentication());
         assertEquals(DefaultResponse.ResponseType.POST, resp.getResponseType());
-        final var response = resp.getAttributes().get(SamlProtocolConstants.PARAMETER_SAML_RESPONSE);
+        val response = resp.getAttributes().get(SamlProtocolConstants.PARAMETER_SAML_RESPONSE);
         assertNotNull(response);
         assertTrue(response.contains("NotOnOrAfter"));
 
-        final var pattern = Pattern.compile("NotOnOrAfter\\s*=\\s*\"(.+Z)\"");
-        final var matcher = pattern.matcher(response);
-        final var now = ZonedDateTime.now(ZoneOffset.UTC);
+        val pattern = Pattern.compile("NotOnOrAfter\\s*=\\s*\"(.+Z)\"");
+        val matcher = pattern.matcher(response);
+        val now = ZonedDateTime.now(ZoneOffset.UTC);
 
         while (matcher.find()) {
-            final var onOrAfter = matcher.group(1);
-            final var dt = ZonedDateTime.parse(onOrAfter);
+            val onOrAfter = matcher.group(1);
+            val dt = ZonedDateTime.parse(onOrAfter);
             assertTrue(dt.isAfter(now));
         }
         assertTrue(resp.getAttributes().containsKey(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
@@ -112,9 +114,9 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
     @Test
     public void serializeGoogleAccountService() throws Exception {
-        final var service = getGoogleAccountsService();
+        val service = getGoogleAccountsService();
         MAPPER.writeValue(FILE, service);
-        final var service2 = MAPPER.readValue(FILE, GoogleAccountsService.class);
+        val service2 = MAPPER.readValue(FILE, GoogleAccountsService.class);
         assertEquals(service, service2);
     }
 }

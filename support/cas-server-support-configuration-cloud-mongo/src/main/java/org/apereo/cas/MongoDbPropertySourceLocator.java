@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
@@ -23,9 +25,9 @@ public class MongoDbPropertySourceLocator implements PropertySourceLocator {
     @Override
     public PropertySource<?> locate(final Environment environment) {
         if (environment instanceof ConfigurableEnvironment) {
-            final var sourceName = MongoDbPropertySource.class.getSimpleName();
-            final var composite = new CompositePropertySource(sourceName);
-            final var source = new MongoDbPropertySource(sourceName, mongo);
+            val sourceName = MongoDbPropertySource.class.getSimpleName();
+            val composite = new CompositePropertySource(sourceName);
+            val source = new MongoDbPropertySource(sourceName, mongo);
             composite.addFirstPropertySource(source);
             return composite;
         }

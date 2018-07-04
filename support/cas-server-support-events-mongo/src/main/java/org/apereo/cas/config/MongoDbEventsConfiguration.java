@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
@@ -37,16 +39,16 @@ public class MongoDbEventsConfiguration {
     @RefreshScope
     @Bean
     public MongoTemplate mongoEventsTemplate() {
-        final var mongo = casProperties.getEvents().getMongo();
-        final var factory = new MongoDbConnectionFactory();
-        final var mongoTemplate = factory.buildMongoTemplate(mongo);
+        val mongo = casProperties.getEvents().getMongo();
+        val factory = new MongoDbConnectionFactory();
+        val mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
 
     @Bean
     public CasEventRepository casEventRepository() {
-        final var mongo = casProperties.getEvents().getMongo();
+        val mongo = casProperties.getEvents().getMongo();
         return new MongoDbCasEventRepository(
                 mongoEventsTemplate(),
                 mongo.getCollection());

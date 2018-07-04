@@ -1,5 +1,7 @@
 package org.apereo.cas.otp.web.flow;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
@@ -22,9 +24,9 @@ public class OneTimeTokenAccountSaveRegistrationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final var account = requestContext.getFlowScope().get("key", OneTimeTokenAccount.class);
+        val account = requestContext.getFlowScope().get("key", OneTimeTokenAccount.class);
 
-        final var uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
+        val uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
         repository.save(uid, account.getSecretKey(), account.getValidationCode(), account.getScratchCodes());
         return success();
     }

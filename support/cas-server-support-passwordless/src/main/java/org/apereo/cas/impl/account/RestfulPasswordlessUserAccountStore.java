@@ -1,5 +1,7 @@
 package org.apereo.cas.impl.account;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -35,11 +37,11 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
             final Map<String, Object> parameters = new HashMap<>();
             parameters.put("username", username);
 
-            final var response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
+            val response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>());
             if (response != null && response.getEntity() != null) {
-                final var account = MAPPER.readValue(response.getEntity().getContent(), PasswordlessUserAccount.class);
+                val account = MAPPER.readValue(response.getEntity().getContent(), PasswordlessUserAccount.class);
                 return Optional.ofNullable(account);
             }
         } catch (final Exception e) {

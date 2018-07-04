@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -44,15 +46,15 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyE
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final var service = resolveRegisteredServiceInRequestContext(context);
-        final var authentication = WebUtils.getAuthentication(context);
+        val service = resolveRegisteredServiceInRequestContext(context);
+        val authentication = WebUtils.getAuthentication(context);
 
         if (authentication == null || service == null) {
             LOGGER.debug("No authentication or service is available to determine event for principal");
             return null;
         }
 
-        final var policy = service.getMultifactorPolicy();
+        val policy = service.getMultifactorPolicy();
         if (policy == null || service.getMultifactorPolicy().getMultifactorAuthenticationProviders().isEmpty()) {
             LOGGER.debug("Authentication policy is absent or does not contain any multifactor authentication providers");
             return null;
@@ -64,8 +66,8 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyE
             return null;
         }
 
-        final var principal = authentication.getPrincipal();
-        final var providers = flattenProviders(getAuthenticationProviderForService(service));
+        val principal = authentication.getPrincipal();
+        val providers = flattenProviders(getAuthenticationProviderForService(service));
         return resolveEventViaPrincipalAttribute(principal,
                 org.springframework.util.StringUtils.commaDelimitedListToSet(policy.getPrincipalAttributeNameTrigger()),
                 service, context, providers, Pattern.compile(policy.getPrincipalAttributeValueToMatch()).asPredicate());

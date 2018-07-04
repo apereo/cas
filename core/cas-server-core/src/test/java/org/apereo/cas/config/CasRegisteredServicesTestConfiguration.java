@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.TestOneTimePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
@@ -46,10 +48,10 @@ public class CasRegisteredServicesTestConfiguration {
         final List l = new ArrayList();
 
         var svc = RegisteredServiceTestUtils.getRegisteredService("testencryption$");
-        final var policy = new ReturnAllowedAttributeReleasePolicy();
+        val policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAuthorizedToReleaseCredentialPassword(true);
         policy.setAuthorizedToReleaseProxyGrantingTicket(true);
-        final var publicKey = new RegisteredServicePublicKeyImpl();
+        val publicKey = new RegisteredServicePublicKeyImpl();
         publicKey.setLocation("classpath:keys/RSA1024Public.key");
         svc.setPublicKey(publicKey);
         svc.setAttributeReleasePolicy(policy);
@@ -79,7 +81,7 @@ public class CasRegisteredServicesTestConfiguration {
         svc.setEvaluationOrder(1);
         svc.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(".+"));
         svc.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:keys/RSA4096Public.key", "RSA"));
-        final var policy1 = new ReturnAllowedAttributeReleasePolicy();
+        val policy1 = new ReturnAllowedAttributeReleasePolicy();
         policy1.setAuthorizedToReleaseCredentialPassword(true);
         policy1.setAuthorizedToReleaseProxyGrantingTicket(true);
         svc.setAttributeReleasePolicy(policy1);
@@ -94,7 +96,7 @@ public class CasRegisteredServicesTestConfiguration {
         l.add(svc);
 
         svc = RegisteredServiceTestUtils.getRegisteredService("testencryption$");
-        final var policy2 = new ReturnAllowedAttributeReleasePolicy();
+        val policy2 = new ReturnAllowedAttributeReleasePolicy();
         policy2.setAuthorizedToReleaseCredentialPassword(true);
         policy2.setAuthorizedToReleaseProxyGrantingTicket(true);
         svc.setAttributeReleasePolicy(policy2);
@@ -176,7 +178,7 @@ public class CasRegisteredServicesTestConfiguration {
         svc = RegisteredServiceTestUtils.getRegisteredService("consentService");
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
-        final var attrPolicy = new ReturnAllAttributeReleasePolicy();
+        val attrPolicy = new ReturnAllAttributeReleasePolicy();
         attrPolicy.setConsentPolicy(new DefaultRegisteredServiceConsentPolicy());
         svc.setAttributeReleasePolicy(attrPolicy);
         svc.setEvaluationOrder(88);
@@ -185,7 +187,7 @@ public class CasRegisteredServicesTestConfiguration {
         svc = RegisteredServiceTestUtils.getRegisteredService("jwtservice");
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
-        final var prop = new DefaultRegisteredServiceProperty();
+        val prop = new DefaultRegisteredServiceProperty();
         prop.setValues(CollectionUtils.wrapSet(Boolean.TRUE.toString()));
         svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.getPropertyName(), prop);
         svc.setEvaluationOrder(2000);

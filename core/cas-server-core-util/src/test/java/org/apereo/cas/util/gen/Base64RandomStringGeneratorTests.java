@@ -1,5 +1,7 @@
 package org.apereo.cas.util.gen;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
@@ -26,8 +28,8 @@ public class Base64RandomStringGeneratorTests {
 
     @Test
     public void verifyRandomString() {
-        final var s1 = this.randomStringGenerator.getNewString();
-        final var s2 = this.randomStringGenerator.getNewString();
+        val s1 = this.randomStringGenerator.getNewString();
+        val s2 = this.randomStringGenerator.getNewString();
         assertNotSame(s1, s2);
     }
 }

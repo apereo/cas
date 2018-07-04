@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.swivel.SwivelAuthenticationHandler;
 import org.apereo.cas.adaptors.swivel.SwivelTokenCredential;
@@ -44,7 +46,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator swivelAuthenticationMetaDataPopulator() {
-        final var authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute,
                 swivelAuthenticationHandler(), swivelAuthenticationProvider());
     }
@@ -64,7 +66,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public SwivelAuthenticationHandler swivelAuthenticationHandler() {
-        final var swivel = this.casProperties.getAuthn().getMfa().getSwivel();
+        val swivel = this.casProperties.getAuthn().getMfa().getSwivel();
         return new SwivelAuthenticationHandler(swivel.getName(),
                 servicesManager, swivelPrincipalFactory(), swivel);
     }
@@ -72,8 +74,8 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider swivelAuthenticationProvider() {
-        final var swivel = this.casProperties.getAuthn().getMfa().getSwivel();
-        final var p = new SwivelMultifactorAuthenticationProvider(swivel.getSwivelUrl());
+        val swivel = this.casProperties.getAuthn().getMfa().getSwivel();
+        val p = new SwivelMultifactorAuthenticationProvider(swivel.getSwivelUrl());
         p.setBypassEvaluator(swivelBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(swivel.getRank());

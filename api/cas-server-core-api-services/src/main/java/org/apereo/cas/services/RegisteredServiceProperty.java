@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.base.Predicates;
@@ -116,7 +118,7 @@ public interface RegisteredServiceProperty extends Serializable {
          */
         public RegisteredServiceProperty getPropertyValue(final RegisteredService service) {
             if (isAssignedTo(service)) {
-                final var property = service.getProperties().entrySet()
+                val property = service.getProperties().entrySet()
                     .stream().filter(entry -> entry.getKey().equalsIgnoreCase(getPropertyName())
                         && StringUtils.isNotBlank(entry.getValue().getValue()))
                     .distinct().findFirst();
@@ -137,7 +139,7 @@ public interface RegisteredServiceProperty extends Serializable {
          */
         public <T> T getPropertyValue(final RegisteredService service, final Class<T> clazz) {
             if (isAssignedTo(service)) {
-                final var prop = getPropertyValue(service);
+                val prop = getPropertyValue(service);
                 if (prop != null) {
                     return clazz.cast(prop.getValue());
                 }

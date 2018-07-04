@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.ecp;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.tuple.Pair;
@@ -81,8 +83,8 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
         produces = {MediaType.TEXT_XML_VALUE, SamlIdPConstants.ECP_SOAP_PAOS_CONTENT_TYPE})
     public void handleEcpRequest(final HttpServletResponse response,
                                  final HttpServletRequest request) {
-        final var soapContext = decodeSoapRequest(request);
-        final var credential = extractBasicAuthenticationCredential(request, response);
+        val soapContext = decodeSoapRequest(request);
+        val credential = extractBasicAuthenticationCredential(request, response);
 
         if (credential == null) {
             LOGGER.error("Credentials could not be extracted from the SAML ECP request");
@@ -109,31 +111,31 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                     final String binding) {
         LOGGER.debug("Handling ECP request for SOAP context [{}]", soapContext);
 
-        final var envelope = soapContext.getSubcontext(SOAP11Context.class).getEnvelope();
+        val envelope = soapContext.getSubcontext(SOAP11Context.class).getEnvelope();
         SamlUtils.logSamlObject(configBean, envelope);
 
-        final var authnRequest = (AuthnRequest) soapContext.getMessage();
-        final var authenticationContext = Pair.of(authnRequest, soapContext);
+        val authnRequest = (AuthnRequest) soapContext.getMessage();
+        val authenticationContext = Pair.of(authnRequest, soapContext);
         try {
             LOGGER.debug("Verifying ECP authentication request [{}]", authnRequest);
-            final var serviceRequest =
+            val serviceRequest =
                 verifySamlAuthenticationRequest(authenticationContext, request);
 
             LOGGER.debug("Attempting to authenticate ECP request for credential id [{}]", credential.getId());
-            final var authentication = authenticateEcpRequest(credential, authenticationContext);
+            val authentication = authenticateEcpRequest(credential, authenticationContext);
             LOGGER.debug("Authenticated [{}] successfully with authenticated principal [{}]",
                 credential.getId(), authentication.getPrincipal());
 
             LOGGER.debug("Building ECP SAML response for [{}]", credential.getId());
-            final var issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
+            val issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
             final Service service = webApplicationServiceFactory.createService(issuer);
-            final var casAssertion = buildCasAssertion(authentication, service, serviceRequest.getKey(), new LinkedHashMap<>());
+            val casAssertion = buildCasAssertion(authentication, service, serviceRequest.getKey(), new LinkedHashMap<>());
 
             LOGGER.debug("CAS assertion to use for building ECP SAML response is [{}]", casAssertion);
             buildSamlResponse(response, request, authenticationContext, casAssertion, binding);
         } catch (final AuthenticationException e) {
             LOGGER.error(e.getMessage(), e);
-            final var error = e.getHandlerErrors().values()
+            val error = e.getHandlerErrors().values()
                 .stream()
                 .map(Throwable::getMessage)
                 .filter(Objects::nonNull)
@@ -170,12 +172,12 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      */
     protected Authentication authenticateEcpRequest(final Credential credential,
                                                     final Pair<AuthnRequest, MessageContext> authnRequest) {
-        final var issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest.getKey());
+        val issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest.getKey());
         LOGGER.debug("Located issuer [{}] from request prior to authenticating [{}]", issuer, credential.getId());
 
         final Service service = webApplicationServiceFactory.createService(issuer);
         LOGGER.debug("Executing authentication request for service [{}] on behalf of credential id [{}]", service, credential.getId());
-        final var authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+        val authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
         return authenticationResult.getAuthentication();
     }
 
@@ -183,9 +185,9 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
     private Credential extractBasicAuthenticationCredential(final HttpServletRequest request,
                                                             final HttpServletResponse response) {
         try {
-            final var extractor = new BasicAuthExtractor();
+            val extractor = new BasicAuthExtractor();
             final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
-            final var credentials = extractor.extract(webContext);
+            val credentials = extractor.extract(webContext);
             if (credentials != null) {
                 LOGGER.debug("Received basic authentication ECP request from credentials [{}]", credentials);
                 return new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());

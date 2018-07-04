@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -41,8 +43,8 @@ public class LdapMonitorConfiguration {
     @Bean
     public HealthIndicator pooledLdapConnectionFactoryHealthIndicator(@Qualifier("pooledConnectionFactoryMonitorExecutorService")
                                                                           final ExecutorService executor) {
-        final var ldap = casProperties.getMonitor().getLdap();
-        final var connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+        val ldap = casProperties.getMonitor().getLdap();
+        val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new PooledLdapConnectionFactoryHealthIndicator(Beans.newDuration(ldap.getMaxWait()).toMillis(),
             connectionFactory, executor, new SearchValidator());
     }

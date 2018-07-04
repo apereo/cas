@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.filters.CsrfPreventionFilter;
 import org.apache.catalina.filters.RemoteAddrFilter;
@@ -35,7 +37,7 @@ public class CasEmbeddedContainerTomcatFiltersConfiguration {
     @RefreshScope
     @Bean
     public FilterRegistrationBean tomcatCsrfPreventionFilter() {
-        final var bean = new FilterRegistrationBean();
+        val bean = new FilterRegistrationBean();
         bean.setFilter(new CsrfPreventionFilter());
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setName("tomcatCsrfPreventionFilter");
@@ -46,9 +48,9 @@ public class CasEmbeddedContainerTomcatFiltersConfiguration {
     @RefreshScope
     @Bean
     public FilterRegistrationBean tomcatRemoteAddressFilter() {
-        final var bean = new FilterRegistrationBean();
-        final var addr = casProperties.getServer().getTomcat().getRemoteAddr();
-        final var filter = new RemoteAddrFilter();
+        val bean = new FilterRegistrationBean();
+        val addr = casProperties.getServer().getTomcat().getRemoteAddr();
+        val filter = new RemoteAddrFilter();
         filter.setAllow(addr.getAllowedClientIpAddressRegex());
         filter.setDeny(addr.getDeniedClientIpAddressRegex());
         filter.setDenyStatus(HttpStatus.UNAUTHORIZED.value());

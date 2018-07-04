@@ -1,5 +1,7 @@
 package org.apereo.cas.otp.repository.credentials;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +47,7 @@ public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTi
             }
 
             final Collection<OneTimeTokenAccount> c = this.serializer.from(this.location.getFile());
-            final var account = c.stream()
+            val account = c.stream()
                 .filter(a -> StringUtils.isNotBlank(a.getUsername()) && a.getUsername().equals(username))
                 .findAny()
                 .orElse(null);
@@ -63,7 +65,7 @@ public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTi
                      final int validationCode, final List<Integer> scratchCodes) {
         try {
             LOGGER.debug("Storing google authenticator account for [{}]", userName);
-            final var account = new OneTimeTokenAccount(userName, secretKey, validationCode, scratchCodes);
+            val account = new OneTimeTokenAccount(userName, secretKey, validationCode, scratchCodes);
             update(account);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -73,10 +75,10 @@ public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTi
     @Override
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         try {
-            final var accounts = readAccountsFromJsonRepository();
+            val accounts = readAccountsFromJsonRepository();
 
             LOGGER.debug("Found [{}] account(s) and added google authenticator account for [{}]", accounts.size(), account.getUsername());
-            final var encoded = encode(account);
+            val encoded = encode(account);
             accounts.add(encoded);
 
             writeAccountsToJsonRepository(accounts);
@@ -100,7 +102,7 @@ public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTi
 
     private TreeSet<OneTimeTokenAccount> readAccountsFromJsonRepository() throws IOException {
         LOGGER.debug("Ensuring JSON repository file exists at [{}]", this.location.getFile());
-        final var result = this.location.getFile().createNewFile();
+        val result = this.location.getFile().createNewFile();
         if (result) {
             LOGGER.debug("Created JSON repository file at [{}]", this.location.getFile());
         }

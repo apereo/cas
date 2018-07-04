@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -55,8 +57,8 @@ public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final var service = resolveRegisteredServiceInRequestContext(context);
-        final var authentication = WebUtils.getAuthentication(context);
+        val service = resolveRegisteredServiceInRequestContext(context);
+        val authentication = WebUtils.getAuthentication(context);
 
         if (authentication == null) {
             LOGGER.debug("No authentication is available to determine event for principal");
@@ -68,16 +70,16 @@ public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver
             return null;
         }
 
-        final var providerMap =
+        val providerMap =
                 MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             return null;
         }
 
-        final var providers = flattenProviders(providerMap.values());
+        val providers = flattenProviders(providerMap.values());
         if (providers.size() == 1 && StringUtils.isNotBlank(globalAuthenticationAttributeValueRegex)) {
-            final var provider = providers.iterator().next();
+            val provider = providers.iterator().next();
             LOGGER.debug("Found a single multifactor provider [{}] in the application context", provider);
             return resolveEventViaAuthenticationAttribute(authentication, attributeNames, service, context, providers,
                 input -> input != null && input.matches(globalAuthenticationAttributeValueRegex));

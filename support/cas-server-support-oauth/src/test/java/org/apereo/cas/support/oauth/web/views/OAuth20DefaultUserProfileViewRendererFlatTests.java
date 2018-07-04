@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.views;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
@@ -35,8 +37,8 @@ public class OAuth20DefaultUserProfileViewRendererFlatTests extends AbstractOAut
                 OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES, 
                 CollectionUtils.wrap("email", "cas@example.org", "name", "Test"),
                 "something", CollectionUtils.wrapList("something"));
-        final var json = oauthUserProfileViewRenderer.render(map, mock(AccessToken.class));
-        final var value = JsonValue.readJSON(json).asObject();
+        val json = oauthUserProfileViewRenderer.render(map, mock(AccessToken.class));
+        val value = JsonValue.readJSON(json).asObject();
         assertNotNull(value.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID));
         assertNotNull(value.get("email"));
         assertNotNull(value.get("name"));

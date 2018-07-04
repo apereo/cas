@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -107,7 +109,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             return null;
         }
         LOGGER.debug("Creating principal for [{}]", principalId);
-        final var attributes = retrievePersonAttributes(principalId, credential);
+        val attributes = retrievePersonAttributes(principalId, credential);
         if (attributes == null || attributes.isEmpty()) {
             LOGGER.debug("Principal id [{}] did not specify any attributes", principalId);
             if (!this.returnNullIfNoAttributes) {
@@ -118,7 +120,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             return null;
         }
         LOGGER.debug("Retrieved [{}] attribute(s) from the repository", attributes.size());
-        final var pair = convertPersonAttributesToPrincipal(principalId, attributes);
+        val pair = convertPersonAttributesToPrincipal(principalId, attributes);
         return this.principalFactory.createPrincipal(pair.getKey(), pair.getValue());
     }
 
@@ -134,9 +136,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         final String[] principalId = {extractedPrincipalId};
         final Map<String, Object> convertedAttributes = new HashMap<>();
         attributes.entrySet().forEach(entry -> {
-            final var key = entry.getKey();
+            val key = entry.getKey();
             LOGGER.debug("Found attribute [{}]", key);
-            final var values = entry.getValue();
+            val values = entry.getValue();
             if (StringUtils.isNotBlank(this.principalAttributeName) && key.equalsIgnoreCase(this.principalAttributeName)) {
                 if (values.isEmpty()) {
                     LOGGER.debug("[{}] is empty, using [{}] for principal", this.principalAttributeName, extractedPrincipalId);
@@ -160,7 +162,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * @return the map
      */
     protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
-        final var personAttributes = this.attributeRepository.getPerson(principalId);
+        val personAttributes = this.attributeRepository.getPerson(principalId);
         final Map<String, List<Object>> attributes;
         if (personAttributes == null) {
             attributes = null;

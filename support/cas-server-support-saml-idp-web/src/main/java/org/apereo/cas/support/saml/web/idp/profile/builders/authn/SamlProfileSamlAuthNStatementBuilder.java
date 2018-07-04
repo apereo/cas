@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -72,16 +74,16 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
                                                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                final SamlRegisteredService service, final String binding,
                                                final MessageContext messageContext) throws SamlException {
-        final var assertion = Assertion.class.cast(casAssertion);
-        final var authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
-        final var id = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
-        final var statement = newAuthnStatement(authenticationMethod, DateTimeUtils.zonedDateTimeOf(assertion.getAuthenticationDate()), id);
+        val assertion = Assertion.class.cast(casAssertion);
+        val authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
+        val id = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
+        val statement = newAuthnStatement(authenticationMethod, DateTimeUtils.zonedDateTimeOf(assertion.getAuthenticationDate()), id);
         if (assertion.getValidUntilDate() != null) {
-            final var dt = DateTimeUtils.zonedDateTimeOf(assertion.getValidUntilDate());
+            val dt = DateTimeUtils.zonedDateTimeOf(assertion.getValidUntilDate());
             statement.setSessionNotOnOrAfter(
                 DateTimeUtils.dateTimeOf(dt.plusSeconds(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance())));
         }
-        final var subjectLocality = buildSubjectLocality(assertion, authnRequest, adaptor, binding);
+        val subjectLocality = buildSubjectLocality(assertion, authnRequest, adaptor, binding);
         statement.setSubjectLocality(subjectLocality);
         return statement;
     }
@@ -99,9 +101,9 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     protected SubjectLocality buildSubjectLocality(final Object assertion, final RequestAbstractType authnRequest,
                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                    final String binding) throws SamlException {
-        final var subjectLocality = newSamlObject(SubjectLocality.class);
-        final var hostAddress = InetAddressUtils.getCasServerHostAddress(casProperties.getServer().getName());
-        final var issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
+        val subjectLocality = newSamlObject(SubjectLocality.class);
+        val hostAddress = InetAddressUtils.getCasServerHostAddress(casProperties.getServer().getName());
+        val issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
         LOGGER.debug("Built subject locality address [{}] for the saml authentication statement prepped for [{}]", hostAddress, issuer);
         subjectLocality.setAddress(hostAddress);
         return subjectLocality;

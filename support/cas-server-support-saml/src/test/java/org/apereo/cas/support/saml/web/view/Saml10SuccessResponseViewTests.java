@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.view;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CipherExecutor;
@@ -56,7 +58,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
     public void initialize() {
         final List<RegisteredService> list = new ArrayList<>();
         list.add(RegisteredServiceTestUtils.getRegisteredService("https://.+"));
-        final var dao = new InMemoryServiceRegistry();
+        val dao = new InMemoryServiceRegistry();
         dao.setRegisteredServices(list);
 
         final ServicesManager mgmr = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class));
@@ -80,7 +82,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         attributes.put(TEST_ATTRIBUTE, TEST_VALUE);
         attributes.put("testEmptyCollection", new ArrayList<>(0));
         attributes.put("testAttributeCollection", Arrays.asList("tac1", "tac2"));
-        final var principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID, attributes);
+        val principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID, attributes);
 
         final Map<String, Object> authAttributes = new HashMap<>();
         authAttributes.put(
@@ -88,15 +90,15 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
             SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
         authAttributes.put("testSamlAttribute", "value");
 
-        final var primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
-        final var assertion = new DefaultAssertionBuilder(primary).with(Collections.singletonList(primary)).with(
+        val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
+        val assertion = new DefaultAssertionBuilder(primary).with(Collections.singletonList(primary)).with(
             CoreAuthenticationTestUtils.getService()).with(true).build();
         model.put("assertion", assertion);
 
-        final var servletResponse = new MockHttpServletResponse();
+        val servletResponse = new MockHttpServletResponse();
 
         this.response.renderMergedOutputModel(model, new MockHttpServletRequest(), servletResponse);
-        final var written = servletResponse.getContentAsString();
+        val written = servletResponse.getContentAsString();
 
         assertTrue(written.contains(PRINCIPAL_ID));
         assertTrue(written.contains(TEST_ATTRIBUTE));
@@ -117,7 +119,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
     public void verifyResponseWithNoAttributes() throws Exception {
         final Map<String, Object> model = new HashMap<>();
 
-        final var principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID);
+        val principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID);
 
         final Map<String, Object> authAttributes = new HashMap<>();
         authAttributes.put(
@@ -125,8 +127,8 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
             SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
         authAttributes.put("testSamlAttribute", "value");
 
-        final var primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
-        final var assertion = new DefaultAssertionBuilder(primary)
+        val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
+        val assertion = new DefaultAssertionBuilder(primary)
             .with(Collections.singletonList(primary))
             .with(CoreAuthenticationTestUtils.getService())
             .with(true)
@@ -134,10 +136,10 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         model.put("assertion", assertion);
 
-        final var servletResponse = new MockHttpServletResponse();
+        val servletResponse = new MockHttpServletResponse();
 
         this.response.renderMergedOutputModel(model, new MockHttpServletRequest(), servletResponse);
-        final var written = servletResponse.getContentAsString();
+        val written = servletResponse.getContentAsString();
 
         assertTrue(written.contains(PRINCIPAL_ID));
         assertTrue(written.contains(SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT));
@@ -150,26 +152,26 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(TEST_ATTRIBUTE, TEST_VALUE);
-        final var principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID, attributes);
+        val principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID, attributes);
 
         final Map<String, Object> authnAttributes = new HashMap<>();
         authnAttributes.put("authnAttribute1", "authnAttrbuteV1");
         authnAttributes.put("authnAttribute2", "authnAttrbuteV2");
         authnAttributes.put(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);
 
-        final var primary = CoreAuthenticationTestUtils.getAuthentication(principal, authnAttributes);
+        val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authnAttributes);
 
-        final var assertion = new DefaultAssertionBuilder(primary)
+        val assertion = new DefaultAssertionBuilder(primary)
             .with(Collections.singletonList(primary))
             .with(CoreAuthenticationTestUtils.getService())
             .with(true)
             .build();
         model.put("assertion", assertion);
 
-        final var servletResponse = new MockHttpServletResponse();
+        val servletResponse = new MockHttpServletResponse();
 
         this.response.renderMergedOutputModel(model, new MockHttpServletRequest(), servletResponse);
-        final var written = servletResponse.getContentAsString();
+        val written = servletResponse.getContentAsString();
 
         assertTrue(written.contains(PRINCIPAL_ID));
         assertTrue(written.contains(TEST_ATTRIBUTE));

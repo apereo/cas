@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.support;
 
+import lombok.val;
+
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -83,13 +85,13 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         Security.addProvider(new BouncyCastleProvider());
         this.jasyptInstance = new StandardPBEStringEncryptor();
 
-        final var alg = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ALGORITHM);
+        val alg = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ALGORITHM);
         setAlgorithm(alg);
-        final var psw = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PASSWORD);
+        val psw = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PASSWORD);
         setPassword(psw);
-        final var pName = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PROVIDER);
+        val pName = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PROVIDER);
         setProviderName(pName);
-        final var iter = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ITERATIONS);
+        val iter = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ITERATIONS);
         setKeyObtentionIterations(iter);
     }
 
@@ -207,9 +209,9 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         if (StringUtils.isNotBlank(value) && value.startsWith(ENCRYPTED_VALUE_PREFIX)) {
             initializeJasyptInstanceIfNecessary();
 
-            final var encValue = value.substring(ENCRYPTED_VALUE_PREFIX.length());
+            val encValue = value.substring(ENCRYPTED_VALUE_PREFIX.length());
             LOGGER.trace("Decrypting value [{}]...", encValue);
-            final var result = this.jasyptInstance.decrypt(encValue);
+            val result = this.jasyptInstance.decrypt(encValue);
 
             if (StringUtils.isNotBlank(result)) {
                 LOGGER.debug("Decrypted value [{}] successfully.", encValue);

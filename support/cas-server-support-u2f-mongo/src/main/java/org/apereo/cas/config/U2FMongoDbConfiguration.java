@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.u2f.storage.U2FMongoDbDeviceRepository;
@@ -35,11 +37,11 @@ public class U2FMongoDbConfiguration {
     
     @Bean
     public U2FDeviceRepository u2fDeviceRepository() {
-        final var u2f = casProperties.getAuthn().getMfa().getU2f();
+        val u2f = casProperties.getAuthn().getMfa().getU2f();
         
-        final var factory = new MongoDbConnectionFactory();
-        final var mongoProps = u2f.getMongo();
-        final var mongoTemplate = factory.buildMongoTemplate(mongoProps);
+        val factory = new MongoDbConnectionFactory();
+        val mongoProps = u2f.getMongo();
+        val mongoTemplate = factory.buildMongoTemplate(mongoProps);
 
         factory.createCollection(mongoTemplate, mongoProps.getCollection(), mongoProps.isDropCollection());
         
@@ -47,7 +49,7 @@ public class U2FMongoDbConfiguration {
                 Caffeine.newBuilder()
                         .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
                         .build(key -> StringUtils.EMPTY);
-        final var repo = new U2FMongoDbDeviceRepository(requestStorage, mongoTemplate, u2f.getExpireRegistrations(),
+        val repo = new U2FMongoDbDeviceRepository(requestStorage, mongoTemplate, u2f.getExpireRegistrations(),
                 u2f.getExpireDevicesTimeUnit(), mongoProps.getCollection());
         repo.setCipherExecutor(this.u2fRegistrationRecordCipherExecutor);
         return repo;

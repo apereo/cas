@@ -1,5 +1,7 @@
 package org.apereo.cas.web;
 
+import lombok.val;
+
 import lombok.NoArgsConstructor;
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -56,8 +58,8 @@ public class CasWebApplication {
      * @param args the args
      */
     public static void main(final String[] args) {
-        final var properties = CasEmbeddedContainerUtils.getRuntimeProperties(Boolean.TRUE);
-        final var banner = CasEmbeddedContainerUtils.getCasBannerInstance();
+        val properties = CasEmbeddedContainerUtils.getRuntimeProperties(Boolean.TRUE);
+        val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
         new SpringApplicationBuilder(CasWebApplication.class)
             .banner(banner)
             .web(WebApplicationType.SERVLET)

@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.policy;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import lombok.Setter;
@@ -27,7 +28,7 @@ public class AnyAuthenticationPolicy implements AuthenticationPolicy {
     @Override
     public boolean isSatisfiedBy(final Authentication authn) throws Exception {
         if (this.tryAll) {
-            final var sum = authn.getSuccesses().size() + authn.getFailures().size();
+            val sum = authn.getSuccesses().size() + authn.getFailures().size();
             if (authn.getCredentials().size() != sum) {
                 LOGGER.warn("Number of provided credentials [{}] does not match the sum of authentication successes and failures [{}]", authn.getCredentials().size(), sum);
                 return false;

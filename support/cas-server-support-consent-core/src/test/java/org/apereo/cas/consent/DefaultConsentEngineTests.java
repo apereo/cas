@@ -1,5 +1,7 @@
 package org.apereo.cas.consent;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -49,16 +51,16 @@ public class DefaultConsentEngineTests {
 
     @Test
     public void verifyConsentIsAlwaysRequired() {
-        final var authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
-        final var service = CoreAuthenticationTestUtils.getService();
-        final var consentService = CoreAuthenticationTestUtils.getRegisteredService("consentService");
-        final var policy = new ReturnAllAttributeReleasePolicy();
+        val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
+        val service = CoreAuthenticationTestUtils.getService();
+        val consentService = CoreAuthenticationTestUtils.getRegisteredService("consentService");
+        val policy = new ReturnAllAttributeReleasePolicy();
         policy.setConsentPolicy(new DefaultRegisteredServiceConsentPolicy());
         when(consentService.getAttributeReleasePolicy()).thenReturn(policy);
-        final var decision = this.consentEngine.storeConsentDecision(service, consentService,
+        val decision = this.consentEngine.storeConsentDecision(service, consentService,
             authentication, 14, ChronoUnit.DAYS, ConsentReminderOptions.ALWAYS);
         assertNotNull(decision);
-        final var result = this.consentEngine.isConsentRequiredFor(service, consentService, authentication);
+        val result = this.consentEngine.isConsentRequiredFor(service, consentService, authentication);
         assertNotNull(result);
         assertTrue(result.getKey());
         assertEquals(decision, result.getRight());
@@ -66,32 +68,32 @@ public class DefaultConsentEngineTests {
 
     @Test
     public void verifyConsentIsRequiredByAttributeName() {
-        final var authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
-        final var service = CoreAuthenticationTestUtils.getService();
-        final var consentService = CoreAuthenticationTestUtils.getRegisteredService("consentService");
-        final var policy = new ReturnAllAttributeReleasePolicy();
+        val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
+        val service = CoreAuthenticationTestUtils.getService();
+        val consentService = CoreAuthenticationTestUtils.getRegisteredService("consentService");
+        val policy = new ReturnAllAttributeReleasePolicy();
         policy.setConsentPolicy(new DefaultRegisteredServiceConsentPolicy());
         when(consentService.getAttributeReleasePolicy()).thenReturn(policy);
-        final var decision = this.consentEngine.storeConsentDecision(service, consentService,
+        val decision = this.consentEngine.storeConsentDecision(service, consentService,
             authentication, 14, ChronoUnit.DAYS, ConsentReminderOptions.ATTRIBUTE_NAME);
         assertNotNull(decision);
-        final var result = this.consentEngine.isConsentRequiredFor(service, consentService, authentication);
+        val result = this.consentEngine.isConsentRequiredFor(service, consentService, authentication);
         assertNotNull(result);
         assertFalse(result.getKey());
     }
 
     @Test
     public void verifyConsentFound() {
-        final var authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
-        final var service = CoreAuthenticationTestUtils.getService();
-        final var consentService = CoreAuthenticationTestUtils.getRegisteredService("consentService");
-        final var policy = new ReturnAllAttributeReleasePolicy();
+        val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
+        val service = CoreAuthenticationTestUtils.getService();
+        val consentService = CoreAuthenticationTestUtils.getRegisteredService("consentService");
+        val policy = new ReturnAllAttributeReleasePolicy();
         policy.setConsentPolicy(new DefaultRegisteredServiceConsentPolicy());
         when(consentService.getAttributeReleasePolicy()).thenReturn(policy);
-        final var decision = this.consentEngine.storeConsentDecision(service, consentService,
+        val decision = this.consentEngine.storeConsentDecision(service, consentService,
             authentication, 14, ChronoUnit.DAYS, ConsentReminderOptions.ATTRIBUTE_NAME);
         assertNotNull(decision);
-        final var decision2 = this.consentEngine.findConsentDecision(service, consentService, authentication);
+        val decision2 = this.consentEngine.findConsentDecision(service, consentService, authentication);
         assertEquals(decision, decision2);
     }
 }

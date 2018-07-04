@@ -1,5 +1,7 @@
 package org.apereo.cas.tokens;
 
+import lombok.val;
+
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -20,45 +22,45 @@ import static org.junit.Assert.*;
 public class JWTTicketGrantingTicketResourceEntityResponseFactoryTests extends BaseTicketResourceEntityResponseFactoryTests {
     @Test
     public void verifyTicketGrantingTicketAsDefault() throws Exception {
-        final var result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport);
-        final var tgt = centralAuthenticationService.createTicketGrantingTicket(result);
+        val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport);
+        val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
 
-        final var response = ticketGrantingTicketResourceEntityResponseFactory.build(tgt, new MockHttpServletRequest());
+        val response = ticketGrantingTicketResourceEntityResponseFactory.build(tgt, new MockHttpServletRequest());
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     @Test
     public void verifyTicketGrantingTicketAsJwt() throws Exception {
-        final var result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
+        val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
-        final var tgt = centralAuthenticationService.createTicketGrantingTicket(result);
+        val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
 
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addParameter(TokenConstants.PARAMETER_NAME_TOKEN, Boolean.TRUE.toString());
-        final var response = ticketGrantingTicketResourceEntityResponseFactory.build(tgt, request);
+        val response = ticketGrantingTicketResourceEntityResponseFactory.build(tgt, request);
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
-        final var jwt = this.tokenCipherExecutor.decode(response.getBody());
-        final var claims = JWTClaimsSet.parse(jwt.toString());
+        val jwt = this.tokenCipherExecutor.decode(response.getBody());
+        val claims = JWTClaimsSet.parse(jwt.toString());
         assertEquals(claims.getSubject(), tgt.getAuthentication().getPrincipal().getId());
     }
 
     @Test
     public void verifyTicketGrantingTicketAsJwtWithHeader() throws Exception {
-        final var result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
+        val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
-        final var tgt = centralAuthenticationService.createTicketGrantingTicket(result);
+        val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
 
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addHeader(TokenConstants.PARAMETER_NAME_TOKEN, Boolean.TRUE.toString());
-        final var response = ticketGrantingTicketResourceEntityResponseFactory.build(tgt, request);
+        val response = ticketGrantingTicketResourceEntityResponseFactory.build(tgt, request);
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
-        final var jwt = this.tokenCipherExecutor.decode(response.getBody());
-        final var claims = JWTClaimsSet.parse(jwt.toString());
+        val jwt = this.tokenCipherExecutor.decode(response.getBody());
+        val claims = JWTClaimsSet.parse(jwt.toString());
         assertEquals(claims.getSubject(), tgt.getAuthentication().getPrincipal().getId());
     }
 

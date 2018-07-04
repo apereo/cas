@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -43,7 +45,7 @@ public class CasJdbcMonitorConfiguration {
     @Bean
     @RefreshScope
     public HealthIndicator dataSourceHealthIndicator(@Qualifier("pooledJdbcMonitorExecutorService") final ExecutorService executor) {
-        final var jdbc = casProperties.getMonitor().getJdbc();
+        val jdbc = casProperties.getMonitor().getJdbc();
         return new JdbcDataSourceHealthIndicator(Beans.newDuration(jdbc.getMaxWait()).toMillis(),
             monitorDataSource(), executor, jdbc.getValidationQuery());
     }

@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.MongoDbPropertySource;
@@ -30,7 +32,7 @@ public class MongoDbCloudConfigBootstrapConfiguration {
     @Bean
     @SneakyThrows
     public MongoDbPropertySourceLocator mongoDbPropertySourceLocator() {
-        final var mongoTemplate = mongoDbCloudConfigurationTemplate();
+        val mongoTemplate = mongoDbCloudConfigurationTemplate();
         if (!mongoTemplate.collectionExists(MongoDbPropertySource.class.getSimpleName())) {
             mongoTemplate.createCollection(MongoDbPropertySource.class.getSimpleName());
         }
@@ -39,8 +41,8 @@ public class MongoDbCloudConfigBootstrapConfiguration {
 
     @Bean
     public MongoTemplate mongoDbCloudConfigurationTemplate() {
-        final var factory = new MongoDbConnectionFactory();
-        final var uri = environment.getProperty("cas.spring.cloud.mongo.uri");
+        val factory = new MongoDbConnectionFactory();
+        val uri = environment.getProperty("cas.spring.cloud.mongo.uri");
         return factory.buildMongoTemplate(uri);
     }
 }

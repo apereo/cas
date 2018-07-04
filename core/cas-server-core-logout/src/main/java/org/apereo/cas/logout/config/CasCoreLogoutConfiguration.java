@@ -1,5 +1,7 @@
 package org.apereo.cas.logout.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -100,9 +102,9 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
     @Autowired
     @Bean
     public LogoutExecutionPlan logoutExecutionPlan(final List<LogoutExecutionPlanConfigurer> configurers) {
-        final var plan = new DefaultLogoutExecutionPlan();
+        val plan = new DefaultLogoutExecutionPlan();
         configurers.forEach(c -> {
-            final var name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            val name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Configuring logout execution plan [{}]", name);
             c.configureLogoutExecutionPlan(plan);
         });

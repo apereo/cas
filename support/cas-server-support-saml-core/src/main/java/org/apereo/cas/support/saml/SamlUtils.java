@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml;
 
+import lombok.val;
+
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.idp.profile.spring.factory.BasicResourceCredentialFactoryBean;
@@ -83,10 +85,10 @@ public class SamlUtils {
     public static <T extends XMLObject> T transformSamlObject(final OpenSamlConfigBean configBean, final String xml,
                                                               final Class<T> clazz) {
         try (InputStream in = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))) {
-            final var document = configBean.getParserPool().parse(in);
-            final var root = document.getDocumentElement();
+            val document = configBean.getParserPool().parse(in);
+            val root = document.getDocumentElement();
 
-            final var marshaller = configBean.getUnmarshallerFactory().getUnmarshaller(root);
+            val marshaller = configBean.getUnmarshallerFactory().getUnmarshaller(root);
             if (marshaller != null) {
                 final Object result = marshaller.unmarshall(root);
                 if (!clazz.isAssignableFrom(result.getClass())) {
@@ -113,16 +115,16 @@ public class SamlUtils {
      */
     public static StringWriter transformSamlObject(final OpenSamlConfigBean configBean, final XMLObject samlObject,
                                                    final boolean indent) throws SamlException {
-        final var writer = new StringWriter();
+        val writer = new StringWriter();
         try {
-            final var marshaller = configBean.getMarshallerFactory().getMarshaller(samlObject.getElementQName());
+            val marshaller = configBean.getMarshallerFactory().getMarshaller(samlObject.getElementQName());
             if (marshaller != null) {
-                final var element = marshaller.marshall(samlObject);
-                final var domSource = new DOMSource(element);
+                val element = marshaller.marshall(samlObject);
+                val domSource = new DOMSource(element);
 
-                final var result = new StreamResult(writer);
-                final var tf = TransformerFactory.newInstance();
-                final var transformer = tf.newTransformer();
+                val result = new StreamResult(writer);
+                val tf = TransformerFactory.newInstance();
+                val transformer = tf.newTransformer();
 
                 if (indent) {
                     transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -144,7 +146,7 @@ public class SamlUtils {
      * @throws Exception the exception
      */
     public static SignatureValidationFilter buildSignatureValidationFilter(final String signatureResourceLocation) throws Exception {
-        final var resource = ResourceUtils.getResourceFrom(signatureResourceLocation);
+        val resource = ResourceUtils.getResourceFrom(signatureResourceLocation);
         return buildSignatureValidationFilter(resource);
     }
 
@@ -158,7 +160,7 @@ public class SamlUtils {
     public static SignatureValidationFilter buildSignatureValidationFilter(final ResourceLoader resourceLoader,
                                                                            final String signatureResourceLocation) {
         try {
-            final var resource = resourceLoader.getResource(signatureResourceLocation);
+            val resource = resourceLoader.getResource(signatureResourceLocation);
             return buildSignatureValidationFilter(resource);
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
@@ -186,16 +188,16 @@ public class SamlUtils {
         keyInfoProviderList.add(new InlineX509DataProvider());
 
         LOGGER.debug("Attempting to resolve credentials from [{}]", signatureResourceLocation);
-        final var credential = buildCredentialForMetadataSignatureValidation(signatureResourceLocation);
+        val credential = buildCredentialForMetadataSignatureValidation(signatureResourceLocation);
         LOGGER.info("Successfully resolved credentials from [{}]", signatureResourceLocation);
 
         LOGGER.debug("Configuring credential resolver for key signature trust engine @ [{}]", credential.getCredentialType().getSimpleName());
-        final var resolver = new StaticCredentialResolver(credential);
-        final var keyInfoResolver = new BasicProviderKeyInfoCredentialResolver(keyInfoProviderList);
-        final var trustEngine = new ExplicitKeySignatureTrustEngine(resolver, keyInfoResolver);
+        val resolver = new StaticCredentialResolver(credential);
+        val keyInfoResolver = new BasicProviderKeyInfoCredentialResolver(keyInfoProviderList);
+        val trustEngine = new ExplicitKeySignatureTrustEngine(resolver, keyInfoResolver);
 
         LOGGER.debug("Adding signature validation filter based on the configured trust engine");
-        final var signatureValidationFilter = new SignatureValidationFilter(trustEngine);
+        val signatureValidationFilter = new SignatureValidationFilter(trustEngine);
         signatureValidationFilter.setRequireSignedRoot(false);
         LOGGER.debug("Added metadata SignatureValidationFilter with signature from [{}]", signatureResourceLocation);
         return signatureValidationFilter;
@@ -210,7 +212,7 @@ public class SamlUtils {
      */
     public static BasicCredential buildCredentialForMetadataSignatureValidation(final Resource resource) throws Exception {
         try {
-            final var x509FactoryBean = new BasicX509CredentialFactoryBean();
+            val x509FactoryBean = new BasicX509CredentialFactoryBean();
             x509FactoryBean.setCertificateResource(resource);
             x509FactoryBean.afterPropertiesSet();
             return x509FactoryBean.getObject();
@@ -219,7 +221,7 @@ public class SamlUtils {
 
             LOGGER.debug("Credential cannot be extracted from [{}] via X.509. Treating it as a public key to locate credential...",
                     resource);
-            final var credentialFactoryBean = new BasicResourceCredentialFactoryBean();
+            val credentialFactoryBean = new BasicResourceCredentialFactoryBean();
             credentialFactoryBean.setPublicKeyInfo(resource);
             credentialFactoryBean.afterPropertiesSet();
             return credentialFactoryBean.getObject();
@@ -235,7 +237,7 @@ public class SamlUtils {
      * @throws SamlException the saml exception
      */
     public static void logSamlObject(final OpenSamlConfigBean configBean, final XMLObject samlObject) throws SamlException {
-        final var repeat = StringUtils.repeat('*', SAML_OBJECT_LOG_ASTERIXLINE_LENGTH);
+        val repeat = StringUtils.repeat('*', SAML_OBJECT_LOG_ASTERIXLINE_LENGTH);
         LOGGER.debug(repeat);
         LOGGER.debug("Logging [{}]\n\n{}\n\n", samlObject.getClass().getName(), transformSamlObject(configBean, samlObject, true));
         LOGGER.debug(repeat);

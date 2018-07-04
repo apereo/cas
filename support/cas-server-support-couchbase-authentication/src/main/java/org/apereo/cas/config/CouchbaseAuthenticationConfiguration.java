@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
@@ -58,8 +60,8 @@ public class CouchbaseAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public CouchbaseClientFactory authenticationCouchbaseClientFactory() {
-        final var couchbase = casProperties.getAuthn().getCouchbase();
-        final var nodes = org.springframework.util.StringUtils.commaDelimitedListToSet(couchbase.getNodeSet());
+        val couchbase = casProperties.getAuthn().getCouchbase();
+        val nodes = org.springframework.util.StringUtils.commaDelimitedListToSet(couchbase.getNodeSet());
         return new CouchbaseClientFactory(nodes, couchbase.getBucket(), couchbase.getPassword());
     }
 
@@ -67,8 +69,8 @@ public class CouchbaseAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler couchbaseAuthenticationHandler() {
-        final var couchbase = casProperties.getAuthn().getCouchbase();
-        final var handler = new CouchbaseAuthenticationHandler(
+        val couchbase = casProperties.getAuthn().getCouchbase();
+        val handler = new CouchbaseAuthenticationHandler(
             servicesManager, couchbasePrincipalFactory(),
             authenticationCouchbaseClientFactory(),
             couchbase);
@@ -81,7 +83,7 @@ public class CouchbaseAuthenticationConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer couchbaseAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            final var couchbase = casProperties.getAuthn().getCouchbase();
+            val couchbase = casProperties.getAuthn().getCouchbase();
             if (StringUtils.isNotBlank(couchbase.getPasswordAttribute()) && StringUtils.isNotBlank(couchbase.getUsernameAttribute())) {
                 plan.registerAuthenticationHandlerWithPrincipalResolver(couchbaseAuthenticationHandler(), personDirectoryPrincipalResolver);
             } else {
@@ -93,8 +95,8 @@ public class CouchbaseAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "couchbasePersonAttributeDao")
     @Bean
     public IPersonAttributeDao couchbasePersonAttributeDao() {
-        final var couchbase = casProperties.getAuthn().getAttributeRepository().getCouchbase();
-        final var cb = new CouchbasePersonAttributeDao(couchbase, authenticationCouchbaseClientFactory());
+        val couchbase = casProperties.getAuthn().getAttributeRepository().getCouchbase();
+        val cb = new CouchbasePersonAttributeDao(couchbase, authenticationCouchbaseClientFactory());
         cb.setOrder(couchbase.getOrder());
         return cb;
     }
@@ -102,7 +104,7 @@ public class CouchbaseAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "couchbaseAttributeRepositoryPlanConfigurer")
     @Bean
     public PersonDirectoryAttributeRepositoryPlanConfigurer couchbaseAttributeRepositoryPlanConfigurer() {
-        final var couchbase = casProperties.getAuthn().getAttributeRepository().getCouchbase();
+        val couchbase = casProperties.getAuthn().getAttributeRepository().getCouchbase();
         return new PersonDirectoryAttributeRepositoryPlanConfigurer() {
             @Override
             public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {

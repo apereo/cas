@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -36,7 +38,7 @@ public class CasSamlSPInCommonConfiguration implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        final var service = SamlSPUtils.newSamlServiceProviderService(
+        val service = SamlSPUtils.newSamlServiceProviderService(
             casProperties.getSamlSp().getInCommon(),
             samlRegisteredServiceCachingMetadataResolver);
         if (service != null) {

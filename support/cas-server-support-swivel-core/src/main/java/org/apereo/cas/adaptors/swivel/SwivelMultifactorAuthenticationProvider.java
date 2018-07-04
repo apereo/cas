@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.swivel;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -48,7 +50,7 @@ public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactor
      */
     public boolean canPing() {
         try {
-            final var connection = (HttpURLConnection) new URL(this.swivelUrl).openConnection();
+            val connection = (HttpURLConnection) new URL(this.swivelUrl).openConnection();
             connection.setRequestMethod(HttpMethod.GET.name());
             connection.connect();
             return connection.getResponseCode() == HttpStatus.SC_OK;

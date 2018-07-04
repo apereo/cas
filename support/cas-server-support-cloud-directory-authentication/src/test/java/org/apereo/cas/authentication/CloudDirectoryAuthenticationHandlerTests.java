@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.clouddirectory.CloudDirectoryRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -33,9 +35,9 @@ public class CloudDirectoryAuthenticationHandlerTests {
 
     @Test
     public void verifyAction() throws Exception {
-        final var repository = mock(CloudDirectoryRepository.class);
+        val repository = mock(CloudDirectoryRepository.class);
         when(repository.getUser(anyString())).thenReturn(CollectionUtils.wrap("username", "casuser", "password", "Mellon"));
-        final var h = new CloudDirectoryAuthenticationHandler("", mock(ServicesManager.class),
+        val h = new CloudDirectoryAuthenticationHandler("", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), repository, casProperties.getAuthn().getCloudDirectory());
         assertNotNull(h.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon")));
     }

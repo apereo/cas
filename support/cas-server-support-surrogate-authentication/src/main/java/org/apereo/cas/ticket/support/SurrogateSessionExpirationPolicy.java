@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.support;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
@@ -43,7 +45,7 @@ public class SurrogateSessionExpirationPolicy extends BaseDelegatingExpirationPo
 
     @Override
     protected String getExpirationPolicyNameFor(final TicketState ticketState) {
-        final var attributes = ticketState.getAuthentication().getAttributes();
+        val attributes = ticketState.getAuthentication().getAttributes();
         if (attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL)
                 && attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER)) {
             LOGGER.debug("Ticket is associated with a surrogate authentication.");

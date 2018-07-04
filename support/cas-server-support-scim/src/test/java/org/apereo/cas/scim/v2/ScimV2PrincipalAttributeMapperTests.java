@@ -1,5 +1,7 @@
 package org.apereo.cas.scim.v2;
 
+import lombok.val;
+
 import com.unboundid.scim2.common.types.Meta;
 import com.unboundid.scim2.common.types.Name;
 import com.unboundid.scim2.common.types.UserResource;
@@ -18,21 +20,21 @@ import java.util.Calendar;
 public class ScimV2PrincipalAttributeMapperTests {
     @Test
     public void verifyAction() throws Exception {
-        final var user = new UserResource();
+        val user = new UserResource();
         user.setActive(true);
         user.setDisplayName("CASUser");
         user.setId("casuser");
-        final var name = new Name();
+        val name = new Name();
         name.setGivenName("casuser");
         user.setName(name);
-        final var meta = new Meta();
+        val meta = new Meta();
         meta.setResourceType("User");
         meta.setCreated(Calendar.getInstance());
         meta.setLocation(new URI("http://localhost:8218"));
         user.setMeta(meta);
 
         try {
-            final var mapper = new ScimV2PrincipalAttributeMapper();
+            val mapper = new ScimV2PrincipalAttributeMapper();
             mapper.map(user, CoreAuthenticationTestUtils.getPrincipal(),
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         } catch (final Exception e) {

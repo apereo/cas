@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.generic.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.generic.JsonResourceAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
@@ -53,8 +55,8 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler jsonResourceAuthenticationHandler() {
-        final var jsonProps = casProperties.getAuthn().getJson();
-        final var h =
+        val jsonProps = casProperties.getAuthn().getJson();
+        val h =
             new JsonResourceAuthenticationHandler(jsonProps.getName(), servicesManager, jsonPrincipalFactory(),
                 null, jsonProps.getLocation());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jsonProps.getPasswordEncoder()));
@@ -69,7 +71,7 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer jsonResourceAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            final var file = casProperties.getAuthn().getJson().getLocation();
+            val file = casProperties.getAuthn().getJson().getLocation();
             if (file != null) {
                 LOGGER.debug("Added JSON resource authentication handler for the target file [{}]", file.getDescription());
                 plan.registerAuthenticationHandlerWithPrincipalResolver(jsonResourceAuthenticationHandler(), personDirectoryPrincipalResolver);

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.api.PasswordlessTokenRepository;
@@ -28,25 +30,25 @@ public class DisplayBeforePasswordlessAuthenticationAction extends AbstractActio
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final var attributes = requestContext.getCurrentEvent().getAttributes();
+        val attributes = requestContext.getCurrentEvent().getAttributes();
         if (attributes.contains(CasWebflowConstants.TRANSITION_ID_ERROR)) {
-            final var e = attributes.get("error", Exception.class);
+            val e = attributes.get("error", Exception.class);
             requestContext.getFlowScope().put(CasWebflowConstants.TRANSITION_ID_ERROR, e);
-            final var user = WebUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
+            val user = WebUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
             WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
             return success();
         }
-        final var username = requestContext.getRequestParameters().get("username");
+        val username = requestContext.getRequestParameters().get("username");
         if (StringUtils.isBlank(username)) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
-        final var account = passwordlessUserAccountStore.findUser(username);
+        val account = passwordlessUserAccountStore.findUser(username);
         if (!account.isPresent()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
-        final var user = account.get();
+        val user = account.get();
         WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
-        final var token = passwordlessTokenRepository.createToken(user.getUsername());
+        val token = passwordlessTokenRepository.createToken(user.getUsername());
 
         communicationsManager.validate();
         if (communicationsManager.isMailSenderDefined() && StringUtils.isNotBlank(user.getEmail())) {

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -30,14 +32,14 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
 
     @Override
     public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
-        final var metadataLocation = service.getMetadataLocation();
+        val metadataLocation = service.getMetadataLocation();
         LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
         try (var in = ResourceUtils.getResourceFrom(metadataLocation).getInputStream()) {
             LOGGER.debug("Parsing metadata from [{}]", metadataLocation);
-            final var document = this.configBean.getParserPool().parse(in);
+            val document = this.configBean.getParserPool().parse(in);
 
-            final var metadataRoot = document.getDocumentElement();
-            final var metadataProvider = new DOMMetadataResolver(metadataRoot);
+            val metadataRoot = document.getDocumentElement();
+            val metadataProvider = new DOMMetadataResolver(metadataRoot);
             configureAndInitializeSingleMetadataResolver(metadataProvider, service);
             return CollectionUtils.wrap(metadataProvider);
         } catch (final Exception e) {
@@ -49,8 +51,8 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
     @Override
     public boolean supports(final SamlRegisteredService service) {
         try {
-            final var metadataLocation = service.getMetadataLocation();
-            final var metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
+            val metadataLocation = service.getMetadataLocation();
+            val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             return metadataResource instanceof ClassPathResource;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

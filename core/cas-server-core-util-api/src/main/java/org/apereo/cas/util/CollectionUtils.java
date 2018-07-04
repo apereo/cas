@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.val;
+
 import com.google.common.collect.Multimap;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -38,7 +40,7 @@ public class CollectionUtils {
      * @return the optional
      */
     public static Optional<Object> firstElement(final Object obj) {
-        final var object = CollectionUtils.toCollection(obj);
+        val object = CollectionUtils.toCollection(obj);
         if (object.isEmpty()) {
             return Optional.empty();
         }
@@ -55,8 +57,8 @@ public class CollectionUtils {
      */
     @SneakyThrows
     public static <T extends Collection> T toCollection(final Object obj, final Class<T> clazz) {
-        final var results = toCollection(obj);
-        final var col = clazz.getDeclaredConstructor().newInstance();
+        val results = toCollection(obj);
+        val col = clazz.getDeclaredConstructor().newInstance();
         col.addAll(results);
         return col;
     }
@@ -301,7 +303,7 @@ public class CollectionUtils {
         final List<T> list = new ArrayList<>();
         if (source != null) {
             if (source instanceof Collection) {
-                final var it = ((Collection) source).iterator();
+                val it = ((Collection) source).iterator();
                 while (it.hasNext()) {
                     list.add((T) it.next());
                 }

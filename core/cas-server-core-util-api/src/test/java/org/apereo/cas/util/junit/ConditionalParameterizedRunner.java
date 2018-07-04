@@ -1,5 +1,7 @@
 package org.apereo.cas.util.junit;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import org.apereo.cas.util.SocketUtils;
 import org.junit.runner.Runner;
@@ -22,7 +24,7 @@ public class ConditionalParameterizedRunner extends Parameterized {
     @SneakyThrows
     protected void runChild(final Runner runner, final RunNotifier notifier) {
         var runTests = true;
-        final var ignore = ((ParentRunner<Object>) runner).getTestClass().getAnnotation(ConditionalIgnore.class);
+        val ignore = ((ParentRunner<Object>) runner).getTestClass().getAnnotation(ConditionalIgnore.class);
         if (ignore != null) {
             final IgnoreCondition condition = ignore.condition().getDeclaredConstructor().newInstance();
             runTests = condition.isSatisfied();

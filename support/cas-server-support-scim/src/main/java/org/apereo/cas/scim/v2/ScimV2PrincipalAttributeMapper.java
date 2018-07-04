@@ -1,5 +1,7 @@
 package org.apereo.cas.scim.v2;
 
+import lombok.val;
+
 import com.unboundid.scim2.common.types.Email;
 import com.unboundid.scim2.common.types.Name;
 import com.unboundid.scim2.common.types.PhoneNumber;
@@ -28,7 +30,7 @@ public class ScimV2PrincipalAttributeMapper {
      * @return the principal attribute value
      */
     public String getPrincipalAttributeValue(final Principal p, final String attributeName) {
-        final var attributes = p.getAttributes();
+        val attributes = p.getAttributes();
         if (attributes.containsKey(attributeName)) {
             return CollectionUtils.toCollection(attributes.get(attributeName)).iterator().next().toString();
         }
@@ -55,7 +57,7 @@ public class ScimV2PrincipalAttributeMapper {
         attr = getPrincipalAttributeValue(p, "displayName");
         user.setDisplayName(attr);
 
-        final var name = new Name();
+        val name = new Name();
         attr = getPrincipalAttributeValue(p, "givenName");
         name.setGivenName(attr);
         attr = getPrincipalAttributeValue(p, "familyName");
@@ -65,7 +67,7 @@ public class ScimV2PrincipalAttributeMapper {
 
         user.setName(name);
 
-        final var email = new Email();
+        val email = new Email();
         email.setPrimary(Boolean.TRUE);
         attr = getPrincipalAttributeValue(p, "mail");
         if (StringUtils.isBlank(attr)) {
@@ -74,7 +76,7 @@ public class ScimV2PrincipalAttributeMapper {
         email.setValue(attr);
         user.setEmails(CollectionUtils.wrap(email));
 
-        final var phone = new PhoneNumber();
+        val phone = new PhoneNumber();
         phone.setPrimary(Boolean.TRUE);
         attr = getPrincipalAttributeValue(p, "phone");
         if (StringUtils.isBlank(attr)) {

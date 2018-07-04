@@ -1,5 +1,7 @@
 package org.apereo.cas.support.rest.resources;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
@@ -61,7 +63,7 @@ public class TicketGrantingTicketResource {
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                              final HttpServletRequest request) {
         try {
-            final var tgtId = createTicketGrantingTicketForRequest(requestBody, request);
+            val tgtId = createTicketGrantingTicketForRequest(requestBody, request);
             return createResponseEntityForTicket(request, tgtId);
         } catch (final AuthenticationException e) {
             return RestResourceUtils.createResponseEntityForAuthnFailure(e);
@@ -113,8 +115,8 @@ public class TicketGrantingTicketResource {
         if (credential == null || credential.isEmpty()) {
             throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
         }
-        final var service = this.serviceFactory.createService(request);
-        final var authenticationResult =
+        val service = this.serviceFactory.createService(request);
+        val authenticationResult =
             authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
         return centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
     }

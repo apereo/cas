@@ -1,5 +1,7 @@
 package org.apereo.cas.services.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -27,7 +29,7 @@ public class RegisteredServiceReverseMappedRegexAttributeFilter extends Register
         return attributeValues.stream()
                 .filter(v -> {
                     LOGGER.debug("Matching attribute value [{}] against pattern [{}]", v, pattern.pattern());
-                    final var matcher = pattern.matcher(v.toString());
+                    val matcher = pattern.matcher(v.toString());
                     if (isCompleteMatch()) {
                         return !matcher.matches();
                     }

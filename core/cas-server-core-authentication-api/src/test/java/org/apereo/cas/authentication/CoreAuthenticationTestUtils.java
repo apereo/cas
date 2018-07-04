@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -55,7 +57,7 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword(final String username, final String password) {
-        final var usernamePasswordCredentials = new UsernamePasswordCredential();
+        val usernamePasswordCredentials = new UsernamePasswordCredential();
         usernamePasswordCredentials.setUsername(username);
         usernamePasswordCredentials.setPassword(password);
 
@@ -75,7 +77,7 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static Service getService(final String id) {
-        final var svc = mock(Service.class);
+        val svc = mock(Service.class);
         when(svc.getId()).thenReturn(id);
         when(svc.matches(any(Service.class))).thenReturn(true);
         return svc;
@@ -90,7 +92,7 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static WebApplicationService getWebApplicationService(final String id) {
-        final var svc = mock(WebApplicationService.class);
+        val svc = mock(WebApplicationService.class);
         when(svc.getId()).thenReturn(id);
         when(svc.matches(any(WebApplicationService.class))).thenReturn(true);
         when(svc.getOriginalUrl()).thenReturn(id);
@@ -163,13 +165,13 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static RegisteredService getRegisteredService(final String url) {
-        final var service = mock(RegisteredService.class);
+        val service = mock(RegisteredService.class);
         when(service.getServiceId()).thenReturn(url);
         when(service.getName()).thenReturn("service name");
         when(service.getId()).thenReturn(Long.MAX_VALUE);
         when(service.getDescription()).thenReturn("service description");
 
-        final var access = mock(RegisteredServiceAccessStrategy.class);
+        val access = mock(RegisteredServiceAccessStrategy.class);
         when(access.isServiceAccessAllowed()).thenReturn(true);
         when(service.getAccessStrategy()).thenReturn(access);
         return service;

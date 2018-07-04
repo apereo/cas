@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.authentication;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +29,7 @@ public class GroovyScriptMultifactorAuthenticationProviderSelector implements Mu
     public MultifactorAuthenticationProvider resolve(final Collection<MultifactorAuthenticationProvider> providers,
                                                      final RegisteredService service, final Principal principal) {
         final Object[] args = {service, principal, providers, LOGGER};
-        final var provider = ScriptingUtils.executeGroovyScript(groovyScript, args, String.class);
+        val provider = ScriptingUtils.executeGroovyScript(groovyScript, args, String.class);
         if (StringUtils.isBlank(provider)) {
             throw new IllegalArgumentException("Multifactor provider selection via Groovy cannot use blank");
         }

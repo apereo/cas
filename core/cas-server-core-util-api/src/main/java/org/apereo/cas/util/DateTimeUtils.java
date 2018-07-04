@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.val;
+
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
@@ -83,7 +85,7 @@ public class DateTimeUtils {
 
         if (result == null) {
             try {
-                final var ld = LocalDate.parse(value, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+                val ld = LocalDate.parse(value, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
                 result = LocalDateTime.of(ld, LocalTime.now());
             } catch (final Exception e) {
                 result = null;
@@ -92,7 +94,7 @@ public class DateTimeUtils {
 
         if (result == null) {
             try {
-                final var ld = LocalDate.parse(value);
+                val ld = LocalDate.parse(value);
                 result = LocalDateTime.of(ld, LocalTime.now());
             } catch (final Exception e) {
                 result = null;

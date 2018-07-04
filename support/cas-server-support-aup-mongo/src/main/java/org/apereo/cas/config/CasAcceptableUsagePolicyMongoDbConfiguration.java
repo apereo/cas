@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.MongoDbAcceptableUsagePolicyRepository;
@@ -37,9 +39,9 @@ public class CasAcceptableUsagePolicyMongoDbConfiguration {
     @RefreshScope
     @Bean
     public MongoTemplate mongoAcceptableUsagePolicyTemplate() {
-        final var mongo = casProperties.getAcceptableUsagePolicy().getMongo();
-        final var factory = new MongoDbConnectionFactory();
-        final var mongoTemplate = factory.buildMongoTemplate(mongo);
+        val mongo = casProperties.getAcceptableUsagePolicy().getMongo();
+        val factory = new MongoDbConnectionFactory();
+        val mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
@@ -47,7 +49,7 @@ public class CasAcceptableUsagePolicyMongoDbConfiguration {
     @RefreshScope
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
-        final var mongo = casProperties.getAcceptableUsagePolicy().getMongo();
+        val mongo = casProperties.getAcceptableUsagePolicy().getMongo();
         return new MongoDbAcceptableUsagePolicyRepository(ticketRegistrySupport,
                 casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
                 mongoAcceptableUsagePolicyTemplate(),

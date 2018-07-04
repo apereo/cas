@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
@@ -20,7 +22,7 @@ public class JdbcSingleRowAttributeRepositoryTests extends BaseJdbcAttributeRepo
     @Test
     public void verifySingleRowAttributeRepository() {
         assertNotNull(attributeRepository);
-        final var person = attributeRepository.getPerson("casuser");
+        val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
         assertNotNull(person.getAttributes());
         assertFalse(person.getAttributes().isEmpty());

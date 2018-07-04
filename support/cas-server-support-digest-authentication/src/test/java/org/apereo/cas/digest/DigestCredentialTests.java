@@ -1,5 +1,7 @@
 package org.apereo.cas.digest;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -23,7 +25,7 @@ public class DigestCredentialTests {
 
     @Test
     public void verifySerializeADigestCredentialToJson() throws IOException {
-        final var credentialMetaDataWritten = new DigestCredential("uid", "realm", "hash");
+        val credentialMetaDataWritten = new DigestCredential("uid", "realm", "hash");
 
         MAPPER.writeValue(JSON_FILE, credentialMetaDataWritten);
 

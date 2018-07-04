@@ -1,5 +1,7 @@
 package org.apereo.cas.util.jpa;
 
+import lombok.val;
+
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.sql.Timestamp;
@@ -16,13 +18,13 @@ import java.time.LocalTime;
 public class SkippingNanoSecondsLocalDateTimeConverter implements AttributeConverter<LocalDateTime, Timestamp> {
     @Override
     public Timestamp convertToDatabaseColumn(final LocalDateTime dt) {
-        final var result = LocalDateTime.of(dt.toLocalDate(), LocalTime.of(dt.getHour(), dt.getMinute(), dt.getSecond()));
+        val result = LocalDateTime.of(dt.toLocalDate(), LocalTime.of(dt.getHour(), dt.getMinute(), dt.getSecond()));
         return Timestamp.valueOf(result);
     }
 
     @Override
     public LocalDateTime convertToEntityAttribute(final Timestamp timestamp) {
-        final var dt = timestamp.toLocalDateTime();
+        val dt = timestamp.toLocalDateTime();
         return LocalDateTime.of(dt.toLocalDate(), LocalTime.of(dt.getHour(), dt.getMinute(), dt.getSecond()));
     }
 }

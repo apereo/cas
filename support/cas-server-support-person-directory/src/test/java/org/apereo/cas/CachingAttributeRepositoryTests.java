@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -34,12 +36,12 @@ public class CachingAttributeRepositoryTests {
 
     @Test
     public void verifyRepositoryCaching() {
-        final var person1 = cachingAttributeRepository.getPerson("casuser");
+        val person1 = cachingAttributeRepository.getPerson("casuser");
         assertEquals("casuser", person1.getName());
         assertEquals(4, person1.getAttributes().size());
 
         // The second call should not go out to the repositories again
-        final var person2 = cachingAttributeRepository.getPerson("casuser");
+        val person2 = cachingAttributeRepository.getPerson("casuser");
         assertEquals(4, person2.getAttributes().size());
     }
 }

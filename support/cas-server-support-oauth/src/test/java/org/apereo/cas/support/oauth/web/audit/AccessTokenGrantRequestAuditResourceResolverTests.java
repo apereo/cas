@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.audit;
 
+import lombok.val;
+
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -21,16 +23,16 @@ import static org.mockito.Mockito.*;
 public class AccessTokenGrantRequestAuditResourceResolverTests {
     @Test
     public void verifyAction() {
-        final var r = new AccessTokenGrantRequestAuditResourceResolver();
-        final var token = mock(OAuthToken.class);
+        val r = new AccessTokenGrantRequestAuditResourceResolver();
+        val token = mock(OAuthToken.class);
         when(token.getId()).thenReturn("CODE");
         when(token.getService()).thenReturn(RegisteredServiceTestUtils.getService());
 
-        final var service = new OAuthRegisteredService();
+        val service = new OAuthRegisteredService();
         service.setClientId("CLIENTID");
         service.setName("OAUTH");
         service.setId(123);
-        final var holder =
+        val holder =
             new AccessTokenRequestDataHolder(token, service, OAuth20GrantTypes.AUTHORIZATION_CODE,
                 true, CollectionUtils.wrapSet("email"));
         assertTrue(r.resolveFrom(mock(JoinPoint.class), holder).length > 0);

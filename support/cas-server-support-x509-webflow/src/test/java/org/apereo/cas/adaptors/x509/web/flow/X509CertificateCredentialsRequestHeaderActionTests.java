@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
 import org.apereo.cas.adaptors.x509.config.X509AuthenticationConfiguration;
@@ -37,8 +39,8 @@ public class X509CertificateCredentialsRequestHeaderActionTests extends Abstract
 
     @Test
     public void verifyCredentialsResultsInAuthnFailure() throws Exception {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         request.addHeader("ssl_client_cert", VALID_CERTIFICATE.getContent());
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.execute(context).getId());

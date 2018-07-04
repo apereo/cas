@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -78,9 +80,9 @@ public class HazelcastHealthIndicatorTests {
 
     @Test
     public void verifyMonitor() {
-        final var health = hazelcastHealthIndicator.health();
+        val health = hazelcastHealthIndicator.health();
         assertEquals(Status.UP, health.getStatus());
-        final var details = health.getDetails();
+        val details = health.getDetails();
         details.values().stream()
             .map(Map.class::cast)
             .forEach(map -> {

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import lombok.val;
+
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -46,11 +48,11 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
     @SneakyThrows
     public ChainingMetadataResolver load(final SamlRegisteredServiceCacheKey cacheKey) {
 
-        final var metadataResolver = new ChainingMetadataResolver();
+        val metadataResolver = new ChainingMetadataResolver();
         final List<MetadataResolver> metadataResolvers = new ArrayList<>();
 
-        final var service = cacheKey.getRegisteredService();
-        final var availableResolvers = this.metadataResolutionPlan.getRegisteredMetadataResolvers();
+        val service = cacheKey.getRegisteredService();
+        val availableResolvers = this.metadataResolutionPlan.getRegisteredMetadataResolvers();
         LOGGER.debug("There are [{}] metadata resolver(s) available in the chain", availableResolvers.size());
         availableResolvers
             .stream()

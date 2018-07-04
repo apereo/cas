@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.val;
+
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.category.FileSystemCategory;
@@ -41,33 +43,33 @@ public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     public void verifyNewSamlServiceProvider() throws Exception {
-        final var entity = mock(EntityDescriptor.class);
+        val entity = mock(EntityDescriptor.class);
         when(entity.getEntityID()).thenReturn("https://dropbox.com");
-        final var resolver = mock(SamlRegisteredServiceCachingMetadataResolver.class);
-        final var metadata = mock(MetadataResolver.class);
+        val resolver = mock(SamlRegisteredServiceCachingMetadataResolver.class);
+        val metadata = mock(MetadataResolver.class);
         when(metadata.resolveSingle(any(CriteriaSet.class))).thenReturn(entity);
         when(resolver.resolve(any(SamlRegisteredService.class))).thenReturn(metadata);
-        final var sp = new SamlServiceProviderProperties.Dropbox();
+        val sp = new SamlServiceProviderProperties.Dropbox();
         sp.setMetadata("https://metadata.dropbox.com");
         sp.setEntityIds(CollectionUtils.wrap(entity.getEntityID()));
-        final var service = SamlSPUtils.newSamlServiceProviderService(sp, resolver);
+        val service = SamlSPUtils.newSamlServiceProviderService(sp, resolver);
         assertNotNull(service);
         assertEquals(entity.getEntityID(), service.getServiceId());
     }
 
     @Test
     public void verifyNewSamlServiceProviderViaMetadata() {
-        final var sp = new SamlServiceProviderProperties.TestShib();
+        val sp = new SamlServiceProviderProperties.TestShib();
         sp.setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
-        final var service = SamlSPUtils.newSamlServiceProviderService(sp, defaultSamlRegisteredServiceCachingMetadataResolver);
+        val service = SamlSPUtils.newSamlServiceProviderService(sp, defaultSamlRegisteredServiceCachingMetadataResolver);
         assertNotNull(service);
     }
 
     @Test
     public void verifySaveOperation() {
-        final var sp = new SamlServiceProviderProperties.TestShib();
+        val sp = new SamlServiceProviderProperties.TestShib();
         sp.setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
-        final var service = SamlSPUtils.newSamlServiceProviderService(sp, defaultSamlRegisteredServiceCachingMetadataResolver);
+        val service = SamlSPUtils.newSamlServiceProviderService(sp, defaultSamlRegisteredServiceCachingMetadataResolver);
         SamlSPUtils.saveService(service, servicesManager);
         SamlSPUtils.saveService(service, servicesManager);
         assertEquals(2, servicesManager.count());
@@ -75,7 +77,7 @@ public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
 
     @AfterClass
     public static void shutdown() {
-        final var cols = FileUtils.listFiles(METADATA_DIRECTORY.getFile(), new String[]{"crt", "key", "xml"}, false);
+        val cols = FileUtils.listFiles(METADATA_DIRECTORY.getFile(), new String[]{"crt", "key", "xml"}, false);
         cols.forEach(FileUtils::deleteQuietly);
     }
 }

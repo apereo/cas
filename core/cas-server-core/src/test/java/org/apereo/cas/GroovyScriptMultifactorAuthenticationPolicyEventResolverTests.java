@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -90,17 +92,17 @@ public class GroovyScriptMultifactorAuthenticationPolicyEventResolverTests {
     public void initialize() {
         this.context = new MockRequestContext();
 
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("195.88.151.11");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-        final var response = new MockHttpServletResponse();
+        val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        final var targetResolver = new DefaultTargetStateResolver(TestMultifactorAuthenticationProvider.ID);
-        final var transition = new Transition(new DefaultTransitionCriteria(
+        val targetResolver = new DefaultTargetStateResolver(TestMultifactorAuthenticationProvider.ID);
+        val transition = new Transition(new DefaultTransitionCriteria(
             new LiteralExpression(TestMultifactorAuthenticationProvider.ID)), targetResolver);
         context.getRootFlow().getGlobalTransitionSet().add(transition);
 
@@ -111,7 +113,7 @@ public class GroovyScriptMultifactorAuthenticationPolicyEventResolverTests {
 
     @Test
     public void verifyOperationNeedsMfa() {
-        final var event = resolver.resolve(context);
+        val event = resolver.resolve(context);
         assertEquals(1, event.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());
     }

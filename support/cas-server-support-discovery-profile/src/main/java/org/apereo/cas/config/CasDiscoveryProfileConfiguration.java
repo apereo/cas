@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -62,12 +64,12 @@ public class CasDiscoveryProfileConfiguration {
     @Bean
     public Set<String> availableAttributes() {
         final Set<String> attributes = new LinkedHashSet<>(0);
-        final var possibleUserAttributeNames = attributeRepository.getPossibleUserAttributeNames();
+        val possibleUserAttributeNames = attributeRepository.getPossibleUserAttributeNames();
         if (possibleUserAttributeNames != null) {
             attributes.addAll(possibleUserAttributeNames);
         }
         
-        final var ldapProps = casProperties.getAuthn().getLdap();
+        val ldapProps = casProperties.getAuthn().getLdap();
         if (ldapProps != null) {
             ldapProps.stream()
                 .forEach(ldap -> {
@@ -75,7 +77,7 @@ public class CasDiscoveryProfileConfiguration {
                     attributes.addAll(transformAttributes(ldap.getAdditionalAttributes()));
                 });
         }
-        final var jdbcProps = casProperties.getAuthn().getJdbc();
+        val jdbcProps = casProperties.getAuthn().getJdbc();
         if (jdbcProps != null) {
             jdbcProps.getQuery().stream()
                 .forEach(jdbc -> attributes.addAll(transformAttributes(jdbc.getPrincipalAttributeList())));

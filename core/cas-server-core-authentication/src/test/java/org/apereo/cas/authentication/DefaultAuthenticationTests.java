@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -37,9 +39,9 @@ public class DefaultAuthenticationTests {
     
     @Test
     public void verifySerializeADefaultAuthenticationToJson() throws IOException {
-        final var serviceWritten = CoreAuthenticationTestUtils.getAuthentication();
+        val serviceWritten = CoreAuthenticationTestUtils.getAuthentication();
         mapper.writeValue(JSON_FILE, serviceWritten);
-        final var serviceRead = mapper.readValue(JSON_FILE, Authentication.class);
+        val serviceRead = mapper.readValue(JSON_FILE, Authentication.class);
         assertEquals(serviceWritten, serviceRead);
     }
 }

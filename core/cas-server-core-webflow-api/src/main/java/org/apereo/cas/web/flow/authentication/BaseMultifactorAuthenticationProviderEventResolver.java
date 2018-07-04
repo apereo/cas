@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -49,14 +51,14 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
     @Override
     public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
                                                                        final Collection<String> requestMfaMethod) {
-        final var providerFound = providers.values()
+        val providerFound = providers.values()
                 .stream()           
                 .filter(p -> requestMfaMethod.stream().filter(Objects::nonNull).anyMatch(p::matches))
                 .findFirst();
         if (providerFound.isPresent()) {
-            final var provider = providerFound.get();
+            val provider = providerFound.get();
             if (provider instanceof VariegatedMultifactorAuthenticationProvider) {
-                final var multi = VariegatedMultifactorAuthenticationProvider.class.cast(provider);
+                val multi = VariegatedMultifactorAuthenticationProvider.class.cast(provider);
                 return multi.getProviders()
                         .stream()
                         .filter(p -> requestMfaMethod.stream().anyMatch(p::matches))
@@ -101,9 +103,9 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
      * @return the registered service
      */
     protected RegisteredService resolveRegisteredServiceInRequestContext(final RequestContext requestContext) {
-        final var resolvedService = resolveServiceFromAuthenticationRequest(requestContext);
+        val resolvedService = resolveServiceFromAuthenticationRequest(requestContext);
         if (resolvedService != null) {
-            final var service = this.servicesManager.findServiceBy(resolvedService);
+            val service = this.servicesManager.findServiceBy(resolvedService);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(resolvedService, service);
             return service;
         }

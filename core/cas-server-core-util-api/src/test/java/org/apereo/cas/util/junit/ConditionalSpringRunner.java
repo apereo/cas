@@ -1,5 +1,7 @@
 package org.apereo.cas.util.junit;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import org.apereo.cas.util.SocketUtils;
 import org.junit.runners.model.FrameworkMethod;
@@ -43,7 +45,7 @@ public class ConditionalSpringRunner extends SpringJUnit4ClassRunner {
     @Override
     @SneakyThrows
     protected Statement withBeforeClasses(final Statement statement) {
-        final var ignore = getTestClass().getJavaClass().getAnnotation(ConditionalIgnore.class);
+        val ignore = getTestClass().getJavaClass().getAnnotation(ConditionalIgnore.class);
         if (ignore != null) {
             final IgnoreCondition condition = ignore.condition().getDeclaredConstructor().newInstance();
             if (!isIgnoreConditionSatisfied(ignore, condition)) {
@@ -56,7 +58,7 @@ public class ConditionalSpringRunner extends SpringJUnit4ClassRunner {
     @Override
     @SneakyThrows
     protected Statement withAfterClasses(final Statement statement) {
-        final var ignore = getTestClass().getJavaClass().getAnnotation(ConditionalIgnore.class);
+        val ignore = getTestClass().getJavaClass().getAnnotation(ConditionalIgnore.class);
         if (ignore != null) {
             final IgnoreCondition condition = ignore.condition().getDeclaredConstructor().newInstance();
             if (!isIgnoreConditionSatisfied(ignore, condition)) {

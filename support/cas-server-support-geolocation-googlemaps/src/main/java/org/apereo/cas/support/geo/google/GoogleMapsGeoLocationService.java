@@ -1,5 +1,7 @@
 package org.apereo.cas.support.geo.google;
 
+import lombok.val;
+
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.LatLng;
@@ -35,13 +37,13 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
             return null;
         }
 
-        final var r = new GeoLocationResponse();
+        val r = new GeoLocationResponse();
         r.setLatitude(latitude);
         r.setLongitude(longitude);
 
-        final var latlng = new LatLng(latitude, longitude);
+        val latlng = new LatLng(latitude, longitude);
         try {
-            final var results = GeocodingApi.reverseGeocode(this.context, latlng).await();
+            val results = GeocodingApi.reverseGeocode(this.context, latlng).await();
             if (results != null && results.length > 0) {
                 Arrays.stream(results)
                     .map(result -> result.formattedAddress)

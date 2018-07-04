@@ -1,5 +1,7 @@
 package org.apereo.cas.pm.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
@@ -45,8 +47,8 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
     @RefreshScope
     @Bean
     public CipherExecutor passwordManagementCipherExecutor() {
-        final var pm = casProperties.getAuthn().getPm();
-        final var crypto = pm.getReset().getCrypto();
+        val pm = casProperties.getAuthn().getPm();
+        val crypto = pm.getReset().getCrypto();
         if (pm.isEnabled() && crypto.isEnabled()) {
             return new PasswordResetTokenCipherExecutor(
                 crypto.getEncryption().getKey(),
@@ -60,7 +62,7 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
     @RefreshScope
     @Bean
     public PasswordValidationService passwordValidationService() {
-        final var policyPattern = casProperties.getAuthn().getPm().getPolicyPattern();
+        val policyPattern = casProperties.getAuthn().getPm().getPolicyPattern();
         return (credential, bean) -> StringUtils.hasText(bean.getPassword())
             && bean.getPassword().equals(bean.getConfirmedPassword())
             && bean.getPassword().matches(policyPattern);
@@ -70,9 +72,9 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
     @RefreshScope
     @Bean
     public PasswordManagementService passwordChangeService() {
-        final var pm = casProperties.getAuthn().getPm();
+        val pm = casProperties.getAuthn().getPm();
         if (pm.isEnabled()) {
-            final var location = pm.getJson().getLocation();
+            val location = pm.getJson().getLocation();
             if (location != null) {
                 LOGGER.debug("Configuring password management based on JSON resource [{}]", location);
                 return new JsonResourcePasswordManagementService(passwordManagementCipherExecutor(),
@@ -80,7 +82,7 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
                     casProperties.getAuthn().getPm(), location);
             }
 
-            final var groovyScript = pm.getGroovy().getLocation();
+            val groovyScript = pm.getGroovy().getLocation();
             if (groovyScript != null) {
                 LOGGER.debug("Configuring password management based on Groovy resource [{}]", groovyScript);
                 return new GroovyResourcePasswordManagementService(passwordManagementCipherExecutor(),
@@ -102,7 +104,7 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
 
     @Override
     public void afterPropertiesSet() {
-        final var pm = casProperties.getAuthn().getPm();
+        val pm = casProperties.getAuthn().getPm();
         if (pm.isEnabled()) {
             communicationsManager.validate();
         }

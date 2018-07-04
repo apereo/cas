@@ -1,5 +1,7 @@
 package org.apereo.cas.support.rest.resources;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -47,7 +49,7 @@ public class RestResourceUtils {
      */
     public static ResponseEntity<String> createResponseEntityForAuthnFailure(final AuthenticationException e) {
         try {
-            final var authnExceptions = e.getHandlerErrors().values()
+            val authnExceptions = e.getHandlerErrors().values()
                 .stream()
                 .map(ex -> ex.getClass().getSimpleName()
                     + ": "

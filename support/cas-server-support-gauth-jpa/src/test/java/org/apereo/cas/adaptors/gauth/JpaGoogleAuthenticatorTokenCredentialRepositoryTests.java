@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.gauth;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -110,7 +112,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepositoryTests {
     @Test
     public void verifySave() {
         registry.save("uid", "secret", 143211, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
-        final var s = registry.get("uid");
+        val s = registry.get("uid");
         assertEquals("secret", s.getSecretKey());
     }
 

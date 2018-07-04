@@ -1,5 +1,7 @@
 package org.apereo.cas.grouper.services;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.services.JsonServiceRegistry;
@@ -44,11 +46,11 @@ public class GrouperRegisteredServiceAccessStrategyTests {
         v1.add("admin");
         attributes.put("memberOf", v1);
 
-        final var service = RegisteredServiceTestUtils.getRegisteredService("test");
-        final var grouper = new GrouperRegisteredServiceAccessStrategy();
+        val service = RegisteredServiceTestUtils.getRegisteredService("test");
+        val grouper = new GrouperRegisteredServiceAccessStrategy();
         grouper.setRequiredAttributes(attributes);
         service.setAccessStrategy(grouper);
-        final var dao = new JsonServiceRegistry(RESOURCE, false,
+        val dao = new JsonServiceRegistry(RESOURCE, false,
             mock(ApplicationEventPublisher.class),
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy());
@@ -58,9 +60,9 @@ public class GrouperRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkGrouperAttributes() {
-        final var resource = new ClassPathResource("grouper.client.properties");
+        val resource = new ClassPathResource("grouper.client.properties");
         if (resource.exists()) {
-            final var strategy = new GrouperRegisteredServiceAccessStrategy();
+            val strategy = new GrouperRegisteredServiceAccessStrategy();
             final Map<String, Set<String>> requiredAttributes = new HashMap<>();
             requiredAttributes.put("memberOf", Collections.singleton("admin"));
             strategy.setRequiredAttributes(requiredAttributes);

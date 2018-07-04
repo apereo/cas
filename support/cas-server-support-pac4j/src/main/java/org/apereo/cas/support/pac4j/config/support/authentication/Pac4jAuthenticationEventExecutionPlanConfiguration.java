@@ -1,6 +1,8 @@
 
 package org.apereo.cas.support.pac4j.config.support.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
@@ -65,7 +67,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
     @RefreshScope
     @Bean
     public Clients builtClients() {
-        final var clients = pac4jDelegatedClientFactory().build();
+        val clients = pac4jDelegatedClientFactory().build();
         LOGGER.debug("The following clients are built: [{}]", clients);
         if (clients.isEmpty()) {
             LOGGER.warn("No delegated authentication clients are defined and/or configured");
@@ -91,8 +93,8 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
     @Bean
     @ConditionalOnMissingBean(name = "clientAuthenticationHandler")
     public AuthenticationHandler clientAuthenticationHandler() {
-        final var pac4j = casProperties.getAuthn().getPac4j();
-        final var h = new ClientAuthenticationHandler(pac4j.getName(), servicesManager,
+        val pac4j = casProperties.getAuthn().getPac4j();
+        val h = new ClientAuthenticationHandler(pac4j.getName(), servicesManager,
             clientPrincipalFactory(), builtClients());
         h.setTypedIdUsed(pac4j.isTypedIdUsed());
         h.setPrincipalAttributeId(pac4j.getPrincipalAttributeId());

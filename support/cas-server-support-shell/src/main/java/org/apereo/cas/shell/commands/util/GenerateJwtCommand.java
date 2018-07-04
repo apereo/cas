@@ -1,5 +1,7 @@
 package org.apereo.cas.shell.commands.util;
 
+import lombok.val;
+
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -86,17 +88,17 @@ public class GenerateJwtCommand {
         configureJwtSigning(signingSecretSize, signingAlgorithm, g);
         configureJwtEncryption(encryptionSecretSize, encryptionAlgorithm, encryptionMethod, g);
 
-        final var profile = new CommonProfile();
+        val profile = new CommonProfile();
         profile.setId(subject);
 
-        final var repeat = StringUtils.repeat('=', SEP_LENGTH);
+        val repeat = StringUtils.repeat('=', SEP_LENGTH);
         LOGGER.debug(repeat);
         LOGGER.info("\nGenerating JWT for subject [{}] with signing key size [{}], signing algorithm [{}], "
                 + "encryption key size [{}], encryption method [{}] and encryption algorithm [{}]\n",
             subject, signingSecretSize, signingAlgorithm, encryptionSecretSize, encryptionMethod, encryptionAlgorithm);
         LOGGER.debug(repeat);
 
-        final var token = g.generate(profile);
+        val token = g.generate(profile);
         LOGGER.info("==== JWT ====\n[{}]", token);
     }
 
@@ -107,7 +109,7 @@ public class GenerateJwtCommand {
             return;
         }
 
-        final var encryptionSecret = RandomStringUtils.randomAlphanumeric(encryptionSecretSize);
+        val encryptionSecret = RandomStringUtils.randomAlphanumeric(encryptionSecretSize);
         LOGGER.info("==== Encryption Secret ====\n[{}]\n", encryptionSecret);
 
         final var acceptedEncAlgs = Arrays.stream(JWEAlgorithm.class.getDeclaredFields())
@@ -128,8 +130,8 @@ public class GenerateJwtCommand {
             .collect(Collectors.joining(","));
         LOGGER.debug("Encryption method: [{}]. Available methods are [{}]", encryptionMethod, acceptedEncMethods);
 
-        final var algorithm = JWEAlgorithm.parse(encryptionAlgorithm);
-        final var encryptionMethodAlg = EncryptionMethod.parse(encryptionMethod);
+        val algorithm = JWEAlgorithm.parse(encryptionAlgorithm);
+        val encryptionMethodAlg = EncryptionMethod.parse(encryptionMethod);
 
         if (DirectDecrypter.SUPPORTED_ALGORITHMS.contains(algorithm)) {
             if (!DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethodAlg)) {
@@ -156,7 +158,7 @@ public class GenerateJwtCommand {
             return;
         }
 
-        final var signingSecret = RandomStringUtils.randomAlphanumeric(signingSecretSize);
+        val signingSecret = RandomStringUtils.randomAlphanumeric(signingSecretSize);
         LOGGER.info("==== Signing Secret ====\n{}\n", signingSecret);
 
         final var acceptedSigningAlgs = Arrays.stream(JWSAlgorithm.class.getDeclaredFields())

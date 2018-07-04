@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.services.ServicesManager;
@@ -18,7 +20,7 @@ import static org.mockito.Mockito.*;
 public class SimpleSurrogateAuthenticationServiceTests {
     @Test
     public void verifyList() throws Exception {
-        final var mgr = mock(ServicesManager.class);
+        val mgr = mock(ServicesManager.class);
         final SurrogateAuthenticationService r = new SimpleSurrogateAuthenticationService(
             CollectionUtils.wrap("casuser", CollectionUtils.wrapList("banderson")), mgr);
         assertFalse(r.getEligibleAccountsForSurrogateToProxy("casuser").isEmpty());
@@ -26,7 +28,7 @@ public class SimpleSurrogateAuthenticationServiceTests {
 
     @Test
     public void verifyProxying() {
-        final var mgr = mock(ServicesManager.class);
+        val mgr = mock(ServicesManager.class);
         final SurrogateAuthenticationService r = new SimpleSurrogateAuthenticationService(
             CollectionUtils.wrap("casuser", CollectionUtils.wrapList("banderson")), mgr);
         assertTrue(r.canAuthenticateAs("banderson", CoreAuthenticationTestUtils.getPrincipal("casuser"),

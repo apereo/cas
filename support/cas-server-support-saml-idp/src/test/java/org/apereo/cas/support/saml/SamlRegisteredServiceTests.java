@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -50,12 +52,12 @@ public class SamlRegisteredServiceTests {
 
     @Test
     public void verifySavingSamlService() throws Exception {
-        final var service = new SamlRegisteredService();
+        val service = new SamlRegisteredService();
         service.setName(SAML_SERVICE);
         service.setServiceId("http://mmoayyed.unicon.net");
         service.setMetadataLocation(METADATA_LOCATION);
 
-        final var dao = new JsonServiceRegistry(RESOURCE, false,
+        val dao = new JsonServiceRegistry(RESOURCE, false,
                 mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy(),
                      new DefaultRegisteredServiceResourceNamingStrategy());
         dao.save(service);
@@ -64,16 +66,16 @@ public class SamlRegisteredServiceTests {
 
     @Test
     public void verifySavingInCommonSamlService() throws Exception {
-        final var service = new SamlRegisteredService();
+        val service = new SamlRegisteredService();
         service.setName(SAML_SERVICE);
         service.setServiceId("http://mmoayyed.unicon.net");
         service.setMetadataLocation(METADATA_LOCATION);
-        final var policy = new InCommonRSAttributeReleasePolicy();
-        final var chain = new ChainingAttributeReleasePolicy();
+        val policy = new InCommonRSAttributeReleasePolicy();
+        val chain = new ChainingAttributeReleasePolicy();
         chain.setPolicies(Arrays.asList(policy, new DenyAllAttributeReleasePolicy()));
         service.setAttributeReleasePolicy(chain);
 
-        final var dao = new JsonServiceRegistry(RESOURCE, false,
+        val dao = new JsonServiceRegistry(RESOURCE, false,
                 mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy(),
                      new DefaultRegisteredServiceResourceNamingStrategy());
         dao.save(service);
@@ -82,24 +84,24 @@ public class SamlRegisteredServiceTests {
 
     @Test
     public void checkPattern() {
-        final var service = new SamlRegisteredService();
+        val service = new SamlRegisteredService();
         service.setName(SAML_SERVICE);
         service.setServiceId("^http://.+");
         service.setMetadataLocation(METADATA_LOCATION);
 
-        final var dao = new InMemoryServiceRegistry();
+        val dao = new InMemoryServiceRegistry();
         dao.setRegisteredServices(Collections.singletonList(service));
-        final var impl = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class));
+        val impl = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class));
         impl.load();
 
-        final var s = impl.findServiceBy(new WebApplicationServiceFactory()
+        val s = impl.findServiceBy(new WebApplicationServiceFactory()
                 .createService("http://mmoayyed.unicon.net:8081/sp/saml/SSO"));
         assertNotNull(s);
     }
 
     @Test
     public void verifySerializeAReturnMappedAttributeReleasePolicyToJson() throws IOException {
-        final var serviceWritten = new SamlRegisteredService();
+        val serviceWritten = new SamlRegisteredService();
         serviceWritten.setName(SAML_SERVICE);
         serviceWritten.setServiceId("http://mmoayyed.unicon.net");
         serviceWritten.setMetadataLocation(METADATA_LOCATION);

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.view;
 
+import lombok.val;
+
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockWebServer;
 import org.junit.Test;
@@ -26,10 +28,10 @@ public class RestfulUrlTemplateResolverTests {
             new ByteArrayResource("template".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
 
-            final var props = new CasConfigurationProperties();
+            val props = new CasConfigurationProperties();
             props.getView().getRest().setUrl("http://localhost:9294");
-            final var r = new RestfulUrlTemplateResolver(props);
-            final var res = r.resolveTemplate(mock(IEngineConfiguration.class), "cas",
+            val r = new RestfulUrlTemplateResolver(props);
+            val res = r.resolveTemplate(mock(IEngineConfiguration.class), "cas",
                 "template", new LinkedHashMap<>());
             assertNotNull(res);
         } catch (final Exception e) {

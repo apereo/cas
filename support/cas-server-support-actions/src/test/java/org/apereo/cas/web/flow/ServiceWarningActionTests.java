@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -48,7 +50,7 @@ public class ServiceWarningActionTests extends AbstractCentralAuthenticationServ
 
     @Test
     public void verifyAction() throws Exception {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addParameter(ServiceWarningAction.PARAMETER_NAME_IGNORE_WARNING, "true");
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 

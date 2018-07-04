@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -42,10 +44,10 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
     @RefreshScope
     @Bean
     public MongoTemplate mongoMfaTrustedAuthnTemplate() {
-        final var mongo = casProperties.getAuthn().getMfa().getTrusted().getMongo();
-        final var factory = new MongoDbConnectionFactory();
+        val mongo = casProperties.getAuthn().getMfa().getTrusted().getMongo();
+        val factory = new MongoDbConnectionFactory();
 
-        final var mongoTemplate = factory.buildMongoTemplate(mongo);
+        val mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
@@ -53,8 +55,8 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
     @RefreshScope
     @Bean
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
-        final var mongodb = casProperties.getAuthn().getMfa().getTrusted().getMongo();
-        final var m =
+        val mongodb = casProperties.getAuthn().getMfa().getTrusted().getMongo();
+        val m =
                 new MongoDbMultifactorAuthenticationTrustStorage(
                         mongodb.getCollection(),
                         mongoMfaTrustedAuthnTemplate());

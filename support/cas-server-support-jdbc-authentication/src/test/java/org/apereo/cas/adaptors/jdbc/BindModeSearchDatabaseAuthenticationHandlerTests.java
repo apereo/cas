@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.jdbc;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -48,7 +50,7 @@ public class BindModeSearchDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAction() throws Exception {
-        final var h = new BindModeSearchDatabaseAuthenticationHandler(null, mock(ServicesManager.class),
+        val h = new BindModeSearchDatabaseAuthenticationHandler(null, mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0, this.dataSource);
         assertNotNull(h.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon")));
     }

@@ -1,5 +1,7 @@
 package org.apereo.cas.impl.notify;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,8 +24,8 @@ public class AuthenticationRiskSmsNotifier extends BaseAuthenticationRiskNotifie
 
     @Override
     public void publish() {
-        final var sms = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getSms();
-        final var principal = authentication.getPrincipal();
+        val sms = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getSms();
+        val principal = authentication.getPrincipal();
 
         if (StringUtils.isBlank(sms.getText()) || StringUtils.isBlank(sms.getFrom())
                 || !principal.getAttributes().containsKey(sms.getAttributeName())) {

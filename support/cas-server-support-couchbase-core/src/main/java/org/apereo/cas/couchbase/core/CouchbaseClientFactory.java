@@ -1,5 +1,7 @@
 package org.apereo.cas.couchbase.core;
 
+import lombok.val;
+
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.CouchbaseCluster;
@@ -137,15 +139,15 @@ public class CouchbaseClientFactory {
      * @throws GeneralSecurityException the general security exception
      */
     public N1qlQueryResult query(final String usernameAttribute, final String usernameValue) throws GeneralSecurityException {
-        final var bucket = getBucket();
+        val bucket = getBucket();
         final Statement statement = Select.select("*")
             .from(Expression.i(bucket.name()))
             .where(Expression.x(usernameAttribute).eq('\'' + usernameValue + '\''));
 
         LOGGER.debug("Running query [{}] on bucket [{}]", statement.toString(), bucket.name());
 
-        final var query = N1qlQuery.simple(statement);
-        final var result = bucket.query(query, timeout, TimeUnit.MILLISECONDS);
+        val query = N1qlQuery.simple(statement);
+        val result = bucket.query(query, timeout, TimeUnit.MILLISECONDS);
         if (!result.finalSuccess()) {
             LOGGER.error("Couchbase query failed with [{}]", result.errors()
                 .stream()
@@ -179,8 +181,8 @@ public class CouchbaseClientFactory {
     private void createDesignDocumentAndViewIfNeeded() {
         if (this.views != null && this.designDocument != null) {
             LOGGER.debug("Ensure that indexes exist in bucket [{}]", this.bucket.name());
-            final var bucketManager = this.bucket.bucketManager();
-            final var newDocument = DesignDocument.create(this.designDocument, new ArrayList<>(views));
+            val bucketManager = this.bucket.bucketManager();
+            val newDocument = DesignDocument.create(this.designDocument, new ArrayList<>(views));
             try {
                 if (!newDocument.equals(bucketManager.getDesignDocument(this.designDocument))) {
                     LOGGER.warn("Missing indexes in bucket [{}] for document [{}]", this.bucket.name(), this.designDocument);

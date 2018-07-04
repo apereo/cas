@@ -1,5 +1,7 @@
 package org.apereo.cas.support.events.listener;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
@@ -66,7 +68,7 @@ public class CasConfigurationEventListener {
             LOGGER.info("Received event [{}]. Refreshing CAS configuration...", event);
             Collection<String> keys = null;
             try {
-                final var refresher = this.contextRefresher.getIfAvailable();
+                val refresher = this.contextRefresher.getIfAvailable();
                 if (refresher != null) {
                     keys = refresher.refresh();
                     LOGGER.debug("Refreshed the following settings: [{}].", keys);

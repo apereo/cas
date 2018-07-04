@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -49,11 +51,11 @@ public abstract class BasePrincipalFromNonInteractiveCredentialsAction extends A
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final var remoteUser = getRemotePrincipalId(request);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val remoteUser = getRemotePrincipalId(request);
         if (StringUtils.isNotBlank(remoteUser)) {
             LOGGER.debug("User [{}] found in HttpServletRequest", remoteUser);
-            final var attributes = principalAttributesExtractor.getAttributes(request);
+            val attributes = principalAttributesExtractor.getAttributes(request);
             LOGGER.debug("Attributes [{}] found in HttpServletRequest", attributes);
             return new PrincipalBearingCredential(this.principalFactory.createPrincipal(remoteUser, attributes));
         }

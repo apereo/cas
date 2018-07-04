@@ -1,5 +1,7 @@
 package org.apereo.cas.web.report;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -38,7 +40,7 @@ public class CasResolveAttributesReportEndpoint extends BaseCasMvcEndpoint {
      */
     @ReadOperation
     public Map<String, Object> resolvePrincipalAttributes(@Selector final String uid) {
-        final var p = personDirectoryPrincipalResolver.resolve(new BasicIdentifiableCredential(uid));
+        val p = personDirectoryPrincipalResolver.resolve(new BasicIdentifiableCredential(uid));
         final Map<String, Object> map = new LinkedHashMap<>();
         map.put("uid", p.getId());
         map.put("attributes", p.getAttributes());

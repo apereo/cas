@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.generic.remote.RemoteAddressAuthenticationHandler;
 import org.apereo.cas.adaptors.generic.remote.RemoteAddressNonInteractiveCredentialsAction;
@@ -85,8 +87,8 @@ public class CasRemoteAuthenticationConfiguration implements CasWebflowExecution
     @Bean
     @RefreshScope
     public AuthenticationHandler remoteAddressAuthenticationHandler() {
-        final var remoteAddress = casProperties.getAuthn().getRemoteAddress();
-        final var bean = new RemoteAddressAuthenticationHandler(remoteAddress.getName(),
+        val remoteAddress = casProperties.getAuthn().getRemoteAddress();
+        val bean = new RemoteAddressAuthenticationHandler(remoteAddress.getName(),
             servicesManager,
             remoteAddressPrincipalFactory());
         bean.configureIpNetworkRange(remoteAddress.getIpAddressRange());

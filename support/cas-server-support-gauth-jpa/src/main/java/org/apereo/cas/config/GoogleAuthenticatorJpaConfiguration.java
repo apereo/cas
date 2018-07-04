@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
@@ -69,7 +71,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean googleAuthenticatorEntityManagerFactory() {
-        final var bean =
+        val bean =
             JpaBeans.newHibernateEntityManagerFactoryBean(
                 new JpaConfigDataHolder(
                     jpaGoogleAuthenticatorVendorAdapter(),
@@ -85,7 +87,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     @Bean
     public PlatformTransactionManager transactionManagerGoogleAuthenticator(
         @Qualifier("googleAuthenticatorEntityManagerFactory") final EntityManagerFactory emf) {
-        final var mgmr = new JpaTransactionManager();
+        val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }

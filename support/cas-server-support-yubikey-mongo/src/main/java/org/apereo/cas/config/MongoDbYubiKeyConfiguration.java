@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
@@ -47,9 +49,9 @@ public class MongoDbYubiKeyConfiguration {
     @RefreshScope
     @Bean
     public MongoTemplate mongoYubiKeyTemplate() {
-        final var mongo = casProperties.getAuthn().getMfa().getYubikey().getMongo();
-        final var factory = new MongoDbConnectionFactory();
-        final var mongoTemplate = factory.buildMongoTemplate(mongo);
+        val mongo = casProperties.getAuthn().getMfa().getYubikey().getMongo();
+        val factory = new MongoDbConnectionFactory();
+        val mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
@@ -57,8 +59,8 @@ public class MongoDbYubiKeyConfiguration {
     @RefreshScope
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
-        final var yubi = casProperties.getAuthn().getMfa().getYubikey();
-        final var registry = new MongoDbYubiKeyAccountRegistry(yubiKeyAccountValidator,
+        val yubi = casProperties.getAuthn().getMfa().getYubikey();
+        val registry = new MongoDbYubiKeyAccountRegistry(yubiKeyAccountValidator,
                 mongoYubiKeyTemplate(),
                 yubi.getMongo().getCollection());
         registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);

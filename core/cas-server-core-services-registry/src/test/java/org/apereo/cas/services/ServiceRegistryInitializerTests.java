@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
@@ -19,12 +21,12 @@ public class ServiceRegistryInitializerTests {
     public void ensureInitFromJsonDoesNotCreateDuplicates() {
         var initialService = newService();
 
-        final var servicesManager = mock(ServicesManager.class);
-        final var jsonServiceRegistry = mock(ServiceRegistry.class);
+        val servicesManager = mock(ServicesManager.class);
+        val jsonServiceRegistry = mock(ServiceRegistry.class);
         when(jsonServiceRegistry.load()).thenReturn(Arrays.asList(initialService));
 
         final ServiceRegistry serviceRegistry = new InMemoryServiceRegistry();
-        final var serviceRegistryInitializer = new ServiceRegistryInitializer(jsonServiceRegistry, serviceRegistry, servicesManager);
+        val serviceRegistryInitializer = new ServiceRegistryInitializer(jsonServiceRegistry, serviceRegistry, servicesManager);
         serviceRegistryInitializer.initServiceRegistryIfNecessary();
         assertThat(serviceRegistry.size()).isEqualTo(1);
 
@@ -36,7 +38,7 @@ public class ServiceRegistryInitializerTests {
     }
 
     private RegisteredService newService() {
-        final var service = mock(RegisteredService.class);
+        val service = mock(RegisteredService.class);
         when(service.getServiceId()).thenReturn("^https?://.*");
         when(service.getName()).thenReturn("Test");
         when(service.getDescription()).thenReturn("Test");

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.util;
 
+import lombok.val;
+
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
@@ -84,7 +86,7 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
      * @return the byte[] array of size {@link #ASSERTION_HANDLE_SIZE}
      */
     private byte[] newAssertionHandle() {
-        final var handle = new byte[ASSERTION_HANDLE_SIZE];
+        val handle = new byte[ASSERTION_HANDLE_SIZE];
         this.random.nextBytes(handle);
         return handle;
     }

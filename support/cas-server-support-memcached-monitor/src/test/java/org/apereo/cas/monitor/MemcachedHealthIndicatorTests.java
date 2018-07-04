@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import lombok.val;
+
 import org.apereo.cas.category.MemcachedCategory;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.monitor.config.MemcachedMonitorConfiguration;
@@ -51,7 +53,7 @@ public class MemcachedHealthIndicatorTests {
 
     @Test
     public void verifyMonitorNotRunning() {
-        final var health = monitor.health();
+        val health = monitor.health();
         assertEquals(Status.OUT_OF_SERVICE, health.getStatus());
     }
 }

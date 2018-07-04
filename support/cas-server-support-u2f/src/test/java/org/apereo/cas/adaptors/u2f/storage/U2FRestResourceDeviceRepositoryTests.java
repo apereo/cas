@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yubico.u2f.data.DeviceRegistration;
@@ -59,11 +61,11 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
     @BeforeClass
     public static void beforeClass() throws Exception {
         final Map<String, List<U2FDeviceRegistration>> devices = new HashMap<>();
-        final var reg = new DeviceRegistration("123456", "bjsdghj3b", "njsdkhjdfjh45", 1, false);
-        final var device1 = new U2FDeviceRegistration(2000, "casuser", reg.toJson(), LocalDate.now());
-        final var device2 = new U2FDeviceRegistration(1000, "casuser", reg.toJson(), LocalDate.now());
+        val reg = new DeviceRegistration("123456", "bjsdghj3b", "njsdkhjdfjh45", 1, false);
+        val device1 = new U2FDeviceRegistration(2000, "casuser", reg.toJson(), LocalDate.now());
+        val device2 = new U2FDeviceRegistration(1000, "casuser", reg.toJson(), LocalDate.now());
         devices.put(BaseResourceU2FDeviceRepository.MAP_KEY_DEVICES, CollectionUtils.wrapList(device1, device2));
-        final var data = MAPPER.writeValueAsString(devices);
+        val data = MAPPER.writeValueAsString(devices);
         WEB_SERVER = new MockWebServer(9196, data);
         WEB_SERVER.start();
     }

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
@@ -45,7 +47,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
             this.httpRequestRemoteAddressPattern = RegexUtils.MATCH_NOTHING_PATTERN;
         }
 
-        final var values = org.springframework.util.StringUtils.commaDelimitedListToSet(bypassProperties.getHttpRequestHeaders());
+        val values = org.springframework.util.StringUtils.commaDelimitedListToSet(bypassProperties.getHttpRequestHeaders());
         this.httpRequestHeaderPatterns = values.stream().map(RegexUtils::createPattern).collect(Collectors.toSet());
     }
 
@@ -54,24 +56,24 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
                                                                   final RegisteredService registeredService,
                                                                   final MultifactorAuthenticationProvider provider,
                                                                   final HttpServletRequest request) {
-        final var principal = authentication.getPrincipal();
+        val principal = authentication.getPrincipal();
         LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], service [{}] and provider [{}]",
             principal.getId(), registeredService, provider);
-        final var bypassByPrincipal = locateMatchingAttributeBasedOnPrincipalAttributes(bypassProperties, principal);
+        val bypassByPrincipal = locateMatchingAttributeBasedOnPrincipalAttributes(bypassProperties, principal);
         if (bypassByPrincipal) {
             LOGGER.debug("Bypass rules for principal [{}] indicate the request may be ignored", principal.getId());
             updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
 
-        final var bypassByAuthn = locateMatchingAttributeBasedOnAuthenticationAttributes(bypassProperties, authentication);
+        val bypassByAuthn = locateMatchingAttributeBasedOnAuthenticationAttributes(bypassProperties, authentication);
         if (bypassByAuthn) {
             LOGGER.debug("Bypass rules for authentication for principal [{}] indicate the request may be ignored", principal.getId());
             updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
 
-        final var bypassByAuthnMethod = locateMatchingAttributeValue(
+        val bypassByAuthnMethod = locateMatchingAttributeValue(
             AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE,
             bypassProperties.getAuthenticationMethodName(),
             authentication.getAttributes(), false
@@ -82,7 +84,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
             return false;
         }
 
-        final var bypassByHandlerName = locateMatchingAttributeValue(
+        val bypassByHandlerName = locateMatchingAttributeValue(
             AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS,
             bypassProperties.getAuthenticationHandlerName(),
             authentication.getAttributes(), false
@@ -93,21 +95,21 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
             return false;
         }
 
-        final var bypassByCredType = locateMatchingCredentialType(authentication, bypassProperties.getCredentialClassType());
+        val bypassByCredType = locateMatchingCredentialType(authentication, bypassProperties.getCredentialClassType());
         if (bypassByCredType) {
             LOGGER.debug("Bypass rules for credential types [{}] indicate the request may be ignored", bypassProperties.getCredentialClassType());
             updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
 
-        final var bypassByHttpRequest = locateMatchingHttpRequest(authentication, request);
+        val bypassByHttpRequest = locateMatchingHttpRequest(authentication, request);
         if (bypassByHttpRequest) {
             LOGGER.debug("Bypass rules for http request indicate the request may be ignored for [{}]", principal.getId());
             updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
 
-        final var bypassByService = locateMatchingRegisteredServiceForBypass(authentication, registeredService);
+        val bypassByService = locateMatchingRegisteredServiceForBypass(authentication, registeredService);
         if (bypassByService) {
             updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
@@ -220,7 +222,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
             return false;
         }
 
-        final var names = attributes.entrySet()
+        val names = attributes.entrySet()
             .stream()
             .filter(e -> {
                 LOGGER.debug("Attempting to match [{}] against [{}]", attrName, e.getKey());
@@ -239,10 +241,10 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
             return matchIfNoValueProvided;
         }
 
-        final var values = names
+        val values = names
             .stream()
             .filter(e -> {
-                final var valuesCol = CollectionUtils.toCollection(e.getValue());
+                val valuesCol = CollectionUtils.toCollection(e.getValue());
                 LOGGER.debug("Matching attribute [{}] with values [{}] against [{}]", e.getKey(), valuesCol, attrValue);
                 return valuesCol
                     .stream()
@@ -276,7 +278,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
 
         if (StringUtils.isNotBlank(bypassProperties.getHttpRequestHeaders())) {
             final List<String> headerNames = Collections.list(request.getHeaderNames());
-            final var matched = this.httpRequestHeaderPatterns.stream()
+            val matched = this.httpRequestHeaderPatterns.stream()
                 .anyMatch(pattern -> headerNames.stream().anyMatch(name -> pattern.matcher(name).matches()));
             if (matched) {
                 LOGGER.debug("Http request remote headers [{}] match [{}]", headerNames, bypassProperties.getHttpRequestHeaders());

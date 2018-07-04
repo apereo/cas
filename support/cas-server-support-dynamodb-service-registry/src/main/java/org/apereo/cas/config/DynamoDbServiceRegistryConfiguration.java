@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +34,7 @@ public class DynamoDbServiceRegistryConfiguration implements ServiceRegistryExec
     @RefreshScope
     @Bean
     public DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator() {
-        final var db = casProperties.getServiceRegistry().getDynamoDb();
+        val db = casProperties.getServiceRegistry().getDynamoDb();
         return new DynamoDbServiceRegistryFacilitator(db, amazonDynamoDbClient());
     }
 
@@ -51,8 +53,8 @@ public class DynamoDbServiceRegistryConfiguration implements ServiceRegistryExec
     @Bean
     @SneakyThrows
     public AmazonDynamoDB amazonDynamoDbClient() {
-        final var dynamoDbProperties = casProperties.getServiceRegistry().getDynamoDb();
-        final var factory = new AmazonDynamoDbClientFactory();
+        val dynamoDbProperties = casProperties.getServiceRegistry().getDynamoDb();
+        val factory = new AmazonDynamoDbClientFactory();
         return factory.createAmazonDynamoDb(dynamoDbProperties);
     }
 }

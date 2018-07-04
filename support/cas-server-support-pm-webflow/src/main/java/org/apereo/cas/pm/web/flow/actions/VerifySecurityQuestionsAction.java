@@ -1,5 +1,7 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.pm.BasePasswordManagementService;
@@ -24,16 +26,16 @@ public class VerifySecurityQuestionsAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        final var username = requestContext.getFlowScope().getString("username");
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val username = requestContext.getFlowScope().getString("username");
 
-        final var questions = passwordManagementService.getSecurityQuestions(username);
-        final var canonicalQuestions = BasePasswordManagementService.canonicalizeSecurityQuestions(questions);
-        final var i = new AtomicInteger(0);
-        final var c = canonicalQuestions
+        val questions = passwordManagementService.getSecurityQuestions(username);
+        val canonicalQuestions = BasePasswordManagementService.canonicalizeSecurityQuestions(questions);
+        val i = new AtomicInteger(0);
+        val c = canonicalQuestions
             .stream()
             .filter(q -> {
-                final var answer = request.getParameter("q" + i.getAndIncrement());
+                val answer = request.getParameter("q" + i.getAndIncrement());
                 return passwordManagementService.isValidSecurityQuestionAnswer(username, q, questions.get(q), answer);
             })
             .count();

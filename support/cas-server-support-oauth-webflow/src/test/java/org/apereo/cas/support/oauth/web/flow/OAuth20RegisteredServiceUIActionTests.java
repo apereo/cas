@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -95,17 +97,17 @@ public class OAuth20RegisteredServiceUIActionTests {
     
     @Test
     public void verifyOAuthActionWithoutMDUI() throws Exception {
-        final var ctx = new MockRequestContext();
+        val ctx = new MockRequestContext();
         WebUtils.putService(ctx, RegisteredServiceTestUtils.getService());
-        final var event = oauth20RegisteredServiceUIAction.execute(ctx);
+        val event = oauth20RegisteredServiceUIAction.execute(ctx);
         assertEquals("success", event.getId());
-        final var mdui = WebUtils.getServiceUserInterfaceMetadata(ctx, Serializable.class);
+        val mdui = WebUtils.getServiceUserInterfaceMetadata(ctx, Serializable.class);
         assertNull(mdui);
     }
 
     @Test
     public void verifyOAuthActionWithMDUI() throws Exception {
-        final var svc = new OAuthRegisteredService();
+        val svc = new OAuthRegisteredService();
         svc.setClientId("id");
         svc.setName("oauth");
         svc.setDescription("description");
@@ -116,12 +118,12 @@ public class OAuth20RegisteredServiceUIActionTests {
         svc.setLogo("logo");
         servicesManager.save(svc);
         
-        final var ctx = new MockRequestContext();
+        val ctx = new MockRequestContext();
         WebUtils.putService(ctx, RegisteredServiceTestUtils.getService(
                 "https://www.example.org?client_id=id&client_secret=secret&redirect_uri=https://oauth.example.org"));
-        final var event = oauth20RegisteredServiceUIAction.execute(ctx);
+        val event = oauth20RegisteredServiceUIAction.execute(ctx);
         assertEquals("success", event.getId());
-        final var mdui = WebUtils.getServiceUserInterfaceMetadata(ctx, DefaultRegisteredServiceUserInterfaceInfo.class);
+        val mdui = WebUtils.getServiceUserInterfaceMetadata(ctx, DefaultRegisteredServiceUserInterfaceInfo.class);
         assertNotNull(mdui);
         
         assertEquals(mdui.getDisplayName(), svc.getName());

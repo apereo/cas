@@ -1,5 +1,7 @@
 package org.apereo.cas.gua.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -68,7 +70,7 @@ public class GraphicalUserAuthenticationConfiguration implements CasWebflowExecu
     @RefreshScope
     @ConditionalOnMissingBean(name = "userGraphicalAuthenticationRepository")
     public UserGraphicalAuthenticationRepository userGraphicalAuthenticationRepository() {
-        final var gua = casProperties.getAuthn().getGua();
+        val gua = casProperties.getAuthn().getGua();
         if (gua.getResource().getLocation() != null) {
             return new StaticUserGraphicalAuthenticationRepository(gua.getResource().getLocation());
         }

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.principal.Service;
 
 import java.util.Arrays;
@@ -44,7 +45,7 @@ public class DefaultAuthenticationTransaction implements AuthenticationTransacti
      * @return the authentication transaction
      */
     public static DefaultAuthenticationTransaction of(final Service service, final Credential... credentials) {
-        final var creds = sanitizeCredentials(credentials);
+        val creds = sanitizeCredentials(credentials);
         return new DefaultAuthenticationTransaction(service, creds);
     }
 

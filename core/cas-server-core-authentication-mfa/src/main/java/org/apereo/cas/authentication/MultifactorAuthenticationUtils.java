@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
@@ -72,8 +74,8 @@ public class MultifactorAuthenticationUtils {
      */
     public static Collection<MultifactorAuthenticationProvider> getMultifactorAuthenticationProvidersByIds(final Collection<String> ids,
                                                                                                            final ApplicationContext applicationContext) {
-        final var available = getAvailableMultifactorAuthenticationProviders(applicationContext);
-        final var values = available.values();
+        val available = getAvailableMultifactorAuthenticationProviders(applicationContext);
+        val values = available.values();
         return values.stream()
             .filter(p -> ids.contains(p.getId()))
             .collect(Collectors.toSet());

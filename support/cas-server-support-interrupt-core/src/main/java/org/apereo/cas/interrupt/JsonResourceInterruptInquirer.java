@@ -1,5 +1,7 @@
 package org.apereo.cas.interrupt;
 
+import lombok.val;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
@@ -39,7 +41,7 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer {
     @Override
     public InterruptResponse inquireInternal(final Authentication authentication, final RegisteredService registeredService,
                                              final Service service, final Credential credential) {
-        final var user = authentication.getPrincipal().getId();
+        val user = authentication.getPrincipal().getId();
         readResourceForInterrupts();
         if (interrupts.containsKey(user)) {
             return interrupts.get(user);

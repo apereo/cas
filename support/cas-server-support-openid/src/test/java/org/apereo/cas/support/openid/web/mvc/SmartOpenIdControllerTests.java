@@ -1,5 +1,7 @@
 package org.apereo.cas.support.openid.web.mvc;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import org.junit.Test;
@@ -29,7 +31,7 @@ public class SmartOpenIdControllerTests extends AbstractOpenIdTests {
     @Test
     public void verifyCanHandle() {
         request.addParameter(OPENID_MODE_PARAM, "associate");
-        final var canHandle = smartOpenIdController.canHandle(request, response);
+        val canHandle = smartOpenIdController.canHandle(request, response);
         request.removeParameter(OPENID_MODE_PARAM);
         assertTrue(canHandle);
     }
@@ -37,7 +39,7 @@ public class SmartOpenIdControllerTests extends AbstractOpenIdTests {
     @Test
     public void verifyCannotHandle() {
         request.addParameter(OPENID_MODE_PARAM, "anythingElse");
-        final var canHandle = smartOpenIdController.canHandle(request, response);
+        val canHandle = smartOpenIdController.canHandle(request, response);
         request.removeParameter(OPENID_MODE_PARAM);
         assertFalse(canHandle);
     }
@@ -50,7 +52,7 @@ public class SmartOpenIdControllerTests extends AbstractOpenIdTests {
         request.addParameter("openid.dh_consumer_public",
                 "NzKoFMyrzFn/5iJFPdX6MVvNA/BChV1/sJdnYbupDn7ptn+cerwEzyFfWFx25KsoLSkxQCaSMmYtc1GPy/2GI1BSKSDhpdJmDBb"
                 + "QRa/9Gs+giV/5fHcz/mHz8sREc7RTGI+0Ka9230arwrWt0fnoaJLRKEGUsmFR71rCo4EUOew=");
-        final var assocResponse = smartOpenIdController.getAssociationResponse(request);
+        val assocResponse = smartOpenIdController.getAssociationResponse(request);
         assertTrue(assocResponse.containsKey("assoc_handle"));
         assertTrue(assocResponse.containsKey("expires_in"));
         assertTrue(assocResponse.containsKey("dh_server_public"));

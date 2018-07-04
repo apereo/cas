@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -37,8 +39,8 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
 
     @Override
     public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
-        final var matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(this.groovyScript);
-        final var matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(this.groovyScript);
+        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(this.groovyScript);
+        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(this.groovyScript);
         if (matcherInline.find()) {
             return resolveUsernameFromInlineGroovyScript(principal, service, matcherInline.group(1));
         }
@@ -52,9 +54,9 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
     private String resolveUsernameFromExternalGroovyScript(final Principal principal, final Service service, final String scriptFile) {
         try {
             LOGGER.debug("Found groovy script to execute");
-            final var resourceFrom = ResourceUtils.getResourceFrom(scriptFile);
-            final var script = IOUtils.toString(resourceFrom.getInputStream(), StandardCharsets.UTF_8);
-            final var result = getGroovyAttributeValue(principal, script);
+            val resourceFrom = ResourceUtils.getResourceFrom(scriptFile);
+            val script = IOUtils.toString(resourceFrom.getInputStream(), StandardCharsets.UTF_8);
+            val result = getGroovyAttributeValue(principal, script);
             if (result != null) {
                 LOGGER.debug("Found username [{}] from script [{}]", result, scriptFile);
                 return result.toString();
@@ -69,7 +71,7 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
     private String resolveUsernameFromInlineGroovyScript(final Principal principal, final Service service, final String script) {
         try {
             LOGGER.debug("Found groovy script to execute [{}]", this.groovyScript);
-            final var result = getGroovyAttributeValue(principal, script);
+            val result = getGroovyAttributeValue(principal, script);
             if (result != null) {
                 LOGGER.debug("Found username [{}] from script [{}]", result, this.groovyScript);
                 return result.toString();

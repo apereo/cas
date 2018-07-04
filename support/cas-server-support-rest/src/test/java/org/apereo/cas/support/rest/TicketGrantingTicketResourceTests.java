@@ -1,5 +1,7 @@
 package org.apereo.cas.support.rest;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -68,8 +70,8 @@ public class TicketGrantingTicketResourceTests {
 
     @Before
     public void initialize() {
-        final var publisher = mock(ApplicationEventPublisher.class);
-        final var manager = mock(AuthenticationManager.class);
+        val publisher = mock(ApplicationEventPublisher.class);
+        val manager = mock(AuthenticationManager.class);
         when(manager.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
@@ -87,7 +89,7 @@ public class TicketGrantingTicketResourceTests {
 
     @Test
     public void verifyNormalCreationOfTGT() throws Exception {
-        final var expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
+        val expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
             + "<html><head><title>201 Created</title></head><body><h1>TGT Created</h1>"
             + "<form action=\"http://localhost/cas/v1/tickets/TGT-1\" "
             + "method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">"
@@ -106,7 +108,7 @@ public class TicketGrantingTicketResourceTests {
 
     @Test
     public void defaultCreationOfTGT() throws Throwable {
-        final var expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
+        val expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
             + "<html><head><title>201 Created</title></head><body><h1>TGT Created</h1>"
             + "<form action=\"http://localhost/cas/v1/tickets/TGT-1\" "
             + "method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">"
@@ -125,7 +127,7 @@ public class TicketGrantingTicketResourceTests {
 
     @Test
     public void verifyHtmlCreationOfTGT() throws Throwable {
-        final var expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
+        val expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
             + "<html><head><title>201 Created</title></head><body><h1>TGT Created</h1>"
             + "<form action=\"http://localhost/cas/v1/tickets/TGT-1\" "
             + "method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">"
@@ -144,7 +146,7 @@ public class TicketGrantingTicketResourceTests {
 
     @Test
     public void verifyJsonCreationOfTGT() throws Throwable {
-        final var expectedReturnEntityBody = "TGT-1";
+        val expectedReturnEntityBody = "TGT-1";
 
         configureCasMockToCreateValidTGT();
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
@@ -161,7 +163,7 @@ public class TicketGrantingTicketResourceTests {
     public void creationOfTGTWithAuthenticationException() throws Exception {
         configureCasMockTGTCreationToThrowAuthenticationException();
 
-        final var content = this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
+        val content = this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
             .param(USERNAME, TEST_VALUE)
             .param(PASSWORD, TEST_VALUE))
             .andExpect(status().isUnauthorized())
@@ -196,7 +198,7 @@ public class TicketGrantingTicketResourceTests {
     }
 
     private void configureCasMockToCreateValidTGT() {
-        final var tgt = mock(TicketGrantingTicket.class);
+        val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("TGT-1");
         when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class))).thenReturn(tgt);
     }

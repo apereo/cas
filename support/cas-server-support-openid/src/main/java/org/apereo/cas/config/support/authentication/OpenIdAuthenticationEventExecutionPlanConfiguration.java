@@ -1,5 +1,7 @@
 package org.apereo.cas.config.support.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -46,13 +48,13 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
     
     @Bean
     public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
-        final var openid = casProperties.getAuthn().getOpenid();
+        val openid = casProperties.getAuthn().getOpenid();
         return new OpenIdCredentialsAuthenticationHandler(openid.getName(), servicesManager, openidPrincipalFactory(), ticketRegistry);
     }
 
     @Bean
     public OpenIdPrincipalResolver openIdPrincipalResolver() {
-        final var r = new OpenIdPrincipalResolver(attributeRepository, openidPrincipalFactory(),
+        val r = new OpenIdPrincipalResolver(attributeRepository, openidPrincipalFactory(),
                 casProperties.getAuthn().getOpenid().getPrincipal().isReturnNull(),
                 casProperties.getAuthn().getOpenid().getPrincipal().getPrincipalAttribute());
         return r;

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.report;
 
+import lombok.val;
+
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -77,7 +79,7 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
      * given there is not an explicit property mapping for it provided by Boot, etc.
      */
     public void initialize() {
-        final var pair = ControllerUtils.buildLoggerContext(environment, resourceLoader);
+        val pair = ControllerUtils.buildLoggerContext(environment, resourceLoader);
         pair.ifPresent(it -> {
             this.logConfigurationFile = it.getKey();
             this.loggerContext = it.getValue();
@@ -104,7 +106,7 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
             loggerMap.put("level", config.getLevel().name());
             final Collection<String> appenders = new HashSet<>();
             config.getAppenders().keySet().stream().map(key -> config.getAppenders().get(key)).forEach(appender -> {
-                final var builder = new ToStringBuilder(this, ToStringStyle.JSON_STYLE);
+                val builder = new ToStringBuilder(this, ToStringStyle.JSON_STYLE);
                 builder.append("name", appender.getName());
                 builder.append("state", appender.getState());
                 builder.append("layoutFormat", appender.getLayout().getContentFormat());
@@ -137,14 +139,14 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
         final Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("loggers", configuredLoggers);
 
-        final var loggers = getActiveLoggersInFactory();
+        val loggers = getActiveLoggersInFactory();
         responseMap.put("activeLoggers", loggers.values());
 
         return responseMap;
     }
 
     private Map<String, Logger> getActiveLoggersInFactory() {
-        final var factory = (Log4jLoggerFactory) getCasLoggerFactoryInstance();
+        val factory = (Log4jLoggerFactory) getCasLoggerFactoryInstance();
         if (factory != null) {
             return factory.getLoggersInContext(this.loggerContext);
         }
@@ -161,7 +163,7 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
      * @return the logger configurations
      */
     private Set<LoggerConfig> getLoggerConfigurations() {
-        final var configuration = this.loggerContext.getConfiguration();
+        val configuration = this.loggerContext.getConfiguration();
         return new HashSet<>(configuration.getLoggers().values());
     }
 

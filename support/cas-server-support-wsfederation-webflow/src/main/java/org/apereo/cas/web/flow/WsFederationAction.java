@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -49,8 +51,8 @@ public class WsFederationAction extends AbstractAuthenticationAction {
     @Override
     protected Event doExecute(final RequestContext context) {
         try {
-            final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-            final var wa = request.getParameter(WA);
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+            val wa = request.getParameter(WA);
             if (StringUtils.isNotBlank(wa) && wa.equalsIgnoreCase(WSIGNIN)) {
                 wsFederationResponseValidator.validateWsFederationAuthenticationRequest(context);
                 return super.doExecute(context);

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -43,11 +45,11 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyEntityIdUIInfoExists() throws Exception {
-        final var ctx = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val ctx = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         request.addParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, "https://carmenwiki.osu.edu/shibboleth");
-        final var response = new MockHttpServletResponse();
-        final var sCtx = new MockServletContext();
+        val response = new MockHttpServletResponse();
+        val sCtx = new MockServletContext();
         ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
         ctx.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService());
         samlMetadataUIParserAction.execute(ctx);
@@ -57,13 +59,13 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyEntityIdUIInfoNoParam() throws Exception {
-        final var ctx = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val ctx = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         request.addParameter("somethingelse", "https://carmenwiki.osu.edu/shibboleth");
 
-        final var response = new MockHttpServletResponse();
+        val response = new MockHttpServletResponse();
 
-        final var sCtx = new MockServletContext();
+        val sCtx = new MockServletContext();
         ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
         samlMetadataUIParserAction.execute(ctx);
         assertNull(WebUtils.getServiceUserInterfaceMetadata(ctx, SamlMetadataUIInfo.class));

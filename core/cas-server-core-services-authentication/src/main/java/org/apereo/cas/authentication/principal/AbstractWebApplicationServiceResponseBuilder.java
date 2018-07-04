@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.RequiredArgsConstructor;
@@ -72,10 +74,10 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
      * @return the response type
      */
     protected Response.ResponseType getWebApplicationServiceResponseType(final WebApplicationService finalService) {
-        final var request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         var method = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_METHOD) : null;
         if (StringUtils.isBlank(method)) {
-            final var registeredService = this.servicesManager.findServiceBy(finalService);
+            val registeredService = this.servicesManager.findServiceBy(finalService);
             if (registeredService != null) {
                 method = registeredService.getResponseType();
             }

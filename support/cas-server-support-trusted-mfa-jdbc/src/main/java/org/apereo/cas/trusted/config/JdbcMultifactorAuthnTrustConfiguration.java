@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -62,7 +64,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean mfaTrustedAuthnEntityManagerFactory() {
-        final var bean =
+        val bean =
                 JpaBeans.newHibernateEntityManagerFactoryBean(
                         new JpaConfigDataHolder(
                                 jpaMfaTrustedAuthnVendorAdapter(),
@@ -78,14 +80,14 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @Bean
     public PlatformTransactionManager transactionManagerMfaAuthnTrust(
             @Qualifier("mfaTrustedAuthnEntityManagerFactory") final EntityManagerFactory emf) {
-        final var mgmr = new JpaTransactionManager();
+        val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }
 
     @Bean
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
-        final var m = new JpaMultifactorAuthenticationTrustStorage();
+        val m = new JpaMultifactorAuthenticationTrustStorage();
         m.setCipherExecutor(this.mfaTrustCipherExecutor);
         return m;
     }

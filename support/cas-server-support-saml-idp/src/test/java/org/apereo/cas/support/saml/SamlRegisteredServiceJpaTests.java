@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
@@ -33,12 +35,12 @@ public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests
 
     @Test
     public void verifySavingSamlService() {
-        final var service = new SamlRegisteredService();
+        val service = new SamlRegisteredService();
         service.setName("SAML");
         service.setServiceId("http://mmoayyed.example.net");
         service.setMetadataLocation("classpath:/metadata/idp-metadata.xml");
-        final var policy = new InCommonRSAttributeReleasePolicy();
-        final var chain = new ChainingAttributeReleasePolicy();
+        val policy = new InCommonRSAttributeReleasePolicy();
+        val chain = new ChainingAttributeReleasePolicy();
         chain.setPolicies(Arrays.asList(policy, new DenyAllAttributeReleasePolicy()));
         service.setAttributeReleasePolicy(chain);
         service.setDescription("Description");
@@ -47,7 +49,7 @@ public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests
         service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, true));
         servicesManager.save(service);
         servicesManager.load();
-        final var services = servicesManager.getAllServices();
+        val services = servicesManager.getAllServices();
         assertEquals(1, services.size());
         services.forEach(s -> servicesManager.delete(s.getId()));
         assertEquals(0, servicesManager.count());

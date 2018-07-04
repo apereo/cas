@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import lombok.val;
+
 import com.yubico.client.v2.ResponseStatus;
 import com.yubico.client.v2.VerificationResponse;
 import com.yubico.client.v2.YubicoClient;
@@ -19,12 +21,12 @@ import static org.mockito.Mockito.*;
 public class DefaultYubiKeyAccountValidatorTests {
     @Test
     public void verifyAction() throws Exception {
-        final var client = mock(YubicoClient.class);
-        final var r = mock(VerificationResponse.class);
+        val client = mock(YubicoClient.class);
+        val r = mock(VerificationResponse.class);
         when(client.verify(anyString())).thenReturn(r);
         when(r.getStatus()).thenReturn(ResponseStatus.OK);
         when(r.getTimestamp()).thenReturn(String.valueOf(new Date().getTime()));
-        final var v = new DefaultYubiKeyAccountValidator(client);
+        val v = new DefaultYubiKeyAccountValidator(client);
         assertTrue(v.isValid("casuser", "cccccccvlidcrkrrculeevnlcjbngciggidutebbkjrv"));
     }
 }

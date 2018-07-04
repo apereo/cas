@@ -1,5 +1,7 @@
 package org.apereo.cas.web.view;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -52,16 +54,16 @@ public class Cas30ResponseView extends Cas20ResponseView {
                                             final HttpServletResponse response) throws Exception {
         super.prepareMergedOutputModel(model, request, response);
 
-        final var service = authenticationRequestServiceSelectionStrategies.resolveService(getServiceFrom(model));
-        final var registeredService = this.servicesManager.findServiceBy(service);
+        val service = authenticationRequestServiceSelectionStrategies.resolveService(getServiceFrom(model));
+        val registeredService = this.servicesManager.findServiceBy(service);
 
-        final var principalAttributes = getCasPrincipalAttributes(model, registeredService);
+        val principalAttributes = getCasPrincipalAttributes(model, registeredService);
         final Map<String, Object> attributes = new HashMap<>(principalAttributes);
 
         LOGGER.debug("Processed principal attributes from the output model to be [{}]", principalAttributes.keySet());
         if (this.releaseProtocolAttributes) {
             LOGGER.debug("CAS is configured to release protocol-level attributes. Processing...");
-            final var protocolAttributes = getCasProtocolAuthenticationAttributes(model, registeredService);
+            val protocolAttributes = getCasProtocolAuthenticationAttributes(model, registeredService);
             attributes.putAll(protocolAttributes);
             LOGGER.debug("Processed protocol/authentication attributes from the output model to be [{}]", protocolAttributes.keySet());
         }
@@ -88,12 +90,12 @@ public class Cas30ResponseView extends Cas20ResponseView {
             return new LinkedHashMap<>(0);
         }
 
-        final var filteredAuthenticationAttributes = authenticationAttributeReleasePolicy
+        val filteredAuthenticationAttributes = authenticationAttributeReleasePolicy
             .getAuthenticationAttributesForRelease(getPrimaryAuthenticationFrom(model));
 
         filterCasProtocolAttributes(model, filteredAuthenticationAttributes);
 
-        final var contextProvider = getSatisfiedMultifactorAuthenticationProviderId(model);
+        val contextProvider = getSatisfiedMultifactorAuthenticationProviderId(model);
         if (StringUtils.isNotBlank(contextProvider) && StringUtils.isNotBlank(authenticationContextAttribute)) {
             filteredAuthenticationAttributes.put(this.authenticationContextAttribute, CollectionUtils.wrap(contextProvider));
         }
@@ -133,12 +135,12 @@ public class Cas30ResponseView extends Cas20ResponseView {
                                                      final RegisteredService registeredService) {
 
         LOGGER.debug("Beginning to encode attributes for the response");
-        final var encodedAttributes = this.protocolAttributeEncoder.encodeAttributes(attributes, registeredService);
+        val encodedAttributes = this.protocolAttributeEncoder.encodeAttributes(attributes, registeredService);
 
         LOGGER.debug("Encoded attributes for the response are [{}]", encodedAttributes);
         super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES, encodedAttributes);
 
-        final var formattedAttributes = this.attributesRenderer.render(encodedAttributes);
+        val formattedAttributes = this.attributesRenderer.render(encodedAttributes);
         super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES, formattedAttributes);
     }
 }

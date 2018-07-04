@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -66,7 +68,7 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
 
     @Before
     public void before() {
-        final var svc = RegisteredServiceTestUtils.getRegisteredService("https://example.token.org");
+        val svc = RegisteredServiceTestUtils.getRegisteredService("https://example.token.org");
         svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         var prop = new DefaultRegisteredServiceProperty();
         prop.addValue(SIGNING_SECRET);
@@ -84,16 +86,16 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
         g.setSignatureConfiguration(new SecretSignatureConfiguration(SIGNING_SECRET, JWSAlgorithm.HS256));
         g.setEncryptionConfiguration(new SecretEncryptionConfiguration(ENCRYPTION_SECRET, JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
 
-        final var profile = new CommonProfile();
+        val profile = new CommonProfile();
         profile.setId("casuser");
         profile.addAttribute("uid", "uid");
         profile.addAttribute("givenName", "CASUser");
         profile.addAttribute("memberOf", CollectionUtils.wrapSet("system", "cas", "admin"));
-        final var token = g.generate(profile);
+        val token = g.generate(profile);
 
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addHeader(TokenConstants.PARAMETER_NAME_TOKEN, token);
-        final var context = new MockRequestContext();
+        val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService("https://example.token.org"));
         assertEquals("success", this.action.execute(context).getId());

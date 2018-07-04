@@ -1,5 +1,7 @@
 package org.apereo.cas.web.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
@@ -51,7 +53,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
 
     @Before
     public void initialize() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setRemoteAddr(IP_ADDRESS);
         request.setLocalAddr(IP_ADDRESS);
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
@@ -85,7 +87,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
             LOGGER.debug("Waiting for [{}] ms", period);
             Thread.sleep(period);
 
-            final var status = loginUnsuccessfully("mog", "1.2.3.4");
+            val status = loginUnsuccessfully("mog", "1.2.3.4");
             assertEquals(expected, status.getStatus());
         }
     }

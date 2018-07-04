@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -34,7 +36,7 @@ public class RestMultifactorAuthenticationTrustConfiguration {
     @RefreshScope
     @Bean
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
-        final var m = new RestMultifactorAuthenticationTrustStorage(new RestTemplate(), casProperties);
+        val m = new RestMultifactorAuthenticationTrustStorage(new RestTemplate(), casProperties);
         m.setCipherExecutor(this.mfaTrustCipherExecutor);
         return m;
     }

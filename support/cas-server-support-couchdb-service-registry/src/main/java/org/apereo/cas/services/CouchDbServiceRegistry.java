@@ -42,7 +42,7 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
         for (var retries = 0; retries < conflictRetries; retries++) {
             try {
                 exception = null;
-                final var serviceDocument = dbClient.get(service.getId());
+                val serviceDocument = dbClient.get(service.getId());
                 dbClient.remove(serviceDocument);
                 success = true;
             } catch (final UpdateConflictException e) {

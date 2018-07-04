@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -25,32 +27,32 @@ public class DefaultRegisteredServiceUsernameProviderTests {
 
     @Test
     public void verifyRegServiceUsernameUpper() {
-        final var provider = new DefaultRegisteredServiceUsernameProvider();
+        val provider = new DefaultRegisteredServiceUsernameProvider();
         provider.setCanonicalizationMode(CaseCanonicalizationMode.UPPER.name());
-        final var principal = mock(Principal.class);
+        val principal = mock(Principal.class);
         when(principal.getId()).thenReturn("id");
-        final var id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),
+        val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
         assertEquals(id, principal.getId().toUpperCase());
     }
 
     @Test
     public void verifyRegServiceUsername() {
-        final var provider = new DefaultRegisteredServiceUsernameProvider();
+        val provider = new DefaultRegisteredServiceUsernameProvider();
 
-        final var principal = mock(Principal.class);
+        val principal = mock(Principal.class);
         when(principal.getId()).thenReturn("id");
-        final var id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),
+        val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getRegisteredService("id"));
         assertEquals(id, principal.getId());
     }
 
     @Test
     public void verifyEquality() {
-        final var provider =
+        val provider =
                 new DefaultRegisteredServiceUsernameProvider();
 
-        final var provider2 =
+        val provider2 =
                 new DefaultRegisteredServiceUsernameProvider();
 
         assertEquals(provider, provider2);
@@ -58,7 +60,7 @@ public class DefaultRegisteredServiceUsernameProviderTests {
 
     @Test
     public void verifySerializeADefaultRegisteredServiceUsernameProviderToJson() throws IOException {
-        final var providerWritten = new DefaultRegisteredServiceUsernameProvider();
+        val providerWritten = new DefaultRegisteredServiceUsernameProvider();
 
         MAPPER.writeValue(JSON_FILE, providerWritten);
 

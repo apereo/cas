@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import edu.internet2.middleware.grouperClientExt.org.apache.commons.lang3.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
@@ -54,8 +56,8 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final var service = resolveRegisteredServiceInRequestContext(context);
-        final var authentication = WebUtils.getAuthentication(context);
+        val service = resolveRegisteredServiceInRequestContext(context);
+        val authentication = WebUtils.getAuthentication(context);
 
         if (StringUtils.isBlank(grouperField)) {
             LOGGER.debug("No group field is defined to process for Grouper multifactor trigger");
@@ -66,36 +68,36 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
             return null;
         }
 
-        final var principal = authentication.getPrincipal();
-        final var results = grouperFacade.getGroupsForSubjectId(principal.getId());
+        val principal = authentication.getPrincipal();
+        val results = grouperFacade.getGroupsForSubjectId(principal.getId());
         if (results.isEmpty()) {
             LOGGER.debug("No groups could be found for [{}] to resolve events for MFA", principal);
             return null;
         }
 
-        final var providerMap =
+        val providerMap =
             MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
 
-        final var groupField = GrouperGroupField.valueOf(grouperField);
+        val groupField = GrouperGroupField.valueOf(grouperField);
 
-        final var values = results.stream()
+        val values = results.stream()
             .map(wsGetGroupsResult -> Stream.of(wsGetGroupsResult.getWsGroups()))
             .flatMap(Function.identity())
             .map(g -> GrouperFacade.getGrouperGroupAttribute(groupField, g))
             .collect(Collectors.toSet());
 
-        final var providerFound = resolveProvider(providerMap, values);
+        val providerFound = resolveProvider(providerMap, values);
 
         if (providerFound.isPresent()) {
-            final var provider = providerFound.get();
+            val provider = providerFound.get();
             if (provider.isAvailable(service)) {
                 LOGGER.debug("Attempting to build event based on the authentication provider [{}] and service [{}]",
                     provider, service.getName());
-                final var event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
+                val event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
                     buildEventAttributeMap(authentication.getPrincipal(), service, provider));
                 return CollectionUtils.wrapSet(event);
             }

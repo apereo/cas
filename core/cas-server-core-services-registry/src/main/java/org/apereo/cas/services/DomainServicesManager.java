@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -44,19 +46,19 @@ public class DomainServicesManager extends AbstractServicesManager {
 
     @Override
     protected void deleteInternal(final RegisteredService service) {
-        final var domain = extractDomain(service.getServiceId());
+        val domain = extractDomain(service.getServiceId());
         this.domains.get(domain).remove(service);
     }
 
     @Override
     protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
-        final var mappedDomain = StringUtils.isNotBlank(serviceId) ? extractDomain(serviceId) : StringUtils.EMPTY;
+        val mappedDomain = StringUtils.isNotBlank(serviceId) ? extractDomain(serviceId) : StringUtils.EMPTY;
         LOGGER.debug("Domain mapped to the service identifier is [{}]", mappedDomain);
 
-        final var domain = domains.containsKey(mappedDomain) ? mappedDomain : DEFAULT_DOMAIN_NAME;
+        val domain = domains.containsKey(mappedDomain) ? mappedDomain : DEFAULT_DOMAIN_NAME;
         LOGGER.debug("Looking up services under domain [{}] for service identifier [{}]", domain, serviceId);
 
-        final var registeredServices = getServicesForDomain(domain);
+        val registeredServices = getServicesForDomain(domain);
         if (registeredServices == null || registeredServices.isEmpty()) {
             LOGGER.debug("No services could be located for domain [{}]", domain);
             return new ArrayList<>(0);
@@ -89,18 +91,18 @@ public class DomainServicesManager extends AbstractServicesManager {
 
 
     private String extractDomain(final String service) {
-        final var extractor = this.domainExtractor.matcher(service.toLowerCase());
+        val extractor = this.domainExtractor.matcher(service.toLowerCase());
         return extractor.lookingAt() ? validateDomain(extractor.group(1)) : "default";
     }
 
     private String validateDomain(final String providedDomain) {
-        final var domain = StringUtils.remove(providedDomain, "\\");
-        final var match = domainPattern.matcher(StringUtils.remove(domain, "\\"));
+        val domain = StringUtils.remove(providedDomain, "\\");
+        val match = domainPattern.matcher(StringUtils.remove(domain, "\\"));
         return match.matches() ? domain : "default";
     }
 
     private void addToDomain(final RegisteredService r, final Map<String, TreeSet<RegisteredService>> map) {
-        final var domain = extractDomain(r.getServiceId());
+        val domain = extractDomain(r.getServiceId());
         final TreeSet<RegisteredService> services;
         if (map.containsKey(domain)) {
             services = map.get(domain);

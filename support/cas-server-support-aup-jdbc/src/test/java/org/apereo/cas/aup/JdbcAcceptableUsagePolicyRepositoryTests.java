@@ -1,5 +1,7 @@
 package org.apereo.cas.aup;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.config.CasAcceptableUsagePolicyJdbcConfiguration;
@@ -86,8 +88,8 @@ public class JdbcAcceptableUsagePolicyRepositoryTests {
 
     @Before
     public void initialize() throws Exception {
-        final var c = this.acceptableUsagePolicyDataSource.getConnection();
-        final var s = c.createStatement();
+        val c = this.acceptableUsagePolicyDataSource.getConnection();
+        val s = c.createStatement();
         c.setAutoCommit(true);
         s.execute("CREATE TABLE aup_table (id int primary key, username varchar(255), accepted boolean)");
         s.execute("INSERT INTO aup_table (id, username, accepted) values (100, 'casuser', false);");
@@ -96,8 +98,8 @@ public class JdbcAcceptableUsagePolicyRepositoryTests {
 
     @Test
     public void verifyAction() {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
         final TicketGrantingTicket tgt = new MockTicketGrantingTicket("casuser", c, CollectionUtils.wrap("accepted", "false"));

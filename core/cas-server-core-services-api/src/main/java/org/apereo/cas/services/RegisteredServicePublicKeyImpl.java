@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -55,7 +57,7 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
     @SneakyThrows
     @Override
     public PublicKey createInstance() {
-        final var factory = this.publicKeyFactoryBeanClass.getDeclaredConstructor().newInstance();
+        val factory = this.publicKeyFactoryBeanClass.getDeclaredConstructor().newInstance();
         if (this.location.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
             factory.setResource(new ClassPathResource(StringUtils.removeStart(this.location, ResourceUtils.CLASSPATH_URL_PREFIX)));
         } else {

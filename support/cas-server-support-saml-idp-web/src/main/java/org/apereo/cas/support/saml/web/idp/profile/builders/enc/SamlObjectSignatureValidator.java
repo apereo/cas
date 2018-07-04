@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
+import lombok.val;
+
 import com.google.common.collect.Sets;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -92,11 +94,11 @@ public class SamlObjectSignatureValidator {
                                                  final HttpServletRequest request,
                                                  final MessageContext context) throws Exception {
 
-        final var roleDescriptorResolver = getRoleDescriptorResolver(resolver, context, profileRequest);
+        val roleDescriptorResolver = getRoleDescriptorResolver(resolver, context, profileRequest);
 
         LOGGER.debug("Validating signature for [{}]", profileRequest.getClass().getName());
 
-        final var signature = profileRequest.getSignature();
+        val signature = profileRequest.getSignature();
         if (signature != null) {
             validateSignatureOnProfileRequest(profileRequest, signature, roleDescriptorResolver);
         } else {
@@ -133,30 +135,30 @@ public class SamlObjectSignatureValidator {
     protected RoleDescriptorResolver getRoleDescriptorResolver(final MetadataResolver resolver,
                                                                final MessageContext context,
                                                                final RequestAbstractType profileRequest) throws Exception {
-        final var idp = casProperties.getAuthn().getSamlIdp();
+        val idp = casProperties.getAuthn().getSamlIdp();
         return SamlIdPUtils.getRoleDescriptorResolver(resolver, idp.getMetadata().isRequireValidMetadata());
     }
 
     private void validateSignatureOnAuthenticationRequest(final RequestAbstractType profileRequest, final HttpServletRequest request,
                                                           final MessageContext context,
                                                           final RoleDescriptorResolver roleDescriptorResolver) throws Exception {
-        final var handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
-        final var peer = context.getSubcontext(SAMLPeerEntityContext.class, true);
+        val handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
+        val peer = context.getSubcontext(SAMLPeerEntityContext.class, true);
         peer.setEntityId(SamlIdPUtils.getIssuerFromSamlRequest(profileRequest));
 
-        final var peerEntityId = peer.getEntityId();
+        val peerEntityId = peer.getEntityId();
         LOGGER.debug("Validating request signature for [{}] via [{}]...", peerEntityId, handler.getClass().getSimpleName());
 
-        final var roleDescriptor = roleDescriptorResolver.resolveSingle(
+        val roleDescriptor = roleDescriptorResolver.resolveSingle(
             new CriteriaSet(new EntityIdCriterion(peerEntityId),
                 new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME)));
         peer.setRole(roleDescriptor.getElementQName());
-        final var protocol = context.getSubcontext(SAMLProtocolContext.class, true);
+        val protocol = context.getSubcontext(SAMLProtocolContext.class, true);
         protocol.setProtocol(SAMLConstants.SAML20P_NS);
 
         LOGGER.debug("Building security parameters context for signature validation of [{}]", peerEntityId);
-        final var secCtx = context.getSubcontext(SecurityParametersContext.class, true);
-        final var validationParams = new SignatureValidationParameters();
+        val secCtx = context.getSubcontext(SecurityParametersContext.class, true);
+        val validationParams = new SignatureValidationParameters();
 
         if (overrideBlackListedSignatureAlgorithms != null && !overrideBlackListedSignatureAlgorithms.isEmpty()) {
             validationParams.setBlacklistedAlgorithms(this.overrideBlackListedSignatureAlgorithms);
@@ -169,16 +171,16 @@ public class SamlObjectSignatureValidator {
         }
 
         LOGGER.debug("Resolving signing credentials for [{}]", peerEntityId);
-        final var credentials = getSigningCredential(roleDescriptorResolver, profileRequest);
+        val credentials = getSigningCredential(roleDescriptorResolver, profileRequest);
         if (credentials == null || credentials.isEmpty()) {
             throw new SamlException("Signing credentials for validation could not be resolved");
         }
 
         var foundValidCredential = false;
-        final var it = credentials.iterator();
+        val it = credentials.iterator();
         while (!foundValidCredential && it.hasNext()) {
             try {
-                final var c = it.next();
+                val c = it.next();
 
                 final CredentialResolver resolver = new StaticCredentialResolver(c);
                 final KeyInfoCredentialResolver keyResolver = new StaticKeyInfoCredentialResolver(c);
@@ -210,23 +212,23 @@ public class SamlObjectSignatureValidator {
     private void validateSignatureOnProfileRequest(final RequestAbstractType profileRequest,
                                                    final Signature signature,
                                                    final RoleDescriptorResolver roleDescriptorResolver) throws Exception {
-        final var validator = new SAMLSignatureProfileValidator();
+        val validator = new SAMLSignatureProfileValidator();
         LOGGER.debug("Validating profile signature for [{}] via [{}]...", profileRequest.getIssuer(),
             validator.getClass().getSimpleName());
         validator.validate(signature);
         LOGGER.debug("Successfully validated profile signature for [{}].", profileRequest.getIssuer());
 
         @NonNull
-        final var credentials = getSigningCredential(roleDescriptorResolver, profileRequest);
+        val credentials = getSigningCredential(roleDescriptorResolver, profileRequest);
         if (credentials.isEmpty()) {
             throw new SamlException("Signing credentials for validation could not be resolved based on the provided signature");
         }
 
         var foundValidCredential = false;
-        final var it = credentials.iterator();
+        val it = credentials.iterator();
         while (!foundValidCredential && it.hasNext()) {
             try {
-                final var c = it.next();
+                val c = it.next();
                 LOGGER.debug("Validating signature using credentials for [{}]", c.getEntityId());
                 SignatureValidator.validate(signature, c);
                 LOGGER.info("Successfully validated the request signature.");
@@ -244,13 +246,13 @@ public class SamlObjectSignatureValidator {
 
     @SneakyThrows
     private Set<Credential> getSigningCredential(final RoleDescriptorResolver resolver, final RequestAbstractType profileRequest) {
-        final var kekCredentialResolver = new MetadataCredentialResolver();
-        final var config = getSignatureValidationConfiguration();
+        val kekCredentialResolver = new MetadataCredentialResolver();
+        val config = getSignatureValidationConfiguration();
         kekCredentialResolver.setRoleDescriptorResolver(resolver);
         kekCredentialResolver.setKeyInfoCredentialResolver(
             DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
         kekCredentialResolver.initialize();
-        final var criteriaSet = new CriteriaSet();
+        val criteriaSet = new CriteriaSet();
         criteriaSet.add(new SignatureValidationConfigurationCriterion(config));
         criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
 
@@ -278,9 +280,9 @@ public class SamlObjectSignatureValidator {
      * @return the signature validation configuration
      */
     protected SignatureValidationConfiguration getSignatureValidationConfiguration() {
-        final var config =
+        val config =
             DefaultSecurityConfigurationBootstrap.buildDefaultSignatureValidationConfiguration();
-        final var samlIdp = casProperties.getAuthn().getSamlIdp();
+        val samlIdp = casProperties.getAuthn().getSamlIdp();
 
         if (this.overrideBlackListedSignatureAlgorithms != null
             && !samlIdp.getAlgs().getOverrideBlackListedSignatureSigningAlgorithms().isEmpty()) {

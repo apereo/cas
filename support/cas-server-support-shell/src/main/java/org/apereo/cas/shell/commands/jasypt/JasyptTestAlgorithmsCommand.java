@@ -1,5 +1,7 @@
 package org.apereo.cas.shell.commands.jasypt;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -50,13 +52,13 @@ public class JasyptTestAlgorithmsCommand {
         }
 
         LOGGER.info("==== JASYPT Password Based Encryption Algorithms ====\n");
-        final var password = "SecretKeyValue";
-        final var value = "ValueToEncrypt";
+        val password = "SecretKeyValue";
+        val value = "ValueToEncrypt";
 
         final Set<String> pbeAlgos = AlgorithmRegistry.getAllPBEAlgorithms();
-        for (final var provider: providers) {
-            for (final var algorithm: pbeAlgos) {
-                final var cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
+        for (val provider: providers) {
+            for (val algorithm: pbeAlgos) {
+                val cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
                 cipher.setPassword(password);
                 cipher.setKeyObtentionIterations("1");
                 cipher.setAlgorithm(algorithm);

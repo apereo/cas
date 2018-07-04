@@ -1,5 +1,7 @@
 package org.apereo.cas.audit.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
@@ -45,8 +47,8 @@ public class CasSupportJdbcAuditConfiguration {
 
     @Bean
     public AuditTrailManager jdbcAuditTrailManager() {
-        final var jdbc = casProperties.getAudit().getJdbc();
-        final var t = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate());
+        val jdbc = casProperties.getAudit().getJdbc();
+        val t = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate());
         t.setCleanupCriteria(auditCleanupCriteria());
         t.setDataSource(inspektrAuditTrailDataSource());
         t.setAsynchronous(jdbc.isAsynchronous());
@@ -97,7 +99,7 @@ public class CasSupportJdbcAuditConfiguration {
 
     @Bean
     public TransactionTemplate inspektrAuditTransactionTemplate() {
-        final var t = new TransactionTemplate(inspektrAuditTransactionManager());
+        val t = new TransactionTemplate(inspektrAuditTransactionManager());
         t.setIsolationLevelName(casProperties.getAudit().getJdbc().getIsolationLevelName());
         t.setPropagationBehaviorName(casProperties.getAudit().getJdbc().getPropagationBehaviorName());
         return t;

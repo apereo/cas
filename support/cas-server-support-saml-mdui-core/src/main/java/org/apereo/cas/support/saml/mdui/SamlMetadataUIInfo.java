@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.mdui;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -131,7 +133,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      */
     public String getDescription(final String locale) {
         if (this.uiInfo != null) {
-            final var description = getLocalizedValues(locale, this.uiInfo.getDescriptions());
+            val description = getLocalizedValues(locale, this.uiInfo.getDescriptions());
             return (description != null) ? description : super.getDescription();
         }
         return super.getDescription();
@@ -150,7 +152,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      */
     public String getDisplayName(final String locale) {
         if (this.uiInfo != null) {
-            final var displayName = getLocalizedValues(locale, this.uiInfo.getDisplayNames());
+            val displayName = getLocalizedValues(locale, this.uiInfo.getDisplayNames());
             return (displayName != null) ? displayName : super.getDisplayName();
         }
         return super.getDisplayName();
@@ -169,7 +171,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      */
     public String getInformationURL(final String locale) {
         if (this.uiInfo != null) {
-            final var informationUrl = getLocalizedValues(locale, this.uiInfo.getInformationURLs());
+            val informationUrl = getLocalizedValues(locale, this.uiInfo.getInformationURLs());
             return (informationUrl != null) ? informationUrl : super.getInformationURL();
         }
         return super.getInformationURL();
@@ -188,7 +190,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      */
     public String getPrivacyStatementURL(final String locale) {
         if (this.uiInfo != null) {
-            final var privacyStatementURL = getLocalizedValues(locale, this.uiInfo.getPrivacyStatementURLs());
+            val privacyStatementURL = getLocalizedValues(locale, this.uiInfo.getPrivacyStatementURLs());
             return (privacyStatementURL != null) ? privacyStatementURL : super.getPrivacyStatementURL();
         }
         return super.getPrivacyStatementURL();
@@ -207,7 +209,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      * @return the string value
      */
     private String getLocalizedValues(final String locale, final List<?> items) {
-        final var foundLocale = findLocale(StringUtils.defaultString(locale, "en"), items);
+        val foundLocale = findLocale(StringUtils.defaultString(locale, "en"), items);
         if (foundLocale.isPresent()) {
             return foundLocale.get();
         }
@@ -234,8 +236,8 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
         LOGGER.trace("Looking for locale [{}]", locale);
         for (var i = 0; i < items.size(); i++) {
             if (items.get(i) instanceof LocalizedName) {
-                final var p = Pattern.compile(locale, Pattern.CASE_INSENSITIVE);
-                final var value = (LocalizedName) items.get(i);
+                val p = Pattern.compile(locale, Pattern.CASE_INSENSITIVE);
+                val value = (LocalizedName) items.get(i);
                 if (p.matcher(value.getXMLLang()).matches()) {
                     LOGGER.trace("Found locale [{}]", value);
                     return Optional.of(value.getValue());

@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
@@ -85,8 +87,8 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
-        final var props = casProperties.getAuthn().getAccept();
-        final var h = new AcceptUsersAuthenticationHandler(props.getName(), servicesManager,
+        val props = casProperties.getAuthn().getAccept();
+        val h = new AcceptUsersAuthenticationHandler(props.getName(), servicesManager,
             acceptUsersPrincipalFactory(), null, getParsedUsers());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(props.getPasswordEncoder()));
         h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration());
@@ -102,8 +104,8 @@ public class CasCoreAuthenticationHandlersConfiguration {
     }
 
     private Map<String, String> getParsedUsers() {
-        final var pattern = Pattern.compile("::");
-        final var usersProperty = casProperties.getAuthn().getAccept().getUsers();
+        val pattern = Pattern.compile("::");
+        val usersProperty = casProperties.getAuthn().getAccept().getUsers();
 
         if (StringUtils.isNotBlank(usersProperty) && usersProperty.contains(pattern.pattern())) {
             return Stream.of(usersProperty.split(","))
@@ -170,7 +172,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
                 .stream()
                 .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
                 .map(jaas -> {
-                    final var h = new JaasAuthenticationHandler(jaas.getName(), servicesManager,
+                    val h = new JaasAuthenticationHandler(jaas.getName(), servicesManager,
                         jaasPrincipalFactory(), jaas.getOrder());
 
                     h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());
@@ -184,11 +186,11 @@ public class CasCoreAuthenticationHandlersConfiguration {
                     if (StringUtils.isNotBlank(jaas.getLoginConfigurationFile())) {
                         h.setLoginConfigurationFile(new File(jaas.getLoginConfigurationFile()));
                     }
-                    final var passwordPolicy = jaas.getPasswordPolicy();
+                    val passwordPolicy = jaas.getPasswordPolicy();
                     h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(passwordPolicy));
                     if (passwordPolicy.isEnabled()) {
                         LOGGER.debug("Password policy is enabled for JAAS. Constructing password policy configuration for [{}]", jaas.getRealm());
-                        final var cfg = new PasswordPolicyConfiguration(passwordPolicy);
+                        val cfg = new PasswordPolicyConfiguration(passwordPolicy);
                         if (passwordPolicy.isAccountStateHandlingEnabled()) {
                             cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));
                         } else {

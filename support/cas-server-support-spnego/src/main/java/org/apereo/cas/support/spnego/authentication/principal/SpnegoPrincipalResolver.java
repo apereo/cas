@@ -1,5 +1,7 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
+import lombok.val;
+
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
@@ -32,8 +34,8 @@ public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     @Override
     protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
-        final var c = (SpnegoCredential) credential;
-        final var id = c.getPrincipal().getId();
+        val c = (SpnegoCredential) credential;
+        val id = c.getPrincipal().getId();
         return id;
     }
 

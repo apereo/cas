@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -31,11 +33,11 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketIdToDelete) {
-        final var ticketId = encodeTicketId(ticketIdToDelete);
+        val ticketId = encodeTicketId(ticketIdToDelete);
         LOGGER.debug("Deleting ticket [{}]", ticketIdToDelete);
         DbAccessException exception = null;
         var success = false;
-        final var ticketDocument = new TicketDocument();
+        val ticketDocument = new TicketDocument();
         try {
             ticketDocument.setRevision(couchDb.getCurrentRevision(ticketId));
         } catch (final DocumentNotFoundException e) {
@@ -71,7 +73,7 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public void addTicket(final Ticket ticketToAdd) {
-        final var encodedTicket = encodeTicket(ticketToAdd);
+        val encodedTicket = encodeTicket(ticketToAdd);
         LOGGER.debug("Adding ticket [{}]", encodedTicket.getId());
 
         couchDb.add(new TicketDocument(encodedTicket));
@@ -80,7 +82,7 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Ticket getTicket(final String ticketId) {
         LOGGER.debug("Locating ticket id [{}]", ticketId);
-        final var encTicketId = encodeTicketId(ticketId);
+        val encTicketId = encodeTicketId(ticketId);
         if (StringUtils.isBlank(encTicketId)) {
             LOGGER.debug("Ticket id [{}] could not be found", encTicketId);
             return null;
@@ -95,10 +97,10 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
         }
 
         if (document != null) {
-            final var t = document.getTicket();
+            val t = document.getTicket();
             LOGGER.debug("Got ticket [{}] from the registry.", t);
 
-            final var decoded = decodeTicket(t);
+            val decoded = decodeTicket(t);
             if (decoded == null || decoded.isExpired()) {
                 LOGGER.warn("The expiration policy for ticket id [{}] has expired the ticket", encTicketId);
                 return null;
@@ -122,11 +124,11 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        final var encodedTicket = encodeTicket(ticket);
+        val encodedTicket = encodeTicket(ticket);
         LOGGER.debug("Updating [{}]", encodedTicket.getId());
         DbAccessException exception = null;
         var success = false;
-        final var doc = new TicketDocument(encodedTicket);
+        val doc = new TicketDocument(encodedTicket);
         doc.setRevision(couchDb.getCurrentRevision(encodedTicket.getId()));
         for (var retries = 0; retries < conflictRetries; retries++) {
             try {

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -48,8 +50,8 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final var service = resolveRegisteredServiceInRequestContext(context);
-        final var authentication = WebUtils.getAuthentication(context);
+        val service = resolveRegisteredServiceInRequestContext(context);
+        val authentication = WebUtils.getAuthentication(context);
 
         if (authentication == null) {
             LOGGER.debug("No authentication is available to determine event for principal");
@@ -61,20 +63,20 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
         }
         LOGGER.debug("Attempting to globally activate [{}]", globalProviderId);
 
-        final var providerMap =
+        val providerMap =
                 MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context to handle [{}]", globalProviderId);
             throw new AuthenticationException();
         }
 
-        final var providerFound = resolveProvider(providerMap, globalProviderId);
+        val providerFound = resolveProvider(providerMap, globalProviderId);
         if (providerFound.isPresent()) {
-            final var provider = providerFound.get();
+            val provider = providerFound.get();
             if (provider.isAvailable(service)) {
                 LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service);
-                final var attributes = buildEventAttributeMap(authentication.getPrincipal(), service, provider);
-                final var event = validateEventIdForMatchingTransitionInContext(provider.getId(), context, attributes);
+                val attributes = buildEventAttributeMap(authentication.getPrincipal(), service, provider);
+                val event = validateEventIdForMatchingTransitionInContext(provider.getId(), context, attributes);
                 return CollectionUtils.wrapSet(event);
             }
             LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", provider);

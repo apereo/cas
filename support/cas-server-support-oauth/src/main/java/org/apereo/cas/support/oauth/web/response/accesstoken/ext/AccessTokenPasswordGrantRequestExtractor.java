@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableContext;
@@ -46,48 +48,48 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
 
     @Override
     public AccessTokenRequestDataHolder extract(final HttpServletRequest request, final HttpServletResponse response) {
-        final var clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
-        final var scopes = OAuth20Utils.parseRequestScopes(request);
+        val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+        val scopes = OAuth20Utils.parseRequestScopes(request);
         LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
 
-        final var registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
-        final var context = Pac4jUtils.getPac4jJ2EContext(request, response);
-        final var manager = Pac4jUtils.getPac4jProfileManager(request, response);
+        val context = Pac4jUtils.getPac4jJ2EContext(request, response);
+        val manager = Pac4jUtils.getPac4jProfileManager(request, response);
         final Optional<UserProfile> profile = manager.get(true);
         if (!profile.isPresent()) {
             throw new UnauthorizedServiceException("OAuth user profile cannot be determined");
         }
-        final var uProfile = profile.get();
+        val uProfile = profile.get();
         LOGGER.debug("Creating matching service request based on [{}]", registeredService);
-        final var requireServiceHeader = oAuthProperties.getGrants().getResourceOwner().isRequireServiceHeader();
+        val requireServiceHeader = oAuthProperties.getGrants().getResourceOwner().isRequireServiceHeader();
         if (requireServiceHeader) {
             LOGGER.debug("Using request headers to identify and build the target service url");
         }
-        final var service = this.authenticationBuilder.buildService(registeredService, context, requireServiceHeader);
+        val service = this.authenticationBuilder.buildService(registeredService, context, requireServiceHeader);
 
         LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
-        final var authentication = this.authenticationBuilder.build(uProfile, registeredService, context, service);
+        val authentication = this.authenticationBuilder.build(uProfile, registeredService, context, service);
 
 
-        final var audit = AuditableContext.builder().service(service)
+        val audit = AuditableContext.builder().service(service)
             .authentication(authentication)
             .registeredService(registeredService)
             .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
             .build();
-        final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();
 
         final AuthenticationResult result = new DefaultAuthenticationResult(authentication, requireServiceHeader ? service : null);
-        final var ticketGrantingTicket = this.centralAuthenticationService.createTicketGrantingTicket(result);
+        val ticketGrantingTicket = this.centralAuthenticationService.createTicketGrantingTicket(result);
 
         return new AccessTokenRequestDataHolder(service, authentication, registeredService, ticketGrantingTicket, getGrantType(), scopes);
     }
 
     @Override
     public boolean supports(final HttpServletRequest context) {
-        final var grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
+        val grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, getGrantType());
     }
 

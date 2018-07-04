@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import com.microsoft.azure.documentdb.ConsistencyLevel;
 import com.microsoft.azure.documentdb.IndexingMode;
 import com.microsoft.azure.documentdb.IndexingPolicy;
@@ -42,14 +44,14 @@ public class CosmosDbServiceRegistryConfiguration implements ServiceRegistryExec
     @Bean
     @RefreshScope
     public ServiceRegistry cosmosDbServiceRegistry() {
-        final var factory = new CosmosDbObjectFactory(this.applicationContext);
-        final var cosmosDb = casProperties.getServiceRegistry().getCosmosDb();
-        final var dbFactory = factory.createDocumentDbFactory(cosmosDb);
-        final var db = factory.createDocumentDbTemplate(dbFactory, cosmosDb);
+        val factory = new CosmosDbObjectFactory(this.applicationContext);
+        val cosmosDb = casProperties.getServiceRegistry().getCosmosDb();
+        val dbFactory = factory.createDocumentDbFactory(cosmosDb);
+        val db = factory.createDocumentDbTemplate(dbFactory, cosmosDb);
 
         if (cosmosDb.isDropCollection()) {
-            final var collectionLink = CosmosDbObjectFactory.getCollectionLink(cosmosDb.getDatabase(), cosmosDb.getCollection());
-            final var options = new RequestOptions();
+            val collectionLink = CosmosDbObjectFactory.getCollectionLink(cosmosDb.getDatabase(), cosmosDb.getCollection());
+            val options = new RequestOptions();
             options.setConsistencyLevel(ConsistencyLevel.valueOf(cosmosDb.getConsistencyLevel()));
             options.setOfferThroughput(cosmosDb.getThroughput());
             try {
@@ -58,7 +60,7 @@ public class CosmosDbServiceRegistryConfiguration implements ServiceRegistryExec
                 LOGGER.error(e.getMessage(), e);
             }
         }
-        final var indexingPolicy = new IndexingPolicy();
+        val indexingPolicy = new IndexingPolicy();
         indexingPolicy.setAutomatic(true);
         indexingPolicy.setIndexingMode(IndexingMode.valueOf(cosmosDb.getIndexingMode()));
         db.createCollectionIfNotExists(cosmosDb.getCollection(), PARTITION_KEY_FIELD_NAME,

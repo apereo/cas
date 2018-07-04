@@ -1,5 +1,7 @@
 package org.apereo.cas.hz;
 
+import lombok.val;
+
 import com.hazelcast.aws.AwsDiscoveryStrategyFactory;
 import com.hazelcast.config.DiscoveryStrategyConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +23,7 @@ public class HazelcastAwsDiscoveryStrategy implements HazelcastDiscoveryStrategy
 
     @Override
     public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster) {
-        final var aws = cluster.getDiscovery().getAws();
+        val aws = cluster.getDiscovery().getAws();
         final Map<String, Comparable> properties = new HashMap<>();
         if (StringUtils.hasText(aws.getAccessKey())) {
             properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_ACCESS_KEY, aws.getAccessKey());

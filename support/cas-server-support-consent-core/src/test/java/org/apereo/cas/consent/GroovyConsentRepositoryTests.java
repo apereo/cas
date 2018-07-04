@@ -1,5 +1,7 @@
 package org.apereo.cas.consent;
 
+import lombok.val;
+
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
@@ -19,21 +21,21 @@ public class GroovyConsentRepositoryTests {
 
     @Test
     public void verifyConsentDecisionIsDeleted() {
-        final var repo = new GroovyConsentRepository(groovyResource);
-        final var b = repo.deleteConsentDecision(1, "CasUser");
+        val repo = new GroovyConsentRepository(groovyResource);
+        val b = repo.deleteConsentDecision(1, "CasUser");
         assertTrue(b);
     }
 
     @Test
     public void verifyConsentDecisionStored() {
-        final var builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
-        final var regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
-        final var svc = RegisteredServiceTestUtils.getService();
-        final var decision = builder.build(svc,
+        val builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
+        val regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
+        val svc = RegisteredServiceTestUtils.getService();
+        val decision = builder.build(svc,
             regSvc, "casuser",
             CollectionUtils.wrap("attribute", "value"));
 
-        final var repo = new GroovyConsentRepository(groovyResource);
+        val repo = new GroovyConsentRepository(groovyResource);
         assertTrue(repo.storeConsentDecision(decision));
 
         assertTrue(repo.getConsentDecisions().size() == 1);

@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -30,7 +32,7 @@ public class CacheHealthIndicatorTests {
 
     @Test
     public void verifyObserveOk() {
-        final var warn = casProperties.getMonitor().getWarn();
+        val warn = casProperties.getMonitor().getWarn();
         final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
             warn.getThreshold()) {
@@ -39,13 +41,13 @@ public class CacheHealthIndicatorTests {
                 return statsArray(new SimpleCacheStatistics(100, 200, 0));
             }
         };
-        final var status = monitor.health().getStatus();
+        val status = monitor.health().getStatus();
         assertEquals(Status.UP, status);
     }
 
     @Test
     public void verifyObserveWarn() {
-        final var warn = casProperties.getMonitor().getWarn();
+        val warn = casProperties.getMonitor().getWarn();
         final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
             warn.getThreshold()
@@ -55,13 +57,13 @@ public class CacheHealthIndicatorTests {
                 return statsArray(new SimpleCacheStatistics(199, 200, 100));
             }
         };
-        final var status = monitor.health().getStatus();
+        val status = monitor.health().getStatus();
         assertEquals("WARN", status.getCode());
     }
 
     @Test
     public void verifyObserveError() {
-        final var warn = casProperties.getMonitor().getWarn();
+        val warn = casProperties.getMonitor().getWarn();
         final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
             warn.getThreshold()) {
@@ -70,13 +72,13 @@ public class CacheHealthIndicatorTests {
                 return statsArray(new SimpleCacheStatistics(100, 110, 0));
             }
         };
-        final var status = monitor.health().getStatus();
+        val status = monitor.health().getStatus();
         assertEquals(Status.OUT_OF_SERVICE, status);
     }
 
     @Test
     public void verifyObserveError2() {
-        final var warn = casProperties.getMonitor().getWarn();
+        val warn = casProperties.getMonitor().getWarn();
         final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
             warn.getThreshold()) {

@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.gauth;
 
+import lombok.val;
+
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.SneakyThrows;
 import lombok.ToString;
@@ -43,7 +45,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
     @Override
     public OneTimeTokenAccount get(final String username) {
         try {
-            final var r = this.entityManager.createQuery("SELECT r FROM " + ENTITY_NAME + " r where r.username = :username",
+            val r = this.entityManager.createQuery("SELECT r FROM " + ENTITY_NAME + " r where r.username = :username",
                 GoogleAuthenticatorAccount.class)
                 .setParameter("username", username)
                 .getSingleResult();
@@ -59,29 +61,29 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
 
     @Override
     public void save(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
-        final var r = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
+        val r = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
         update(r);
     }
 
     @Override
     public OneTimeTokenAccount create(final String username) {
-        final var key = this.googleAuthenticator.createCredentials();
+        val key = this.googleAuthenticator.createCredentials();
         return new GoogleAuthenticatorAccount(username, key.getKey(), key.getVerificationCode(), key.getScratchCodes());
     }
 
     @Override
     @SneakyThrows
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
-        final var ac = get(account.getUsername());
+        val ac = get(account.getUsername());
         if (ac != null) {
             ac.setValidationCode(account.getValidationCode());
             ac.setScratchCodes(account.getScratchCodes());
             ac.setSecretKey(account.getSecretKey());
-            final var encoded = encode(ac);
+            val encoded = encode(ac);
             this.entityManager.merge(encoded);
             return encoded;
         }
-        final var encoded = encode(account);
+        val encoded = encode(account);
         this.entityManager.merge(encoded);
         return encoded;
     }

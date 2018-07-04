@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.logout.LogoutManager;
@@ -54,7 +56,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
      * Clean tickets.
      */
     protected void cleanInternal() {
-        final var ticketsDeleted = ticketRegistry.getTicketsStream()
+        val ticketsDeleted = ticketRegistry.getTicketsStream()
             .filter(Ticket::isExpired)
             .mapToInt(this::cleanTicket)
             .sum();

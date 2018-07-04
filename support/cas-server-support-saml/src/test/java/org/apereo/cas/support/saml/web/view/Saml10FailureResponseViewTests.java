@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.view;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
@@ -30,7 +32,7 @@ public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
     @Before
     public void initialize() {
 
-        final var builder = new Saml10ObjectBuilder(this.configBean);
+        val builder = new Saml10ObjectBuilder(this.configBean);
         view = new Saml10FailureResponseView(null, null, "attribute",
                 builder, new DefaultArgumentExtractor(new SamlServiceFactory(new Saml10ObjectBuilder(configBean))),
                 StandardCharsets.UTF_8.name(), 0, 30, null);
@@ -38,15 +40,15 @@ public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyResponse() throws Exception {
-        final var request = new MockHttpServletRequest();
-        final var response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
         request.addParameter("TARGET", "service");
 
-        final var description = "Validation failed";
+        val description = "Validation failed";
         this.view.renderMergedOutputModel(
                 Collections.singletonMap("description", description), request, response);
 
-        final var responseText = response.getContentAsString();
+        val responseText = response.getContentAsString();
         assertTrue(responseText.contains("Status"));
         assertTrue(responseText.contains(description));
     }

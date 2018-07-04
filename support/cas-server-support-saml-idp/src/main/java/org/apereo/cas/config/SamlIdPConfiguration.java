@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
@@ -165,7 +167,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean(initMethod = "initialize", destroyMethod = "destroy")
     @RefreshScope
     public SAMLArtifactMap samlArtifactMap() {
-        final var map = new CasSamlArtifactMap(ticketRegistry, samlArtifactTicketFactory(),
+        val map = new CasSamlArtifactMap(ticketRegistry, samlArtifactTicketFactory(),
             ticketGrantingTicketCookieGenerator.getIfAvailable());
         map.setArtifactLifetime(TimeUnit.SECONDS.toMillis(samlArtifactTicketExpirationPolicy().getTimeToLive()));
         return map;
@@ -285,7 +287,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean
     @RefreshScope
     public SamlObjectEncrypter samlObjectEncrypter() {
-        final var algs = casProperties.getAuthn().getSamlIdp().getAlgs();
+        val algs = casProperties.getAuthn().getSamlIdp().getAlgs();
         return new SamlObjectEncrypter(algs.getOverrideDataEncryptionAlgorithms(),
             algs.getOverrideKeyEncryptionAlgorithms(),
             algs.getOverrideBlackListedEncryptionAlgorithms(),
@@ -296,7 +298,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean
     @RefreshScope
     public SamlIdPObjectSigner samlObjectSigner() {
-        final var algs = casProperties.getAuthn().getSamlIdp().getAlgs();
+        val algs = casProperties.getAuthn().getSamlIdp().getAlgs();
         return new SamlIdPObjectSigner(
             algs.getOverrideSignatureReferenceDigestMethods(),
             algs.getOverrideSignatureAlgorithms(),

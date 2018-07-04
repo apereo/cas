@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.gauth;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.authentication.OneTimeToken;
@@ -117,8 +119,8 @@ public class GoogleAuthenticatorMongoDbTokenRepositoryTests {
         final OneTimeToken token2 = new GoogleAuthenticatorToken(5678, "casuser");
         repository.store(token2);
 
-        final var t1 = repository.get("casuser", 1111);
-        final var t2 = repository.get("casuser", 5678);
+        val t1 = repository.get("casuser", 1111);
+        val t2 = repository.get("casuser", 5678);
 
         assertTrue(t1.getId() > 0);
         assertTrue(t2.getId() > 0);

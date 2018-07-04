@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -16,9 +18,9 @@ public class HostNameBasedUniqueTicketIdGeneratorTests {
     
     @Test
     public void verifyUniqueGenerationOfTicketIds() {
-        final var generator = new HostNameBasedUniqueTicketIdGenerator(10, StringUtils.EMPTY);
-        final var id1 = generator.getNewTicketId("TEST");
-        final var id2 = generator.getNewTicketId("TEST");
+        val generator = new HostNameBasedUniqueTicketIdGenerator(10, StringUtils.EMPTY);
+        val id1 = generator.getNewTicketId("TEST");
+        val id2 = generator.getNewTicketId("TEST");
         assertNotSame(id1, id2);
     }
 }

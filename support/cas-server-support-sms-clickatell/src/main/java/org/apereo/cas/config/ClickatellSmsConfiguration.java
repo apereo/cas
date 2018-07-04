@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.sms.ClickatellSmsSender;
@@ -25,7 +27,7 @@ public class ClickatellSmsConfiguration {
 
     @Bean
     public SmsSender smsSender() {
-        final var clickatell = casProperties.getSmsProvider().getClickatell();
+        val clickatell = casProperties.getSmsProvider().getClickatell();
         return new ClickatellSmsSender(clickatell.getToken(), clickatell.getServerUrl());
     }
 }

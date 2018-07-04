@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.u2f;
 
+import lombok.val;
+
 import com.yubico.u2f.U2F;
 import com.yubico.u2f.data.DeviceRegistration;
 import com.yubico.u2f.data.messages.SignRequestData;
@@ -37,17 +39,17 @@ public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     @Override
     @SneakyThrows
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) {
-        final var tokenCredential = (U2FTokenCredential) credential;
+        val tokenCredential = (U2FTokenCredential) credential;
 
-        final var authentication = WebUtils.getInProgressAuthentication();
+        val authentication = WebUtils.getInProgressAuthentication();
         if (authentication == null) {
             throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
         }
-        final var p = authentication.getPrincipal();
+        val p = authentication.getPrincipal();
 
-        final var authenticateResponse = SignResponse.fromJson(tokenCredential.getToken());
-        final var authJson = u2FDeviceRepository.getDeviceAuthenticationRequest(authenticateResponse.getRequestId(), p.getId());
-        final var authenticateRequest = SignRequestData.fromJson(authJson);
+        val authenticateResponse = SignResponse.fromJson(tokenCredential.getToken());
+        val authJson = u2FDeviceRepository.getDeviceAuthenticationRequest(authenticateResponse.getRequestId(), p.getId());
+        val authenticateRequest = SignRequestData.fromJson(authJson);
         DeviceRegistration registration = null;
         try {
             registration = u2f.finishSignature(authenticateRequest, authenticateResponse, u2FDeviceRepository.getRegisteredDevices(p.getId()));

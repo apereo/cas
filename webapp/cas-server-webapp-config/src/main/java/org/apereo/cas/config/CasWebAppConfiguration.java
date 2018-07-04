@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.web.Log4jServletContextListener;
@@ -55,7 +57,7 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
     @Bean
     @Lazy
     public ThemeChangeInterceptor themeChangeInterceptor() {
-        final var bean = new ThemeChangeInterceptor();
+        val bean = new ThemeChangeInterceptor();
         bean.setParamName(casProperties.getTheme().getParamName());
         return bean;
     }
@@ -67,7 +69,7 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
         final CookieLocaleResolver bean = new CookieLocaleResolver() {
             @Override
             protected Locale determineDefaultLocale(final HttpServletRequest request) {
-                final var locale = request.getLocale();
+                val locale = request.getLocale();
                 if (StringUtils.isBlank(casProperties.getLocale().getDefaultValue())
                     || !locale.getLanguage().equals(casProperties.getLocale().getDefaultValue())) {
                     return locale;
@@ -90,8 +92,8 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
             @Override
             protected ModelAndView handleRequestInternal(final HttpServletRequest request,
                                                          final HttpServletResponse response) {
-                final var queryString = request.getQueryString();
-                final var url = request.getContextPath() + "/login"
+                val queryString = request.getQueryString();
+                val url = request.getContextPath() + "/login"
                     + (queryString != null ? '?' + queryString : StringUtils.EMPTY);
                 return new ModelAndView(new RedirectView(response.encodeURL(url)));
             }
@@ -102,7 +104,7 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
     @Bean
     @Lazy
     public ServletListenerRegistrationBean log4jServletContextListener() {
-        final var bean = new ServletListenerRegistrationBean();
+        val bean = new ServletListenerRegistrationBean();
         bean.setEnabled(true);
         bean.setListener(new Log4jServletContextListener());
         return bean;
@@ -111,9 +113,9 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
     @Bean
     @Lazy
     public SimpleUrlHandlerMapping handlerMapping() {
-        final var mapping = new SimpleUrlHandlerMapping();
+        val mapping = new SimpleUrlHandlerMapping();
 
-        final var root = rootController();
+        val root = rootController();
         mapping.setOrder(1);
         mapping.setAlwaysUseFullPath(true);
         mapping.setRootHandler(root);

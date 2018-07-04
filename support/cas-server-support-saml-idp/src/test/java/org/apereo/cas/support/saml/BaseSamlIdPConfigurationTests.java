@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -149,7 +151,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected SamlRegisteredService getSamlRegisteredServiceForTestShib(final boolean signAssertion,
                                                                         final boolean signResponses,
                                                                         final boolean encryptAssertions) {
-        final var service = new SamlRegisteredService();
+        val service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setServiceId("https://sp.testshib.org/shibboleth-sp");
         service.setId(100);
@@ -162,14 +164,14 @@ public abstract class BaseSamlIdPConfigurationTests {
     }
 
     protected static Assertion getAssertion() {
-        final var casuser = new AttributePrincipalImpl("casuser", CoreAuthenticationTestUtils.getAttributes());
+        val casuser = new AttributePrincipalImpl("casuser", CoreAuthenticationTestUtils.getAttributes());
         return new AssertionImpl(casuser, CoreAuthenticationTestUtils.getAttributes());
     }
 
     protected static AuthnRequest getAuthnRequestFor(final SamlRegisteredService service) {
-        final var authnRequest = mock(AuthnRequest.class);
+        val authnRequest = mock(AuthnRequest.class);
         when(authnRequest.getID()).thenReturn("23hgbcehfgeb7843jdv1");
-        final var issuer = mock(Issuer.class);
+        val issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn(service.getServiceId());
         when(authnRequest.getIssuer()).thenReturn(issuer);
         return authnRequest;

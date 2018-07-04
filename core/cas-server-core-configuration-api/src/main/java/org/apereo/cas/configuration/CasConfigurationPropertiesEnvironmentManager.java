@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -62,10 +64,10 @@ public class CasConfigurationPropertiesEnvironmentManager {
      */
     @SneakyThrows
     public void savePropertyForStandaloneProfile(final Pair<String, String> pair) {
-        final var file = getStandaloneProfileConfigurationDirectory();
-        final var params = new Parameters();
+        val file = getStandaloneProfileConfigurationDirectory();
+        val params = new Parameters();
 
-        final var builder =
+        val builder =
             new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
                 .configure(params.properties().setFile(new File(file, getApplicationName() + ".properties")));
 
@@ -92,12 +94,12 @@ public class CasConfigurationPropertiesEnvironmentManager {
     public static void rebindCasConfigurationProperties(final ConfigurationPropertiesBindingPostProcessor binder,
                                                         final ApplicationContext applicationContext) {
 
-        final var map = applicationContext.getBeansOfType(CasConfigurationProperties.class);
-        final var name = map.keySet().iterator().next();
+        val map = applicationContext.getBeansOfType(CasConfigurationProperties.class);
+        val name = map.keySet().iterator().next();
         LOGGER.debug("Reloading CAS configuration via [{}]", name);
-        final var e = applicationContext.getBean(name);
+        val e = applicationContext.getBean(name);
         binder.postProcessBeforeInitialization(e, name);
-        final var bean = applicationContext.getAutowireCapableBeanFactory().initializeBean(e, name);
+        val bean = applicationContext.getAutowireCapableBeanFactory().initializeBean(e, name);
         applicationContext.getAutowireCapableBeanFactory().autowireBean(bean);
         LOGGER.debug("Reloaded CAS configuration [{}]", name);
     }

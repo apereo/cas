@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa.request;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -47,32 +49,32 @@ public abstract class BaseRequestMultifactorAuthenticationPolicyEventResolver ex
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final var service = resolveRegisteredServiceInRequestContext(context);
-        final var authentication = WebUtils.getAuthentication(context);
+        val service = resolveRegisteredServiceInRequestContext(context);
+        val authentication = WebUtils.getAuthentication(context);
 
         if (service == null || authentication == null) {
             LOGGER.debug("No service or authentication is available to determine event for principal");
             return null;
         }
 
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final var values = resolveEventFromHttpRequest(request);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val values = resolveEventFromHttpRequest(request);
         if (values != null && !values.isEmpty()) {
             LOGGER.debug("Received request as [{}]", values);
 
-            final var providerMap =
+            val providerMap =
                 MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
             if (providerMap == null || providerMap.isEmpty()) {
                 LOGGER.error("No multifactor authentication providers are available in the application context to satisfy [{}]", values);
                 throw new AuthenticationException();
             }
 
-            final var providerFound = resolveProvider(providerMap, values.get(0));
+            val providerFound = resolveProvider(providerMap, values.get(0));
             if (providerFound.isPresent()) {
-                final var provider = providerFound.get();
+                val provider = providerFound.get();
                 if (provider.isAvailable(service)) {
                     LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service.getName());
-                    final var event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
+                    val event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
                         buildEventAttributeMap(authentication.getPrincipal(), service, provider));
                     return CollectionUtils.wrapSet(event);
                 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.rest.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -44,13 +46,13 @@ public class RestServicesConfiguration {
 
     @Bean
     public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
-        final var serializer = new DefaultRegisteredServiceJsonSerializer();
+        val serializer = new DefaultRegisteredServiceJsonSerializer();
         return new MappingJackson2HttpMessageConverter(serializer.getObjectMapper());
     }
 
     @Bean
     public RegisteredServiceResource registeredServiceResourceRestController() {
-        final var rest = casProperties.getRest();
+        val rest = casProperties.getRest();
         if (StringUtils.isBlank(rest.getAttributeName())) {
             throw new BeanCreationException("No attribute name is defined to enforce authorization when adding services via CAS REST APIs. "
                 + "This is likely due to misconfiguration in CAS settings where the attribute name definition is absent");

@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.CollectionUtils;
@@ -28,10 +30,10 @@ public class ResourceCRLFetcher implements CRLFetcher {
     @Override
     public Collection<X509CRL> fetch(final Collection<Resource> crls) throws IOException, CRLException {
         final Set<X509CRL> results = new HashSet<>();
-        for (final var r : crls) {
+        for (val r : crls) {
             LOGGER.debug("Fetching CRL data from [{}]", r);
             try(var ins = r.getInputStream()) {
-                final var crl = (X509CRL) CertUtils.getCertificateFactory().generateCRL(ins);
+                val crl = (X509CRL) CertUtils.getCertificateFactory().generateCRL(ins);
                 if (crl != null) {
                     results.add(crl);
                 }
@@ -67,7 +69,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
      */
     @Override
     public X509CRL fetch(final Resource crl) throws IOException, CRLException, CertificateException {
-        final var results = fetch(CollectionUtils.wrap(crl));
+        val results = fetch(CollectionUtils.wrap(crl));
         if (!results.isEmpty()) {
             return results.iterator().next();
         }

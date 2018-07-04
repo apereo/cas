@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
@@ -95,7 +97,7 @@ public class CasRestConfiguration implements RestHttpRequestCredentialFactoryCon
     @Autowired
     public ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory(
         final List<ServiceTicketResourceEntityResponseFactoryConfigurer> configurers) {
-        final var plan = new DefaultServiceTicketResourceEntityResponseFactoryPlan();
+        val plan = new DefaultServiceTicketResourceEntityResponseFactoryPlan();
         configurers.forEach(c -> c.configureEntityResponseFactory(plan));
         return new CompositeServiceTicketResourceEntityResponseFactory(plan.getFactories());
     }
@@ -135,7 +137,7 @@ public class CasRestConfiguration implements RestHttpRequestCredentialFactoryCon
     @Autowired
     @Bean
     public RestHttpRequestCredentialFactory restHttpRequestCredentialFactory(final List<RestHttpRequestCredentialFactoryConfigurer> configurers) {
-        final var factory = new ChainingRestHttpRequestCredentialFactory();
+        val factory = new ChainingRestHttpRequestCredentialFactory();
         configurers.forEach(c -> c.configureCredentialFactory(factory));
         return factory;
     }
@@ -180,7 +182,7 @@ public class CasRestConfiguration implements RestHttpRequestCredentialFactoryCon
 
         @Override
         public void addInterceptors(final InterceptorRegistry registry) {
-            final var plan = authenticationThrottlingExecutionPlan.getIfAvailable();
+            val plan = authenticationThrottlingExecutionPlan.getIfAvailable();
             LOGGER.debug("Activating authentication throttling for REST endpoints...");
             plan.getAuthenticationThrottleInterceptors().forEach(handler -> {
                 registry.addInterceptor(handler).addPathPatterns("/v1/**");

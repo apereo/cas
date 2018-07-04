@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -31,24 +33,24 @@ public class OAuth20UserAuthenticator implements Authenticator<UsernamePasswordC
 
     @Override
     public void validate(final UsernamePasswordCredentials credentials, final WebContext context) throws CredentialsException {
-        final var casCredential = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
+        val casCredential = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
         try {
-            final var clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
-            final var service = this.webApplicationServiceFactory.createService(clientId);
+            val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
+            val service = this.webApplicationServiceFactory.createService(clientId);
             final RegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
-            final var authenticationResult = this.authenticationSystemSupport
+            val authenticationResult = this.authenticationSystemSupport
                 .handleAndFinalizeSingleAuthenticationTransaction(null, casCredential);
-            final var authentication = authenticationResult.getAuthentication();
-            final var principal = authentication.getPrincipal();
+            val authentication = authenticationResult.getAuthentication();
+            val principal = authentication.getPrincipal();
 
-            final var profile = new CommonProfile();
-            final var id = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
+            val profile = new CommonProfile();
+            val id = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
             LOGGER.debug("Created profile id [{}]", id);
 
             profile.setId(id);
-            final var attributes = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
+            val attributes = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
             profile.addAttributes(attributes);
             LOGGER.debug("Authenticated user profile [{}]", profile);
             credentials.setUserProfile(profile);

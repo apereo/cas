@@ -1,5 +1,7 @@
 package org.apereo.cas.consent;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -39,11 +41,11 @@ public class RestConsentRepository implements ConsentRepository {
     @Override
     public Collection<ConsentDecision> findConsentDecisions(final String principal) {
         try {
-            final var headers = new HttpHeaders();
+            val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
             headers.put("principal", CollectionUtils.wrap(principal));
             final HttpEntity<String> entity = new HttpEntity<>(headers);
-            final var result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
+            val result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
             if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
                 return result.getBody();
             }
@@ -56,10 +58,10 @@ public class RestConsentRepository implements ConsentRepository {
     @Override
     public Collection<ConsentDecision> findConsentDecisions() {
         try {
-            final var headers = new HttpHeaders();
+            val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
             final HttpEntity<String> entity = new HttpEntity<>(headers);
-            final var result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
+            val result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
             if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
                 return result.getBody();
             }
@@ -72,12 +74,12 @@ public class RestConsentRepository implements ConsentRepository {
     @Override
     public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService, final Authentication authentication) {
         try {
-            final var headers = new HttpHeaders();
+            val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
             headers.put("service", CollectionUtils.wrap(service.getId()));
             headers.put("principal", CollectionUtils.wrap(authentication.getPrincipal().getId()));
             final HttpEntity<String> entity = new HttpEntity<>(headers);
-            final var result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, ConsentDecision.class);
+            val result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, ConsentDecision.class);
             if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
                 return result.getBody();
             }
@@ -90,10 +92,10 @@ public class RestConsentRepository implements ConsentRepository {
     @Override
     public boolean storeConsentDecision(final ConsentDecision decision) {
         try {
-            final var headers = new HttpHeaders();
+            val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
             final HttpEntity<ConsentDecision> entity = new HttpEntity<>(decision, headers);
-            final var result = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, ConsentDecision.class);
+            val result = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, ConsentDecision.class);
             return result.getStatusCodeValue() == HttpStatus.OK.value();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -104,11 +106,11 @@ public class RestConsentRepository implements ConsentRepository {
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
         try {
-            final var headers = new HttpHeaders();
+            val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
             final HttpEntity<Map> entity = new HttpEntity<>(headers);
-            final var deleteEndpoint = this.endpoint.concat('/' + Long.toString(decisionId));
-            final var result = restTemplate.exchange(deleteEndpoint, HttpMethod.DELETE, entity, Boolean.class);
+            val deleteEndpoint = this.endpoint.concat('/' + Long.toString(decisionId));
+            val result = restTemplate.exchange(deleteEndpoint, HttpMethod.DELETE, entity, Boolean.class);
             return result.getStatusCodeValue() == HttpStatus.OK.value();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

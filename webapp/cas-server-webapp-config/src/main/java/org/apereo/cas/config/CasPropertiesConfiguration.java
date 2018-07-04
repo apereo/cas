@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CasVersion;
@@ -30,8 +32,8 @@ public class CasPropertiesConfiguration implements InitializingBean {
      */
     @Override
     public void afterPropertiesSet() {
-        final var sysProps = System.getProperties();
-        final var properties = new Properties();
+        val sysProps = System.getProperties();
+        val properties = new Properties();
         if (CasVersion.getVersion() != null) {
             properties.put("info.cas.version", CasVersion.getVersion());
         }
@@ -39,7 +41,7 @@ public class CasPropertiesConfiguration implements InitializingBean {
         properties.put("info.cas.java.home", sysProps.get("java.home"));
         properties.put("info.cas.java.vendor", sysProps.get("java.vendor"));
         properties.put("info.cas.java.version", sysProps.get("java.version"));
-        final var src = new PropertiesPropertySource(CasVersion.class.getName(), properties);
+        val src = new PropertiesPropertySource(CasVersion.class.getName(), properties);
         this.environment.getPropertySources().addFirst(src);
     }
 }

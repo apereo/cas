@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.radius;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import net.jradius.client.RadiusClient;
 import net.jradius.dictionary.Attr_NASIPAddress;
@@ -112,7 +114,7 @@ public class JRadiusServerImpl implements RadiusServer {
 
     @Override
     public RadiusResponse authenticate(final String username, final String password) throws Exception {
-        final var attributeList = new AttributeList();
+        val attributeList = new AttributeList();
         attributeList.add(new Attr_UserName(username));
         attributeList.add(new Attr_UserPassword(password));
         if (StringUtils.isNotBlank(this.nasIpAddress)) {
@@ -139,11 +141,11 @@ public class JRadiusServerImpl implements RadiusServer {
         RadiusClient client = null;
         try {
             client = this.radiusClientFactory.newInstance();
-            final var request = new AccessRequest(client, attributeList);
+            val request = new AccessRequest(client, attributeList);
             final RadiusPacket response = client.authenticate(request, RadiusClient.getAuthProtocol(this.protocol.getName()), this.retries);
             LOGGER.debug("RADIUS response from [{}]: [{}]", client.getRemoteInetAddress().getCanonicalHostName(), response.getClass().getName());
             if (response instanceof AccessAccept) {
-                final var attributes = response.getAttributes().getAttributeList();
+                val attributes = response.getAttributes().getAttributeList();
                 LOGGER.debug("Radius response code [{}] accepted with attributes [{}] and identifier [{}]", response.getCode(), attributes, response.getIdentifier());
                 return new RadiusResponse(response.getCode(), response.getIdentifier(), attributes);
             }

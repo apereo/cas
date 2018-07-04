@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
@@ -59,7 +61,7 @@ public class JpaEventsConfiguration {
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean eventsEntityManagerFactory() {
-        final var bean =
+        val bean =
                 JpaBeans.newHibernateEntityManagerFactoryBean(
                         new JpaConfigDataHolder(
                                 jpaEventVendorAdapter(),
@@ -74,7 +76,7 @@ public class JpaEventsConfiguration {
     @Autowired
     @Bean
     public PlatformTransactionManager transactionManagerEvents(@Qualifier("eventsEntityManagerFactory") final EntityManagerFactory emf) {
-        final var mgmr = new JpaTransactionManager();
+        val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }

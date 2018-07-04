@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.val;
+
 import com.unboundid.ldap.sdk.AddRequest;
 import com.unboundid.ldap.sdk.Attribute;
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -79,13 +81,13 @@ public class LdapTestUtils {
      */
     public static void createLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries) {
         try {
-            for (final var entry : entries) {
+            for (val entry : entries) {
                 final Collection<Attribute> attrs = new ArrayList<>(entry.getAttributeNames().length);
                 attrs.addAll(entry.getAttributes().stream()
                     .map(a -> new Attribute(a.getName(), a.getStringValues()))
                     .collect(Collectors.toList()));
 
-                final var ad = new AddRequest(entry.getDn(), attrs);
+                val ad = new AddRequest(entry.getDn(), attrs);
                 LOGGER.debug("Creating entry [{}] with attributes [{}]", entry, attrs);
                 connection.add(ad);
             }
@@ -107,12 +109,12 @@ public class LdapTestUtils {
      * @param entries    the entries
      */
     public static void modifyLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries) {
-        for (final var entry : entries) {
+        for (val entry : entries) {
             final Collection<Attribute> attrs = new ArrayList<>(entry.getAttributeNames().length);
             attrs.addAll(entry.getAttributes().stream()
                 .map(a -> new Attribute(a.getName(), a.getStringValues()))
                 .collect(Collectors.toList()));
-            for (final var ldapAttribute : entry.getAttributes()) {
+            for (val ldapAttribute : entry.getAttributes()) {
                 modifyLdapEntry(connection, entry, ldapAttribute);
             }
         }
@@ -130,11 +132,11 @@ public class LdapTestUtils {
     public static void modifyLdapEntry(final LDAPConnection serverCon, final String dn, final LdapAttribute attr,
                                        final AttributeModificationType add) {
         try {
-            final var address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
+            val address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
             try (var conn = DefaultConnectionFactory.getConnection(address)) {
                 try {
                     conn.open();
-                    final var modify = new ModifyOperation(conn);
+                    val modify = new ModifyOperation(conn);
                     modify.execute(new ModifyRequest(dn, new AttributeModification(add, attr)));
                 } catch (final Exception e) {
                     LOGGER.debug(e.getMessage(), e);

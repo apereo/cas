@@ -1,5 +1,7 @@
 package org.apereo.cas.web.security;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -36,13 +38,13 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        final var requests = http.authorizeRequests();
+        val requests = http.authorizeRequests();
         configureEndpointAccessToDenyUndefined(requests);
         configureEndpointAccessForStaticResources(requests);
 
-        final var endpoints = casProperties.getMonitor().getEndpoints().getEndpoint();
+        val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint();
         endpoints.forEach(Unchecked.biConsumer((k, v) -> {
-            final var endpoint = EndpointRequest.to(k);
+            val endpoint = EndpointRequest.to(k);
             v.getAccess().forEach(Unchecked.consumer(access -> configureEndpointAccess(http, requests, access, v, endpoint)));
         }));
     }
@@ -50,17 +52,17 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
     @Override
     @SneakyThrows
     protected void configure(final AuthenticationManagerBuilder auth) {
-        final var jaas = casProperties.getMonitor().getEndpoints().getJaas();
+        val jaas = casProperties.getMonitor().getEndpoints().getJaas();
         if (jaas.getLoginConfig() != null) {
             configureJaasAuthenticationProvider(auth, jaas);
         }
 
-        final var ldap = casProperties.getMonitor().getEndpoints().getLdap();
+        val ldap = casProperties.getMonitor().getEndpoints().getLdap();
         if (StringUtils.isNotBlank(ldap.getLdapUrl()) && StringUtils.isNotBlank(ldap.getSearchFilter())) {
             configureLdapAuthenticationProvider(auth, ldap);
         }
 
-        final var jdbc = casProperties.getMonitor().getEndpoints().getJdbc();
+        val jdbc = casProperties.getMonitor().getEndpoints().getJdbc();
         if (StringUtils.isNotBlank(jdbc.getQuery())) {
             configureJdbcAuthenticationProvider(auth, jdbc);
         }
@@ -78,7 +80,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      */
     @SneakyThrows
     protected void configureJdbcAuthenticationProvider(final AuthenticationManagerBuilder auth, final MonitorProperties.Endpoints.JdbcSecurity jdbc) {
-        final var cfg = auth.jdbcAuthentication();
+        val cfg = auth.jdbcAuthentication();
         cfg.usersByUsernameQuery(jdbc.getQuery());
         cfg.rolePrefix(jdbc.getRolePrefix());
         cfg.dataSource(JpaBeans.newDataSource(jdbc));
@@ -93,7 +95,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      */
     protected void configureLdapAuthenticationProvider(final AuthenticationManagerBuilder auth, final MonitorProperties.Endpoints.LdapSecurity ldap) {
         if (isLdapAuthorizationActive()) {
-            final var p = new LdapAuthenticationProvider(ldap, securityProperties);
+            val p = new LdapAuthenticationProvider(ldap, securityProperties);
             auth.authenticationProvider(p);
         }
     }
@@ -107,7 +109,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      */
     protected void configureJaasAuthenticationProvider(final AuthenticationManagerBuilder auth,
                                                        final MonitorProperties.Endpoints.JaasSecurity jaas) throws Exception {
-        final var p = new JaasAuthenticationProvider();
+        val p = new JaasAuthenticationProvider();
         p.setLoginConfig(jaas.getLoginConfig());
         p.setLoginContextName(jaas.getLoginContextName());
         p.setRefreshConfigurationOnStartup(jaas.isRefreshConfigurationOnStartup());
@@ -122,8 +124,8 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      * @param requests the requests
      */
     protected void configureEndpointAccessToDenyUndefined(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests) {
-        final var endpoints = casProperties.getMonitor().getEndpoints().getEndpoint().keySet();
-        final var configuredEndpoints = endpoints.toArray(new String[]{});
+        val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint().keySet();
+        val configuredEndpoints = endpoints.toArray(new String[]{});
         requests
             .requestMatchers(EndpointRequest.toAnyEndpoint().excluding(configuredEndpoints).excludingLinks())
             .denyAll();
@@ -220,7 +222,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
     private void configureEndpointAccessByIpAddress(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
                                                     final ActuatorEndpointProperties properties,
                                                     final EndpointRequest.EndpointRequestMatcher endpoint) {
-        final var addresses = properties.getRequiredIpAddresses()
+        val addresses = properties.getRequiredIpAddresses()
             .stream()
             .map(address -> "hasIpAddress('" + address + "')")
             .collect(Collectors.joining(" or "));
@@ -259,8 +261,8 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
     }
 
     private boolean isLdapAuthorizationActive() {
-        final var ldap = casProperties.getMonitor().getEndpoints().getLdap();
-        final var authZ = ldap.getLdapAuthz();
+        val ldap = casProperties.getMonitor().getEndpoints().getLdap();
+        val authZ = ldap.getLdapAuthz();
         return StringUtils.isNotBlank(ldap.getBaseDn())
             && StringUtils.isNotBlank(ldap.getLdapUrl())
             && StringUtils.isNotBlank(ldap.getSearchFilter())

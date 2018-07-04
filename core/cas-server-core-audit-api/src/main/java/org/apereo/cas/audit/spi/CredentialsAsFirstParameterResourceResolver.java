@@ -1,5 +1,7 @@
 package org.apereo.cas.audit.spi;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.util.CollectionUtils;
@@ -39,9 +41,9 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
      * @return the string[]
      */
     private static String[] toResources(final Object[] args) {
-        final var object = args[0];
+        val object = args[0];
         if (object instanceof AuthenticationTransaction) {
-            final var transaction = AuthenticationTransaction.class.cast(object);
+            val transaction = AuthenticationTransaction.class.cast(object);
             return new String[] {SUPPLIED_CREDENTIALS + transaction.getCredentials()};
         }
         return new String[] {SUPPLIED_CREDENTIALS + CollectionUtils.wrap(object)};

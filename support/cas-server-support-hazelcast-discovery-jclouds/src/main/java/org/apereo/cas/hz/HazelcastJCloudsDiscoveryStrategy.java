@@ -1,5 +1,7 @@
 package org.apereo.cas.hz;
 
+import lombok.val;
+
 import com.hazelcast.config.DiscoveryStrategyConfig;
 import com.hazelcast.jclouds.JCloudsDiscoveryStrategyFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +23,7 @@ public class HazelcastJCloudsDiscoveryStrategy implements HazelcastDiscoveryStra
 
     @Override
     public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster) {
-        final var jclouds = cluster.getDiscovery().getJclouds();
+        val jclouds = cluster.getDiscovery().getJclouds();
         final Map<String, Comparable> properties = new HashMap<>();
         if (StringUtils.hasText(jclouds.getCredential())) {
             properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_CREDENTIAL, jclouds.getCredential());

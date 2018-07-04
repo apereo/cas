@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -32,8 +34,8 @@ public class SecurityTokenServiceClientBuilder {
      * @return the security token service client
      */
     public SecurityTokenServiceClient buildClientForSecurityTokenRequests(final WSFederationRegisteredService service) {
-        final var cxfBus = BusFactory.getDefaultBus();
-        final var sts = new SecurityTokenServiceClient(cxfBus);
+        val cxfBus = BusFactory.getDefaultBus();
+        val sts = new SecurityTokenServiceClient(cxfBus);
         sts.setAddressingNamespace(StringUtils.defaultIfBlank(service.getAddressingNamespace(), WSFederationConstants.HTTP_WWW_W3_ORG_2005_08_ADDRESSING));
         sts.setTokenType(StringUtils.defaultIfBlank(service.getTokenType(), WSConstants.WSS_SAML2_TOKEN_TYPE));
         sts.setKeyType(WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512_BEARER);
@@ -41,7 +43,7 @@ public class SecurityTokenServiceClientBuilder {
         if (StringUtils.isNotBlank(service.getPolicyNamespace())) {
             sts.setWspNamespace(service.getPolicyNamespace());
         }
-        final var namespace = StringUtils.defaultIfBlank(service.getNamespace(), WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512);
+        val namespace = StringUtils.defaultIfBlank(service.getNamespace(), WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512);
         sts.setServiceQName(new QName(namespace, StringUtils.defaultIfBlank(service.getWsdlService(), WSFederationConstants.SECURITY_TOKEN_SERVICE)));
         sts.setEndpointQName(new QName(namespace, service.getWsdlEndpoint()));
         sts.getProperties().putAll(new HashMap<>());
@@ -52,8 +54,8 @@ public class SecurityTokenServiceClientBuilder {
         if (StringUtils.isNotBlank(service.getWsdlLocation())) {
             return service.getWsdlLocation();
         }
-        final var wsdl = String.format(WSFederationConstants.ENDPOINT_STS_REALM_WSDL, wsFederationProperties.getIdp().getRealmName());
-        final var location = this.prefix.concat(wsdl);
+        val wsdl = String.format(WSFederationConstants.ENDPOINT_STS_REALM_WSDL, wsFederationProperties.getIdp().getRealmName());
+        val location = this.prefix.concat(wsdl);
         return location;
     }
 
@@ -66,11 +68,11 @@ public class SecurityTokenServiceClientBuilder {
      */
     public SecurityTokenServiceClient buildClientForRelyingPartyTokenResponses(final SecurityToken securityToken,
                                                                                final WSFederationRegisteredService service) {
-        final var cxfBus = BusFactory.getDefaultBus();
-        final var sts = new SecurityTokenServiceClient(cxfBus);
+        val cxfBus = BusFactory.getDefaultBus();
+        val sts = new SecurityTokenServiceClient(cxfBus);
         sts.setAddressingNamespace(StringUtils.defaultIfBlank(service.getAddressingNamespace(), WSFederationConstants.HTTP_WWW_W3_ORG_2005_08_ADDRESSING));
         sts.setWsdlLocation(prepareWsdlLocation(service));
-        final var namespace = StringUtils.defaultIfBlank(service.getNamespace(), WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512);
+        val namespace = StringUtils.defaultIfBlank(service.getNamespace(), WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512);
         sts.setServiceQName(new QName(namespace, service.getWsdlService()));
         sts.setEndpointQName(new QName(namespace, service.getWsdlEndpoint()));
         sts.setEnableAppliesTo(StringUtils.isNotBlank(service.getAppliesTo()));

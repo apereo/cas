@@ -1,5 +1,7 @@
 package org.apereo.cas.web.view;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
@@ -96,10 +98,10 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     }
 
     protected Map<?, ?> renderView() throws Exception {
-        final var modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
+        val modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
         LOGGER.debug("Retrieved model and view [{}]", modelAndView.getModel());
 
-        final var req = new MockHttpServletRequest(new MockServletContext());
+        val req = new MockHttpServletRequest(new MockServletContext());
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
         final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
@@ -116,8 +118,8 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             }
         };
 
-        final var view = getCasViewToRender(encoder, viewDelegated);
-        final var resp = new MockHttpServletResponse();
+        val view = getCasViewToRender(encoder, viewDelegated);
+        val resp = new MockHttpServletResponse();
         view.render(modelAndView.getModel(), req, resp);
         return getRenderedViewModelMap(req);
     }
@@ -147,9 +149,9 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         final Map<?, ?> attributes = renderView();
         assertTrue(attributes.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL));
 
-        final var encodedPsw = (String) attributes.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
-        final var password = decryptCredential(encodedPsw);
-        final var creds = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        val encodedPsw = (String) attributes.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
+        val password = decryptCredential(encodedPsw);
+        val creds = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         assertEquals(password, creds.getPassword());
     }
 
@@ -159,29 +161,29 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         LOGGER.warn("Attributes are [{}]", attributes.keySet());
         assertTrue(attributes.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET));
 
-        final var encodedPgt = (String) attributes.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
-        final var pgt = decryptCredential(encodedPgt);
+        val encodedPgt = (String) attributes.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
+        val pgt = decryptCredential(encodedPgt);
         assertNotNull(pgt);
     }
 
     @SneakyThrows
     private String decryptCredential(final String cred) {
-        final var factory = new PrivateKeyFactoryBean();
+        val factory = new PrivateKeyFactoryBean();
         factory.setAlgorithm("RSA");
         factory.setLocation(new ClassPathResource("keys/RSA4096Private.p8"));
         factory.setSingleton(false);
-        final var privateKey = factory.getObject();
+        val privateKey = factory.getObject();
 
         LOGGER.debug("Initializing cipher based on [{}]", privateKey.getAlgorithm());
-        final var cipher = Cipher.getInstance(privateKey.getAlgorithm());
+        val cipher = Cipher.getInstance(privateKey.getAlgorithm());
 
         LOGGER.debug("Decoding value [{}]", cred);
-        final var cred64 = EncodingUtils.decodeBase64(cred);
+        val cred64 = EncodingUtils.decodeBase64(cred);
 
         LOGGER.debug("Initializing decrypt-mode via private key [{}]", privateKey.getAlgorithm());
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
-        final var cipherData = cipher.doFinal(cred64);
+        val cipherData = cipher.doFinal(cred64);
         return new String(cipherData, StandardCharsets.UTF_8);
     }
 }

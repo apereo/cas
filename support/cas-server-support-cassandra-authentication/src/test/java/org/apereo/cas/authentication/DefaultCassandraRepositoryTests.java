@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import org.apereo.cas.category.CassandraCategory;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -70,22 +72,22 @@ public class DefaultCassandraRepositoryTests {
 
     @Test
     public void verifyUserNotFound() throws Exception {
-        final var c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("baduser", "Mellon");
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("baduser", "Mellon");
         thrown.expect(AccountNotFoundException.class);
         cassandraAuthenticationHandler.authenticate(c);
     }
 
     @Test
     public void verifyUserBadPassword() throws Exception {
-        final var c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "bad");
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "bad");
         thrown.expect(FailedLoginException.class);
         cassandraAuthenticationHandler.authenticate(c);
     }
 
     @Test
     public void verifyUser() throws Exception {
-        final var c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
-        final var result = cassandraAuthenticationHandler.authenticate(c);
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
+        val result = cassandraAuthenticationHandler.authenticate(c);
         assertNotNull(result);
         assertEquals("casuser", result.getPrincipal().getId());
     }

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.validator.authorization;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.ServicesManager;
@@ -26,20 +28,20 @@ import static org.mockito.Mockito.*;
 public class OAuth20RefreshTokenGrantTypeAuthorizationRequestValidatorTests {
     @Test
     public void verifyValidator() {
-        final var serviceManager = mock(ServicesManager.class);
-        final var service = new OAuthRegisteredService();
+        val serviceManager = mock(ServicesManager.class);
+        val service = new OAuthRegisteredService();
         service.setName("OAuth");
         service.setClientId("client");
         service.setClientSecret("secret");
         service.setServiceId("https://callback.example.org");
 
         when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(service));
-        final var v =
+        val v =
             new OAuth20RefreshTokenGrantTypeAuthorizationRequestValidator(serviceManager, new WebApplicationServiceFactory(),
                 new RegisteredServiceAccessStrategyAuditableEnforcer());
 
-        final var request = new MockHttpServletRequest();
-        final var response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
         assertFalse(v.validate(new J2EContext(request, response)));
 
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.getType());

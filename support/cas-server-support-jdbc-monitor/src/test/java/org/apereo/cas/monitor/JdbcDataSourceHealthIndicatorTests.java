@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -42,16 +44,16 @@ public class JdbcDataSourceHealthIndicatorTests {
 
     @Before
     public void initialize() {
-        final var ctx = new ClassPathXmlApplicationContext("classpath:/jpaTestApplicationContext.xml");
+        val ctx = new ClassPathXmlApplicationContext("classpath:/jpaTestApplicationContext.xml");
         this.dataSource = ctx.getBean("dataSource", DataSource.class);
     }
 
     @Test
     public void verifyObserve() {
-        final var monitor = new JdbcDataSourceHealthIndicator(5000,
+        val monitor = new JdbcDataSourceHealthIndicator(5000,
             this.dataSource, this.executor,
             "SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
-        final var status = monitor.health();
+        val status = monitor.health();
         assertEquals(Status.UP, status.getStatus());
     }
 }

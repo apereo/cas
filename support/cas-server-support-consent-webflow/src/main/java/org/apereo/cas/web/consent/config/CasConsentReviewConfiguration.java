@@ -1,5 +1,7 @@
 package org.apereo.cas.web.consent.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -40,13 +42,13 @@ public class CasConsentReviewConfiguration implements ServiceRegistryExecutionPl
 
     @Override
     public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        final var service = new RegexRegisteredService();
+        val service = new RegexRegisteredService();
         service.setEvaluationOrder(0);
         service.setName("CAS Consent Review");
         service.setDescription("Review consent decisions for attribute release");
         service.setServiceId(consentCallbackService().getId());
-        final var policy = new ReturnAllowedAttributeReleasePolicy();
-        final var consentPolicy = new DefaultRegisteredServiceConsentPolicy();
+        val policy = new ReturnAllowedAttributeReleasePolicy();
+        val consentPolicy = new DefaultRegisteredServiceConsentPolicy();
         consentPolicy.setEnabled(false);
         policy.setConsentPolicy(consentPolicy);
         service.setAttributeReleasePolicy(policy);

@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.CipherExecutor;
@@ -93,7 +95,7 @@ public class YubiKeyConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Bean
     public FlowDefinitionRegistry yubikeyFlowRegistry() {
-        final var builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-yubikey/*-webflow.xml");
         return builder.build();
@@ -129,7 +131,7 @@ public class YubiKeyConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Bean
     @RefreshScope
     public CipherExecutor yubikeyAccountCipherExecutor() {
-        final var crypto = casProperties.getAuthn().getMfa().getYubikey().getCrypto();
+        val crypto = casProperties.getAuthn().getMfa().getYubikey().getCrypto();
         if (crypto.isEnabled()) {
             return new YubikeyAccountCipherExecutor(
                 crypto.getEncryption().getKey(),
@@ -156,7 +158,7 @@ public class YubiKeyConfiguration implements CasWebflowExecutionPlanConfigurer {
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer yubiMultifactorTrustWebflowConfigurer() {
-            final var deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
+            val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
             return new YubiKeyMultifactorTrustWebflowConfigurer(flowBuilderServices,
                 deviceRegistrationEnabled, loginFlowDefinitionRegistry, applicationContext, casProperties);
         }

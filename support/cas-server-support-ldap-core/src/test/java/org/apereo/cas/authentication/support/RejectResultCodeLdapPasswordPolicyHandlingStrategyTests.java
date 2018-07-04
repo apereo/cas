@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,8 +24,8 @@ public class RejectResultCodeLdapPasswordPolicyHandlingStrategyTests {
 
     @Test
     public void verifyStrategySupportsDefault() {
-        final var s = new RejectResultCodeLdapPasswordPolicyHandlingStrategy();
-        final var res = mock(AuthenticationResponse.class);
+        val s = new RejectResultCodeLdapPasswordPolicyHandlingStrategy();
+        val res = mock(AuthenticationResponse.class);
         when(res.getAuthenticationResultCode()).thenReturn(AuthenticationResultCode.INVALID_CREDENTIAL);
         assertFalse(s.supports(null));
 

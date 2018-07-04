@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.handler.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
@@ -66,10 +68,10 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
                                                                                         final String originalPassword)
         throws GeneralSecurityException, PreventedException {
 
-        final var username = credential.getUsername();
-        final var password = credential.getPassword();
+        val username = credential.getUsername();
+        val password = credential.getPassword();
 
-        final var exception = this.usernameErrorMap.get(username);
+        val exception = this.usernameErrorMap.get(username);
         if (exception instanceof GeneralSecurityException) {
             throw (GeneralSecurityException) exception;
         }

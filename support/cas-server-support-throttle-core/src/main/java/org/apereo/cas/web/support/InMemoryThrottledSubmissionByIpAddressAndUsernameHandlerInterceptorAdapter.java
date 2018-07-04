@@ -1,5 +1,7 @@
 package org.apereo.cas.web.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
@@ -30,7 +32,7 @@ public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     @Override
     public String constructKey(final HttpServletRequest request) {
-        final var username = request.getParameter(getUsernameParameter());
+        val username = request.getParameter(getUsernameParameter());
 
         if (StringUtils.isBlank(username)) {
             return request.getRemoteAddr();

@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.gauth.repository.credentials;
 
+import lombok.val;
+
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
@@ -33,21 +35,21 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Before
     public void initialize() {
-        final var bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
+        val bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
         this.google = new GoogleAuthenticator(bldr.build());
     }
 
     @Test
     public void verifyCreate() {
-        final var repo =
+        val repo =
             new InMemoryGoogleAuthenticatorTokenCredentialRepository(CipherExecutor.noOpOfStringToString(), google);
-        final var acct = repo.create("casuser");
+        val acct = repo.create("casuser");
         assertNotNull(acct);
     }
 
     @Test
     public void verifyGet() {
-        final var repo =
+        val repo =
             new InMemoryGoogleAuthenticatorTokenCredentialRepository(CipherExecutor.noOpOfStringToString(), google);
         var acct = repo.get("casuser");
         assertNull(acct);

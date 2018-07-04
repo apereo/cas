@@ -1,5 +1,7 @@
 package org.apereo.cas.web.report;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -54,13 +56,13 @@ public class AuthenticationAuditLogEndpoint extends BaseCasMvcEndpoint {
     public Collection<AuthenticationAuditSummary> getAuthnAuditSummary(final long start,
                                                                        final String range,
                                                                        final String scale) {
-        final var audits = getAuthnAudit();
-        final var startDate = DateTimeUtils.localDateTimeOf(start);
-        final var endDate = startDate.plus(Duration.parse(range));
+        val audits = getAuthnAudit();
+        val startDate = DateTimeUtils.localDateTimeOf(start);
+        val endDate = startDate.plus(Duration.parse(range));
 
         final var authnEvents = audits.stream()
             .filter(a -> {
-                final var actionTime = DateTimeUtils.localDateTimeOf(a.getWhenActionWasPerformed());
+                val actionTime = DateTimeUtils.localDateTimeOf(a.getWhenActionWasPerformed());
                 return (actionTime.isEqual(startDate) || actionTime.isAfter(startDate))
                     && (actionTime.isEqual(endDate) || actionTime.isBefore(endDate))
                     && RegexUtils.matches(AUTHENTICATION_PATTERN, a.getActionPerformed());
@@ -68,7 +70,7 @@ public class AuthenticationAuditLogEndpoint extends BaseCasMvcEndpoint {
             .sorted(Comparator.comparing(AuditActionContext::getWhenActionWasPerformed))
             .collect(Collectors.toList());
 
-        final var steps = Duration.parse(scale);
+        val steps = Duration.parse(scale);
         final Map<Integer, LocalDateTime> buckets = new LinkedHashMap<>();
 
         var dt = startDate;
@@ -83,21 +85,21 @@ public class AuthenticationAuditLogEndpoint extends BaseCasMvcEndpoint {
 
         final Map<LocalDateTime, AuthenticationAuditSummary> summary = new LinkedHashMap<>();
         var foundBucket = false;
-        for (final var event : authnEvents) {
+        for (val event : authnEvents) {
             foundBucket = false;
             for (var i = 0; i < buckets.keySet().size(); i++) {
-                final var actionTime = DateTimeUtils.localDateTimeOf(event.getWhenActionWasPerformed());
-                final var bucketDateTime = buckets.get(i);
+                val actionTime = DateTimeUtils.localDateTimeOf(event.getWhenActionWasPerformed());
+                val bucketDateTime = buckets.get(i);
                 if (actionTime.isEqual(bucketDateTime) || actionTime.isAfter(bucketDateTime)) {
                     for (var j = 0; j < buckets.keySet().size(); j++) {
-                        final var nextBucketDateTime = buckets.get(j);
+                        val nextBucketDateTime = buckets.get(j);
                         if (actionTime.isBefore(nextBucketDateTime)) {
-                            final var bucketToUse = buckets.get(j - 1);
+                            val bucketToUse = buckets.get(j - 1);
                             final AuthenticationAuditSummary values;
                             if (summary.containsKey(bucketToUse)) {
                                 values = summary.get(bucketToUse);
                             } else {
-                                final var l = bucketToUse.toInstant(ZoneOffset.UTC).toEpochMilli();
+                                val l = bucketToUse.toInstant(ZoneOffset.UTC).toEpochMilli();
                                 values = new AuthenticationAuditSummary(l);
                             }
                             if (event.getActionPerformed().contains("SUCCESS")) {
@@ -117,7 +119,7 @@ public class AuthenticationAuditLogEndpoint extends BaseCasMvcEndpoint {
                 }
             }
         }
-        final var values = summary.values();
+        val values = summary.values();
         return values;
     }
 
@@ -127,7 +129,7 @@ public class AuthenticationAuditLogEndpoint extends BaseCasMvcEndpoint {
      * @return the authn audit
      */
     private Set<AuditActionContext> getAuthnAudit() {
-        final var sinceDate = LocalDate.now().minusDays(getCasProperties().getAudit().getNumberOfDaysInHistory());
+        val sinceDate = LocalDate.now().minusDays(getCasProperties().getAudit().getNumberOfDaysInHistory());
         return this.auditTrailManager.getAuditRecordsSince(sinceDate);
     }
 

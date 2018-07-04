@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.token;
 
+import lombok.val;
+
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.junit.Test;
 
@@ -14,8 +16,8 @@ import static org.junit.Assert.*;
 public class OidcIdTokenSigningAndEncryptionServiceTests extends AbstractOidcTests {
     @Test
     public void verifyOperation() {
-        final var claims = getClaims();
-        final var result = oidcTokenSigningAndEncryptionService.encode(getOidcRegisteredService(), claims);
+        val claims = getClaims();
+        val result = oidcTokenSigningAndEncryptionService.encode(getOidcRegisteredService(), claims);
         assertNotNull(result);
     }
 }

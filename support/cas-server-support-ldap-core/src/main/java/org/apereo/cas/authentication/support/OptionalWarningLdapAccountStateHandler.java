@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.MessageDescriptor;
@@ -38,7 +40,7 @@ public class OptionalWarningLdapAccountStateHandler extends DefaultLdapAccountSt
             LOGGER.debug("No warning attribute value to match is defined");
             return;
         }
-        final var attribute = response.getLdapEntry().getAttribute(this.warnAttributeName);
+        val attribute = response.getLdapEntry().getAttribute(this.warnAttributeName);
         var matches = false;
         if (attribute != null) {
             LOGGER.debug("Found warning attribute [{}] with value [{}]", attribute.getName(), attribute.getStringValue());

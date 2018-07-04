@@ -1,5 +1,7 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
+import lombok.val;
+
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,16 +26,16 @@ public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> 
 
     @Override
     public OpenIdService createService(final HttpServletRequest request) {
-        final var service = request.getParameter(OpenIdProtocolConstants.OPENID_RETURNTO);
-        final var openIdIdentity = request.getParameter(OpenIdProtocolConstants.OPENID_IDENTITY);
+        val service = request.getParameter(OpenIdProtocolConstants.OPENID_RETURNTO);
+        val openIdIdentity = request.getParameter(OpenIdProtocolConstants.OPENID_IDENTITY);
 
         if (openIdIdentity == null || !StringUtils.hasText(service)) {
             return null;
         }
 
-        final var id = cleanupUrl(service);
-        final var artifactId = request.getParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE);
-        final var s = new OpenIdService(id, service, artifactId, openIdIdentity);
+        val id = cleanupUrl(service);
+        val artifactId = request.getParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE);
+        val s = new OpenIdService(id, service, artifactId, openIdIdentity);
         s.setLoggedOutAlready(true);
         s.setSource(OpenIdProtocolConstants.OPENID_RETURNTO);
         return s;

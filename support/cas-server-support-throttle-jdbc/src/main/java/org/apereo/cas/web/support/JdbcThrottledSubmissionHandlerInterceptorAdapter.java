@@ -1,5 +1,7 @@
 package org.apereo.cas.web.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -44,10 +46,10 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
 
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
-        final var clientInfo = ClientInfoHolder.getClientInfo();
-        final var remoteAddress = clientInfo.getClientIpAddress();
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        val remoteAddress = clientInfo.getClientIpAddress();
 
-        final var failuresInAudits = this.jdbcTemplate.query(
+        val failuresInAudits = this.jdbcTemplate.query(
             this.sqlQueryAudit,
             new Object[]{
                 remoteAddress,
@@ -58,7 +60,7 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
             new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
             (resultSet, i) -> resultSet.getTimestamp(1));
 
-        final var failures = failuresInAudits.stream().map(t -> new Date(t.getTime())).collect(Collectors.toList());
+        val failures = failuresInAudits.stream().map(t -> new Date(t.getTime())).collect(Collectors.toList());
         return calculateFailureThresholdRateAndCompare(failures);
     }
 

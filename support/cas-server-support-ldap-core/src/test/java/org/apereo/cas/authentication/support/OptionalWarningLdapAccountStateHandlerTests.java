@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.support;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.junit.Test;
@@ -28,16 +30,16 @@ public class OptionalWarningLdapAccountStateHandlerTests {
 
     @Test
     public void verifyWarningOnMatch() {
-        final var h = new OptionalWarningLdapAccountStateHandler();
+        val h = new OptionalWarningLdapAccountStateHandler();
         h.setWarnAttributeName("attribute");
         h.setWarningAttributeValue("value");
         h.setDisplayWarningOnMatch(true);
-        final var response = mock(AuthenticationResponse.class);
-        final var entry = mock(LdapEntry.class);
+        val response = mock(AuthenticationResponse.class);
+        val entry = mock(LdapEntry.class);
         when(response.getLdapEntry()).thenReturn(entry);
         when(entry.getAttribute(anyString())).thenReturn(new LdapAttribute("attribute", "value"));
         final List<MessageDescriptor> messages = new ArrayList<>();
-        final var config = new PasswordPolicyConfiguration();
+        val config = new PasswordPolicyConfiguration();
         config.setPasswordWarningNumberOfDays(5);
         h.handleWarning(new AccountState.DefaultWarning(ZonedDateTime.now(), 1),
             response, config, messages);
@@ -46,16 +48,16 @@ public class OptionalWarningLdapAccountStateHandlerTests {
 
     @Test
     public void verifyAlwaysWarningOnMatch() {
-        final var h = new OptionalWarningLdapAccountStateHandler();
+        val h = new OptionalWarningLdapAccountStateHandler();
         h.setWarnAttributeName("attribute");
         h.setWarningAttributeValue("value");
         h.setDisplayWarningOnMatch(true);
-        final var response = mock(AuthenticationResponse.class);
-        final var entry = mock(LdapEntry.class);
+        val response = mock(AuthenticationResponse.class);
+        val entry = mock(LdapEntry.class);
         when(response.getLdapEntry()).thenReturn(entry);
         when(entry.getAttribute(anyString())).thenReturn(new LdapAttribute("attribute", "value"));
         final List<MessageDescriptor> messages = new ArrayList<>();
-        final var config = new PasswordPolicyConfiguration();
+        val config = new PasswordPolicyConfiguration();
         config.setAlwaysDisplayPasswordExpirationWarning(true);
         h.handleWarning(new AccountState.DefaultWarning(ZonedDateTime.now(), 1),
             response, config, messages);
@@ -64,16 +66,16 @@ public class OptionalWarningLdapAccountStateHandlerTests {
 
     @Test
     public void verifyNoWarningOnMatch() {
-        final var h = new OptionalWarningLdapAccountStateHandler();
+        val h = new OptionalWarningLdapAccountStateHandler();
         h.setWarnAttributeName("attribute");
         h.setWarningAttributeValue("value");
         h.setDisplayWarningOnMatch(false);
-        final var response = mock(AuthenticationResponse.class);
-        final var entry = mock(LdapEntry.class);
+        val response = mock(AuthenticationResponse.class);
+        val entry = mock(LdapEntry.class);
         when(response.getLdapEntry()).thenReturn(entry);
         when(entry.getAttribute(anyString())).thenReturn(new LdapAttribute("attribute", "value"));
         final List<MessageDescriptor> messages = new ArrayList<>();
-        final var config = new PasswordPolicyConfiguration();
+        val config = new PasswordPolicyConfiguration();
         config.setPasswordWarningNumberOfDays(5);
         h.handleWarning(new AccountState.DefaultWarning(ZonedDateTime.now(), 1),
             response, config, messages);

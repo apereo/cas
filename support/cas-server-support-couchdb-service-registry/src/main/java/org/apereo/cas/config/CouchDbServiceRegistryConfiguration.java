@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
@@ -45,9 +47,9 @@ public class CouchDbServiceRegistryConfiguration implements ServiceRegistryExecu
     @Bean
     @RefreshScope
     public RegisteredServiceRepository serviceRegistryCouchDbRepository() {
-        final var couchDbProperties = casProperties.getServiceRegistry().getCouchDb();
+        val couchDbProperties = casProperties.getServiceRegistry().getCouchDb();
 
-        final var serviceRepository = new RegisteredServiceRepository(couchDbFactory.create(), couchDbProperties.isCreateIfNotExists());
+        val serviceRepository = new RegisteredServiceRepository(couchDbFactory.create(), couchDbProperties.isCreateIfNotExists());
         serviceRepository.initStandardDesignDocument();
         return serviceRepository;
     }

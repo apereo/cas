@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -86,18 +88,18 @@ public class GrouperMultifactorAuthenticationPolicyEventResolverTests {
 
     @Test
     public void verifyOperation() {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService());
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
 
-        final var targetResolver = new DefaultTargetStateResolver(TestMultifactorAuthenticationProvider.ID);
-        final var transition = new Transition(new DefaultTransitionCriteria(new LiteralExpression(TestMultifactorAuthenticationProvider.ID)), targetResolver);
+        val targetResolver = new DefaultTargetStateResolver(TestMultifactorAuthenticationProvider.ID);
+        val transition = new Transition(new DefaultTransitionCriteria(new LiteralExpression(TestMultifactorAuthenticationProvider.ID)), targetResolver);
         context.getRootFlow().getGlobalTransitionSet().add(transition);
-        final var event = resolver.resolve(context);
+        val event = resolver.resolve(context);
         assertEquals(1, event.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());
     }
@@ -106,13 +108,13 @@ public class GrouperMultifactorAuthenticationPolicyEventResolverTests {
     public static class GrouperTestConfiguration {
         @Bean
         public GrouperFacade grouperFacade() {
-            final var group = new WsGroup();
+            val group = new WsGroup();
             group.setName(TestMultifactorAuthenticationProvider.ID);
             group.setDisplayName("Apereo CAS");
             group.setDescription("CAS Authentication with Apereo");
-            final var result = new WsGetGroupsResult();
+            val result = new WsGetGroupsResult();
             result.setWsGroups(new WsGroup[]{group});
-            final var facade = mock(GrouperFacade.class);
+            val facade = mock(GrouperFacade.class);
             when(facade.getGroupsForSubjectId(anyString())).thenReturn(CollectionUtils.wrapList(result));
             return facade;
         }

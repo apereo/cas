@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -51,11 +53,11 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyResponse() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "service");
-        final var impl = samlServiceFactory.createService(request);
+        val impl = samlServiceFactory.createService(request);
 
-        final var response = new SamlServiceResponseBuilder(
+        val response = new SamlServiceResponseBuilder(
             new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class))).build(impl, "ticketId",
             CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
@@ -65,7 +67,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyResponseForJsession() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "http://www.cnn.com/;jsession=test");
         final Service impl = samlServiceFactory.createService(request);
 
@@ -74,10 +76,10 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyResponseWithNoTicket() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "service");
         final WebApplicationService impl = samlServiceFactory.createService(request);
-        final var response = new SamlServiceResponseBuilder(
+        val response = new SamlServiceResponseBuilder(
             new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
             .build(impl, null, CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
@@ -87,53 +89,53 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyRequestBody() {
-        final var body = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+        val body = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">"
             + "<SOAP-ENV:Header/><SOAP-ENV:Body><samlp:Request xmlns:samlp=\"urn:oasis:names:tc:SAML:1.0:protocol\" MajorVersion=\"1\" "
             + "MinorVersion=\"1\" RequestID=\"_192.168.16.51.1024506224022\" IssueInstant=\"2002-06-19T17:03:44.022Z\">"
             + "<samlp:AssertionArtifact>artifact</samlp:AssertionArtifact></samlp:Request></SOAP-ENV:Body></SOAP-ENV:Envelope>";
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setMethod("POST");
         request.setContent(body.getBytes(StandardCharsets.UTF_8));
 
-        final var impl = samlServiceFactory.createService(request);
+        val impl = samlServiceFactory.createService(request);
         assertEquals("artifact", impl.getArtifactId());
         assertEquals("_192.168.16.51.1024506224022", impl.getRequestId());
     }
 
     @Test
     public void verifyTargetMatchingSamlService() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "https://some.service.edu/path/to/app");
 
-        final var service = new DefaultArgumentExtractor(samlServiceFactory).extractService(request);
+        val service = new DefaultArgumentExtractor(samlServiceFactory).extractService(request);
         final Service impl = new DefaultArgumentExtractor(samlServiceFactory).extractService(request);
         assertTrue(impl.matches(service));
     }
 
     @Test
     public void verifyTargetMatchesNoSamlService() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "https://some.service.edu/path/to/app");
         final Service impl = new DefaultArgumentExtractor(samlServiceFactory).extractService(request);
 
-        final var request2 = new MockHttpServletRequest();
+        val request2 = new MockHttpServletRequest();
         request2.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "https://some.SERVICE.edu");
-        final var service = new DefaultArgumentExtractor(samlServiceFactory).extractService(request2);
+        val service = new DefaultArgumentExtractor(samlServiceFactory).extractService(request2);
         assertFalse(impl.matches(service));
     }
 
     @Test
     public void verifySerializeASamlServiceToJson() throws IOException {
-        final var body = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+        val body = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">"
             + "<SOAP-ENV:Header/><SOAP-ENV:Body><samlp:Request xmlns:samlp=\"urn:oasis:names:tc:SAML:1.0:protocol\" MajorVersion=\"1\" "
             + "MinorVersion=\"1\" RequestID=\"_192.168.16.51.1024506224022\" IssueInstant=\"2002-06-19T17:03:44.022Z\">"
             + "<samlp:AssertionArtifact>artifact</samlp:AssertionArtifact></samlp:Request></SOAP-ENV:Body></SOAP-ENV:Envelope>";
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setContent(body.getBytes(StandardCharsets.UTF_8));
 
-        final var serviceWritten = samlServiceFactory.createService(request);
+        val serviceWritten = samlServiceFactory.createService(request);
         MAPPER.writeValue(JSON_FILE, serviceWritten);
-        final var serviceRead = MAPPER.readValue(JSON_FILE, SamlService.class);
+        val serviceRead = MAPPER.readValue(JSON_FILE, SamlService.class);
         assertEquals(serviceWritten, serviceRead);
     }
 }

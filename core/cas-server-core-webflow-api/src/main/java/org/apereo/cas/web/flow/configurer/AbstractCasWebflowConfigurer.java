@@ -144,7 +144,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             LOGGER.error("Login flow registry is not configured and/or initialized correctly.");
             return null;
         }
-        val found = Arrays.stream(this.loginFlowDefinitionRegistry.getFlowDefinitionIds()).anyMatch(f -> f.equals(FLOW_ID_LOGIN));
+        final var found = Arrays.stream(this.loginFlowDefinitionRegistry.getFlowDefinitionIds()).anyMatch(f -> f.equals(FLOW_ID_LOGIN));
         if (found) {
             return (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
         }
@@ -583,7 +583,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @return the flow variable
      */
     public FlowVariable createFlowVariable(final Flow flow, final String id, final Class type) {
-        val opt = Arrays.stream(flow.getVariables()).filter(v -> v.getName().equalsIgnoreCase(id)).findFirst();
+        final var opt = Arrays.stream(flow.getVariables()).filter(v -> v.getName().equalsIgnoreCase(id)).findFirst();
         if (opt.isPresent()) {
             return opt.get();
         }

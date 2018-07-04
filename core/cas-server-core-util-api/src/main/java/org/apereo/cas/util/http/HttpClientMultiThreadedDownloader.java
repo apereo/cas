@@ -1,5 +1,7 @@
 package org.apereo.cas.util.http;
 
+import lombok.val;
+
 import com.github.axet.wget.SpeedInfo;
 import com.github.axet.wget.WGet;
 import com.github.axet.wget.info.DownloadInfo;
@@ -29,15 +31,15 @@ public class HttpClientMultiThreadedDownloader {
      */
     @SneakyThrows
     public void download() {
-        final var stop = new AtomicBoolean(false);
-        final var info = new DownloadInfo(resourceToDownload.getURL());
-        final var status = new DownloadStatusListener(info);
+        val stop = new AtomicBoolean(false);
+        val info = new DownloadInfo(resourceToDownload.getURL());
+        val status = new DownloadStatusListener(info);
 
         info.extract(stop, status);
 
         info.enableMultipart();
 
-        final var w = new WGet(info, this.targetDestination);
+        val w = new WGet(info, this.targetDestination);
 
         status.speedInfo.start(0);
 
@@ -76,11 +78,11 @@ public class HttpClientMultiThreadedDownloader {
 
                 case DOWNLOADING:
                     speedInfo.step(info.getCount());
-                    final var now = System.currentTimeMillis();
+                    val now = System.currentTimeMillis();
                     if (now - 1_000 > last) {
                         last = now;
 
-                        final var partBuilder = new StringBuilder();
+                        val partBuilder = new StringBuilder();
                         if (info.getParts() != null) {
                             info.getParts().forEach(p -> {
                                 switch (p.getState()) {
@@ -99,7 +101,7 @@ public class HttpClientMultiThreadedDownloader {
                             });
                         }
 
-                        final var p = info.getCount() / (float) info.getLength();
+                        val p = info.getCount() / (float) info.getLength();
                         LOGGER.debug(String.format("%.2f %s (%s / %s)", p, partBuilder.toString(),
                             FileUtils.byteCountToDisplaySize(speedInfo.getCurrentSpeed()),
                             FileUtils.byteCountToDisplaySize(speedInfo.getAverageSpeed())));

@@ -1,5 +1,7 @@
 package org.apereo.cas.aws;
 
+import lombok.val;
+
 import com.amazonaws.client.builder.AwsClientBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,10 +33,10 @@ public class AmazonEnvironmentAwareClientBuilderTests {
 
     @Test
     public void verifyAction() {
-        final var builder = new AmazonEnvironmentAwareClientBuilder("aws", environment);
-        final var mock = mock(AwsClientBuilder.class);
+        val builder = new AmazonEnvironmentAwareClientBuilder("aws", environment);
+        val mock = mock(AwsClientBuilder.class);
         when(mock.build()).thenReturn(new Object());
-        final var client = builder.build(mock, Object.class);
+        val client = builder.build(mock, Object.class);
         assertNotNull(client);
         assertNotNull(builder.getSetting("secretKey"));
         assertNotNull(builder.getSetting("secretKey", String.class));

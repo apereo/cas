@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.query;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -50,14 +52,14 @@ public class SamlProfileAttributeQueryResponseBuilder extends SamlProfileSamlSoa
                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                           final String binding,
                           final MessageContext messageContext) throws SamlException {
-        final var header = newSoapObject(Header.class);
-        final var body = newSoapObject(Body.class);
-        final var query = (AttributeQuery) authnRequest;
-        final var saml2Response = buildSaml2Response(casAssertion, query, service,
+        val header = newSoapObject(Header.class);
+        val body = newSoapObject(Body.class);
+        val query = (AttributeQuery) authnRequest;
+        val saml2Response = buildSaml2Response(casAssertion, query, service,
             adaptor, request, SAMLConstants.SAML2_POST_BINDING_URI, messageContext);
         body.getUnknownXMLObjects().add(saml2Response);
 
-        final var envelope = newSoapObject(Envelope.class);
+        val envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
         SamlUtils.logSamlObject(this.configBean, envelope);

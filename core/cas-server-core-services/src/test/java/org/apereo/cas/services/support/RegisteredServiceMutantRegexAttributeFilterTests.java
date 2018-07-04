@@ -1,5 +1,7 @@
 package org.apereo.cas.services.support;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -57,15 +59,15 @@ public class RegisteredServiceMutantRegexAttributeFilterTests {
     @Test
     public void verifyPatternFilter() {
         this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
-        final var attrs = this.filter.filter(this.givenAttributesMap);
+        val attrs = this.filter.filter(this.givenAttributesMap);
         assertEquals(attrs.size(), this.givenAttributesMap.size());
         assertEquals(2, CollectionUtils.toCollection(attrs.get("memberOf")).size());
     }
 
     @Test
     public void verifySerialization() {
-        final var data = SerializationUtils.serialize(this.filter);
-        final var secondFilter =
+        val data = SerializationUtils.serialize(this.filter);
+        val secondFilter =
             SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
         assertEquals(secondFilter, this.filter);
     }
@@ -89,7 +91,7 @@ public class RegisteredServiceMutantRegexAttributeFilterTests {
         this.filter.setExcludeUnmappedAttributes(true);
         final Map results = filter.filter(this.givenAttributesMap);
         assertEquals(1, results.size());
-        final var values = (Collection) results.get("memberOf");
+        val values = (Collection) results.get("memberOf");
         assertTrue(values.contains("prefixathon101"));
         assertTrue(values.contains("postfixh101"));
     }

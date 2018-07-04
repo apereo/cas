@@ -1,5 +1,7 @@
 package org.apereo.cas.impl.notify;
 
+import lombok.val;
+
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.impl.calcs.BaseAuthenticationRequestRiskCalculatorTests;
@@ -27,8 +29,8 @@ public class AuthenticationRiskEmailNotifierTests extends BaseAuthenticationRequ
     public void verifyOperation() {
         try {
             authenticationRiskEmailNotifier.setRegisteredService(CoreAuthenticationTestUtils.getRegisteredService());
-            final var principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("mail", "cas@example.org"));
-            final var authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
+            val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("mail", "cas@example.org"));
+            val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
             authenticationRiskEmailNotifier.setAuthentication(authentication);
             authenticationRiskEmailNotifier.setAuthenticationRiskScore(new AuthenticationRiskScore(BigDecimal.ONE));
             authenticationRiskEmailNotifier.publish();

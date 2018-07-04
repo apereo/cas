@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.support;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -23,7 +25,7 @@ public class AlwaysExpiresExpirationPolicyTests {
 
     @Test
     public void verifySerializeAnAlwaysExpiresExpirationPolicyToJson() throws IOException {
-        final var policyWritten = new AlwaysExpiresExpirationPolicy();
+        val policyWritten = new AlwaysExpiresExpirationPolicy();
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
 

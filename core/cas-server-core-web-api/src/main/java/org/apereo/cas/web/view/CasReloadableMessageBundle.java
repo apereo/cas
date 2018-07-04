@@ -1,5 +1,7 @@
 package org.apereo.cas.web.view;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -31,7 +33,7 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
 
     @Override
     protected String getDefaultMessage(final String code) {
-        final var messageToReturn = super.getDefaultMessage(code);
+        val messageToReturn = super.getDefaultMessage(code);
         if (!StringUtils.isBlank(messageToReturn) && messageToReturn.equals(code)) {
             LOGGER.warn("The code [{}] cannot be found in the default language bundle and will be used as the message itself.", code);
         }
@@ -45,10 +47,10 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
         if (!locale.equals(Locale.ENGLISH)) {
             foundCode = IntStream.range(0, this.basenames.length)
                 .filter(i -> {
-                    final var filename = this.basenames[i] + '_' + locale;
+                    val filename = this.basenames[i] + '_' + locale;
 
                     LOGGER.trace("Examining language bundle [{}] for the code [{}]", filename, code);
-                    final var holder = this.getProperties(filename);
+                    val holder = this.getProperties(filename);
                     return holder != null && holder.getProperties() != null
                         && holder.getProperty(code) != null;
                 })

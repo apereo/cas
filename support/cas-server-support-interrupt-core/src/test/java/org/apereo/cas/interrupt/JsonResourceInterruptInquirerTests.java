@@ -1,5 +1,7 @@
 package org.apereo.cas.interrupt;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -30,11 +32,11 @@ public class JsonResourceInterruptInquirerTests {
                 CollectionUtils.wrap("text", "link", "text2", "link2"), false, true);
         map.put("casuser", response);
 
-        final var f = File.createTempFile("interrupt", "json");
+        val f = File.createTempFile("interrupt", "json");
         MAPPER.writer().withDefaultPrettyPrinter().writeValue(f, map);
         assertTrue(f.exists());
         
-        final var q = new JsonResourceInterruptInquirer(new FileSystemResource(f));
+        val q = new JsonResourceInterruptInquirer(new FileSystemResource(f));
         response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"), CoreAuthenticationTestUtils.getRegisteredService(),
                 CoreAuthenticationTestUtils.getService(), CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertNotNull(response);

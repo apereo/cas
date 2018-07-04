@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.rest;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
@@ -107,15 +109,15 @@ public class RestAuthenticationHandlerTests {
 
     @Test
     public void verifySuccess() throws Exception {
-        final var principalWritten = new DefaultPrincipalFactory().createPrincipal("casuser");
+        val principalWritten = new DefaultPrincipalFactory().createPrincipal("casuser");
 
-        final var mapper = new ObjectMapper().findAndRegisterModules();
-        final var writer = new StringWriter();
+        val mapper = new ObjectMapper().findAndRegisterModules();
+        val writer = new StringWriter();
         mapper.writeValue(writer, principalWritten);
 
         server.andRespond(withSuccess(writer.toString(), MediaType.APPLICATION_JSON));
 
-        final var res =
+        val res =
             authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertEquals("casuser", res.getPrincipal().getId());
     }

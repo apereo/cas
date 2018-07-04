@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
+import lombok.val;
+
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -115,19 +117,19 @@ public class JpaSamlRegisteredServiceMetadataResolverTests {
 
     @Test
     public void verifyResolver() throws Exception {
-        final var res = new ClassPathResource("samlsp-metadata.xml");
-        final var md = new SamlMetadataDocument();
+        val res = new ClassPathResource("samlsp-metadata.xml");
+        val md = new SamlMetadataDocument();
         md.setName("SP");
         md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
         resolver.saveOrUpdate(md);
         
-        final var service = new SamlRegisteredService();
+        val service = new SamlRegisteredService();
         service.setName("SAML Service");
         service.setServiceId("https://carmenwiki.osu.edu/shibboleth");
         service.setDescription("Testing");
         service.setMetadataLocation("jdbc://");
         assertTrue(resolver.supports(service));
-        final var resolvers = resolver.resolve(service);
+        val resolvers = resolver.resolve(service);
         assertTrue(resolvers.size() == 1);
     }
 }

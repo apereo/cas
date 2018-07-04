@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.generic;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
@@ -36,7 +38,7 @@ public class FileAuthenticationHandlerTests {
     public void initialize() {
         this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("authentication.txt"),
             FileAuthenticationHandler.DEFAULT_SEPARATOR);
-        final var p = new PasswordEncoderProperties();
+        val p = new PasswordEncoderProperties();
         p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
         p.setEncodingAlgorithm("MD5");
         p.setCharacterEncoding("UTF-8");
@@ -45,7 +47,7 @@ public class FileAuthenticationHandlerTests {
 
     @Test
     public void verifySupportsProperUserCredentials() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
         c.setPassword("rutgers");
@@ -55,7 +57,7 @@ public class FileAuthenticationHandlerTests {
     @Test
     public void verifyDoesNotSupportBadUserCredentials() {
         try {
-            final var c = new HttpBasedServiceCredential(
+            val c = new HttpBasedServiceCredential(
                 new URL("http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService());
             assertFalse(this.authenticationHandler.supports(c));
         } catch (final MalformedURLException e) {
@@ -65,7 +67,7 @@ public class FileAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticatesUserInFileWithDefaultSeparator() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
         c.setPassword("rutgers");
@@ -75,7 +77,7 @@ public class FileAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsUserNotInFileWithDefaultSeparator() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
         c.setPassword("rutgers");
@@ -88,7 +90,7 @@ public class FileAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsNullUserName() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
         c.setUsername(null);
         c.setPassword("user");
         this.thrown.expect(AccountNotFoundException.class);
@@ -97,7 +99,7 @@ public class FileAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsNullUserNameAndPassword() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
         c.setUsername(null);
         c.setPassword(null);
         this.thrown.expect(AccountNotFoundException.class);
@@ -106,7 +108,7 @@ public class FileAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsNullPassword() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
         c.setUsername("scott");
         c.setPassword(null);
         this.thrown.expect(FailedLoginException.class);
@@ -115,7 +117,7 @@ public class FileAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticatesUserInFileWithCommaSeparator() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
         this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("authentication2.txt"), ",");
         c.setUsername("scott");
         c.setPassword("rutgers");
@@ -124,7 +126,7 @@ public class FileAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsUserNotInFileWithCommaSeparator() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("authentication2.txt"), ",");
         c.setUsername("fds");
@@ -136,7 +138,7 @@ public class FileAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsGoodUsernameBadPassword() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
         this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("authentication2.txt"), ",");
 
         c.setUsername("scott");
@@ -149,7 +151,7 @@ public class FileAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticateNoFileName() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
         this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("fff"), FileAuthenticationHandler.DEFAULT_SEPARATOR);
 
         c.setUsername("scott");

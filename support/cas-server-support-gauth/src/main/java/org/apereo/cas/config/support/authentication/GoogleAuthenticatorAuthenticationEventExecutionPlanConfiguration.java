@@ -1,5 +1,7 @@
 package org.apereo.cas.config.support.authentication;
 
+import lombok.val;
+
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
@@ -77,8 +79,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     public IGoogleAuthenticator googleAuthenticatorInstance() {
-        final var gauth = casProperties.getAuthn().getMfa().getGauth();
-        final var bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
+        val gauth = casProperties.getAuthn().getMfa().getGauth();
+        val bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
 
         bldr.setCodeDigits(gauth.getCodeDigits());
         bldr.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(gauth.getTimeStepSize()));
@@ -104,8 +106,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider googleAuthenticatorAuthenticationProvider() {
-        final var gauth = casProperties.getAuthn().getMfa().getGauth();
-        final var p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
+        val gauth = casProperties.getAuthn().getMfa().getGauth();
+        val p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
         p.setBypassEvaluator(googleBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(gauth.getRank());
@@ -126,7 +128,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public Action googleAccountRegistrationAction() {
-        final var gauth = casProperties.getAuthn().getMfa().getGauth();
+        val gauth = casProperties.getAuthn().getMfa().getGauth();
         return new OneTimeTokenAccountCheckRegistrationAction(googleAuthenticatorAccountRegistry,
             gauth.getLabel(),
             gauth.getIssuer());
@@ -144,7 +146,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry() {
-        final var gauth = casProperties.getAuthn().getMfa().getGauth();
+        val gauth = casProperties.getAuthn().getMfa().getGauth();
         if (gauth.getJson().getLocation() != null) {
             return new JsonGoogleAuthenticatorTokenCredentialRepository(gauth.getJson().getLocation(), googleAuthenticatorInstance(),
                 googleAuthenticatorAccountCipherExecutor());
@@ -160,7 +162,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public CipherExecutor googleAuthenticatorAccountCipherExecutor() {
-        final var crypto = casProperties.getAuthn().getMfa().getGauth().getCrypto();
+        val crypto = casProperties.getAuthn().getMfa().getGauth().getCrypto();
         if (crypto.isEnabled()) {
             return new OneTimeTokenAccountCipherExecutor(
                 crypto.getEncryption().getKey(),

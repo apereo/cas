@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
@@ -56,10 +58,10 @@ public class CasCoreAuthenticationSupportConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "authenticationContextValidator")
     public AuthenticationContextValidator authenticationContextValidator() {
-        final var mfa = casProperties.getAuthn().getMfa();
-        final var contextAttribute = mfa.getAuthenticationContextAttribute();
-        final var failureMode = mfa.getGlobalFailureMode();
-        final var authnAttributeName = mfa.getTrusted().getAuthenticationContextAttribute();
+        val mfa = casProperties.getAuthn().getMfa();
+        val contextAttribute = mfa.getAuthenticationContextAttribute();
+        val failureMode = mfa.getGlobalFailureMode();
+        val authnAttributeName = mfa.getTrusted().getAuthenticationContextAttribute();
         return new DefaultMultifactorAuthenticationContextValidator(contextAttribute, failureMode, authnAttributeName, applicationContext);
     }
 

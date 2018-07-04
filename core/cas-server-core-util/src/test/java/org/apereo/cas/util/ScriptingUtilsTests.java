@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.val;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +42,7 @@ public class ScriptingUtilsTests {
     @Test
     public void verifyGroovyResourceExecution() {
         try {
-            final var file = File.createTempFile("test", ".groovy");
+            val file = File.createTempFile("test", ".groovy");
             FileUtils.write(file, "def process(String name) { return name }", StandardCharsets.UTF_8);
             final Resource resource = new FileSystemResource(file);
 
@@ -60,7 +62,7 @@ public class ScriptingUtilsTests {
     @Test
     public void verifyResourceScriptEngineExecution() {
         try {
-            final var file = File.createTempFile("test", ".groovy");
+            val file = File.createTempFile("test", ".groovy");
             FileUtils.write(file, "def run(String name) { return name }", StandardCharsets.UTF_8);
 
             final Object result = ScriptingUtils.executeScriptEngine(file.getCanonicalPath(), new Object[]{"casuser"}, String.class);

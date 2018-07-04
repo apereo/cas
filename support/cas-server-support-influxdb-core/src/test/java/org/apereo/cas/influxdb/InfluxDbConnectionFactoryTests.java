@@ -1,5 +1,7 @@
 package org.apereo.cas.influxdb;
 
+import lombok.val;
+
 import org.apereo.cas.category.InfluxDbCategory;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
@@ -63,14 +65,14 @@ public class InfluxDbConnectionFactoryTests {
 
     @Test
     public void verifyWritePoint() {
-        final var p = Point.measurement("events")
+        val p = Point.measurement("events")
             .time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
             .addField("hostname", "cas.example.org")
             .build();
         factory.write(p, CAS_EVENTS_DATABASE);
-        final var result = factory.query("*", "events", CAS_EVENTS_DATABASE);
-        final var resultMapper = new InfluxDBResultMapper();
-        final var resultEvents = resultMapper.toPOJO(result, InfluxEvent.class);
+        val result = factory.query("*", "events", CAS_EVENTS_DATABASE);
+        val resultMapper = new InfluxDBResultMapper();
+        val resultEvents = resultMapper.toPOJO(result, InfluxEvent.class);
         assertNotNull(resultEvents);
         assertEquals(1, resultEvents.size());
         assertEquals("cas.example.org", resultEvents.iterator().next().hostname);

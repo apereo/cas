@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
@@ -55,22 +57,22 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
 
-        final var authorizationHeader = request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
+        val authorizationHeader = request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
         LOGGER.debug("SPNEGO Authorization header located as [{}]", authorizationHeader);
 
-        final var authzHeaderLength = authorizationHeader.length();
-        final var prefixLength = this.messageBeginPrefix.length();
+        val authzHeaderLength = authorizationHeader.length();
+        val prefixLength = this.messageBeginPrefix.length();
         if (authzHeaderLength > prefixLength && authorizationHeader.startsWith(this.messageBeginPrefix)) {
             LOGGER.debug("SPNEGO Authorization header found with [{}] bytes", authzHeaderLength - prefixLength);
-            final var base64 = authorizationHeader.substring(prefixLength);
-            final var token = EncodingUtils.decodeBase64(base64);
+            val base64 = authorizationHeader.substring(prefixLength);
+            val token = EncodingUtils.decodeBase64(base64);
             if (token == null) {
                 LOGGER.warn("Could not decode authorization header in Base64");
                 return null;
             }
-            final var tokenString = new String(token, Charset.defaultCharset());
+            val tokenString = new String(token, Charset.defaultCharset());
             LOGGER.debug("Obtained token: [{}]. Creating credential...", tokenString);
             return new SpnegoCredential(token);
         }
@@ -96,16 +98,16 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
      * @param context the context
      */
     private void setResponseHeader(final RequestContext context) {
-        final var credential = WebUtils.getCredential(context);
+        val credential = WebUtils.getCredential(context);
 
         if (credential == null) {
             LOGGER.debug("No credential was provided. No response header set.");
             return;
         }
 
-        final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
-        final var spnegoCredentials = (SpnegoCredential) credential;
-        final var nextToken = spnegoCredentials.getNextToken();
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+        val spnegoCredentials = (SpnegoCredential) credential;
+        val nextToken = spnegoCredentials.getNextToken();
         if (nextToken != null) {
             LOGGER.debug("Obtained output token: [{}]", new String(nextToken, Charset.defaultCharset()));
             response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, (this.ntlm

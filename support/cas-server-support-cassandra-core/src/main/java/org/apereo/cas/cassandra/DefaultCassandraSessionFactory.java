@@ -1,5 +1,7 @@
 package org.apereo.cas.cassandra;
 
+import lombok.val;
+
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.HostDistance;
@@ -39,27 +41,27 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
 
     private static Cluster initializeCassandraCluster(final BaseCassandraProperties cassandra) {
         final Cluster cluster;
-        final var poolingOptions = new PoolingOptions()
+        val poolingOptions = new PoolingOptions()
             .setMaxRequestsPerConnection(HostDistance.LOCAL, cassandra.getMaxRequestsPerConnection())
             .setConnectionsPerHost(HostDistance.LOCAL, cassandra.getCoreConnections(), cassandra.getMaxConnections());
 
-        final var dcPolicyBuilder = DCAwareRoundRobinPolicy.builder();
+        val dcPolicyBuilder = DCAwareRoundRobinPolicy.builder();
         if (StringUtils.isNotBlank(cassandra.getLocalDc())) {
             dcPolicyBuilder.withLocalDc(cassandra.getLocalDc());
         }
 
-        final var loadBalancingPolicy = new TokenAwarePolicy(dcPolicyBuilder.build(), cassandra.isShuffleReplicas());
+        val loadBalancingPolicy = new TokenAwarePolicy(dcPolicyBuilder.build(), cassandra.isShuffleReplicas());
 
-        final var socketOptions = new SocketOptions()
+        val socketOptions = new SocketOptions()
             .setConnectTimeoutMillis(cassandra.getConnectTimeoutMillis())
             .setReadTimeoutMillis(cassandra.getReadTimeoutMillis());
 
-        final var queryOptions = new QueryOptions()
+        val queryOptions = new QueryOptions()
             .setConsistencyLevel(ConsistencyLevel.valueOf(cassandra.getConsistencyLevel()))
             .setSerialConsistencyLevel(ConsistencyLevel.valueOf(cassandra.getSerialConsistencyLevel()));
 
-        final var retryPolicy = RetryPolicyType.valueOf(cassandra.getRetryPolicy()).getRetryPolicy();
-        final var builder =
+        val retryPolicy = RetryPolicyType.valueOf(cassandra.getRetryPolicy()).getRetryPolicy();
+        val builder =
             Cluster.builder()
                 .withCredentials(cassandra.getUsername(), cassandra.getPassword())
                 .withPoolingOptions(poolingOptions)

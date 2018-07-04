@@ -1,5 +1,7 @@
 package org.apereo.cas.shell.commands.properties;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -47,7 +49,7 @@ public class EncryptPropertyCommand {
         @ShellOption(value = {"iterations"},
             help = "Key obtention iterations to encrypt") final String iterations) {
 
-        final var cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
+        val cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
         cipher.setAlgorithm(alg);
         cipher.setPassword(password);
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
@@ -55,7 +57,7 @@ public class EncryptPropertyCommand {
         }
         cipher.setProviderName(provider);
         cipher.setKeyObtentionIterations(iterations);
-        final var encrypted = cipher.encryptValue(value);
+        val encrypted = cipher.encryptValue(value);
         LOGGER.info("==== Encrypted Value ====\n{}", encrypted);
         try {
             cipher.decryptValue(encrypted);

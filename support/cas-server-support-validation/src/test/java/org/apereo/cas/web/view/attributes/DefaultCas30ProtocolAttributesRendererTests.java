@@ -1,5 +1,7 @@
 package org.apereo.cas.web.view.attributes;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.junit.Test;
 
@@ -16,7 +18,7 @@ import static org.junit.Assert.*;
 public class DefaultCas30ProtocolAttributesRendererTests {
     @Test
     public void verifyAction() {
-        final var r = new DefaultCas30ProtocolAttributesRenderer();
+        val r = new DefaultCas30ProtocolAttributesRenderer();
         final Map results = CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap();
         assertFalse(r.render(results).isEmpty());
     }
