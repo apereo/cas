@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.bson.Document;
+import org.apereo.cas.ticket.TicketState;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 import org.springframework.data.domain.Sort;
@@ -224,7 +225,12 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
      * Makes the assumption that the CAS server date and the Mongo server date are in sync.
      */
     private static Date getExpireAt(final Ticket ticket) {
-        final long ttl = ticket.getExpirationPolicy().getTimeToLive();
+        final long ttl;
+        if (ticket instanceof TicketState) {
+            ttl = ticket.getExpirationPolicy().getTimeToLive((TicketState) ticket);
+        } else {
+            ttl = ticket.getExpirationPolicy().getTimeToLive();
+        }
 
         // expiration policy can specify not to delete automatically
         if (ttl < 1) {

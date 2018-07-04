@@ -8,7 +8,6 @@
     <!-- TreeWalker module checks -->
     <module name="TreeWalker">
         <property name="tabWidth" value="4"/>
-        <module name="SuppressionCommentFilter"/>
         <module name="NonEmptyAtclauseDescription">
             <property name="severity" value="error"/>
         </module>
@@ -82,9 +81,6 @@
             <property name="severity" value="error"/>
             <property name="ignoreNumbers" value="-1, 0, 1, 2, 1000"/>
         </module>
-        <module name="LocalFinalVariableName">
-            <property name="severity" value="error"/>
-        </module>
         <module name="LocalVariableName">
             <property name="severity" value="error"/>
         </module>
@@ -121,7 +117,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="AbbreviationAsWordInName">
-            <property name="allowedAbbreviationLength" value="5" />
+            <property name="allowedAbbreviationLength" value="5"/>
         </module>
         <module name="TypeName">
             <property name="severity" value="error"/>
@@ -365,10 +361,10 @@
             <metadata name="net.sf.eclipsecs.core.comment" value="Do not create a standalone instance of SecureRandom"/>
             <property name="severity" value="error"/>
             <property name="format" value="new SecureRandom\(.*\)"/>
-            <property name="message" 
+            <property name="message"
                       value="Do not create a standalone instance of SecureRandom. Use RandomUtils instead."/>
         </module>
-        
+
         <module name="RegexpSinglelineJava">
             <property name="id" value="collectionsEmpty"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Avoid using an empty immutable collection"/>
@@ -386,7 +382,7 @@
             <property name="message"
                       value="Returning an unmodifiable collection is specially problematic for serialization tasks. To avoid future side effects try using an empty collection of size zero instead"/>
         </module>
-        
+
         <module name="RegexpSinglelineJava">
             <property name="id" value="namedAnnotations"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Component/Controller/Configuration annotations must be named"/>
@@ -456,7 +452,7 @@
             <metadata name="net.sf.eclipsecs.core.comment" value="The logger object must be named &quot;logger&quot;"/>
             <property name="severity" value="error"/>
             <property name="format" value="(private|public|protected)\s+(static\s)*(final\s)*(static\s)*Logger\s+(log|LOG|LOGGER|logger)\b"/>
-            <property name="message"  value="Use the Lombok @Slf4j annotation to obtain a logger object instead." />
+            <property name="message" value="Use the Lombok @Slf4j annotation to obtain a logger object instead."/>
         </module>
         <module name="RegexpSinglelineJava">
             <property name="id" value="finalNonUtilClass"/>
