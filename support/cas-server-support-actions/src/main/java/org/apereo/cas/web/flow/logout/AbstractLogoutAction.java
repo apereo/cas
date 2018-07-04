@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.logout;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -23,8 +24,8 @@ public abstract class AbstractLogoutAction extends AbstractAction {
 
     @Override
     public Event doExecute(final RequestContext context) {
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         preventCaching(response);
         return doInternalExecute(request, response, context);
     }

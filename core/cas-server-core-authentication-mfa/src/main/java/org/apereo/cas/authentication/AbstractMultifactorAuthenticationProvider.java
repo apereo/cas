@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
@@ -82,7 +83,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
         }
         if (service != null) {
             LOGGER.debug("Evaluating multifactor authentication policy for service [{}}", service);
-            final var policy = service.getMultifactorPolicy();
+            val policy = service.getMultifactorPolicy();
             if (policy != null && policy.getFailureMode() != NOT_SET) {
                 failureMode = policy.getFailureMode();
                 LOGGER.debug("Multi-factor failure mode for [{}] is defined as [{}]", service.getServiceId(), failureMode);
@@ -92,7 +93,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
             if (isAvailable()) {
                 return true;
             }
-            final var providerName = getClass().getSimpleName();
+            val providerName = getClass().getSimpleName();
             if (failureMode == RegisteredServiceMultifactorPolicy.FailureModes.CLOSED) {
                 LOGGER.warn("[{}] could not be reached. Authentication shall fail for [{}]", providerName, service);
                 throw new AuthenticationException();

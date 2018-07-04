@@ -157,7 +157,7 @@ public abstract class AbstractOidcTests {
     }
 
     protected OidcRegisteredService getOidcRegisteredService() {
-        final var svc = new OidcRegisteredService();
+        val svc = new OidcRegisteredService();
         svc.setClientId("clientid");
         svc.setName("oauth");
         svc.setDescription("description");
@@ -174,12 +174,12 @@ public abstract class AbstractOidcTests {
     }
 
     protected JwtClaims getClaims() {
-        final var claims = new JwtClaims();
+        val claims = new JwtClaims();
         claims.setJwtId(RandomStringUtils.randomAlphanumeric(16));
         claims.setIssuer("https://cas.example.org");
         claims.setAudience(getOidcRegisteredService().getClientId());
 
-        final var expirationDate = NumericDate.now();
+        val expirationDate = NumericDate.now();
         expirationDate.addSeconds(120);
         claims.setExpirationTime(expirationDate);
         claims.setIssuedAtToNow();

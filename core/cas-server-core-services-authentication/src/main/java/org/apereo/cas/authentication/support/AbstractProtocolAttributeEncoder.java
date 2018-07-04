@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.support;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.RegisteredService;
@@ -45,7 +46,7 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
     public Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final RegisteredService registeredService) {
         LOGGER.debug("Starting to encode attributes for release to service [{}]", registeredService);
         final Map<String, Object> newEncodedAttributes = new HashMap<>(attributes);
-        final var cachedAttributesToEncode = initialize(newEncodedAttributes);
+        val cachedAttributesToEncode = initialize(newEncodedAttributes);
         if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             encodeAttributesInternal(newEncodedAttributes, cachedAttributesToEncode, this.cipherExecutor, registeredService);
             LOGGER.debug("[{}] encoded attributes are available for release to [{}]: [{}]", newEncodedAttributes.size(), registeredService, newEncodedAttributes.keySet());
@@ -80,7 +81,7 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
      */
     protected Map<String, String> initialize(final Map<String, Object> attributes) {
         final Map<String, String> cachedAttributesToEncode = new HashMap<>();
-        final var messageFormat = "Removed [{}] as an authentication attribute and cached it locally.";
+        val messageFormat = "Removed [{}] as an authentication attribute and cached it locally.";
         Collection<?> collection = (Collection<?>) attributes.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
         if (collection != null && collection.size() == 1) {
             cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, collection.iterator().next().toString());

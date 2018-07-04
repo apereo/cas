@@ -2,6 +2,7 @@ package org.apereo.cas.monitor;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 
@@ -33,7 +34,7 @@ public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicato
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
         var poolBuilder = builder.up();
-        final var result = this.executor.submit(new Validator(this, builder));
+        val result = this.executor.submit(new Validator(this, builder));
         String message;
         try {
             poolBuilder = result.get(this.maxWait, TimeUnit.MILLISECONDS);
