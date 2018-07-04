@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apereo.cas.category.FileSystemCategory;
@@ -41,7 +42,7 @@ public abstract class AbstractResourceBasedServiceRegistryTests extends Abstract
 
     @Test
     public void verifyServiceWithInvalidFileName() {
-        final var r = buildRegisteredServiceInstance(RandomUtils.nextInt());
+        val r = buildRegisteredServiceInstance(RandomUtils.nextInt());
         r.setName("hell/o@world:*");
         this.thrown.expect(IllegalArgumentException.class);
         this.dao.save(r);
