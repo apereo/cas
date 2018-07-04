@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.resolver.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -170,7 +171,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the authentication provider for service
      */
     protected Collection<MultifactorAuthenticationProvider> getAuthenticationProviderForService(final RegisteredService service) {
-        final var policy = service.getMultifactorPolicy();
+        val policy = service.getMultifactorPolicy();
         if (policy != null) {
             return policy.getMultifactorAuthenticationProviders().stream()
                 .map(this::getMultifactorAuthenticationProviderFromApplicationContext)
@@ -193,12 +194,12 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                                   final Map<String, Object> attributes) {
 
         final AttributeMap<Object> attributesMap = new LocalAttributeMap<>(attributes);
-        final var event = new Event(this, eventId, attributesMap);
+        val event = new Event(this, eventId, attributesMap);
 
         LOGGER.debug("Resulting event id is [{}] by provider [{}]. Locating transitions in the context for that event id...",
             event.getId(), getName());
 
-        final var def = context.getMatchingTransition(event.getId());
+        val def = context.getMatchingTransition(event.getId());
         if (def == null) {
             LOGGER.warn("Transition definition cannot be found for event [{}]", event.getId());
             throw new AuthenticationException();
@@ -237,7 +238,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         final Set<Event> events = new HashSet<>();
         if (attributeValue instanceof Collection) {
             LOGGER.debug("Attribute value [{}] is a multi-valued attribute", attributeValue);
-            final var values = (Collection<String>) attributeValue;
+            val values = (Collection<String>) attributeValue;
             values.forEach(value -> {
                 try {
                     if (predicate.test(value)) {
@@ -247,8 +248,8 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                         if (provider.isAvailable(service)) {
                             LOGGER.debug("Provider [{}] is successfully verified", provider);
 
-                            final var id = provider.getId();
-                            final var event = validateEventIdForMatchingTransitionInContext(id, context,
+                            val id = provider.getId();
+                            val event = validateEventIdForMatchingTransitionInContext(id, context,
                                 buildEventAttributeMap(principal, service, provider));
                             events.add(event);
                         }
@@ -301,8 +302,8 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         LOGGER.debug("Attempting check for availability of multifactor authentication provider [{}] for [{}]", provider, service);
         if (provider != null && provider.isAvailable(service)) {
             LOGGER.debug("Provider [{}] is successfully verified", provider);
-            final var id = provider.getId();
-            final var event = validateEventIdForMatchingTransitionInContext(id, context, buildEventAttributeMap(principal, service, provider));
+            val id = provider.getId();
+            val event = validateEventIdForMatchingTransitionInContext(id, context, buildEventAttributeMap(principal, service, provider));
             return CollectionUtils.wrapSet(event);
         }
         LOGGER.debug("Provider [{}] could not be verified", provider);
@@ -322,15 +323,15 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         }
 
         LOGGER.debug("Locating attribute value for attribute(s): [{}]", attributeNames);
-        for (final var attributeName : attributeNames) {
-            final var attributeValue = attributesToExamine.get(attributeName);
+        for (val attributeName : attributeNames) {
+            val attributeValue = attributesToExamine.get(attributeName);
             if (attributeValue == null) {
                 LOGGER.debug("Attribute value for [{}] to determine event is not configured for [{}]", attributeName, principal.getId());
                 continue;
             }
 
             LOGGER.debug("Selecting a multifactor authentication provider out of [{}] for [{}] and service [{}]", providers, principal.getId(), service);
-            final var provider =
+            val provider =
                 this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
 
             LOGGER.debug("Located attribute value [{}] for [{}]", attributeValue, attributeNames);
@@ -397,7 +398,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             return null;
         }
 
-        final var attributes = getPrincipalAttributesForMultifactorAuthentication(principal);
+        val attributes = getPrincipalAttributesForMultifactorAuthentication(principal);
         return resolveEventViaAttribute(principal, attributes, attributeNames, service, context, providers, predicate);
     }
 
@@ -411,11 +412,11 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
     @Override
     public Event resolveSingle(final RequestContext context) {
-        final var events = resolve(context);
+        val events = resolve(context);
         if (events == null || events.isEmpty()) {
             return null;
         }
-        final var event = events.iterator().next();
+        val event = events.iterator().next();
         LOGGER.debug("Resolved single event [{}] via [{}] for this context", event.getId(), event.getSource().getClass().getName());
         return event;
     }
@@ -486,9 +487,9 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the set
      */
     protected Set<Event> handleAuthenticationTransactionAndGrantTicketGrantingTicket(final RequestContext context) {
-        final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         try {
-            final var credential = getCredentialFromContext(context);
+            val credential = getCredentialFromContext(context);
             var builder = WebUtils.getAuthenticationResultBuilder(context);
 
             LOGGER.debug("Handling authentication transaction for credential [{}]", credential);
@@ -499,7 +500,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             return CollectionUtils.wrapSet(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            final var messageContext = context.getMessageContext();
+            val messageContext = context.getMessageContext();
             messageContext.addMessage(new MessageBuilder()
                 .error()
                 .code(DEFAULT_MESSAGE_BUNDLE_PREFIX.concat(e.getClass().getSimpleName()))

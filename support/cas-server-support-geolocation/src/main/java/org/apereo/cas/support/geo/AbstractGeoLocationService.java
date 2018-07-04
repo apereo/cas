@@ -50,19 +50,19 @@ public abstract class AbstractGeoLocationService implements GeoLocationService {
     @SneakyThrows
     public GeoLocationResponse locate(final String address) {
         try {
-            final var info = UserInfo.getInfo(address);
+            val info = UserInfo.getInfo(address);
             if (info != null && info.getPosition() != null) {
                 return locate(info.getPosition().getLatitude(), info.getPosition().getLongitude());
             }
             return null;
         } catch (final Exception e) {
             if (StringUtils.isNotBlank(ipStackAccessKey)) {
-                final var url = String.format("http://api.ipstack.com/%s?access_key=%s", address, ipStackAccessKey);
-                final var response = HttpUtils.executeGet(url);
+                val url = String.format("http://api.ipstack.com/%s?access_key=%s", address, ipStackAccessKey);
+                val response = HttpUtils.executeGet(url);
                 if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                    final var result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                    final var infos = MAPPER.readValue(result, Map.class);
-                    final var geoResponse = new GeoLocationResponse();
+                    val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                    val infos = MAPPER.readValue(result, Map.class);
+                    val geoResponse = new GeoLocationResponse();
                     geoResponse.setLatitude((double) infos.getOrDefault("latitude", 0D));
                     geoResponse.setLongitude((double) infos.getOrDefault("longitude", 0D));
                     geoResponse

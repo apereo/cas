@@ -30,14 +30,14 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
         if (other == this) {
             return true;
         }
-        final var builder = new EqualsBuilder();
+        val builder = new EqualsBuilder();
         builder.append(getId(), ((Credential) other).getId());
         return builder.isEquals();
     }
 
     @Override
     public int hashCode() {
-        final var builder = new HashCodeBuilder(11, 41);
+        val builder = new HashCodeBuilder(11, 41);
         builder.append(getClass().getName());
         builder.append(getId());
         return builder.toHashCode();

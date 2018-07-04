@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -20,12 +21,12 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
     @Override
     protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress) throws Exception {
-        final var request = new MockHttpServletRequest();
-        final var response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
         request.setMethod("POST");
         request.setParameter("username", username);
         request.setRemoteAddr(fromAddress);
-        final var context = new MockRequestContext();
+        val context = new MockRequestContext();
         context.setCurrentEvent(new Event(StringUtils.EMPTY, "error"));
         request.setAttribute("flowRequestContext", context);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());

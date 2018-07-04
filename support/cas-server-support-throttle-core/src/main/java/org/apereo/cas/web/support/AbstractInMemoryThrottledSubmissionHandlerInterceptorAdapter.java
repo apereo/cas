@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +37,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
-        final var last = this.ipMap.get(constructKey(request));
+        val last = this.ipMap.get(constructKey(request));
         return last != null && submissionRate(ZonedDateTime.now(ZoneOffset.UTC), last) > getThresholdRate();
     }
 
@@ -53,12 +54,12 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     public void decrement() {
         LOGGER.info("Beginning audit cleanup...");
 
-        final var keys = this.ipMap.entrySet();
+        val keys = this.ipMap.entrySet();
         LOGGER.debug("Decrementing counts for throttler.  Starting key count: [{}]", keys.size());
 
-        final var now = ZonedDateTime.now(ZoneOffset.UTC);
-        for (final var iter = keys.iterator(); iter.hasNext();) {
-            final var entry = iter.next();
+        val now = ZonedDateTime.now(ZoneOffset.UTC);
+        for (val iter = keys.iterator(); iter.hasNext(); ) {
+            val entry = iter.next();
             if (submissionRate(now, entry.getValue()) < getThresholdRate()) {
                 LOGGER.trace("Removing entry for key [{}]", entry.getKey());
                 iter.remove();
