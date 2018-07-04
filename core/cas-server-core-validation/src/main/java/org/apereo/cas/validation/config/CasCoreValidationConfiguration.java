@@ -1,5 +1,7 @@
 package org.apereo.cas.validation.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -59,9 +61,9 @@ public class CasCoreValidationConfiguration implements ServiceTicketValidationAu
     @Bean
     @ConditionalOnMissingBean(name = "serviceValidationAuthorizers")
     public ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers(final List<ServiceTicketValidationAuthorizerConfigurer> configurers) {
-        final var plan = new DefaultServiceTicketValidationAuthorizersExecutionPlan();
+        val plan = new DefaultServiceTicketValidationAuthorizersExecutionPlan();
         configurers.forEach(c -> {
-            final var name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            val name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Configuring service ticket validation authorizer execution plan [{}]", name);
             c.configureAuthorizersExecutionPlan(plan);
         });

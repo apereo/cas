@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.StringBean;
@@ -45,21 +47,21 @@ public class JmsTicketRegistry extends DefaultTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        final var result = super.deleteSingleTicket(ticketId);
+        val result = super.deleteSingleTicket(ticketId);
         publishMessageToQueue(new DeleteTicketMessageQueueCommand(id, ticketId));
         return result;
     }
 
     @Override
     public long deleteAll() {
-        final var result = super.deleteAll();
+        val result = super.deleteAll();
         publishMessageToQueue(new DeleteTicketsMessageQueueCommand(id));
         return result;
     }
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        final var result = super.updateTicket(ticket);
+        val result = super.updateTicket(ticket);
         publishMessageToQueue(new UpdateTicketMessageQueueCommand(id, ticket));
         return result;
     }

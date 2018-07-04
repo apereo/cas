@@ -1,5 +1,7 @@
 package org.apereo.cas.util.gen;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.transforms.ChainingPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.ConvertCasePrincipalNameTransformer;
@@ -19,11 +21,11 @@ import static org.junit.Assert.*;
 public class ChainingPrincipalNameTransformerTests {
     @Test
     public void verifyChain() {
-        final var t = new ChainingPrincipalNameTransformer();
+        val t = new ChainingPrincipalNameTransformer();
         t.addTransformer(new RegexPrincipalNameTransformer("(.+)@example.org"));
         t.addTransformer(new PrefixSuffixPrincipalNameTransformer("prefix-", "-suffix"));
         t.addTransformer(new ConvertCasePrincipalNameTransformer(true));
-        final var uid = t.transform("casuser@example.org");
+        val uid = t.transform("casuser@example.org");
         assertTrue("PREFIX-CASUSER-SUFFIX".equals(uid));
     }
 

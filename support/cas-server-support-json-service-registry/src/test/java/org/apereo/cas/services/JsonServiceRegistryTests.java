@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
@@ -49,20 +51,20 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
 
     @Test
     public void verifyLegacyServiceDefinition() throws Exception {
-        final var resource = new ClassPathResource("Legacy-10000003.json");
-        final var serializer = new DefaultRegisteredServiceJsonSerializer();
-        final var service = serializer.from(resource.getInputStream());
+        val resource = new ClassPathResource("Legacy-10000003.json");
+        val serializer = new DefaultRegisteredServiceJsonSerializer();
+        val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
     }
 
     @Test
     public void verifyExistingDefinitionForCompatibility2() throws IOException {
         final Resource resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest2.json");
-        final var serializer = new DefaultRegisteredServiceJsonSerializer();
-        final var service = serializer.from(resource.getInputStream());
+        val serializer = new DefaultRegisteredServiceJsonSerializer();
+        val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
         assertNotNull(service.getAttributeReleasePolicy());
-        final var policy = (ReturnMappedAttributeReleasePolicy) service.getAttributeReleasePolicy();
+        val policy = (ReturnMappedAttributeReleasePolicy) service.getAttributeReleasePolicy();
         assertNotNull(policy);
         assertEquals(2, policy.getAllowedAttributes().size());
     }
@@ -70,11 +72,11 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
     @Test
     public void verifyExistingDefinitionForCompatibility1() throws IOException {
         final Resource resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest1.json");
-        final var serializer = new DefaultRegisteredServiceJsonSerializer();
-        final var service = serializer.from(resource.getInputStream());
+        val serializer = new DefaultRegisteredServiceJsonSerializer();
+        val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
         assertNotNull(service.getAttributeReleasePolicy());
-        final var policy = (ReturnMappedAttributeReleasePolicy) service.getAttributeReleasePolicy();
+        val policy = (ReturnMappedAttributeReleasePolicy) service.getAttributeReleasePolicy();
         assertNotNull(policy);
         assertEquals(2, policy.getAllowedAttributes().size());
     }

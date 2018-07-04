@@ -1,5 +1,7 @@
 package org.apereo.cas.support.events.listener;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +55,7 @@ public class DefaultCasEventListener {
     @EventListener
     public void handleCasTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent event) {
         if (this.casEventRepository != null) {
-            final var dto = prepareCasEvent(event);
+            val dto = prepareCasEvent(event);
             dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
             dto.putId(TicketIdSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
             dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
@@ -69,7 +71,7 @@ public class DefaultCasEventListener {
     @EventListener
     public void handleCasAuthenticationTransactionFailureEvent(final CasAuthenticationTransactionFailureEvent event) {
         if (this.casEventRepository != null) {
-            final var dto = prepareCasEvent(event);
+            val dto = prepareCasEvent(event);
             dto.setPrincipalId(event.getCredential().getId());
             dto.putId(CasAuthenticationPolicyFailureEvent.class.getSimpleName());
             this.casEventRepository.save(dto);
@@ -84,7 +86,7 @@ public class DefaultCasEventListener {
     @EventListener
     public void handleCasAuthenticationPolicyFailureEvent(final CasAuthenticationPolicyFailureEvent event) {
         if (this.casEventRepository != null) {
-            final var dto = prepareCasEvent(event);
+            val dto = prepareCasEvent(event);
             dto.setPrincipalId(event.getAuthentication().getPrincipal().getId());
             dto.putId(CasAuthenticationPolicyFailureEvent.class.getSimpleName());
             this.casEventRepository.save(dto);
@@ -99,7 +101,7 @@ public class DefaultCasEventListener {
     @EventListener
     public void handleCasRiskyAuthenticationDetectedEvent(final CasRiskyAuthenticationDetectedEvent event) {
         if (this.casEventRepository != null) {
-            final var dto = prepareCasEvent(event);
+            val dto = prepareCasEvent(event);
             dto.putId(event.getService().getName());
             dto.setPrincipalId(event.getAuthentication().getPrincipal().getId());
             this.casEventRepository.save(dto);
@@ -107,17 +109,17 @@ public class DefaultCasEventListener {
     }
 
     private static CasEvent prepareCasEvent(final AbstractCasEvent event) {
-        final var dto = new CasEvent();
+        val dto = new CasEvent();
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
         dto.setCreationTime(DateTimeUtils.zonedDateTimeOf(event.getTimestamp()).toString());
 
-        final var clientInfo = ClientInfoHolder.getClientInfo();
+        val clientInfo = ClientInfoHolder.getClientInfo();
         dto.putClientIpAddress(clientInfo.getClientIpAddress());
         dto.putServerIpAddress(clientInfo.getServerIpAddress());
         dto.putAgent(WebUtils.getHttpServletRequestUserAgentFromRequestContext());
 
-        final var location = WebUtils.getHttpServletRequestGeoLocationFromRequestContext();
+        val location = WebUtils.getHttpServletRequestGeoLocationFromRequestContext();
         if (location != null) {
             dto.putGeoLocation(location);
         }

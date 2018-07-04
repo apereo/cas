@@ -1,5 +1,7 @@
 package org.apereo.cas.metadata.rest;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -50,13 +52,13 @@ public class CasConfigurationMetadataServerEndpoint {
     @ReadOperation
     public List<ConfigurationMetadataSearchResult> search(@Selector final String name) {
         List results = new ArrayList<>();
-        final var allProps = repository.getRepository().getAllProperties();
+        val allProps = repository.getRepository().getAllProperties();
 
         if (StringUtils.isNotBlank(name) && RegexUtils.isValidRegex(name)) {
-            final var names = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(name).spliterator(), false)
+            val names = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(name).spliterator(), false)
                 .map(Object::toString)
                 .collect(Collectors.joining("|"));
-            final var pattern = RegexUtils.createPattern(names);
+            val pattern = RegexUtils.createPattern(names);
             results = allProps.entrySet()
                 .stream()
                 .filter(propEntry -> RegexUtils.find(pattern, propEntry.getKey()))

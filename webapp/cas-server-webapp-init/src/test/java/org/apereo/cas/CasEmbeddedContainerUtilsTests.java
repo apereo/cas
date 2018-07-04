@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import lombok.val;
+
 import org.junit.Test;
 import org.springframework.mock.env.MockEnvironment;
 
@@ -27,11 +29,11 @@ public class CasEmbeddedContainerUtilsTests {
 
     @Test
     public void verifyCasBanner() {
-        final var banner = CasEmbeddedContainerUtils.getCasBannerInstance();
+        val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
         assertNotNull(banner);
-        final var out = new ByteArrayOutputStream();
+        val out = new ByteArrayOutputStream();
         banner.printBanner(new MockEnvironment(), getClass(), new PrintStream(out));
-        final var results = new String(out.toByteArray(), StandardCharsets.UTF_8);
+        val results = new String(out.toByteArray(), StandardCharsets.UTF_8);
         assertNotNull(results);
     }
 }

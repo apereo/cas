@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -62,8 +64,8 @@ public class CasServiceRegistryInitializationConfiguration {
     @RefreshScope
     @Bean
     public ServiceRegistryInitializer serviceRegistryInitializer() {
-        final var serviceRegistryInstance = serviceRegistry.getIfAvailable();
-        final var initializer = new ServiceRegistryInitializer(embeddedJsonServiceRegistry(),
+        val serviceRegistryInstance = serviceRegistry.getIfAvailable();
+        val initializer = new ServiceRegistryInitializer(embeddedJsonServiceRegistry(),
             serviceRegistryInstance, servicesManager.getIfAvailable());
 
         LOGGER.info("Attempting to initialize the service registry [{}] from service definition resources found at [{}]",
@@ -83,12 +85,12 @@ public class CasServiceRegistryInitializationConfiguration {
     @Bean
     @SneakyThrows
     public ServiceRegistry embeddedJsonServiceRegistry() {
-        final var location = getServiceRegistryInitializerServicesDirectoryResource();
+        val location = getServiceRegistryInitializerServicesDirectoryResource();
         return new EmbeddedResourceBasedServiceRegistry(eventPublisher, location);
     }
 
     private Resource getServiceRegistryInitializerServicesDirectoryResource() {
-        final var registry = casProperties.getServiceRegistry().getJson();
+        val registry = casProperties.getServiceRegistry().getJson();
         return ObjectUtils.defaultIfNull(registry.getLocation(), new ClassPathResource("services"));
     }
 

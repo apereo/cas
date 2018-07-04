@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.duo;
 
+import lombok.val;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +29,8 @@ public class DuoSecurityHealthIndicator extends AbstractHealthIndicator {
             .filter(DuoMultifactorAuthenticationProvider.class::isInstance)
             .map(DuoMultifactorAuthenticationProvider.class::cast)
             .forEach(p -> {
-                final var result = p.getDuoAuthenticationService().ping();
-                final var b = builder.withDetail("duoApiHost", p.getDuoAuthenticationService().getApiHost());
+                val result = p.getDuoAuthenticationService().ping();
+                val b = builder.withDetail("duoApiHost", p.getDuoAuthenticationService().getApiHost());
                 if (result) {
                     b.up().build();
                 } else {

@@ -1,5 +1,7 @@
 package org.apereo.cas.tokens;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -42,7 +44,7 @@ public class JWTServiceTicketResourceEntityResponseFactory extends CasProtocolSe
     @Override
     protected String grantServiceTicket(final String ticketGrantingTicket, final Service service,
                                         final AuthenticationResult authenticationResult) {
-        final var registeredService = this.servicesManager.findServiceBy(service);
+        val registeredService = this.servicesManager.findServiceBy(service);
 
         LOGGER.debug("Located registered service [{}] for [{}]", registeredService, service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
@@ -60,8 +62,8 @@ public class JWTServiceTicketResourceEntityResponseFactory extends CasProtocolSe
             return super.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
         }
 
-        final var serviceTicket = super.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
-        final var jwt = this.tokenTicketBuilder.build(serviceTicket, service);
+        val serviceTicket = super.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
+        val jwt = this.tokenTicketBuilder.build(serviceTicket, service);
         LOGGER.debug("Generated JWT [{}] for service [{}]", jwt, service);
         return jwt;
     }

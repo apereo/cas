@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import lombok.val;
+
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
@@ -35,7 +37,7 @@ public class JsonMultifactorAuthenticationTrustStorageTests extends AbstractMult
     }
 
     private static void deleteJsonFile() throws IOException {
-        final var file = new File("/tmp/trusted-device.json");
+        val file = new File("/tmp/trusted-device.json");
         if (file.exists()) {
             FileUtils.forceDelete(file);
         }

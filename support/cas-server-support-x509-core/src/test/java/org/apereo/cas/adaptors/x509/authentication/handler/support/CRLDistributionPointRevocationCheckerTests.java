@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -69,7 +71,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
 
         super(certFiles, expected);
 
-        final var file = new File(System.getProperty("java.io.tmpdir"), "ca.crl");
+        val file = new File(System.getProperty("java.io.tmpdir"), "ca.crl");
         if (file.exists()) {
             file.delete();
         }
@@ -92,8 +94,8 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         CacheManager.getInstance().removeAllCaches();
         final Collection<Object[]> params = new ArrayList<>();
         Cache cache;
-        final var defaultPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
-        final var zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
+        val defaultPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
+        val zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
 
         // Test case #0
         // Valid certificate on valid CRL data with encoded url
@@ -157,7 +159,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         // "AllowRevocationPolicy" set to allow unavailable CRL data
         cache = new Cache("crlCache-5", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
-        final var checker5 =
+        val checker5 =
                 new CRLDistributionPointRevocationChecker(cache, defaultPolicy, new AllowRevocationPolicy());
         params.add(new Object[]{checker5,
             new String[]{"user-valid.crt"},
@@ -207,7 +209,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
 
     @AfterClass
     public static void destroy() {
-        final var file = new File("ca.crl");
+        val file = new File("ca.crl");
         if (file.exists()) {
             file.delete();
         }

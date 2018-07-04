@@ -1,5 +1,7 @@
 package org.apereo.cas.syncope.authentication;
 
+import lombok.val;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +60,7 @@ public class SyncopeAuthenticationHandlerTests {
     @Test
     public void verifyHandlerPasses() {
         try {
-            final var user = new UserTO();
+            val user = new UserTO();
             user.setUsername("casuser");
             startMockSever(user);
             syncopeAuthenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
@@ -72,7 +74,7 @@ public class SyncopeAuthenticationHandlerTests {
     @Test
     public void verifyHandlerMustChangePassword() {
         try {
-            final var user = new UserTO();
+            val user = new UserTO();
             user.setUsername("casuser");
             user.setMustChangePassword(true);
             startMockSever(user);
@@ -90,7 +92,7 @@ public class SyncopeAuthenticationHandlerTests {
     @Test
     public void verifyHandlerSuspended() {
         try {
-            final var user = new UserTO();
+            val user = new UserTO();
             user.setUsername("casuser");
             user.setSuspended(true);
             startMockSever(user);
@@ -106,7 +108,7 @@ public class SyncopeAuthenticationHandlerTests {
     }
 
     private void startMockSever(final UserTO user) throws JsonProcessingException {
-        final var data = MAPPER.writeValueAsString(user);
+        val data = MAPPER.writeValueAsString(user);
         this.webServer = new MockWebServer(8095,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);

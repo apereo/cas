@@ -1,5 +1,7 @@
 package org.apereo.cas.audit.spi;
 
+import lombok.val;
+
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.aspectj.lang.JoinPoint;
@@ -17,12 +19,12 @@ import static org.mockito.Mockito.*;
 public class ServiceAccessEnforcementAuditResourceResolverTests {
     @Test
     public void verifyAction() {
-        final var r = new ServiceAccessEnforcementAuditResourceResolver();
-        final var result = AuditableExecutionResult.of(
+        val r = new ServiceAccessEnforcementAuditResourceResolver();
+        val result = AuditableExecutionResult.of(
             CoreAuthenticationTestUtils.getAuthentication(),
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
-        final var outcome = r.resolveFrom(mock(JoinPoint.class), result);
+        val outcome = r.resolveFrom(mock(JoinPoint.class), result);
         assertTrue(outcome.length > 0);
     }
 }

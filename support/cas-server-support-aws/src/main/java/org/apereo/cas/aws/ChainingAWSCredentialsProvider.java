@@ -1,5 +1,7 @@
 package org.apereo.cas.aws;
 
+import lombok.val;
+
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -36,7 +38,7 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
     @Override
     public AWSCredentials getCredentials() {
         LOGGER.debug("Attempting to locate AWS credentials from the chain...");
-        for (final var p : this.chain) {
+        for (val p : this.chain) {
             AWSCredentials c;
             try {
                 LOGGER.debug("Calling credential provider [{}] to fetch credentials...", p.getClass().getSimpleName());
@@ -56,7 +58,7 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
 
     @Override
     public void refresh() {
-        for (final var p : this.chain) {
+        for (val p : this.chain) {
             try {
                 p.refresh();
             } catch (final Throwable e) {
@@ -119,7 +121,7 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
 
         if (credentialPropertiesFile != null) {
             try {
-                final var f = credentialPropertiesFile.getFile();
+                val f = credentialPropertiesFile.getFile();
                 chain.add(new PropertiesFileCredentialsProvider(f.getCanonicalPath()));
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
@@ -148,7 +150,7 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
 
         if (StringUtils.isNotBlank(credentialAccessKey) && StringUtils.isNotBlank(credentialSecretKey)) {
             addProviderToChain(nothing -> {
-                final var credentials = new BasicAWSCredentials(credentialAccessKey, credentialSecretKey);
+                val credentials = new BasicAWSCredentials(credentialAccessKey, credentialSecretKey);
                 chain.add(new AWSStaticCredentialsProvider(credentials));
                 return null;
             });

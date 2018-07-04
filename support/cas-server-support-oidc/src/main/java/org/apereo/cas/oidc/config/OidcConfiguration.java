@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.config;
 
+import lombok.val;
+
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -270,7 +272,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
 
     @Bean
     public HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor() {
-        final var clients = Stream.of(
+        val clients = Stream.of(
             Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
             Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
             Authenticators.CAS_OAUTH_CLIENT_USER_FORM).collect(Collectors.joining(","));
@@ -279,7 +281,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
 
     @Bean
     public HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor() {
-        final var name = oauthSecConfig.getClients().findClient(CasClient.class).getName();
+        val name = oauthSecConfig.getClients().findClient(CasClient.class).getName();
         return new OidcSecurityInterceptor(oauthSecConfig, name, oidcAuthorizationRequestSupport());
     }
 
@@ -316,7 +318,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
 
     @Bean
     public OidcAttributeToScopeClaimMapper oidcAttributeToScopeClaimMapper() {
-        final var mappings = casProperties.getAuthn().getOidc().getClaimsMap();
+        val mappings = casProperties.getAuthn().getOidc().getClaimsMap();
         return new DefaultOidcAttributeToScopeClaimMapper(mappings);
     }
 
@@ -457,7 +459,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @RefreshScope
     @Bean
     public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver() {
-        final var r = new OidcAuthenticationContextWebflowEventResolver(
+        val r = new OidcAuthenticationContextWebflowEventResolver(
             authenticationSystemSupport.getIfAvailable(),
             centralAuthenticationService,
             servicesManager,
@@ -474,7 +476,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer oidcWebflowConfigurer() {
-        final var cfg = new OidcWebflowConfigurer(flowBuilderServices,
+        val cfg = new OidcWebflowConfigurer(flowBuilderServices,
             loginFlowDefinitionRegistry, oidcRegisteredServiceUIAction(), applicationContext, casProperties);
         cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
         return cfg;
@@ -488,7 +490,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
 
     @Bean
     public OidcIdTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
-        final var oidc = casProperties.getAuthn().getOidc();
+        val oidc = casProperties.getAuthn().getOidc();
         return new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),
             oidc.getIssuer());
@@ -496,8 +498,8 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
 
     @Bean
     public LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> oidcServiceJsonWebKeystoreCache() {
-        final var oidc = casProperties.getAuthn().getOidc();
-        final var cache =
+        val oidc = casProperties.getAuthn().getOidc();
+        val cache =
             Caffeine.newBuilder().maximumSize(1)
                 .expireAfterWrite(oidc.getJwksCacheInMinutes(), TimeUnit.MINUTES)
                 .build(oidcServiceJsonWebKeystoreCacheLoader());
@@ -506,8 +508,8 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
 
     @Bean
     public LoadingCache<String, Optional<RsaJsonWebKey>> oidcDefaultJsonWebKeystoreCache() {
-        final var oidc = casProperties.getAuthn().getOidc();
-        final var cache =
+        val oidc = casProperties.getAuthn().getOidc();
+        val cache =
             Caffeine.newBuilder().maximumSize(1)
                 .expireAfterWrite(oidc.getJwksCacheInMinutes(), TimeUnit.MINUTES)
                 .build(oidcDefaultJsonWebKeystoreCacheLoader());
@@ -534,15 +536,15 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @RefreshScope
     @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreGeneratorService")
     public OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService() {
-        final var s = new OidcJsonWebKeystoreGeneratorService(casProperties.getAuthn().getOidc());
+        val s = new OidcJsonWebKeystoreGeneratorService(casProperties.getAuthn().getOidc());
         s.generate();
         return s;
     }
 
     @Bean
     public HandlerInterceptorAdapter oauthInterceptor() {
-        final var oidc = casProperties.getAuthn().getOidc();
-        final var mode =
+        val oidc = casProperties.getAuthn().getOidc();
+        val mode =
             OidcConstants.DynamicClientRegistrationMode.valueOf(StringUtils.defaultIfBlank(
                 oidc.getDynamicClientRegistrationMode(),
                 OidcConstants.DynamicClientRegistrationMode.PROTECTED.name()));
@@ -556,7 +558,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @RefreshScope
     @Bean
     public Collection<BaseOidcScopeAttributeReleasePolicy> userDefinedScopeBasedAttributeReleasePolicies() {
-        final var oidc = casProperties.getAuthn().getOidc();
+        val oidc = casProperties.getAuthn().getOidc();
         return oidc.getUserDefinedScopes().entrySet()
             .stream()
             .map(k -> new OidcCustomScopeAttributeReleasePolicy(k.getKey(), CollectionUtils.wrapList(k.getValue().split(","))))

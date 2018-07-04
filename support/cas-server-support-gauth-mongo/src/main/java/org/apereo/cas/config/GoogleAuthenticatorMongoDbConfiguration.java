@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
@@ -45,9 +47,9 @@ public class GoogleAuthenticatorMongoDbConfiguration {
     @RefreshScope
     @Bean
     public MongoTemplate mongoDbGoogleAuthenticatorTemplate() {
-        final var mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
-        final var factory = new MongoDbConnectionFactory();
-        final var mongoTemplate = factory.buildMongoTemplate(mongo);
+        val mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
+        val factory = new MongoDbConnectionFactory();
+        val mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
@@ -58,7 +60,7 @@ public class GoogleAuthenticatorMongoDbConfiguration {
                                                                                    final IGoogleAuthenticator googleAuthenticatorInstance,
                                                                                @Qualifier("googleAuthenticatorAccountCipherExecutor")
                                                                                final CipherExecutor googleAuthenticatorAccountCipherExecutor) {
-        final var mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
+        val mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
         return new MongoDbGoogleAuthenticatorTokenCredentialRepository(
             googleAuthenticatorInstance,
             mongoDbGoogleAuthenticatorTemplate(),
@@ -70,7 +72,7 @@ public class GoogleAuthenticatorMongoDbConfiguration {
 
     @Bean
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
-        final var mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
+        val mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
         return new GoogleAuthenticatorMongoDbTokenRepository(mongoDbGoogleAuthenticatorTemplate(),
             mongo.getTokenCollection(),
             casProperties.getAuthn().getMfa().getGauth().getTimeStepSize());

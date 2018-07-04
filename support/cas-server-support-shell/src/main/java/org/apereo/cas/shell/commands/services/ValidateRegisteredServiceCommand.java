@@ -1,5 +1,7 @@
 package org.apereo.cas.shell.commands.services;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,12 +46,12 @@ public class ValidateRegisteredServiceCommand {
         }
 
         if (StringUtils.isNotBlank(file)) {
-            final var filePath = new File(file);
+            val filePath = new File(file);
             validate(filePath);
             return;
         }
         if (StringUtils.isNotBlank(directory)) {
-            final var directoryPath = new File(directory);
+            val directoryPath = new File(directory);
             if (directoryPath.isDirectory()) {
                 FileUtils.listFiles(directoryPath, new String[]{"json", "yml"}, false).forEach(this::validate);
             }
@@ -60,9 +62,9 @@ public class ValidateRegisteredServiceCommand {
 
     private void validate(final File filePath) {
         try {
-            final var validator = new DefaultRegisteredServiceJsonSerializer();
+            val validator = new DefaultRegisteredServiceJsonSerializer();
             if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {
-                final var svc = validator.from(filePath);
+                val svc = validator.from(filePath);
                 LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
             } else {
                 LOGGER.warn("File [{}] is does not exist, is not readable or is empty", filePath.getCanonicalPath());

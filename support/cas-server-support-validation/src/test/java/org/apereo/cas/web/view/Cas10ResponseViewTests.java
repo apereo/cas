@@ -1,5 +1,7 @@
 package org.apereo.cas.web.view;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -40,8 +42,8 @@ public class Cas10ResponseViewTests {
 
     @Test
     public void verifySuccessView() throws Exception {
-        final var response = new MockHttpServletResponse();
-        final var view = new Cas10ResponseView(true, null,
+        val response = new MockHttpServletResponse();
+        val view = new Cas10ResponseView(true, null,
                 null, null, null);
         view.render(this.model, new MockHttpServletRequest(), response);
         assertEquals("yes\ntest\n", response.getContentAsString());
@@ -49,8 +51,8 @@ public class Cas10ResponseViewTests {
 
     @Test
     public void verifyFailureView() throws Exception {
-        final var response = new MockHttpServletResponse();
-        final var view = new Cas10ResponseView(false, null,
+        val response = new MockHttpServletResponse();
+        val view = new Cas10ResponseView(false, null,
                 null, null, null);
         view.render(this.model, new MockHttpServletRequest(), response);
         assertEquals("no\n\n", response.getContentAsString());

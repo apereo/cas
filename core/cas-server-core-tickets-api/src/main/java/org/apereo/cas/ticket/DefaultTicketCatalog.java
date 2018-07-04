@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.OrderComparator;
 import java.util.ArrayList;
@@ -24,7 +26,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
 
     @Override
     public TicketDefinition find(final String ticketId) {
-        final var defn = ticketMetadataMap.values().stream()
+        val defn = ticketMetadataMap.values().stream()
             .filter(md -> ticketId.startsWith(md.getPrefix())).findFirst().orElse(null);
         if (defn == null) {
             LOGGER.error("Ticket definition for [{}] cannot be found in the ticket catalog "

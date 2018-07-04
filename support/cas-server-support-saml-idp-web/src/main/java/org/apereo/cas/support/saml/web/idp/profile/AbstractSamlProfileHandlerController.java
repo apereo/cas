@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
+import lombok.val;
+
 import com.google.common.base.Splitter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;

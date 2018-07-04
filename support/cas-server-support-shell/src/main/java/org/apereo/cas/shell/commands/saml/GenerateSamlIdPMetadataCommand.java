@@ -1,5 +1,7 @@
 package org.apereo.cas.shell.commands.saml;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.DefaultSamlIdPMetadataLocator;
@@ -54,8 +56,8 @@ public class GenerateSamlIdPMetadataCommand {
             help = "Force metadata generation, disregarding anything that might already be available at the specified location") final boolean force) {
 
         final SamlIdPMetadataLocator locator = new DefaultSamlIdPMetadataLocator(new File(metadataLocation));
-        final var writer = new DefaultSamlIdPCertificateAndKeyWriter();
-        final var generator = new FileSystemSamlIdPMetadataGenerator(entityId, this.resourceLoader,
+        val writer = new DefaultSamlIdPCertificateAndKeyWriter();
+        val generator = new FileSystemSamlIdPMetadataGenerator(entityId, this.resourceLoader,
             serverPrefix, scope, locator, writer);
 
         var generateMetadata = true;

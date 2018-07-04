@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
@@ -27,8 +29,8 @@ public class DefaultSecurityTokenTicketFactory implements SecurityTokenTicketFac
 
     @Override
     public SecurityTokenTicket create(final TicketGrantingTicket ticket, final SecurityToken securityToken) {
-        final var token = EncodingUtils.encodeBase64(SerializationUtils.serialize(securityToken));
-        final var id = ticketUniqueTicketIdGenerator.getNewTicketId(SecurityTokenTicket.PREFIX);
+        val token = EncodingUtils.encodeBase64(SerializationUtils.serialize(securityToken));
+        val id = ticketUniqueTicketIdGenerator.getNewTicketId(SecurityTokenTicket.PREFIX);
         final SecurityTokenTicket stt = new DefaultSecurityTokenTicket(id, ticket, this.expirationPolicy, token);
         ticket.getDescendantTickets().add(stt.getId());
         return stt;

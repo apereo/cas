@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.val;
+
 import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
@@ -97,8 +99,8 @@ public class ScriptingUtils {
                                                  final Map<String, Object> variables,
                                                  final Class<T> clazz) {
         try {
-            final var binding = new Binding();
-            final var shell = new GroovyShell(binding);
+            val binding = new Binding();
+            val shell = new GroovyShell(binding);
             if (variables != null && !variables.isEmpty()) {
                 variables.forEach(binding::setVariable);
             }
@@ -107,7 +109,7 @@ public class ScriptingUtils {
             }
             LOGGER.debug("Executing groovy script [{}] with variables [{}]", script, binding.getVariables());
 
-            final var result = shell.evaluate(script);
+            val result = shell.evaluate(script);
             if (result != null && !clazz.isAssignableFrom(result.getClass())) {
                 throw new ClassCastException("Result [" + result
                     + " is of type " + result.getClass()
@@ -186,21 +188,21 @@ public class ScriptingUtils {
             return null;
         }
 
-        final var parent = ScriptingUtils.class.getClassLoader();
+        val parent = ScriptingUtils.class.getClassLoader();
         return AccessController.doPrivileged((PrivilegedAction<T>) () -> getGroovyResult(groovyScript, methodName, args, clazz, parent));
     }
 
     private static <T> T getGroovyResult(final Resource groovyScript, final String methodName,
                                          final Object[] args, final Class<T> clazz, final ClassLoader parent) {
         try (var loader = new GroovyClassLoader(parent)) {
-            final var groovyFile = groovyScript.getFile();
+            val groovyFile = groovyScript.getFile();
             if (groovyFile.exists()) {
                 final Class<?> groovyClass = loader.parseClass(groovyFile);
                 LOGGER.trace("Creating groovy object instance from class [{}]", groovyFile.getCanonicalPath());
 
-                final var groovyObject = (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();
+                val groovyObject = (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();
                 LOGGER.trace("Executing groovy script's [{}] method, with parameters [{}]", methodName, args);
-                final var result = groovyObject.invokeMethod(methodName, args);
+                val result = groovyObject.invokeMethod(methodName, args);
                 LOGGER.trace("Results returned by the groovy script are [{}]", result);
 
                 if (result != null && !clazz.isAssignableFrom(result.getClass())) {
@@ -226,24 +228,24 @@ public class ScriptingUtils {
      */
     public static <T> T executeScriptEngine(final String scriptFile, final Object[] args, final Class<T> clazz) {
         try {
-            final var engineName = getScriptEngineName(scriptFile);
-            final var engine = new ScriptEngineManager().getEngineByName(engineName);
+            val engineName = getScriptEngineName(scriptFile);
+            val engine = new ScriptEngineManager().getEngineByName(engineName);
             if (engine == null || StringUtils.isBlank(engineName)) {
                 LOGGER.warn("Script engine is not available for [{}]", engineName);
                 return null;
             }
 
-            final var resourceFrom = ResourceUtils.getResourceFrom(scriptFile);
-            final var theScriptFile = resourceFrom.getFile();
+            val resourceFrom = ResourceUtils.getResourceFrom(scriptFile);
+            val theScriptFile = resourceFrom.getFile();
             if (theScriptFile.exists()) {
                 LOGGER.debug("Created object instance from class [{}]", theScriptFile.getCanonicalPath());
 
                 try (var reader = Files.newBufferedReader(theScriptFile.toPath(), StandardCharsets.UTF_8)) {
                     engine.eval(reader);
                 }
-                final var invocable = (Invocable) engine;
+                val invocable = (Invocable) engine;
                 LOGGER.debug("Executing script's run method, with parameters [{}]", args);
-                final var result = invocable.invokeFunction("run", args);
+                val result = invocable.invokeFunction("run", args);
                 LOGGER.debug("Groovy script result is [{}]", result);
                 if (result != null && !clazz.isAssignableFrom(result.getClass())) {
                     throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
@@ -270,7 +272,7 @@ public class ScriptingUtils {
                                                   final Map<String, Object> variables,
                                                   final Class<T> clazz) {
         try {
-            final var engine = new ScriptEngineManager().getEngineByName("groovy");
+            val engine = new ScriptEngineManager().getEngineByName("groovy");
             if (engine == null) {
                 LOGGER.warn("Script engine is not available for Groovy");
                 return null;
@@ -282,7 +284,7 @@ public class ScriptingUtils {
             if (!binding.containsKey("logger")) {
                 binding.put("logger", LOGGER);
             }
-            final var result = engine.eval(script, binding);
+            val result = engine.eval(script, binding);
             if (result != null && !clazz.isAssignableFrom(result.getClass())) {
                 throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
             }
@@ -326,17 +328,17 @@ public class ScriptingUtils {
                 return null;
             }
 
-            final var script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+            val script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
 
-            final var clazz = AccessController.doPrivileged((PrivilegedAction<Class<T>>) () -> {
-                final var classLoader = new GroovyClassLoader(ScriptingUtils.class.getClassLoader(),
+            val clazz = AccessController.doPrivileged((PrivilegedAction<Class<T>>) () -> {
+                val classLoader = new GroovyClassLoader(ScriptingUtils.class.getClassLoader(),
                     new CompilerConfiguration(), true);
                 return classLoader.parseClass(script);
             });
 
             LOGGER.debug("Preparing constructor arguments [{}] for resource [{}]", args, resource);
-            final var ctor = clazz.getDeclaredConstructor(constructorArgs);
-            final var result = ctor.newInstance(args);
+            val ctor = clazz.getDeclaredConstructor(constructorArgs);
+            val result = ctor.newInstance(args);
 
             if (result != null && !expectedType.isAssignableFrom(result.getClass())) {
                 throw new ClassCastException("Result [" + result

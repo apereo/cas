@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
@@ -39,8 +41,8 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     @Override
     public boolean registerAccountFor(final String uid, final String token) {
         if (getAccountValidator().isValid(uid, token)) {
-            final var yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
-            final var account = new YubiKeyAccount();
+            val yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
+            val account = new YubiKeyAccount();
             account.setPublicId(getCipherExecutor().encode(yubikeyPublicId));
             account.setUsername(uid);
             return this.entityManager.merge(account) != null;
@@ -70,7 +72,7 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     @Override
     public Optional<YubiKeyAccount> getAccount(final String uid) {
         try {
-            final var account = this.entityManager.createQuery(SELECT_QUERY.concat("where r.username = :username"),
+            val account = this.entityManager.createQuery(SELECT_QUERY.concat("where r.username = :username"),
                 YubiKeyAccount.class)
                 .setParameter("username", uid)
                 .getSingleResult();

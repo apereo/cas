@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.authentication.api;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -71,7 +73,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
      * @return the authentication trust record
      */
     public static MultifactorAuthenticationTrustRecord newInstance(final String principal, final String geography, final String fingerprint) {
-        final var r = new MultifactorAuthenticationTrustRecord();
+        val r = new MultifactorAuthenticationTrustRecord();
         r.setRecordDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         r.setPrincipal(principal);
         r.setDeviceFingerprint(fingerprint);

@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.support;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -43,9 +45,9 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        final var currentTime = ZonedDateTime.now(ZoneOffset.UTC);
-        final var lastTimeUsed = ticketState.getLastTimeUsed();
-        final var killTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        val currentTime = ZonedDateTime.now(ZoneOffset.UTC);
+        val lastTimeUsed = ticketState.getLastTimeUsed();
+        val killTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
         if (ticketState.getCountOfUses() == 0 && currentTime.isBefore(killTime)) {
             LOGGER.debug("Ticket is not expired due to a count of zero and the time being less " + "than the timeToKillInSeconds");
             return super.isExpired(ticketState);
@@ -54,7 +56,7 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
             LOGGER.debug("Ticket is expired due to the time being greater than the timeToKillInSeconds");
             return true;
         }
-        final var dontUseUntil = lastTimeUsed.plus(this.timeInBetweenUsesInSeconds, ChronoUnit.SECONDS);
+        val dontUseUntil = lastTimeUsed.plus(this.timeInBetweenUsesInSeconds, ChronoUnit.SECONDS);
         if (currentTime.isBefore(dontUseUntil)) {
             LOGGER.warn("Ticket is expired due to the time being less than the waiting period.");
             return true;

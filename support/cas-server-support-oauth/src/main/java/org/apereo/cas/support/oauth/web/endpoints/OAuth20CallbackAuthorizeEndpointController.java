@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -62,13 +64,13 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL)
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) {
-        final var context = new J2EContext(request, response, this.oauthConfig.getSessionStore());
-        final var callback = new DefaultCallbackLogic();
+        val context = new J2EContext(request, response, this.oauthConfig.getSessionStore());
+        val callback = new DefaultCallbackLogic();
         callback.perform(context, oauthConfig, J2ENopHttpActionAdapter.INSTANCE,
             null, Boolean.TRUE, Boolean.FALSE,
             Boolean.FALSE, Authenticators.CAS_OAUTH_CLIENT);
-        final var url = StringUtils.remove(response.getHeader("Location"), "redirect:");
-        final var manager = Pac4jUtils.getPac4jProfileManager(request, response);
+        val url = StringUtils.remove(response.getHeader("Location"), "redirect:");
+        val manager = Pac4jUtils.getPac4jProfileManager(request, response);
         return oAuth20CallbackAuthorizeViewResolver.resolve(context, manager, url);
     }
 }

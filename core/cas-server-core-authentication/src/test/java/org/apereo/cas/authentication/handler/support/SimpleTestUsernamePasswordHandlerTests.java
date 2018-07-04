@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.handler.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
@@ -48,7 +50,7 @@ public class SimpleTestUsernamePasswordHandlerTests {
 
     @Test
     public void verifyValidUsernamePassword() throws Exception {
-        final var result =
+        val result =
             authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertEquals("SimpleTestUsernamePasswordAuthenticationHandler", result.getHandlerName());
     }

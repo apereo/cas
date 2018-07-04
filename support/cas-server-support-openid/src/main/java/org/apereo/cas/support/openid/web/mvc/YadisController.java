@@ -1,5 +1,7 @@
 package org.apereo.cas.support.openid.web.mvc;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -39,10 +41,10 @@ public class YadisController {
      */
     @GetMapping(path = "/yadis.xml")
     public void yadis(final HttpServletResponse response) throws Exception {
-        final var template = this.resourceLoader.getResource("classpath:/yadis.template");
+        val template = this.resourceLoader.getResource("classpath:/yadis.template");
         try (var writer = new StringWriter()) {
             IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);
-            final var yadis = writer.toString().replace("$casLoginUrl", casProperties.getServer().getLoginUrl());
+            val yadis = writer.toString().replace("$casLoginUrl", casProperties.getServer().getLoginUrl());
             response.setContentType("application/xrds+xml");
             final Writer respWriter = response.getWriter();
             respWriter.write(yadis);

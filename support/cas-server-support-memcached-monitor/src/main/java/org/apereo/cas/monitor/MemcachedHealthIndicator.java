@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.MemcachedClientIF;
@@ -29,15 +31,15 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
         try {
-            final var client = (MemcachedClient) getClientFromPool();
+            val client = (MemcachedClient) getClientFromPool();
             if (client.getAvailableServers().isEmpty()) {
                 LOGGER.warn("No available memcached servers can be found");
                 builder.outOfService().withDetail("message", "No memcached servers available.");
                 return;
             }
-            final var unavailableList = client.getUnavailableServers();
+            val unavailableList = client.getUnavailableServers();
             if (!unavailableList.isEmpty()) {
-                final var description = "One or more memcached servers is unavailable: " + unavailableList;
+                val description = "One or more memcached servers is unavailable: " + unavailableList;
                 builder.down().withDetail("message", description);
                 return;
             }
@@ -61,13 +63,13 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
     protected CacheStatistics[] getStatistics() {
         final List<CacheStatistics> statsList = new ArrayList<>();
         try {
-            final var client = getClientFromPool();
+            val client = getClientFromPool();
             client.getStats()
                 .forEach((key, statsMap) -> {
                     if (!statsMap.isEmpty()) {
-                        final var size = Long.parseLong(statsMap.get("bytes"));
-                        final var capacity = Long.parseLong(statsMap.get("limit_maxbytes"));
-                        final var evictions = Long.parseLong(statsMap.get("evictions"));
+                        val size = Long.parseLong(statsMap.get("bytes"));
+                        val capacity = Long.parseLong(statsMap.get("limit_maxbytes"));
+                        val evictions = Long.parseLong(statsMap.get("evictions"));
 
                         final String name;
                         if (key instanceof InetSocketAddress) {

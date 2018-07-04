@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -51,8 +53,8 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final var tgt = WebUtils.getTicketGrantingTicketId(context);
-        final var service = WebUtils.getRegisteredService(context);
+        val tgt = WebUtils.getTicketGrantingTicketId(context);
+        val service = WebUtils.getRegisteredService(context);
 
         if (service == null) {
             LOGGER.debug("No service is available to determine event for principal");
@@ -63,26 +65,26 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
             LOGGER.trace("TGT is blank; proceed with flow normally.");
             return resumeFlow();
         }
-        final var authentication = this.ticketRegistrySupport.getAuthenticationFrom(tgt);
+        val authentication = this.ticketRegistrySupport.getAuthenticationFrom(tgt);
         if (authentication == null) {
             LOGGER.trace("TGT has no authentication and is blank; proceed with flow normally.");
             return resumeFlow();
         }
 
-        final var credential = WebUtils.getCredential(context);
-        final var builder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
+        val credential = WebUtils.getCredential(context);
+        val builder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
 
         LOGGER.debug("Recording and tracking initial authentication results in the request context");
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putAuthentication(authentication, context);
 
-        final var event = this.initialAuthenticationAttemptWebflowEventResolver.resolveSingle(context);
+        val event = this.initialAuthenticationAttemptWebflowEventResolver.resolveSingle(context);
         if (event == null) {
             LOGGER.trace("Request does not indicate a requirement for authentication policy; proceed with flow normally.");
             return resumeFlow();
         }
 
-        final var id = event.getId();
+        val id = event.getId();
         LOGGER.debug("Resolved event from the initial authentication leg is [{}]", id);
 
         if (id.equals(CasWebflowConstants.TRANSITION_ID_ERROR)
@@ -94,16 +96,16 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         }
 
         LOGGER.debug("Validating authentication context for event [{}] and service [{}]", id, service);
-        final var result = this.authenticationContextValidator.validate(authentication, id, service);
+        val result = this.authenticationContextValidator.validate(authentication, id, service);
 
         if (result.getKey()) {
             LOGGER.debug("Authentication context is successfully validated by [{}] for service [{}]", id, service);
             return resumeFlow();
         }
 
-        final var value = result.getValue();
+        val value = result.getValue();
         if (value.isPresent()) {
-            final var attributeMap = buildEventAttributeMap(authentication.getPrincipal(), service, value.get());
+            val attributeMap = buildEventAttributeMap(authentication.getPrincipal(), service, value.get());
             return CollectionUtils.wrapSet(validateEventIdForMatchingTransitionInContext(id, context, attributeMap));
         }
         LOGGER.warn("The authentication context cannot be satisfied and the requested event [{}] is unrecognized", id);

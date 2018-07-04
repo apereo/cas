@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
@@ -47,7 +49,7 @@ public class EhcacheTicketRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "ticketRMISynchronousCacheReplicator")
     public CacheReplicator ticketRMISynchronousCacheReplicator() {
-        final var cache = casProperties.getTicket().getRegistry().getEhcache();
+        val cache = casProperties.getTicket().getRegistry().getEhcache();
         return new RMISynchronousCacheReplicator(
             cache.isReplicatePuts(),
             cache.isReplicatePutsViaCopy(),
@@ -60,7 +62,7 @@ public class EhcacheTicketRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "ticketRMIAsynchronousCacheReplicator")
     public CacheReplicator ticketRMIAsynchronousCacheReplicator() {
-        final var cache = casProperties.getTicket().getRegistry().getEhcache();
+        val cache = casProperties.getTicket().getRegistry().getEhcache();
         return new RMIAsynchronousCacheReplicator(
             cache.isReplicatePuts(),
             cache.isReplicatePutsViaCopy(),
@@ -75,16 +77,16 @@ public class EhcacheTicketRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "ticketCacheBootstrapCacheLoader")
     public BootstrapCacheLoader ticketCacheBootstrapCacheLoader() {
-        final var cache = casProperties.getTicket().getRegistry().getEhcache();
+        val cache = casProperties.getTicket().getRegistry().getEhcache();
         return new RMIBootstrapCacheLoader(cache.isLoaderAsync(), cache.getMaxChunkSize());
     }
 
     @Bean
     public EhCacheManagerFactoryBean ehcacheTicketCacheManager() {
-        final var cache = casProperties.getTicket().getRegistry().getEhcache();
-        final var bean = new EhCacheManagerFactoryBean();
+        val cache = casProperties.getTicket().getRegistry().getEhcache();
+        val bean = new EhCacheManagerFactoryBean();
 
-        final var configExists = ResourceUtils.doesResourceExist(cache.getConfigLocation());
+        val configExists = ResourceUtils.doesResourceExist(cache.getConfigLocation());
         if (configExists) {
             bean.setConfigLocation(cache.getConfigLocation());
         } else {
@@ -97,11 +99,11 @@ public class EhcacheTicketRegistryConfiguration {
     }
 
     private Ehcache buildCache(final TicketDefinition ticketDefinition) {
-        final var cache = casProperties.getTicket().getRegistry().getEhcache();
-        final var configExists = ResourceUtils.doesResourceExist(cache.getConfigLocation());
+        val cache = casProperties.getTicket().getRegistry().getEhcache();
+        val configExists = ResourceUtils.doesResourceExist(cache.getConfigLocation());
 
-        final var ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache();
-        final var bean = new EhCacheFactoryBean();
+        val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache();
+        val bean = new EhCacheFactoryBean();
 
         bean.setCacheName(ticketDefinition.getProperties().getStorageName());
         LOGGER.debug("Constructing Ehcache cache [{}]", bean.getName());
@@ -123,7 +125,7 @@ public class EhcacheTicketRegistryConfiguration {
         bean.setMaxEntriesInCache(ehcacheProperties.getMaxElementsInCache());
         bean.setMaxEntriesLocalDisk(ehcacheProperties.getMaxElementsOnDisk());
         bean.setMemoryStoreEvictionPolicy(ehcacheProperties.getMemoryStoreEvictionPolicy());
-        final var c = new PersistenceConfiguration();
+        val c = new PersistenceConfiguration();
         c.strategy(ehcacheProperties.getPersistence());
         c.setSynchronousWrites(ehcacheProperties.isSynchronousWrites());
         bean.persistence(c);
@@ -137,16 +139,16 @@ public class EhcacheTicketRegistryConfiguration {
     @Bean
     public TicketRegistry ticketRegistry(@Qualifier("ehcacheTicketCacheManager") final CacheManager manager,
                                          @Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        final var crypto = casProperties.getTicket().getRegistry().getEhcache().getCrypto();
+        val crypto = casProperties.getTicket().getRegistry().getEhcache().getCrypto();
 
-        final var definitions = ticketCatalog.findAll();
+        val definitions = ticketCatalog.findAll();
         definitions.forEach(t -> {
-            final var ehcache = buildCache(t);
+            val ehcache = buildCache(t);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Created Ehcache cache [{}] for [{}]", ehcache.getName(), t);
 
 
-                final var config = ehcache.getCacheConfiguration();
+                val config = ehcache.getCacheConfiguration();
                 LOGGER.debug("TicketCache.maxEntriesLocalHeap=[{}]", config.getMaxEntriesLocalHeap());
                 LOGGER.debug("TicketCache.maxEntriesLocalDisk=[{}]", config.getMaxEntriesLocalDisk());
                 LOGGER.debug("TicketCache.maxEntriesInCache=[{}]", config.getMaxEntriesInCache());

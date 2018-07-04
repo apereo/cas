@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
+import lombok.val;
+
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
@@ -45,19 +47,19 @@ public class InjectResponseHeadersActionTests {
 
     @Test
     public void verifyAction() throws Exception {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
-        final var response = new MockHttpServletResponse();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
-        final var locator = mock(ResponseBuilderLocator.class);
+        val locator = mock(ResponseBuilderLocator.class);
         when(locator.locate(any(WebApplicationService.class))).thenReturn(new WebApplicationServiceResponseBuilder(this.servicesManager));
 
-        final var redirectToServiceAction = new InjectResponseHeadersAction(locator);
-        final var event = redirectToServiceAction.execute(context);
+        val redirectToServiceAction = new InjectResponseHeadersAction(locator);
+        val event = redirectToServiceAction.execute(context);
         assertEquals(CasWebflowConstants.STATE_ID_SUCCESS, event.getId());
         assertNotNull(response.getHeader(CasProtocolConstants.PARAMETER_SERVICE));
     }

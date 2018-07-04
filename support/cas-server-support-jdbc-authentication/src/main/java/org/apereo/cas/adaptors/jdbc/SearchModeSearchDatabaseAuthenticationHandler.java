@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.jdbc;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
@@ -57,7 +59,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
                     + "No SQL statement or JDBC template found");
         }
 
-        final var username = credential.getUsername();
+        val username = credential.getUsername();
         try {
             LOGGER.debug("Executing SQL query [{}]", sql);
 

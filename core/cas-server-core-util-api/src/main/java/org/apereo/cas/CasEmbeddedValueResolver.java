@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.EmbeddedValueResolver;
 import org.springframework.context.ApplicationContext;
@@ -27,9 +29,9 @@ public class CasEmbeddedValueResolver extends EmbeddedValueResolver {
 
     @Override
     public String resolveStringValue(final String strVal) {
-        final var originalValue = super.resolveStringValue(strVal);
+        val originalValue = super.resolveStringValue(strVal);
 
-        final var value = convertValueToDurationIfPossible(originalValue);
+        val value = convertValueToDurationIfPossible(originalValue);
         if (value != null) {
             return value;
         }
@@ -39,7 +41,7 @@ public class CasEmbeddedValueResolver extends EmbeddedValueResolver {
     private String convertValueToDurationIfPossible(final String value) {
         try {
             final ConversionService service = applicationContext.getEnvironment().getConversionService();
-            final var dur = service.convert(value, Duration.class);
+            val dur = service.convert(value, Duration.class);
             if (dur != null) {
                 return String.valueOf(dur.toMillis());
             }

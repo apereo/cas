@@ -1,5 +1,7 @@
 package org.apereo.cas.support.sms;
 
+import lombok.val;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -13,7 +15,7 @@ import static org.junit.Assert.*;
 public class TwilioSmsSenderTests {
     @Test
     public void verifyAction() {
-        final var s = new TwilioSmsSender("accountid", "token");
+        val s = new TwilioSmsSender("accountid", "token");
         assertFalse(s.send("123456789", "123456789", "Msg"));
     }
 }

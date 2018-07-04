@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
+import lombok.val;
+
 import com.google.common.io.ByteStreams;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
@@ -39,7 +41,7 @@ public class DynamicMetadataResolver extends UrlResourceMetadataResolver {
 
     @Override
     protected HttpResponse fetchMetadata(final String metadataLocation) {
-        final var metadata = samlIdPProperties.getMetadata();
+        val metadata = samlIdPProperties.getMetadata();
         final Map headers = new LinkedHashMap();
         headers.put("Content-Type", metadata.getSupportedContentTypes());
         headers.put("Accept", "*/*");
@@ -73,9 +75,9 @@ public class DynamicMetadataResolver extends UrlResourceMetadataResolver {
             return new InMemoryResourceMetadataResolver(backupFile, this.configBean);
         }
 
-        final var ins = response.getEntity().getContent();
-        final var source = ByteStreams.toByteArray(ins);
-        final var bais = new ByteArrayInputStream(source);
+        val ins = response.getEntity().getContent();
+        val source = ByteStreams.toByteArray(ins);
+        val bais = new ByteArrayInputStream(source);
         return new InMemoryResourceMetadataResolver(bais, this.configBean);
     }
 }

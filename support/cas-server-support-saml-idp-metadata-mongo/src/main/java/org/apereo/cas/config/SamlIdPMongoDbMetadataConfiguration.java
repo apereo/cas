@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
@@ -36,7 +38,7 @@ public class SamlIdPMongoDbMetadataConfiguration implements SamlRegisteredServic
 
     @Bean
     public SamlRegisteredServiceMetadataResolver mongoDbSamlRegisteredServiceMetadataResolver() {
-        final var idp = casProperties.getAuthn().getSamlIdp();
+        val idp = casProperties.getAuthn().getSamlIdp();
         return new MongoDbSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean,
             mongoDbSamlMetadataResolverTemplate());
     }
@@ -44,9 +46,9 @@ public class SamlIdPMongoDbMetadataConfiguration implements SamlRegisteredServic
     @ConditionalOnMissingBean(name = "mongoDbSamlMetadataResolverTemplate")
     @Bean
     public MongoTemplate mongoDbSamlMetadataResolverTemplate() {
-        final var mongo = casProperties.getAuthn().getSamlIdp().getMetadata().getMongo();
-        final var factory = new MongoDbConnectionFactory();
-        final var mongoTemplate = factory.buildMongoTemplate(mongo);
+        val mongo = casProperties.getAuthn().getSamlIdp().getMetadata().getMongo();
+        val factory = new MongoDbConnectionFactory();
+        val mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }

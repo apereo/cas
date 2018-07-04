@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.web.controllers;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -95,18 +97,18 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
                                                                                   final HttpServletResponse response) {
         try {
             final CredentialsExtractor<UsernamePasswordCredentials> authExtractor = new BasicAuthExtractor();
-            final var credentials = authExtractor.extract(Pac4jUtils.getPac4jJ2EContext(request, response));
+            val credentials = authExtractor.extract(Pac4jUtils.getPac4jJ2EContext(request, response));
             if (credentials == null) {
                 throw new IllegalArgumentException("No credentials are provided to verify introspection on the access token");
             }
 
-            final var service = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, credentials.getUsername());
+            val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, credentials.getUsername());
             if (validateIntrospectionRequest(service, credentials, request)) {
-                final var accessToken = StringUtils.defaultIfBlank(request.getParameter(OAuth20Constants.ACCESS_TOKEN),
+                val accessToken = StringUtils.defaultIfBlank(request.getParameter(OAuth20Constants.ACCESS_TOKEN),
                     request.getParameter(OAuth20Constants.TOKEN));
 
                 LOGGER.debug("Located access token [{}] in the request", accessToken);
-                final var ticket = this.centralAuthenticationService.getTicket(accessToken, AccessToken.class);
+                val ticket = this.centralAuthenticationService.getTicket(accessToken, AccessToken.class);
                 if (ticket != null) {
                     return createIntrospectionResponse(service, ticket);
                 }
@@ -121,35 +123,35 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
     private boolean validateIntrospectionRequest(final OAuthRegisteredService registeredService,
                                                  final UsernamePasswordCredentials credentials,
                                                  final HttpServletRequest request) {
-        final var tokenExists = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.ACCESS_TOKEN)
+        val tokenExists = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.ACCESS_TOKEN)
             || HttpRequestUtils.doesParameterExist(request, OAuth20Constants.TOKEN);
 
 
         if (tokenExists && OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword())) {
-            final var service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
-            final var audit = AuditableContext.builder()
+            val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+            val audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)
                 .build();
-            final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
             return !accessResult.isExecutionFailure();
         }
         return false;
     }
 
     private ResponseEntity<OidcIntrospectionAccessTokenResponse> createIntrospectionResponse(final OAuthRegisteredService service, final AccessToken ticket) {
-        final var introspect = new OidcIntrospectionAccessTokenResponse();
+        val introspect = new OidcIntrospectionAccessTokenResponse();
         introspect.setActive(true);
         introspect.setClientId(service.getClientId());
-        final var authentication = ticket.getAuthentication();
-        final var subject = authentication.getPrincipal().getId();
+        val authentication = ticket.getAuthentication();
+        val subject = authentication.getPrincipal().getId();
         introspect.setSub(subject);
         introspect.setUniqueSecurityName(subject);
         introspect.setExp(ticket.getExpirationPolicy().getTimeToLive());
         introspect.setIat(ticket.getCreationTime().toInstant().getEpochSecond());
 
-        final var methods = authentication.getAttributes().get(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);
-        final var realmNames = CollectionUtils.toCollection(methods)
+        val methods = authentication.getAttributes().get(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);
+        val realmNames = CollectionUtils.toCollection(methods)
             .stream()
             .map(Object::toString)
             .collect(Collectors.joining(","));
@@ -157,7 +159,7 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
         introspect.setRealmName(realmNames);
         introspect.setTokenType(OAuth20Constants.TOKEN_TYPE_BEARER);
 
-        final var grant = authentication.getAttributes()
+        val grant = authentication.getAttributes()
             .getOrDefault(OAuth20Constants.GRANT_TYPE, StringUtils.EMPTY).toString().toLowerCase();
         introspect.setGrantType(grant);
         introspect.setScope(OidcConstants.StandardScopes.OPENID.getScope());

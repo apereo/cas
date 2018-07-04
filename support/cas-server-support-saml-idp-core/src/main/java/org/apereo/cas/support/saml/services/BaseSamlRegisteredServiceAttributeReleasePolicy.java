@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
@@ -35,8 +37,8 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
                                                      final Map<String, Object> attributes,
                                                      final RegisteredService service) {
         if (service instanceof SamlRegisteredService) {
-            final var saml = (SamlRegisteredService) service;
-            final var request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+            val saml = (SamlRegisteredService) service;
+            val request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
             if (request == null) {
                 LOGGER.warn("Could not locate the request context to process attributes");
@@ -45,10 +47,10 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
 
             var entityId = request.getParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID);
             if (StringUtils.isBlank(entityId)) {
-                final var svcParam = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
+                val svcParam = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
                 if (StringUtils.isNotBlank(svcParam)) {
                     try {
-                        final var builder = new URIBuilder(svcParam);
+                        val builder = new URIBuilder(svcParam);
                         entityId = builder.getQueryParams().stream()
                             .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
                             .map(NameValuePair::getValue)
@@ -65,15 +67,15 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
                 return super.getAttributesInternal(principal, attributes, service);
             }
 
-            final var ctx = ApplicationContextProvider.getApplicationContext();
+            val ctx = ApplicationContextProvider.getApplicationContext();
             if (ctx == null) {
                 LOGGER.warn("Could not locate the application context to process attributes");
                 return super.getAttributesInternal(principal, attributes, service);
             }
-            final var resolver =
+            val resolver =
                 ctx.getBean("defaultSamlRegisteredServiceCachingMetadataResolver", SamlRegisteredServiceCachingMetadataResolver.class);
 
-            final var facade =
+            val facade =
                 SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, saml, entityId);
 
             if (facade == null || !facade.isPresent()) {
@@ -81,7 +83,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
                 return super.getAttributesInternal(principal, attributes, service);
             }
 
-            final var input = facade.get().getEntityDescriptor();
+            val input = facade.get().getEntityDescriptor();
             if (input == null) {
                 LOGGER.warn("Could not locate entity descriptor for [{}] to process attributes", entityId);
                 return super.getAttributesInternal(principal, attributes, service);

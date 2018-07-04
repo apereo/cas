@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.services;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -30,10 +32,10 @@ public class OAuth20WebApplicationServiceTests {
         service.setServiceId("testId");
         service.setTheme("theme");
         service.setDescription("description");
-        final var factory = new WebApplicationServiceFactory();
-        final var serviceWritten = factory.createService(service.getServiceId());
+        val factory = new WebApplicationServiceFactory();
+        val serviceWritten = factory.createService(service.getServiceId());
         MAPPER.writeValue(JSON_FILE, serviceWritten);
-        final var serviceRead = MAPPER.readValue(JSON_FILE, WebApplicationService.class);
+        val serviceRead = MAPPER.readValue(JSON_FILE, WebApplicationService.class);
         assertEquals(serviceWritten, serviceRead);
     }
 }

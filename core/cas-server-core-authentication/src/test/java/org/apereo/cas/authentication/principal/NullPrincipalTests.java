@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -23,9 +25,9 @@ public class NullPrincipalTests {
 
     @Test
     public void verifySerializeANullPrincipalToJson() throws IOException {
-        final var serviceWritten = NullPrincipal.getInstance();
+        val serviceWritten = NullPrincipal.getInstance();
         MAPPER.writeValue(JSON_FILE, serviceWritten);
-        final var serviceRead = MAPPER.readValue(JSON_FILE, NullPrincipal.class);
+        val serviceRead = MAPPER.readValue(JSON_FILE, NullPrincipal.class);
         assertEquals(serviceWritten, serviceRead);
     }
 }

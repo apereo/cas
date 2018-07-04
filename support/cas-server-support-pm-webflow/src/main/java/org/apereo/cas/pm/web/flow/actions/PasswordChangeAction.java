@@ -1,5 +1,7 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -43,8 +45,8 @@ public class PasswordChangeAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         try {
-            final var c = (UsernamePasswordCredential) WebUtils.getCredential(requestContext);
-            final var bean = requestContext.getFlowScope()
+            val c = (UsernamePasswordCredential) WebUtils.getCredential(requestContext);
+            val bean = requestContext.getFlowScope()
                     .get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeBean.class);
 
             if (!passwordValidationService.isValid(c, bean)) {

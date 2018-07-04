@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
@@ -68,7 +70,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
      * @return Name of next flow state to transition to or {@value #UNKNOWN}
      */
     public String handle(final Exception e, final RequestContext requestContext) {
-        final var messageContext = requestContext.getMessageContext();
+        val messageContext = requestContext.getMessageContext();
 
         if (e instanceof AuthenticationException) {
             return handleAuthenticationException((AuthenticationException) e, requestContext);
@@ -79,7 +81,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
         }
 
         LOGGER.trace("Unable to translate errors of the authentication exception [{}]. Returning [{}]", e, UNKNOWN);
-        final var messageCode = this.messageBundlePrefix + UNKNOWN;
+        val messageCode = this.messageBundlePrefix + UNKNOWN;
         messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
         return UNKNOWN;
     }
@@ -97,7 +99,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
      */
     protected String handleAuthenticationException(final AuthenticationException e, final RequestContext requestContext) {
         if (e.getHandlerErrors().containsKey(UnauthorizedServiceForPrincipalException.class.getSimpleName())) {
-            final var url = WebUtils.getUnauthorizedRedirectUrlIntoFlowScope(requestContext);
+            val url = WebUtils.getUnauthorizedRedirectUrlIntoFlowScope(requestContext);
             if (url != null) {
                 LOGGER.warn("Unauthorized service access for principal; CAS will be redirecting to [{}]", url);
                 return CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK;
@@ -105,7 +107,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
         }
 
         final Collection<Class> values = e.getHandlerErrors().values().stream().map(Throwable::getClass).collect(Collectors.toList());
-        final var handlerErrorName = this.errors
+        val handlerErrorName = this.errors
             .stream()
             .filter(values::contains)
             .map(Class::getSimpleName)
@@ -115,8 +117,8 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
                 return UNKNOWN;
             });
 
-        final var messageContext = requestContext.getMessageContext();
-        final var messageCode = this.messageBundlePrefix + handlerErrorName;
+        val messageContext = requestContext.getMessageContext();
+        val messageCode = this.messageBundlePrefix + handlerErrorName;
         messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
         return handlerErrorName;
     }
@@ -132,8 +134,8 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
      * @return Name of next flow state to transition to or {@value #UNKNOWN}
      */
     protected String handleAbstractTicketException(final AbstractTicketException e, final RequestContext requestContext) {
-        final var messageContext = requestContext.getMessageContext();
-        final var match = this.errors.stream()
+        val messageContext = requestContext.getMessageContext();
+        val match = this.errors.stream()
             .filter(c -> c.isInstance(e)).map(Class::getSimpleName)
             .findFirst();
 
@@ -143,14 +145,14 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final var currentEvent = requestContext.getCurrentEvent();
+        val currentEvent = requestContext.getCurrentEvent();
         LOGGER.debug("Located current event [{}]", currentEvent);
 
-        final var error = currentEvent.getAttributes().get(CasWebflowConstants.TRANSITION_ID_ERROR, Exception.class);
+        val error = currentEvent.getAttributes().get(CasWebflowConstants.TRANSITION_ID_ERROR, Exception.class);
         if (error != null) {
             LOGGER.debug("Located error attribute [{}] with message [{}] from the current event", error.getClass(), error.getMessage());
 
-            final var event = handle(error, requestContext);
+            val event = handle(error, requestContext);
             LOGGER.debug("Final event id resolved from the error is [{}]", event);
             return new EventFactorySupport().event(this, event, currentEvent.getAttributes());
         }

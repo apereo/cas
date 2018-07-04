@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.audit.BaseAuditableExecution;
@@ -19,9 +21,9 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         actionResolverName = "SERVICE_ACCESS_ENFORCEMENT_ACTION_RESOLVER",
         resourceResolverName = "SERVICE_ACCESS_ENFORCEMENT_RESOURCE_RESOLVER")
     public AuditableExecutionResult execute(final AuditableContext context) {
-        final var registeredService = context.getRegisteredService();
+        val registeredService = context.getRegisteredService();
         if (context.getServiceTicket().isPresent() && context.getAuthenticationResult().isPresent() && registeredService.isPresent()) {
-            final var result = AuditableExecutionResult.of(context);
+            val result = AuditableExecutionResult.of(context);
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getServiceTicket().get(),
                     context.getAuthenticationResult().get(), registeredService.get());
@@ -31,10 +33,10 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             return result;
         }
 
-        final var service = context.getService();
-        final var ticketGrantingTicket = context.getTicketGrantingTicket();
+        val service = context.getService();
+        val ticketGrantingTicket = context.getTicketGrantingTicket();
         if (service.isPresent() && registeredService.isPresent() && ticketGrantingTicket.isPresent()) {
-            final var result = AuditableExecutionResult.of(service.get(),
+            val result = AuditableExecutionResult.of(service.get(),
                 registeredService.get(), ticketGrantingTicket.get());
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service.get(),
@@ -47,9 +49,9 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             return result;
         }
 
-        final var authentication = context.getAuthentication();
+        val authentication = context.getAuthentication();
         if (service.isPresent() && registeredService.isPresent() && authentication.isPresent()) {
-            final var result = AuditableExecutionResult.of(authentication.get(), service.get(), registeredService.get());
+            val result = AuditableExecutionResult.of(authentication.get(), service.get(), registeredService.get());
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service.get(),
                     registeredService.get(),
@@ -62,7 +64,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         }
 
         if (service.isPresent() && registeredService.isPresent()) {
-            final var result = AuditableExecutionResult.of(service.get(), registeredService.get());
+            val result = AuditableExecutionResult.of(service.get(), registeredService.get());
             try {
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service.get(), registeredService.get());
             } catch (final PrincipalException e) {
@@ -72,7 +74,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         }
 
         if (registeredService.isPresent()) {
-            final var result = AuditableExecutionResult.of(registeredService.get());
+            val result = AuditableExecutionResult.of(registeredService.get());
             try {
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService.get());
             } catch (final PrincipalException e) {

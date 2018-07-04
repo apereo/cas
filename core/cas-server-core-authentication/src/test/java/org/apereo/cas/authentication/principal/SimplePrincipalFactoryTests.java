@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
@@ -21,7 +23,7 @@ public class SimplePrincipalFactoryTests {
         map.put("a1", "v1");
         map.put("a2", "v3");
 
-        final var p = fact.createPrincipal("user", map);
+        val p = fact.createPrincipal("user", map);
         assertTrue(p instanceof SimplePrincipal);
         assertEquals(p.getAttributes(), map);
     }
@@ -33,8 +35,8 @@ public class SimplePrincipalFactoryTests {
         map.put("a1", "v1");
         map.put("a2", "v3");
 
-        final var p = fact.createPrincipal("user", map);
-        final var p2 = fact.createPrincipal("USER", map);
+        val p = fact.createPrincipal("user", map);
+        val p2 = fact.createPrincipal("USER", map);
         assertTrue(p instanceof SimplePrincipal);
         assertTrue(p2 instanceof SimplePrincipal);
         assertEquals(p.getAttributes(), map);

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.policy;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PreventedException;
@@ -22,7 +24,7 @@ public class NotPreventedAuthenticationPolicy extends AnyAuthenticationPolicy {
 
     @Override
     public boolean isSatisfiedBy(final Authentication authentication) throws Exception {
-        final var fail = authentication.getFailures().values()
+        val fail = authentication.getFailures().values()
             .stream()
             .anyMatch(failure -> failure.getClass().isAssignableFrom(PreventedException.class));
         if (fail) {

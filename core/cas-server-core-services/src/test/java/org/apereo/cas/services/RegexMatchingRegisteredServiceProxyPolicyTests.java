@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -22,7 +24,7 @@ public class RegexMatchingRegisteredServiceProxyPolicyTests {
 
     @Test
     public void verifySerializeARegexMatchingRegisteredServiceProxyPolicyToJson() throws IOException {
-        final var policyWritten = new RegexMatchingRegisteredServiceProxyPolicy("pattern");
+        val policyWritten = new RegexMatchingRegisteredServiceProxyPolicy("pattern");
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
 

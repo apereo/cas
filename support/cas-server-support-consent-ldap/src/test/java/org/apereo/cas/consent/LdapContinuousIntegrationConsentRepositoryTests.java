@@ -1,5 +1,7 @@
 package org.apereo.cas.consent;
 
+import lombok.val;
+
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +40,7 @@ public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapCon
     @BeforeClass
     @SneakyThrows
     public static void bootstrap() {
-        final var localhost = new LDAPConnection("localhost", LDAP_PORT,
+        val localhost = new LDAPConnection("localhost", LDAP_PORT,
             "cn=Directory Manager", "password");
         LdapIntegrationTestsOperations.populateEntries(
             localhost,

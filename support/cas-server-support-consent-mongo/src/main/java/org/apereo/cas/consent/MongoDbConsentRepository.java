@@ -1,5 +1,7 @@
 package org.apereo.cas.consent;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
@@ -29,13 +31,13 @@ public class MongoDbConsentRepository implements ConsentRepository {
     public ConsentDecision findConsentDecision(final Service service,
                                                final RegisteredService registeredService,
                                                final Authentication authentication) {
-        final var query = new Query(Criteria.where("service").is(service.getId()).and("principal").is(authentication.getPrincipal().getId()));
+        val query = new Query(Criteria.where("service").is(service.getId()).and("principal").is(authentication.getPrincipal().getId()));
         return this.mongoTemplate.findOne(query, ConsentDecision.class, this.collectionName);
     }
 
     @Override
     public Collection<ConsentDecision> findConsentDecisions(final String principal) {
-        final var query = new Query(Criteria.where("principal").is(principal));
+        val query = new Query(Criteria.where("principal").is(principal));
         return this.mongoTemplate.find(query, ConsentDecision.class, this.collectionName);
     }
 
@@ -52,8 +54,8 @@ public class MongoDbConsentRepository implements ConsentRepository {
 
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
-        final var query = new Query(Criteria.where("id").is(decisionId).and("principal").is(principal));
-        final var result = this.mongoTemplate.remove(query, ConsentDecision.class, this.collectionName);
+        val query = new Query(Criteria.where("id").is(decisionId).and("principal").is(principal));
+        val result = this.mongoTemplate.remove(query, ConsentDecision.class, this.collectionName);
         return result.getDeletedCount() > 0;
     }
 }

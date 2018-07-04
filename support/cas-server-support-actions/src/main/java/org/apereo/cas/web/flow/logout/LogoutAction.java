@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.logout;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -43,21 +45,21 @@ public class LogoutAction extends AbstractLogoutAction {
                                       final RequestContext context) {
 
         var needFrontSlo = false;
-        final var logoutRequests = WebUtils.getLogoutRequests(context);
+        val logoutRequests = WebUtils.getLogoutRequests(context);
         if (logoutRequests != null) {
             needFrontSlo = logoutRequests
                     .stream()
                     .anyMatch(logoutRequest -> logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED);
         }
 
-        final var paramName = StringUtils.defaultIfEmpty(logoutProperties.getRedirectParameter(), CasProtocolConstants.PARAMETER_SERVICE);
+        val paramName = StringUtils.defaultIfEmpty(logoutProperties.getRedirectParameter(), CasProtocolConstants.PARAMETER_SERVICE);
         LOGGER.debug("Using parameter name [{}] to detect destination service, if any", paramName);
-        final var service = request.getParameter(paramName);
+        val service = request.getParameter(paramName);
         LOGGER.debug("Located target service [{}] for redirection after logout", paramName);
 
         if (logoutProperties.isFollowServiceRedirects() && StringUtils.isNotBlank(service)) {
             final Service webAppService = webApplicationServiceFactory.createService(service);
-            final var rService = this.servicesManager.findServiceBy(webAppService);
+            val rService = this.servicesManager.findServiceBy(webAppService);
 
             if (rService != null && rService.getAccessStrategy().isServiceAccessAllowed()) {
                 LOGGER.debug("Redirecting to service [{}]", service);

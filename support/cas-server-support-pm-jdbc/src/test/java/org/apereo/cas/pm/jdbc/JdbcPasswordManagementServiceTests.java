@@ -1,5 +1,7 @@
 package org.apereo.cas.pm.jdbc;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.Credential;
@@ -98,13 +100,13 @@ public class JdbcPasswordManagementServiceTests {
 
     @Test
     public void verifyUserEmailCanBeFound() {
-        final var email = passwordChangeService.findEmail("casuser");
+        val email = passwordChangeService.findEmail("casuser");
         assertEquals("casuser@example.org", email);
     }
 
     @Test
     public void verifyNullReturnedIfUserEmailCannotBeFound() {
-        final var email = passwordChangeService.findEmail("unknown");
+        val email = passwordChangeService.findEmail("unknown");
         assertNull(email);
     }
 
@@ -119,10 +121,10 @@ public class JdbcPasswordManagementServiceTests {
     @Test
     public void verifyUserPasswordChange() {
         final Credential c = new UsernamePasswordCredential("casuser", "password");
-        final var bean = new PasswordChangeBean();
+        val bean = new PasswordChangeBean();
         bean.setConfirmedPassword("newPassword1");
         bean.setPassword("newPassword1");
-        final var res = passwordChangeService.change(c, bean);
+        val res = passwordChangeService.change(c, bean);
         assertTrue(res);
     }
 

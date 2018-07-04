@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
@@ -31,7 +33,7 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
 
     @Override
     public Service resolveServiceFrom(final Service service) {
-        final var entityId = getEntityIdAsParameter(service).get().getValue();
+        val entityId = getEntityIdAsParameter(service).get().getValue();
         LOGGER.trace("Located entity id [{}] from service authentication request at [{}]", entityId, service.getId());
         return this.webApplicationServiceFactory.createService(entityId);
     }
@@ -49,8 +51,8 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
      * @return the entity id as parameter
      */
     protected static Optional<URIBuilder.BasicNameValuePair> getEntityIdAsParameter(final Service service) {
-        final var builder = new URIBuilder(service.getId());
-        final var param = builder.getQueryParams().stream()
+        val builder = new URIBuilder(service.getId());
+        val param = builder.getQueryParams().stream()
                 .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID)).findFirst();
         return param;
     }

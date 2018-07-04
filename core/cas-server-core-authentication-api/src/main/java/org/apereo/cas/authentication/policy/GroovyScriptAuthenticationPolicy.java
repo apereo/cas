@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.policy;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
@@ -26,13 +28,13 @@ public class GroovyScriptAuthenticationPolicy implements AuthenticationPolicy {
     @Override
     public boolean isSatisfiedBy(final Authentication auth) throws Exception {
         final Optional<Exception> ex;
-        final var matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(script);
+        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(script);
         if (matcherInline.find()) {
-            final var args = CollectionUtils.wrap("principal", auth.getPrincipal(), "logger", LOGGER);
-            final var inlineScript = matcherInline.group(1);
+            val args = CollectionUtils.wrap("principal", auth.getPrincipal(), "logger", LOGGER);
+            val inlineScript = matcherInline.group(1);
             ex = ScriptingUtils.executeGroovyShellScript(inlineScript, args, Optional.class);
         } else {
-            final var res = this.resourceLoader.getResource(script);
+            val res = this.resourceLoader.getResource(script);
             final Object[] args = {auth.getPrincipal(), LOGGER};
             ex = ScriptingUtils.executeGroovyScript(res, args, Optional.class);
         }

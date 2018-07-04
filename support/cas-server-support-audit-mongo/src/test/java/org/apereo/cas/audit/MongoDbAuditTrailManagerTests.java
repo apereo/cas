@@ -1,5 +1,7 @@
 package org.apereo.cas.audit;
 
+import lombok.val;
+
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -57,9 +59,9 @@ public class MongoDbAuditTrailManagerTests {
 
     @Test
     public void verify() {
-        final var twoDaysAgo = LocalDate.now().minusDays(2);
-        final var since = DateTimeUtils.dateOf(twoDaysAgo);
-        final var ctx = new AuditActionContext("casuser", "resource",
+        val twoDaysAgo = LocalDate.now().minusDays(2);
+        val since = DateTimeUtils.dateOf(twoDaysAgo);
+        val ctx = new AuditActionContext("casuser", "resource",
             "action", "appcode", since, "clientIp",
             "serverIp");
         auditTrailExecutionPlan.record(ctx);

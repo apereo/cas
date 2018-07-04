@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.login;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -33,12 +35,12 @@ public class GenericSuccessViewAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         if (StringUtils.isNotBlank(this.redirectUrl)) {
-            final var service = this.serviceFactory.createService(this.redirectUrl);
-            final var registeredService = this.servicesManager.findServiceBy(service);
+            val service = this.serviceFactory.createService(this.redirectUrl);
+            val registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             requestContext.getExternalContext().requestExternalRedirect(service.getId());
         } else {
-            final var tgt = WebUtils.getTicketGrantingTicketId(requestContext);
+            val tgt = WebUtils.getTicketGrantingTicketId(requestContext);
             WebUtils.putPrincipal(requestContext, getAuthenticationPrincipal(tgt));
         }
         return success();
@@ -53,7 +55,7 @@ public class GenericSuccessViewAction extends AbstractAction {
      */
     public Principal getAuthenticationPrincipal(final String ticketGrantingTicketId) {
         try {
-            final var ticketGrantingTicket = this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+            val ticketGrantingTicket = this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
             return ticketGrantingTicket.getAuthentication().getPrincipal();
         } catch (final InvalidTicketException e) {
             LOGGER.warn("Ticket-granting ticket [{}] cannot be found in the ticket registry.", e.getMessage());

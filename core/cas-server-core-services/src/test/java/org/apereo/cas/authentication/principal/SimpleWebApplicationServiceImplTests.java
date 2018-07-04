@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -31,20 +33,20 @@ public class SimpleWebApplicationServiceImplTests {
 
     @Test
     public void verifySerializeACompletePrincipalToJson() throws IOException {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE);
-        final var serviceWritten = new WebApplicationServiceFactory().createService(request);
+        val serviceWritten = new WebApplicationServiceFactory().createService(request);
         MAPPER.writeValue(JSON_FILE, serviceWritten);
-        final var serviceRead = MAPPER.readValue(JSON_FILE, SimpleWebApplicationServiceImpl.class);
+        val serviceRead = MAPPER.readValue(JSON_FILE, SimpleWebApplicationServiceImpl.class);
         assertEquals(serviceWritten, serviceRead);
     }
 
     @Test
     public void verifyResponse() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE);
-        final var impl = new WebApplicationServiceFactory().createService(request);
-        final var response = new WebApplicationServiceResponseBuilder(
+        val impl = new WebApplicationServiceFactory().createService(request);
+        val response = new WebApplicationServiceResponseBuilder(
             new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
             .build(impl, "ticketId", RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
@@ -53,28 +55,28 @@ public class SimpleWebApplicationServiceImplTests {
 
     @Test
     public void verifyCreateSimpleWebApplicationServiceImplFromServiceAttribute() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, SERVICE);
-        final var impl = new WebApplicationServiceFactory().createService(request);
+        val impl = new WebApplicationServiceFactory().createService(request);
         assertNotNull(impl);
     }
 
     @Test
     public void verifyResponseForJsession() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "http://www.cnn.com/;jsession=test");
-        final var impl = new WebApplicationServiceFactory().createService(request);
+        val impl = new WebApplicationServiceFactory().createService(request);
 
         assertEquals("http://www.cnn.com/", impl.getId());
     }
 
     @Test
     public void verifyResponseWithNoTicket() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE);
-        final var impl = new WebApplicationServiceFactory().createService(request);
+        val impl = new WebApplicationServiceFactory().createService(request);
 
-        final var response = new WebApplicationServiceResponseBuilder(
+        val response = new WebApplicationServiceResponseBuilder(
             new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
             .build(impl, null,
                 RegisteredServiceTestUtils.getAuthentication());
@@ -85,10 +87,10 @@ public class SimpleWebApplicationServiceImplTests {
 
     @Test
     public void verifyResponseWithNoTicketAndNoParameterInServiceURL() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setParameter(SERVICE, "http://foo.com/");
-        final var impl = new WebApplicationServiceFactory().createService(request);
-        final var response = new WebApplicationServiceResponseBuilder(
+        val impl = new WebApplicationServiceFactory().createService(request);
+        val response = new WebApplicationServiceResponseBuilder(
             new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
             .build(impl, null,
                 RegisteredServiceTestUtils.getAuthentication());
@@ -100,10 +102,10 @@ public class SimpleWebApplicationServiceImplTests {
 
     @Test
     public void verifyResponseWithNoTicketAndOneParameterInServiceURL() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "http://foo.com/?param=test");
-        final var impl = new WebApplicationServiceFactory().createService(request);
-        final var response = new WebApplicationServiceResponseBuilder(
+        val impl = new WebApplicationServiceFactory().createService(request);
+        val response = new WebApplicationServiceResponseBuilder(
             new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
             .build(impl, null, RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -30,11 +32,11 @@ public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResour
     }
 
     private String[] getPrincipalIdFromSamlEcpResponse(final Envelope envelope) {
-        final var objects = envelope.getBody().getUnknownXMLObjects();
+        val objects = envelope.getBody().getUnknownXMLObjects();
         if (objects.isEmpty()) {
             return new String[]{};
         }
-        final var object = objects.get(0);
+        val object = objects.get(0);
         if (object instanceof Response) {
             return getPrincipalIdFromSamlResponse((Response) object);
         }
@@ -45,7 +47,7 @@ public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResour
     }
 
     private String[] getPrincipalIdFromSamlResponse(final Response response) {
-        final var result =
+        val result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append("issuer", response.getIssuer().getValue())
                 .append("destination", response.getDestination())
@@ -54,7 +56,7 @@ public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResour
     }
 
     private String[] getPrincipalIdFromSamlEcpFault(final Fault fault) {
-        final var result =
+        val result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append("actor", fault.getActor().getValue())
                 .append("message", fault.getMessage().getValue())

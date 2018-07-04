@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.transcoders.Transcoder;
 import org.apereo.cas.ComponentSerializationPlan;
@@ -41,7 +43,7 @@ public class MemcachedTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public Transcoder memcachedTicketRegistryTranscoder() {
-        final var memcached = casProperties.getTicket().getRegistry().getMemcached();
+        val memcached = casProperties.getTicket().getRegistry().getMemcached();
         return MemcachedUtils.newTranscoder(memcached, componentSerializationPlan.getRegisteredClasses());
     }
 
@@ -49,16 +51,16 @@ public class MemcachedTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public MemcachedPooledClientConnectionFactory memcachedPooledClientConnectionFactory() {
-        final var memcached = casProperties.getTicket().getRegistry().getMemcached();
+        val memcached = casProperties.getTicket().getRegistry().getMemcached();
         return new MemcachedPooledClientConnectionFactory(memcached, memcachedTicketRegistryTranscoder());
     }
 
     @Bean
     public TicketRegistry ticketRegistry() {
-        final var memcached = casProperties.getTicket().getRegistry().getMemcached();
-        final var factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedTicketRegistryTranscoder());
-        final var registry = new MemcachedTicketRegistry(factory.getObjectPool());
-        final var cipherExecutor = CoreTicketUtils.newTicketRegistryCipherExecutor(memcached.getCrypto(), "memcached");
+        val memcached = casProperties.getTicket().getRegistry().getMemcached();
+        val factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedTicketRegistryTranscoder());
+        val registry = new MemcachedTicketRegistry(factory.getObjectPool());
+        val cipherExecutor = CoreTicketUtils.newTicketRegistryCipherExecutor(memcached.getCrypto(), "memcached");
         registry.setCipherExecutor(cipherExecutor);
         return registry;
     }

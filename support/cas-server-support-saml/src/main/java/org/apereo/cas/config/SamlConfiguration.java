@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
@@ -102,7 +104,7 @@ public class SamlConfiguration {
     @RefreshScope
     @Bean
     public View casSamlServiceSuccessView() {
-        final var samlCore = casProperties.getSamlCore();
+        val samlCore = casProperties.getSamlCore();
         return new Saml10SuccessResponseView(protocolAttributeEncoder,
             servicesManager,
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),

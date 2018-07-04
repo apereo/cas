@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc;
 
+import lombok.val;
+
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;

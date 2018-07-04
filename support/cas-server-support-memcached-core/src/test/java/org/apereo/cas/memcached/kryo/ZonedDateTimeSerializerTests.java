@@ -1,5 +1,7 @@
 package org.apereo.cas.memcached.kryo;
 
+import lombok.val;
+
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -21,9 +23,9 @@ public class ZonedDateTimeSerializerTests {
 
     @Test
     public void verifyTranscoderWorks() {
-        final var pool = new CasKryoPool();
+        val pool = new CasKryoPool();
         try (var kryo = pool.borrow()) {
-            final var output = new ByteBufferOutput(2048);
+            val output = new ByteBufferOutput(2048);
             kryo.writeObject(output, ZonedDateTime.now(ZoneOffset.UTC));
             kryo.writeObject(output, ZonedDateTime.now());
         }

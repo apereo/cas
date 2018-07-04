@@ -1,5 +1,7 @@
 package org.apereo.cas.web;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -55,19 +57,19 @@ public class DelegatedClientNavigationController {
      */
     @GetMapping(ENDPOINT_REDIRECT)
     public View redirectToProvider(final HttpServletRequest request, final HttpServletResponse response) {
-        final var clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
+        val clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
         try {
             final IndirectClient client = (IndirectClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
-            final var webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
-            final var ticket = delegatedClientWebflowManager.store(webContext, client);
+            val webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
+            val ticket = delegatedClientWebflowManager.store(webContext, client);
 
             final View result;
-            final var action = client.getRedirectAction(webContext);
+            val action = client.getRedirectAction(webContext);
             if (RedirectAction.RedirectType.SUCCESS.equals(action.getType())) {
                 result = new DynamicHtmlView(action.getContent());
             } else {
-                final var builder = new URIBuilder(action.getLocation());
-                final var url = builder.toString();
+                val builder = new URIBuilder(action.getLocation());
+                val url = builder.toString();
                 LOGGER.debug("Redirecting client [{}] to [{}] based on identifier [{}]", client.getName(), url, ticket.getId());
                 result = new RedirectView(url);
             }

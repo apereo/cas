@@ -1,5 +1,7 @@
 package org.apereo.cas.services.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -33,9 +35,9 @@ public class RegisteredServiceScriptedAttributeFilterTests {
 
     @Test
     public void verifyScriptedAttributeFilter() throws Exception {
-        final var filter = new RegisteredServiceScriptedAttributeFilter();
-        final var f = File.createTempFile("attr", ".groovy");
-        final var stream = new ClassPathResource("groovy-attr-filter.groovy").getInputStream();
+        val filter = new RegisteredServiceScriptedAttributeFilter();
+        val f = File.createTempFile("attr", ".groovy");
+        val stream = new ClassPathResource("groovy-attr-filter.groovy").getInputStream();
         FileUtils.copyInputStreamToFile(stream, f);
         filter.setScript("file:" + f.getCanonicalPath());
         final Map results = filter.filter(this.givenAttributesMap);

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
@@ -38,9 +40,9 @@ public class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTe
 
     @Test
     public void ensureInflation() {
-        final var deflator = CompressionUtils.deflate(SAML_REQUEST);
-        final var builder = new GoogleSaml20ObjectBuilder(configBean);
-        final var msg = builder.decodeSamlAuthnRequest(deflator);
+        val deflator = CompressionUtils.deflate(SAML_REQUEST);
+        val builder = new GoogleSaml20ObjectBuilder(configBean);
+        val msg = builder.decodeSamlAuthnRequest(deflator);
         assertEquals(SAML_REQUEST, msg);
     }
 

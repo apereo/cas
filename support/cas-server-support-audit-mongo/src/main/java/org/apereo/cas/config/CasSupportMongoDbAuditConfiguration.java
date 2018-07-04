@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.MongoDbAuditTrailManager;
@@ -27,11 +29,11 @@ public class CasSupportMongoDbAuditConfiguration {
 
     @Bean
     public AuditTrailManager mongoDbAuditTrailManager() {
-        final var mongo = casProperties.getAudit().getMongo();
-        final var factory = new MongoDbConnectionFactory();
-        final var mongoTemplate = factory.buildMongoTemplate(mongo);
+        val mongo = casProperties.getAudit().getMongo();
+        val factory = new MongoDbConnectionFactory();
+        val mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
-        final var mgmr = new MongoDbAuditTrailManager(mongoTemplate, mongo.getCollection());
+        val mgmr = new MongoDbAuditTrailManager(mongoTemplate, mongo.getCollection());
         mgmr.setAsynchronous(mongo.isAsynchronous());
         return mgmr;
     }

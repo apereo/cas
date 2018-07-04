@@ -1,5 +1,7 @@
 package org.apereo.cas.services.util;
 
+import lombok.val;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JavaType;
@@ -36,7 +38,7 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
                                         final String failureMsg) {
 
         if (subTypeId.contains("org.jasig.")) {
-            final var newTypeName = subTypeId.replaceAll("jasig", "apereo");
+            val newTypeName = subTypeId.replaceAll("jasig", "apereo");
             LOGGER.warn("Found legacy CAS JSON definition type identified as [{}]. "
                     + "While CAS will attempt to convert the legacy definition to [{}] for the time being, "
                     + "the definition SHOULD manually be upgraded to the new supported syntax",
@@ -53,16 +55,16 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
                                          final Object beanOrClass, final String propertyName) throws IOException {
         var handled = false;
         if (beanOrClass instanceof CachingPrincipalAttributesRepository) {
-            final var repo = CachingPrincipalAttributesRepository.class.cast(beanOrClass);
+            val repo = CachingPrincipalAttributesRepository.class.cast(beanOrClass);
             if ("duration".equals(propertyName)) {
                 for (var i = 1; i <= TOKEN_COUNT_DURATION; i++) {
                     p.nextToken();
                 }
-                final var timeUnit = p.getText();
+                val timeUnit = p.getText();
                 for (var i = 1; i <= TOKEN_COUNT_EXPIRATION; i++) {
                     p.nextToken();
                 }
-                final var expiration = p.getValueAsInt();
+                val expiration = p.getValueAsInt();
 
                 repo.setTimeUnit(timeUnit);
                 repo.setExpiration(expiration);

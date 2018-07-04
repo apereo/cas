@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.refreshtoken;
 
+import lombok.val;
+
 import org.apereo.cas.ticket.BaseOAuthExpirationPolicyTests;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.junit.Test;
@@ -16,9 +18,9 @@ import static org.junit.Assert.*;
 public class OAuthRefreshTokenExpirationPolicyTests extends BaseOAuthExpirationPolicyTests {
     @Test
     public void verifyRefreshTokenExpiryWhenTgtIsExpired() {
-        final var tgt = newTicketGrantingTicket();
-        final var at = newAccessToken(tgt);
-        final var rt = newRefreshToken(at);
+        val tgt = newTicketGrantingTicket();
+        val at = newAccessToken(tgt);
+        val rt = newRefreshToken(at);
 
         assertFalse("Refresh token should not be expired", rt.isExpired());
         tgt.markTicketExpired();
@@ -27,7 +29,7 @@ public class OAuthRefreshTokenExpirationPolicyTests extends BaseOAuthExpirationP
 
     @Test
     public void verifySerializeAnOAuthRefreshTokenExpirationPolicyToJson() throws Exception {
-        final var policyWritten = new OAuthRefreshTokenExpirationPolicy(1234L);
+        val policyWritten = new OAuthRefreshTokenExpirationPolicy(1234L);
         MAPPER.writeValue(JSON_FILE, policyWritten);
         final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, OAuthRefreshTokenExpirationPolicy.class);
         assertEquals(policyWritten, policyRead);

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.pac4j.authentication;
 
+import lombok.val;
+
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationBuilder;
@@ -22,7 +24,7 @@ public class ClientAuthenticationMetaDataPopulator extends BaseAuthenticationMet
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         transaction.getPrimaryCredential().ifPresent(clientCredential -> {
-            final var credentials = ClientCredential.class.cast(clientCredential);
+            val credentials = ClientCredential.class.cast(clientCredential);
             builder.addAttribute(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, credentials.getClientName());
         });
     }

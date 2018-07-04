@@ -1,5 +1,7 @@
 package org.apereo.cas.support.realm;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -24,9 +26,9 @@ public class UriRealmParser implements RealmParser {
 
     @Override
     public String parseRealm(final Map<String, Object> messageContext) throws STSException {
-        final var url = (String) messageContext.get("org.apache.cxf.request.url");
+        val url = (String) messageContext.get("org.apache.cxf.request.url");
 
-        final var st = new StringTokenizer(url, "/");
+        val st = new StringTokenizer(url, "/");
         String realm = null;
         var count = st.countTokens();
         if (count <= 1) {

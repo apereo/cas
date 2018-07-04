@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -42,10 +44,10 @@ public class ClasspathResourceMetadataResolverTests {
 
     @Test
     public void verifyResolverSupports() {
-        final var props = new SamlIdPProperties();
+        val props = new SamlIdPProperties();
         props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
-        final var resolver = new ClasspathResourceMetadataResolver(props, openSamlConfigBean);
-        final var service = new SamlRegisteredService();
+        val resolver = new ClasspathResourceMetadataResolver(props, openSamlConfigBean);
+        val service = new SamlRegisteredService();
         service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
         assertFalse(resolver.supports(service));
         service.setMetadataLocation("classpath:sample-sp.xml");
@@ -54,10 +56,10 @@ public class ClasspathResourceMetadataResolverTests {
 
     @Test
     public void verifyResolverResolves() {
-        final var props = new SamlIdPProperties();
+        val props = new SamlIdPProperties();
         props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
-        final var resolver = new ClasspathResourceMetadataResolver(props, openSamlConfigBean);
-        final var service = new SamlRegisteredService();
+        val resolver = new ClasspathResourceMetadataResolver(props, openSamlConfigBean);
+        val service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);
         service.setMetadataLocation("classpath:sample-sp.xml");

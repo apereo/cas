@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -13,7 +14,7 @@ import static org.junit.Assert.*;
 public class DistributedCacheObjectTests {
     @Test
     public void verifyAction() {
-        final var o = new DistributedCacheObject("objectValue");
+        val o = new DistributedCacheObject("objectValue");
         assertTrue(o.getProperties().isEmpty());
         o.getProperties().put("key", "value");
         assertFalse(o.getProperties().isEmpty());

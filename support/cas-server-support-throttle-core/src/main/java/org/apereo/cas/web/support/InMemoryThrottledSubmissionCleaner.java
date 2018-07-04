@@ -1,5 +1,7 @@
 package org.apereo.cas.web.support;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,7 +24,7 @@ public class InMemoryThrottledSubmissionCleaner implements Runnable {
     @Scheduled(initialDelayString = "${cas.authn.throttle.schedule.startDelay:PT10S}",
         fixedDelayString = "${cas.authn.throttle.schedule.repeatInterval:PT15S}")
     public void run() {
-        final var handlers = authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors();
+        val handlers = authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors();
         handlers
             .stream()
             .filter(handler -> handler instanceof ThrottledSubmissionHandlerInterceptor)

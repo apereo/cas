@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.util;
 
+import lombok.val;
+
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -31,8 +33,8 @@ public class GoogleSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder {
     @Override
     public QName getSamlObjectQName(final Class objectType) {
         try {
-            final var f = objectType.getField(DEFAULT_ELEMENT_LOCAL_NAME_FIELD);
-            final var name = f.get(null).toString();
+            val f = objectType.getField(DEFAULT_ELEMENT_LOCAL_NAME_FIELD);
+            val name = f.get(null).toString();
 
             if (objectType.equals(Response.class) || objectType.equals(Status.class)
                     || objectType.equals(StatusCode.class)) {

@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -27,7 +29,7 @@ public class X509CertificateCredentialTests {
     public void verifySerializeAX509CertificateCredentialToJson() throws IOException {
         MAPPER.findAndRegisterModules();
         final X509Certificate certificate = new CasX509Certificate(true);
-        final var credentialWritten = new X509CertificateCredential(new X509Certificate[]{certificate});
+        val credentialWritten = new X509CertificateCredential(new X509Certificate[]{certificate});
 
         MAPPER.writeValue(JSON_FILE, credentialWritten);
         final CredentialMetaData credentialRead = MAPPER.readValue(JSON_FILE, X509CertificateCredential.class);

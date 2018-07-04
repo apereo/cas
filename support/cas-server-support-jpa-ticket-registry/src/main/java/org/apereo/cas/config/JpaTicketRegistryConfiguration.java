@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -55,12 +57,12 @@ public class JpaTicketRegistryConfiguration {
 
     @Bean
     public List<String> ticketPackagesToScan() {
-        final var reflections =
+        val reflections =
             new Reflections(new ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE))
                 .setScanners(new SubTypesScanner(false)));
         final Set<Class<?>> subTypes = (Set) reflections.getSubTypesOf(AbstractTicket.class);
-        final var packages = subTypes
+        val packages = subTypes
             .stream()
             .map(t -> t.getPackage().getName())
             .collect(Collectors.toList());
@@ -81,7 +83,7 @@ public class JpaTicketRegistryConfiguration {
 
     @Bean
     public PlatformTransactionManager ticketTransactionManager(@Qualifier("ticketEntityManagerFactory") final EntityManagerFactory emf) {
-        final var mgmr = new JpaTransactionManager();
+        val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }
@@ -96,16 +98,16 @@ public class JpaTicketRegistryConfiguration {
     @Bean
     @RefreshScope
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        final var jpa = casProperties.getTicket().getRegistry().getJpa();
-        final var bean = new JpaTicketRegistry(jpa.getTicketLockType(), ticketCatalog);
+        val jpa = casProperties.getTicket().getRegistry().getJpa();
+        val bean = new JpaTicketRegistry(jpa.getTicketLockType(), ticketCatalog);
         bean.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(jpa.getCrypto(), "jpa"));
         return bean;
     }
 
     @Bean
     public LockingStrategy lockingStrategy() {
-        final var registry = casProperties.getTicket().getRegistry();
-        final var uniqueId = StringUtils.defaultIfEmpty(casProperties.getHost().getName(), InetAddressUtils.getCasServerHostName());
+        val registry = casProperties.getTicket().getRegistry();
+        val uniqueId = StringUtils.defaultIfEmpty(casProperties.getHost().getName(), InetAddressUtils.getCasServerHostName());
         return new JpaLockingStrategy("cas-ticket-registry-cleaner", uniqueId,
             Beans.newDuration(registry.getJpa().getJpaLockingTimeout()).getSeconds());
     }

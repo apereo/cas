@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.validator.authorization;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableContext;
@@ -29,14 +31,14 @@ public class OAuth20PasswordGrantTypeAuthorizationRequestValidator implements OA
 
     @Override
     public boolean validate(final J2EContext context) {
-        final var request = context.getRequest();
+        val request = context.getRequest();
 
         if (!HttpRequestUtils.doesParameterExist(request, OAuth20Constants.GRANT_TYPE)) {
             LOGGER.warn("Grant type must be specified");
             return false;
         }
 
-        final var grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
 
         if (!HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CLIENT_ID)) {
             LOGGER.warn("Client id not specified for grant type [{}]", grantType);
@@ -58,15 +60,15 @@ public class OAuth20PasswordGrantTypeAuthorizationRequestValidator implements OA
             return false;
         }
 
-        final var clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
-        final var registeredService = getRegisteredServiceByClientId(clientId);
+        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
+        val registeredService = getRegisteredServiceByClientId(clientId);
 
-        final var service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
-        final var audit = AuditableContext.builder()
+        val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+        val audit = AuditableContext.builder()
             .service(service)
             .registeredService(registeredService)
             .build();
-        final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
 
         if (accessResult.isExecutionFailure()) {
             LOGGER.warn("Registered service [{}] is not found or is not authorized for access.", registeredService);
@@ -87,7 +89,7 @@ public class OAuth20PasswordGrantTypeAuthorizationRequestValidator implements OA
 
     @Override
     public boolean supports(final J2EContext context) {
-        final var grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.PASSWORD);
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
@@ -65,7 +67,7 @@ public class InitialFlowSetupActionCookieTests extends AbstractCentralAuthentica
         this.tgtCookieGenerator.setCookiePath(StringUtils.EMPTY);
 
         final List<ArgumentExtractor> argExtractors = Collections.singletonList(new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
-        final var servicesManager = mock(ServicesManager.class);
+        val servicesManager = mock(ServicesManager.class);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(RegisteredServiceTestUtils.getRegisteredService("test"));
         this.action = new InitialFlowSetupAction(argExtractors, servicesManager, authenticationRequestServiceSelectionStrategies, tgtCookieGenerator,
                 warnCookieGenerator, casProperties);
@@ -75,9 +77,9 @@ public class InitialFlowSetupActionCookieTests extends AbstractCentralAuthentica
 
     @Test
     public void verifySettingContextPath() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setContextPath(CONST_CONTEXT_PATH);
-        final var context = new MockRequestContext();
+        val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         this.action.doExecute(context);
@@ -88,9 +90,9 @@ public class InitialFlowSetupActionCookieTests extends AbstractCentralAuthentica
 
     @Test
     public void verifyResettingContextPath() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setContextPath(CONST_CONTEXT_PATH);
-        final var context = new MockRequestContext();
+        val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         this.action.doExecute(context);

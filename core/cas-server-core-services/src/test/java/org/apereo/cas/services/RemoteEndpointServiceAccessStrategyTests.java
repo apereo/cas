@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -27,7 +29,7 @@ public class RemoteEndpointServiceAccessStrategyTests {
 
     @Test
     public void verifySerializeAX509CertificateCredentialToJson() throws IOException {
-        final var strategyWritten = new RemoteEndpointServiceAccessStrategy();
+        val strategyWritten = new RemoteEndpointServiceAccessStrategy();
         MAPPER.writeValue(JSON_FILE, strategyWritten);
         final RegisteredServiceAccessStrategy credentialRead = MAPPER.readValue(JSON_FILE, RemoteEndpointServiceAccessStrategy.class);
         assertEquals(strategyWritten, credentialRead);
@@ -35,7 +37,7 @@ public class RemoteEndpointServiceAccessStrategyTests {
 
     @Test
     public void verifyOperation() {
-        final var strategy = new RemoteEndpointServiceAccessStrategy();
+        val strategy = new RemoteEndpointServiceAccessStrategy();
         strategy.setEndpointUrl("http://localhost:8755");
         strategy.setAcceptableResponseCodes("200,201");
         try (var webServer = new MockWebServer(8755,

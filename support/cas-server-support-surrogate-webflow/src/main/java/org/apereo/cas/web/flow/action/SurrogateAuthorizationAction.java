@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.action;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableContext;
@@ -26,21 +28,21 @@ public class SurrogateAuthorizationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final var ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
+        val ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
         try {
             final Service service = WebUtils.getService(requestContext);
-            final var authentication = WebUtils.getAuthentication(requestContext);
-            final var svc = WebUtils.getRegisteredService(requestContext);
+            val authentication = WebUtils.getAuthentication(requestContext);
+            val svc = WebUtils.getRegisteredService(requestContext);
             if (svc != null) {
                 AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
 
-                final var audit = AuditableContext.builder().service(service)
+                val audit = AuditableContext.builder().service(service)
                     .service(service)
                     .authentication(authentication)
                     .registeredService(svc)
                     .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                     .build();
-                final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+                val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
                 accessResult.throwExceptionIfNeeded();
                 
                 return success();

@@ -1,5 +1,7 @@
 package org.apereo.cas.services.util;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +42,7 @@ public class DefaultRegisteredServiceJsonSerializer extends AbstractJacksonBacke
      */
     @Override
     protected ObjectMapper initializeObjectMapper() {
-        final var mapper = super.initializeObjectMapper();
+        val mapper = super.initializeObjectMapper();
         mapper.addHandler(new JasigRegisteredServiceDeserializationProblemHandler());
         return mapper;
     }

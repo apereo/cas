@@ -1,5 +1,7 @@
 package org.apereo.cas.web.pac4j;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
@@ -48,7 +50,7 @@ public class CasSecurityInterceptor extends SecurityInterceptor {
         if (modelAndView != null
                 && StringUtils.isNotBlank(request.getQueryString())
                 && request.getQueryString().contains(CasProtocolConstants.PARAMETER_TICKET)) {
-            final var v = new RedirectView(request.getRequestURL().toString());
+            val v = new RedirectView(request.getRequestURL().toString());
             v.setExposeModelAttributes(false);
             v.setExposePathVariables(false);
             modelAndView.setView(v);

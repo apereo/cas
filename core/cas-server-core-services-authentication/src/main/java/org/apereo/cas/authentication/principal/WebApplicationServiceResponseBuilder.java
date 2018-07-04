@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.val;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +42,8 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
             parameters.put(CasProtocolConstants.PARAMETER_TICKET, serviceTicketId);
         }
 
-        final var finalService = buildInternal(service, parameters);
-        final var responseType = getWebApplicationServiceResponseType(finalService);
+        val finalService = buildInternal(service, parameters);
+        val responseType = getWebApplicationServiceResponseType(finalService);
         if (responseType == ResponseType.POST) {
             return buildPost(finalService, parameters);
         }

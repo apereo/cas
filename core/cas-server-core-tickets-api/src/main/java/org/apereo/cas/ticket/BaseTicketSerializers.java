@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import lombok.val;
+
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import lombok.SneakyThrows;
@@ -120,7 +122,7 @@ public abstract class BaseTicketSerializers {
      * @return the string
      */
     public static String serializeTicket(final Ticket ticket) {
-        final var writer = new StringWriter();
+        val writer = new StringWriter();
         if (ticket instanceof TicketGrantingTicket) {
             getTicketGrantingTicketSerializer().to(writer, TicketGrantingTicket.class.cast(ticket));
         } else if (ticket instanceof ServiceTicket) {

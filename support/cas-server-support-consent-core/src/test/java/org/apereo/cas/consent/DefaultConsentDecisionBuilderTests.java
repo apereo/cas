@@ -1,5 +1,7 @@
 package org.apereo.cas.consent;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasConsentApiConfiguration;
@@ -41,7 +43,7 @@ public class DefaultConsentDecisionBuilderTests {
 
     @Test
     public void verifyNewConsentDecision() {
-        final var consentDecision = getConsentDecision();
+        val consentDecision = getConsentDecision();
         assertNotNull(consentDecision);
         assertEquals("casuser", consentDecision.getPrincipal());
         assertEquals(consentDecision.getService(), RegisteredServiceTestUtils.getService().getId());
@@ -49,22 +51,22 @@ public class DefaultConsentDecisionBuilderTests {
 
     @Test
     public void verifyAttributesRequireConsent() {
-        final var consentDecision = getConsentDecision();
+        val consentDecision = getConsentDecision();
         assertTrue(consentDecisionBuilder.doesAttributeReleaseRequireConsent(consentDecision, CollectionUtils.wrap("attr2", "value2")));
         assertFalse(consentDecisionBuilder.doesAttributeReleaseRequireConsent(consentDecision, CollectionUtils.wrap("attr1", "something")));
     }
 
     @Test
     public void verifyAttributeValuesRequireConsent() {
-        final var consentDecision = getConsentDecision();
+        val consentDecision = getConsentDecision();
         consentDecision.setOptions(ConsentReminderOptions.ATTRIBUTE_VALUE);
         assertTrue(consentDecisionBuilder.doesAttributeReleaseRequireConsent(consentDecision, CollectionUtils.wrap("attr1", "value2")));
     }
 
     @Test
     public void verifyAttributesAreRetrieved() {
-        final var consentDecision = getConsentDecision();
-        final var attrs = consentDecisionBuilder.getConsentableAttributesFrom(consentDecision);
+        val consentDecision = getConsentDecision();
+        val attrs = consentDecisionBuilder.getConsentableAttributesFrom(consentDecision);
         assertTrue(attrs.containsKey("attr1"));
         assertEquals("value1", attrs.get("attr1"));
     }

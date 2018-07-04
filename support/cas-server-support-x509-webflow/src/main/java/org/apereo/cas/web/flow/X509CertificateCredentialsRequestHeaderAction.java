@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.authentication.Credential;
@@ -33,12 +35,12 @@ public class X509CertificateCredentialsRequestHeaderAction extends X509Certifica
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
-        final var x509Credential = super.constructCredentialsFromRequest(context);
+        val x509Credential = super.constructCredentialsFromRequest(context);
         if (x509Credential != null) {
             return x509Credential;
         }
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final var certFromHeader = x509CertificateExtractor.extract(request);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val certFromHeader = x509CertificateExtractor.extract(request);
         if (certFromHeader != null) {
             LOGGER.debug("Certificate found in HTTP request via {}", x509CertificateExtractor.getClass().getName());
             return new X509CertificateCredential(certFromHeader);

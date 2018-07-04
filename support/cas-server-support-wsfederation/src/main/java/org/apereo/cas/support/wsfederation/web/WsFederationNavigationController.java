@@ -1,5 +1,7 @@
 package org.apereo.cas.support.wsfederation.web;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -60,15 +62,15 @@ public class WsFederationNavigationController {
      */
     @GetMapping(ENDPOINT_REDIRECT)
     public View redirectToProvider(final HttpServletRequest request, final HttpServletResponse response) {
-        final var wsfedId = request.getParameter(PARAMETER_NAME);
+        val wsfedId = request.getParameter(PARAMETER_NAME);
         try {
             final var cfg = configurations.stream().filter(c -> c.getId().equals(wsfedId)).findFirst().orElse(null);
             if (cfg == null) {
                 throw new IllegalArgumentException("Could not locate WsFederation configuration for " + wsfedId);
             }
-            final var service = determineService(request);
-            final var id = wsFederationHelper.getRelyingPartyIdentifier(service, cfg);
-            final var url = cfg.getAuthorizationUrl(id, cfg.getId());
+            val service = determineService(request);
+            val id = wsFederationHelper.getRelyingPartyIdentifier(service, cfg);
+            val url = cfg.getAuthorizationUrl(id, cfg.getId());
             wsFederationCookieManager.store(request, response, cfg.getId(), service, cfg);
             return new RedirectView(url);
         } catch (final Exception e) {
@@ -78,7 +80,7 @@ public class WsFederationNavigationController {
     }
 
     private Service determineService(final HttpServletRequest request) {
-        final var serviceParameter = StringUtils.defaultIfBlank(request.getParameter(CasProtocolConstants.PARAMETER_SERVICE), casLoginEndpoint);
+        val serviceParameter = StringUtils.defaultIfBlank(request.getParameter(CasProtocolConstants.PARAMETER_SERVICE), casLoginEndpoint);
         return this.authenticationRequestServiceSelectionStrategies.resolveService(webApplicationServiceFactory.createService(serviceParameter));
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -37,8 +39,8 @@ public class RestServiceRegistryConfiguration implements ServiceRegistryExecutio
     @SneakyThrows
     @ConditionalOnProperty(name = "cas.serviceRegistry.rest.url")
     public ServiceRegistry restfulServiceRegistry() {
-        final var registry = casProperties.getServiceRegistry().getRest();
-        final var restTemplate = new RestTemplate();
+        val registry = casProperties.getServiceRegistry().getRest();
+        val restTemplate = new RestTemplate();
         final MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
 
         if (StringUtils.isNotBlank(registry.getBasicAuthUsername())
@@ -50,7 +52,7 @@ public class RestServiceRegistryConfiguration implements ServiceRegistryExecutio
 
     @Override
     public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        final var registry = casProperties.getServiceRegistry().getRest();
+        val registry = casProperties.getServiceRegistry().getRest();
         if (StringUtils.isNotBlank(registry.getUrl())) {
             plan.registerServiceRegistry(restfulServiceRegistry());
         }

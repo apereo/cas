@@ -1,5 +1,7 @@
 package org.apereo.cas.services.web;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.thymeleaf.engine.AbstractTemplateHandler;
 import org.thymeleaf.model.ICloseElementTag;
@@ -21,7 +23,7 @@ public class CasThymeleafOutputTemplateHandler extends AbstractTemplateHandler {
 
     @Override
     public void handleText(final IText text) {
-        final var contentString = text.getText();
+        val contentString = text.getText();
         if (!contentString.isEmpty() && contentString.trim().isEmpty()) {
             if (!writeWhitespace) {
                 return;

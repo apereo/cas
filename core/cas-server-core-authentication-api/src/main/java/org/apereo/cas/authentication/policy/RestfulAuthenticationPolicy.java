@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.policy;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
@@ -36,25 +38,25 @@ public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
 
     @Override
     public boolean isSatisfiedBy(final Authentication authentication) throws Exception {
-        final var principal = authentication.getPrincipal();
+        val principal = authentication.getPrincipal();
         try {
-            final var acceptHeaders = new HttpHeaders();
+            val acceptHeaders = new HttpHeaders();
             acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
             final HttpEntity<Principal> entity = new HttpEntity<>(principal, acceptHeaders);
             LOGGER.warn("Checking authentication policy for [{}] via POST at [{}]", principal, this.endpoint);
-            final var resp = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, String.class);
+            val resp = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, String.class);
             if (resp == null) {
                 LOGGER.warn("[{}] returned no responses", this.endpoint);
                 throw new GeneralSecurityException("No response returned from REST endpoint to determine authentication policy");
             }
-            final var statusCode = resp.getStatusCode();
+            val statusCode = resp.getStatusCode();
             if (statusCode != HttpStatus.OK) {
-                final var ex = handleResponseStatusCode(statusCode, principal);
+                val ex = handleResponseStatusCode(statusCode, principal);
                 throw new GeneralSecurityException(ex);
             }
             return true;
         } catch (final HttpClientErrorException e) {
-            final var ex = handleResponseStatusCode(e.getStatusCode(), authentication.getPrincipal());
+            val ex = handleResponseStatusCode(e.getStatusCode(), authentication.getPrincipal());
             throw new GeneralSecurityException(ex);
         }
     }

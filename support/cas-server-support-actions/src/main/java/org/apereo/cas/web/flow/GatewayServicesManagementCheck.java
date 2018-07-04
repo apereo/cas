@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
@@ -25,17 +27,17 @@ public class GatewayServicesManagementCheck extends AbstractAction {
     protected Event doExecute(final RequestContext context) {
         final Service service = WebUtils.getService(context);
 
-        final var registeredService = this.servicesManager.findServiceBy(service);
+        val registeredService = this.servicesManager.findServiceBy(service);
 
         if (registeredService == null) {
-            final var msg = String.format("Service Management: Unauthorized Service Access. "
+            val msg = String.format("Service Management: Unauthorized Service Access. "
                     + "Service [%s] does not match entries in service registry.", service.getId());
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
 
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            final var msg = String.format("Service Management: Access to service [%s] "
+            val msg = String.format("Service Management: Access to service [%s] "
                     + "is disabled by the service registry.", service.getId());
             LOGGER.warn(msg);
             WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context,

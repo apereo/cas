@@ -1,5 +1,7 @@
 package org.apereo.cas.discovery;
 
+import lombok.val;
+
 import com.google.common.base.Predicates;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -52,7 +54,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
     private final Set<String> availableAttributes;
 
     private Map<String, String> locateMultifactorAuthenticationProviderTypesActive() {
-        final var providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
+        val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
         return providers
             .values()
             .stream()
@@ -62,7 +64,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
     private Map<String, String> locateMultifactorAuthenticationProviderTypesSupported() {
         final Function<Class, Object> mapper = c -> {
             try {
-                final var p = MultifactorAuthenticationProvider.class.cast(c.getDeclaredConstructor().newInstance());
+                val p = MultifactorAuthenticationProvider.class.cast(c.getDeclaredConstructor().newInstance());
                 LOGGER.debug("Located supported multifactor authentication provider [{}]", p.getId());
                 return p;
             } catch (final Exception e) {
@@ -98,7 +100,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
 
     private Object locateSubtypesByReflection(final Function<Class, Object> mapper, final Collector collector,
                                               final Class parentType, final Predicate filter, final String packageNamespace) {
-        final var reflections = new Reflections(new ConfigurationBuilder()
+        val reflections = new Reflections(new ConfigurationBuilder()
             .setUrls(ClasspathHelper.forPackage(packageNamespace))
             .setScanners(new SubTypesScanner(false)));
         final Set<Class<?>> subTypes = (Set) reflections.getSubTypesOf(parentType);
@@ -134,7 +136,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
      * @return the profile
      */
     public CasServerProfile getProfile() {
-        final var profile = new CasServerProfile();
+        val profile = new CasServerProfile();
         profile.setRegisteredServiceTypesSupported(locateRegisteredServiceTypesSupported());
         profile.setRegisteredServiceTypes(locateRegisteredServiceTypesActive());
         profile.setMultifactorAuthenticationProviderTypesSupported(locateMultifactorAuthenticationProviderTypesSupported());

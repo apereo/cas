@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -33,7 +35,7 @@ public class SamlResponsePostEncoder extends BaseSamlResponseEncoder {
 
     @Override
     protected BaseSAML2MessageEncoder getMessageEncoderInstance() {
-        final var encoder = new HTTPPostEncoder();
+        val encoder = new HTTPPostEncoder();
         encoder.setVelocityEngine(this.velocityEngineFactory);
         return encoder;
     }

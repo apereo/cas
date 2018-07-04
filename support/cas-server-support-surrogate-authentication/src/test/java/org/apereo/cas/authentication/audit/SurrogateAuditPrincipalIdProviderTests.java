@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.audit;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
@@ -23,10 +25,10 @@ import static org.junit.Assert.*;
 public class SurrogateAuditPrincipalIdProviderTests {
     @Test
     public void verifyAction() {
-        final var p = new SurrogateAuditPrincipalIdProvider();
+        val p = new SurrogateAuditPrincipalIdProvider();
         assertEquals(Credential.UNKNOWN_ID, p.getPrincipalIdFrom(null, null, null));
 
-        final var auth = CoreAuthenticationTestUtils.getAuthentication(
+        val auth = CoreAuthenticationTestUtils.getAuthentication(
             CoreAuthenticationTestUtils.getPrincipal(),
             CollectionUtils.wrap(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, "true",
                 SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL, "principal",

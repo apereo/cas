@@ -1,5 +1,7 @@
 package org.apereo.cas.validation;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditableContext;
@@ -23,12 +25,12 @@ public class RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer ext
         resourceResolverName = "DELEGATED_CLIENT_RESOURCE_RESOLVER")
     @Override
     public AuditableExecutionResult execute(final AuditableContext context) {
-        final var result = AuditableExecutionResult.of(context);
+        val result = AuditableExecutionResult.of(context);
 
         if (context.getRegisteredService().isPresent() && context.getProperties().containsKey(Client.class.getSimpleName())) {
-            final var registeredService = context.getRegisteredService().get();
-            final var clientName = context.getProperties().get(Client.class.getSimpleName()).toString();
-            final var policy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
+            val registeredService = context.getRegisteredService().get();
+            val clientName = context.getProperties().get(Client.class.getSimpleName()).toString();
+            val policy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
             if (policy != null) {
                 if (!policy.isProviderAllowed(clientName, registeredService)) {
                     LOGGER.debug("Delegated authentication policy for [{}] does not allow for using client [{}]", registeredService,

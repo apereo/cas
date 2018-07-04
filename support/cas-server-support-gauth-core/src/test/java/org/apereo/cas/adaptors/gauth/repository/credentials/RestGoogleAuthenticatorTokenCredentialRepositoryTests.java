@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.gauth.repository.credentials;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
@@ -44,32 +46,32 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Before
     public void initialize() {
-        final var bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
+        val bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
         this.google = new GoogleAuthenticator(bldr.build());
     }
 
     @Test
     public void verifyCreate() {
-        final var gauth = new GAuthMultifactorProperties();
-        final var repo =
+        val gauth = new GAuthMultifactorProperties();
+        val repo =
             new RestGoogleAuthenticatorTokenCredentialRepository(google, new RestTemplate(),
                 gauth,
                 CipherExecutor.noOpOfStringToString());
-        final var acct = repo.create("casuser");
+        val acct = repo.create("casuser");
         assertNotNull(acct);
     }
 
     @Test
     public void verifyGet() throws Exception {
-        final var gauth = new GAuthMultifactorProperties();
+        val gauth = new GAuthMultifactorProperties();
         gauth.getRest().setEndpointUrl("http://localhost:9295");
-        final var repo =
+        val repo =
             new RestGoogleAuthenticatorTokenCredentialRepository(google, new RestTemplate(),
                 gauth,
                 CipherExecutor.noOpOfStringToString());
         var acct = repo.create("casuser");
 
-        final var data = MAPPER.writeValueAsString(acct);
+        val data = MAPPER.writeValueAsString(acct);
         try (var webServer = new MockWebServer(9295,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();

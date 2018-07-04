@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -81,7 +83,7 @@ public abstract class BaseOAuthExpirationPolicyTests {
     protected RefreshTokenFactory defaultRefreshTokenFactory;
     
     protected TicketGrantingTicket newTicketGrantingTicket() {
-        final var principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
         return new TicketGrantingTicketImpl(
             ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
             CoreAuthenticationTestUtils.getAuthentication(principal),
@@ -89,13 +91,13 @@ public abstract class BaseOAuthExpirationPolicyTests {
     }
 
     protected AccessToken newAccessToken(final TicketGrantingTicket tgt) {
-        final var testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
+        val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
         return defaultAccessTokenFactory.create(testService, tgt.getAuthentication(), tgt, new ArrayList<>());
     }
 
     protected RefreshToken newRefreshToken(final AccessToken at) {
-        final var testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
-        final var rt = defaultRefreshTokenFactory.create(testService, at.getAuthentication(),
+        val testService = CoreAuthenticationTestUtils.getService("https://service.example.com");
+        val rt = defaultRefreshTokenFactory.create(testService, at.getAuthentication(),
             at.getTicketGrantingTicket(), new ArrayList<>());
         at.getTicketGrantingTicket().getDescendantTickets().add(rt.getId());
         return rt;

@@ -1,6 +1,7 @@
 package org.apereo.cas.monitor.config;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.MemoryMonitor;
 import org.apereo.cas.monitor.SessionMonitor;
@@ -34,7 +35,7 @@ public class CasCoreMonitorConfiguration {
     @ConditionalOnMissingBean(name = "memoryHealthIndicator")
     @Bean
     public HealthIndicator memoryHealthIndicator() {
-        final var freeMemThreshold = casProperties.getMonitor().getFreeMemThreshold();
+        val freeMemThreshold = casProperties.getMonitor().getFreeMemThreshold();
         if (freeMemThreshold > 0) {
             LOGGER.debug("Configured memory monitor with free-memory threshold [{}]", freeMemThreshold);
             return new MemoryMonitor(freeMemThreshold);
@@ -45,8 +46,8 @@ public class CasCoreMonitorConfiguration {
     @ConditionalOnMissingBean(name = "sessionHealthIndicator")
     @Bean
     public HealthIndicator sessionHealthIndicator() {
-        final var warnSt = casProperties.getMonitor().getSt().getWarn();
-        final var warnTgt = casProperties.getMonitor().getTgt().getWarn();
+        val warnSt = casProperties.getMonitor().getSt().getWarn();
+        val warnTgt = casProperties.getMonitor().getTgt().getWarn();
         if (warnSt.getThreshold() > 0 && warnTgt.getThreshold() > 0) {
             LOGGER.debug("Configured session monitor with service ticket threshold [{}] and session threshold [{}]",
                 warnSt.getThreshold(), warnTgt.getThreshold());

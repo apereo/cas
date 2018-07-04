@@ -1,5 +1,7 @@
 package org.apereo.cas.shell.commands.db;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.boot.MetadataSources;
@@ -109,7 +111,7 @@ public class GenerateDdlCommand {
             help = "Halt if an error occurs during the generation process",
             defaultValue = "true") final boolean haltOnError) {
 
-        final var dialectName = DIALECTS_MAP.getOrDefault(dialect.trim().toUpperCase(), dialect);
+        val dialectName = DIALECTS_MAP.getOrDefault(dialect.trim().toUpperCase(), dialect);
         LOGGER.info("Using database dialect class [{}]", dialectName);
         if (!dialectName.contains(".")) {
             LOGGER.warn("Dialect name must be a fully qualified class name. Supported dialects by default are [{}] "
@@ -117,14 +119,14 @@ public class GenerateDdlCommand {
             return;
         }
 
-        final var svcRegistry = new StandardServiceRegistryBuilder();
+        val svcRegistry = new StandardServiceRegistryBuilder();
         if (StringUtils.isNotBlank(dialectName)) {
             svcRegistry.applySetting(AvailableSettings.DIALECT, dialect);
         }
-        final var metadata = new MetadataSources(svcRegistry.build());
+        val metadata = new MetadataSources(svcRegistry.build());
         REFLECTIONS.getTypesAnnotatedWith(MappedSuperclass.class).forEach(metadata::addAnnotatedClass);
         REFLECTIONS.getTypesAnnotatedWith(Entity.class).forEach(metadata::addAnnotatedClass);
-        final var export = new SchemaExport();
+        val export = new SchemaExport();
         export.setDelimiter(delimiter);
         export.setOutputFile(file);
         export.setFormat(pretty);

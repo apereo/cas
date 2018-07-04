@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -41,21 +43,21 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     @Override
     public void expire(final LocalDateTime onOrBefore) {
-        final var entity = getHttpEntity(onOrBefore);
+        val entity = getHttpEntity(onOrBefore);
         restTemplate.exchange(getEndpointUrl(null), HttpMethod.POST, entity, Object.class);
     }
 
 
     @Override
     public void expire(final String key) {
-        final var entity = getHttpEntity(key);
+        val entity = getHttpEntity(key);
         restTemplate.exchange(getEndpointUrl(null), HttpMethod.POST, entity, Object.class);
     }
 
     @Override
     protected MultifactorAuthenticationTrustRecord setInternal(final MultifactorAuthenticationTrustRecord record) {
-        final var entity = getHttpEntity(record);
-        final var response = restTemplate.exchange(getEndpointUrl(null), HttpMethod.POST, entity, Object.class);
+        val entity = getHttpEntity(record);
+        val response = restTemplate.exchange(getEndpointUrl(null), HttpMethod.POST, entity, Object.class);
         if (response != null && response.getStatusCode() == HttpStatus.OK) {
             return record;
         }
@@ -63,22 +65,22 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     private Set<MultifactorAuthenticationTrustRecord> getResults(final String url) {
-        final var entity = getHttpEntity(null);
-        final var responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, MultifactorAuthenticationTrustRecord[].class);
+        val entity = getHttpEntity(null);
+        val responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, MultifactorAuthenticationTrustRecord[].class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            final var results = responseEntity.getBody();
+            val results = responseEntity.getBody();
             return Stream.of(results).collect(Collectors.toSet());
         }
         return new HashSet<>(0);
     }
 
     private HttpEntity<Object> getHttpEntity(final Object body) {
-        final var rest = properties.getAuthn().getMfa().getTrusted().getRest();
+        val rest = properties.getAuthn().getMfa().getTrusted().getRest();
         return new HttpEntity<>(body, HttpUtils.createBasicAuthHeaders(rest.getBasicAuthUsername(), rest.getBasicAuthPassword()));
     }
 
     private String getEndpointUrl(final String path) {
-        final var endpoint = properties.getAuthn().getMfa().getTrusted().getRest().getUrl();
+        val endpoint = properties.getAuthn().getMfa().getTrusted().getRest().getUrl();
         return (!endpoint.endsWith("/") ? endpoint.concat("/") : endpoint).concat(StringUtils.defaultString(path));
     }
 }

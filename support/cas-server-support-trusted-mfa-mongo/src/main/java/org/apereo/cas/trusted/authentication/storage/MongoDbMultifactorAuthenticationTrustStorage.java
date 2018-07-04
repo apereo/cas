@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
@@ -26,9 +28,9 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
     @Override
     public void expire(final String key) {
         try {
-            final var query = new Query();
+            val query = new Query();
             query.addCriteria(Criteria.where("recordKey").is(key));
-            final var res = this.mongoTemplate.remove(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
+            val res = this.mongoTemplate.remove(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
             LOGGER.info("Found and removed [{}]", res.getDeletedCount());
         } catch (final Exception e) {
             if (LOGGER.isDebugEnabled()) {
@@ -42,9 +44,9 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
     @Override
     public void expire(final LocalDateTime onOrBefore) {
         try {
-            final var query = new Query();
+            val query = new Query();
             query.addCriteria(Criteria.where("recordDate").lte(onOrBefore));
-            final var res = this.mongoTemplate.remove(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
+            val res = this.mongoTemplate.remove(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
             LOGGER.info("Found and removed [{}]", res.getDeletedCount());
         } catch (final Exception e) {
             if (LOGGER.isDebugEnabled()) {
@@ -57,17 +59,17 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
 
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
-        final var query = new Query();
+        val query = new Query();
         query.addCriteria(Criteria.where("recordDate").gte(onOrAfterDate));
-        final var results = mongoTemplate.find(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
+        val results = mongoTemplate.find(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
         return new HashSet<>(results);
     }
 
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
-        final var query = new Query();
+        val query = new Query();
         query.addCriteria(Criteria.where("principal").is(principal));
-        final var results =
+        val results =
             this.mongoTemplate.find(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
         return new HashSet<>(results);
     }

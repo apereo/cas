@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.val;
+
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -66,9 +68,9 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
 
     @Override
     public void addTicket(final Ticket ticket) {
-        final var encodedTicket = encodeTicket(ticket);
-        final var metadata = this.ticketCatalog.find(ticket);
-        final var cache = getIgniteCacheFromMetadata(metadata);
+        val encodedTicket = encodeTicket(ticket);
+        val metadata = this.ticketCatalog.find(ticket);
+        val cache = getIgniteCacheFromMetadata(metadata);
         LOGGER.debug("Adding ticket [{}] to the cache [{}]", ticket.getId(), cache.getName());
         cache.withExpiryPolicy(new IgniteInternalTicketExpiryPolicy(ticket)).put(encodedTicket.getId(), encodedTicket);
     }
@@ -76,7 +78,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
     @Override
     public long deleteAll() {
         return this.ticketCatalog.findAll().stream().map(this::getIgniteCacheFromMetadata).filter(Objects::nonNull).mapToLong(instance -> {
-            final var size = instance.size();
+            val size = instance.size();
             instance.removeAll();
             return size;
         }).sum();
@@ -84,14 +86,14 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        final var ticket = getTicket(ticketId);
+        val ticket = getTicket(ticketId);
         if (ticket != null) {
-            final var metadata = this.ticketCatalog.find(ticket);
+            val metadata = this.ticketCatalog.find(ticket);
             if (metadata == null) {
                 LOGGER.warn("Ticket [{}] is not registered in the catalog and is unrecognized", ticketId);
                 return false;
             }
-            final var cache = getIgniteCacheFromMetadata(metadata);
+            val cache = getIgniteCacheFromMetadata(metadata);
             return cache.remove(encodeTicketId(ticket.getId()));
         }
         return true;
@@ -99,17 +101,17 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
 
     @Override
     public Ticket getTicket(final String ticketIdToGet) {
-        final var ticketId = encodeTicketId(ticketIdToGet);
+        val ticketId = encodeTicketId(ticketIdToGet);
         if (StringUtils.isBlank(ticketId)) {
             return null;
         }
-        final var metadata = this.ticketCatalog.find(ticketIdToGet);
+        val metadata = this.ticketCatalog.find(ticketIdToGet);
         if (metadata == null) {
             LOGGER.warn("Ticket [{}] is not registered in the catalog and is unrecognized", ticketIdToGet);
             return null;
         }
-        final var cache = getIgniteCacheFromMetadata(metadata);
-        final var ticket = cache.get(ticketId);
+        val cache = getIgniteCacheFromMetadata(metadata);
+        val ticket = cache.get(ticketId);
         if (ticket == null) {
             LOGGER.debug("No ticket by id [{}] is found in the ignite ticket registry", ticketId);
             return null;
@@ -157,7 +159,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
     }
 
     private IgniteCache<String, Ticket> getIgniteCacheFromMetadata(final TicketDefinition metadata) {
-        final var mapName = metadata.getProperties().getStorageName();
+        val mapName = metadata.getProperties().getStorageName();
         LOGGER.debug("Locating cache name [{}] for ticket definition [{}]", mapName, metadata);
         return getIgniteCacheInstanceByName(mapName);
     }

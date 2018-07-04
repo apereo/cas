@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import com.unboundid.scim.data.Meta;
 import com.unboundid.scim.data.Name;
 import com.unboundid.scim.data.UserResource;
@@ -67,29 +69,29 @@ public class PrincipalScimV1ProvisionerActionTests {
 
     @Test
     public void verifyAction() throws Exception {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        final var user = new UserResource(CoreSchema.USER_DESCRIPTOR);
+        val user = new UserResource(CoreSchema.USER_DESCRIPTOR);
         user.setActive(true);
         user.setDisplayName("CASUser");
         user.setId("casuser");
-        final var name = new Name("formatted", "family",
+        val name = new Name("formatted", "family",
             "middle", "givenMame", "prefix", "prefix2");
         name.setGivenName("casuser");
         user.setName(name);
-        final var meta = new Meta(new Date(), new Date(), new URI("http://localhost:8215"), "1");
+        val meta = new Meta(new Date(), new Date(), new URI("http://localhost:8215"), "1");
         meta.setCreated(new Date());
         user.setMeta(meta);
 
 
-        final var resources = new Resources(CollectionUtils.wrapList(user));
-        final var stream = new ByteArrayOutputStream();
+        val resources = new Resources(CollectionUtils.wrapList(user));
+        val stream = new ByteArrayOutputStream();
         resources.marshal(new JsonMarshaller(), stream);
-        final var data = stream.toString();
+        val data = stream.toString();
         try (var webServer = new MockWebServer(8215,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();

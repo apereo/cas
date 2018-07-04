@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata.generator;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -77,11 +79,11 @@ public class FileSystemSamlIdPMetadataGenerator implements SamlIdPMetadataGenera
      * @throws Exception the exception
      */
     protected void buildSelfSignedEncryptionCert() throws Exception {
-        final var encCert = this.samlIdPMetadataLocator.getEncryptionCertificate().getFile();
+        val encCert = this.samlIdPMetadataLocator.getEncryptionCertificate().getFile();
         if (encCert.exists()) {
             FileUtils.forceDelete(encCert);
         }
-        final var encKey = this.samlIdPMetadataLocator.getEncryptionKey().getFile();
+        val encKey = this.samlIdPMetadataLocator.getEncryptionKey().getFile();
         if (encKey.exists()) {
             FileUtils.forceDelete(encKey);
         }
@@ -97,11 +99,11 @@ public class FileSystemSamlIdPMetadataGenerator implements SamlIdPMetadataGenera
      */
     @SneakyThrows
     protected void buildSelfSignedSigningCert() {
-        final var signingCert = this.samlIdPMetadataLocator.getSigningCertificate().getFile();
+        val signingCert = this.samlIdPMetadataLocator.getSigningCertificate().getFile();
         if (signingCert.exists()) {
             FileUtils.forceDelete(signingCert);
         }
-        final var signingKey = this.samlIdPMetadataLocator.getSigningKey().getFile();
+        val signingKey = this.samlIdPMetadataLocator.getSigningKey().getFile();
         if (signingKey.exists()) {
             FileUtils.forceDelete(signingKey);
         }
@@ -118,7 +120,7 @@ public class FileSystemSamlIdPMetadataGenerator implements SamlIdPMetadataGenera
      */
     @SneakyThrows
     protected void buildMetadataGeneratorParameters() {
-        final var template = this.resourceLoader.getResource("classpath:/template-idp-metadata.xml");
+        val template = this.resourceLoader.getResource("classpath:/template-idp-metadata.xml");
 
         var signingCert = FileUtils.readFileToString(this.samlIdPMetadataLocator.getSigningCertificate().getFile(), StandardCharsets.UTF_8);
         signingCert = StringUtils.remove(signingCert, BEGIN_CERTIFICATE);
@@ -130,7 +132,7 @@ public class FileSystemSamlIdPMetadataGenerator implements SamlIdPMetadataGenera
 
         try (var writer = new StringWriter()) {
             IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);
-            final var metadata = writer.toString()
+            val metadata = writer.toString()
                 .replace("${entityId}", this.entityId)
                 .replace("${scope}", this.scope)
                 .replace("${idpEndpointUrl}", getIdPEndpointUrl())

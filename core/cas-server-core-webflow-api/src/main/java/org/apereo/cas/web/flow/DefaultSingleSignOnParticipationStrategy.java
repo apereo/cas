@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
@@ -30,15 +32,15 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
             return this.createSsoSessionCookieOnRenewAuthentications;
         }
 
-        final var authentication = WebUtils.getAuthentication(ctx);
+        val authentication = WebUtils.getAuthentication(ctx);
         final Service service = WebUtils.getService(ctx);
         if (service != null) {
-            final var registeredService = this.servicesManager.findServiceBy(service);
+            val registeredService = this.servicesManager.findServiceBy(service);
             if (registeredService != null) {
-                final var ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
+                val ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
                 try {
                     AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
-                    final var isAllowedForSso = registeredService.getAccessStrategy().isServiceAccessAllowedForSso();
+                    val isAllowedForSso = registeredService.getAccessStrategy().isServiceAccessAllowedForSso();
                     LOGGER.debug("Located [{}] in registry. Service access to participate in SSO is set to [{}]",
                         registeredService.getServiceId(), isAllowedForSso);
                     return isAllowedForSso;

@@ -1,5 +1,7 @@
 package org.apereo.cas.impl.token;
 
+import lombok.val;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.api.PasswordlessTokenRepository;
@@ -88,12 +90,12 @@ public class RestfulPasswordlessTokenRepositoryTests {
 
     @Test
     public void verifyFindToken() {
-        final var token = passwordlessTokenRepository.createToken("casuser");
-        final var data = passwordlessCipherExecutor.encode(token).toString();
+        val token = passwordlessTokenRepository.createToken("casuser");
+        val data = passwordlessCipherExecutor.encode(token).toString();
         try (var webServer = new MockWebServer(9293,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            final var foundToken = passwordlessTokenRepository.findToken("casuser");
+            val foundToken = passwordlessTokenRepository.findToken("casuser");
             assertNotNull(foundToken);
             assertTrue(foundToken.isPresent());
         } catch (final Exception e) {
@@ -103,7 +105,7 @@ public class RestfulPasswordlessTokenRepositoryTests {
 
     @Test
     public void verifySaveToken() {
-        final var data = "THE_TOKEN";
+        val data = "THE_TOKEN";
         try (var webServer = new MockWebServer(9293,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();

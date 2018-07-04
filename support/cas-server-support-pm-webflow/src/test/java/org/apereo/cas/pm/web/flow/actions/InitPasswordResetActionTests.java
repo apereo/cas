@@ -1,5 +1,7 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.category.MailCategory;
 import org.apereo.cas.util.junit.ConditionalIgnore;
@@ -30,18 +32,18 @@ public class InitPasswordResetActionTests extends BasePasswordManagementActionTe
     @Test
     public void verifyAction() {
         try {
-            final var request = new MockHttpServletRequest();
+            val request = new MockHttpServletRequest();
             request.setRemoteAddr("1.2.3.4");
             request.setLocalAddr("1.2.3.4");
             ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-            final var token = passwordManagementService.createToken("casuser");
-            final var context = new MockRequestContext();
+            val token = passwordManagementService.createToken("casuser");
+            val context = new MockRequestContext();
 
             context.getFlowScope().put("token", token);
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals("success", initPasswordResetAction.execute(context).getId());
-            final var c = WebUtils.getCredential(context, UsernamePasswordCredential.class);
+            val c = WebUtils.getCredential(context, UsernamePasswordCredential.class);
             assertNotNull(c);
             assertEquals("casuser", c.getUsername());
         } catch (final Exception e) {

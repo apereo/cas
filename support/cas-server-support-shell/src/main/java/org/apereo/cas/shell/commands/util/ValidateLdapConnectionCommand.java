@@ -1,5 +1,7 @@
 package org.apereo.cas.shell.commands.util;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.shell.standard.ShellCommandGroup;
@@ -66,7 +68,7 @@ public class ValidateLdapConnectionCommand {
                          final String baseDn, final String searchFilter,
                          final String userAttributes,
                          final String userPassword) throws Exception {
-        final var pair = getContext(ldapUrl, bindDn, bindCredential);
+        val pair = getContext(ldapUrl, bindDn, bindCredential);
         if (pair == null) {
             LOGGER.error("Could not connect to any of the provided LDAP urls based on the given credentials.");
             return;
@@ -85,31 +87,31 @@ public class ValidateLdapConnectionCommand {
                 return;
             }
 
-            final var attrIDs = userAttributes.split(",");
+            val attrIDs = userAttributes.split(",");
             LOGGER.info("******* Ldap Search *******");
             LOGGER.info("Ldap filter: [{}]", searchFilter);
             LOGGER.info("Ldap search base: [{}]", baseDn);
             LOGGER.info("Returning attributes: [{}]\n", Arrays.toString(attrIDs));
 
-            final var ctls = getSearchControls(attrIDs);
-            final var answer = ctx.search(baseDn, searchFilter, ctls);
+            val ctls = getSearchControls(attrIDs);
+            val answer = ctx.search(baseDn, searchFilter, ctls);
             if (answer.hasMoreElements()) {
                 LOGGER.info("******* Ldap Search Results *******");
                 while (answer.hasMoreElements()) {
-                    final var result = answer.nextElement();
+                    val result = answer.nextElement();
                     LOGGER.info("User name: [{}]", result.getName());
                     LOGGER.info("User full name: [{}]", result.getNameInNamespace());
 
                     if (userPassword != null) {
                         LOGGER.info("Attempting to authenticate [{}] with password [{}]", result.getName(), userPassword);
 
-                        final var env = getLdapDirectoryContextSettings(result.getNameInNamespace(), userPassword, pair.getKey());
+                        val env = getLdapDirectoryContextSettings(result.getNameInNamespace(), userPassword, pair.getKey());
                         new InitialDirContext(env);
                         LOGGER.info("Successfully authenticated [{}] with password [{}]", result.getName(), userPassword);
                     }
-                    final var attrs = result.getAttributes().getIDs();
+                    val attrs = result.getAttributes().getIDs();
                     while (attrs.hasMoreElements()) {
-                        final var id = attrs.nextElement();
+                        val id = attrs.nextElement();
                         LOGGER.info("[{}] => [{}]", id, result.getAttributes().get(id));
                     }
                 }
@@ -125,7 +127,7 @@ public class ValidateLdapConnectionCommand {
     }
 
     private SearchControls getSearchControls(final String[] attrIDs) {
-        final var ctls = new SearchControls();
+        val ctls = new SearchControls();
         ctls.setDerefLinkFlag(true);
         ctls.setTimeLimit(TIMEOUT);
         ctls.setReturningAttributes(attrIDs);
@@ -134,12 +136,12 @@ public class ValidateLdapConnectionCommand {
     }
 
     private Pair<String, DirContext> getContext(final String ldapUrl, final String bindDn, final String bindCredential) {
-        final var urls = StringUtils.commaDelimitedListToSet(ldapUrl);
-        for (final var url: urls) {
+        val urls = StringUtils.commaDelimitedListToSet(ldapUrl);
+        for (val url: urls) {
             if (ldapUrl != null && !ldapUrl.isEmpty()) {
                 LOGGER.info("Attempting connect to LDAP instance [{}]", url);
 
-                final var env = getLdapDirectoryContextSettings(bindDn, bindCredential, url);
+                val env = getLdapDirectoryContextSettings(bindDn, bindCredential, url);
                 try {
                     return Pair.of(ldapUrl, new InitialDirContext(env));
                 } catch (final Exception e) {

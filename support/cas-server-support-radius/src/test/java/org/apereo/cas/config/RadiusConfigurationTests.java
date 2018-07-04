@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
@@ -39,17 +41,17 @@ public class RadiusConfigurationTests {
 
     @Test
     public void emptyAddress() {
-        final var clientProperties = new RadiusClientProperties();
+        val clientProperties = new RadiusClientProperties();
         clientProperties.setInetAddress("  ");
-        final var ips = RadiusConfiguration.getClientIps(clientProperties);
+        val ips = RadiusConfiguration.getClientIps(clientProperties);
         assertEquals(0, ips.size());
     }
 
     @Test
     public void someAddressesWithSpaces() {
-        final var clientProperties = new RadiusClientProperties();
+        val clientProperties = new RadiusClientProperties();
         clientProperties.setInetAddress("localhost,  localguest  ");
-        final var ips = RadiusConfiguration.getClientIps(clientProperties);
+        val ips = RadiusConfiguration.getClientIps(clientProperties);
         assertEquals(2, ips.size());
         assertTrue(ips.contains("localhost"));
         assertTrue(ips.contains("localguest"));
@@ -63,7 +65,7 @@ public class RadiusConfigurationTests {
     @Test
     public void radiusServers() {
         assertEquals("localhost,localguest", casProperties.getAuthn().getRadius().getClient().getInetAddress());
-        final var servers = radiusConfiguration.radiusServers();
+        val servers = radiusConfiguration.radiusServers();
         assertNotNull(servers);
         assertEquals(2, servers.size());
     }

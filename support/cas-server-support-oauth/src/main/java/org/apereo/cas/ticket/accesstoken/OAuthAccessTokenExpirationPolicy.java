@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.accesstoken;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -47,7 +49,7 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        final var expired = isAccessTokenExpired(ticketState);
+        val expired = isAccessTokenExpired(ticketState);
         if (!expired) {
             return super.isExpired(ticketState);
         }
@@ -72,8 +74,8 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
      */
     @JsonIgnore
     protected boolean isAccessTokenExpired(final TicketState ticketState) {
-        final var currentSystemTime = ZonedDateTime.now(ZoneOffset.UTC);
-        final var creationTime = ticketState.getCreationTime();
+        val currentSystemTime = ZonedDateTime.now(ZoneOffset.UTC);
+        val creationTime = ticketState.getCreationTime();
         // token has been used, check maxTimeToLive (hard window)
         var expirationTime = creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
         if (currentSystemTime.isAfter(expirationTime)) {

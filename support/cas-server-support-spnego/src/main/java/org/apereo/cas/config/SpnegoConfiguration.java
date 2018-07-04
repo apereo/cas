@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import jcifs.spnego.Authentication;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
@@ -58,8 +60,8 @@ public class SpnegoConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "jcifsConfig")
     public JcifsConfig jcifsConfig() {
-        final var c = new JcifsConfig();
-        final var spnego = casProperties.getAuthn().getSpnego();
+        val c = new JcifsConfig();
+        val spnego = casProperties.getAuthn().getSpnego();
         c.setJcifsDomain(spnego.getJcifsDomain());
         c.setJcifsDomainController(spnego.getJcifsDomainController());
         c.setJcifsNetbiosCachePolicy(spnego.getCachePolicy());
@@ -83,8 +85,8 @@ public class SpnegoConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "spnegoHandler")
     public AuthenticationHandler spnegoHandler() {
-        final var spnegoProperties = casProperties.getAuthn().getSpnego();
-        final var h = new JcifsSpnegoAuthenticationHandler(spnegoProperties.getName(), servicesManager, spnegoPrincipalFactory(),
+        val spnegoProperties = casProperties.getAuthn().getSpnego();
+        val h = new JcifsSpnegoAuthenticationHandler(spnegoProperties.getName(), servicesManager, spnegoPrincipalFactory(),
             spnegoAuthentication(), spnegoProperties.isPrincipalWithDomainName(), spnegoProperties.isNtlmAllowed());
         h.setAuthentication(spnegoAuthentication());
         h.setPrincipalWithDomainName(spnegoProperties.isPrincipalWithDomainName());
@@ -95,7 +97,7 @@ public class SpnegoConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler ntlmAuthenticationHandler() {
-        final var ntlmProperties = casProperties.getAuthn().getNtlm();
+        val ntlmProperties = casProperties.getAuthn().getNtlm();
         return new NtlmAuthenticationHandler(ntlmProperties.getName(), servicesManager, ntlmPrincipalFactory(),
             ntlmProperties.isLoadBalance(),
             ntlmProperties.getDomainController(), ntlmProperties.getIncludePattern());
@@ -111,7 +113,7 @@ public class SpnegoConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "spnegoPrincipalResolver")
     public PrincipalResolver spnegoPrincipalResolver() {
-        final var spnegoProperties = casProperties.getAuthn().getSpnego();
+        val spnegoProperties = casProperties.getAuthn().getSpnego();
         return new SpnegoPrincipalResolver(attributeRepository, spnegoPrincipalFactory(),
             spnegoProperties.getPrincipal().isReturnNull(),
             PrincipalNameTransformerUtils.newPrincipalNameTransformer(spnegoProperties.getPrincipalTransformation()),

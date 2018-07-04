@@ -1,5 +1,7 @@
 package org.apereo.cas.validation;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -15,14 +17,14 @@ public class Cas20ProtocolValidationSpecificationTests {
 
     @Test
     public void verifyRenewGettersAndSettersFalse() {
-        final var s = new Cas20ProtocolValidationSpecification();
+        val s = new Cas20ProtocolValidationSpecification();
         s.setRenew(false);
         assertFalse(s.isRenew());
     }
 
     @Test
     public void verifyRenewGettersAndSettersTrue() {
-        final var s = new Cas20ProtocolValidationSpecification();
+        val s = new Cas20ProtocolValidationSpecification();
         s.setRenew(true);
         assertTrue(s.isRenew());
     }

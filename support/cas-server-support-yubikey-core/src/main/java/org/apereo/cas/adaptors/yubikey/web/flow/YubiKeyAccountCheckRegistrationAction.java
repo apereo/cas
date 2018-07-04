@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.yubikey.web.flow;
 
+import lombok.val;
+
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +26,9 @@ public class YubiKeyAccountCheckRegistrationAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         @NonNull
-        final var authentication = WebUtils.getAuthentication(requestContext);
+        val authentication = WebUtils.getAuthentication(requestContext);
 
-        final var uid = authentication.getPrincipal().getId();
+        val uid = authentication.getPrincipal().getId();
         if (registry.isYubiKeyRegisteredFor(uid)) {
             return success();
         }

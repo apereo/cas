@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.login;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -29,8 +31,8 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext context) {
-        final var ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
-        final var ticketGrantingTicketValueFromCookie = WebUtils.getTicketGrantingTicketIdFrom(context.getFlowScope());
+        val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
+        val ticketGrantingTicketValueFromCookie = WebUtils.getTicketGrantingTicketIdFrom(context.getFlowScope());
 
         if (StringUtils.isBlank(ticketGrantingTicketId)) {
             LOGGER.debug("No ticket-granting ticket is found in the context.");

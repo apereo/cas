@@ -1,5 +1,7 @@
 package org.apereo.cas.web.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
@@ -37,7 +39,7 @@ public class CasCookieConfiguration {
     @Bean
     @RefreshScope
     public CookieRetrievingCookieGenerator warnCookieGenerator() {
-        final var props = casProperties.getWarningCookie();
+        val props = casProperties.getWarningCookie();
         return new WarningCookieRetrievingCookieGenerator(props.getName(), props.getPath(),
             props.getMaxAge(), props.isSecure(), props.isHttpOnly());
     }
@@ -55,7 +57,7 @@ public class CasCookieConfiguration {
     @RefreshScope
     @Bean
     public CipherExecutor cookieCipherExecutor() {
-        final var crypto = casProperties.getTgc().getCrypto();
+        val crypto = casProperties.getTgc().getCrypto();
         var enabled = crypto.isEnabled();
         if (!enabled && (StringUtils.isNotBlank(crypto.getEncryption().getKey())) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
             LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
@@ -78,8 +80,8 @@ public class CasCookieConfiguration {
     @Bean
     @RefreshScope
     public CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator() {
-        final var tgc = casProperties.getTgc();
-        final var rememberMeMaxAge = (int) Beans.newDuration(tgc.getRememberMeMaxAge()).getSeconds();
+        val tgc = casProperties.getTgc();
+        val rememberMeMaxAge = (int) Beans.newDuration(tgc.getRememberMeMaxAge()).getSeconds();
         return new TGCCookieRetrievingCookieGenerator(cookieValueManager(),
             tgc.getName(),
             tgc.getPath(),

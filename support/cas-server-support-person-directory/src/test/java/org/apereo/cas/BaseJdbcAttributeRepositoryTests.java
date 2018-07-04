@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import lombok.val;
+
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
@@ -43,8 +45,8 @@ public abstract class BaseJdbcAttributeRepositoryTests {
     public void setupDatabase() {
         this.dataSource = JpaBeans.newDataSource(casProperties.getAuthn().getAttributeRepository().getJdbc().get(0));
         @Cleanup
-        final var c = dataSource.getConnection();
-        final var s = c.createStatement();
+        val c = dataSource.getConnection();
+        val s = c.createStatement();
         c.setAutoCommit(true);
         prepareDatabaseTable(s);
     }
@@ -55,8 +57,8 @@ public abstract class BaseJdbcAttributeRepositoryTests {
     @SneakyThrows
     public void cleanup() {
         @Cleanup
-        final var c = dataSource.getConnection();
-        final var s = c.createStatement();
+        val c = dataSource.getConnection();
+        val s = c.createStatement();
         c.setAutoCommit(true);
         s.execute("delete from table_users;");
         s.execute("drop table table_users;");
