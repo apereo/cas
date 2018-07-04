@@ -24,5 +24,4 @@
     <suppress checks="\w+" files="(\.(crt|crl|class|keystore))|rebel.xml"/>
     <suppress id="finalNonUtilClass" files="(.*(Utils|Constants|Facade|Support|Beans|Tickets))\.java" />
     <suppress checks="." files="com[\\/]duosecurity[\\/]duoweb[\\/]"/>
-    <suppress-xpath checks="FinalLocalVariableCheck" query="//VARIABLE_DEF/TYPE[@text='val']/../IDENT"/>
 </suppressions>
