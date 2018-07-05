@@ -1,9 +1,9 @@
 package org.apereo.cas.util;
 
-import lombok.val;
-
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -111,7 +111,8 @@ public class HttpUtils {
      * @param entity            the entity
      * @return the http response
      */
-    public static HttpResponse execute(final String url, final String method,
+    public static HttpResponse execute(final String url,
+                                       final String method,
                                        final String basicAuthUsername,
                                        final String basicAuthPassword,
                                        final Map<String, Object> parameters,
@@ -120,23 +121,7 @@ public class HttpUtils {
         try {
             val client = buildHttpClient(basicAuthUsername, basicAuthPassword);
             val uri = buildHttpUri(url, parameters);
-            final HttpUriRequest request;
-            switch (method.toLowerCase()) {
-                case "post":
-                    request = new HttpPost(uri);
-                    if (StringUtils.isNotBlank(entity)) {
-                        val stringEntity = new StringEntity(entity);
-                        ((HttpPost) request).setEntity(stringEntity);
-                    }
-                    break;
-                case "delete":
-                    request = new HttpDelete(uri);
-                    break;
-                case "get":
-                default:
-                    request = new HttpGet(uri);
-                    break;
-            }
+            val request = getHttpRequestByMethod(method.toLowerCase().trim(), entity, uri);
             headers.forEach((k, v) -> request.addHeader(k, v.toString()));
             prepareHttpRequest(request, basicAuthUsername, basicAuthPassword, parameters);
             return client.execute(request);
@@ -144,6 +129,23 @@ public class HttpUtils {
             LOGGER.error(e.getMessage(), e);
         }
         return null;
+    }
+
+    @SneakyThrows
+    private static HttpUriRequest getHttpRequestByMethod(final String method, final String entity, final URI uri) {
+        if ("post".equalsIgnoreCase(method)) {
+            val request = new HttpPost(uri);
+            if (StringUtils.isNotBlank(entity)) {
+                val stringEntity = new StringEntity(entity);
+                request.setEntity(stringEntity);
+            }
+            return request;
+        }
+        if ("delete".equalsIgnoreCase(method)) {
+            return new HttpDelete(uri);
+        }
+
+        return new HttpGet(uri);
     }
 
     /**

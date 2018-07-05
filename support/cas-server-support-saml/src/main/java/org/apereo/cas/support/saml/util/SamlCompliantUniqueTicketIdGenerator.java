@@ -1,9 +1,8 @@
 package org.apereo.cas.support.saml.util;
 
-import lombok.val;
-
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.RandomUtils;
@@ -71,13 +70,15 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
      */
     @Override
     public String getNewTicketId(final String prefix) {
-        final AbstractSAMLArtifact artifact;
-        if (this.saml2compliant) {
-            artifact = new SAML2ArtifactType0004(ENDPOINT_ID, newAssertionHandle(), this.sourceIdDigest);
-        } else {
-            artifact = new SAML1ArtifactType0001(this.sourceIdDigest, newAssertionHandle());
-        }
+        val artifact = getSAMLArtifactType();
         return prefix + '-' + artifact.base64Encode();
+    }
+
+    private AbstractSAMLArtifact getSAMLArtifactType() {
+        if (this.saml2compliant) {
+            return new SAML2ArtifactType0004(ENDPOINT_ID, newAssertionHandle(), this.sourceIdDigest);
+        }
+        return new SAML1ArtifactType0001(this.sourceIdDigest, newAssertionHandle());
     }
 
     /**

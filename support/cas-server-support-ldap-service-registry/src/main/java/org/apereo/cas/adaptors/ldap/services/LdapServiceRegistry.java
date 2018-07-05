@@ -86,15 +86,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
      * @return the registered service
      */
     private RegisteredService update(final RegisteredService rs) {
-        String currentDn = null;
-        try {
-            val response = searchForServiceById(rs.getId());
-            if (LdapUtils.containsResultEntry(response)) {
-                currentDn = response.getResult().getEntry().getDn();
-            }
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        val currentDn = getCurrentDnForRegisteredService(rs);
 
         if (StringUtils.isNotBlank(currentDn)) {
             LOGGER.debug("Updating registered service at [{}]", currentDn);
@@ -105,6 +97,18 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
             insert(rs);
         }
         return rs;
+    }
+
+    private String getCurrentDnForRegisteredService(final RegisteredService rs) {
+        try {
+            val response = searchForServiceById(rs.getId());
+            if (LdapUtils.containsResultEntry(response)) {
+                return response.getResult().getEntry().getDn();
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
     }
 
     @Override

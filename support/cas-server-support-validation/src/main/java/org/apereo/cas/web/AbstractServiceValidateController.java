@@ -217,7 +217,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      */
 
     protected ModelAndView handleTicketValidation(final HttpServletRequest request, final WebApplicationService service, final String serviceTicketId) {
-        TicketGrantingTicket proxyGrantingTicketId = null;
+        var proxyGrantingTicketId = (TicketGrantingTicket) null;
         val serviceCredential = getServiceCredentialsFromRequest(service, request);
         if (serviceCredential != null) {
             try {
@@ -241,7 +241,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         if (!ctxResult.getKey()) {
             throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.getService());
         }
-        String proxyIou = null;
+        var proxyIou = StringUtils.EMPTY;
         if (serviceCredential != null && this.proxyHandler != null && this.proxyHandler.canHandle(serviceCredential)) {
             proxyIou = handleProxyIouDelivery(serviceCredential, proxyGrantingTicketId);
             if (StringUtils.isEmpty(proxyIou)) {

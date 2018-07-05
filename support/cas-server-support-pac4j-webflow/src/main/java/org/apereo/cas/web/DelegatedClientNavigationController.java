@@ -1,16 +1,17 @@
 package org.apereo.cas.web;
 
-import lombok.val;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
 import org.apereo.cas.web.view.DynamicHtmlView;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
+import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.HttpAction;
@@ -63,16 +64,7 @@ public class DelegatedClientNavigationController {
             val webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
             val ticket = delegatedClientWebflowManager.store(webContext, client);
 
-            final View result;
-            val action = client.getRedirectAction(webContext);
-            if (RedirectAction.RedirectType.SUCCESS.equals(action.getType())) {
-                result = new DynamicHtmlView(action.getContent());
-            } else {
-                val builder = new URIBuilder(action.getLocation());
-                val url = builder.toString();
-                LOGGER.debug("Redirecting client [{}] to [{}] based on identifier [{}]", client.getName(), url, ticket.getId());
-                result = new RedirectView(url);
-            }
+            val result = getResultingView(client, webContext, ticket);
             this.delegatedSessionCookieManager.store(webContext);
             return result;
         } catch (final HttpAction e) {
@@ -83,5 +75,16 @@ public class DelegatedClientNavigationController {
             }
             throw new UnauthorizedServiceException(e.getMessage(), e);
         }
+    }
+
+    private View getResultingView(final IndirectClient<Credentials, CommonProfile> client, final J2EContext webContext, final Ticket ticket) {
+        val action = client.getRedirectAction(webContext);
+        if (RedirectAction.RedirectType.SUCCESS.equals(action.getType())) {
+            return new DynamicHtmlView(action.getContent());
+        }
+        val builder = new URIBuilder(action.getLocation());
+        val url = builder.toString();
+        LOGGER.debug("Redirecting client [{}] to [{}] based on identifier [{}]", client.getName(), url, ticket.getId());
+        return new RedirectView(url);
     }
 }

@@ -73,7 +73,7 @@ public class OAuth20CasAuthenticationBuilder {
      * @return the service
      */
     public Service buildService(final OAuthRegisteredService registeredService, final J2EContext context, final boolean useServiceHeader) {
-        String id = null;
+        var id = StringUtils.EMPTY;
         if (useServiceHeader) {
             id = OAuth20Utils.getServiceRequestHeaderIfAny(context.getRequest());
             LOGGER.debug("Located service based on request header is [{}]", id);

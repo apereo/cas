@@ -65,7 +65,7 @@ public class PathWatcherService implements Runnable, Closeable {
     @Override
     public void run() {
         try {
-            WatchKey key;
+            var key = (WatchKey) null;
             while ((key = watcher.take()) != null) {
                 handleEvent(key);
                 val valid = key != null && key.reset();
@@ -121,7 +121,7 @@ public class PathWatcherService implements Runnable, Closeable {
             thread.interrupt();
         }
     }
-    
+
     /**
      * Start thread.
      *

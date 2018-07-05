@@ -147,9 +147,8 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      * Configure encryption key from public key resource.
      *
      * @param secretKeyToUse the secret key to use
-     * @throws Exception the exception
      */
-    protected void configureEncryptionKeyFromPublicKeyResource(final String secretKeyToUse) throws Exception {
+    protected void configureEncryptionKeyFromPublicKeyResource(final String secretKeyToUse) {
         val object = extractPublicKeyFromResource(secretKeyToUse);
         LOGGER.debug("Located encryption key resource [{}]", secretKeyToUse);
         setSecretKeyEncryptionKey(object);
@@ -158,13 +157,9 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
     @Override
     public String encode(final Serializable value, final Object[] parameters) {
-        final String encoded;
-
-        if (this.encryptionEnabled && this.secretKeyEncryptionKey != null) {
-            encoded = EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value, this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier);
-        } else {
-            encoded = value.toString();
-        }
+        val encoded = this.encryptionEnabled && this.secretKeyEncryptionKey != null
+            ? EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value, this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier)
+            : value.toString();
 
         if (this.signingEnabled) {
             val signed = sign(encoded.getBytes(StandardCharsets.UTF_8));
@@ -196,7 +191,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      */
     protected String getEncryptionKeySetting() {
         return "N/A";
-    };
+    }
 
     /**
      * Gets signing key setting.
@@ -205,5 +200,6 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      */
     protected String getSigningKeySetting() {
         return "N/A";
-    };
+    }
+
 }

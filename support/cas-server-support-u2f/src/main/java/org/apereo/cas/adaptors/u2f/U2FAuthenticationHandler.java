@@ -50,7 +50,8 @@ public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
         val authenticateResponse = SignResponse.fromJson(tokenCredential.getToken());
         val authJson = u2FDeviceRepository.getDeviceAuthenticationRequest(authenticateResponse.getRequestId(), p.getId());
         val authenticateRequest = SignRequestData.fromJson(authJson);
-        DeviceRegistration registration = null;
+
+        var registration = (DeviceRegistration) null;
         try {
             registration = u2f.finishSignature(authenticateRequest, authenticateResponse, u2FDeviceRepository.getRegisteredDevices(p.getId()));
             return createHandlerResult(tokenCredential, p);
