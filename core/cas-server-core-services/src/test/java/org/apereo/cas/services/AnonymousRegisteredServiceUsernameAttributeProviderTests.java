@@ -56,7 +56,7 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
         val providerWritten = new AnonymousRegisteredServiceUsernameAttributeProvider(
             new ShibbolethCompatiblePersistentIdGenerator(CASROX));
         MAPPER.writeValue(JSON_FILE, providerWritten);
-        final RegisteredServiceUsernameAttributeProvider providerRead = MAPPER.readValue(JSON_FILE, AnonymousRegisteredServiceUsernameAttributeProvider.class);
+        val providerRead = MAPPER.readValue(JSON_FILE, AnonymousRegisteredServiceUsernameAttributeProvider.class);
         assertEquals(providerWritten, providerRead);
     }
 

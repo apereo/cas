@@ -66,7 +66,7 @@ public class HttpBasedServiceCredentialTests {
                 RegisteredServiceTestUtils.getRegisteredService(SOME_APP_URL));
 
         MAPPER.writeValue(JSON_FILE, credentialMetaDataWritten);
-        final CredentialMetaData credentialMetaDataRead = MAPPER.readValue(JSON_FILE, HttpBasedServiceCredential.class);
+        val credentialMetaDataRead = MAPPER.readValue(JSON_FILE, HttpBasedServiceCredential.class);
         assertEquals(credentialMetaDataWritten, credentialMetaDataRead);
     }
 }

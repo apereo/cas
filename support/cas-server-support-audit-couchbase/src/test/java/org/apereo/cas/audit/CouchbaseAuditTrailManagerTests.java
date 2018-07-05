@@ -24,7 +24,6 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -69,7 +68,7 @@ public class CouchbaseAuditTrailManagerTests {
             "action", "appcode", since, "clientIp",
             "serverIp");
         auditTrailExecutionPlan.record(ctx);
-        final Set results = auditTrailExecutionPlan.getAuditRecordsSince(fiveDaysAgo);
+        val results = auditTrailExecutionPlan.getAuditRecordsSince(fiveDaysAgo);
         assertFalse(results.isEmpty());
     }
 }

@@ -41,7 +41,7 @@ public class SimpleHttpClientTests {
 
     @Test
     public void verifyInvalidHttpsUrl() {
-        final HttpClient client = this.getHttpClient();
+        val client = this.getHttpClient();
         assertFalse(client.isValidEndPoint("https://wrong.host.badssl.com/"));
     }
 
@@ -56,7 +56,7 @@ public class SimpleHttpClientTests {
     }
 
     private static SSLConnectionSocketFactory getFriendlyToAllSSLSocketFactory() throws Exception {
-        final TrustManager trm = new X509TrustManager() {
+        val trm = new X509TrustManager() {
             @Override
             public X509Certificate[] getAcceptedIssuers() {
                 return null;

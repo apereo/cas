@@ -39,18 +39,18 @@ public class OidcAuthorizationRequestSupportTests {
     public void verifyOidcMaxAge() {
         val context = mock(WebContext.class);
         when(context.getFullRequestURL()).thenReturn("https://tralala.whapi.com/something?" + OidcConstants.MAX_AGE + "=1000");
-        var age = OidcAuthorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context);
+        val age = OidcAuthorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context);
         assertTrue(age.isPresent());
         assertTrue(1000 == age.get());
 
         when(context.getFullRequestURL()).thenReturn("https://tralala.whapi.com/something?" + OidcConstants.MAX_AGE + "=NA");
-        age = OidcAuthorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context);
-        assertTrue(age.isPresent());
-        assertTrue(-1 == age.get());
+        val age2 = OidcAuthorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context);
+        assertTrue(age2.isPresent());
+        assertTrue(-1 == age2.get());
 
         when(context.getFullRequestURL()).thenReturn("https://tralala.whapi.com/something?");
-        age = OidcAuthorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context);
-        assertFalse(age.isPresent());
+        val age3 = OidcAuthorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(context);
+        assertFalse(age3.isPresent());
     }
 
     @Test

@@ -11,7 +11,6 @@ import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
-import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -36,7 +35,7 @@ public class BasicAuthenticationAction extends AbstractNonInteractiveCredentials
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
             val extractor = new BasicAuthExtractor();
-            final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
+            val webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
             val credentials = extractor.extract(webContext);
             if (credentials != null) {
                 LOGGER.debug("Received basic authentication request from credentials [{}]", credentials);

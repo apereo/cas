@@ -95,16 +95,13 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
         val m = ATTR_PATTERN.matcher(this.descriptor);
         final Map<String, AttributeContext> attrMap = new HashMap<>();
         val rdnSequence = new NameReader(certificate).readSubject();
-        String name;
-        String[] values;
-        AttributeContext context;
         while (m.find()) {
-            name = m.group(1);
+            val name = m.group(1);
             if (!attrMap.containsKey(name)) {
-                values = getAttributeValues(rdnSequence, StandardAttributeType.fromName(name));
+                val values = getAttributeValues(rdnSequence, StandardAttributeType.fromName(name));
                 attrMap.put(name, new AttributeContext(values));
             }
-            context = attrMap.get(name);
+            val context = attrMap.get(name);
             m.appendReplacement(sb, context.nextValue());
         }
         m.appendTail(sb);

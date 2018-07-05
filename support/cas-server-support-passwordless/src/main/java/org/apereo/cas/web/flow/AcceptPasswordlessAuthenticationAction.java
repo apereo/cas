@@ -1,16 +1,13 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.OneTimePasswordCredential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.flow.actions.AbstractAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -53,8 +50,8 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
             val currentToken = passwordlessTokenRepository.findToken(username);
 
             if (currentToken.isPresent()) {
-                final Credential credential = new OneTimePasswordCredential(username, password);
-                final Service service = WebUtils.getService(requestContext);
+                val credential = new OneTimePasswordCredential(username, password);
+                val service = WebUtils.getService(requestContext);
                 val authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
                 WebUtils.putAuthenticationResult(authenticationResult, requestContext);
                 WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);

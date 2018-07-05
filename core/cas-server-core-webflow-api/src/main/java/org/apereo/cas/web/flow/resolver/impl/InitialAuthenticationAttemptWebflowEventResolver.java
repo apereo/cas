@@ -1,9 +1,8 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import lombok.val;
-
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
@@ -71,7 +70,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
     public Set<Event> resolveInternal(final RequestContext context) {
         try {
             val credential = getCredentialFromContext(context);
-            final Service service = WebUtils.getService(context);
+            val service = WebUtils.getService(context);
             if (credential != null) {
                 val builder = this.authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credential);
                 if (builder.getInitialAuthentication().isPresent()) {
@@ -112,23 +111,24 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
     }
 
     private RegisteredService determineRegisteredServiceForEvent(final RequestContext context, final Service service) {
-        RegisteredService registeredService = null;
-        if (service != null) {
-            LOGGER.debug("Locating service [{}] in service registry to determine authentication policy", service);
-            registeredService = this.servicesManager.findServiceBy(service);
-            LOGGER.debug("Locating authentication event in the request context...");
-            val authn = WebUtils.getAuthentication(context);
-
-            LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
-
-            val audit = AuditableContext.builder().service(service)
-                .authentication(authn)
-                .registeredService(registeredService)
-                .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
-                .build();
-            val result = this.registeredServiceAccessStrategyEnforcer.execute(audit);
-            result.throwExceptionIfNeeded();
+        if (service == null) {
+            return null;
         }
+
+        LOGGER.debug("Locating service [{}] in service registry to determine authentication policy", service);
+        val registeredService = this.servicesManager.findServiceBy(service);
+        LOGGER.debug("Locating authentication event in the request context...");
+        val authn = WebUtils.getAuthentication(context);
+
+        LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
+
+        val audit = AuditableContext.builder().service(service)
+            .authentication(authn)
+            .registeredService(registeredService)
+            .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
+            .build();
+        val result = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        result.throwExceptionIfNeeded();
         return registeredService;
     }
 
@@ -172,15 +172,16 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
     }
 
     private Event returnAuthenticationExceptionEventIfNeeded(final Exception e) {
-        final Exception ex;
         if (e instanceof AuthenticationException || e instanceof AbstractTicketException) {
-            ex = e;
-        } else if (e.getCause() instanceof AuthenticationException || e.getCause() instanceof AbstractTicketException) {
-            ex = (Exception) e.getCause();
-        } else {
-            return null;
+            LOGGER.debug(e.getMessage(), e);
+            return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
         }
-        LOGGER.debug(ex.getMessage(), ex);
-        return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
+
+        if (e.getCause() instanceof AuthenticationException || e.getCause() instanceof AbstractTicketException) {
+            val ex = e.getCause();
+            LOGGER.debug(ex.getMessage(), ex);
+            return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
+        }
+        return null;
     }
 }

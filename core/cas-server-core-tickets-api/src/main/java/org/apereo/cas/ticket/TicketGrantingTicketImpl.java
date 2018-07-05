@@ -139,7 +139,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @Override
     public synchronized ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
                                                          final boolean credentialProvided, final boolean onlyTrackMostRecentSession) {
-        final ServiceTicket serviceTicket = new ServiceTicketImpl(id, this, service, credentialProvided, expirationPolicy);
+        val serviceTicket = new ServiceTicketImpl(id, this, service, credentialProvided, expirationPolicy);
         trackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
         return serviceTicket;
     }

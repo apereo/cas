@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.DefaultAuthenticationResult;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -81,7 +80,7 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();
 
-        final AuthenticationResult result = new DefaultAuthenticationResult(authentication, requireServiceHeader ? service : null);
+        val result = new DefaultAuthenticationResult(authentication, requireServiceHeader ? service : null);
         val ticketGrantingTicket = this.centralAuthenticationService.createTicketGrantingTicket(result);
 
         return new AccessTokenRequestDataHolder(service, authentication, registeredService, ticketGrantingTicket, getGrantType(), scopes);

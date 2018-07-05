@@ -96,7 +96,7 @@ public class CloudWatchAppender extends AbstractAppender {
     }
 
     private void flush() {
-        int drained;
+        var drained = 0;
         final List<InputLogEvent> logEvents = new ArrayList<>(AWS_DRAIN_LIMIT);
         do {
             drained = queue.drainTo(logEvents, AWS_DRAIN_LIMIT);

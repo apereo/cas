@@ -86,7 +86,7 @@ public class PrincipalScimV2ProvisionerActionTests {
         user.setMeta(meta);
         
         val data = MAPPER.writeValueAsString(user);
-        try (var webServer = new MockWebServer(8218,
+        try (val webServer = new MockWebServer(8218,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, principalScimProvisionerAction.execute(context).getId());

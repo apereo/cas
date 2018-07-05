@@ -1,13 +1,11 @@
 package org.apereo.cas.scim.v2;
 
-import lombok.val;
-
 import com.unboundid.scim2.common.types.Email;
 import com.unboundid.scim2.common.types.Name;
 import com.unboundid.scim2.common.types.PhoneNumber;
 import com.unboundid.scim2.common.types.UserResource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import lombok.val;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -52,37 +50,24 @@ public class ScimV2PrincipalAttributeMapper {
         }
         user.setActive(Boolean.TRUE);
 
-        var attr = getPrincipalAttributeValue(p, "nickName");
-        user.setNickName(attr);
-        attr = getPrincipalAttributeValue(p, "displayName");
-        user.setDisplayName(attr);
+        user.setNickName(getPrincipalAttributeValue(p, "nickName"));
+        user.setDisplayName(getPrincipalAttributeValue(p, "displayName"));
 
         val name = new Name();
-        attr = getPrincipalAttributeValue(p, "givenName");
-        name.setGivenName(attr);
-        attr = getPrincipalAttributeValue(p, "familyName");
-        name.setFamilyName(attr);
-        attr = getPrincipalAttributeValue(p, "middleName");
-        name.setMiddleName(attr);
+        name.setGivenName(getPrincipalAttributeValue(p, "givenName"));
+        name.setFamilyName(getPrincipalAttributeValue(p, "familyName"));
+        name.setMiddleName(getPrincipalAttributeValue(p, "middleName"));
 
         user.setName(name);
 
         val email = new Email();
         email.setPrimary(Boolean.TRUE);
-        attr = getPrincipalAttributeValue(p, "mail");
-        if (StringUtils.isBlank(attr)) {
-            attr = getPrincipalAttributeValue(p, "email");
-        }
-        email.setValue(attr);
+        email.setValue(getPrincipalAttributeValue(p, "email"));
         user.setEmails(CollectionUtils.wrap(email));
 
         val phone = new PhoneNumber();
         phone.setPrimary(Boolean.TRUE);
-        attr = getPrincipalAttributeValue(p, "phone");
-        if (StringUtils.isBlank(attr)) {
-            attr = getPrincipalAttributeValue(p, "phoneNumber");
-        }
-        phone.setValue(attr);
+        phone.setValue(getPrincipalAttributeValue(p, "phoneNumber"));
         user.setPhoneNumbers(CollectionUtils.wrap(phone));
     }
 }

@@ -1,8 +1,7 @@
 package org.apereo.cas.web.report;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -16,6 +15,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Scott Battaglia
@@ -51,30 +51,29 @@ public class StatisticsEndpoint extends BaseCasMvcEndpoint {
         model.put("maxMemory", FileUtils.byteCountToDisplaySize(runtime.maxMemory()));
         model.put("freeMemory", FileUtils.byteCountToDisplaySize(runtime.freeMemory()));
 
-        var unexpiredTgts = 0;
-        var unexpiredSts = 0;
-        var expiredTgts = 0;
-        var expiredSts = 0;
+        val unexpiredTgts = new AtomicInteger();
+        val unexpiredSts = new AtomicInteger();
+        val expiredTgts = new AtomicInteger();
+        val expiredSts = new AtomicInteger();
 
         val tickets = this.centralAuthenticationService.getTickets(ticket -> true);
-
-        for (val ticket : tickets) {
+        tickets.forEach(ticket -> {
             if (ticket instanceof ServiceTicket) {
                 if (ticket.isExpired()) {
                     this.centralAuthenticationService.deleteTicket(ticket.getId());
-                    expiredSts++;
+                    expiredSts.incrementAndGet();
                 } else {
-                    unexpiredSts++;
+                    unexpiredSts.incrementAndGet();
                 }
             } else {
                 if (ticket.isExpired()) {
                     this.centralAuthenticationService.deleteTicket(ticket.getId());
-                    expiredTgts++;
+                    expiredTgts.incrementAndGet();
                 } else {
-                    unexpiredTgts++;
+                    unexpiredTgts.incrementAndGet();
                 }
             }
-        }
+        });
 
         model.put("unexpiredTgts", unexpiredTgts);
         model.put("unexpiredSts", unexpiredSts);

@@ -1,11 +1,12 @@
 package org.apereo.cas.support.wsfederation;
 
-import lombok.val;
-
+import com.google.common.base.Predicates;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.principal.Service;
@@ -15,6 +16,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.X509CertParser;
 import org.bouncycastle.jce.provider.X509CertificateObject;
@@ -36,7 +38,6 @@ import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.security.impl.SAMLSignatureProfileValidator;
 import org.opensaml.security.SecurityException;
 import org.opensaml.security.credential.Credential;
-import org.opensaml.security.credential.CredentialResolver;
 import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
 import org.opensaml.security.criteria.UsageCriterion;
@@ -48,10 +49,8 @@ import org.opensaml.xmlsec.encryption.support.ChainingEncryptedKeyResolver;
 import org.opensaml.xmlsec.encryption.support.EncryptedKeyResolver;
 import org.opensaml.xmlsec.encryption.support.InlineEncryptedKeyResolver;
 import org.opensaml.xmlsec.encryption.support.SimpleRetrievalMethodEncryptedKeyResolver;
-import org.opensaml.xmlsec.keyinfo.KeyInfoCredentialResolver;
 import org.opensaml.xmlsec.keyinfo.impl.StaticKeyInfoCredentialResolver;
 import org.opensaml.xmlsec.signature.support.SignatureException;
-import org.opensaml.xmlsec.signature.support.SignaturePrevalidator;
 import org.opensaml.xmlsec.signature.support.SignatureTrustEngine;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 
@@ -60,7 +59,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyPair;
 import java.security.Security;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -191,28 +189,31 @@ public class WsFederationHelper {
 
     private XMLObject getSecurityTokenFromRequestedToken(final RequestedSecurityToken reqToken, final Collection<WsFederationConfiguration> config) {
         LOGGER.debug("Locating the first occurrence of a security token from the requested security token");
-        var securityToken = getAssertionFromSecurityToken(reqToken);
-        if (securityToken instanceof EncryptedData) {
-            LOGGER.debug("Security token is encrypted. Attempting to decrypt to extract the assertion");
-            val encryptedData = EncryptedData.class.cast(securityToken);
-            val it = config.iterator();
-            var found = false;
-            while (!found && it.hasNext()) {
-                try {
-                    val c = it.next();
-                    val decrypter = buildAssertionDecrypter(c);
-                    LOGGER.debug("Built an instance of [{}]", decrypter.getClass().getName());
-                    securityToken = decrypter.decryptData(encryptedData);
-                    LOGGER.debug("Decrypted assertion successfully");
-                    found = true;
-                } catch (final Exception e) {
-                    LOGGER.debug(e.getMessage(), e);
+        val securityTokenFromAssertion = getAssertionFromSecurityToken(reqToken);
+
+        val func = FunctionUtils.doIf(Predicates.instanceOf(EncryptedData.class),
+            () -> {
+                LOGGER.debug("Security token is encrypted. Attempting to decrypt to extract the assertion");
+                val encryptedData = EncryptedData.class.cast(securityTokenFromAssertion);
+                val it = config.iterator();
+                while (it.hasNext()) {
+                    try {
+                        val c = it.next();
+                        val decrypter = buildAssertionDecrypter(c);
+                        LOGGER.debug("Built an instance of [{}]", decrypter.getClass().getName());
+                        var decryptedToken = decrypter.decryptData(encryptedData);
+                        LOGGER.debug("Decrypted assertion successfully");
+                        return decryptedToken;
+                    } catch (final Exception e) {
+                        LOGGER.debug(e.getMessage(), e);
+                    }
                 }
-            }
-            if (!found) {
-                throw new IllegalArgumentException("Could not extract or decrypt an assertion based on the security token provided");
-            }
-        }
+                LOGGER.error("Could not extract or decrypt an assertion based on the security token provided");
+                return null;
+            },
+            () -> securityTokenFromAssertion);
+
+        @NonNull val securityToken = func.apply(securityTokenFromAssertion);
         return securityToken;
     }
 
@@ -237,33 +238,34 @@ public class WsFederationHelper {
             LOGGER.warn("No assertion or its configuration was provided to validate signatures");
             return false;
         }
-        var valid = false;
         val signature = assertion.getKey().getSignature();
-        if (signature != null) {
-            final SignaturePrevalidator validator = new SAMLSignatureProfileValidator();
-            try {
-                validator.validate(signature);
-                val criteriaSet = new CriteriaSet();
-                criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
-                criteriaSet.add(new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME));
-                criteriaSet.add(new ProtocolCriterion(SAMLConstants.SAML20P_NS));
-                criteriaSet.add(new EntityIdCriterion(assertion.getValue().getIdentityProviderIdentifier()));
-                try {
-                    val engine = buildSignatureTrustEngine(assertion.getValue());
-                    valid = engine.validate(signature, criteriaSet);
-                } catch (final SecurityException e) {
-                    LOGGER.warn(e.getMessage(), e);
-                } finally {
-                    if (!valid) {
-                        LOGGER.error("Signature doesn't match any signing credential.");
-                    }
-                }
-            } catch (final SignatureException e) {
-                LOGGER.error("Failed to validate assertion signature", e);
-            }
-        }
         SamlUtils.logSamlObject(this.configBean, assertion.getKey());
-        return valid;
+        if (signature != null) {
+            return false;
+        }
+
+        val validator = new SAMLSignatureProfileValidator();
+        try {
+            LOGGER.debug("Validating signature...");
+            validator.validate(signature);
+            val criteriaSet = new CriteriaSet();
+            criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
+            criteriaSet.add(new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME));
+            criteriaSet.add(new ProtocolCriterion(SAMLConstants.SAML20P_NS));
+            criteriaSet.add(new EntityIdCriterion(assertion.getValue().getIdentityProviderIdentifier()));
+            try {
+                val engine = buildSignatureTrustEngine(assertion.getValue());
+                LOGGER.debug("Validating signature via trust engine for [{}]", assertion.getValue().getIdentityProviderIdentifier());
+                return engine.validate(signature, criteriaSet);
+            } catch (final SecurityException e) {
+                LOGGER.warn(e.getMessage(), e);
+            }
+        } catch (final SignatureException e) {
+            LOGGER.error("Failed to validate assertion signature", e);
+        }
+
+        LOGGER.error("Signature doesn't match any signing credential.");
+        return false;
     }
 
     /**
@@ -274,12 +276,13 @@ public class WsFederationHelper {
      * @return relying party id
      */
     public String getRelyingPartyIdentifier(final Service service, final WsFederationConfiguration configuration) {
-        var relyingPartyIdentifier = configuration.getRelyingPartyIdentifier();
+        val relyingPartyIdentifier = configuration.getRelyingPartyIdentifier();
         if (service != null) {
             val registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             if (RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.isAssignedTo(registeredService)) {
-                relyingPartyIdentifier = RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.getPropertyValue(registeredService).getValue();
+                LOGGER.debug("Determined relying party identifier from [{}] to be [{}]", service, relyingPartyIdentifier);
+                return RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.getPropertyValue(registeredService).getValue();
             }
         }
         LOGGER.debug("Determined relying party identifier for [{}] to be [{}]", service, relyingPartyIdentifier);
@@ -295,8 +298,8 @@ public class WsFederationHelper {
     @SneakyThrows
     private static SignatureTrustEngine buildSignatureTrustEngine(final WsFederationConfiguration wsFederationConfiguration) {
         val signingWallet = wsFederationConfiguration.getSigningWallet();
-        final CredentialResolver resolver = new StaticCredentialResolver(signingWallet);
-        final KeyInfoCredentialResolver keyResolver = new StaticKeyInfoCredentialResolver(signingWallet);
+        val resolver = new StaticCredentialResolver(signingWallet);
+        val keyResolver = new StaticKeyInfoCredentialResolver(signingWallet);
         return new ExplicitKeySignatureTrustEngine(resolver, keyResolver);
     }
 
@@ -307,20 +310,23 @@ public class WsFederationHelper {
         val br = new BufferedReader(new InputStreamReader(config.getEncryptionPrivateKey().getInputStream(), StandardCharsets.UTF_8));
         Security.addProvider(new BouncyCastleProvider());
         LOGGER.debug("Parsing credential private key");
-        try (var pemParser = new PEMParser(br)) {
+        try (val pemParser = new PEMParser(br)) {
             val privateKeyPemObject = pemParser.readObject();
             val converter = new JcaPEMKeyConverter().setProvider(new BouncyCastleProvider());
-            final KeyPair kp;
-            if (privateKeyPemObject instanceof PEMEncryptedKeyPair) {
-                LOGGER.debug("Encryption private key is an encrypted keypair");
-                val ckp = (PEMEncryptedKeyPair) privateKeyPemObject;
-                val decProv = new JcePEMDecryptorProviderBuilder().build(config.getEncryptionPrivateKeyPassword().toCharArray());
-                LOGGER.debug("Attempting to decrypt the encrypted keypair based on the provided encryption private key password");
-                kp = converter.getKeyPair(ckp.decryptKeyPair(decProv));
-            } else {
-                LOGGER.debug("Extracting a keypair from the private key");
-                kp = converter.getKeyPair((PEMKeyPair) privateKeyPemObject);
-            }
+
+            val kp = FunctionUtils.doIf(Predicates.instanceOf(PEMEncryptedKeyPair.class),
+                () -> {
+                    LOGGER.debug("Encryption private key is an encrypted keypair");
+                    val ckp = (PEMEncryptedKeyPair) privateKeyPemObject;
+                    val decProv = new JcePEMDecryptorProviderBuilder().build(config.getEncryptionPrivateKeyPassword().toCharArray());
+                    LOGGER.debug("Attempting to decrypt the encrypted keypair based on the provided encryption private key password");
+                    return converter.getKeyPair(ckp.decryptKeyPair(decProv));
+                },
+                () -> {
+                    LOGGER.debug("Extracting a keypair from the private key");
+                    return converter.getKeyPair((PEMKeyPair) privateKeyPemObject);
+                }).apply(privateKeyPemObject);
+
             val certParser = new X509CertParser();
             // This is the certificate shared with ADFS in DER format, i.e certificate.crt
             LOGGER.debug("Locating encryption certificate [{}]", config.getEncryptionCertificate());
@@ -342,7 +348,7 @@ public class WsFederationHelper {
         val encryptedKeyResolver = new ChainingEncryptedKeyResolver(list);
         LOGGER.debug("Building credential instance to decrypt data");
         val encryptionCredential = getEncryptionCredential(config);
-        final KeyInfoCredentialResolver resolver = new StaticKeyInfoCredentialResolver(encryptionCredential);
+        val resolver = new StaticKeyInfoCredentialResolver(encryptionCredential);
         val decrypter = new Decrypter(null, resolver, encryptedKeyResolver);
         decrypter.setRootInNewDocument(true);
         return decrypter;

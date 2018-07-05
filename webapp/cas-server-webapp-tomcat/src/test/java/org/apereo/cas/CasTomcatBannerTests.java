@@ -38,7 +38,7 @@ public class CasTomcatBannerTests {
         val banner = new CasTomcatBanner();
         val writer = new StringWriter();
         val out = new WriterOutputStream(writer, StandardCharsets.UTF_8);
-        try (var stream = new PrintStream(out)) {
+        try (val stream = new PrintStream(out)) {
             banner.printBanner(environment, CasTomcatBanner.class, stream);
         }
         val output = writer.toString();

@@ -1,7 +1,5 @@
 package org.apereo.cas.support.oauth.util;
 
-import lombok.val;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -9,6 +7,7 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
@@ -31,7 +30,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -74,7 +72,7 @@ public class OAuth20Utils {
      * @return a null view
      */
     public static ModelAndView writeText(final HttpServletResponse response, final String text, final int status) {
-        try (var printWriter = response.getWriter()) {
+        try (val printWriter = response.getWriter()) {
             response.setStatus(status);
             printWriter.print(text);
         } catch (final IOException e) {
@@ -189,9 +187,7 @@ public class OAuth20Utils {
      * @return the model and view
      */
     public static ModelAndView produceErrorView(final Exception e) {
-        final Map model = new HashMap<>();
-        model.put("rootCauseException", e);
-        return new ModelAndView(OAuth20Constants.ERROR_VIEW, model);
+        return new ModelAndView(OAuth20Constants.ERROR_VIEW, CollectionUtils.wrap("rootCauseException", e));
     }
 
     /**
@@ -223,7 +219,7 @@ public class OAuth20Utils {
      */
     public static OAuth20ResponseTypes getResponseType(final J2EContext context) {
         val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
-        final var type = Arrays.stream(OAuth20ResponseTypes.values())
+        val type = Arrays.stream(OAuth20ResponseTypes.values())
             .filter(t -> t.getType().equalsIgnoreCase(responseType))
             .findFirst()
             .orElse(OAuth20ResponseTypes.CODE);

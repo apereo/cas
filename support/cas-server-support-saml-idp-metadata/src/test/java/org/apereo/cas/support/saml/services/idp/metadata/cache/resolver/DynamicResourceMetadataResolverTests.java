@@ -20,8 +20,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Collection;
-
 import static org.junit.Assert.*;
 
 /**
@@ -66,7 +64,7 @@ public class DynamicResourceMetadataResolverTests {
         service.setName("Dynamic");
         service.setMetadataLocation("http://mdq-beta.incommon.org/global/entities/{0}");
         service.setServiceId("https://webauth.cmc.edu/idp/shibboleth");
-        final Collection results = resolver.resolve(service);
+        val results = resolver.resolve(service);
         assertFalse(results.isEmpty());
     }
 }

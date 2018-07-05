@@ -76,7 +76,7 @@ public class CouchbaseAuditTrailManager implements AuditTrailManager {
 
     @SneakyThrows
     private void saveAuditRecord(final AuditActionContext audit) {
-        try (var stringWriter = new StringWriter()) {
+        try (val stringWriter = new StringWriter()) {
             this.serializer.to(stringWriter, audit);
             val id = UUID.randomUUID().toString();
             val document = StringDocument.create(id, 0, stringWriter.toString());
@@ -89,7 +89,7 @@ public class CouchbaseAuditTrailManager implements AuditTrailManager {
         val name = this.couchbase.getBucket().name();
         val statement = select("*").from(i(name)).where(x("whenActionWasPerformed").gte(x("$whenActionWasPerformed")));
         val placeholderValues = JsonObject.create().put("whenActionWasPerformed", DateTimeUtils.dateOf(localDate).getTime());
-        var q = N1qlQuery.parameterized(statement, placeholderValues);
+        val q = N1qlQuery.parameterized(statement, placeholderValues);
         val result = this.couchbase.getBucket().query(q);
         return result.allRows()
             .stream()

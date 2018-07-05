@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -52,7 +51,7 @@ public class InitialFlowSetupAction extends AbstractAction {
     }
 
     private void configureWebflowContextForService(final RequestContext context) {
-        final Service service = WebUtils.getService(this.argumentExtractors, context);
+        val service = WebUtils.getService(this.argumentExtractors, context);
         if (service != null) {
             LOGGER.debug("Placing service in context scope: [{}]", service.getId());
 

@@ -4,7 +4,6 @@ import lombok.val;
 
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.impl.Log4jLogEvent;
-import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.message.SimpleMessage;
 import org.apache.logging.log4j.util.SortedArrayStringMap;
 import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
@@ -27,8 +26,8 @@ public final class LoggingUtils {
      */
     public static LogEvent prepareLogEvent(final LogEvent logEvent) {
         val messageModified = TicketIdSanitizationUtils.sanitize(logEvent.getMessage().getFormattedMessage());
-        final Message message = new SimpleMessage(messageModified);
-        final LogEvent newLogEvent = Log4jLogEvent.newBuilder()
+        val message = new SimpleMessage(messageModified);
+        val newLogEvent = Log4jLogEvent.newBuilder()
             .setLevel(logEvent.getLevel())
             .setLoggerName(logEvent.getLoggerName())
             .setLoggerFqcn(logEvent.getLoggerFqcn())

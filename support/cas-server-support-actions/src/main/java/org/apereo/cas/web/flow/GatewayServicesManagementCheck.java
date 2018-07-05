@@ -4,7 +4,6 @@ import lombok.val;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.WebUtils;
@@ -25,7 +24,7 @@ public class GatewayServicesManagementCheck extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext context) {
-        final Service service = WebUtils.getService(context);
+        val service = WebUtils.getService(context);
 
         val registeredService = this.servicesManager.findServiceBy(service);
 

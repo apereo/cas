@@ -279,7 +279,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests {
 
     @Test
     public void verifyChainedAuthenticationsOnValidation() {
-        final Service svc = RegisteredServiceTestUtils.getService(SVC2_ID);
+        val svc = RegisteredServiceTestUtils.getService(SVC2_ID);
         val st = this.cas.grantServiceTicket(TGT2_ID, svc, getAuthenticationContext());
         assertNotNull(st);
 

@@ -38,12 +38,12 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
                 val attributeValues = CollectionUtils.toCollection(entry.getValue());
                 LOGGER.debug("Found attribute [{}] in pattern definitions with value(s) [{}]", attributeName, attributeValues);
                 val patterns = createPatternsAndReturnValue(attributeName);
-                final var finalValues = patterns
+                var finalValues = patterns
                     .stream()
                     .map(patternDefinition -> {
                         val pattern = patternDefinition.getLeft();
                         LOGGER.debug("Found attribute [{}] in the pattern definitions. Processing pattern [{}]", attributeName, pattern.pattern());
-                        val filteredValues = filterAndMapAttributeValuesByPattern(attributeValues, pattern, patternDefinition.getValue());
+                        var filteredValues = filterAndMapAttributeValuesByPattern(attributeValues, pattern, patternDefinition.getValue());
                         LOGGER.debug("Filtered attribute values for [{}] are [{}]", attributeName, filteredValues);
                         return filteredValues;
                     })

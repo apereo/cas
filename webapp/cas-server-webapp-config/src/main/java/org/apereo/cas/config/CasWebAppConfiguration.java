@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * This is {@link CasWebAppConfiguration}.
@@ -119,7 +118,7 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
         mapping.setOrder(1);
         mapping.setAlwaysUseFullPath(true);
         mapping.setRootHandler(root);
-        final Map urls = new HashMap();
+        val urls = new HashMap();
         urls.put("/", root);
 
         mapping.setUrlMap(urls);

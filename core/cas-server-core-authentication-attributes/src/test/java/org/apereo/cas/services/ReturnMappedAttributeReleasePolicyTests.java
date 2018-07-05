@@ -54,7 +54,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyRead);
 
-        final Map attributes = policyRead.getAttributes(principal, CoreAttributesTestUtils.getService(), registeredService);
+        val attributes = policyRead.getAttributes(principal, CoreAttributesTestUtils.getService(), registeredService);
         assertTrue(attributes.containsKey("DaTest2"));
         assertTrue(attributes.containsKey("newTest2"));
         assertTrue(attributes.containsKey("newTest1"));
@@ -68,7 +68,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
         val policyWritten = new ReturnMappedAttributeReleasePolicy(wrap);
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
-        final RegisteredServiceAttributeReleasePolicy policyRead = MAPPER.readValue(JSON_FILE, ReturnMappedAttributeReleasePolicy.class);
+        val policyRead = MAPPER.readValue(JSON_FILE, ReturnMappedAttributeReleasePolicy.class);
         assertEquals(policyWritten, policyRead);
     }
 

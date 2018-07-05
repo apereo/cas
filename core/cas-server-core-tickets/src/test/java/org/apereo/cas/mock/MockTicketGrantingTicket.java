@@ -3,11 +3,11 @@ package org.apereo.cas.mock;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -60,7 +60,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
 
     public MockTicketGrantingTicket(final String principal, final Credential c, final Map attributes) {
         id = ID_GENERATOR.getNewTicketId("TGT");
-        final CredentialMetaData metaData = new BasicCredentialMetaData(c);
+        val metaData = new BasicCredentialMetaData(c);
         authentication = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory()
             .createPrincipal(principal, attributes)).addCredential(metaData)
             .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),

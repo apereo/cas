@@ -3,7 +3,6 @@ package org.apereo.cas.authentication;
 import lombok.val;
 
 import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticationService;
-import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.services.ServicesManager;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -22,7 +21,7 @@ public class JsonResourceSurrogateAuthenticationServiceTests {
     public void verifyList() throws Exception {
         val resource = new ClassPathResource("surrogates.json");
         val mgr = mock(ServicesManager.class);
-        final SurrogateAuthenticationService r = new JsonResourceSurrogateAuthenticationService(resource, mgr);
+        val r = new JsonResourceSurrogateAuthenticationService(resource, mgr);
         assertFalse(r.getEligibleAccountsForSurrogateToProxy("casuser").isEmpty());
     }
 
@@ -30,7 +29,7 @@ public class JsonResourceSurrogateAuthenticationServiceTests {
     public void verifyProxying() throws Exception {
         val resource = new ClassPathResource("surrogates.json");
         val mgr = mock(ServicesManager.class);
-        final SurrogateAuthenticationService r = new JsonResourceSurrogateAuthenticationService(resource, mgr);
+        val r = new JsonResourceSurrogateAuthenticationService(resource, mgr);
         assertTrue(r.canAuthenticateAs("banderson", CoreAuthenticationTestUtils.getPrincipal("casuser"),
             CoreAuthenticationTestUtils.getService()));
     }

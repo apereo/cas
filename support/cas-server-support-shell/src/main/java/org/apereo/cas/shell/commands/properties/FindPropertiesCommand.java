@@ -1,8 +1,7 @@
 package org.apereo.cas.shell.commands.properties;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -98,9 +97,11 @@ public class FindPropertiesCommand {
         val props = repository.getRepository().getAllProperties();
 
         props.forEach((k, v) -> {
-            final var matched = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(k).spliterator(), false)
+            val matched = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(k).spliterator(), false)
                 .map(Object::toString)
-                .anyMatch(name -> strict ? RegexUtils.matches(propertyPattern, name) : RegexUtils.find(propertyPattern, name));
+                .anyMatch(name -> strict
+                    ? RegexUtils.matches(propertyPattern, name)
+                    : RegexUtils.find(propertyPattern, name));
             if (matched) {
                 results.put(k, v);
             }

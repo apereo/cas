@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.jdbc;
 import lombok.val;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -48,22 +47,14 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
                                                                                         final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
-        String sql = null;
-        if (StringUtils.isNotBlank(tableUsers) || StringUtils.isNotBlank(fieldUser) || StringUtils.isNotBlank(fieldPassword)) {
-            sql = "SELECT COUNT('x') FROM ".concat(this.tableUsers).concat(" WHERE ").concat(this.fieldUser)
-                    .concat(" = ? AND ").concat(this.fieldPassword).concat("= ?");
-        }
-
-        if (StringUtils.isBlank(sql) || getJdbcTemplate() == null) {
-            throw new GeneralSecurityException("Authentication handler is not configured correctly. "
-                    + "No SQL statement or JDBC template found");
-        }
+        val sql = "SELECT COUNT('x') FROM ".concat(this.tableUsers).concat(" WHERE ").concat(this.fieldUser)
+            .concat(" = ? AND ").concat(this.fieldPassword).concat("= ?");
 
         val username = credential.getUsername();
         try {
             LOGGER.debug("Executing SQL query [{}]", sql);
 
-            final int count = getJdbcTemplate().queryForObject(sql, Integer.class, username, credential.getPassword());
+            val count = getJdbcTemplate().queryForObject(sql, Integer.class, username, credential.getPassword());
             if (count == 0) {
                 throw new FailedLoginException(username + " not found with SQL query.");
             }

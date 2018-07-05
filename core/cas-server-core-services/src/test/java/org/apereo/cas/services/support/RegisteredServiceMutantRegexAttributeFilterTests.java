@@ -78,7 +78,7 @@ public class RegisteredServiceMutantRegexAttributeFilterTests {
         this.filter.setExcludeUnmappedAttributes(true);
         this.filter.setCaseInsensitive(true);
         MAPPER.writeValue(JSON_FILE, this.filter);
-        final RegisteredServiceAttributeFilter filterRead = MAPPER.readValue(JSON_FILE, RegisteredServiceMutantRegexAttributeFilter.class);
+        val filterRead = MAPPER.readValue(JSON_FILE, RegisteredServiceMutantRegexAttributeFilter.class);
         assertEquals(filter, filterRead);
     }
 
@@ -89,7 +89,7 @@ public class RegisteredServiceMutantRegexAttributeFilterTests {
                 "^mat(.+)(101) -> postfix$1$2")));
         this.filter.setCaseInsensitive(false);
         this.filter.setExcludeUnmappedAttributes(true);
-        final Map results = filter.filter(this.givenAttributesMap);
+        val results = filter.filter(this.givenAttributesMap);
         assertEquals(1, results.size());
         val values = (Collection) results.get("memberOf");
         assertTrue(values.contains("prefixathon101"));

@@ -51,11 +51,8 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
     @Test
     public void verifySerializeAShibbolethCompatiblePersistentIdGeneratorToJson() throws IOException {
         val generatorWritten = new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
-
         MAPPER.writeValue(JSON_FILE, generatorWritten);
-
-        final PersistentIdGenerator credentialRead = MAPPER.readValue(JSON_FILE, ShibbolethCompatiblePersistentIdGenerator.class);
-
+        val credentialRead = MAPPER.readValue(JSON_FILE, ShibbolethCompatiblePersistentIdGenerator.class);
         assertEquals(generatorWritten, credentialRead);
     }
 }

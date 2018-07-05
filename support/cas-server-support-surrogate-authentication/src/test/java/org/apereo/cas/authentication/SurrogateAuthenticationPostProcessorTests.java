@@ -69,7 +69,7 @@ public class SurrogateAuthenticationPostProcessorTests {
         val c = new SurrogateUsernamePasswordCredential();
         c.setUsername("casuser");
         c.setPassword("Mellon");
-        final AuthenticationTransaction transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("service"), c);
+        val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("service"), c);
         val builder = mock(AuthenticationBuilder.class);
         when(builder.build()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("casuser"));
         thrown.expect(AuthenticationException.class);
@@ -82,7 +82,7 @@ public class SurrogateAuthenticationPostProcessorTests {
         c.setUsername("casuser");
         c.setPassword("Mellon");
         c.setSurrogateUsername("cassurrogate");
-        final AuthenticationTransaction transaction = DefaultAuthenticationTransaction.of(
+        val transaction = DefaultAuthenticationTransaction.of(
             RegisteredServiceTestUtils.getService("https://localhost"), c);
         val builder = mock(AuthenticationBuilder.class);
         when(builder.build()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("casuser"));

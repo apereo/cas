@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
 import lombok.val;
-
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.junit.Test;
@@ -20,7 +19,7 @@ public class DefaultTicketRegistryCleanerTests {
     @Test
     public void verifyAction() {
         val logoutManager = mock(LogoutManager.class);
-        final TicketRegistry ticketRegistry = new DefaultTicketRegistry();
+        val ticketRegistry = new DefaultTicketRegistry();
         val casuser = new MockTicketGrantingTicket("casuser");
         casuser.markTicketExpired();
         ticketRegistry.addTicket(casuser);

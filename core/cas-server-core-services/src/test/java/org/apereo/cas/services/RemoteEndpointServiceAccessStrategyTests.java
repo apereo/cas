@@ -31,7 +31,7 @@ public class RemoteEndpointServiceAccessStrategyTests {
     public void verifySerializeAX509CertificateCredentialToJson() throws IOException {
         val strategyWritten = new RemoteEndpointServiceAccessStrategy();
         MAPPER.writeValue(JSON_FILE, strategyWritten);
-        final RegisteredServiceAccessStrategy credentialRead = MAPPER.readValue(JSON_FILE, RemoteEndpointServiceAccessStrategy.class);
+        val credentialRead = MAPPER.readValue(JSON_FILE, RemoteEndpointServiceAccessStrategy.class);
         assertEquals(strategyWritten, credentialRead);
     }
 
@@ -40,7 +40,7 @@ public class RemoteEndpointServiceAccessStrategyTests {
         val strategy = new RemoteEndpointServiceAccessStrategy();
         strategy.setEndpointUrl("http://localhost:8755");
         strategy.setAcceptableResponseCodes("200,201");
-        try (var webServer = new MockWebServer(8755,
+        try (val webServer = new MockWebServer(8755,
             new ByteArrayResource("OK".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertTrue(strategy.doPrincipalAttributesAllowServiceAccess("casuser", CoreAuthenticationTestUtils.getAttributes()));

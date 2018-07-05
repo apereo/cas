@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -31,13 +32,13 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationContextTicketValidationException;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.validation.UnauthorizedServiceTicketValidationException;
 import org.apereo.cas.validation.ValidationResponseType;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -50,6 +51,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * Process the /validate , /serviceValidate , and /proxyValidate URL requests.
@@ -108,7 +110,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      */
     protected Credential getServiceCredentialsFromRequest(final WebApplicationService service, final HttpServletRequest request) {
         val pgtUrl = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL);
-        if (StringUtils.hasText(pgtUrl)) {
+        if (StringUtils.isNotBlank(pgtUrl)) {
             try {
                 val registeredService = this.servicesManager.findServiceBy(service);
                 verifyRegisteredServiceProperties(registeredService, service);
@@ -167,7 +169,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         throws AuthenticationException, AbstractTicketException {
         val serviceTicket = this.centralAuthenticationService.getTicket(serviceTicketId, ServiceTicket.class);
         val authenticationResult = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceTicket.getService(), credential);
-        final TicketGrantingTicket proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId, authenticationResult);
+        val proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId, authenticationResult);
         LOGGER.debug("Generated proxy-granting ticket [{}] off of service ticket [{}] and credential [{}]", proxyGrantingTicketId.getId(), serviceTicketId, credential);
         return proxyGrantingTicketId;
     }
@@ -176,7 +178,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val service = this.argumentExtractor.extractService(request);
         val serviceTicketId = service != null ? service.getArtifactId() : null;
-        if (service == null || !StringUtils.hasText(serviceTicketId)) {
+        if (service == null || StringUtils.isBlank(serviceTicketId)) {
             LOGGER.debug("Could not identify service and/or service ticket for service: [{}]", service);
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, null, request, service);
         }
@@ -320,19 +322,19 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     }
 
     private ModelAndView getModelAndView(final HttpServletRequest request, final boolean isSuccess, final WebApplicationService service) {
-        var type = service != null ? service.getFormat() : ValidationResponseType.XML;
-        val format = request.getParameter(CasProtocolConstants.PARAMETER_FORMAT);
-        if (!StringUtils.isEmpty(format)) {
-            try {
-                type = ValidationResponseType.valueOf(format.toUpperCase());
-            } catch (final Exception e) {
-                LOGGER.warn(e.getMessage(), e);
-            }
-        }
+        val type = getValidationResponseType(request, service);
         if (type == ValidationResponseType.JSON) {
             return new ModelAndView(this.jsonView);
         }
         return new ModelAndView(isSuccess ? this.successView : this.failureView);
+    }
+
+    private ValidationResponseType getValidationResponseType(final HttpServletRequest request, final WebApplicationService service) {
+        val format = request.getParameter(CasProtocolConstants.PARAMETER_FORMAT);
+        final Function<String, ValidationResponseType> func = FunctionUtils.doIf(StringUtils::isNotBlank,
+            t -> ValidationResponseType.valueOf(t.toUpperCase()),
+            f -> service != null ? service.getFormat() : ValidationResponseType.XML);
+        return func.apply(format);
     }
 
     /**
@@ -352,7 +354,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         val modelAndView = getModelAndView(request, true, service);
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION, assertion);
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE, service);
-        if (StringUtils.hasText(proxyIou)) {
+        if (StringUtils.isNotBlank(proxyIou)) {
             modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU, proxyIou);
         }
         if (proxyGrantingTicket != null) {

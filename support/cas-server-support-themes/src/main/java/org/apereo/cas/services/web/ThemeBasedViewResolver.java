@@ -1,10 +1,9 @@
 package org.apereo.cas.services.web;
 
-import lombok.val;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.core.Ordered;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -62,15 +61,12 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
     }
 
     private ViewResolver getViewResolver(final String theme) {
-        // load the actual view resolver (using/updating cache as necessary)
-        final ViewResolver resolver;
         if (resolvers.containsKey(theme)) {
-            resolver = resolvers.get(theme);
-        } else {
-            resolver = viewResolverFactory.create(theme);
-            resolvers.put(theme, resolver);
+            return resolvers.get(theme);
         }
-        // return the resolver
+
+        val resolver = viewResolverFactory.create(theme);
+        resolvers.put(theme, resolver);
         return resolver;
     }
 

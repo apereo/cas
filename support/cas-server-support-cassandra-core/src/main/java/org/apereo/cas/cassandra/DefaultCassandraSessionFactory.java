@@ -40,7 +40,6 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
     }
 
     private static Cluster initializeCassandraCluster(final BaseCassandraProperties cassandra) {
-        final Cluster cluster;
         val poolingOptions = new PoolingOptions()
             .setMaxRequestsPerConnection(HostDistance.LOCAL, cassandra.getMaxRequestsPerConnection())
             .setConnectionsPerHost(HostDistance.LOCAL, cassandra.getCoreConnections(), cassandra.getMaxConnections());
@@ -76,7 +75,7 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
         Arrays.stream(StringUtils.split(cassandra.getContactPoints(), ','))
             .forEach(contactPoint -> builder.addContactPoint(StringUtils.trim(contactPoint)));
 
-        cluster = builder.build();
+        val cluster = builder.build();
 
         if (LOGGER.isDebugEnabled()) {
             cluster.getMetadata().getAllHosts().forEach(clusterHost ->

@@ -1,11 +1,10 @@
 package org.apereo.cas.discovery;
 
-import lombok.val;
-
 import com.google.common.base.Predicates;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
@@ -72,9 +71,10 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
                 return null;
             }
         };
-        final Predicate filter = o -> !VariegatedMultifactorAuthenticationProvider.class.isAssignableFrom(Class.class.cast(o));
-        final Collector collector = Collectors.toMap(MultifactorAuthenticationProvider::getId, MultifactorAuthenticationProvider::getFriendlyName);
-        return (Map) locateSubtypesByReflection(mapper, collector, AbstractMultifactorAuthenticationProvider.class, filter, CentralAuthenticationService.NAMESPACE);
+        val collector = Collectors.toMap(MultifactorAuthenticationProvider::getId, MultifactorAuthenticationProvider::getFriendlyName);
+        return (Map) locateSubtypesByReflection(mapper, collector, AbstractMultifactorAuthenticationProvider.class,
+            o -> !VariegatedMultifactorAuthenticationProvider.class.isAssignableFrom(Class.class.cast(o)),
+            CentralAuthenticationService.NAMESPACE);
     }
 
     private Map<String, Class> locateRegisteredServiceTypesActive() {
@@ -93,7 +93,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
                 return null;
             }
         };
-        final Collector collector = Collectors.toMap(RegisteredService::getFriendlyName, RegisteredService::getClass);
+        val collector = Collectors.toMap(RegisteredService::getFriendlyName, RegisteredService::getClass);
         return (Map) locateSubtypesByReflection(mapper, collector,
             AbstractRegisteredService.class, Predicates.alwaysTrue(), CentralAuthenticationService.NAMESPACE);
     }

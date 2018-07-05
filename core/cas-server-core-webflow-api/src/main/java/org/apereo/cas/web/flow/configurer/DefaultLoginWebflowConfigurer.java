@@ -1,8 +1,7 @@
 package org.apereo.cas.web.flow.configurer;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
@@ -18,6 +17,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.action.SetAction;
@@ -448,13 +448,12 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      * @param flow the flow
      */
     protected void createRenewCheckDecisionState(final Flow flow) {
-        final String renewTestCondition;
-        if (casProperties.getSso().isRenewAuthnEnabled()) {
-            val renewParam = "requestParameters." + CasProtocolConstants.PARAMETER_RENEW;
-            renewTestCondition = renewParam + " != '' and " + renewParam + " != null";
-        } else {
-            renewTestCondition = "true";
-        }
+        val renewTestCondition = FunctionUtils.doIf(casProperties.getSso().isRenewAuthnEnabled(),
+            () -> {
+                val renewParam = "requestParameters." + CasProtocolConstants.PARAMETER_RENEW;
+                return renewParam + " != '' and " + renewParam + " != null";
+            },
+            () -> "true").get();
 
         createDecisionState(flow, CasWebflowConstants.STATE_ID_RENEW_REQUEST_CHECK,
             renewTestCondition,

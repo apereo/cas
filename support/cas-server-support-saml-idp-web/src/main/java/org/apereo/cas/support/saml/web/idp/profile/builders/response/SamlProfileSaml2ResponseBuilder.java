@@ -1,8 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
@@ -10,8 +9,8 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlResponseEncoder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlResponseArtifactEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlResponsePostEncoder;
@@ -82,7 +81,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                                   final String binding,
                                   final MessageContext messageContext) throws SamlException {
         val id = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
-        var samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), authnRequest.getID(), null);
+        val samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), authnRequest.getID(), null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
         samlResponse.setIssuer(buildEntityIssuer());
 
@@ -107,8 +106,9 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
 
         if (service.isSignResponses()) {
             LOGGER.debug("SAML entity id [{}] indicates that SAML responses should be signed", adaptor.getEntityId());
-            samlResponse = this.samlObjectSigner.encode(samlResponse, service, adaptor, response, request, binding, authnRequest);
-            SamlUtils.logSamlObject(configBean, samlResponse);
+            val samlResponseSigned = this.samlObjectSigner.encode(samlResponse, service, adaptor, response, request, binding, authnRequest);
+            SamlUtils.logSamlObject(configBean, samlResponseSigned);
+            return samlResponseSigned;
         }
 
         return samlResponse;
@@ -136,11 +136,11 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         }
 
         if (binding.equalsIgnoreCase(SAMLConstants.SAML2_POST_SIMPLE_SIGN_BINDING_URI)) {
-            final BaseSamlResponseEncoder encoder = new SamlResponsePostSimpleSignEncoder(this.velocityEngineFactory, adaptor, httpResponse, httpRequest);
+            val encoder = new SamlResponsePostSimpleSignEncoder(this.velocityEngineFactory, adaptor, httpResponse, httpRequest);
             return encoder.encode(authnRequest, samlResponse, relayState);
         }
 
-        final BaseSamlResponseEncoder encoder = new SamlResponsePostEncoder(this.velocityEngineFactory, adaptor, httpResponse, httpRequest);
+        val encoder = new SamlResponsePostEncoder(this.velocityEngineFactory, adaptor, httpResponse, httpRequest);
         return encoder.encode(authnRequest, samlResponse, relayState);
     }
 

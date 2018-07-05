@@ -5,7 +5,6 @@ import lombok.val;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -46,9 +45,9 @@ public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQuer
     @SneakyThrows
     public SamlAttributeQueryTicket create(final String id, final SAMLObject samlObject,
                                            final String relyingParty, final TicketGrantingTicket ticketGrantingTicket) {
-        try (var w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
+        try (val w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
             val codeId = createTicketIdFor(id);
-            final Service service = this.webApplicationServiceFactory.createService(relyingParty);
+            val service = this.webApplicationServiceFactory.createService(relyingParty);
             final SamlAttributeQueryTicket at = new SamlAttributeQueryTicketImpl(codeId, service, this.expirationPolicy, 
                     relyingParty, w.toString(), ticketGrantingTicket);
             if (ticketGrantingTicket != null) {

@@ -14,7 +14,6 @@ import org.apereo.cas.util.RegexUtils;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.core.Ordered;
 
-import java.util.Set;
 import java.util.regex.Pattern;
 import lombok.Getter;
 import lombok.Setter;
@@ -62,7 +61,7 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
             setOrder(CasConfigurationMetadataRepository.isCasProperty(prop) ? Ordered.HIGHEST_PRECEDENCE : Ordered.LOWEST_PRECEDENCE);
             val valueHints = prop.getHints().getValueHints();
             valueHints.forEach(hint -> {
-                final Set values = CollectionUtils.toCollection(hint.getValue());
+                val values = CollectionUtils.toCollection(hint.getValue());
                 if (values.contains(RequiresModule.class.getName())) {
                     setRequiredModule(hint.getDescription());
                     setRequiredModuleAutomated(values.contains(Boolean.TRUE));

@@ -100,7 +100,7 @@ public class EhCacheStatistics implements CacheStatistics {
             builder.append(name).append(':');
         }
         val free = getPercentFree();
-        try (var formatter = new Formatter(builder)) {
+        try (val formatter = new Formatter(builder)) {
             if (this.useBytes) {
                 formatter.format("%.2f MB heap, ", this.heapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
                 formatter.format("%.2f MB disk, ", this.diskSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);

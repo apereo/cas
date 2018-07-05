@@ -16,8 +16,6 @@ import org.junit.Test;
 import org.junit.After;
 import org.junit.Before;
 
-import java.util.Collection;
-
 import static org.junit.Assert.*;
 
 /**
@@ -48,7 +46,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
     @Test
     public void verifyAction() {
 
-        final RegisteredService registeredService = RegisteredServiceTestUtils.getRegisteredService();
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         DistributedCacheObject obj = mgr.get(registeredService);
         assertNull(obj);
         assertFalse(mgr.contains(registeredService));
@@ -58,7 +56,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
         assertFalse(mgr.getAll().isEmpty());
         obj = mgr.get(registeredService);
         assertNotNull(obj);
-        final Collection c = mgr.findAll(obj1 -> obj1.getValue().equals(registeredService));
+        val c = mgr.findAll(obj1 -> obj1.getValue().equals(registeredService));
         assertFalse(c.isEmpty());
         mgr.remove(registeredService, cache);
         assertTrue(mgr.getAll().isEmpty());
@@ -66,7 +64,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
 
     @Test
     public void verifyPublisher() {
-        final RegisteredService registeredService = RegisteredServiceTestUtils.getRegisteredService();
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val publisher = new CasRegisteredServiceHazelcastStreamPublisher(mgr, new StringBean("123456"));
         publisher.publish(registeredService, new CasRegisteredServiceDeletedEvent(this, registeredService));
         publisher.publish(registeredService, new CasRegisteredServiceSavedEvent(this, registeredService));

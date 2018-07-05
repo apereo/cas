@@ -1,11 +1,11 @@
 package org.apereo.cas.support.saml.web.view;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractCasView;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
@@ -30,7 +30,7 @@ import java.util.Map;
 @Slf4j
 public abstract class AbstractSaml10ResponseView extends AbstractCasView {
 
-    
+
     /**
      * The Saml object builder.
      */
@@ -40,7 +40,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      * Skew time.
      **/
     protected final int skewAllowance;
-    
+
     /**
      * Assertion validity period length.
      **/
@@ -92,7 +92,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
                                       final int issueLength,
                                       final AuthenticationAttributeReleasePolicy authAttrReleasePolicy) {
         super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
-                authAttrReleasePolicy);
+            authAttrReleasePolicy);
         this.samlObjectBuilder = samlObjectBuilder;
         this.samlArgumentExtractor = samlArgumentExtractor;
         this.encoding = encoding;
@@ -103,36 +103,24 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     }
 
     @Override
-    protected void renderMergedOutputModel(final Map<String, Object> model, 
-                                           final HttpServletRequest request, 
+    protected void renderMergedOutputModel(final Map<String, Object> model,
+                                           final HttpServletRequest request,
                                            final HttpServletResponse response) throws Exception {
-
-        String serviceId = null;
         try {
             response.setCharacterEncoding(this.encoding);
             val service = this.samlArgumentExtractor.extractService(request);
-            if (service == null || StringUtils.isBlank(service.getId())) {
-                serviceId = "UNKNOWN";
-            } else {
-                try {
-                    serviceId = new URL(service.getId()).getHost();
-                } catch (final MalformedURLException e) {
-                    LOGGER.debug(e.getMessage(), e);
-                }
-            }
+            val serviceId = getServiceIdFromRequest(service);
 
             LOGGER.debug("Using [{}] as the recipient of the SAML response for [{}]", serviceId, service);
             val samlResponse = this.samlObjectBuilder.newResponse(
-                    this.samlObjectBuilder.generateSecureRandomId(),
-                    ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(this.skewAllowance), serviceId, service);
+                this.samlObjectBuilder.generateSecureRandomId(),
+                ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(this.skewAllowance), serviceId, service);
             LOGGER.debug("Created SAML response for service [{}]", serviceId);
-            
             prepareResponse(samlResponse, model);
-
             LOGGER.debug("Starting to encode SAML response for service [{}]", serviceId);
             this.samlObjectBuilder.encodeSamlResponse(response, request, samlResponse);
         } catch (final Exception e) {
-            LOGGER.error("Error generating SAML response for service [{}].", serviceId, e);
+            LOGGER.error("Error generating SAML response for service", e);
             throw e;
         }
     }
@@ -146,4 +134,15 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      */
     protected abstract void prepareResponse(Response response, Map<String, Object> model);
 
+    private String getServiceIdFromRequest(final Service service) {
+        if (service == null || StringUtils.isBlank(service.getId())) {
+            return "UNKNOWN";
+        }
+        try {
+            return new URL(service.getId()).getHost();
+        } catch (final MalformedURLException e) {
+            LOGGER.debug(e.getMessage(), e);
+        }
+        return null;
+    }
 }

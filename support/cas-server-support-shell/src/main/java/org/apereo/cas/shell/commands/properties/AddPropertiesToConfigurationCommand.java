@@ -1,8 +1,7 @@
 package org.apereo.cas.shell.commands.properties;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -91,7 +90,7 @@ public class AddPropertiesToConfigurationCommand {
         options.setPrettyFlow(true);
         options.setAllowUnicode(true);
         val yaml = new Yaml(options);
-        try (var writer = Files.newBufferedWriter(filePath.toPath(), StandardCharsets.UTF_8)) {
+        try (val writer = Files.newBufferedWriter(filePath.toPath(), StandardCharsets.UTF_8)) {
             putResultsIntoProperties(results, yamlProps);
             yaml.dump(yamlProps, writer);
         }
@@ -116,24 +115,26 @@ public class AddPropertiesToConfigurationCommand {
     }
 
     private void putResultsIntoProperties(final Map<String, ConfigurationMetadataProperty> results, final Properties p) {
-        val lines = results.values().stream().collect(Collectors.toList());
-        Collections.sort(lines, Comparator.comparing(ConfigurationMetadataProperty::getName));
-
+        val lines = results.values().stream()
+            .sorted(Comparator.comparing(ConfigurationMetadataProperty::getName))
+            .collect(Collectors.toList());
         lines.forEach(v -> {
-            final String value;
-            if (v.getDefaultValue() == null) {
-                value = StringUtils.EMPTY;
-            } else {
-                value = v.getDefaultValue().toString();
-            }
+            val value = getDefaultValueForProperty(v);
             LOGGER.info("Adding property [{}={}]", v.getId(), value);
             p.put("# " + v.getId(), value);
         });
     }
 
+    private String getDefaultValueForProperty(final ConfigurationMetadataProperty v) {
+        if (v.getDefaultValue() == null) {
+            return StringUtils.EMPTY;
+        }
+        return v.getDefaultValue().toString();
+    }
+
     private Properties loadPropertiesFromConfigurationFile(final File filePath) throws IOException {
         val p = new Properties();
-        try (var f = Files.newBufferedReader(filePath.toPath(), StandardCharsets.UTF_8)) {
+        try (val f = Files.newBufferedReader(filePath.toPath(), StandardCharsets.UTF_8)) {
             p.load(f);
         }
         return p;

@@ -44,7 +44,7 @@ public class DistributedTicketRegistryTests {
 
     @Test
     public void verifyProxiedInstancesEqual() {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+        val t = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(t);
         val returned = (TicketGrantingTicket) this.ticketRegistry.getTicket(TGT_ID);
         assertEquals(t, returned);
@@ -73,7 +73,7 @@ public class DistributedTicketRegistryTests {
 
     @Test
     public void verifyUpdateOfRegistry() throws AbstractTicketException {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+        val t = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(t);
         val returned = (TicketGrantingTicket) this.ticketRegistry.getTicket(TGT_ID);
         val s = returned.grantServiceTicket("test2", RegisteredServiceTestUtils.getService(), new NeverExpiresExpirationPolicy(), false, true);

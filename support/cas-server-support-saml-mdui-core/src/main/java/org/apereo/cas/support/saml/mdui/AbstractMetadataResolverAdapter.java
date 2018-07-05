@@ -140,7 +140,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      */
     private List<MetadataResolver> loadMetadataFromResource(final MetadataFilter metadataFilter, final Resource resource, final String entityId) {
         LOGGER.debug("Evaluating metadata resource [{}]", resource.getFilename());
-        try (var in = getResourceInputStream(resource, entityId)) {
+        try (val in = getResourceInputStream(resource, entityId)) {
             if (in.available() > 0 && in.markSupported()) {
                 LOGGER.debug("Parsing [{}]", resource.getFilename());
                 val document = this.configBean.getParserPool().parse(in);

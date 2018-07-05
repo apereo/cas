@@ -17,7 +17,6 @@ import org.springframework.http.MediaType;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -37,19 +36,19 @@ public class ReturnRestfulAttributeReleasePolicyTests {
     public void verifySerializeAttributeReleasePolicyToJson() throws IOException {
         val policyWritten = new ReturnRestfulAttributeReleasePolicy("http://endpoint.example.org");
         MAPPER.writeValue(JSON_FILE, policyWritten);
-        final RegisteredServiceAttributeReleasePolicy policyRead = MAPPER.readValue(JSON_FILE, ReturnRestfulAttributeReleasePolicy.class);
+        val policyRead = MAPPER.readValue(JSON_FILE, ReturnRestfulAttributeReleasePolicy.class);
         assertEquals(policyWritten, policyRead);
     }
 
     @Test
     public void verifyPolicy() throws IOException {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("givenName", "CASUSER", "familyName", "CAS"));
-        try (var webServer = new MockWebServer(9299,
+        try (val webServer = new MockWebServer(9299,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
 
             val policyWritten = new ReturnRestfulAttributeReleasePolicy("http://localhost:9299");
-            final Map attributes = policyWritten.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
+            val attributes = policyWritten.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
                 CoreAuthenticationTestUtils.getService(),
                 CoreAuthenticationTestUtils.getRegisteredService());
             assertFalse(attributes.isEmpty());

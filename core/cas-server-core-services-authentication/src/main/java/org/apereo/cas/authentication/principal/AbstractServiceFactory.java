@@ -21,7 +21,7 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
 
     @Override
     public <T extends Service> T createService(final String id, final Class<T> clazz) {
-        final Service service = createService(id);
+        var service = createService(id);
         if (!clazz.isAssignableFrom(service.getClass())) {
             throw new ClassCastException("Service [" + service.getId() + " is of type " + service.getClass() + " when we were expecting " + clazz);
         }
@@ -30,7 +30,7 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
 
     @Override
     public <T extends Service> T createService(final HttpServletRequest request, final Class<T> clazz) {
-        final Service service = createService(request);
+        var service = createService(request);
         if (!clazz.isAssignableFrom(service.getClass())) {
             throw new ClassCastException("Service [" + service.getId() + " is of type " + service.getClass() + " when we were expecting " + clazz);
         }

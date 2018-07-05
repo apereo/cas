@@ -15,7 +15,6 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
-import org.opensaml.saml.saml1.binding.encoding.impl.HTTPSOAP11Encoder;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.Attribute;
 import org.opensaml.saml.saml1.core.AttributeStatement;
@@ -281,7 +280,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
 
         SamlUtils.logSamlObject(this.configBean, samlMessage);
 
-        final HTTPSOAP11Encoder encoder = new CasHttpSoap11Encoder();
+        val encoder = new CasHttpSoap11Encoder();
         final MessageContext<SAMLObject> context = new MessageContext();
         context.setMessage(samlMessage);
         encoder.setHttpServletResponse(httpResponse);

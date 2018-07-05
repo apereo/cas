@@ -1,7 +1,5 @@
 package org.apereo.cas.token;
 
-import lombok.val;
-
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.PlainHeader;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -10,15 +8,16 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
-import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.token.cipher.RegisteredServiceTokenTicketCipherExecutor;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 import org.jasig.cas.client.validation.TicketValidator;
@@ -52,13 +51,14 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
         final Map<String, Object> attributes = new LinkedHashMap<>(assertion.getAttributes());
         attributes.putAll(assertion.getPrincipal().getAttributes());
 
-        final Date validUntilDate;
-        if (assertion.getValidUntilDate() != null) {
-            validUntilDate = assertion.getValidUntilDate();
-        } else {
-            val dt = ZonedDateTime.now().plusSeconds(expirationPolicy.getTimeToLive());
-            validUntilDate = DateTimeUtils.dateOf(dt);
-        }
+        val validUntilDate = FunctionUtils.doIf(
+            assertion.getValidUntilDate() != null,
+            assertion::getValidUntilDate,
+            () -> {
+                val dt = ZonedDateTime.now().plusSeconds(expirationPolicy.getTimeToLive());
+                return DateTimeUtils.dateOf(dt);
+            })
+            .get();
         return buildJwt(serviceTicketId, service.getId(), assertion.getAuthenticationDate(),
             assertion.getPrincipal().getName(), validUntilDate, attributes);
     }
@@ -108,7 +108,7 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
         LOGGER.debug("Locating service specific signing and encryption keys for [{}] in service registry", serviceAudience);
-        final RegisteredServiceCipherExecutor serviceCipher = new RegisteredServiceTokenTicketCipherExecutor();
+        val serviceCipher = new RegisteredServiceTokenTicketCipherExecutor();
         if (serviceCipher.supports(registeredService)) {
             LOGGER.debug("Encoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
             return serviceCipher.encode(jwtJson, Optional.of(registeredService));
@@ -118,7 +118,7 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
             LOGGER.debug("Encoding JWT based on default global keys for [{}]", serviceAudience);
             return defaultTokenCipherExecutor.encode(jwtJson);
         }
-        val header =new PlainHeader.Builder()
+        val header = new PlainHeader.Builder()
             .type(JOSEObjectType.JWT)
             .build();
         val token = new PlainJWT(header, claimsSet).serialize();

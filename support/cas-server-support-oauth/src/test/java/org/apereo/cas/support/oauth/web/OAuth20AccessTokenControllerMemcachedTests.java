@@ -5,7 +5,6 @@ import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.category.MemcachedCategory;
 import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
-import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.registry.MemcachedTicketRegistry;
 import org.junit.Test;
@@ -42,7 +41,7 @@ public class OAuth20AccessTokenControllerMemcachedTests extends AbstractOAuth20T
     public void verifyOAuthCodeIsAddedToMemcached() {
         val p = createPrincipal();
         val code = addCode(p, addRegisteredService());
-        final Ticket ticket = this.ticketRegistry.getTicket(code.getId(), OAuthCode.class);
+        val ticket = this.ticketRegistry.getTicket(code.getId(), OAuthCode.class);
         assertNotNull(ticket);
     }
 }

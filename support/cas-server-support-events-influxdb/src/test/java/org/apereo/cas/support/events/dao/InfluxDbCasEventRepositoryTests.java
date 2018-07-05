@@ -24,7 +24,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import java.util.Collection;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -61,12 +60,12 @@ public class InfluxDbCasEventRepositoryTests {
     public void verifyEventsStored() {
         val dto = getCasEvent();
         casEventRepository.save(dto);
-        Collection events = casEventRepository.load();
+        val events = casEventRepository.load();
         assertFalse(events.isEmpty());
-        events = casEventRepository.getEventsForPrincipal(dto.getPrincipalId());
-        assertFalse(events.isEmpty());
-        events = casEventRepository.getEventsOfType(dto.getType());
-        assertFalse(events.isEmpty());
+        val events2 = casEventRepository.getEventsForPrincipal(dto.getPrincipalId());
+        assertFalse(events2.isEmpty());
+        val events3 = casEventRepository.getEventsOfType(dto.getType());
+        assertFalse(events3.isEmpty());
     }
 
     private CasEvent getCasEvent() {

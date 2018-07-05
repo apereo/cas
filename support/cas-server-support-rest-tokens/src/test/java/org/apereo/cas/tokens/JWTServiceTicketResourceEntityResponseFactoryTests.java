@@ -5,7 +5,6 @@ import lombok.val;
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.junit.Test;
@@ -26,7 +25,7 @@ public class JWTServiceTicketResourceEntityResponseFactoryTests extends BaseTick
     public void verifyServiceTicketAsDefault() {
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport);
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
-        final Service service = RegisteredServiceTestUtils.getService("test");
+        val service = RegisteredServiceTestUtils.getService("test");
         val response = serviceTicketResourceEntityResponseFactory.build(tgt.getId(), service, result);
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -37,7 +36,7 @@ public class JWTServiceTicketResourceEntityResponseFactoryTests extends BaseTick
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
-        final Service service = RegisteredServiceTestUtils.getService("jwtservice");
+        val service = RegisteredServiceTestUtils.getService("jwtservice");
         val response = serviceTicketResourceEntityResponseFactory.build(tgt.getId(), service, result);
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());

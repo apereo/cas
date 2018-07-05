@@ -1,19 +1,17 @@
 package org.apereo.cas.util;
 
-import lombok.val;
-
 import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 import groovy.lang.GroovyShell;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.springframework.core.io.Resource;
 
-import javax.script.Bindings;
 import javax.script.Invocable;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleBindings;
@@ -194,7 +192,7 @@ public class ScriptingUtils {
 
     private static <T> T getGroovyResult(final Resource groovyScript, final String methodName,
                                          final Object[] args, final Class<T> clazz, final ClassLoader parent) {
-        try (var loader = new GroovyClassLoader(parent)) {
+        try (val loader = new GroovyClassLoader(parent)) {
             val groovyFile = groovyScript.getFile();
             if (groovyFile.exists()) {
                 final Class<?> groovyClass = loader.parseClass(groovyFile);
@@ -240,7 +238,7 @@ public class ScriptingUtils {
             if (theScriptFile.exists()) {
                 LOGGER.debug("Created object instance from class [{}]", theScriptFile.getCanonicalPath());
 
-                try (var reader = Files.newBufferedReader(theScriptFile.toPath(), StandardCharsets.UTF_8)) {
+                try (val reader = Files.newBufferedReader(theScriptFile.toPath(), StandardCharsets.UTF_8)) {
                     engine.eval(reader);
                 }
                 val invocable = (Invocable) engine;
@@ -277,7 +275,7 @@ public class ScriptingUtils {
                 LOGGER.warn("Script engine is not available for Groovy");
                 return null;
             }
-            final Bindings binding = new SimpleBindings();
+            val binding = new SimpleBindings();
             if (variables != null && !variables.isEmpty()) {
                 binding.putAll(variables);
             }
@@ -353,14 +351,15 @@ public class ScriptingUtils {
     }
 
     private static String getScriptEngineName(final String scriptFile) {
-        String engineName = null;
         if (scriptFile.endsWith(".py")) {
-            engineName = "python";
-        } else if (scriptFile.endsWith(".js")) {
-            engineName = "js";
-        } else if (scriptFile.endsWith(".groovy")) {
-            engineName = "groovy";
+            return "python";
         }
-        return engineName;
+        if (scriptFile.endsWith(".js")) {
+            return "js";
+        }
+        if (scriptFile.endsWith(".groovy")) {
+            return "groovy";
+        }
+        return null;
     }
 }

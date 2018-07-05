@@ -55,7 +55,7 @@ public class CasVersion {
      */
     @SneakyThrows
     public static ZonedDateTime getDateTime() {
-        final Class clazz = CasVersion.class;
+        val clazz = CasVersion.class;
         val resource = clazz.getResource(clazz.getSimpleName() + ".class");
         if ("file".equals(resource.getProtocol())) {
             return DateTimeUtils.zonedDateTimeOf(new File(resource.toURI()).lastModified());

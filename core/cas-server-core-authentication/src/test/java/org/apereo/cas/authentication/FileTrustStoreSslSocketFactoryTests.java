@@ -4,7 +4,6 @@ import lombok.val;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,7 +37,7 @@ public class FileTrustStoreSslSocketFactoryTests {
     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() {
         val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory());
-        final HttpClient client = clientFactory.getObject();
+        val client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://self-signed.badssl.com"));
     }
 
@@ -46,7 +45,7 @@ public class FileTrustStoreSslSocketFactoryTests {
     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable2() {
         val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory());
-        final HttpClient client = clientFactory.getObject();
+        val client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://untrusted-root.badssl.com"));
     }
 
@@ -66,7 +65,7 @@ public class FileTrustStoreSslSocketFactoryTests {
     public void verifyTrustStoreLoadingSuccessfullyForValidEndpointWithNoCert() {
         val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory());
-        final HttpClient client = clientFactory.getObject();
+        val client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://www.google.com"));
     }
 
@@ -74,7 +73,7 @@ public class FileTrustStoreSslSocketFactoryTests {
     public void verifyTrustStoreLoadingSuccessfullyWihInsecureEndpoint() {
         val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory());
-        final HttpClient client = clientFactory.getObject();
+        val client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("http://wikipedia.org"));
     }
 

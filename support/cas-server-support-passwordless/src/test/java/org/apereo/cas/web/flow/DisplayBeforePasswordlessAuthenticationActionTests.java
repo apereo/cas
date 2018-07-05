@@ -12,7 +12,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
@@ -49,7 +48,7 @@ public class DisplayBeforePasswordlessAuthenticationActionTests extends BasePass
     @Test
     public void verifyError() throws Exception {
         val context = new MockRequestContext();
-        final AttributeMap attributes = new LocalAttributeMap("error", new IllegalArgumentException("Bad account"));
+        val attributes = new LocalAttributeMap("error", new IllegalArgumentException("Bad account"));
         context.setCurrentEvent(new Event(this, "processing", attributes));
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

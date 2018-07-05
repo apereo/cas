@@ -56,7 +56,7 @@ public class GenerateYamlRegisteredServiceCommand {
                 val svc = validator.from(filePath);
                 LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
                 val yaml = new RegisteredServiceYamlSerializer();
-                try (var writer = new StringWriter()) {
+                try (val writer = new StringWriter()) {
                     yaml.to(writer, svc);
                     LOGGER.info(writer.toString());
 

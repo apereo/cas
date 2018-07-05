@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 public class RestfulUrlTemplateResolverTests {
     @Test
     public void verifyAction() {
-        try (var webServer = new MockWebServer(9294,
+        try (val webServer = new MockWebServer(9294,
             new ByteArrayResource("template".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
 

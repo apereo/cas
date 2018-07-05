@@ -8,11 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
 import org.springframework.binding.expression.Expression;
-import org.springframework.binding.expression.ParserContext;
 import org.springframework.binding.expression.spel.SpringELExpressionParser;
 import org.springframework.binding.expression.support.FluentParserContext;
 import org.springframework.binding.expression.support.LiteralExpression;
@@ -144,7 +143,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             LOGGER.error("Login flow registry is not configured and/or initialized correctly.");
             return null;
         }
-        final var found = Arrays.stream(this.loginFlowDefinitionRegistry.getFlowDefinitionIds()).anyMatch(f -> f.equals(FLOW_ID_LOGIN));
+        val found = Arrays.stream(this.loginFlowDefinitionRegistry.getFlowDefinitionIds()).anyMatch(f -> f.equals(FLOW_ID_LOGIN));
         if (found) {
             return (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
         }
@@ -247,7 +246,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             LOGGER.error("Flow builder services is not configured correctly.");
             return null;
         }
-        final ParserContext ctx = new FluentParserContext();
+        val ctx = new FluentParserContext();
         val action = this.flowBuilderServices.getExpressionParser().parseExpression(expression, ctx);
         val newAction = new EvaluateAction(action, null);
         LOGGER.debug("Created evaluate action for expression [{}]", action.getExpressionString());
@@ -355,7 +354,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @return the expression
      */
     public Expression createExpression(final String expression, final Class expectedType) {
-        final ParserContext parserContext = new FluentParserContext().expectResult(expectedType);
+        val parserContext = new FluentParserContext().expectResult(expectedType);
         return getSpringExpressionParser().parseExpression(expression, parserContext);
     }
 
@@ -429,7 +428,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         }
         val endState = new EndState(flow, id);
         if (viewFactory != null) {
-            final Action finalResponseAction = new ViewFactoryActionAdapter(viewFactory);
+            val finalResponseAction = new ViewFactoryActionAdapter(viewFactory);
             endState.setFinalResponseAction(finalResponseAction);
             LOGGER.debug("Created end state state [{}] on flow id [{}], backed by view factory [{}]", id, flow.getId(), viewFactory);
         } else {
@@ -514,7 +513,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         val target = parser.parseExpression(name, new FluentParserContext());
         val mapping = new DefaultMapping(source, target);
         mapping.setRequired(required);
-        final ConversionExecutor typeConverter = new RuntimeBindingConversionExecutor(type, this.flowBuilderServices.getConversionService());
+        val typeConverter = new RuntimeBindingConversionExecutor(type, this.flowBuilderServices.getConversionService());
         mapping.setTypeConverter(typeConverter);
         return mapping;
     }
@@ -583,7 +582,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @return the flow variable
      */
     public FlowVariable createFlowVariable(final Flow flow, final String id, final Class type) {
-        final var opt = Arrays.stream(flow.getVariables()).filter(v -> v.getName().equalsIgnoreCase(id)).findFirst();
+        val opt = Arrays.stream(flow.getVariables()).filter(v -> v.getName().equalsIgnoreCase(id)).findFirst();
         if (opt.isPresent()) {
             return opt.get();
         }
@@ -660,9 +659,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             return (List<TransitionCriteria>) ReflectionUtils.getField(field, chain);
         }
         if (def.getExecutionCriteria() != null) {
-            final List c = new ArrayList<>();
-            c.add(def.getExecutionCriteria());
-            return c;
+            return CollectionUtils.wrapList(def.getExecutionCriteria());
         }
         return new ArrayList<>(0);
     }
@@ -701,7 +698,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         val action = getState(flow, actionStateId, ActionState.class);
         val actions = action.getActionList().toArray();
         Arrays.stream(actions).forEach(action.getActionList()::remove);
-        final Action evaluateAction = createEvaluateAction(evaluateActionId);
+        val evaluateAction = createEvaluateAction(evaluateActionId);
         action.getActionList().add(evaluateAction);
         action.getActionList().addAll(actions);
         return evaluateAction;
@@ -759,7 +756,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     public <T extends TransitionableState> T getTransitionableState(final Flow flow, final String stateId, final Class<T> clazz) {
         if (containsFlowState(flow, stateId)) {
-            final StateDefinition state = flow.getTransitionableState(stateId);
+            val state = flow.getTransitionableState(stateId);
             return clazz.cast(state);
         }
         return null;
