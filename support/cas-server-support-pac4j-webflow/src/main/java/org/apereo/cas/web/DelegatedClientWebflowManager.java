@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * This is {@link DelegatedClientWebflowManager}.

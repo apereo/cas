@@ -13,6 +13,7 @@ import org.apereo.inspektr.audit.annotation.Audit;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -46,7 +47,7 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
         val scores = new ArrayList<AuthenticationRiskScore>();
         this.calculators.forEach(r -> scores.add(r.calculate(authentication, service, request)));
         val sum = scores.stream().map(AuthenticationRiskScore::getScore).reduce(BigDecimal.ZERO, BigDecimal::add);
-        val score = sum.divide(BigDecimal.valueOf(this.calculators.size()), 2, BigDecimal.ROUND_UP);
+        val score = sum.divide(BigDecimal.valueOf(this.calculators.size()), 2, RoundingMode.UP);
         return new AuthenticationRiskScore(score);
     }
 }

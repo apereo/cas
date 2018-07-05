@@ -16,6 +16,8 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Optional;
+
 /**
  * This is {@link DelegatedAuthenticationSAML2ClientLogoutAction}.
  * <p>
@@ -75,7 +77,7 @@ public class DelegatedAuthenticationSAML2ClientLogoutAction extends AbstractActi
      */
     private String findCurrentClientName(final WebContext webContext) {
         val pm = Pac4jUtils.getPac4jProfileManager(webContext);
-        val profile = pm.get(true);
+        val profile = (Optional<CommonProfile>) pm.get(true);
         return profile.map(CommonProfile::getClientName).orElse(null);
     }
 

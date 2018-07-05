@@ -3,6 +3,7 @@ package org.apereo.cas.services.support;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.springframework.core.OrderComparator;
 import java.util.ArrayList;

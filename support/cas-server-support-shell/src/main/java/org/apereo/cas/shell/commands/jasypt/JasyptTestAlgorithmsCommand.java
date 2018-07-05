@@ -60,20 +60,20 @@ public class JasyptTestAlgorithmsCommand {
                 val cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
                 cipher.setPassword(password);
                 cipher.setKeyObtentionIterations("1");
-                cipher.setAlgorithm(algorithm);
+                cipher.setAlgorithm(algorithm.toString());
                 cipher.setProviderName(provider);
                 try {
                     final String encryptedValue;
                     try {
                         encryptedValue = cipher.encryptValuePropagateExceptions(value);
                     } catch (final EncryptionInitializationException e) {
-                        // encryption doesn't work for this algorithm/provider combo
+                        LOGGER.trace(e.getMessage(), e);
                         continue;
                     }
                     LOGGER.info("Provider: [{}] Algorithm: [{}]", provider, algorithm);
                     try {
                         cipher.decryptValuePropagateExceptions(encryptedValue);
-                        LOGGER.info("Encrypted Value: [{}] Decryption Succeeded", encryptedValue);
+                        LOGGER.info("Encrypted Value: [{}] Decryption succeeded", encryptedValue);
                     } catch (final Exception e) {
                         LOGGER.info("Encrypted Value: [{}] Decryption Failed", encryptedValue);
                     }
