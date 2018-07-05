@@ -1,20 +1,20 @@
 package org.apereo.cas.impl.calcs;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
-import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.support.events.dao.CasEvent;
+import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 
@@ -27,15 +27,15 @@ import java.util.Collection;
 @Slf4j
 public abstract class BaseAuthenticationRequestRiskCalculator implements AuthenticationRequestRiskCalculator {
 
-    
+
     /**
      * CAS event repository instance.
      */
     protected CasEventRepository casEventRepository;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     public BaseAuthenticationRequestRiskCalculator(final CasEventRepository casEventRepository) {
         this.casEventRepository = casEventRepository;
     }
@@ -53,7 +53,7 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
         LOGGER.debug("Calculated authentication risk score by [{}] is [{}]", getClass().getSimpleName(), score);
         return score;
     }
-    
+
     /**
      * Calculate score authentication risk score.
      *
@@ -64,9 +64,9 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
      * @return the authentication risk score
      */
     protected BigDecimal calculateScore(final HttpServletRequest request,
-                                    final Authentication authentication,
-                                    final RegisteredService service,
-                                    final Collection<CasEvent> events) {
+                                        final Authentication authentication,
+                                        final RegisteredService service,
+                                        final Collection<CasEvent> events) {
         return HIGHEST_RISK_SCORE;
     }
 
@@ -79,9 +79,9 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
     protected Collection<CasEvent> getCasTicketGrantingTicketCreatedEventsFor(final String principal) {
         val type = CasTicketGrantingTicketCreatedEvent.class.getName();
         LOGGER.debug("Retrieving events of type [{}] for [{}]", type, principal);
-        
+
         val date = ZonedDateTime.now()
-                .minusDays(casProperties.getAuthn().getAdaptive().getRisk().getDaysInRecentHistory());
+            .minusDays(casProperties.getAuthn().getAdaptive().getRisk().getDaysInRecentHistory());
         return casEventRepository.getEventsOfTypeForPrincipal(type, principal, date);
     }
 
@@ -93,7 +93,8 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
      * @return the final averaged score
      */
     protected BigDecimal getFinalAveragedScore(final long eventCount, final long total) {
-        val score = BigDecimal.valueOf(eventCount).divide(BigDecimal.valueOf(total), 2, BigDecimal.ROUND_HALF_UP);
+        val score = BigDecimal.valueOf(eventCount)
+            .divide(BigDecimal.valueOf(total), 2, RoundingMode.HALF_UP);
         return HIGHEST_RISK_SCORE.subtract(score);
     }
 }

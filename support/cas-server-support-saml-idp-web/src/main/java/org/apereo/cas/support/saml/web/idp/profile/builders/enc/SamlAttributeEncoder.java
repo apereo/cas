@@ -22,7 +22,7 @@ public class SamlAttributeEncoder implements ProtocolAttributeEncoder {
 
     @Override
     public Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final RegisteredService service) {
-        val finalAttributes = Maps.newHashMapWithExpectedSize(attributes.size());
+        val finalAttributes = Maps.<String, Object>newHashMapWithExpectedSize(attributes.size());
 
         attributes.forEach((k, v) -> {
             val attributeName = EncodingUtils.hexDecode(k);

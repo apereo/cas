@@ -141,7 +141,7 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     @RefreshScope
     public AuthenticationRiskEvaluator authenticationRiskEvaluator() {
         val risk = casProperties.getAuthn().getAdaptive().getRisk();
-        val calculators = new HashSet<>();
+        val calculators = new HashSet<AuthenticationRequestRiskCalculator>();
 
         if (risk.getIp().isEnabled()) {
             calculators.add(ipAddressAuthenticationRequestRiskCalculator());

@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**

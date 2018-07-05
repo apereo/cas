@@ -12,6 +12,8 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
 import org.springframework.core.io.Resource;
 
+import java.util.HashMap;
+
 /**
  * This is {@link GroovyScriptInterruptInquirer}.
  *

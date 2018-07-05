@@ -235,7 +235,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                            final RequestContext context,
                                                            final MultifactorAuthenticationProvider provider,
                                                            final Predicate<String> predicate) {
-        val events = new HashSet<>();
+        val events = new HashSet<Event>();
         if (attributeValue instanceof Collection) {
             LOGGER.debug("Attribute value [{}] is a multi-valued attribute", attributeValue);
             val values = (Collection<String>) attributeValue;
@@ -244,10 +244,8 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                     if (predicate.test(value)) {
                         LOGGER.debug("Attribute value predicate [{}] has successfully matched the [{}]. "
                             + "Attempting to verify multifactor authentication for [{}]", predicate, value, service);
-
                         if (provider.isAvailable(service)) {
                             LOGGER.debug("Provider [{}] is successfully verified", provider);
-
                             val id = provider.getId();
                             val event = validateEventIdForMatchingTransitionInContext(id, context,
                                 buildEventAttributeMap(principal, service, provider));
@@ -260,7 +258,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                     LOGGER.debug("Ignoring [{}] since no matching transition could be found", value);
                 }
             });
-            return events;
+            return (Set) events;
         }
         LOGGER.debug("Attribute value [{}] of type [{}] is not a multi-valued attribute", attributeValue, attributeValue.getClass());
         return null;
