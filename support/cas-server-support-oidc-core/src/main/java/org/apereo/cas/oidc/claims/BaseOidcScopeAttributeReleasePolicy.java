@@ -56,7 +56,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         }
         val resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attributes);
-        val attributesToRelease = Maps.newHashMapWithExpectedSize(attributes.size());
+        val attributesToRelease = Maps.<String, Object>newHashMapWithExpectedSize(attributes.size());
         LOGGER.debug("Attempting to map and filter claims based on resolved attributes [{}]", resolvedAttributes);
         val properties = applicationContext.getBean(CasConfigurationProperties.class);
         val supportedClaims = properties.getAuthn().getOidc().getClaims();

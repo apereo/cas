@@ -1,7 +1,5 @@
 package org.apereo.cas.mongo;
 
-import lombok.val;
-
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
@@ -10,6 +8,7 @@ import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -29,9 +28,9 @@ import org.springframework.data.mongodb.core.MongoClientOptionsFactoryBean;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
-import org.springframework.data.mongodb.core.convert.CustomConversions;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.util.ClassUtils;
@@ -54,11 +53,9 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class MongoDbConnectionFactory {
-
-    private static final int TIMEOUT = 5000;
     private static final int DEFAULT_PORT = 27017;
 
-    private final CustomConversions customConversions;
+    private final MongoCustomConversions customConversions;
 
     public MongoDbConnectionFactory() {
         this(new ArrayList<>());
@@ -89,7 +86,7 @@ public class MongoDbConnectionFactory {
         converters.addAll(JodaTimeConverters.getConvertersToRegister());
         converters.addAll(Jsr310Converters.getConvertersToRegister());
         
-        this.customConversions = new CustomConversions(converters);
+        this.customConversions = new MongoCustomConversions(converters);
     }
 
     /**
@@ -159,7 +156,7 @@ public class MongoDbConnectionFactory {
     }
 
     private Set<Class<?>> getInitialEntitySet() {
-        val initialEntitySet = new HashSet<>();
+        val initialEntitySet = new HashSet<Class<?>>();
         for (val basePackage : getMappingBasePackages()) {
             initialEntitySet.addAll(scanForEntities(basePackage));
         }

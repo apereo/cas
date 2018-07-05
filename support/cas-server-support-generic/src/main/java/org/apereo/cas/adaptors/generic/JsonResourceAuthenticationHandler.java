@@ -1,11 +1,10 @@
 package org.apereo.cas.adaptors.generic;
 
-import lombok.val;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.DefaultMessageDescriptor;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.MessageDescriptor;
@@ -38,8 +37,6 @@ import java.util.Map;
  */
 @Slf4j
 public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-
-
     private final ObjectMapper mapper;
     private final Resource resource;
 
@@ -57,15 +54,7 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                                         final String originalPassword)
         throws GeneralSecurityException, PreventedException {
-        final Map<String, CasUserAccount> map;
-        try {
-            map = mapper.readValue(resource.getInputStream(),
-                new TypeReference<Map<String, CasUserAccount>>() {
-                });
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new PreventedException(e);
-        }
+        val map = readAccountsFromResource();
         val username = credential.getUsername();
         val password = credential.getPassword();
         if (!map.containsKey(username)) {
@@ -102,7 +91,7 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
                         warnings.add(new DefaultMessageDescriptor(
                             "password.expiration.loginsRemaining",
                             "You have {0} logins remaining before you MUST change your password.",
-                            new Serializable[] {daysRemaining}));
+                            new Serializable[]{daysRemaining}));
                     }
                 }
             }
@@ -111,5 +100,16 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
         }
 
         throw new FailedLoginException();
+    }
+
+    private Map<String, CasUserAccount> readAccountsFromResource() throws PreventedException {
+        try {
+            return mapper.readValue(resource.getInputStream(),
+                new TypeReference<Map<String, CasUserAccount>>() {
+                });
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new PreventedException(e);
+        }
     }
 }

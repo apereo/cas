@@ -33,6 +33,7 @@ import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.CookieUtils;
 import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,6 +42,7 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -185,7 +187,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                                          final OAuthRegisteredService registeredService,
                                                          final J2EContext context,
                                                          final String clientId) {
-        val profile = manager.get(true);
+        val profile = (Optional<CommonProfile>) manager.get(true);
         if (profile == null || !profile.isPresent()) {
             LOGGER.error("Unexpected null profile from profile manager. Request is not fully authenticated.");
             return OAuth20Utils.produceUnauthorizedErrorView();
@@ -198,7 +200,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         LOGGER.debug("Created OAuth authentication [{}] for service [{}]", service, authentication);
 
         try {
-            val audit = AuditableContext.builder().service(service)
+            val audit = AuditableContext.builder()
+                .service(service)
                 .authentication(authentication)
                 .registeredService(registeredService)
                 .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)

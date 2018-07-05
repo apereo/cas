@@ -1,8 +1,7 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -37,7 +36,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -61,12 +59,11 @@ public class JpaTicketRegistryConfiguration {
             new Reflections(new ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE))
                 .setScanners(new SubTypesScanner(false)));
-        val subTypes = (Set) reflections.getSubTypesOf(AbstractTicket.class);
-        val packages = subTypes
+        val subTypes = reflections.getSubTypesOf(AbstractTicket.class);
+        return subTypes
             .stream()
             .map(t -> t.getPackage().getName())
-            .collect(Collectors.toList());
-        return packages;
+            .collect(Collectors.<String>toList());
     }
 
     @Lazy

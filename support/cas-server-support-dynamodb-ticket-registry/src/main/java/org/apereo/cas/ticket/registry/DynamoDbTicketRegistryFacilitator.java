@@ -137,7 +137,7 @@ public class DynamoDbTicketRegistryFacilitator {
      * @return the all
      */
     public Collection<Ticket> getAll() {
-        val tickets = new ArrayList<>();
+        val tickets = new ArrayList<Ticket>();
         val metadata = this.ticketCatalog.findAll();
         metadata.forEach(r -> {
             val scan = new ScanRequest(r.getProperties().getStorageName());

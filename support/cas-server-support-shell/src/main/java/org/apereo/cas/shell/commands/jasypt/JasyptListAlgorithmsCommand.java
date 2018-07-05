@@ -46,7 +46,7 @@ public class JasyptListAlgorithmsCommand {
         val pbeAlgos = AlgorithmRegistry.getAllPBEAlgorithms();
         LOGGER.info("==== JASYPT Password Based Encryption Algorithms ====\n");
         for (val pbeAlgo: pbeAlgos) {
-            LOGGER.info(pbeAlgo);
+            LOGGER.info(pbeAlgo.toString());
         }
     }
 }

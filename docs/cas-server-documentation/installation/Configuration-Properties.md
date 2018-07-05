@@ -1319,7 +1319,6 @@ To learn more about this topic, [please review this guide](Cassandra-Authenticat
 # cas.authn.cassandra.keyspace=
 # cas.authn.cassandra.contactPoints=localhost1,localhost2
 # cas.authn.cassandra.localDc=
-# cas.authn.cassandra.shuffleReplicas=true
 # cas.authn.cassandra.retryPolicy=DEFAULT_RETRY_POLICY|DOWNGRADING_CONSISTENCY_RETRY_POLICY|FALLTHROUGH_RETRY_POLICY
 # cas.authn.cassandra.compression=LZ4|SNAPPY|NONE
 # cas.authn.cassandra.consistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE

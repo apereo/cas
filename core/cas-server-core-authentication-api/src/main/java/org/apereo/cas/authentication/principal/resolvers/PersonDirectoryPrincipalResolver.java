@@ -1,11 +1,10 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
-import lombok.val;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -163,13 +162,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      */
     protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
         val personAttributes = this.attributeRepository.getPerson(principalId);
-        final Map<String, List<Object>> attributes;
-        if (personAttributes == null) {
-            attributes = null;
-        } else {
-            attributes = personAttributes.getAttributes();
-        }
-        return attributes;
+        return personAttributes == null
+            ? null
+            : personAttributes.getAttributes();
     }
 
     /**
