@@ -84,7 +84,7 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
 
     @Override
     public Collection<MultifactorAuthenticationProvider> flattenProviders(final Collection<? extends MultifactorAuthenticationProvider> providers) {
-        val flattenedProviders = new HashSet<>();
+        val flattenedProviders = new HashSet<MultifactorAuthenticationProvider>();
         providers.forEach(p -> {
             if (p instanceof VariegatedMultifactorAuthenticationProvider) {
                 flattenedProviders.addAll(VariegatedMultifactorAuthenticationProvider.class.cast(p).getProviders());
@@ -92,8 +92,7 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
                 flattenedProviders.add(p);
             }
         });
-
-        return flattenedProviders;
+        return (Collection) flattenedProviders;
     }
 
     /**

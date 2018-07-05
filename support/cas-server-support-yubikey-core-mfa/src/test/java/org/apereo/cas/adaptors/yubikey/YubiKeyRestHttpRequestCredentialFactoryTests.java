@@ -17,7 +17,7 @@ public class YubiKeyRestHttpRequestCredentialFactoryTests {
     @Test
     public void verifyAction() {
         val f = new YubiKeyRestHttpRequestCredentialFactory();
-        val body = new LinkedMultiValueMap<>();
+        val body = new LinkedMultiValueMap<String, String>();
         body.add(YubiKeyRestHttpRequestCredentialFactory.PARAMETER_NAME_YUBIKEY_OTP, "token");
         assertFalse(f.fromRequestBody(body).isEmpty());
     }

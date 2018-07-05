@@ -47,7 +47,7 @@ public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetaD
     /** The Constant AUTHN_METHOD_UNSPECIFIED. */
     public static final String AUTHN_METHOD_UNSPECIFIED = "urn:oasis:names:tc:SAML:1.0:am:unspecified";
 
-    private val authenticationMethods = new HashMap<String, String>();
+    private final Map<String, String> authenticationMethods = new HashMap<>();
 
     /**
      * Instantiates a new SAML authentication meta data populator.

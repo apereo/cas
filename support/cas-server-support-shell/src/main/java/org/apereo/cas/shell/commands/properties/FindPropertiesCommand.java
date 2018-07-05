@@ -14,6 +14,7 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;

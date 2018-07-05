@@ -13,6 +13,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
 
+import java.util.HashMap;
 import java.util.Map;
 import lombok.Setter;
 

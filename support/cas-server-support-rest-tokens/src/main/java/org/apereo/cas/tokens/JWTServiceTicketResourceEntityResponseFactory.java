@@ -1,8 +1,7 @@
 package org.apereo.cas.tokens;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -48,14 +47,7 @@ public class JWTServiceTicketResourceEntityResponseFactory extends CasProtocolSe
 
         LOGGER.debug("Located registered service [{}] for [{}]", registeredService, service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-        var tokenAsResponse = RegisteredServiceProperties.TOKEN_AS_RESPONSE.isAssignedTo(registeredService, BooleanUtils::toBoolean);
-        if (tokenAsResponse) {
-            LOGGER.warn("Service [{}] is configured to generate JWTs as tickets using a deprecated property [{}]. Consider switching to [{}] instead.",
-                service, RegisteredServiceProperties.TOKEN_AS_RESPONSE.getPropertyName(),
-                RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET);
-        } else {
-            tokenAsResponse = RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService, BooleanUtils::toBoolean);
-        }
+        val tokenAsResponse = RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService, BooleanUtils::toBoolean);
 
         if (!tokenAsResponse) {
             LOGGER.debug("Service [{}] does not require JWTs as tickets, given the properties assigned are [{}]", service, registeredService.getProperties());

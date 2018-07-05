@@ -11,6 +11,7 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**

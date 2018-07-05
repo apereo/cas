@@ -14,6 +14,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**

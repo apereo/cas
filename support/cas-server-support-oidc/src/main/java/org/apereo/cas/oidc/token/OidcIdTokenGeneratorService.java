@@ -24,6 +24,7 @@ import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.UserProfile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 
@@ -86,7 +88,7 @@ public class OidcIdTokenGeneratorService {
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
         val context = Pac4jUtils.getPac4jJ2EContext(request, response);
         val manager = Pac4jUtils.getPac4jProfileManager(request, response);
-        val profile = manager.get(true);
+        val profile = (Optional<CommonProfile>) manager.get(true);
 
         if (!profile.isPresent()) {
             throw new IllegalArgumentException("Unable to determine the user profile from the context");

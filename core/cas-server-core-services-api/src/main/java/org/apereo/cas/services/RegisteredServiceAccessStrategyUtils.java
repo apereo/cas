@@ -1,9 +1,8 @@
 package org.apereo.cas.services;
 
-import lombok.val;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -124,12 +123,10 @@ public class RegisteredServiceAccessStrategyUtils {
         ensureServiceAccessIsAllowed(service, registeredService);
 
         val principal = authentication.getPrincipal();
-        final Map<String, Object> principalAttrs;
-        if (retrievePrincipalAttributesFromReleasePolicy && registeredService != null && registeredService.getAttributeReleasePolicy() != null) {
-            principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
-        } else {
-            principalAttrs = authentication.getPrincipal().getAttributes();
-        }
+        val principalAttrs =
+            retrievePrincipalAttributesFromReleasePolicy && registeredService != null && registeredService.getAttributeReleasePolicy() != null
+                ? registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService)
+                : authentication.getPrincipal().getAttributes();
         val attributes = new HashMap<String, Object>(principalAttrs);
         attributes.putAll(authentication.getAttributes());
         ensurePrincipalAccessIsAllowedForService(service, registeredService, principal.getId(), attributes);
@@ -201,7 +198,7 @@ public class RegisteredServiceAccessStrategyUtils {
                                                        final TicketGrantingTicket ticketGrantingTicket) {
         ensureServiceSsoAccessIsAllowed(registeredService, service, ticketGrantingTicket, false);
     }
-    
+
     /**
      * Ensure service sso access is allowed.
      *
@@ -222,7 +219,7 @@ public class RegisteredServiceAccessStrategyUtils {
             }
             if (ticketGrantingTicket.getProxiedBy() == null && ticketGrantingTicket.getCountOfUses() > 0 && !credentialsProvided) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO. The ticket-granting ticket [{}] is not proxied and it's been used at least once. "
-                    +"The authentication request must provide credentials before access can be granted", ticketGrantingTicket.getId(), service.getId());
+                    + "The authentication request must provide credentials before access can be granted", ticketGrantingTicket.getId(), service.getId());
                 throw new UnauthorizedSsoServiceException();
             }
         }

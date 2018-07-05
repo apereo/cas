@@ -1,7 +1,5 @@
 package org.apereo.cas.cassandra;
 
-import lombok.val;
-
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.HostDistance;
@@ -15,6 +13,7 @@ import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
 import com.datastax.driver.core.policies.LoggingRetryPolicy;
 import com.datastax.driver.core.policies.TokenAwarePolicy;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.BaseCassandraProperties;
 import org.springframework.beans.factory.DisposableBean;
@@ -49,7 +48,8 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
             dcPolicyBuilder.withLocalDc(cassandra.getLocalDc());
         }
 
-        val loadBalancingPolicy = new TokenAwarePolicy(dcPolicyBuilder.build(), cassandra.isShuffleReplicas());
+        val replica = TokenAwarePolicy.ReplicaOrdering.valueOf(cassandra.getReplicaOrdering().toUpperCase());
+        val loadBalancingPolicy = new TokenAwarePolicy(dcPolicyBuilder.build(), replica);
 
         val socketOptions = new SocketOptions()
             .setConnectTimeoutMillis(cassandra.getConnectTimeoutMillis())

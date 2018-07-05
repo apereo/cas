@@ -1,6 +1,7 @@
 package org.apereo.cas.discovery;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.Map;
 
 /**

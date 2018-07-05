@@ -1,8 +1,7 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.discovery.CasServerDiscoveryProfileEndpoint;
@@ -63,19 +62,18 @@ public class CasDiscoveryProfileConfiguration {
 
     @Bean
     public Set<String> availableAttributes() {
-        val attributes = new LinkedHashSet<>(0);
+        val attributes = new LinkedHashSet<String>(0);
         val possibleUserAttributeNames = attributeRepository.getPossibleUserAttributeNames();
         if (possibleUserAttributeNames != null) {
             attributes.addAll(possibleUserAttributeNames);
         }
-        
+
         val ldapProps = casProperties.getAuthn().getLdap();
         if (ldapProps != null) {
-            ldapProps.stream()
-                .forEach(ldap -> {
-                    attributes.addAll(transformAttributes(ldap.getPrincipalAttributeList()));
-                    attributes.addAll(transformAttributes(ldap.getAdditionalAttributes()));
-                });
+            ldapProps.forEach(ldap -> {
+                attributes.addAll(transformAttributes(ldap.getPrincipalAttributeList()));
+                attributes.addAll(transformAttributes(ldap.getAdditionalAttributes()));
+            });
         }
         val jdbcProps = casProperties.getAuthn().getJdbc();
         if (jdbcProps != null) {
@@ -86,7 +84,7 @@ public class CasDiscoveryProfileConfiguration {
     }
 
     private Set<String> transformAttributes(final List<String> attributes) {
-        val attributeSet = new LinkedHashSet<>();
+        val attributeSet = new LinkedHashSet<String>();
         CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributes)
             .values()
             .stream()

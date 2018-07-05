@@ -35,7 +35,7 @@ public class AttributeConsentReportEndpoint {
      */
     @ReadOperation
     public Collection<Map<String, Object>> consentDecisions(@Selector final String principal) {
-        val result = new HashSet<>();
+        val result = new HashSet<Map<String, Object>>();
         LOGGER.debug("Fetching consent decisions for principal [{}]", principal);
         val consentDecisions = this.consentRepository.findConsentDecisions(principal);
         LOGGER.debug("Resolved consent decisions for principal [{}]: {}", principal, consentDecisions);

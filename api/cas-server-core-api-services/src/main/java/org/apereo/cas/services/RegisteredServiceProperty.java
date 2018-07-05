@@ -36,13 +36,6 @@ public interface RegisteredServiceProperty extends Serializable {
         WSFED_RELYING_PARTY_ID("wsfed.relyingPartyIdentifier", StringUtils.EMPTY),
         /**
          * Produce a JWT as a response when generating service tickets.
-         *
-         * @deprecated Use {@link #TOKEN_AS_SERVICE_TICKET} instead.
-         **/
-        @Deprecated
-        TOKEN_AS_RESPONSE("jwtAsResponse", "true"),
-        /**
-         * Produce a JWT as a response when generating service tickets.
          **/
         TOKEN_AS_SERVICE_TICKET("jwtAsServiceTicket", "false"),
         /**

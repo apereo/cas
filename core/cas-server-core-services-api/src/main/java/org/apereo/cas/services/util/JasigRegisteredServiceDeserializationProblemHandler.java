@@ -44,7 +44,7 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
                     + "the definition SHOULD manually be upgraded to the new supported syntax",
                 subTypeId, newTypeName);
             val newType = ClassUtils.getClass(newTypeName);
-            return SimpleType.construct(newType);
+            return SimpleType.constructUnsafe(newType);
         }
         return null;
     }

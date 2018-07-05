@@ -31,7 +31,7 @@ public class DelegatedSessionCookieManager {
      * @param webContext the web context
      */
     public void store(final J2EContext webContext) {
-        val session = Maps.newLinkedHashMap();
+        val session = Maps.<String, Object>newLinkedHashMap();
         val webSession = (HttpSession) webContext.getSessionStore().getTrackableSession(webContext);
         val names = webSession.getAttributeNames();
         while (names.hasMoreElements()) {

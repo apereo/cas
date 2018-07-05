@@ -97,7 +97,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
      * @return the sso sessions
      */
     private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionReportOptions option) {
-        val activeSessions = new ArrayList<>();
+        val activeSessions = new ArrayList<Map<String, Object>>();
         val dateFormat = new ISOStandardDateFormat();
         getNonExpiredTicketGrantingTickets().stream().map(TicketGrantingTicket.class::cast)
             .filter(tgt -> !(option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null))

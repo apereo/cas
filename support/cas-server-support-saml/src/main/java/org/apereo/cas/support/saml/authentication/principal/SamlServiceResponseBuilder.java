@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.authentication.principal;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
 import org.apereo.cas.authentication.principal.Response;
