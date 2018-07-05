@@ -111,7 +111,7 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
     public void verifySerializeARegisteredServiceRegexAttributeFilterToJson() throws IOException {
         this.filter.setPatterns(Collections.singletonMap("memberOf", "^\\w{3}$"));
         MAPPER.writeValue(JSON_FILE, this.filter);
-        final RegisteredServiceAttributeFilter filterRead = MAPPER.readValue(JSON_FILE, RegisteredServiceMappedRegexAttributeFilter.class);
+        val filterRead = MAPPER.readValue(JSON_FILE, RegisteredServiceMappedRegexAttributeFilter.class);
         assertEquals(filter, filterRead);
     }
 }

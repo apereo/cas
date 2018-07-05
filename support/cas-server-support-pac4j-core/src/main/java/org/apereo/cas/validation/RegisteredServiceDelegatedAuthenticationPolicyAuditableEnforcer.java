@@ -35,7 +35,7 @@ public class RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer ext
                 if (!policy.isProviderAllowed(clientName, registeredService)) {
                     LOGGER.debug("Delegated authentication policy for [{}] does not allow for using client [{}]", registeredService,
                             clientName);
-                    final RuntimeException e = new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+                    val e = new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
                     result.setException(e);
                 }
             }

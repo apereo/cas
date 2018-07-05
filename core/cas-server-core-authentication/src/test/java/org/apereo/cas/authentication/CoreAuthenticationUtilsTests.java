@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,7 +26,7 @@ public class CoreAuthenticationUtilsTests {
 
     @Test
     public void verifyMapTransform() {
-        final Map results = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMap(CollectionUtils.wrapList("name", "family"));
+        val results = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMap(CollectionUtils.wrapList("name", "family"));
         assertEquals(2, results.size());
     }
 

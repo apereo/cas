@@ -1,8 +1,7 @@
 package org.apereo.cas.support.wsfederation.config.support.authentication;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
@@ -10,6 +9,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegatedCookieProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
@@ -45,7 +45,7 @@ import java.util.HashSet;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class WsFedAuthenticationEventExecutionPlanConfiguration {
-    
+
     @Autowired
     @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
@@ -88,17 +88,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         config.setName(wsfed.getName());
 
         val cookie = wsfed.getCookie();
-        val crypto = cookie.getCrypto();
-        final CipherExecutor cipher;
-        if (crypto.isEnabled()) {
-            cipher = new WsFederationCookieCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey(), crypto.getAlg());
-        } else {
-            LOGGER.info("WsFederation delegated authentication cookie encryption/signing is turned off and "
-                + "MAY NOT be safe in a production environment. "
-                + "Consider using other choices to handle encryption, signing and verification of "
-                + "delegated authentication cookie.");
-            cipher = CipherExecutor.noOp();
-        }
+        val cipher = getCipherExecutor(cookie);
         val cookieGen = new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher),
             cookie.getName(), cookie.getPath(), cookie.getMaxAge(),
             cookie.isSecure(), cookie.getDomain(), cookie.isHttpOnly());
@@ -106,6 +96,18 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
 
         config.initialize();
         return config;
+    }
+
+    private CipherExecutor getCipherExecutor(final WsFederationDelegatedCookieProperties cookie) {
+        val crypto = cookie.getCrypto();
+        if (crypto.isEnabled()) {
+            return new WsFederationCookieCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey(), crypto.getAlg());
+        }
+        LOGGER.info("WsFederation delegated authentication cookie encryption/signing is turned off and "
+            + "MAY NOT be safe in a production environment. "
+            + "Consider using other choices to handle encryption, signing and verification of "
+            + "delegated authentication cookie.");
+        return CipherExecutor.noOp();
     }
 
     @ConditionalOnMissingBean(name = "wsFederationConfigurations")
@@ -141,7 +143,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                     plan.registerAuthenticationHandler(handler);
                 } else {
                     val configurations = wsFederationConfigurations();
-                    final var cfg = configurations.stream()
+                    val cfg = configurations.stream()
                         .filter(c -> c.getIdentityProviderUrl().equals(wsfed.getIdentityProviderUrl()))
                         .findFirst()
                         .orElseThrow(() -> new RuntimeException("Unable to find configuration for identity provider " + wsfed.getIdentityProviderUrl()));

@@ -12,8 +12,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Set;
-
 /**
  * This is {@link AbstractPrincipalAttributeAcceptableUsagePolicyRepository}.
  *
@@ -62,7 +60,7 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
         LOGGER.debug("Principal attributes found for [{}] are [{}]", principal.getId(), attributes);
 
         if (attributes != null && attributes.containsKey(this.aupAttributeName)) {
-            final Set value = CollectionUtils.toCollection(attributes.get(this.aupAttributeName));
+            val value = CollectionUtils.toCollection(attributes.get(this.aupAttributeName));
             LOGGER.debug("Evaluating attribute value [{}] found for [{}]", value, this.aupAttributeName);
             return value.stream().anyMatch(v -> v.toString().equalsIgnoreCase(Boolean.TRUE.toString()));
         }

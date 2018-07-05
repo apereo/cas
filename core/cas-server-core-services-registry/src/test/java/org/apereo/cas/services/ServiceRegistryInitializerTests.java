@@ -19,19 +19,19 @@ public class ServiceRegistryInitializerTests {
 
     @Test
     public void ensureInitFromJsonDoesNotCreateDuplicates() {
-        var initialService = newService();
+        val initialService = newService();
 
         val servicesManager = mock(ServicesManager.class);
         val jsonServiceRegistry = mock(ServiceRegistry.class);
         when(jsonServiceRegistry.load()).thenReturn(Arrays.asList(initialService));
 
-        final ServiceRegistry serviceRegistry = new InMemoryServiceRegistry();
+        val serviceRegistry = new InMemoryServiceRegistry();
         val serviceRegistryInitializer = new ServiceRegistryInitializer(jsonServiceRegistry, serviceRegistry, servicesManager);
         serviceRegistryInitializer.initServiceRegistryIfNecessary();
         assertThat(serviceRegistry.size()).isEqualTo(1);
 
-        initialService = newService();
-        when(jsonServiceRegistry.load()).thenReturn(Arrays.asList(initialService));
+        val initialService2 = newService();
+        when(jsonServiceRegistry.load()).thenReturn(Arrays.asList(initialService2));
 
         serviceRegistryInitializer.initServiceRegistryIfNecessary();
         assertThat(serviceRegistry.size()).isEqualTo(1);

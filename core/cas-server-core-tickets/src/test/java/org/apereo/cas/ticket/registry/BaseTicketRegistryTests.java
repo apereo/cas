@@ -1,10 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
 import lombok.val;
-
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.AbstractTicket;
@@ -17,8 +15,8 @@ import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.junit.Assume;
-import org.junit.Test;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.test.util.AopTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -259,7 +257,7 @@ public abstract class BaseTicketRegistryTests {
         final Collection<Ticket> tickets = new ArrayList<>();
 
         for (var i = 0; i < TICKETS_IN_REGISTRY; i++) {
-            final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + i,
+            val ticketGrantingTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + i,
                 CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
             val st = ticketGrantingTicket.grantServiceTicket("ST" + i,
                 RegisteredServiceTestUtils.getService(),
@@ -293,7 +291,7 @@ public abstract class BaseTicketRegistryTests {
                 new NeverExpiresExpirationPolicy()));
             val tgt = this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX + '1', TicketGrantingTicket.class);
 
-            final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
+            val service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
             val st1 = tgt.grantServiceTicket(
                 "ST11", service, new NeverExpiresExpirationPolicy(), false, false);
@@ -342,7 +340,7 @@ public abstract class BaseTicketRegistryTests {
         val authn = CoreAuthenticationTestUtils.getAuthentication();
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TGT_ID, authn, new NeverExpiresExpirationPolicy()));
         val tgt = this.ticketRegistry.getTicket(TGT_ID, TicketGrantingTicket.class);
-        final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
+        val service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
         val ticket = (AbstractTicket) tgt.grantServiceTicket(ST_1_ID, service, new NeverExpiresExpirationPolicy(), false, true);
         ticket.setExpirationPolicy(new AlwaysExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(ticket);
@@ -357,7 +355,7 @@ public abstract class BaseTicketRegistryTests {
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TGT_ID, a, new NeverExpiresExpirationPolicy()));
         val tgt = this.ticketRegistry.getTicket(TGT_ID, TicketGrantingTicket.class);
 
-        final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
+        val service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
         val st1 = tgt.grantServiceTicket(ST_1_ID, service, new NeverExpiresExpirationPolicy(), false, true);
         this.ticketRegistry.addTicket(st1);
@@ -389,7 +387,7 @@ public abstract class BaseTicketRegistryTests {
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TGT_ID, a, new NeverExpiresExpirationPolicy()));
         val tgt = this.ticketRegistry.getTicket(TGT_ID, TicketGrantingTicket.class);
 
-        final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
+        val service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
         IntStream.range(1, 5).forEach(i -> {
             val st = tgt.grantServiceTicket(ST_1_ID + '-' + i, service,
                 new NeverExpiresExpirationPolicy(), false, true);

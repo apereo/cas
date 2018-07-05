@@ -317,7 +317,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             throw new AuthenticationException("Resolved credentials for this transaction are empty");
         }
 
-        final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
+        val builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
         credentials.forEach(cred -> builder.addCredential(new BasicCredentialMetaData(cred)));
 
         @NonNull val handlerSet = getAuthenticationHandlersForThisTransaction(transaction);

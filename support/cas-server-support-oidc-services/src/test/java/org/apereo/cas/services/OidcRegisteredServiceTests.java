@@ -71,7 +71,7 @@ public class OidcRegisteredServiceTests {
         serviceWritten.setBypassApprovalPrompt(true);
         serviceWritten.setUsernameAttributeProvider(new PairwiseOidcRegisteredServiceUsernameAttributeProvider());
         MAPPER.writeValue(JSON_FILE, serviceWritten);
-        final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, OidcRegisteredService.class);
+        val serviceRead = MAPPER.readValue(JSON_FILE, OidcRegisteredService.class);
         assertEquals(serviceWritten, serviceRead);
     }
 }

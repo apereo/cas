@@ -1,10 +1,8 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
@@ -60,7 +58,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             throw new InvalidTicketException(getOAuthParameter(request));
         }
         
-        final Service service = this.webApplicationServiceServiceFactory.createService(redirectUri);
+        val service = this.webApplicationServiceServiceFactory.createService(redirectUri);
         scopes.addAll(token.getScopes());
 
         return new AccessTokenRequestDataHolder(service, token.getAuthentication(), token,

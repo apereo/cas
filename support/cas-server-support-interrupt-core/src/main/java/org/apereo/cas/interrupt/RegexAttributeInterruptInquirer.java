@@ -2,13 +2,13 @@ package org.apereo.cas.interrupt;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -36,7 +36,7 @@ public class RegexAttributeInterruptInquirer extends BaseInterruptInquirer {
             .stream()
             .filter(entry -> entry.getKey().matches(this.interruptAttributeName))
             .filter(entry -> {
-                final Collection values = CollectionUtils.toCollection(entry.getValue());
+                val values = CollectionUtils.toCollection(entry.getValue());
                 LOGGER.debug("Located attribute [{}] with values [{}]. Checking for match against [{}]",
                     this.interruptAttributeName, values, this.interruptAttributeValue);
                 return values.stream().anyMatch(value -> value.toString().matches(this.interruptAttributeValue));

@@ -52,8 +52,8 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
     private PrivateKey readPemPrivateKey() {
         LOGGER.debug("Attempting to read as PEM [{}]", this.location);
         try (Reader in = new InputStreamReader(this.location.getInputStream(), StandardCharsets.UTF_8);
-             var br = new BufferedReader(in);
-             var pp = new PEMParser(br)) {
+             val br = new BufferedReader(in);
+             val pp = new PEMParser(br)) {
             val pemKeyPair = (PEMKeyPair) pp.readObject();
             val kp = new JcaPEMKeyConverter().getKeyPair(pemKeyPair);
             return kp.getPrivate();
@@ -65,7 +65,7 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
 
     private PrivateKey readDERPrivateKey() {
         LOGGER.debug("Attempting to read key as DER [{}]", this.location);
-        try (var privKey = this.location.getInputStream()) {
+        try (val privKey = this.location.getInputStream()) {
             val bytes = new byte[(int) this.location.contentLength()];
             privKey.read(bytes);
             val privSpec = new PKCS8EncodedKeySpec(bytes);

@@ -25,8 +25,6 @@ public class RegexUtilsTests {
 
     @Test
     public void verifyNullRegex() {
-        final String nullRegex = null;
-
-        assertFalse(RegexUtils.isValidRegex(nullRegex));
+        assertFalse(RegexUtils.isValidRegex(null));
     }
 }

@@ -2,6 +2,7 @@ package org.apereo.cas.util.crypto;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.util.DateTimeUtils;
@@ -63,7 +64,7 @@ public class CertUtils {
      * @return the x 509 certificate
      */
     public static X509Certificate readCertificate(final InputStreamSource resource) {
-        try (var in = resource.getInputStream()) {
+        try (val in = resource.getInputStream()) {
             return CertUtil.readCertificate(in);
         } catch (final IOException e) {
             throw new IllegalArgumentException("Error reading certificate " + resource, e);

@@ -61,7 +61,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
 
         if (registeredService.isJsonFormat()) {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            try (var jsonGenerator = getResponseJsonGenerator(response)) {
+            try (val jsonGenerator = getResponseJsonGenerator(response)) {
                 jsonGenerator.writeStartObject();
                 generateJsonInternal(request, response, jsonGenerator, accessTokenId,
                     refreshTokenId, timeout, service, registeredService, responseType);

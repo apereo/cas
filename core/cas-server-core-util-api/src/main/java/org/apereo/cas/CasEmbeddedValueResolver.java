@@ -7,7 +7,6 @@ import org.springframework.beans.factory.config.EmbeddedValueResolver;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.convert.ConversionFailedException;
-import org.springframework.core.convert.ConversionService;
 
 import java.time.Duration;
 
@@ -40,7 +39,7 @@ public class CasEmbeddedValueResolver extends EmbeddedValueResolver {
 
     private String convertValueToDurationIfPossible(final String value) {
         try {
-            final ConversionService service = applicationContext.getEnvironment().getConversionService();
+            val service = applicationContext.getEnvironment().getConversionService();
             val dur = service.convert(value, Duration.class);
             if (dur != null) {
                 return String.valueOf(dur.toMillis());

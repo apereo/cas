@@ -78,18 +78,18 @@ public class TicketGrantingTicketExpirationPolicyTests {
     public void verifyTgtIsExpiredBySlidingWindow() {
         ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
 
-        var tt = System.currentTimeMillis() + ((SLIDING_TIMEOUT - TIMEOUT_BUFFER) * 1_000);
-        DateTimeUtils.setCurrentMillisFixed(tt);
+        val tt1 = System.currentTimeMillis() + ((SLIDING_TIMEOUT - TIMEOUT_BUFFER) * 1_000);
+        DateTimeUtils.setCurrentMillisFixed(tt1);
         assertFalse(ticketGrantingTicket.isExpired());
 
         ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
-        tt = DateTimeUtils.currentTimeMillis() + ((SLIDING_TIMEOUT - TIMEOUT_BUFFER) * 1_000);
-        DateTimeUtils.setCurrentMillisFixed(tt);
+        val tt2 = DateTimeUtils.currentTimeMillis() + ((SLIDING_TIMEOUT - TIMEOUT_BUFFER) * 1_000);
+        DateTimeUtils.setCurrentMillisFixed(tt2);
         assertFalse(ticketGrantingTicket.isExpired());
 
         ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(), expirationPolicy, false, true);
-        tt = DateTimeUtils.currentTimeMillis() + ((SLIDING_TIMEOUT + TIMEOUT_BUFFER) * 1_000);
-        DateTimeUtils.setCurrentMillisFixed(tt);
+        val tt3 = DateTimeUtils.currentTimeMillis() + ((SLIDING_TIMEOUT + TIMEOUT_BUFFER) * 1_000);
+        DateTimeUtils.setCurrentMillisFixed(tt3);
         assertTrue(ticketGrantingTicket.isExpired());
     }
 
@@ -97,7 +97,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
     public void verifySerializeAnExpirationPolicyToJson() throws IOException {
         val policy = new TicketGrantingTicketExpirationPolicy(100, 100);
         MAPPER.writeValue(JSON_FILE, policy);
-        final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, TicketGrantingTicketExpirationPolicy.class);
+        val policyRead = MAPPER.readValue(JSON_FILE, TicketGrantingTicketExpirationPolicy.class);
         assertEquals(policy, policyRead);
     }
 

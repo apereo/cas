@@ -137,10 +137,10 @@ public class WsFederationConfiguration implements Serializable {
      * @return an X509 credential
      */
     private static Credential getSigningCredential(final Resource resource) {
-        try (var inputStream = resource.getInputStream()) {
+        try (val inputStream = resource.getInputStream()) {
             val certificateFactory = CertificateFactory.getInstance("X.509");
             val certificate = (X509Certificate) certificateFactory.generateCertificate(inputStream);
-            final Credential publicCredential = new BasicX509Credential(certificate);
+            val publicCredential = new BasicX509Credential(certificate);
             LOGGER.debug("Signing credential key retrieved from [{}].", resource);
             return publicCredential;
         } catch (final Exception ex) {

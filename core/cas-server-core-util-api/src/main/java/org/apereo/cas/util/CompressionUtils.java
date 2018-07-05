@@ -104,7 +104,7 @@ public class CompressionUtils {
         val bais = new ByteArrayInputStream(bytes);
         val baos = new ByteArrayOutputStream();
         val buf = new byte[bytes.length];
-        try (var iis = new InflaterInputStream(bais)) {
+        try (val iis = new InflaterInputStream(bais)) {
             var count = iis.read(buf);
             while (count != -1) {
                 baos.write(buf, 0, count);

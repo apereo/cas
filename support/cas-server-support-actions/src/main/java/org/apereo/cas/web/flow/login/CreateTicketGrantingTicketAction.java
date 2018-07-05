@@ -1,9 +1,8 @@
 package org.apereo.cas.web.flow.login;
 
-import lombok.val;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apereo.cas.CentralAuthenticationService;
@@ -11,7 +10,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MessageDescriptor;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -47,7 +45,7 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
 
     @Override
     public Event doExecute(final RequestContext context) {
-        final Service service = WebUtils.getService(context);
+        val service = WebUtils.getService(context);
         val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(context);
 
         LOGGER.debug("Finalizing authentication transactions and issuing ticket-granting ticket");
@@ -56,7 +54,7 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
         val authentication = buildFinalAuthentication(authenticationResult);
         val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
         val tgt = createOrUpdateTicketGrantingTicket(authenticationResult, authentication, ticketGrantingTicket);
-        
+
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         WebUtils.putAuthenticationResult(authenticationResult, context);
         WebUtils.putAuthentication(tgt.getAuthentication(), context);
@@ -90,14 +88,12 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
     protected TicketGrantingTicket createOrUpdateTicketGrantingTicket(final AuthenticationResult authenticationResult,
                                                                       final Authentication authentication, final String ticketGrantingTicket) {
         try {
-            final TicketGrantingTicket tgt;
             if (shouldIssueTicketGrantingTicket(authentication, ticketGrantingTicket)) {
-                tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
-            } else {
-                tgt = this.centralAuthenticationService.getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
-                tgt.getAuthentication().update(authentication);
-                this.centralAuthenticationService.updateTicket(tgt);
+                return this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
             }
+            val tgt = this.centralAuthenticationService.getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
+            tgt.getAuthentication().update(authentication);
+            this.centralAuthenticationService.updateTicket(tgt);
             return tgt;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -106,21 +102,24 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
     }
 
     private boolean shouldIssueTicketGrantingTicket(final Authentication authentication, final String ticketGrantingTicket) {
-        var issueTicketGrantingTicket = true;
-        if (StringUtils.isNotBlank(ticketGrantingTicket)) {
-            LOGGER.debug("Located ticket-granting ticket in the context. Retrieving associated authentication");
-            val authenticationFromTgt = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
-            if (authenticationFromTgt == null) {
-                LOGGER.debug("Authentication session associated with [{}] is no longer valid", ticketGrantingTicket);
-                this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
-            } else if (areAuthenticationsEssentiallyEqual(authentication, authenticationFromTgt)) {
-                LOGGER.debug("Resulting authentication matches the authentication from context");
-                issueTicketGrantingTicket = false;
-            } else {
-                LOGGER.debug("Resulting authentication is different from the context");
-            }
+        if (StringUtils.isBlank(ticketGrantingTicket)) {
+            return true;
         }
-        return issueTicketGrantingTicket;
+        LOGGER.debug("Located ticket-granting ticket in the context. Retrieving associated authentication");
+        val authenticationFromTgt = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
+
+        if (authenticationFromTgt == null) {
+            LOGGER.debug("Authentication session associated with [{}] is no longer valid", ticketGrantingTicket);
+            this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
+            return true;
+        }
+
+        if (areAuthenticationsEssentiallyEqual(authentication, authenticationFromTgt)) {
+            LOGGER.debug("Resulting authentication matches the authentication from context");
+            return false;
+        }
+        LOGGER.debug("Resulting authentication is different from the context");
+        return true;
     }
 
     private boolean areAuthenticationsEssentiallyEqual(final Authentication auth1, final Authentication auth2) {

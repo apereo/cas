@@ -38,7 +38,7 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
     public void initialize() throws Exception {
         val resource = new ClassPathResource("jaas-system.conf");
         val fileName = new File(System.getProperty("java.io.tmpdir"), "jaas-system.conf");
-        try (var writer = Files.newBufferedWriter(fileName.toPath(), StandardCharsets.UTF_8)) {
+        try (val writer = Files.newBufferedWriter(fileName.toPath(), StandardCharsets.UTF_8)) {
             IOUtils.copy(resource.getInputStream(), writer, Charset.defaultCharset());
             writer.flush();
         }

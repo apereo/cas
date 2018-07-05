@@ -4,7 +4,6 @@ import lombok.val;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
@@ -47,7 +46,7 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyNullAttributes() {
         val resolver = new PersonDirectoryPrincipalResolver(true, CoreAuthenticationTestUtils.CONST_USERNAME);
-        final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val p = resolver.resolve(c, null);
         assertNull(p);
     }
@@ -56,7 +55,7 @@ public class PersonDirectoryPrincipalResolverTests {
     public void verifyNoAttributesWithPrincipal() {
         val resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository(),
                 CoreAuthenticationTestUtils.CONST_USERNAME);
-        final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val p = resolver.resolve(c, null);
         assertNotNull(p);
     }
@@ -64,7 +63,7 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyAttributesWithPrincipal() {
         val resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository(), "cn");
-        final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val p = resolver.resolve(c, null);
         assertNotNull(p);
         assertNotEquals(p.getId(), CoreAuthenticationTestUtils.CONST_USERNAME);

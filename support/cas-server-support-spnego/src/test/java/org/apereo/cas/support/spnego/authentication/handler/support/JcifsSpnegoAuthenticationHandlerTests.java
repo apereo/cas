@@ -4,10 +4,8 @@ import lombok.val;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.MockJcifsAuthentication;
 import org.apereo.cas.support.spnego.MockUnsuccessfulJcifsAuthentication;
@@ -32,7 +30,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
     @Test
     public void verifySuccessfulAuthenticationWithDomainName() throws Exception {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
-        final AuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null, new MockJcifsAuthentication(), true, true);
+        val authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null, new MockJcifsAuthentication(), true, true);
         assertNotNull(authenticationHandler.authenticate(credentials));
         assertEquals("test", credentials.getPrincipal().getId());
         assertNotNull(credentials.getNextToken());
@@ -41,7 +39,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
     @Test
     public void verifySuccessfulAuthenticationWithoutDomainName() throws Exception {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
-        final AuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null, new MockJcifsAuthentication(), false, true);
+        val authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null, new MockJcifsAuthentication(), false, true);
         assertNotNull(authenticationHandler.authenticate(credentials));
         assertEquals("test", credentials.getPrincipal().getId());
         assertNotNull(credentials.getNextToken());
@@ -50,7 +48,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
     @Test
     public void verifyUnsuccessfulAuthenticationWithExceptionOnProcess() throws Exception {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
-        final AuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null, new MockUnsuccessfulJcifsAuthentication(true),
+        val authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null, new MockUnsuccessfulJcifsAuthentication(true),
             true, true);
 
         try {
@@ -65,7 +63,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
     @Test
     public void verifyUnsuccessfulAuthentication() throws Exception {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
-        final AuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null, new MockUnsuccessfulJcifsAuthentication(false),
+        val authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null, new MockUnsuccessfulJcifsAuthentication(false),
             true, true);
 
         try {
@@ -79,7 +77,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
 
     @Test
     public void verifySupports() {
-        final AuthenticationHandler authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null, new MockJcifsAuthentication(), true, true);
+        val authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null, new MockJcifsAuthentication(), true, true);
 
         assertFalse(authenticationHandler.supports(null));
         assertTrue(authenticationHandler.supports(new SpnegoCredential(new byte[]{0, 1, 2})));
@@ -92,7 +90,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         val myNtlmUserWithNoDomain = USERNAME;
         val myKerberosUser = "Username@DOMAIN.COM";
 
-        final PrincipalFactory factory = new DefaultPrincipalFactory();
+        val factory = new DefaultPrincipalFactory();
         val authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null, new MockJcifsAuthentication(), true,
             true);
 

@@ -17,6 +17,7 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.google.common.base.Predicate;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
@@ -165,7 +166,7 @@ public class ConfigurationMetadataGenerator {
                                       final String typeName,
                                       final boolean indexNameWithBrackets) {
 
-        try (var is = Files.newInputStream(Paths.get(typePath))) {
+        try (val is = Files.newInputStream(Paths.get(typePath))) {
             final var cu = JavaParser.parse(is);
             new FieldVisitor(collectedProps, collectedGroups, indexNameWithBrackets, typeName).visit(cu, p);
             if (cu.getTypes().size() > 0) {

@@ -76,15 +76,17 @@ public class DefaultResponse implements Response {
         LOGGER.debug("Sanitized URL for redirect response is [{}]", sanitizedUrl);
         val fragmentSplit = Splitter.on("#").splitToList(sanitizedUrl);
         builder.append(fragmentSplit.get(0));
-        val params = parameters.entrySet().stream().filter(entry -> entry.getValue() != null).map(entry -> {
-            String param;
-            try {
-                param = String.join("=", entry.getKey(), EncodingUtils.urlEncode(entry.getValue()));
-            } catch (final Exception e) {
-                param = String.join("=", entry.getKey(), entry.getValue());
-            }
-            return param;
-        }).collect(Collectors.joining("&"));
+        val params = parameters.entrySet()
+            .stream()
+            .filter(entry -> entry.getValue() != null)
+            .map(entry -> {
+                try {
+                    return String.join("=", entry.getKey(), EncodingUtils.urlEncode(entry.getValue()));
+                } catch (final Exception e) {
+                    return String.join("=", entry.getKey(), entry.getValue());
+                }
+            })
+            .collect(Collectors.joining("&"));
         if (!(params == null || params.isEmpty())) {
             builder.append(url.contains("?") ? "&" : "?");
             builder.append(params);

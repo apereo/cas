@@ -29,7 +29,7 @@ public class JsonWebKeySetStringCipherExecutorTests {
         val keystoreFile = new File(FileUtils.getTempDirectoryPath(), "sample.jwks");
         FileUtils.write(keystoreFile, data, StandardCharsets.UTF_8);
 
-        try (var webServer = new MockWebServer(8435,
+        try (val webServer = new MockWebServer(8435,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile, "http://localhost:8435");

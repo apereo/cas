@@ -1,7 +1,6 @@
 package org.apereo.cas.util.junit;
 
 import lombok.val;
-
 import org.junit.Assume;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
@@ -18,14 +17,13 @@ import java.lang.reflect.Modifier;
 public class ConditionalIgnoreRule implements MethodRule {
     @Override
     public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
-        var result = base;
         if (hasConditionalIgnoreAnnotation(method)) {
             val condition = getIgnoreCondition(target, method);
             if (condition.isSatisfied()) {
-                result = new IgnoreStatement(condition);
+                return new IgnoreStatement(condition);
             }
         }
-        return result;
+        return base;
     }
 
     /**
@@ -89,13 +87,10 @@ public class ConditionalIgnoreRule implements MethodRule {
          * @throws Exception the exception
          */
         private IgnoreCondition createCondition() throws Exception {
-            final IgnoreCondition result;
             if (isConditionTypeStandalone()) {
-                result = conditionType.getDeclaredConstructor().newInstance();
-            } else {
-                result = conditionType.getDeclaredConstructor(target.getClass()).newInstance(target);
+                return conditionType.getDeclaredConstructor().newInstance();
             }
-            return result;
+            return conditionType.getDeclaredConstructor(target.getClass()).newInstance(target);
         }
 
         /**

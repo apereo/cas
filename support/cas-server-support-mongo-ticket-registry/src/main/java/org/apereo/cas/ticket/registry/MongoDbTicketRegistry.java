@@ -1,9 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.val;
-
 import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.BaseTicketSerializers;
@@ -56,7 +55,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         factory.createCollection(mongoTemplate, collectionName, this.dropCollection);
 
         LOGGER.debug("Creating indices on collection [{}] to auto-expire documents...", collectionName);
-        final MongoCollection collection = mongoTemplate.getCollection(collectionName);
+        val collection = mongoTemplate.getCollection(collectionName);
         mongoTemplate.indexOps(TicketHolder.class)
             .ensureIndex(new Index().on("expireAt", Sort.Direction.ASC).expire(ticket.getProperties().getStorageTimeout()));
         return collection;
@@ -200,14 +199,10 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
      * Makes the assumption that the CAS server date and the Mongo server date are in sync.
      */
     private static Date getExpireAt(final Ticket ticket) {
-        final long ttl;
-        if (ticket instanceof TicketState) {
-            ttl = ticket.getExpirationPolicy().getTimeToLive((TicketState) ticket);
-        } else {
-            ttl = ticket.getExpirationPolicy().getTimeToLive();
-        }
+        val ttl = ticket instanceof TicketState
+            ? ticket.getExpirationPolicy().getTimeToLive((TicketState) ticket)
+            : ticket.getExpirationPolicy().getTimeToLive();
 
-        // expiration policy can specify not to delete automatically
         if (ttl < 1) {
             return null;
         }
@@ -251,7 +246,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     private MongoCollection getTicketCollectionInstance(final String mapName) {
         try {
-            final MongoCollection inst = this.mongoTemplate.getCollection(mapName);
+            val inst = this.mongoTemplate.getCollection(mapName);
             LOGGER.debug("Located MongoDb collection instance [{}]", mapName);
             return inst;
         } catch (final Exception e) {

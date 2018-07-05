@@ -78,7 +78,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             final TypedQuery<? extends Ticket> query = entityManager.createQuery(sql, tkt.getImplementationClass());
             query.setParameter("id", ticketId);
             query.setLockMode(this.lockType);
-            final Ticket result = query.getSingleResult();
+            val result = query.getSingleResult();
             if (result != null && result.isExpired()) {
                 LOGGER.debug("Ticket [{}] has expired and will be removed from the database", result.getId());
                 return null;

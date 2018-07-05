@@ -48,19 +48,19 @@ public class ServiceRegistryInitializer {
     }
 
     private boolean findExistingMatchForService(final RegisteredService r) {
-        var match = this.serviceRegistry.findServiceById(r.getServiceId());
+        val match = this.serviceRegistry.findServiceById(r.getServiceId());
         if (match != null) {
             LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match.getName());
             return true;
         }
-        match = this.serviceRegistry.findServiceByExactServiceId(r.getServiceId());
-        if (match != null) {
-            LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match.getName());
+        val match2 = this.serviceRegistry.findServiceByExactServiceId(r.getServiceId());
+        if (match2 != null) {
+            LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match2.getName());
             return true;
         }
-        match = this.serviceRegistry.findServiceById(r.getId());
-        if (match != null) {
-            LOGGER.warn("Skipping [{}] JSON service definition as a matching id [{}] is found in the registry", r.getName(), match.getId());
+        val match3 = this.serviceRegistry.findServiceById(r.getId());
+        if (match3 != null) {
+            LOGGER.warn("Skipping [{}] JSON service definition as a matching id [{}] is found in the registry", r.getName(), match3.getId());
             return true;
         }
         return false;

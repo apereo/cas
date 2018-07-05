@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -18,7 +17,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpStatus;
@@ -93,11 +91,11 @@ public class RegisteredServiceResource {
 
     private Authentication authenticateRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val extractor = new BasicAuthExtractor();
-        final WebContext webContext = new J2EContext(request, response);
+        val webContext = new J2EContext(request, response);
         val credentials = extractor.extract(webContext);
         if (credentials != null) {
             LOGGER.debug("Received basic authentication request from credentials [{}]", credentials);
-            final Credential c = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
+            val c = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
             val serviceRequest = this.serviceFactory.createService(request);
             val result = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceRequest, c);
             return result.getAuthentication();

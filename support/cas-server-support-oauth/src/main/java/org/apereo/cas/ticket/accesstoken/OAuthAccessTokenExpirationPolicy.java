@@ -83,8 +83,8 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
             return true;
         }
         // token is within hard window, check timeToKill (sliding window)
-        expirationTime = ticketState.getLastTimeUsed().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-        if (currentSystemTime.isAfter(expirationTime)) {
+        val expirationTimeToKill = ticketState.getLastTimeUsed().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        if (currentSystemTime.isAfter(expirationTimeToKill)) {
             LOGGER.debug("Access token is expired because the time since last use is greater than timeToKillInSeconds");
             return true;
         }

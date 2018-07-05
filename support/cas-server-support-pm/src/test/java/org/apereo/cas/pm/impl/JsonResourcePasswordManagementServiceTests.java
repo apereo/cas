@@ -4,7 +4,6 @@ import lombok.val;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -97,7 +96,7 @@ public class JsonResourcePasswordManagementServiceTests {
 
     @Test
     public void verifyUserPasswordChange() {
-        final Credential c = new UsernamePasswordCredential("casuser", "password");
+        val c = new UsernamePasswordCredential("casuser", "password");
         val bean = new PasswordChangeBean();
         bean.setConfirmedPassword("newPassword");
         bean.setPassword("newPassword");

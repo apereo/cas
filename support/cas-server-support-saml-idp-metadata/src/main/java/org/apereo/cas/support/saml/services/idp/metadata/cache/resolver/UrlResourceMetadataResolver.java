@@ -111,7 +111,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      */
     protected AbstractMetadataResolver getMetadataResolverFromResponse(final HttpResponse response, final File backupFile) throws Exception {
         val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-        try (var output = Files.newBufferedWriter(backupFile.toPath(), StandardCharsets.UTF_8)) {
+        try (val output = Files.newBufferedWriter(backupFile.toPath(), StandardCharsets.UTF_8)) {
             IOUtils.write(result, output);
             output.flush();
         }

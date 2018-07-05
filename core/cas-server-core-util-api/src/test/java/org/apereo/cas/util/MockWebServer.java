@@ -192,7 +192,7 @@ public class MockWebServer implements AutoCloseable {
                 out.write(SEPARATOR.getBytes(StandardCharsets.UTF_8));
 
                 val buffer = new byte[BUFFER_SIZE];
-                try (var in = this.resource.getInputStream()) {
+                try (val in = this.resource.getInputStream()) {
                     int count;
                     while ((count = in.read(buffer)) > -1) {
                         out.write(buffer, 0, count);

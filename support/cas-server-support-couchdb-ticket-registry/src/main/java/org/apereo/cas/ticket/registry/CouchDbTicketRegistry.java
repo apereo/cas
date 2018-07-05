@@ -1,9 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.val;
-
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.couchdb.tickets.TicketDocument;
 import org.apereo.cas.couchdb.tickets.TicketRepository;
@@ -23,7 +22,7 @@ import java.util.stream.Stream;
  * @author Timur Duehr
  * @since 5.3.0
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class CouchDbTicketRegistry extends AbstractTicketRegistry {
 
@@ -49,13 +48,11 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
                 couchDb.remove(ticketDocument);
                 success = true;
             } catch (final UpdateConflictException e) {
-                // Retry if update conflict.
                 ticketDocument.setRevision(couchDb.getCurrentRevision(ticketId));
                 if (retries + 1 == conflictRetries) {
                     exception = e;
                 }
             } catch (final DocumentNotFoundException e) {
-                // Fail if document not found.
                 exception = e;
             }
         }
@@ -75,7 +72,6 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
     public void addTicket(final Ticket ticketToAdd) {
         val encodedTicket = encodeTicket(ticketToAdd);
         LOGGER.debug("Adding ticket [{}]", encodedTicket.getId());
-
         couchDb.add(new TicketDocument(encodedTicket));
     }
 

@@ -1,9 +1,8 @@
 package org.apereo.cas.util;
 
-import lombok.val;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -203,13 +202,9 @@ public class LdapUtils {
             return nullValue;
         }
 
-        final String v;
-        if (attr.isBinary()) {
-            val b = attr.getBinaryValue();
-            v = new String(b, StandardCharsets.UTF_8);
-        } else {
-            v = attr.getStringValue();
-        }
+        val v = attr.isBinary()
+            ? new String(attr.getBinaryValue(), StandardCharsets.UTF_8)
+            : attr.getStringValue();
 
         if (StringUtils.isNotBlank(v)) {
             return v;
@@ -250,7 +245,7 @@ public class LdapUtils {
                                                                 final SearchFilter filter,
                                                                 final String[] binaryAttributes,
                                                                 final String[] returnAttributes) throws LdapException {
-        try (var connection = createConnection(connectionFactory)) {
+        try (val connection = createConnection(connectionFactory)) {
             val searchOperation = new SearchOperation(connection);
             val request = LdapUtils.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);
             request.setReferralHandler(new SearchReferralHandler());
@@ -318,7 +313,7 @@ public class LdapUtils {
                                                          final String oldPassword,
                                                          final String newPassword,
                                                          final AbstractLdapProperties.LdapType type) {
-        try (var modifyConnection = createConnection(connectionFactory)) {
+        try (val modifyConnection = createConnection(connectionFactory)) {
             if (!modifyConnection.getConnectionConfig().getUseSSL()
                 && !modifyConnection.getConnectionConfig().getUseStartTLS()) {
                 LOGGER.warn("Executing password modification op under a non-secure LDAP connection; "
@@ -357,7 +352,7 @@ public class LdapUtils {
      */
     public static boolean executeModifyOperation(final String currentDn, final ConnectionFactory connectionFactory,
                                                  final Map<String, Set<String>> attributes) {
-        try (var modifyConnection = createConnection(connectionFactory)) {
+        try (val modifyConnection = createConnection(connectionFactory)) {
             val operation = new ModifyOperation(modifyConnection);
             val mods = attributes.entrySet()
                 .stream()
@@ -400,7 +395,7 @@ public class LdapUtils {
      * @return true/false
      */
     public static boolean executeAddOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) {
-        try (var connection = createConnection(connectionFactory)) {
+        try (val connection = createConnection(connectionFactory)) {
             val operation = new AddOperation(connection);
             operation.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
             return true;
@@ -418,7 +413,7 @@ public class LdapUtils {
      * @return true/false
      */
     public static boolean executeDeleteOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) {
-        try (var connection = createConnection(connectionFactory)) {
+        try (val connection = createConnection(connectionFactory)) {
             val delete = new DeleteOperation(connection);
             val request = new DeleteRequest(entry.getDn());
             request.setReferralHandler(new DeleteReferralHandler());
@@ -669,12 +664,9 @@ public class LdapUtils {
             resolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
         }
 
-        final Authenticator auth;
-        if (StringUtils.isBlank(l.getPrincipalAttributePassword())) {
-            auth = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
-        } else {
-            auth = new Authenticator(resolver, getPooledCompareAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
-        }
+        val auth = StringUtils.isBlank(l.getPrincipalAttributePassword())
+            ? new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)))
+            : new Authenticator(resolver, getPooledCompareAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
 
         if (l.isEnhanceWithEntryResolver()) {
             auth.setEntryResolver(newLdaptiveSearchEntryResolver(l, newLdaptivePooledConnectionFactory(l)));
@@ -872,7 +864,7 @@ public class LdapUtils {
         val bindCf = new DefaultConnectionFactory(cc);
         if (l.getProviderClass() != null) {
             try {
-                final Class clazz = ClassUtils.getClass(l.getProviderClass());
+                val clazz = ClassUtils.getClass(l.getProviderClass());
                 bindCf.setProvider(Provider.class.cast(clazz.getDeclaredConstructor().newInstance()));
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -42,11 +41,11 @@ public class YadisController {
     @GetMapping(path = "/yadis.xml")
     public void yadis(final HttpServletResponse response) throws Exception {
         val template = this.resourceLoader.getResource("classpath:/yadis.template");
-        try (var writer = new StringWriter()) {
+        try (val writer = new StringWriter()) {
             IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);
             val yadis = writer.toString().replace("$casLoginUrl", casProperties.getServer().getLoginUrl());
             response.setContentType("application/xrds+xml");
-            final Writer respWriter = response.getWriter();
+            val respWriter = response.getWriter();
             respWriter.write(yadis);
             respWriter.flush();
         }

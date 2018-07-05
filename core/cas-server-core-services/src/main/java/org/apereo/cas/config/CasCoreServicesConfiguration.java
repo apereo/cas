@@ -167,7 +167,7 @@ public class CasCoreServicesConfiguration {
             c.configureServiceRegistry(plan);
         });
 
-        final Predicate filter = Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
+        val filter = (Predicate) Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
         if (plan.getServiceRegistries(filter).isEmpty()) {
             final List<RegisteredService> services = new ArrayList<>();
             LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "

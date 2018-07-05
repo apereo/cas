@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdService;
@@ -50,7 +49,7 @@ public class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsA
         val openidIdentityParameter = context.getRequestParameters().get(OpenIdProtocolConstants.OPENID_IDENTITY);
 
         val userName = getOpenIdSelectedIdentifier(context, ticketGrantingTicketId, openidIdentityParameter);
-        final Service service = WebUtils.getService(context);
+        val service = WebUtils.getService(context);
 
         // clear the service because otherwise we can fake the username
         if (service instanceof OpenIdService && StringUtils.isBlank(userName)) {

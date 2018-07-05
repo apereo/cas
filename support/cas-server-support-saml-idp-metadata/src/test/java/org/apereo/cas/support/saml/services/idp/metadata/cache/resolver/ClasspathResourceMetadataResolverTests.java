@@ -18,8 +18,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Collection;
-
 import static org.junit.Assert.*;
 
 /**
@@ -63,7 +61,7 @@ public class ClasspathResourceMetadataResolverTests {
         service.setName("TestShib");
         service.setId(1000);
         service.setMetadataLocation("classpath:sample-sp.xml");
-        final Collection results = resolver.resolve(service);
+        val results = resolver.resolve(service);
         assertFalse(results.isEmpty());
     }
 }

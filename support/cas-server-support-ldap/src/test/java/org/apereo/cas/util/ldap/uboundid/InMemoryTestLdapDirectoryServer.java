@@ -109,7 +109,7 @@ public class InMemoryTestLdapDirectoryServer implements AutoCloseable, Disposabl
             try {
                 LOGGER.debug("Trying to restart LDAP server: attempt [{}]", retryCount);
                 this.directoryServer.restartServer();
-                try (var c = getConnection()) {
+                try (val c = getConnection()) {
                     LOGGER.debug("Connected to [{}]:[{}]", c.getConnectedAddress(), c.getConnectedPort());
                     populateDefaultEntries(c);
                 }
@@ -125,7 +125,7 @@ public class InMemoryTestLdapDirectoryServer implements AutoCloseable, Disposabl
     }
 
     public void populateEntries(final InputStream rs) throws Exception {
-        try (var connection = getConnection()) {
+        try (val connection = getConnection()) {
             populateEntries(connection, rs);
         }
     }

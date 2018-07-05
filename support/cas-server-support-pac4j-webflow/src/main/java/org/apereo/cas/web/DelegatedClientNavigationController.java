@@ -59,7 +59,7 @@ public class DelegatedClientNavigationController {
     public View redirectToProvider(final HttpServletRequest request, final HttpServletResponse response) {
         val clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
         try {
-            final IndirectClient client = (IndirectClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
+            val client = (IndirectClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
             val webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
             val ticket = delegatedClientWebflowManager.store(webContext, client);
 

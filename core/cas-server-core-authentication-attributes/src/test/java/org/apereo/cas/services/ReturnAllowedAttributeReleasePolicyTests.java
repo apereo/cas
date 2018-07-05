@@ -33,7 +33,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
         allowedAttributes.add("attributeOne");
         val policyWritten = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
         MAPPER.writeValue(JSON_FILE, policyWritten);
-        final RegisteredServiceAttributeReleasePolicy policyRead = MAPPER.readValue(JSON_FILE, ReturnAllowedAttributeReleasePolicy.class);
+        val policyRead = MAPPER.readValue(JSON_FILE, ReturnAllowedAttributeReleasePolicy.class);
         assertEquals(policyWritten, policyRead);
     }
 }

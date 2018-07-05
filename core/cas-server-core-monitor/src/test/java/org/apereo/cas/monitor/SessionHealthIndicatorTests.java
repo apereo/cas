@@ -5,7 +5,6 @@ import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -74,7 +73,7 @@ public class SessionHealthIndicatorTests {
         });
 
         if (ticket[0] != null) {
-            final Service testService = getService("junit");
+            val testService = getService("junit");
             IntStream.range(0, stCount).forEach(i -> registry.addTicket(ticket[0].grantServiceTicket(GENERATOR.getNewTicketId("ST"),
                 testService, TEST_EXP_POLICY, false, true)));
         }

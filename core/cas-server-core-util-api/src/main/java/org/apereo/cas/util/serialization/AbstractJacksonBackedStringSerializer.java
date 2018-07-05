@@ -125,7 +125,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     @Override
     @SneakyThrows
     public void to(final OutputStream out, final T object) {
-        try (var writer = new StringWriter()) {
+        try (val writer = new StringWriter()) {
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
             val hjsonString = isJsonFormat()
                 ? JsonValue.readHjson(writer.toString()).toString(Stringify.HJSON)
@@ -137,7 +137,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     @Override
     @SneakyThrows
     public void to(final Writer out, final T object) {
-        try (var writer = new StringWriter()) {
+        try (val writer = new StringWriter()) {
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
 
             if (isJsonFormat()) {
@@ -152,11 +152,11 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     @Override
     @SneakyThrows
     public void to(final File out, final T object) {
-        try (var writer = new StringWriter()) {
+        try (val writer = new StringWriter()) {
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
 
             if (isJsonFormat()) {
-                try (var fileWriter = Files.newBufferedWriter(out.toPath(), StandardCharsets.UTF_8)) {
+                try (val fileWriter = Files.newBufferedWriter(out.toPath(), StandardCharsets.UTF_8)) {
                     val opt = this.prettyPrinter instanceof MinimalPrettyPrinter ? Stringify.PLAIN : Stringify.FORMATTED;
                     JsonValue.readHjson(writer.toString()).writeTo(fileWriter, opt);
                     fileWriter.flush();
@@ -170,7 +170,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     @Override
     @SneakyThrows
     public String toString(final T object) {
-        try (var writer = new StringWriter()) {
+        try (val writer = new StringWriter()) {
             to(writer, object);
             return writer.toString();
         }

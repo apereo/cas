@@ -214,7 +214,7 @@ public class PolicyBasedAuthenticationManagerTests {
         if (success) {
             val p = new DefaultPrincipalFactory().createPrincipal("nobody");
 
-            final AuthenticationHandlerExecutionResult result = new DefaultAuthenticationHandlerExecutionResult(mock, mock(CredentialMetaData.class), p);
+            val result = new DefaultAuthenticationHandlerExecutionResult(mock, mock(CredentialMetaData.class), p);
             when(mock.authenticate(any(Credential.class))).thenReturn(result);
         } else {
             when(mock.authenticate(any(Credential.class))).thenThrow(new FailedLoginException());

@@ -64,16 +64,17 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
      * @return the id
      */
     protected String determinePrincipalIdFrom(final UserProfile profile) {
-        final String id;
         if (StringUtils.isNotBlank(principalAttributeId) && profile.containsAttribute(principalAttributeId)) {
-            id = profile.getAttribute(principalAttributeId).toString();
+            val id = profile.getAttribute(principalAttributeId).toString();
             LOGGER.debug("Delegated authentication indicates usage of attribute [{}] for the identifier [{}]", principalAttributeId, id);
-        } else if (isTypedIdUsed) {
-            id = profile.getTypedId();
-            LOGGER.debug("Delegated authentication indicates usage of typed profile id [{}]", id);
-        } else {
-            id = profile.getId();
+            return id;
         }
-        return id;
+
+        if (isTypedIdUsed) {
+            val id = profile.getTypedId();
+            LOGGER.debug("Delegated authentication indicates usage of typed profile id [{}]", id);
+            return id;
+        }
+        return profile.getId();
     }
 }

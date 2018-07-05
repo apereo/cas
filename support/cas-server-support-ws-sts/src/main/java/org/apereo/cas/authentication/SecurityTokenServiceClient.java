@@ -28,10 +28,7 @@ public class SecurityTokenServiceClient extends STSClient {
      * @throws Exception the exception
      */
     public Element requestSecurityTokenResponse(final String appliesTo) throws Exception {
-        String action = null;
-        if (isSecureConv) {
-            action = namespace + "/RST/SCT";
-        }
+        val action = isSecureConv ? namespace + "/RST/SCT" : null;
         return requestSecurityTokenResponse(appliesTo, action, "/Issue", null);
     }
 

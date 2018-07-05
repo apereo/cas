@@ -41,13 +41,13 @@ public class DefaultRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkDefaultImpls() {
-        final RegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy();
+        val authz = new DefaultRegisteredServiceAccessStrategy();
         assertEquals(0, authz.getOrder());
     }
 
     @Test
     public void checkDefaultInterfaceImpls() {
-        final RegisteredServiceAccessStrategy authz = new RegisteredServiceAccessStrategy() {
+        val authz = new RegisteredServiceAccessStrategy() {
             private static final long serialVersionUID = -6993120869616143038L;
         };
         assertEquals(Integer.MAX_VALUE, authz.getOrder());
@@ -59,21 +59,21 @@ public class DefaultRegisteredServiceAccessStrategyTests {
     
     @Test
      public void checkDefaultAuthzStrategyConfig() {
-        final RegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy();
+        val authz = new DefaultRegisteredServiceAccessStrategy();
         assertTrue(authz.isServiceAccessAllowed());
         assertTrue(authz.isServiceAccessAllowedForSso());
     }
 
     @Test
     public void checkDisabledAuthzStrategyConfig() {
-        final RegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy(false, true);
+        val authz = new DefaultRegisteredServiceAccessStrategy(false, true);
         assertFalse(authz.isServiceAccessAllowed());
         assertTrue(authz.isServiceAccessAllowedForSso());
     }
 
     @Test
     public void checkDisabledSsoAuthzStrategyConfig() {
-        final RegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy(true, false);
+        val authz = new DefaultRegisteredServiceAccessStrategy(true, false);
         assertTrue(authz.isServiceAccessAllowed());
         assertFalse(authz.isServiceAccessAllowedForSso());
     }
@@ -262,7 +262,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
 
         MAPPER.writeValue(JSON_FILE, strategyWritten);
 
-        final RegisteredServiceAccessStrategy strategyRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceAccessStrategy.class);
+        val strategyRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceAccessStrategy.class);
 
         assertEquals(strategyWritten, strategyRead);
     }

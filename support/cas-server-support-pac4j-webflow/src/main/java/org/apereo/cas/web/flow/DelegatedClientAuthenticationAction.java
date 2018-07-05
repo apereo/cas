@@ -227,7 +227,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      * @param context The current webflow context
      */
     protected void prepareForLoginPage(final RequestContext context) {
-        final Service currentService = WebUtils.getService(context);
+        val currentService = WebUtils.getService(context);
         val service = authenticationRequestServiceSelectionStrategies.resolveService(currentService, WebApplicationService.class);
 
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
@@ -293,7 +293,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             uriBuilder.queryParam(this.themeParamName, themeParam);
         }
         val redirectUrl = uriBuilder.toUriString();
-        final boolean autoRedirect = (Boolean) client.getCustomProperties().getOrDefault("autoRedirect", Boolean.FALSE);
+        val autoRedirect = (Boolean) client.getCustomProperties().getOrDefault("autoRedirect", Boolean.FALSE);
         val p = new ProviderLoginPageConfiguration(name, redirectUrl, type, getCssClass(name), autoRedirect);
         return Optional.of(p);
     }

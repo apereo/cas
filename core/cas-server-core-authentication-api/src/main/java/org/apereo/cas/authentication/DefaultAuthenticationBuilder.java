@@ -11,7 +11,6 @@ import org.apereo.cas.util.CollectionUtils;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -152,7 +151,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
         if (currentValue == null) {
             return addAttribute(key, value);
         }
-        final Collection collection = CollectionUtils.toCollection(currentValue);
+        val collection = CollectionUtils.toCollection(currentValue);
         collection.addAll(CollectionUtils.toCollection(value));
         return addAttribute(key, collection);
     }
@@ -161,7 +160,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     public boolean hasAttribute(final String name, final Predicate<Object> predicate) {
         if (this.attributes.containsKey(name)) {
             val value = this.attributes.get(name);
-            final Collection valueCol = CollectionUtils.toCollection(value);
+            val valueCol = CollectionUtils.toCollection(value);
             return valueCol.stream().anyMatch(predicate);
         }
         return false;

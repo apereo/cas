@@ -16,7 +16,6 @@ import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 import java.util.Scanner;
 
 import static org.junit.Assert.*;
@@ -54,7 +53,7 @@ public class X509RestHttpRequestCredentialFactoryTests {
         final MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.add("username", "name");
         requestBody.add("password", "passwd");
-        final Collection cred = factory.fromRequestBody(requestBody);
+        val cred = factory.fromRequestBody(requestBody);
         assertTrue(cred.isEmpty());
     }
 }

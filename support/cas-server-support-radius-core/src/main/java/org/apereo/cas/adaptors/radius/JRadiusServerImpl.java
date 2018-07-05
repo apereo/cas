@@ -15,7 +15,6 @@ import net.jradius.dictionary.Attr_UserPassword;
 import net.jradius.dictionary.vsa_redback.Attr_NASRealPort;
 import net.jradius.packet.AccessAccept;
 import net.jradius.packet.AccessRequest;
-import net.jradius.packet.RadiusPacket;
 import net.jradius.packet.attribute.AttributeFactory;
 import net.jradius.packet.attribute.AttributeList;
 import org.apache.commons.lang3.StringUtils;
@@ -142,7 +141,7 @@ public class JRadiusServerImpl implements RadiusServer {
         try {
             client = this.radiusClientFactory.newInstance();
             val request = new AccessRequest(client, attributeList);
-            final RadiusPacket response = client.authenticate(request, RadiusClient.getAuthProtocol(this.protocol.getName()), this.retries);
+            val response = client.authenticate(request, RadiusClient.getAuthProtocol(this.protocol.getName()), this.retries);
             LOGGER.debug("RADIUS response from [{}]: [{}]", client.getRemoteInetAddress().getCanonicalHostName(), response.getClass().getName());
             if (response instanceof AccessAccept) {
                 val attributes = response.getAttributes().getAttributeList();

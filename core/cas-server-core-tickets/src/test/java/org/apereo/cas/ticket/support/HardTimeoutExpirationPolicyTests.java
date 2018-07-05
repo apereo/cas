@@ -5,7 +5,6 @@ import lombok.val;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.ticket.ExpirationPolicy;
 import org.junit.Test;
 
 import java.io.File;
@@ -27,7 +26,7 @@ public class HardTimeoutExpirationPolicyTests {
     public void verifySerializeANeverExpiresExpirationPolicyToJson() throws IOException {
         val policyWritten = new HardTimeoutExpirationPolicy();
         MAPPER.writeValue(JSON_FILE, policyWritten);
-        final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, HardTimeoutExpirationPolicy.class);
+        val policyRead = MAPPER.readValue(JSON_FILE, HardTimeoutExpirationPolicy.class);
         assertEquals(policyWritten, policyRead);
     }
 }

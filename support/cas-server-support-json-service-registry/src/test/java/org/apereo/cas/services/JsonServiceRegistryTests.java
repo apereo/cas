@@ -12,7 +12,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -59,7 +58,7 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
 
     @Test
     public void verifyExistingDefinitionForCompatibility2() throws IOException {
-        final Resource resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest2.json");
+        val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest2.json");
         val serializer = new DefaultRegisteredServiceJsonSerializer();
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);
@@ -71,7 +70,7 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
 
     @Test
     public void verifyExistingDefinitionForCompatibility1() throws IOException {
-        final Resource resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest1.json");
+        val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest1.json");
         val serializer = new DefaultRegisteredServiceJsonSerializer();
         val service = serializer.from(resource.getInputStream());
         assertNotNull(service);

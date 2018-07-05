@@ -1,10 +1,9 @@
 package org.apereo.cas.web.support;
 
-import lombok.val;
-
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
@@ -24,6 +23,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.util.Assert;
@@ -41,9 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -215,6 +213,7 @@ public class WebUtils {
         val tgtFromFlow = getTicketGrantingTicketIdFrom(context.getFlowScope());
         return tgtFromRequest != null ? tgtFromRequest : tgtFromFlow;
     }
+
     /**
      * Gets ticket granting ticket id from.
      *
@@ -801,9 +800,7 @@ public class WebUtils {
      * @return the model and view
      */
     public static ModelAndView produceErrorView(final Exception e) {
-        final Map model = new HashMap<>();
-        model.put("rootCauseException", e);
-        return new ModelAndView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, model);
+        return new ModelAndView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, CollectionUtils.wrap("rootCauseException", e));
     }
 
     /**
@@ -812,13 +809,10 @@ public class WebUtils {
      * @return the in progress authentication
      */
     public static Authentication getInProgressAuthentication() {
-        Authentication authentication = null;
         val context = RequestContextHolder.getRequestContext();
-        if (context != null) {
-            authentication = WebUtils.getAuthentication(context);
-        }
+        val authentication = context != null ? WebUtils.getAuthentication(context) : null;
         if (authentication == null) {
-            authentication = AuthenticationCredentialsThreadLocalBinder.getInProgressAuthentication();
+            return AuthenticationCredentialsThreadLocalBinder.getInProgressAuthentication();
         }
         return authentication;
     }

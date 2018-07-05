@@ -1,13 +1,11 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.WebUtils;
@@ -58,7 +56,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         request.addParameter(PASSWORD_PARAM, TEST);
 
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         putCredentialInRequestScope(context, c);
 
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
@@ -75,7 +73,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         request.addParameter("warn", "true");
 
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         putCredentialInRequestScope(context, c);
 
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
@@ -93,7 +91,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST);
 
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         putCredentialInRequestScope(context, c);
 
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
@@ -110,7 +108,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
 
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        final Credential c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword();
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword();
         putCredentialInRequestScope(context, c);
 
         context.getRequestScope().put("org.springframework.validation.BindException.credentials", new BindException(c, "credential"));
@@ -119,8 +117,8 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
 
     @Test
     public void verifyRenewWithServiceAndSameCredentials() throws Exception {
-        final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        final Service service = RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL);
+        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        val service = RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL);
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
                 getAuthenticationSystemSupport(), service, c);
 
@@ -144,7 +142,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
 
     @Test
     public void verifyRenewWithServiceAndDifferentCredentials() throws Exception {
-        final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
 
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
                 getAuthenticationSystemSupport(), RegisteredServiceTestUtils.getService(TEST), c);
@@ -157,7 +155,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService(TEST).getId());
 
-        final Credential c2 = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        val c2 = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         putCredentialInRequestScope(context, c2);
 
@@ -166,8 +164,8 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
 
     @Test
     public void verifyRenewWithServiceAndBadCredentials() throws Exception {
-        final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        final Service service = RegisteredServiceTestUtils.getService(TEST);
+        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        val service = RegisteredServiceTestUtils.getService(TEST);
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(
                 getAuthenticationSystemSupport(), service, c);
 
@@ -179,7 +177,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
 
-        final Credential c2 = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword();
+        val c2 = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         putCredentialInRequestScope(context, c2);
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.execute(context).getId());

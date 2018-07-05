@@ -187,7 +187,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         oauthCasClient.setName(Authenticators.CAS_OAUTH_CLIENT);
         oauthCasClient.setUrlResolver(casCallbackUrlResolver());
 
-        final Authenticator authenticator = oAuthClientAuthenticator();
+        val authenticator = oAuthClientAuthenticator();
         val basicAuthClient = new DirectBasicAuthClient(authenticator);
         basicAuthClient.setName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
 

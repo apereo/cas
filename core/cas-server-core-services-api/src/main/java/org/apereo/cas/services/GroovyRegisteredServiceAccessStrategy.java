@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
-import org.springframework.core.io.Resource;
 
 import javax.persistence.Transient;
 import java.net.URI;
@@ -93,7 +93,7 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
     @SneakyThrows
     private void buildGroovyAccessStrategyInstanceIfNeeded() {
         if (this.groovyStrategyInstance == null) {
-            final Resource groovyResource = ResourceUtils.getResourceFrom(this.groovyScript);
+            val groovyResource = ResourceUtils.getResourceFrom(this.groovyScript);
             this.groovyStrategyInstance = ScriptingUtils.getObjectInstanceFromGroovyResource(groovyResource, RegisteredServiceAccessStrategy.class);
         }
     }

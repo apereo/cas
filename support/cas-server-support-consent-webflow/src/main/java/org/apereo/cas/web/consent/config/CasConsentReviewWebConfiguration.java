@@ -15,7 +15,6 @@ import org.pac4j.cas.client.direct.DirectCasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.authorization.authorizer.IsAuthenticatedAuthorizer;
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
-import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.engine.DefaultCallbackLogic;
@@ -81,7 +80,7 @@ public class CasConsentReviewWebConfiguration implements WebMvcConfigurer, Servi
         val auth = RequireAnyRoleAuthorizer.class.getSimpleName();
         if (adminAuthorizers.containsKey(auth)) {
             config.addAuthorizer(auth, adminAuthorizers.get(auth));
-            final BaseClient adminClient = casAdminPagesPac4jConfig.getClients().findClient(DirectCasClient.class);
+            val adminClient = casAdminPagesPac4jConfig.getClients().findClient(DirectCasClient.class);
             client.addAuthorizationGenerators(adminClient.getAuthorizationGenerators());
         }
         return config;
