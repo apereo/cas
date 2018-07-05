@@ -42,7 +42,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
                 LOGGER.warn(e.getMessage(), e);
             }
         } else {
-            final Collection<OneTimeToken> tokens = new ArrayList<>();
+            val tokens = new ArrayList<>();
             tokens.add(token);
 
             LOGGER.debug("Storing previously used token [{}] for user [{}]", token, token.getUserId());

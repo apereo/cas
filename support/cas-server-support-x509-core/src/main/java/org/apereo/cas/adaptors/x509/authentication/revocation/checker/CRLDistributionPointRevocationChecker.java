@@ -1,17 +1,15 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
-import lombok.val;
-
-
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
-import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.crypto.CertUtils;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x509.DistributionPoint;
@@ -113,7 +111,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     protected List<X509CRL> getCRLs(final X509Certificate cert) {
         val urls = getDistributionPoints(cert);
         LOGGER.debug("Distribution points for [{}]: [{}].", CertUtils.toString(cert), CollectionUtils.wrap(urls));
-        final List<X509CRL> listOfLocations = new ArrayList<>(urls.length);
+        val listOfLocations = new ArrayList<X509CRL>(urls.length);
         var stopFetching = false;
 
         for (var index = 0; !stopFetching && index < urls.length; index++) {
@@ -179,31 +177,29 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * @return the url distribution points
      */
     private static URI[] getDistributionPoints(final X509Certificate cert) {
-        final List<DistributionPoint> points;
         try {
-            points = new ExtensionReader(cert).readCRLDistributionPoints();
+            val points = new ExtensionReader(cert).readCRLDistributionPoints();
+            val urls = new ArrayList<URI>();
+            if (points != null) {
+                points.stream().map(DistributionPoint::getDistributionPoint).filter(Objects::nonNull).forEach(pointName -> {
+                    val nameSequence = ASN1Sequence.getInstance(pointName.getName());
+                    IntStream.range(0, nameSequence.size()).mapToObj(i -> GeneralName.getInstance(nameSequence.getObjectAt(i))).forEach(name -> {
+                        LOGGER.debug("Found CRL distribution point [{}].", name);
+                        try {
+                            addURL(urls, DERIA5String.getInstance(name.getName()).getString());
+                        } catch (final Exception e) {
+                            LOGGER.warn("[{}] not supported. String or GeneralNameList expected.", pointName);
+                        }
+                    });
+                });
+            }
+            return urls.toArray(new URI[0]);
         } catch (final Exception e) {
             LOGGER.error("Error reading CRLDistributionPoints extension field on [{}]", CertUtils.toString(cert), e);
             return new URI[0];
         }
 
-        final List<URI> urls = new ArrayList<>();
 
-        if (points != null) {
-            points.stream().map(DistributionPoint::getDistributionPoint).filter(Objects::nonNull).forEach(pointName -> {
-                val nameSequence = ASN1Sequence.getInstance(pointName.getName());
-                IntStream.range(0, nameSequence.size()).mapToObj(i -> GeneralName.getInstance(nameSequence.getObjectAt(i))).forEach(name -> {
-                    LOGGER.debug("Found CRL distribution point [{}].", name);
-                    try {
-                        addURL(urls, DERIA5String.getInstance(name.getName()).getString());
-                    } catch (final Exception e) {
-                        LOGGER.warn("[{}] not supported. String or GeneralNameList expected.", pointName);
-                    }
-                });
-            });
-        }
-
-        return urls.toArray(new URI[0]);
     }
 
     /**

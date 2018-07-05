@@ -13,7 +13,6 @@ import org.apereo.cas.util.RegexUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -277,7 +276,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
         }
 
         if (StringUtils.isNotBlank(bypassProperties.getHttpRequestHeaders())) {
-            final List<String> headerNames = Collections.list(request.getHeaderNames());
+            val headerNames = Collections.list(request.getHeaderNames());
             val matched = this.httpRequestHeaderPatterns.stream()
                 .anyMatch(pattern -> headerNames.stream().anyMatch(name -> pattern.matcher(name).matches()));
             if (matched) {

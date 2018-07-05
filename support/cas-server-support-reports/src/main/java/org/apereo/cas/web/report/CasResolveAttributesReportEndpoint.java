@@ -11,7 +11,6 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -41,7 +40,7 @@ public class CasResolveAttributesReportEndpoint extends BaseCasMvcEndpoint {
     @ReadOperation
     public Map<String, Object> resolvePrincipalAttributes(@Selector final String uid) {
         val p = personDirectoryPrincipalResolver.resolve(new BasicIdentifiableCredential(uid));
-        final Map<String, Object> map = new LinkedHashMap<>();
+        val map = new HashMap<String, Object>();
         map.put("uid", p.getId());
         map.put("attributes", p.getAttributes());
         return map;

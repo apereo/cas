@@ -14,7 +14,6 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -65,7 +64,7 @@ public class Beans {
     @SneakyThrows
     public static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties p) {
         val dao = new NamedStubPersonAttributeDao();
-        final Map<String, List<Object>> pdirMap = new HashMap<>();
+        val pdirMap = new HashMap<String, List<Object>>();
         p.getStub().getAttributes().forEach((key, value) -> {
             val vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(value);
             pdirMap.put(key, Arrays.stream(vals).collect(Collectors.toList()));

@@ -17,7 +17,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link CasCaptchaWebflowConfigurer}.
@@ -46,7 +45,7 @@ public class CasCaptchaWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private void createValidateRecaptchaAction(final Flow flow) {
         val state = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
-        final List<Action> currentActions = new ArrayList<>();
+        val currentActions = new ArrayList<Action>();
         state.getActionList().forEach(currentActions::add);
         currentActions.forEach(a -> state.getActionList().remove(a));
 

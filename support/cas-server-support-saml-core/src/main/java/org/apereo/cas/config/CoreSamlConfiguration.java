@@ -27,7 +27,6 @@ import org.springframework.context.annotation.Lazy;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -79,12 +78,12 @@ public class CoreSamlConfiguration {
         pool.setIgnoreComments(true);
         pool.setNamespaceAware(true);
 
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         val clazz = ClassUtils.getClass(casProperties.getSamlCore().getSecurityManager());
         attributes.put("http://apache.org/xml/properties/security-manager", clazz.getDeclaredConstructor().newInstance());
         pool.setBuilderAttributes(attributes);
 
-        final Map<String, Boolean> features = new HashMap<>();
+        val features = new HashMap<String, Boolean>();
         features.put("http://apache.org/xml/features/disallow-doctype-decl", Boolean.TRUE);
         features.put("http://apache.org/xml/features/validation/schema/normalized-value", Boolean.FALSE);
         features.put("http://javax.xml.XMLConstants/feature/secure-processing", Boolean.TRUE);

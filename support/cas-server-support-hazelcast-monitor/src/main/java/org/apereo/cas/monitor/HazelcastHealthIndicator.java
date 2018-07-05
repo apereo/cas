@@ -9,7 +9,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link HazelcastHealthIndicator}.
@@ -32,7 +31,7 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
 
     @Override
     protected CacheStatistics[] getStatistics() {
-        final List<CacheStatistics> statsList = new ArrayList<>();
+        val statsList = new ArrayList<CacheStatistics>();
         LOGGER.debug("Locating hazelcast instance [{}]...", instanceName);
         @NonNull val instance = Hazelcast.getHazelcastInstanceByName(this.instanceName);
         instance.getConfig().getMapConfigs().keySet().forEach(key -> {

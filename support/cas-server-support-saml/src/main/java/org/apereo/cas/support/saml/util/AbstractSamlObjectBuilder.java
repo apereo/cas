@@ -183,7 +183,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
 
         LOGGER.debug("Attempting to generate SAML attribute [{}] with value(s) [{}]", attributeName, attributeValue);
         if (attributeValue instanceof Collection<?>) {
-            final Collection<?> c = (Collection<?>) attributeValue;
+            val c = (Collection<?>) attributeValue;
             LOGGER.debug("Generating multi-valued SAML attribute [{}] with values [{}]", attributeName, c);
             c.stream().map(value -> newAttributeValue(value, defaultElementName)).forEach(attributeList::add);
         } else {
@@ -241,7 +241,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         try {
             val providerName = System.getProperty("jsr105Provider", SIGNATURE_FACTORY_PROVIDER_CLASS);
 
-            final Class<?> clazz = Class.forName(providerName);
+            val clazz = Class.forName(providerName);
             val sigFactory = XMLSignatureFactory
                 .getInstance("DOM", (Provider) clazz.getDeclaredConstructor().newInstance());
 

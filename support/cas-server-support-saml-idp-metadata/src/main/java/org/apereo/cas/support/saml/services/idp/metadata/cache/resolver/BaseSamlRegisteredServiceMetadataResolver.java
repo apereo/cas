@@ -63,7 +63,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
             val metadataResource = ResourceUtils.buildInputStreamResourceFrom(metadataDocument.getValue(), desc);
             val metadataResolver = new InMemoryResourceMetadataResolver(metadataResource, configBean);
 
-            final List<MetadataFilter> metadataFilterList = new ArrayList<>();
+            val metadataFilterList = new ArrayList<MetadataFilter>();
             if (StringUtils.isNotBlank(metadataDocument.getSignature())) {
                 val signatureResource = ResourceUtils.buildInputStreamResourceFrom(metadataDocument.getSignature(), desc);
                 buildSignatureValidationFilterIfNeeded(service, metadataFilterList, signatureResource);
@@ -159,7 +159,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
 
     private static void buildEntityRoleFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
         if (StringUtils.isNotBlank(service.getMetadataCriteriaRoles())) {
-            final List<QName> roles = new ArrayList<>();
+            val roles = new ArrayList<QName>();
             val rolesSet = org.springframework.util.StringUtils.commaDelimitedListToSet(service.getMetadataCriteriaRoles());
             rolesSet.forEach(s -> {
                 if (s.equalsIgnoreCase(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {

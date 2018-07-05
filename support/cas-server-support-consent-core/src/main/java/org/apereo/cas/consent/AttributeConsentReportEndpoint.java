@@ -35,13 +35,13 @@ public class AttributeConsentReportEndpoint {
      */
     @ReadOperation
     public Collection<Map<String, Object>> consentDecisions(@Selector final String principal) {
-        final Collection<Map<String, Object>> result = new HashSet<>();
+        val result = new HashSet<>();
         LOGGER.debug("Fetching consent decisions for principal [{}]", principal);
         val consentDecisions = this.consentRepository.findConsentDecisions(principal);
         LOGGER.debug("Resolved consent decisions for principal [{}]: {}", principal, consentDecisions);
 
-        consentDecisions.stream().forEach(d -> {
-            final Map<String, Object> map = new HashMap<>();
+        consentDecisions.forEach(d -> {
+            val map = new HashMap<String, Object>();
             map.put("decision", d);
             map.put("attributes", this.consentEngine.resolveConsentableAttributesFrom(d));
             result.add(map);

@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -55,13 +54,13 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
             LOGGER.warn("Could not locate the application context to process attributes");
             return new HashMap<>();
         }
-        final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        val resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attributes);
-        final Map<String, Object> attributesToRelease = Maps.newHashMapWithExpectedSize(attributes.size());
+        val attributesToRelease = Maps.newHashMapWithExpectedSize(attributes.size());
         LOGGER.debug("Attempting to map and filter claims based on resolved attributes [{}]", resolvedAttributes);
         val properties = applicationContext.getBean(CasConfigurationProperties.class);
         val supportedClaims = properties.getAuthn().getOidc().getClaims();
-        final Set<String> allowedClaims = new LinkedHashSet<>(getAllowedAttributes());
+        val allowedClaims = new LinkedHashSet<String>(getAllowedAttributes());
         allowedClaims.retainAll(supportedClaims);
         LOGGER.debug("[{}] is designed to allow claims [{}] for scope [{}]. After cross-checking with "
             + "supported claims [{}], the final collection of allowed attributes is [{}]", getClass().getSimpleName(),

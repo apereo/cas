@@ -60,7 +60,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
 
     @Override
     public List<String> getEligibleAccountsForSurrogateToProxy(final String username) {
-        final List<String> eligible = new ArrayList<>();
+        val eligible = new ArrayList<String>();
         try {
             val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(), CollectionUtils.wrap(username));
             LOGGER.debug("Using search filter to find eligible accounts: [{}]", filter);

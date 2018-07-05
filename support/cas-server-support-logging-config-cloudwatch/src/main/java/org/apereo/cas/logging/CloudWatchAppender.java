@@ -28,7 +28,6 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -97,7 +96,7 @@ public class CloudWatchAppender extends AbstractAppender {
 
     private void flush() {
         var drained = 0;
-        final List<InputLogEvent> logEvents = new ArrayList<>(AWS_DRAIN_LIMIT);
+        val logEvents = new ArrayList<InputLogEvent>(AWS_DRAIN_LIMIT);
         do {
             drained = queue.drainTo(logEvents, AWS_DRAIN_LIMIT);
             if (logEvents.isEmpty()) {

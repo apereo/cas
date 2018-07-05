@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link SamlProfileSamlAssertionBuilder}.
@@ -76,7 +75,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
                            final String binding,
                            final MessageContext messageContext) throws SamlException {
 
-        final List<Statement> statements = new ArrayList<>();
+        val statements = new ArrayList<Statement>();
         val authnStatement = this.samlProfileSamlAuthNStatementBuilder.build(authnRequest, request, response,
             casAssertion, service, adaptor, binding, messageContext);
         statements.add(authnStatement);

@@ -65,7 +65,7 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
         ctx.getSessionStore().set(ctx, OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE);
         LOGGER.debug("callbackUrl: [{}]", callbackUrl);
 
-        final Map<String, Object> model = new HashMap<>();
+        val model = new HashMap<String, Object>();
         model.put("service", svc);
         model.put("callbackUrl", callbackUrl);
         model.put("serviceName", svc.getName());

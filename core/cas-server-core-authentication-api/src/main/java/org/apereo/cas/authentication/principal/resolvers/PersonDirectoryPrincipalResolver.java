@@ -134,7 +134,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     protected Pair<String, Map<String, Object>> convertPersonAttributesToPrincipal(final String extractedPrincipalId,
                                                                                    final Map<String, List<Object>> attributes) {
         final String[] principalId = {extractedPrincipalId};
-        final Map<String, Object> convertedAttributes = new HashMap<>();
+        val convertedAttributes = new HashMap<String, Object>();
         attributes.entrySet().forEach(entry -> {
             val key = entry.getKey();
             LOGGER.debug("Found attribute [{}]", key);

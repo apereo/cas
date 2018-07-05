@@ -86,7 +86,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
                 return new HashMap<>(0);
             }
             val names = EncodingUtils.decodeBase64ToString(result);
-            final Map<String, Object> attributes = MAPPER.readValue(names, Map.class);
+            val attributes = MAPPER.readValue(names, Map.class);
             return attributes;
         } catch (final Exception e) {
             throw new IllegalArgumentException("Could not serialize attributes for consent decision");

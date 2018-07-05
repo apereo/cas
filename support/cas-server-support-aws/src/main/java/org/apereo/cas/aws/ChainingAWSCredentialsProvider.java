@@ -118,7 +118,7 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
 
         LOGGER.debug("Attempting to locate AWS credentials...");
 
-        final List<AWSCredentialsProvider> chain = new ArrayList<>();
+        val chain = new ArrayList<AWSCredentialsProvider>();
         chain.add(new InstanceProfileCredentialsProvider(false));
 
         if (credentialPropertiesFile != null) {

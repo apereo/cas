@@ -28,7 +28,6 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link CasFiltersConfiguration} that attempts to create Spring-managed beans
@@ -107,7 +106,7 @@ public class CasFiltersConfiguration {
     @Bean
     public FilterRegistrationBean responseHeadersSecurityFilter() {
         val header = casProperties.getHttpWebRequest().getHeader();
-        final Map<String, String> initParams = new HashMap<>();
+        val initParams = new HashMap<String, String>();
         initParams.put("enableCacheControl", BooleanUtils.toStringTrueFalse(header.isCache()));
         initParams.put("enableXContentTypeOptions", BooleanUtils.toStringTrueFalse(header.isXcontent()));
         initParams.put("enableStrictTransportSecurity", BooleanUtils.toStringTrueFalse(header.isHsts()));
@@ -135,7 +134,7 @@ public class CasFiltersConfiguration {
     @RefreshScope
     @Bean
     public FilterRegistrationBean requestParameterSecurityFilter() {
-        final Map<String, String> initParams = new HashMap<>();
+        val initParams = new HashMap<String, String>();
         initParams.put(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK,
             casProperties.getHttpWebRequest().getParamsToCheck());
         initParams.put(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID, "none");

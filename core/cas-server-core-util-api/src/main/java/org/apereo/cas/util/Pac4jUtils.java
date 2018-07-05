@@ -1,16 +1,15 @@
 package org.apereo.cas.util;
 
-import lombok.val;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.J2ESessionStore;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,7 +34,7 @@ public class Pac4jUtils {
         val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
         if (request != null && response != null) {
             val manager = getPac4jProfileManager(request, response);
-            final Optional<UserProfile> profile = manager.get(true);
+            val profile = (Optional<CommonProfile>) manager.get(true);
             if (profile != null && profile.isPresent()) {
                 val id = profile.get().getId();
                 if (id != null) {

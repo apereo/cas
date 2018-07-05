@@ -13,7 +13,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.StringWriter;
@@ -41,12 +40,12 @@ public class ClickatellSmsSender implements SmsSender {
     @Override
     public boolean send(final String from, final String to, final String message) {
         try {
-            final MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+            val headers = new LinkedMultiValueMap<String, String>();
             headers.add("Authorization", this.token);
             headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
 
-            final Map<String, Object> map = new HashMap<>();
+            val map = new HashMap<String, Object>();
             map.put("content", message);
             map.put("to", CollectionUtils.wrap(to));
             map.put("from", from);
@@ -54,7 +53,7 @@ public class ClickatellSmsSender implements SmsSender {
             val stringify = new StringWriter();
             mapper.writeValue(stringify, map);
 
-            final HttpEntity<String> request = new HttpEntity<>(stringify.toString(), headers);
+            val request = new HttpEntity<>(stringify.toString(), headers);
             val response = restTemplate.postForEntity(new URI(this.serverUrl), request, Map.class);
             if (response.hasBody()) {
                 val body = response.getBody();

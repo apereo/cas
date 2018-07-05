@@ -18,7 +18,6 @@ import java.awt.image.BufferedImage;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
-import java.util.Map;
 import java.util.stream.IntStream;
 
 /**
@@ -52,7 +51,7 @@ public class QRUtils {
     @SneakyThrows
     public static void generateQRCode(final OutputStream stream, final String key,
                                       final int width, final int height) {
-        final Map<EncodeHintType, Object> hintMap = new EnumMap<>(EncodeHintType.class);
+        val hintMap = new EnumMap<>(EncodeHintType.class);
         hintMap.put(EncodeHintType.CHARACTER_SET, StandardCharsets.UTF_8.name());
         hintMap.put(EncodeHintType.MARGIN, 2);
         hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);

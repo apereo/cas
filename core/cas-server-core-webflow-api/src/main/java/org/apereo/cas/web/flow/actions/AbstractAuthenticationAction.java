@@ -18,7 +18,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link AbstractAuthenticationAction}.
@@ -41,7 +40,7 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
 
         if (geoLocation != null && StringUtils.isNotBlank(agent) && !adaptiveAuthenticationPolicy.apply(agent, geoLocation)) {
             val msg = "Adaptive authentication policy does not allow this request for " + agent + " and " + geoLocation;
-            final Map<String, Throwable> map = CollectionUtils.wrap(UnauthorizedAuthenticationException.class.getSimpleName(), new UnauthorizedAuthenticationException(msg));
+            val map = CollectionUtils.<String, Throwable>wrap(UnauthorizedAuthenticationException.class.getSimpleName(), new UnauthorizedAuthenticationException(msg));
             val error = new AuthenticationException(msg, map, new HashMap<>(0));
             return new Event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
                 new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));

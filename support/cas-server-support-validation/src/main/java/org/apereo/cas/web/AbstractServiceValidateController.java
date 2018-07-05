@@ -361,7 +361,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, proxyGrantingTicket.getId());
         }
         contextProvider.ifPresent(provider -> modelAndView.addObject(this.authnContextAttribute, provider.getId()));
-        final Map<String, ?> augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
+        val augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
         if (augmentedModelObjects != null) {
             modelAndView.addAllObjects(augmentedModelObjects);
         }

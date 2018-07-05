@@ -74,7 +74,7 @@ public interface CipherExecutor<I, O> {
      * @return the map
      */
     default Map<String, Object> decode(Map<String, Object> properties, final Object[] parameters) {
-        final Map<String, Object> decrypted = new HashMap<>();
+        val decrypted = new HashMap<String, Object>();
         properties.forEach((key, value) -> {
             try {
                 LOGGER.debug("Attempting to decode key [{}]", key);

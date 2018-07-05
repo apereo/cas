@@ -68,7 +68,7 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
 
     @Override
     public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> map) {
-        final Set<IPersonAttributes> people = new LinkedHashSet();
+        val people = new LinkedHashSet();
         val username = this.usernameAttributeProvider.getUsernameFromQuery(map);
         val person = this.getPerson(username);
         if (person != null) {
@@ -89,7 +89,7 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
     }
 
     private static Map<String, List<Object>> stuffAttributesIntoList(final Map<String, ?> personAttributesMap) {
-        final Set<? extends Map.Entry<String, ?>> entries = personAttributesMap.entrySet();
+        val entries = personAttributesMap.entrySet();
         return entries.stream()
             .collect(Collectors.toMap(Map.Entry::getKey, entry -> CollectionUtils.toCollection(entry.getValue(), ArrayList.class)));
     }

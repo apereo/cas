@@ -48,9 +48,9 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
 
     @Override
     public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs, final RegisteredService service) {
-        final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        val resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
-        final Map<String, Object> attributesToRelease = Maps.newHashMapWithExpectedSize(resolvedAttributes.size());
+        val attributesToRelease = Maps.newHashMapWithExpectedSize(resolvedAttributes.size());
         getAllowedAttributes().entrySet().stream().filter(entry -> WSFederationClaims.contains(entry.getKey().toUpperCase())).forEach(entry -> {
             val claimName = entry.getKey();
             val attributeName = entry.getValue();

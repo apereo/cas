@@ -116,7 +116,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
     }
 
     private static Map<String, String> createErrorCodeMap() {
-        final Map<String, String> errorMap = new HashMap<>();
+        val errorMap = new HashMap<String, String>();
 
         errorMap.put("AGENT_ERROR_NO_OTC", "swivel.auth.otc.malformed");
         errorMap.put("AGENT_ERROR_BAD_OTC", "swivel.auth.otc.malformed");

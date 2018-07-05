@@ -29,7 +29,7 @@ public class CasCoreTicketIdGeneratorsConfiguration {
     @Bean
     @Autowired
     public Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap(final List<UniqueTicketIdGeneratorConfigurer> configurers) {
-        final Map<String, UniqueTicketIdGenerator> map = new HashMap<>();
+        val map = new HashMap<String, UniqueTicketIdGenerator>();
         if (configurers != null) {
             configurers.forEach(c -> {
                 val pair = c.buildUniqueTicketIdGenerators();

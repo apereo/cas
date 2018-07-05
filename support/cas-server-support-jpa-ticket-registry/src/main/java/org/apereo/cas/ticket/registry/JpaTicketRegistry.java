@@ -75,7 +75,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         try {
             val tkt = ticketCatalog.find(ticketId);
             val sql = String.format("select t from %s t where t.id = :id", getTicketEntityName(tkt));
-            final TypedQuery<? extends Ticket> query = entityManager.createQuery(sql, tkt.getImplementationClass());
+            val query = entityManager.createQuery(sql, tkt.getImplementationClass());
             query.setParameter("id", ticketId);
             query.setLockMode(this.lockType);
             val result = query.getSingleResult();
@@ -96,7 +96,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             .stream()
             .map(t -> {
                 val sql = String.format("select t from %s t", getTicketEntityName(t));
-                final TypedQuery<? extends Ticket> query = entityManager.createQuery(sql, t.getImplementationClass());
+                val query = entityManager.createQuery(sql, t.getImplementationClass());
                 query.setLockMode(this.lockType);
                 return query;
             })

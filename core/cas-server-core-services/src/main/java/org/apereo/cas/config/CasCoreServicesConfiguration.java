@@ -159,7 +159,7 @@ public class CasCoreServicesConfiguration {
     @Bean
     @RefreshScope
     public ServiceRegistry serviceRegistry() {
-        final List<ServiceRegistryExecutionPlanConfigurer> configurers = ObjectUtils.defaultIfNull(serviceRegistryDaoConfigurers.getIfAvailable(), new ArrayList<>(0));
+        val configurers = ObjectUtils.defaultIfNull(serviceRegistryDaoConfigurers.getIfAvailable(), new ArrayList<>(0));
         val plan = new DefaultServiceRegistryExecutionPlan();
         configurers.forEach(c -> {
             val name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
@@ -169,7 +169,7 @@ public class CasCoreServicesConfiguration {
 
         val filter = (Predicate) Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
         if (plan.getServiceRegistries(filter).isEmpty()) {
-            final List<RegisteredService> services = new ArrayList<>();
+            val services = new ArrayList<RegisteredService>();
             LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
                 + "Changes that are made to service definitions during runtime WILL be LOST when the web server is restarted. "
                 + "Ideally for production, you need to choose a storage option (JDBC, etc) to store and track service definitions.");

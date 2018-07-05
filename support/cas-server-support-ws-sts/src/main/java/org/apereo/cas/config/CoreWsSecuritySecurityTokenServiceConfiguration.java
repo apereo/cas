@@ -115,7 +115,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public List<TokenDelegationHandler> delegationHandlers() {
-        final List<TokenDelegationHandler> handlers = new ArrayList<>();
+        val handlers = new ArrayList<TokenDelegationHandler>();
         handlers.add(new SAMLDelegationHandler());
         handlers.add(new X509TokenDelegationHandler());
         return handlers;
@@ -205,7 +205,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     public Map<String, RealmProperties> realms() {
         val idp = casProperties.getAuthn().getWsfedIdp().getIdp();
-        final Map<String, RealmProperties> realms = new HashMap<>();
+        val realms = new HashMap<String, RealmProperties>();
         realms.put(idp.getRealmName(), casRealm());
         return realms;
     }

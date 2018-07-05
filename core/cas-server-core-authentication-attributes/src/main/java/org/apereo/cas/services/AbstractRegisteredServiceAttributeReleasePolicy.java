@@ -108,7 +108,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         val policyAttributes = getAttributesInternal(principal, principalAttributes, registeredService);
         LOGGER.debug("Attribute policy [{}] allows release of [{}] for [{}]", getClass().getSimpleName(), policyAttributes, principal.getId());
         LOGGER.debug("Attempting to merge policy attributes and default attributes");
-        final Map<String, Object> attributesToRelease = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        val attributesToRelease = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         if (isExcludeDefaultAttributes()) {
             LOGGER.debug("Ignoring default attribute policy attributes");
         } else {
@@ -204,7 +204,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             val props = ctx.getAutowireCapableBeanFactory().getBean(CasConfigurationProperties.class);
             val defaultAttrs = props.getAuthn().getAttributeRepository().getDefaultAttributesToRelease();
             LOGGER.debug("Default attributes for release are: [{}]", defaultAttrs);
-            final Map<String, Object> defaultAttributesToRelease = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+            val defaultAttributesToRelease = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
             defaultAttrs.forEach(key -> {
                 if (attributes.containsKey(key)) {
                     LOGGER.debug("Found and added default attribute for release: [{}]", key);

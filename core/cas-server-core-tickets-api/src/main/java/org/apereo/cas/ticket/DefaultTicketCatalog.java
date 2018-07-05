@@ -7,7 +7,6 @@ import org.springframework.core.OrderComparator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.NoArgsConstructor;
 
@@ -21,7 +20,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DefaultTicketCatalog implements TicketCatalog {
 
-    private final Map<String, TicketDefinition> ticketMetadataMap = new HashMap<>();
+    private val ticketMetadataMap = new HashMap<String, TicketDefinition>();
 
     @Override
     public TicketDefinition find(final String ticketId) {

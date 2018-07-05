@@ -12,7 +12,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -65,13 +64,13 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsAction extends B
     }
 
     private Map<String, List<String>> getAllRequestHeaderValues(final HttpServletRequest request) {
-        final Map<String, List<String>> headers = new LinkedHashMap<>(DEFAULT_SIZE);
+        val headers = new HashMap<String, List<String>>(DEFAULT_SIZE);
         val names = request.getHeaderNames();
         while (names.hasMoreElements()) {
             val name = (String) names.nextElement();
             val values = request.getHeaders(name);
             if (values != null) {
-                final List<String> listValues = new ArrayList<>(DEFAULT_SIZE);
+                val listValues = new ArrayList<String>(DEFAULT_SIZE);
                 while (values.hasMoreElements()) {
                     val value = (String) values.nextElement();
                     listValues.add(value);

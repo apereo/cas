@@ -40,9 +40,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link SurrogateAuthenticationConfiguration}.
@@ -108,7 +106,7 @@ public class SurrogateAuthenticationConfiguration {
             LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getLocation());
             return new JsonResourceSurrogateAuthenticationService(su.getJson().getLocation(), servicesManager);
         }
-        final Map<String, List> accounts = new LinkedHashMap<>();
+        val accounts = new HashMap<String, List>();
         su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, new ArrayList<>(StringUtils.commaDelimitedListToSet(v))));
         LOGGER.debug("Using accounts [{}] for surrogate authentication", accounts);
         return new SimpleSurrogateAuthenticationService(accounts, servicesManager);

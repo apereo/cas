@@ -69,14 +69,15 @@ public class CollectionUtils {
      * @return The collection instance containing the object provided
      */
     public static Set<Object> toCollection(final Object obj) {
-        final Set<Object> c = new LinkedHashSet<>();
+        val c = new LinkedHashSet<>();
         if (obj == null) {
             LOGGER.debug("Converting null obj to empty collection");
         } else if (obj instanceof Collection) {
             c.addAll((Collection<Object>) obj);
             LOGGER.trace("Converting multi-valued attribute [{}]", obj);
         } else if (obj instanceof Map) {
-            final Set<Map.Entry> set = ((Map) obj).entrySet();
+            val map = (Map) obj;
+            val set = (Set<Map.Entry>) map.entrySet();
             c.addAll(set.stream().map(e -> Pair.of(e.getKey(), e.getValue())).collect(Collectors.toSet()));
         } else if (obj.getClass().isArray()) {
             c.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));
@@ -299,7 +300,7 @@ public class CollectionUtils {
      * @return the list
      */
     public static <T> List<T> wrap(final T source) {
-        final List<T> list = new ArrayList<>();
+        val list = new ArrayList<T>();
         if (source != null) {
             if (source instanceof Collection) {
                 val it = ((Collection) source).iterator();
@@ -324,7 +325,7 @@ public class CollectionUtils {
      * @return the list
      */
     public static <T> List<T> wrap(final List<T> source) {
-        final List<T> list = new ArrayList<>();
+        val list = new ArrayList<T>();
         if (source != null && !source.isEmpty()) {
             list.addAll(source);
         }
@@ -339,7 +340,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> Set<T> wrap(final Set<T> source) {
-        final Set<T> list = new LinkedHashSet<>();
+        val list = new LinkedHashSet<T>();
         if (source != null && !source.isEmpty()) {
             list.addAll(source);
         }
@@ -354,7 +355,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> Set<T> wrapSet(final T source) {
-        final Set<T> list = new LinkedHashSet<>();
+        val list = new LinkedHashSet<T>();
         if (source != null) {
             list.add(source);
         }
@@ -369,7 +370,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> Set<T> wrapSet(final T... source) {
-        final Set<T> list = new LinkedHashSet<>();
+        val list = new LinkedHashSet<T>();
         addToCollection(list, source);
         return list;
     }
@@ -382,7 +383,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> HashSet<T> wrapHashSet(final T... source) {
-        final HashSet<T> list = new HashSet<>();
+        val list = new HashSet<T>();
         addToCollection(list, source);
         return list;
     }
@@ -395,7 +396,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> List<T> wrapList(final T... source) {
-        final List<T> list = new ArrayList<>();
+        val list = new ArrayList<T>();
         addToCollection(list, source);
         return list;
     }
