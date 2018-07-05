@@ -1,10 +1,9 @@
 package org.apereo.cas.trusted.config;
 
-import lombok.val;
-
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
@@ -14,11 +13,11 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
-import org.apereo.cas.trusted.authentication.storage.BaseMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
 import org.apereo.cas.trusted.web.MultifactorTrustedDevicesReportEndpoint;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,14 +72,16 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
             });
 
         storage.asMap();
-        final BaseMultifactorAuthenticationTrustStorage m;
-        if (trusted.getJson().getLocation() != null) {
-            LOGGER.debug("Storing trusted device records inside the JSON resource [{}]", trusted.getJson().getLocation());
-            m = new JsonMultifactorAuthenticationTrustStorage(trusted.getJson().getLocation());
-        } else {
-            LOGGER.warn("Storing trusted device records in runtime memory. Changes and records will be lost upon CAS restarts");
-            m = new InMemoryMultifactorAuthenticationTrustStorage(storage);
-        }
+
+        val m = FunctionUtils.doIf(trusted.getJson().getLocation() != null,
+            () -> {
+                LOGGER.debug("Storing trusted device records inside the JSON resource [{}]", trusted.getJson().getLocation());
+                return new JsonMultifactorAuthenticationTrustStorage(trusted.getJson().getLocation());
+            },
+            () -> {
+                LOGGER.warn("Storing trusted device records in runtime memory. Changes and records will be lost upon CAS restarts");
+                return new InMemoryMultifactorAuthenticationTrustStorage(storage);
+            }).get();
         m.setCipherExecutor(mfaTrustCipherExecutor());
         return m;
     }

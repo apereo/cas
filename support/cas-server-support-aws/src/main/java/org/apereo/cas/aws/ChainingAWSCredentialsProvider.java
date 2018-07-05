@@ -1,7 +1,5 @@
 package org.apereo.cas.aws;
 
-import lombok.val;
-
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -16,6 +14,7 @@ import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
 
@@ -39,14 +38,7 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
     public AWSCredentials getCredentials() {
         LOGGER.debug("Attempting to locate AWS credentials from the chain...");
         for (val p : this.chain) {
-            AWSCredentials c;
-            try {
-                LOGGER.debug("Calling credential provider [{}] to fetch credentials...", p.getClass().getSimpleName());
-                c = p.getCredentials();
-            } catch (final Throwable e) {
-                LOGGER.trace(e.getMessage(), e);
-                c = null;
-            }
+            val c = getCredentialsFromProvider(p);
             if (c != null) {
                 LOGGER.debug("Fetched credentials from [{}] provider successfully.", p.getClass().getSimpleName());
                 return c;
@@ -54,6 +46,16 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
         }
         LOGGER.warn("No AWS credentials could be determined from the chain. Using anonymous credentials...");
         return new AnonymousAWSCredentials();
+    }
+
+    private AWSCredentials getCredentialsFromProvider(final AWSCredentialsProvider p) {
+        try {
+            LOGGER.debug("Calling credential provider [{}] to fetch credentials...", p.getClass().getSimpleName());
+            return p.getCredentials();
+        } catch (final Throwable e) {
+            LOGGER.trace(e.getMessage(), e);
+        }
+        return null;
     }
 
     @Override

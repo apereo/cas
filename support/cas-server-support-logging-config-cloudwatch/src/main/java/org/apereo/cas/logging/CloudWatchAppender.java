@@ -157,7 +157,7 @@ public class CloudWatchAppender extends AbstractAppender {
             val createLogGroupRequest = new CreateLogGroupRequest(logGroupName);
             awsLogsClient.createLogGroup(createLogGroupRequest);
         }
-        String logSequenceToken = null;
+        var logSequenceToken = StringUtils.EMPTY;
         var createLogStream = true;
         LOGGER.debug("Attempting to locate the log stream [{}] for group [{}]", logStreamName, logGroupName);
         val describeLogStreamsRequest = new DescribeLogStreamsRequest(logGroupName).withLogStreamNamePrefix(logStreamName);

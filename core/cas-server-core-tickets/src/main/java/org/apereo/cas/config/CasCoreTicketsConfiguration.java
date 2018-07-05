@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.CasJavaClientProperties;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -97,8 +97,6 @@ import java.util.Map;
 @AutoConfigureAfter(value = {CasCoreUtilConfiguration.class, CasCoreTicketIdGeneratorsConfiguration.class})
 @Slf4j
 public class CasCoreTicketsConfiguration implements TransactionManagementConfigurer {
-
-
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -130,19 +128,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     public AbstractUrlBasedTicketValidator casClientTicketValidator() {
         val prefix = StringUtils.defaultString(casProperties.getClient().getPrefix(), casProperties.getServer().getPrefix());
-
-        final AbstractUrlBasedTicketValidator validator;
-        switch (casProperties.getClient().getValidatorType()) {
-            case CAS10:
-                validator = new Cas10TicketValidator(prefix);
-                break;
-            case CAS20:
-                validator = new Cas20ServiceTicketValidator(prefix);
-                break;
-            case CAS30:
-            default:
-                validator = new Cas30ServiceTicketValidator(prefix);
-        }
+        val validator = buildCasClientTicketValidator(prefix);
 
         final HttpURLConnectionFactory factory = new HttpURLConnectionFactory() {
             private static final long serialVersionUID = 3692658214483917813L;
@@ -159,6 +145,17 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         };
         validator.setURLConnectionFactory(factory);
         return validator;
+    }
+
+    private AbstractUrlBasedTicketValidator buildCasClientTicketValidator(final String prefix) {
+        val validatorType = casProperties.getClient().getValidatorType();
+        if (validatorType == CasJavaClientProperties.ClientTicketValidatorTypes.CAS10) {
+            return new Cas10TicketValidator(prefix);
+        }
+        if (validatorType == CasJavaClientProperties.ClientTicketValidatorTypes.CAS20) {
+            return new Cas20ServiceTicketValidator(prefix);
+        }
+        return new Cas30ServiceTicketValidator(prefix);
     }
 
     @ConditionalOnMissingBean(name = "defaultProxyGrantingTicketFactory")

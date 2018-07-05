@@ -8,8 +8,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
+
 import java.security.cert.X509Certificate;
 import java.util.StringTokenizer;
+
 import lombok.NoArgsConstructor;
 
 /**
@@ -56,7 +58,7 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
 
     private String retrieveTheCommonName(final String inSubjectDN) {
         var commonNameFound = false;
-        String tempCommonName = null;
+        var tempCommonName = StringUtils.EMPTY;
         val st = new StringTokenizer(inSubjectDN, ",");
         while (!commonNameFound && st.hasMoreTokens()) {
             val token = st.nextToken();
@@ -70,7 +72,7 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
 
     private String retrieveTheEDIPI(final String commonName) {
         var found = false;
-        String tempEDIPI = null;
+        var tempEDIPI = StringUtils.EMPTY;
         val st = new StringTokenizer(commonName, ".");
         while (!found && st.hasMoreTokens()) {
             val token = st.nextToken();

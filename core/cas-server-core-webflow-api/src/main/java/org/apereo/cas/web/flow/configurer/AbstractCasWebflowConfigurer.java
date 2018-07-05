@@ -335,15 +335,17 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public Transition createTransition(final Expression criteriaOutcomeExpression, final String targetState) {
-        final TransitionCriteria criteria;
-        if (criteriaOutcomeExpression.toString().equals(WildcardTransitionCriteria.WILDCARD_EVENT_ID)) {
-            criteria = WildcardTransitionCriteria.INSTANCE;
-        } else {
-            criteria = new DefaultTransitionCriteria(criteriaOutcomeExpression);
-        }
+        val criteria = getTransitionCriteriaForExpression(criteriaOutcomeExpression);
         val resolver = new DefaultTargetStateResolver(targetState);
         val t = new Transition(criteria, resolver);
         return t;
+    }
+
+    private TransitionCriteria getTransitionCriteriaForExpression(final Expression criteriaOutcomeExpression) {
+        if (criteriaOutcomeExpression.toString().equals(WildcardTransitionCriteria.WILDCARD_EVENT_ID)) {
+            return WildcardTransitionCriteria.INSTANCE;
+        }
+        return new DefaultTransitionCriteria(criteriaOutcomeExpression);
     }
 
     /**
