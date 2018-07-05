@@ -1,12 +1,11 @@
 package org.apereo.cas.support.pac4j.authentication;
 
-import lombok.val;
-
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
@@ -418,27 +417,7 @@ public class DelegatedClientFactory {
             .stream()
             .filter(oidc -> StringUtils.isNotBlank(oidc.getId()) && StringUtils.isNotBlank(oidc.getSecret()))
             .forEach(oidc -> {
-                final OidcClient client;
-                switch (oidc.getType().toUpperCase()) {
-                    case "GOOGLE":
-                        val cfg = getOidcConfigurationForClient(oidc, OidcConfiguration.class);
-                        client = new GoogleOidcClient(cfg);
-                        break;
-                    case "AZURE":
-                        val azure = getOidcConfigurationForClient(oidc, AzureAdOidcConfiguration.class);
-                        client = new AzureAdClient(new AzureAdOidcConfiguration(azure));
-                        break;
-                    case "KEYCLOAK":
-                        val keycfg = getOidcConfigurationForClient(oidc, KeycloakOidcConfiguration.class);
-                        client = new KeycloakOidcClient(keycfg);
-                        break;
-                    case "GENERIC":
-                    default:
-                        val gencfg = getOidcConfigurationForClient(oidc, OidcConfiguration.class);
-                        client = new OidcClient(gencfg);
-                        break;
-                }
-
+                val client = getOidcClientFrom(oidc);
                 val count = index.intValue();
                 if (StringUtils.isBlank(oidc.getClientName())) {
                     client.setName(client.getClass().getSimpleName() + count);
@@ -448,6 +427,24 @@ public class DelegatedClientFactory {
                 LOGGER.debug("Created client [{}]", client);
                 properties.add(client);
             });
+    }
+
+    private OidcClient getOidcClientFrom(final Pac4jOidcClientProperties oidc) {
+        val type = oidc.getType().toUpperCase();
+        if ("GOOGLE".equals(type)) {
+            val cfg = getOidcConfigurationForClient(oidc, OidcConfiguration.class);
+            return new GoogleOidcClient(cfg);
+        }
+        if ("AZURE".equals(type)) {
+            val azure = getOidcConfigurationForClient(oidc, AzureAdOidcConfiguration.class);
+            return new AzureAdClient(new AzureAdOidcConfiguration(azure));
+        }
+        if ("KEYCLOAK".equals(type)) {
+            val keycfg = getOidcConfigurationForClient(oidc, KeycloakOidcConfiguration.class);
+            return new KeycloakOidcClient(keycfg);
+        }
+        val gencfg = getOidcConfigurationForClient(oidc, OidcConfiguration.class);
+        return new OidcClient(gencfg);
     }
 
     @SneakyThrows

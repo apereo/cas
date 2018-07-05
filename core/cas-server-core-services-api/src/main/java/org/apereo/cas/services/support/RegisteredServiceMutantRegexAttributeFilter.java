@@ -75,12 +75,7 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
         final List<Object> values = new ArrayList<>();
         attributeValues.forEach(v -> {
             val matcher = pattern.matcher(v.toString());
-            final boolean matches;
-            if (isCompleteMatch()) {
-                matches = matcher.matches();
-            } else {
-                matches = matcher.find();
-            }
+            val matches = isCompleteMatch() ? matcher.matches() : matcher.find();
             if (matches) {
                 LOGGER.debug("Found a successful match for [{}] while filtering attribute values with [{}]", v.toString(), pattern.pattern());
                 val count = matcher.groupCount();

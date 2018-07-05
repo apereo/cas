@@ -81,7 +81,7 @@ public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository
         return attributesResult.getAttributes()
             .stream()
             .map(a -> {
-                Object value = null;
+                var value = (Object) null;
                 val attributeValue = a.getValue();
                 LOGGER.debug("Examining attribute [{}]", a);
 

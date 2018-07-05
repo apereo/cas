@@ -25,6 +25,7 @@ import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
+import org.jooq.lambda.Unchecked;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSAny;
@@ -315,17 +316,18 @@ public class WsFederationHelper {
             val converter = new JcaPEMKeyConverter().setProvider(new BouncyCastleProvider());
 
             val kp = FunctionUtils.doIf(Predicates.instanceOf(PEMEncryptedKeyPair.class),
-                () -> {
+                Unchecked.supplier(() -> {
                     LOGGER.debug("Encryption private key is an encrypted keypair");
                     val ckp = (PEMEncryptedKeyPair) privateKeyPemObject;
                     val decProv = new JcePEMDecryptorProviderBuilder().build(config.getEncryptionPrivateKeyPassword().toCharArray());
                     LOGGER.debug("Attempting to decrypt the encrypted keypair based on the provided encryption private key password");
                     return converter.getKeyPair(ckp.decryptKeyPair(decProv));
-                },
-                () -> {
+                }),
+                Unchecked.supplier(() -> {
                     LOGGER.debug("Extracting a keypair from the private key");
                     return converter.getKeyPair((PEMKeyPair) privateKeyPemObject);
-                }).apply(privateKeyPemObject);
+                }))
+                .apply(privateKeyPemObject);
 
             val certParser = new X509CertParser();
             // This is the certificate shared with ADFS in DER format, i.e certificate.crt

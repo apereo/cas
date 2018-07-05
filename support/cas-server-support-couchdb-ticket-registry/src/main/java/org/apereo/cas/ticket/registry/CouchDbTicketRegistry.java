@@ -34,7 +34,7 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
     public boolean deleteSingleTicket(final String ticketIdToDelete) {
         val ticketId = encodeTicketId(ticketIdToDelete);
         LOGGER.debug("Deleting ticket [{}]", ticketIdToDelete);
-        DbAccessException exception = null;
+        var exception = (DbAccessException) null;
         var success = false;
         val ticketDocument = new TicketDocument();
         try {
@@ -84,15 +84,8 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
             return null;
         }
 
-        TicketDocument document;
-
         try {
-            document = this.couchDb.get(encTicketId);
-        } catch (final DocumentNotFoundException ignored) {
-            document = null;
-        }
-
-        if (document != null) {
+            val document = this.couchDb.get(encTicketId);
             val t = document.getTicket();
             LOGGER.debug("Got ticket [{}] from the registry.", t);
 
@@ -102,8 +95,9 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
                 return null;
             }
             return decoded;
+        } catch (final DocumentNotFoundException ignored) {
+            LOGGER.debug("Ticket [{}] not found in the registry.", encTicketId);
         }
-        LOGGER.debug("Ticket [{}] not found in the registry.", encTicketId);
         return null;
     }
 
@@ -122,7 +116,7 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
     public Ticket updateTicket(final Ticket ticket) {
         val encodedTicket = encodeTicket(ticket);
         LOGGER.debug("Updating [{}]", encodedTicket.getId());
-        DbAccessException exception = null;
+        var exception = (DbAccessException) null;
         var success = false;
         val doc = new TicketDocument(encodedTicket);
         doc.setRevision(couchDb.getCurrentRevision(encodedTicket.getId()));

@@ -175,4 +175,28 @@ public class FunctionUtils {
             }
         };
     }
+
+    /**
+     * Do and handle supplier.
+     *
+     * @param <R>          the type parameter
+     * @param function     the function
+     * @param errorHandler the error handler
+     * @return the supplier
+     */
+    @SneakyThrows
+    public static <R> Supplier<R> doAndHandle(final Supplier<R> function, final CheckedFunction<Throwable, R> errorHandler) {
+        return () -> {
+            try {
+                return function.get();
+            } catch (final Throwable e) {
+                LOGGER.warn(e.getMessage(), e);
+                try {
+                    return errorHandler.apply(e);
+                } catch (final Throwable ex) {
+                    throw new IllegalArgumentException(ex.getMessage());
+                }
+            }
+        };
+    }
 }

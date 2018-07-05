@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.nameid;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringNameIDEncoder;
 import org.apache.commons.lang3.StringUtils;
@@ -260,22 +259,25 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         val assertion = Assertion.class.cast(casAssertion);
         val attribute = new IdPAttribute(AttributePrincipal.class.getName());
 
-        final String nameIdValue;
         val principalName = assertion.getPrincipal().getName();
-
         LOGGER.debug("Preparing NameID attribute for principal [{}]", principalName);
-        if (nameFormat.trim().equalsIgnoreCase(NameIDType.TRANSIENT)) {
-            val entityId = adaptor.getEntityId();
-            LOGGER.debug("Generating transient NameID value for principal [{}] and entity id [{}]", principalName, entityId);
-            nameIdValue = persistentIdGenerator.generate(principalName, entityId);
-        } else {
-            nameIdValue = principalName;
-        }
 
-        final IdPAttributeValue<String> value = new StringAttributeValue(nameIdValue);
+        val nameIdValue = getNameIdValueFromNameFormat(nameFormat, adaptor, principalName);
+        val value = new StringAttributeValue(nameIdValue);
         LOGGER.debug("NameID attribute value is set to [{}]", value);
         attribute.setValues(CollectionUtils.wrap(value));
         return attribute;
+    }
+
+    private String getNameIdValueFromNameFormat(final String nameFormat,
+                                                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                final String principalName) {
+        if (nameFormat.trim().equalsIgnoreCase(NameIDType.TRANSIENT)) {
+            val entityId = adaptor.getEntityId();
+            LOGGER.debug("Generating transient NameID value for principal [{}] and entity id [{}]", principalName, entityId);
+            return persistentIdGenerator.generate(principalName, entityId);
+        }
+        return principalName;
     }
 
     /**

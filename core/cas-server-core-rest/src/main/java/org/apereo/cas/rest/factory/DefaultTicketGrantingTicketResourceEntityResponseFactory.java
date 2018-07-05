@@ -1,8 +1,7 @@
 package org.apereo.cas.rest.factory;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.inspektr.audit.annotation.Audit;
@@ -27,7 +26,7 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
     private static final String TGT_CREATED_TITLE_CONTENT = HttpStatus.CREATED.toString() + ' ' + HttpStatus.CREATED.getReasonPhrase();
     private static final String DOCTYPE_AND_OPENING_FORM = DOCTYPE_AND_TITLE + TGT_CREATED_TITLE_CONTENT + CLOSE_TITLE_AND_OPEN_FORM;
     private static final String REST_OF_THE_FORM_AND_CLOSING_TAGS = "\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\"><br><input "
-            + "type=\"submit\" value=\"Submit\"></form></body></html>";
+        + "type=\"submit\" value=\"Submit\"></form></body></html>";
     private static final int SUCCESSFUL_TGT_CREATED_INITIAL_LENGTH = DOCTYPE_AND_OPENING_FORM.length() + REST_OF_THE_FORM_AND_CLOSING_TAGS.length();
 
 
@@ -40,21 +39,23 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
         val ticketReference = new URI(request.getRequestURL().toString() + '/' + ticketGrantingTicket.getId());
         val headers = new HttpHeaders();
         headers.setLocation(ticketReference);
-        final String response;
-        if (isDefaultContentType(request)) {
-            headers.setContentType(MediaType.TEXT_HTML);
-            val tgtUrl = ticketReference.toString();
-            response = new StringBuilder(SUCCESSFUL_TGT_CREATED_INITIAL_LENGTH + tgtUrl.length())
-                    .append(DOCTYPE_AND_OPENING_FORM)
-                    .append(tgtUrl)
-                    .append(REST_OF_THE_FORM_AND_CLOSING_TAGS)
-                    .toString();
-        } else {
-            response = ticketGrantingTicket.getId();
-        }
+        val response = getResponse(ticketGrantingTicket, request, ticketReference, headers);
         final ResponseEntity<String> entity = new ResponseEntity<>(response, headers, HttpStatus.CREATED);
         LOGGER.debug("Created response entity [{}]", entity);
         return entity;
+    }
+
+    private String getResponse(final TicketGrantingTicket ticketGrantingTicket, final HttpServletRequest request, final URI ticketReference, final HttpHeaders headers) {
+        if (isDefaultContentType(request)) {
+            headers.setContentType(MediaType.TEXT_HTML);
+            val tgtUrl = ticketReference.toString();
+            return new StringBuilder(SUCCESSFUL_TGT_CREATED_INITIAL_LENGTH + tgtUrl.length())
+                .append(DOCTYPE_AND_OPENING_FORM)
+                .append(tgtUrl)
+                .append(REST_OF_THE_FORM_AND_CLOSING_TAGS)
+                .toString();
+        }
+        return ticketGrantingTicket.getId();
     }
 
     private boolean isDefaultContentType(final HttpServletRequest request) {

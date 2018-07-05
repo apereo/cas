@@ -34,6 +34,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link BaseWSFederationRequestController}.
@@ -216,7 +217,7 @@ public abstract class BaseWSFederationRequestController {
             return true;
         }
 
-        val ttlMs = ttl * 60L * 1000L;
+        val ttlMs = TimeUnit.MINUTES.toMillis(ttl);
         if (ttlMs > 0) {
             val createdDate = idpToken.getCreated();
             if (createdDate != null) {

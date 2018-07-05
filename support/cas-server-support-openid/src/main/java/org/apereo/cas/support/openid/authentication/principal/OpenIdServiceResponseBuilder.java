@@ -78,7 +78,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
         val associationValid = isAssociationValid(association);
         var successFullAuthentication = true;
 
-        Assertion assertion = null;
+        var assertion = (Assertion) null;
         try {
             if (associated && associationValid) {
                 assertion = centralAuthenticationService.validateServiceTicket(ticketId, service);

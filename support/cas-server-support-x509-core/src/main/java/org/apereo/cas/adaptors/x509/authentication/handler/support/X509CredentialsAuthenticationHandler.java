@@ -154,7 +154,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         val x509Credential = (X509CertificateCredential) credential;
         val certificates = x509Credential.getCertificates();
 
-        X509Certificate clientCert = null;
+        var clientCert = (X509Certificate) null;
         var hasTrustedIssuer = false;
         for (var i = certificates.length - 1; i >= 0; i--) {
             val certificate = certificates[i];

@@ -1,10 +1,9 @@
 package org.apereo.cas.authentication.handler.support.jaas;
 
-import lombok.val;
-
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.MessageDescriptor;
@@ -140,24 +139,22 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws GeneralSecurityException the general security exception
      */
     protected Principal authenticateAndGetPrincipal(final UsernamePasswordCredential credential) throws GeneralSecurityException {
-        Principal principal = null;
-        LoginContext lc = null;
+        val lc = getLoginContext(credential);
         try {
-            lc = getLoginContext(credential);
             lc.login();
             val principals = lc.getSubject().getPrincipals();
             LOGGER.debug("JAAS principals extracted from subject are [{}}", principals);
             if (principals != null && !principals.isEmpty()) {
                 val secPrincipal = principals.iterator().next();
                 LOGGER.debug("JAAS principal detected from subject login context is [{}}", secPrincipal.getName());
-                principal = this.principalFactory.createPrincipal(secPrincipal.getName());
+                return this.principalFactory.createPrincipal(secPrincipal.getName());
             }
         } finally {
             if (lc != null) {
                 lc.logout();
             }
         }
-        return principal;
+        return null;
     }
 
     /**

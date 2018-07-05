@@ -1,11 +1,10 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -152,18 +151,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             val service = restoreAuthenticationRequestInContext(context, webContext, clientName);
             val client = findDelegatedClientByName(request, clientName, service);
 
-            final Credentials credentials;
-            try {
-                credentials = client.getCredentials(webContext);
-                LOGGER.debug("Retrieved credentials from client as [{}]", credentials);
-                if (credentials == null) {
-                    throw new IllegalArgumentException("Unable to determine credentials from the context with client " + client.getName());
-                }
-            } catch (final Exception e) {
-                LOGGER.info(e.getMessage(), e);
-                throw new IllegalArgumentException("Delegated authentication has failed with client " + client.getName());
-            }
-
+            val credentials = getCredentialsFromDelegatedClient(webContext, client);
             try {
                 establishDelegatedAuthenticationSession(context, service, credentials, client);
             } catch (final AuthenticationException e) {
@@ -179,6 +167,20 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             return stopWebflow();
         }
         return error();
+    }
+
+    private Credentials getCredentialsFromDelegatedClient(final J2EContext webContext, final BaseClient<Credentials, CommonProfile> client) {
+        try {
+            val credentials = client.getCredentials(webContext);
+            LOGGER.debug("Retrieved credentials from client as [{}]", credentials);
+            if (credentials == null) {
+                throw new IllegalArgumentException("Unable to determine credentials from the context with client " + client.getName());
+            }
+            return credentials;
+        } catch (final Exception e) {
+            LOGGER.info(e.getMessage(), e);
+            throw new IllegalArgumentException("Delegated authentication has failed with client " + client.getName());
+        }
     }
 
     /**

@@ -238,29 +238,29 @@ public class X509AuthenticationConfiguration {
     @RefreshScope
     public PrincipalResolver x509SerialNumberPrincipalResolver() {
         val x509 = casProperties.getAuthn().getX509();
-        final X509SerialNumberPrincipalResolver r;
+        return getX509SerialNumberPrincipalResolver(x509);
+    }
+
+    private X509SerialNumberPrincipalResolver getX509SerialNumberPrincipalResolver(final X509Properties x509) {
         val radix = x509.getPrincipalSNRadix();
         if (Character.MIN_RADIX <= radix && radix <= Character.MAX_RADIX) {
             if (radix == HEX) {
-                r = new X509SerialNumberPrincipalResolver(attributeRepository,
+                return new X509SerialNumberPrincipalResolver(attributeRepository,
                     x509PrincipalFactory(),
                     x509.getPrincipal().isReturnNull(),
                     x509.getPrincipal().getPrincipalAttribute(),
                     radix, x509.isPrincipalHexSNZeroPadding());
-            } else {
-                r = new X509SerialNumberPrincipalResolver(attributeRepository,
-                    x509PrincipalFactory(),
-                    x509.getPrincipal().isReturnNull(),
-                    x509.getPrincipal().getPrincipalAttribute(),
-                    radix, false);
             }
-        } else {
-            r = new X509SerialNumberPrincipalResolver(attributeRepository,
+            return new X509SerialNumberPrincipalResolver(attributeRepository,
                 x509PrincipalFactory(),
                 x509.getPrincipal().isReturnNull(),
-                x509.getPrincipal().getPrincipalAttribute());
+                x509.getPrincipal().getPrincipalAttribute(),
+                radix, false);
         }
-        return r;
+        return new X509SerialNumberPrincipalResolver(attributeRepository,
+            x509PrincipalFactory(),
+            x509.getPrincipal().isReturnNull(),
+            x509.getPrincipal().getPrincipalAttribute());
     }
 
     @ConditionalOnMissingBean(name = "x509PrincipalFactory")
@@ -294,31 +294,31 @@ public class X509AuthenticationConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer x509AuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            PrincipalResolver resolver = null;
-            if (casProperties.getAuthn().getX509().getPrincipalType() != null) {
-                switch (casProperties.getAuthn().getX509().getPrincipalType()) {
-                    case SERIAL_NO:
-                        resolver = x509SerialNumberPrincipalResolver();
-                        break;
-                    case SERIAL_NO_DN:
-                        resolver = x509SerialNumberAndIssuerDNPrincipalResolver();
-                        break;
-                    case SUBJECT:
-                        resolver = x509SubjectPrincipalResolver();
-                        break;
-                    case SUBJECT_ALT_NAME:
-                        resolver = x509SubjectAlternativeNameUPNPrincipalResolver();
-                        break;
-                    case CN_EDIPI:
-                        resolver = x509CommonNameEDIPIPrincipalResolver();
-                        break;
-                    default:
-                        resolver = x509SubjectDNPrincipalResolver();
-                        break;
-                }
-            }
-
+            val resolver = getPrincipalResolver();
             plan.registerAuthenticationHandlerWithPrincipalResolver(x509CredentialsAuthenticationHandler(), resolver);
         };
+    }
+
+    private PrincipalResolver getPrincipalResolver() {
+        val type = casProperties.getAuthn().getX509().getPrincipalType();
+        if (type == null) {
+            return null;
+        }
+        if (type == X509Properties.PrincipalTypes.SERIAL_NO) {
+            return x509SerialNumberPrincipalResolver();
+        }
+        if (type == X509Properties.PrincipalTypes.SERIAL_NO_DN) {
+            return x509SerialNumberAndIssuerDNPrincipalResolver();
+        }
+        if (type == X509Properties.PrincipalTypes.SUBJECT) {
+            return x509SubjectPrincipalResolver();
+        }
+        if (type == X509Properties.PrincipalTypes.SUBJECT_ALT_NAME) {
+            return x509SubjectAlternativeNameUPNPrincipalResolver();
+        }
+        if (type == X509Properties.PrincipalTypes.CN_EDIPI) {
+            return x509CommonNameEDIPIPrincipalResolver();
+        }
+        return x509SubjectDNPrincipalResolver();
     }
 }

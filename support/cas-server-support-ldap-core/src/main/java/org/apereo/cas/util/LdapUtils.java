@@ -794,24 +794,8 @@ public class LdapUtils {
             LOGGER.debug("Creating LDAP SASL mechanism via [{}]", l.getSaslMechanism());
 
             val bc = new BindConnectionInitializer();
-            final SaslConfig sc;
-            switch (Mechanism.valueOf(l.getSaslMechanism())) {
-                case DIGEST_MD5:
-                    sc = new DigestMd5Config();
-                    ((DigestMd5Config) sc).setRealm(l.getSaslRealm());
-                    break;
-                case CRAM_MD5:
-                    sc = new CramMd5Config();
-                    break;
-                case EXTERNAL:
-                    sc = new ExternalConfig();
-                    break;
-                case GSSAPI:
-                default:
-                    sc = new GssApiConfig();
-                    ((GssApiConfig) sc).setRealm(l.getSaslRealm());
-                    break;
-            }
+            val sc = getSaslConfigFrom(l);
+
             if (StringUtils.isNotBlank(l.getSaslAuthorizationId())) {
                 sc.setAuthorizationId(l.getSaslAuthorizationId());
             }
@@ -832,6 +816,25 @@ public class LdapUtils {
             cc.setConnectionInitializer(new BindConnectionInitializer(l.getBindDn(), new Credential(l.getBindCredential())));
         }
         return cc;
+    }
+
+    private static SaslConfig getSaslConfigFrom(final AbstractLdapProperties l) {
+        if ((Mechanism.valueOf(l.getSaslMechanism())) == Mechanism.DIGEST_MD5) {
+            val sc = new DigestMd5Config();
+            ((DigestMd5Config) sc).setRealm(l.getSaslRealm());
+            return sc;
+        }
+        if ((Mechanism.valueOf(l.getSaslMechanism())) == Mechanism.CRAM_MD5) {
+            val sc = new CramMd5Config();
+            return sc;
+        }
+        if ((Mechanism.valueOf(l.getSaslMechanism())) == Mechanism.EXTERNAL) {
+            val sc = new ExternalConfig();
+            return sc;
+        }
+        val sc = new GssApiConfig();
+        sc.setRealm(l.getSaslRealm());
+        return sc;
     }
 
     /**

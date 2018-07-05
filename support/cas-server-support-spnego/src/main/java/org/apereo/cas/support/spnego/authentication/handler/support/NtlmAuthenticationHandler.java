@@ -73,7 +73,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
 
         var success = false;
         try {
-            final val dc = getUniAddress();
+            val dc = getUniAddress();
             val challenge = SmbSession.getChallenge(dc);
 
             switch (src[NTLM_TOKEN_TYPE_FIELD_INDEX]) {

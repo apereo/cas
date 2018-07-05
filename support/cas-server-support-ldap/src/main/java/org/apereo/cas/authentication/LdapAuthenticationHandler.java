@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -100,17 +99,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential upc,
                                                                                         final String originalPassword) throws GeneralSecurityException, PreventedException {
-        final AuthenticationResponse response;
-        try {
-            LOGGER.debug("Attempting LDAP authentication for [{}]. Authenticator pre-configured attributes are [{}], "
-                    + "additional requested attributes for this authentication request are [{}]", upc, authenticator.getReturnAttributes(),
-                authenticatedEntryAttributes);
-            val request = new AuthenticationRequest(upc.getUsername(), new org.ldaptive.Credential(upc.getPassword()), authenticatedEntryAttributes);
-            response = authenticator.authenticate(request);
-        } catch (final LdapException e) {
-            LOGGER.trace(e.getMessage(), e);
-            throw new PreventedException("Unexpected LDAP error", e);
-        }
+        val response = getLdapAuthenticationResponse(upc);
         LOGGER.debug("LDAP response: [{}]", response);
         if (!passwordPolicyHandlingStrategy.supports(response)) {
             LOGGER.warn("Authentication has failed because LDAP password policy handling strategy [{}] cannot handle [{}].",
@@ -119,7 +108,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
         LOGGER.debug("Attempting to examine and handle LDAP password policy via [{}]",
             passwordPolicyHandlingStrategy.getClass().getSimpleName());
-        final List<MessageDescriptor> messageList = passwordPolicyHandlingStrategy.handle(response, getPasswordPolicyConfiguration());
+        val messageList = passwordPolicyHandlingStrategy.handle(response, getPasswordPolicyConfiguration());
         if (response.getResult()) {
             LOGGER.debug("LDAP response returned a result. Creating the final LDAP principal");
             val principal = createPrincipal(upc.getUsername(), response.getLdapEntry());
@@ -130,6 +119,19 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             throw new AccountNotFoundException(upc.getUsername() + " not found.");
         }
         throw new FailedLoginException("Invalid credentials");
+    }
+
+    private AuthenticationResponse getLdapAuthenticationResponse(final UsernamePasswordCredential upc) throws PreventedException {
+        try {
+            LOGGER.debug("Attempting LDAP authentication for [{}]. Authenticator pre-configured attributes are [{}], "
+                    + "additional requested attributes for this authentication request are [{}]", upc, authenticator.getReturnAttributes(),
+                authenticatedEntryAttributes);
+            val request = new AuthenticationRequest(upc.getUsername(), new org.ldaptive.Credential(upc.getPassword()), authenticatedEntryAttributes);
+            return authenticator.authenticate(request);
+        } catch (final LdapException e) {
+            LOGGER.trace(e.getMessage(), e);
+            throw new PreventedException("Unexpected LDAP error", e);
+        }
     }
 
     /**

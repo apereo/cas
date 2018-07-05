@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
-import lombok.val;
-
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -13,8 +13,10 @@ import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.LocalDynamicMetadataResolver;
+import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.FileSystemResource;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -39,18 +41,21 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
             val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
 
             val metadataFile = metadataResource.getFile();
-            final AbstractMetadataResolver metadataResolver;
-            if (metadataFile.isDirectory()) {
-                metadataResolver = new LocalDynamicMetadataResolver(new FilesystemLoadSaveManager<>(metadataFile, configBean.getParserPool()));
-            } else {
-                metadataResolver = new InMemoryResourceMetadataResolver(metadataResource, configBean);
-            }
+            val metadataResolver = getMetadataResolver(metadataResource, metadataFile);
             configureAndInitializeSingleMetadataResolver(metadataResolver, service);
             return CollectionUtils.wrap(metadataResolver);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return new ArrayList<>(0);
+    }
+
+    @SneakyThrows
+    private AbstractMetadataResolver getMetadataResolver(final AbstractResource metadataResource, final File metadataFile) {
+        if (metadataFile.isDirectory()) {
+            return new LocalDynamicMetadataResolver(new FilesystemLoadSaveManager<>(metadataFile, configBean.getParserPool()));
+        }
+        return new InMemoryResourceMetadataResolver(metadataResource, configBean);
     }
 
     @Override
