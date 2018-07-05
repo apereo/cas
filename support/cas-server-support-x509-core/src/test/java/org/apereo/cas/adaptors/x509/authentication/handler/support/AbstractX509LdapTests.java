@@ -42,14 +42,12 @@ public abstract class AbstractX509LdapTests extends LdapIntegrationTestsOperatio
         for (val ldapEntry : col) {
             if (ldapEntry.getDn().equals(DN)) {
                 val attr = new LdapAttribute(true);
-
-                var value = new byte[1024];
-                IOUtils.read(new ClassPathResource("userCA-valid.crl").getInputStream(), value);
-                value = EncodingUtils.encodeBase64ToByteArray(value);
+                val userCA = new byte[1024];
+                IOUtils.read(new ClassPathResource("userCA-valid.crl").getInputStream(), userCA);
+                val value = EncodingUtils.encodeBase64ToByteArray(userCA);
                 attr.setName("certificateRevocationList");
                 attr.addBinaryValue(value);
                 LdapTestUtils.modifyLdapEntry(getLdapDirectory(port).getConnection(), ldapEntry, attr);
-
             }
         }
     }

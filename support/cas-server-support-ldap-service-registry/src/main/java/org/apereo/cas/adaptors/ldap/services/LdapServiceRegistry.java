@@ -95,6 +95,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+
         if (StringUtils.isNotBlank(currentDn)) {
             LOGGER.debug("Updating registered service at [{}]", currentDn);
             val entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);

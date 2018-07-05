@@ -1,8 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.nameid;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -17,6 +16,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
@@ -142,15 +142,12 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      * @return the required name id format if any
      */
     protected String getRequiredNameIdFormatIfAny(final RequestAbstractType authnRequest) {
-        String requiredNameFormat = null;
-        if (getNameIDPolicy(authnRequest) != null) {
-            requiredNameFormat = getNameIDPolicy(authnRequest).getFormat();
-            LOGGER.debug("AuthN request indicates [{}] is the required NameID format", requiredNameFormat);
-            if (NameID.ENCRYPTED.equals(requiredNameFormat)) {
-                LOGGER.warn("Encrypted NameID formats are not supported");
-                requiredNameFormat = null;
-            }
-        }
+        val nameIDPolicy = getNameIDPolicy(authnRequest);
+        val requiredNameFormat = FunctionUtils.doIf(nameIDPolicy != null,
+            nameIDPolicy::getFormat,
+            () -> null)
+            .get();
+        LOGGER.debug("AuthN request indicates [{}] is the required NameID format", requiredNameFormat);
         return requiredNameFormat;
     }
 

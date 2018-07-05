@@ -3,7 +3,6 @@ package org.apereo.cas.ticket.refreshtoken;
 import lombok.val;
 
 import org.apereo.cas.ticket.BaseOAuthExpirationPolicyTests;
-import org.apereo.cas.ticket.ExpirationPolicy;
 import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
 
@@ -31,7 +30,7 @@ public class OAuthRefreshTokenExpirationPolicyTests extends BaseOAuthExpirationP
     public void verifySerializeAnOAuthRefreshTokenExpirationPolicyToJson() throws Exception {
         val policyWritten = new OAuthRefreshTokenExpirationPolicy(1234L);
         MAPPER.writeValue(JSON_FILE, policyWritten);
-        final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, OAuthRefreshTokenExpirationPolicy.class);
+        val policyRead = MAPPER.readValue(JSON_FILE, OAuthRefreshTokenExpirationPolicy.class);
         assertEquals(policyWritten, policyRead);
     }
 }

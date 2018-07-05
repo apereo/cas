@@ -94,7 +94,7 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
 
         val now = LocalDateTime.now();
         val dow = DayOfWeek.from(now);
-        final var dayNamesForToday = Arrays.stream(TextStyle.values())
+        val dayNamesForToday = Arrays.stream(TextStyle.values())
                 .map(style -> dow.getDisplayName(style, Locale.getDefault()))
                 .collect(Collectors.toList());
 

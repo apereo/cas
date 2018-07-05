@@ -14,6 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 /**
  * This is {@link DefaultAuthenticationEventExecutionPlan}.
@@ -64,9 +65,8 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
             LOGGER.error("Total number of authentication handlers must match the number of provided principal resolvers");
             return;
         }
-        for (var i = 0; i < handlers.size(); i++) {
-            registerAuthenticationHandlerWithPrincipalResolver(handlers.get(i), principalResolver.get(i));
-        }
+        IntStream.range(0, handlers.size())
+            .forEach(i -> registerAuthenticationHandlerWithPrincipalResolver(handlers.get(i), principalResolver.get(i)));
     }
 
     @Override

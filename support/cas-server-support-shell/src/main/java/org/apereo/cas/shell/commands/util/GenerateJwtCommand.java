@@ -112,7 +112,7 @@ public class GenerateJwtCommand {
         val encryptionSecret = RandomStringUtils.randomAlphanumeric(encryptionSecretSize);
         LOGGER.info("==== Encryption Secret ====\n[{}]\n", encryptionSecret);
 
-        final var acceptedEncAlgs = Arrays.stream(JWEAlgorithm.class.getDeclaredFields())
+        val acceptedEncAlgs = Arrays.stream(JWEAlgorithm.class.getDeclaredFields())
             .filter(f -> f.getType().equals(JWEAlgorithm.class))
             .map(Unchecked.function(f -> {
                 f.setAccessible(true);
@@ -121,7 +121,7 @@ public class GenerateJwtCommand {
             .collect(Collectors.joining(","));
         LOGGER.debug("Encryption algorithm: [{}]. Available algorithms are [{}]", encryptionAlgorithm, acceptedEncAlgs);
 
-        final var acceptedEncMethods = Arrays.stream(EncryptionMethod.class.getDeclaredFields())
+        val acceptedEncMethods = Arrays.stream(EncryptionMethod.class.getDeclaredFields())
             .filter(f -> f.getType().equals(EncryptionMethod.class))
             .map(Unchecked.function(f -> {
                 f.setAccessible(true);
@@ -161,7 +161,7 @@ public class GenerateJwtCommand {
         val signingSecret = RandomStringUtils.randomAlphanumeric(signingSecretSize);
         LOGGER.info("==== Signing Secret ====\n{}\n", signingSecret);
 
-        final var acceptedSigningAlgs = Arrays.stream(JWSAlgorithm.class.getDeclaredFields())
+        val acceptedSigningAlgs = Arrays.stream(JWSAlgorithm.class.getDeclaredFields())
             .filter(f -> f.getType().equals(JWSAlgorithm.class))
             .map(Unchecked.function(f -> {
                 f.setAccessible(true);

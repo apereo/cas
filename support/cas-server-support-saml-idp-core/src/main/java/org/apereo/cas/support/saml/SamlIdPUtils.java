@@ -27,7 +27,6 @@ import org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
-import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
 
@@ -73,7 +72,7 @@ public class SamlIdPUtils {
             throw new SamlException("SAMLEndpointContext could not be defined for entity " + entityId);
         }
 
-        final Endpoint endpoint = determineAssertionConsumerService(authnRequest, adaptor, binding);
+        val endpoint = determineAssertionConsumerService(authnRequest, adaptor, binding);
         LOGGER.debug("Configured peer entity endpoint to be [{}] with binding [{}]", endpoint.getLocation(), endpoint.getBinding());
         endpointContext.setEndpoint(endpoint);
     }
@@ -175,7 +174,7 @@ public class SamlIdPUtils {
                     if (acsEndpoints.isEmpty()) {
                         throw new IllegalArgumentException("Metadata resolved for entity id " + issuer + " has no defined ACS endpoints");
                     }
-                    final int acsIndex = authnRequest.getAssertionConsumerServiceIndex();
+                    val acsIndex = authnRequest.getAssertionConsumerServiceIndex();
                     if (acsIndex + 1 > acsEndpoints.size()) {
                         throw new IllegalArgumentException("AssertionConsumerService index specified in the request " + acsIndex + " is invalid "
                             + "since the total endpoints available to " + issuer + " is " + acsEndpoints.size());

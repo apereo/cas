@@ -5,7 +5,6 @@ import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.crypto.hash.ConfigurableHashService;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.util.ByteSource;
@@ -85,7 +84,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
     /**
      * The number of iterations. Defaults to 0.
      */
-    protected long numberOfIterations;
+    protected int numberOfIterations;
 
     /**
      * Static/private salt to be combined with the dynamic salt retrieved
@@ -107,7 +106,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
                                                        final Integer order, final DataSource dataSource,
                                                        final String algorithmName, final String sql, final String passwordFieldName,
                                                        final String saltFieldName, final String expiredFieldName, final String disabledFieldName,
-                                                       final String numberOfIterationsFieldName, final long numberOfIterations,
+                                                       final String numberOfIterationsFieldName, final int numberOfIterations,
                                                        final String staticSalt) {
         super(name, servicesManager, principalFactory, order, dataSource);
         this.algorithmName = algorithmName;
@@ -170,19 +169,19 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      * @return the digested password
      */
     protected String digestEncodedPassword(final String encodedPassword, final Map<String, Object> values) {
-        final ConfigurableHashService hashService = new DefaultHashService();
+        val hashService = new DefaultHashService();
         if (StringUtils.isNotBlank(this.staticSalt)) {
             hashService.setPrivateSalt(ByteSource.Util.bytes(this.staticSalt));
         }
         hashService.setHashAlgorithmName(this.algorithmName);
 
-        Long numOfIterations = this.numberOfIterations;
         if (values.containsKey(this.numberOfIterationsFieldName)) {
             val longAsStr = values.get(this.numberOfIterationsFieldName).toString();
-            numOfIterations = Long.valueOf(longAsStr);
+            hashService.setHashIterations(Integer.valueOf(longAsStr));
+        } else {
+            hashService.setHashIterations(this.numberOfIterations);
         }
 
-        hashService.setHashIterations(numOfIterations.intValue());
         if (!values.containsKey(this.saltFieldName)) {
             throw new IllegalArgumentException("Specified field name for salt does not exist in the results");
         }

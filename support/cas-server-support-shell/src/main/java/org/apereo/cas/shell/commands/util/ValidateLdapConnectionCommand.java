@@ -1,8 +1,7 @@
 package org.apereo.cas.shell.commands.util;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
@@ -74,9 +73,8 @@ public class ValidateLdapConnectionCommand {
             return;
         }
 
-        DirContext ctx = null;
+        val ctx = pair.getValue();
         try {
-            ctx = pair.getValue();
             var log = "Successfully connected to the LDAP url [" + pair.getKey() + "] ";
             if (ctx.getNameInNamespace() != null && !ctx.getNameInNamespace().isEmpty()) {
                 log += "with namespace [" + ctx.getNameInNamespace() + "].";
@@ -137,7 +135,7 @@ public class ValidateLdapConnectionCommand {
 
     private Pair<String, DirContext> getContext(final String ldapUrl, final String bindDn, final String bindCredential) {
         val urls = StringUtils.commaDelimitedListToSet(ldapUrl);
-        for (val url: urls) {
+        for (val url : urls) {
             if (ldapUrl != null && !ldapUrl.isEmpty()) {
                 LOGGER.info("Attempting connect to LDAP instance [{}]", url);
 

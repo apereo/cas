@@ -40,7 +40,7 @@ public class RegisteredServiceScriptedAttributeFilterTests {
         val stream = new ClassPathResource("groovy-attr-filter.groovy").getInputStream();
         FileUtils.copyInputStreamToFile(stream, f);
         filter.setScript("file:" + f.getCanonicalPath());
-        final Map results = filter.filter(this.givenAttributesMap);
+        val results = filter.filter(this.givenAttributesMap);
         assertEquals(3, results.size());
     }
 }

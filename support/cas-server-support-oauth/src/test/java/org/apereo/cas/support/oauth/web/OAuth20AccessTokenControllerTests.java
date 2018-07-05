@@ -7,10 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
@@ -215,7 +213,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyClientExpiredCode() throws Exception {
-        final RegisteredService registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET);
+        val registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET);
         servicesManager.save(registeredService);
 
         final Map<String, Object> map = new HashMap<>();
@@ -227,7 +225,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         val authentication = getAuthentication(principal);
         val expiringOAuthCodeFactory = new DefaultOAuthCodeFactory(new AlwaysExpiresExpirationPolicy());
         val factory = new WebApplicationServiceFactory();
-        final Service service = factory.createService(registeredService.getServiceId());
+        val service = factory.createService(registeredService.getServiceId());
         val code = expiringOAuthCodeFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"), new ArrayList<>());
         this.ticketRegistry.addTicket(code);
@@ -319,12 +317,12 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         var response = mockResponse.getContentAsString();
 
-        final var refreshToken = Arrays.stream(response.split("&"))
+        val refreshToken = Arrays.stream(response.split("&"))
             .filter(f -> f.startsWith(OAuth20Constants.REFRESH_TOKEN))
             .map(f -> StringUtils.remove(f, OAuth20Constants.REFRESH_TOKEN + '='))
             .findFirst()
             .get();
-        final var accessToken = Arrays.stream(response.split("&"))
+        val accessToken = Arrays.stream(response.split("&"))
             .filter(f -> f.startsWith(OAuth20Constants.ACCESS_TOKEN))
             .map(f -> StringUtils.remove(f, OAuth20Constants.ACCESS_TOKEN + '='))
             .findFirst()
@@ -478,10 +476,10 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     @Test
     public void verifyRefreshTokenExpiredToken() throws Exception {
         val principal = createPrincipal();
-        final RegisteredService registeredService = addRegisteredService();
+        val registeredService = addRegisteredService();
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
-        final Service service = factory.createService(registeredService.getServiceId());
+        val service = factory.createService(registeredService.getServiceId());
         val expiringRefreshTokenFactory = new DefaultRefreshTokenFactory(new AlwaysExpiresExpirationPolicy());
         val refreshToken = expiringRefreshTokenFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"), new ArrayList<>());

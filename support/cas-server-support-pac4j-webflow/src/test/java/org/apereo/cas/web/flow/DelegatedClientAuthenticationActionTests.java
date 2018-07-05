@@ -26,7 +26,6 @@ import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPo
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
@@ -57,7 +56,6 @@ import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -96,7 +94,7 @@ public class DelegatedClientAuthenticationActionTests {
 
     @Test
     public void verifyStartAuthenticationWithService() throws Exception {
-        final Service service = RegisteredServiceTestUtils.getService(MY_SERVICE);
+        val service = RegisteredServiceTestUtils.getService(MY_SERVICE);
         verifyStartAuthentication(service);
     }
 
@@ -143,7 +141,7 @@ public class DelegatedClientAuthenticationActionTests {
         assertEquals(MY_THEME, mockRequest.getAttribute(ThemeChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(Locale.getDefault().getCountry(), mockRequest.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(HttpMethod.POST.name(), mockRequest.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
-        final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
+        val flowScope = mockRequestContext.getFlowScope();
         val urls =
             (Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration>)
                 flowScope.get(DelegatedClientAuthenticationAction.PAC4J_URLS);
@@ -199,7 +197,7 @@ public class DelegatedClientAuthenticationActionTests {
         assertEquals(Locale.getDefault().getCountry(), mockRequest.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(HttpMethod.POST.name(), mockRequest.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
         assertEquals(MY_SERVICE, mockRequest.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
-        final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
+        val flowScope = mockRequestContext.getFlowScope();
         assertEquals(service.getId(), ((Service) flowScope.get(CasProtocolConstants.PARAMETER_SERVICE)).getId());
     }
 
@@ -219,7 +217,7 @@ public class DelegatedClientAuthenticationActionTests {
 
     private AbstractAction getDelegatedClientAction(final BaseClient client, final Service service, final Clients clients,
                                                     final MockHttpServletRequest mockRequest) {
-        final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(TGT_ID, mock(Authentication.class), mock(ExpirationPolicy.class));
+        val tgt = new TicketGrantingTicketImpl(TGT_ID, mock(Authentication.class), mock(ExpirationPolicy.class));
         val casImpl = mock(CentralAuthenticationService.class);
         when(casImpl.createTicketGrantingTicket(any())).thenReturn(tgt);
 

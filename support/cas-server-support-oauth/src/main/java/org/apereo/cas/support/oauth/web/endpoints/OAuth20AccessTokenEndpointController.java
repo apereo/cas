@@ -105,21 +105,21 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             return;
         }
 
-        final AccessTokenRequestDataHolder requestHolder;
         try {
-            requestHolder = examineAndExtractAccessTokenGrantRequest(request, response);
+            val requestHolder = examineAndExtractAccessTokenGrantRequest(request, response);
             LOGGER.debug("Creating access token for [{}]", requestHolder);
+            val context = Pac4jUtils.getPac4jJ2EContext(request, response);
+            val accessToken = accessTokenGenerator.generate(requestHolder);
+            LOGGER.debug("Access token generated is: [{}]. Refresh token generated is [{}]", accessToken.getKey(), accessToken.getValue());
+            generateAccessTokenResponse(request, response, requestHolder, context, accessToken.getKey(), accessToken.getValue());
+            response.setStatus(HttpServletResponse.SC_OK);
         } catch (final Exception e) {
             LOGGER.error("Could not identify and extract access token request", e);
             OAuth20Utils.writeTextError(response, OAuth20Constants.INVALID_GRANT);
             return;
         }
 
-        val context = Pac4jUtils.getPac4jJ2EContext(request, response);
-        val accessToken = accessTokenGenerator.generate(requestHolder);
-        LOGGER.debug("Access token generated is: [{}]. Refresh token generated is [{}]", accessToken.getKey(), accessToken.getValue());
-        generateAccessTokenResponse(request, response, requestHolder, context, accessToken.getKey(), accessToken.getValue());
-        response.setStatus(HttpServletResponse.SC_OK);
+
     }
 
     /**

@@ -8,7 +8,6 @@ import org.apereo.cas.aup.LdapAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.LdapUtils;
-import org.ldaptive.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -40,7 +39,7 @@ public class CasAcceptableUsagePolicyLdapConfiguration {
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
         val ldap = casProperties.getAcceptableUsagePolicy().getLdap();
-        final ConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+        val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new LdapAcceptableUsagePolicyRepository(ticketRegistrySupport,
                 casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
                 connectionFactory, ldap.getSearchFilter(), ldap.getBaseDn());

@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.LdapConsentRepository;
 import org.apereo.cas.util.LdapUtils;
-import org.ldaptive.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +29,7 @@ public class CasConsentLdapConfiguration {
     @Bean
     public ConsentRepository consentRepository() {
         val ldap = casProperties.getConsent().getLdap();
-        final ConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+        val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new LdapConsentRepository(connectionFactory, ldap);
     }
 }

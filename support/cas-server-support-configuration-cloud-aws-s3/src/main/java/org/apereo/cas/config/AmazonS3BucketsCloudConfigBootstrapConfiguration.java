@@ -1,11 +1,10 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.apereo.cas.configuration.CasCoreConfigurationUtils;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
@@ -16,7 +15,6 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.InputStreamResource;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -33,7 +31,7 @@ public class AmazonS3BucketsCloudConfigBootstrapConfiguration implements Propert
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
-        final Map properties = new LinkedHashMap<>();
+        val properties = new LinkedHashMap<String, Object>();
         try {
             val builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
             val s3Client = builder.build(AmazonS3ClientBuilder.standard(), AmazonS3.class);
@@ -48,7 +46,7 @@ public class AmazonS3BucketsCloudConfigBootstrapConfiguration implements Propert
                 val objectKey = obj.getKey();
                 LOGGER.debug("Fetching object [{}] from bucket [{}]", objectKey, bucketName);
                 val object = s3Client.getObject(obj.getBucketName(), objectKey);
-                try (var is = object.getObjectContent()) {
+                try (val is = object.getObjectContent()) {
                     if (objectKey.endsWith("properties")) {
                         val props = new Properties();
                         props.load(is);

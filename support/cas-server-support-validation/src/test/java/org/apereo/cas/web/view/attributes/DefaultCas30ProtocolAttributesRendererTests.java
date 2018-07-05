@@ -19,7 +19,7 @@ public class DefaultCas30ProtocolAttributesRendererTests {
     @Test
     public void verifyAction() {
         val r = new DefaultCas30ProtocolAttributesRenderer();
-        final Map results = CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap();
-        assertFalse(r.render(results).isEmpty());
+        val results = CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap();
+        assertFalse(r.render((Map) results).isEmpty());
     }
 }

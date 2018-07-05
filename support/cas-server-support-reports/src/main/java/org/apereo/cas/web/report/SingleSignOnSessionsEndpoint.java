@@ -1,10 +1,9 @@
 package org.apereo.cas.web.report;
 
-import lombok.val;
-
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.Ticket;
@@ -24,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * SSO Report web controller that produces JSON data for the view.
@@ -149,30 +149,31 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
         val option = SsoSessionReportOptions.valueOf(type);
         val activeSsoSessions = getActiveSsoSessions(option);
         sessionsMap.put("activeSsoSessions", activeSsoSessions);
-        long totalTicketGrantingTickets = 0;
-        long totalProxyGrantingTickets = 0;
-        long totalUsageCount = 0;
+        val totalTicketGrantingTickets = new AtomicLong();
+        val totalProxyGrantingTickets = new AtomicLong();
+        val totalUsageCount = new AtomicLong();
         final Set<String> uniquePrincipals = new HashSet<>();
         for (val activeSsoSession : activeSsoSessions) {
             if (activeSsoSession.containsKey(SsoSessionAttributeKeys.IS_PROXIED.toString())) {
                 val isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.toString()).toString());
                 if (isProxied) {
-                    totalProxyGrantingTickets++;
+                    totalProxyGrantingTickets.incrementAndGet();
                 } else {
-                    totalTicketGrantingTickets++;
+                    totalTicketGrantingTickets.incrementAndGet();
                     val principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
                     uniquePrincipals.add(principal);
                 }
             } else {
-                totalTicketGrantingTickets++;
+                totalTicketGrantingTickets.incrementAndGet();
                 val principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
                 uniquePrincipals.add(principal);
             }
-            totalUsageCount += Long.parseLong(activeSsoSession.get(SsoSessionAttributeKeys.NUMBER_OF_USES.toString()).toString());
+            val uses = Long.parseLong(activeSsoSession.get(SsoSessionAttributeKeys.NUMBER_OF_USES.toString()).toString());
+            totalUsageCount.getAndAdd(uses);
         }
         sessionsMap.put("totalProxyGrantingTickets", totalProxyGrantingTickets);
         sessionsMap.put("totalTicketGrantingTickets", totalTicketGrantingTickets);
-        sessionsMap.put("totalTickets", totalTicketGrantingTickets + totalProxyGrantingTickets);
+        sessionsMap.put("totalTickets", totalTicketGrantingTickets.longValue() + totalProxyGrantingTickets.longValue());
         sessionsMap.put("totalPrincipals", uniquePrincipals.size());
         sessionsMap.put("totalUsageCount", totalUsageCount);
         return sessionsMap;

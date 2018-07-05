@@ -46,7 +46,7 @@ public class RestAuditTrailManagerTests {
         val audit = new AuditActionContext("casuser", "resource", "action",
             "CAS", new Date(), "123.456.789.000", "123.456.789.000");
         val data = MAPPER.writeValueAsString(CollectionUtils.wrapSet(audit));
-        try (var webServer = new MockWebServer(9296,
+        try (val webServer = new MockWebServer(9296,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             r.record(audit);

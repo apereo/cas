@@ -70,12 +70,13 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
     public void before() {
         val svc = RegisteredServiceTestUtils.getRegisteredService("https://example.token.org");
         svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        var prop = new DefaultRegisteredServiceProperty();
+        val prop = new DefaultRegisteredServiceProperty();
         prop.addValue(SIGNING_SECRET);
         svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING.getPropertyName(), prop);
-        prop = new DefaultRegisteredServiceProperty();
-        prop.addValue(ENCRYPTION_SECRET);
-        svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION.getPropertyName(), prop);
+
+        val prop2 = new DefaultRegisteredServiceProperty();
+        prop2.addValue(ENCRYPTION_SECRET);
+        svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION.getPropertyName(), prop2);
         this.servicesManager.save(svc);
     }
 

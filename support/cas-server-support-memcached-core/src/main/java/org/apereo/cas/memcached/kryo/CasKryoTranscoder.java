@@ -50,9 +50,9 @@ public class CasKryoTranscoder implements Transcoder<Object> {
 
     @Override
     public CachedData encode(final Object obj) {
-        try (var kryo = this.kryoPool.borrow();
-             var byteStream = new ByteArrayOutputStream();
-             var output = new Output(byteStream)) {
+        try (val kryo = this.kryoPool.borrow();
+             val byteStream = new ByteArrayOutputStream();
+             val output = new Output(byteStream)) {
             if (obj != null) {
                 LOGGER.trace("Writing object [{}] to memcached ", obj.getClass());
             }
@@ -68,8 +68,8 @@ public class CasKryoTranscoder implements Transcoder<Object> {
     @Override
     public Object decode(final CachedData d) {
         val bytes = d.getData();
-        try (var kryo = this.kryoPool.borrow();
-             var input = new Input(new ByteArrayInputStream(bytes))) {
+        try (val kryo = this.kryoPool.borrow();
+             val input = new Input(new ByteArrayInputStream(bytes))) {
             return kryo.readClassAndObject(input);
         } catch (final Exception exception) {
             throw new KryoException(exception);

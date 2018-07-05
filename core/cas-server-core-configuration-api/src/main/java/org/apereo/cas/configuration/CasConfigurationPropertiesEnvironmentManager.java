@@ -7,7 +7,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
@@ -71,7 +70,7 @@ public class CasConfigurationPropertiesEnvironmentManager {
             new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
                 .configure(params.properties().setFile(new File(file, getApplicationName() + ".properties")));
 
-        final Configuration config = builder.getConfiguration();
+        val config = builder.getConfiguration();
         config.setProperty(pair.getKey(), pair.getValue());
         builder.save();
     }

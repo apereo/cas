@@ -49,7 +49,7 @@ public class SerializationUtils {
      */
     @SneakyThrows
     public static void serialize(final Serializable object, final OutputStream outputStream) {
-        try (var out = new ObjectOutputStream(outputStream)) {
+        try (val out = new ObjectOutputStream(outputStream)) {
             out.writeObject(object);
         }
     }
@@ -79,7 +79,7 @@ public class SerializationUtils {
      */
     @SneakyThrows
     public static <T> T deserialize(final InputStream inputStream, final Class<T> clazz) {
-        try (var in = new ObjectInputStream(inputStream)) {
+        try (val in = new ObjectInputStream(inputStream)) {
             val obj = in.readObject();
 
             if (!clazz.isAssignableFrom(obj.getClass())) {
@@ -165,7 +165,7 @@ public class SerializationUtils {
      * @since 4.2
      */
     public static <T extends Serializable> T deserializeAndCheckObject(final byte[] object, final Class<T> type) {
-        final Object result = deserialize(object, type);
+        val result = deserialize(object, type);
         if (!type.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Decoded object is of type " + result.getClass() + " when we were expecting " + type);
         }

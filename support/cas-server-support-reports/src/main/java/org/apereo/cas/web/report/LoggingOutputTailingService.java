@@ -40,6 +40,7 @@ import java.util.List;
 public class LoggingOutputTailingService extends TailerListenerAdapter implements AutoCloseable, InitializingBean, DisposableBean {
 
     private static final String LOG_OUTPUT_STOMP_DESTINATION = "/topic/logs";
+    private static final long DELAY_MILLIS = 100L;
 
     /**
      * This is a Task Executor.
@@ -111,7 +112,7 @@ public class LoggingOutputTailingService extends TailerListenerAdapter implement
         });
 
         outputFileNames.forEach(f -> {
-            val t = new Tailer(new File(f), this, 100L, false, true);
+            val t = new Tailer(new File(f), this, DELAY_MILLIS, false, true);
             this.tailers.add(t);
             this.taskExecutor.execute(t);
         });

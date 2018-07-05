@@ -17,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link DynamicMetadataResolver}.
@@ -42,7 +41,7 @@ public class DynamicMetadataResolver extends UrlResourceMetadataResolver {
     @Override
     protected HttpResponse fetchMetadata(final String metadataLocation) {
         val metadata = samlIdPProperties.getMetadata();
-        final Map headers = new LinkedHashMap();
+        val headers = new LinkedHashMap();
         headers.put("Content-Type", metadata.getSupportedContentTypes());
         headers.put("Accept", "*/*");
         return HttpUtils.executeGet(metadataLocation, metadata.getBasicAuthnUsername(),

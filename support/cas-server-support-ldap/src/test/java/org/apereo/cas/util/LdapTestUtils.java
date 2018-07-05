@@ -60,7 +60,7 @@ public class LdapTestUtils {
      */
     public static Collection<LdapEntry> readLdif(final InputStream ldif, final String baseDn) throws IOException {
         final String ldapString;
-        try (var reader = new BufferedReader(new InputStreamReader(ldif, StandardCharsets.UTF_8))) {
+        try (val reader = new BufferedReader(new InputStreamReader(ldif, StandardCharsets.UTF_8))) {
             ldapString = reader.lines()
                 .map(line -> {
                     if (line.contains(BASE_DN_PLACEHOLDER)) {
@@ -133,7 +133,7 @@ public class LdapTestUtils {
                                        final AttributeModificationType add) {
         try {
             val address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
-            try (var conn = DefaultConnectionFactory.getConnection(address)) {
+            try (val conn = DefaultConnectionFactory.getConnection(address)) {
                 try {
                     conn.open();
                     val modify = new ModifyOperation(conn);

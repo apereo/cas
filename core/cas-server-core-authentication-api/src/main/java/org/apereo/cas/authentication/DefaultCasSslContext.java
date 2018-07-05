@@ -49,7 +49,7 @@ public class DefaultCasSslContext {
         val casTrustStore = KeyStore.getInstance(trustStoreType);
         val trustStorePasswordCharArray = trustStorePassword.toCharArray();
 
-        try (var casStream = trustStoreFile.getInputStream()) {
+        try (val casStream = trustStoreFile.getInputStream()) {
             casTrustStore.load(casStream, trustStorePasswordCharArray);
         }
 

@@ -15,7 +15,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.model.FlowModelFlowBuilder;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.model.AbstractActionModel;
@@ -29,7 +28,6 @@ import org.springframework.webflow.engine.model.TransitionModel;
 import org.springframework.webflow.engine.model.VarModel;
 import org.springframework.webflow.engine.model.ViewStateModel;
 import org.springframework.webflow.engine.model.builder.DefaultFlowModelHolder;
-import org.springframework.webflow.engine.model.registry.FlowModelHolder;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -95,8 +93,8 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
     }
 
     private FlowDefinitionRegistry createDuoFlowDefinitionRegistry(final MultifactorAuthenticationProvider p, final DynamicFlowModelBuilder modelBuilder) {
-        final FlowModelHolder holder = new DefaultFlowModelHolder(modelBuilder);
-        final FlowBuilder flowBuilder = new FlowModelFlowBuilder(holder);
+        val holder = new DefaultFlowModelHolder(modelBuilder);
+        val flowBuilder = new FlowModelFlowBuilder(holder);
         val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices);
         builder.addFlowBuilder(flowBuilder, p.getId());
         return builder.build();

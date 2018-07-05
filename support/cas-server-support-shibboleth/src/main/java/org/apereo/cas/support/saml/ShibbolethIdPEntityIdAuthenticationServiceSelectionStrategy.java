@@ -70,9 +70,9 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
             if (request != null && StringUtils.isNotBlank(request.getQueryString())) {
                 val query = request.getQueryString().split("&");
-                final var paramRequest = Arrays.stream(query)
+                val paramRequest = Arrays.stream(query)
                     .map(p -> {
-                        val params = Splitter.on("=").splitToList(p);
+                        var params = Splitter.on("=").splitToList(p);
                         return Pair.of(params.get(0), params.get(1));
                     })
                     .filter(p -> p.getKey().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))

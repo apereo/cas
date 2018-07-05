@@ -65,11 +65,11 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         val context = new MockRequestContext();
         WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
-        final Map attributes = new LinkedHashMap<>();
+        val attributes = new LinkedHashMap<String, Object>();
         attributes.put(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true);
         attributes.putAll(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap());
 
-        val p = CoreAuthenticationTestUtils.getPrincipal("casuser", attributes);
+        val p = CoreAuthenticationTestUtils.getPrincipal("casuser", (Map) attributes);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(p), context);
 
         val request = new MockHttpServletRequest();

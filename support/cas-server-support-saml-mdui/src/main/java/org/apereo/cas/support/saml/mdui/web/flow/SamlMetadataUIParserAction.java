@@ -5,7 +5,6 @@ import lombok.val;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
@@ -105,7 +104,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      * @return the registered service from request
      */
     protected RegisteredService getRegisteredServiceFromRequest(final RequestContext requestContext, final String entityId) {
-        final Service currentService = WebUtils.getService(requestContext);
+        val currentService = WebUtils.getService(requestContext);
         val service = this.serviceFactory.createService(entityId);
         var registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService == null) {
@@ -123,7 +122,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      * @return the registered service from request
      */
     protected RegisteredService getRegisteredServiceFromRequest(final RequestContext requestContext) {
-        final Service currentService = WebUtils.getService(requestContext);
+        val currentService = WebUtils.getService(requestContext);
         val registeredService = this.servicesManager.findServiceBy(currentService);
         return registeredService;
     }

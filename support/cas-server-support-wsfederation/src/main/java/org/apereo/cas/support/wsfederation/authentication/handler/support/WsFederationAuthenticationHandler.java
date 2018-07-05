@@ -43,9 +43,8 @@ public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcess
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         val wsFederationCredentials = (WsFederationCredential) credential;
         if (wsFederationCredentials != null) {
-            final Map attributes = wsFederationCredentials.getAttributes();
-            val principal = this.principalFactory.createPrincipal(wsFederationCredentials.getId(), attributes);
-
+            val attributes = wsFederationCredentials.getAttributes();
+            val principal = this.principalFactory.createPrincipal(wsFederationCredentials.getId(), (Map) attributes);
             return this.createHandlerResult(wsFederationCredentials, principal, new ArrayList<>());
         }
         throw new FailedLoginException();

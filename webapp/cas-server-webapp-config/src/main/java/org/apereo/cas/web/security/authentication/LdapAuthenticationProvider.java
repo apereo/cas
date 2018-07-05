@@ -11,7 +11,6 @@ import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.Pac4jUtils;
-import org.ldaptive.ConnectionFactory;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.auth.AuthenticationRequest;
@@ -103,7 +102,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
 
     private AuthorizationGenerator<CommonProfile> buildAuthorizationGenerator() {
         val ldapAuthz = this.ldapProperties.getLdapAuthz();
-        final ConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(this.ldapProperties);
+        val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(this.ldapProperties);
 
         if (isGroupBasedAuthorization()) {
             LOGGER.debug("Handling LDAP authorization based on groups");

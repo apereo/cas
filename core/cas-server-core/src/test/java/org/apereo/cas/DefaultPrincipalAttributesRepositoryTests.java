@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
-import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
@@ -77,23 +76,23 @@ public class DefaultPrincipalAttributesRepositoryTests {
 
     @Test
     public void checkDefaultAttributes() {
-        final PrincipalAttributesRepository rep = new DefaultPrincipalAttributesRepository();
+        val rep = new DefaultPrincipalAttributesRepository();
         assertEquals(3, rep.getAttributes(this.principalFactory.getIfAvailable().createPrincipal("uid")).size());
     }
 
     @Test
     public void checkInitialAttributes() {
         val p = this.principalFactory.getIfAvailable().createPrincipal("uid", Collections.singletonMap("mail", "final@example.com"));
-        final PrincipalAttributesRepository rep = new DefaultPrincipalAttributesRepository();
+        val rep = new DefaultPrincipalAttributesRepository();
         assertEquals(1, rep.getAttributes(p).size());
         assertTrue(rep.getAttributes(p).containsKey("mail"));
     }
 
     @Test
     public void verifySerializeADefaultPrincipalAttributesRepositoryToJson() throws IOException {
-        final PrincipalAttributesRepository repositoryWritten = new DefaultPrincipalAttributesRepository();
+        val repositoryWritten = new DefaultPrincipalAttributesRepository();
         MAPPER.writeValue(JSON_FILE, repositoryWritten);
-        final PrincipalAttributesRepository repositoryRead = MAPPER.readValue(JSON_FILE, DefaultPrincipalAttributesRepository.class);
+        val repositoryRead = MAPPER.readValue(JSON_FILE, DefaultPrincipalAttributesRepository.class);
         assertEquals(repositoryWritten, repositoryRead);
     }
 }

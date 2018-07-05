@@ -6,9 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Response;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.SamlConfiguration;
 import org.apereo.cas.config.authentication.support.SamlAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.authentication.support.SamlServiceFactoryConfiguration;
@@ -69,7 +67,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
     public void verifyResponseForJsession() {
         val request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "http://www.cnn.com/;jsession=test");
-        final Service impl = samlServiceFactory.createService(request);
+        val impl = samlServiceFactory.createService(request);
 
         assertEquals("http://www.cnn.com/", impl.getId());
     }
@@ -78,7 +76,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
     public void verifyResponseWithNoTicket() {
         val request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "service");
-        final WebApplicationService impl = samlServiceFactory.createService(request);
+        val impl = samlServiceFactory.createService(request);
         val response = new SamlServiceResponseBuilder(
             new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
             .build(impl, null, CoreAuthenticationTestUtils.getAuthentication());
@@ -108,7 +106,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "https://some.service.edu/path/to/app");
 
         val service = new DefaultArgumentExtractor(samlServiceFactory).extractService(request);
-        final Service impl = new DefaultArgumentExtractor(samlServiceFactory).extractService(request);
+        val impl = new DefaultArgumentExtractor(samlServiceFactory).extractService(request);
         assertTrue(impl.matches(service));
     }
 
@@ -116,7 +114,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
     public void verifyTargetMatchesNoSamlService() {
         val request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "https://some.service.edu/path/to/app");
-        final Service impl = new DefaultArgumentExtractor(samlServiceFactory).extractService(request);
+        val impl = new DefaultArgumentExtractor(samlServiceFactory).extractService(request);
 
         val request2 = new MockHttpServletRequest();
         request2.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "https://some.SERVICE.edu");

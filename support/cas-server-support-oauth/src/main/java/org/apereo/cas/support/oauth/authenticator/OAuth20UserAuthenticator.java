@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -37,7 +36,7 @@ public class OAuth20UserAuthenticator implements Authenticator<UsernamePasswordC
         try {
             val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
             val service = this.webApplicationServiceFactory.createService(clientId);
-            final RegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+            val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
             val authenticationResult = this.authenticationSystemSupport

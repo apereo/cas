@@ -8,7 +8,6 @@ import org.springframework.mock.env.MockEnvironment;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -22,7 +21,7 @@ public class CasEmbeddedContainerUtilsTests {
 
     @Test
     public void verifyRuntimeProperties() {
-        final Map map = CasEmbeddedContainerUtils.getRuntimeProperties(true);
+        val map = CasEmbeddedContainerUtils.getRuntimeProperties(true);
         assertEquals(1, map.size());
         assertTrue(map.containsKey(CasEmbeddedContainerUtils.EMBEDDED_CONTAINER_CONFIG_ACTIVE));
     }

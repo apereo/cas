@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
 
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.audit.SurrogateAuthenticationEligibilityAuditableExecution;
 import org.apereo.cas.authentication.audit.SurrogateEligibilityVerificationAuditResourceResolver;
-import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +32,7 @@ public class SurrogateAuthenticationAuditConfiguration implements AuditTrailReco
 
     @Override
     public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
-        final AuditActionResolver actionResolver = new DefaultAuditActionResolver("_TRIGGERED", StringUtils.EMPTY);
+        val actionResolver = new DefaultAuditActionResolver("_TRIGGERED", StringUtils.EMPTY);
         plan.registerAuditActionResolver("SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION_ACTION_RESOLVER", actionResolver);
 
         plan.registerAuditResourceResolver("SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION_RESOURCE_RESOLVER",

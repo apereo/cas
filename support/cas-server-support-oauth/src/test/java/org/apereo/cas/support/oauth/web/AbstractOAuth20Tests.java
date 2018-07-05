@@ -18,7 +18,6 @@ import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -63,6 +62,7 @@ import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -223,9 +223,7 @@ public abstract class AbstractOAuth20Tests {
         public List inMemoryRegisteredServices() {
             val svc = RegisteredServiceTestUtils.getRegisteredService("^(https?|imaps?)://.*");
             svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-            final List l = new ArrayList();
-            l.add(svc);
-            return l;
+            return CollectionUtils.wrapList(svc);
         }
 
         @Override
@@ -258,7 +256,7 @@ public abstract class AbstractOAuth20Tests {
     protected OAuthCode addCode(final Principal principal, final OAuthRegisteredService registeredService) {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
-        final Service service = factory.createService(registeredService.getClientId());
+        val service = factory.createService(registeredService.getClientId());
         val code = oAuthCodeFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"), new ArrayList<>());
         this.ticketRegistry.addTicket(code);
@@ -268,7 +266,7 @@ public abstract class AbstractOAuth20Tests {
     protected RefreshToken addRefreshToken(final Principal principal, final OAuthRegisteredService registeredService) {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
-        final Service service = factory.createService(registeredService.getServiceId());
+        val service = factory.createService(registeredService.getServiceId());
         val refreshToken = oAuthRefreshTokenFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"), new ArrayList<>());
         this.ticketRegistry.addTicket(refreshToken);

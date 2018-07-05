@@ -64,7 +64,7 @@ public class WsFederationNavigationController {
     public View redirectToProvider(final HttpServletRequest request, final HttpServletResponse response) {
         val wsfedId = request.getParameter(PARAMETER_NAME);
         try {
-            final var cfg = configurations.stream().filter(c -> c.getId().equals(wsfedId)).findFirst().orElse(null);
+            val cfg = configurations.stream().filter(c -> c.getId().equals(wsfedId)).findFirst().orElse(null);
             if (cfg == null) {
                 throw new IllegalArgumentException("Could not locate WsFederation configuration for " + wsfedId);
             }

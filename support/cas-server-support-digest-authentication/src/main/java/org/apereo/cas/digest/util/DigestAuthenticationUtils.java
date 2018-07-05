@@ -29,7 +29,7 @@ public class DigestAuthenticationUtils {
     public static String createNonce() {
         val fmtDate = ZonedDateTime.now().toString();
         val rand = RandomUtils.getNativeInstance();
-        final Integer randomInt = rand.nextInt();
+        val randomInt = rand.nextInt();
         return DigestUtils.md5Hex(fmtDate + randomInt);
     }
 

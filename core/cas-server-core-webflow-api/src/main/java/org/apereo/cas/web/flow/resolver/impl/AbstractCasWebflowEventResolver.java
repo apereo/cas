@@ -112,7 +112,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @param error the error
      * @return the event
      */
-    protected Event newEvent(final String id, final Exception error) {
+    protected Event newEvent(final String id, final Throwable error) {
         return newEvent(id, new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
     }
 
@@ -466,7 +466,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the service
      */
     protected Service resolveServiceFromAuthenticationRequest(final RequestContext context) {
-        final Service ctxService = WebUtils.getService(context);
+        val ctxService = WebUtils.getService(context);
         return resolveServiceFromAuthenticationRequest(ctxService);
     }
 
@@ -490,11 +490,11 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         try {
             val credential = getCredentialFromContext(context);
-            var builder = WebUtils.getAuthenticationResultBuilder(context);
+            val builderResult = WebUtils.getAuthenticationResultBuilder(context);
 
             LOGGER.debug("Handling authentication transaction for credential [{}]", credential);
-            final Service service = WebUtils.getService(context);
-            builder = this.authenticationSystemSupport.handleAuthenticationTransaction(service, builder, credential);
+            val service = WebUtils.getService(context);
+            val builder = this.authenticationSystemSupport.handleAuthenticationTransaction(service, builderResult, credential);
 
             LOGGER.debug("Issuing ticket-granting tickets for service [{}]", service);
             return CollectionUtils.wrapSet(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));

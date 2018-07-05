@@ -107,15 +107,15 @@ public class TokenAuthenticationHandlerTests {
             val svc = RegisteredServiceTestUtils.getRegisteredService(".*");
             svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
 
-            var p = new DefaultRegisteredServiceProperty();
+            val p = new DefaultRegisteredServiceProperty();
             p.addValue(SIGNING_SECRET);
             svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING.getPropertyName(), p);
 
-            p = new DefaultRegisteredServiceProperty();
-            p.addValue(ENCRYPTION_SECRET);
-            svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION.getPropertyName(), p);
+            val p2 = new DefaultRegisteredServiceProperty();
+            p2.addValue(ENCRYPTION_SECRET);
+            svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION.getPropertyName(), p2);
 
-            final List l = new ArrayList();
+            val l = new ArrayList();
             l.add(svc);
             return l;
         }

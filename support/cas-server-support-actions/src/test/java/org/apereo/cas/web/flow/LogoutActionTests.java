@@ -8,7 +8,6 @@ import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.logout.DefaultLogoutRequest;
-import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
@@ -123,7 +122,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     public void verifyLogoutRequestBack() {
         val cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
-        final LogoutRequest logoutRequest = new DefaultLogoutRequest(StringUtils.EMPTY, null, null);
+        val logoutRequest = new DefaultLogoutRequest(StringUtils.EMPTY, null, null);
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         val properties = new LogoutProperties();
@@ -137,7 +136,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     public void verifyLogoutRequestFront() {
         val cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
-        final LogoutRequest logoutRequest = new DefaultLogoutRequest(StringUtils.EMPTY, null, null);
+        val logoutRequest = new DefaultLogoutRequest(StringUtils.EMPTY, null, null);
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         val properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);

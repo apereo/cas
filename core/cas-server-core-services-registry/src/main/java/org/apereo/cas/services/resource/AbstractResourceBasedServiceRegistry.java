@@ -283,7 +283,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                     + "Future CAS versions may try to strictly force the naming syntax, refusing to load the file.",
                 fileName, this.serviceFileNamePattern.pattern());
         }
-        try (var in = Files.newBufferedReader(file.toPath())) {
+        try (val in = Files.newBufferedReader(file.toPath())) {
             return this.registeredServiceSerializers
                 .stream()
                 .filter(s -> s.supports(file))
@@ -304,7 +304,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             service.setId(System.currentTimeMillis());
         }
         val f = getRegisteredServiceFileName(service);
-        try (var out = Files.newOutputStream(f.toPath())) {
+        try (val out = Files.newOutputStream(f.toPath())) {
             val result = this.registeredServiceSerializers.stream().anyMatch(s -> {
                 try {
                     s.to(out, service);

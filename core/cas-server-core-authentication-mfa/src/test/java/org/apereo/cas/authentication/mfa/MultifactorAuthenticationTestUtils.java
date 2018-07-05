@@ -51,8 +51,7 @@ public class MultifactorAuthenticationTestUtils {
         when(authentication.getPrincipal()).thenReturn(principal);
 
         val cmd = mock(CredentialMetaData.class);
-        final Class clz = Credential.class;
-        when(cmd.getCredentialClass()).thenReturn(clz);
+        when(cmd.getCredentialClass()).thenReturn((Class) Credential.class);
         when(authentication.getCredentials()).thenReturn(CollectionUtils.wrapList(cmd));
         return authentication;
     }

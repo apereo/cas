@@ -21,7 +21,6 @@ import static org.mockito.Mockito.*;
  */
 @Slf4j
 public class DefaultRegisteredServiceUsernameProviderTests {
-
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultRegisteredServiceUsernameProvider.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -64,7 +63,7 @@ public class DefaultRegisteredServiceUsernameProviderTests {
 
         MAPPER.writeValue(JSON_FILE, providerWritten);
 
-        final RegisteredServiceUsernameAttributeProvider providerRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceUsernameProvider.class);
+        val providerRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceUsernameProvider.class);
 
         assertEquals(providerWritten, providerRead);
     }

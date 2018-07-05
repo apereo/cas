@@ -5,7 +5,6 @@ import lombok.val;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -33,9 +32,9 @@ public class OAuth20RegisteredServiceUIAction extends AbstractAction implements 
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        Service service = WebUtils.getService(requestContext);
-        if (service != null) {
-            service = serviceSelectionStrategy.resolveServiceFrom(service);
+        val serviceCtx = WebUtils.getService(requestContext);
+        if (serviceCtx != null) {
+            val service = serviceSelectionStrategy.resolveServiceFrom(serviceCtx);
             val registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
 

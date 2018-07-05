@@ -55,7 +55,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     public BaseSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern) {
         setIpsToCheckPattern(RegexUtils.createPattern(ipsToCheckPattern));
     }
-    
+
 
     /**
      * {@inheritDoc}

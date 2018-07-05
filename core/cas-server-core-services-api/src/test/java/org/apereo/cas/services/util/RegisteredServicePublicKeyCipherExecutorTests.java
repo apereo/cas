@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,7 +32,7 @@ public class RegisteredServicePublicKeyCipherExecutorTests {
         val svc = getService("classpath:keys/RSA1024Public.key");
 
         val ticketId = RandomStringUtils.randomAlphanumeric(120);
-        final RegisteredServiceCipherExecutor e = new RegisteredServicePublicKeyCipherExecutor();
+        val e = new RegisteredServicePublicKeyCipherExecutor();
         assertNull(e.encode(ticketId, Optional.of(svc)));
     }
 
@@ -41,12 +40,12 @@ public class RegisteredServicePublicKeyCipherExecutorTests {
     public void verifyCipherAbleToEncode() {
         val svc = getService("classpath:keys/RSA4096Public.key");
         val ticketId = RandomStringUtils.randomAlphanumeric(120);
-        final RegisteredServiceCipherExecutor e = new RegisteredServicePublicKeyCipherExecutor();
+        val e = new RegisteredServicePublicKeyCipherExecutor();
         assertNotNull(e.encode(ticketId, Optional.of(svc)));
     }
 
     private AbstractRegisteredService getService(final String keyLocation) {
-        final AbstractRegisteredService svc = new RegexRegisteredService();
+        val svc = new RegexRegisteredService();
         svc.setServiceId("Testing");
         svc.setPublicKey(new RegisteredServicePublicKeyImpl(keyLocation, "RSA"));
         return svc;

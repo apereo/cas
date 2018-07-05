@@ -41,7 +41,7 @@ public class GroovyRegisteredServiceMultifactorPolicyTests {
         val authz = new GroovyRegisteredServiceMultifactorPolicy();
         authz.setGroovyScript("classpath:mfapolicy.groovy");
         MAPPER.writeValue(JSON_FILE, authz);
-        final RegisteredServiceMultifactorPolicy strategyRead = MAPPER.readValue(JSON_FILE, GroovyRegisteredServiceMultifactorPolicy.class);
+        val strategyRead = MAPPER.readValue(JSON_FILE, GroovyRegisteredServiceMultifactorPolicy.class);
         assertEquals(authz, strategyRead);
         assertEquals("Test", strategyRead.getPrincipalAttributeNameTrigger());
     }

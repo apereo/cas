@@ -14,7 +14,6 @@ import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -51,7 +50,6 @@ public class CasConfigurationMetadataServerEndpoint {
      */
     @ReadOperation
     public List<ConfigurationMetadataSearchResult> search(@Selector final String name) {
-        List results = new ArrayList<>();
         val allProps = repository.getRepository().getAllProperties();
 
         if (StringUtils.isNotBlank(name) && RegexUtils.isValidRegex(name)) {
@@ -59,13 +57,13 @@ public class CasConfigurationMetadataServerEndpoint {
                 .map(Object::toString)
                 .collect(Collectors.joining("|"));
             val pattern = RegexUtils.createPattern(names);
-            results = allProps.entrySet()
+            return allProps.entrySet()
                 .stream()
                 .filter(propEntry -> RegexUtils.find(pattern, propEntry.getKey()))
                 .map(propEntry -> new ConfigurationMetadataSearchResult(propEntry.getValue(), repository))
+                .sorted()
                 .collect(Collectors.toList());
-            Collections.sort(results);
         }
-        return results;
+        return new ArrayList<>();
     }
 }

@@ -1,10 +1,9 @@
 package org.apereo.cas.oidc.jwks;
 
-import lombok.val;
-
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.util.ResourceUtils;
@@ -60,12 +59,9 @@ public class OidcJsonWebKeystoreGeneratorService {
             val rsaJsonWebKey = RsaJwkGenerator.generateJwk(bits);
             val jsonWebKeySet = new JsonWebKeySet(rsaJsonWebKey);
             val data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
-            final File location;
-            if (file instanceof FileSystemResource) {
-                location = FileSystemResource.class.cast(file).getFile();
-            } else {
-                location = DEFAULT_JWKS_LOCATION;
-            }
+            val location = (file instanceof FileSystemResource)
+                ? FileSystemResource.class.cast(file).getFile()
+                : DEFAULT_JWKS_LOCATION;
             FileUtils.write(location, data, StandardCharsets.UTF_8);
             LOGGER.debug("Generated JSON web keystore at [{}]", location);
         } else {

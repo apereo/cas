@@ -75,7 +75,7 @@ public class QueryEncodeJdbcAuthenticationProperties extends AbstractJpaProperti
     /**
      * Default number of iterations for hashing.
      */
-    private long numberOfIterations;
+    private int numberOfIterations;
 
     /**
      * Static salt to be used for hashing.

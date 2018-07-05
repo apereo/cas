@@ -9,7 +9,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.HttpRequestUtils;
@@ -56,7 +55,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
 
         if (valid) {
             val code = context.getRequestParameter(OAuth20Constants.CODE);
-            final OAuthToken token = ticketRegistry.getTicket(code, OAuthCode.class);
+            val token = ticketRegistry.getTicket(code, OAuthCode.class);
             if (token == null || token.isExpired()) {
                 LOGGER.warn("Request OAuth code [{}] is not found or has expired", code);
                 return false;

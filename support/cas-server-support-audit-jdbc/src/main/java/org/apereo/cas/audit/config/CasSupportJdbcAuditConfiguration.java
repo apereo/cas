@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.entity.AuditTrailEntity;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.audit.AuditJdbcProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.CollectionUtils;
@@ -53,6 +54,11 @@ public class CasSupportJdbcAuditConfiguration {
         t.setDataSource(inspektrAuditTrailDataSource());
         t.setAsynchronous(jdbc.isAsynchronous());
         t.setColumnLength(jdbc.getColumnLength());
+        t.setTableName(getAuditTableNameFrom(jdbc));
+        return t;
+    }
+
+    private String getAuditTableNameFrom(final AuditJdbcProperties jdbc) {
         var tableName = AuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
         if (StringUtils.isNotBlank(jdbc.getDefaultSchema())) {
             tableName = jdbc.getDefaultSchema().concat(".").concat(tableName);
@@ -60,8 +66,7 @@ public class CasSupportJdbcAuditConfiguration {
         if (StringUtils.isNotBlank(jdbc.getDefaultCatalog())) {
             tableName = jdbc.getDefaultCatalog().concat(".").concat(tableName);
         }
-        t.setTableName(tableName);
-        return t;
+        return tableName;
     }
 
     @Bean

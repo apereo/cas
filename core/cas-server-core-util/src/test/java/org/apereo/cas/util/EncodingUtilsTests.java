@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
@@ -30,7 +29,7 @@ public class EncodingUtilsTests {
     @Test
     public void verifyAesKeyForJwtSigning() {
         val secret = EncodingUtils.generateJsonWebKey(512);
-        final Key key = new AesKey(secret.getBytes(StandardCharsets.UTF_8));
+        val key = new AesKey(secret.getBytes(StandardCharsets.UTF_8));
         val value = "ThisValue";
         val signed = EncodingUtils.signJwsHMACSha512(key, value.getBytes(StandardCharsets.UTF_8));
         val jwt = EncodingUtils.verifyJwsSignature(key, signed);

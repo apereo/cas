@@ -52,7 +52,7 @@ public class SamlIdPMetadataController implements InitializingBean {
         val contents = IOUtils.toString(md, StandardCharsets.UTF_8);
         response.setContentType(CONTENT_TYPE);
         response.setStatus(HttpServletResponse.SC_OK);
-        try (var writer = response.getWriter()) {
+        try (val writer = response.getWriter()) {
             LOGGER.debug("Producing metadata for the response");
             writer.write(contents);
             writer.flush();

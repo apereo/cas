@@ -5,7 +5,6 @@ import lombok.val;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.authentication.CredentialMetaData;
 import org.junit.Test;
 
 import java.io.File;
@@ -29,7 +28,7 @@ public class DigestCredentialTests {
 
         MAPPER.writeValue(JSON_FILE, credentialMetaDataWritten);
 
-        final CredentialMetaData credentialMetaDataRead = MAPPER.readValue(JSON_FILE, DigestCredential.class);
+        val credentialMetaDataRead = MAPPER.readValue(JSON_FILE, DigestCredential.class);
 
         assertEquals(credentialMetaDataWritten, credentialMetaDataRead);
     }

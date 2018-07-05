@@ -6,9 +6,7 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
@@ -184,8 +182,8 @@ public class RegisteredServiceTestUtils {
     }
 
     public static Authentication getAuthentication(final Principal principal, final Map<String, Object> attributes) {
-        final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
+        val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         return new DefaultAuthenticationBuilder(principal)
             .addCredential(meta)
             .addSuccess("testHandler", new DefaultAuthenticationHandlerExecutionResult(handler, meta))

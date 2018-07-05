@@ -72,7 +72,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
         var acct = repo.create("casuser");
 
         val data = MAPPER.writeValueAsString(acct);
-        try (var webServer = new MockWebServer(9295,
+        try (val webServer = new MockWebServer(9295,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             repo.save(acct.getUsername(), acct.getSecretKey(), acct.getValidationCode(), acct.getScratchCodes());
