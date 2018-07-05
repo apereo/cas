@@ -23,7 +23,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
@@ -95,7 +94,7 @@ public class LoggingOutputTailingService extends TailerListenerAdapter implement
     }
 
     private void registerLogFileTailersForExecution(final LoggerContext loggerContext) {
-        final Collection<String> outputFileNames = new HashSet<>();
+        val outputFileNames = new HashSet<>();
         val loggerAppenders = loggerContext.getConfiguration().getAppenders().values();
         loggerAppenders.forEach(appender -> {
             if (appender instanceof FileAppender) {

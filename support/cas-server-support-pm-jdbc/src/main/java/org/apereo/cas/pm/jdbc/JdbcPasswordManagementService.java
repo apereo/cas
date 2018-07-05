@@ -17,7 +17,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.io.Serializable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -68,7 +67,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     @Override
     public Map<String, String> getSecurityQuestions(final String username) {
         val sqlSecurityQuestions = properties.getJdbc().getSqlSecurityQuestions();
-        final Map<String, String> map = new LinkedHashMap<>();
+        val map = new HashMap<String, String>();
         val results = jdbcTemplate.queryForList(sqlSecurityQuestions, username);
         results.forEach(row -> {
             if (row.containsKey("question") && row.containsKey("answer")) {

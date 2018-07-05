@@ -33,7 +33,6 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link SamlUtils}.
@@ -181,7 +180,7 @@ public class SamlUtils {
             return null;
         }
 
-        final List<KeyInfoProvider> keyInfoProviderList = new ArrayList<>();
+        val keyInfoProviderList = new ArrayList<KeyInfoProvider>();
         keyInfoProviderList.add(new RSAKeyValueProvider());
         keyInfoProviderList.add(new DSAKeyValueProvider());
         keyInfoProviderList.add(new DEREncodedKeyValueProvider());

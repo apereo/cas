@@ -1,8 +1,7 @@
 package org.apereo.cas.services;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.springframework.context.ApplicationEventPublisher;
@@ -73,7 +72,7 @@ public class DomainServicesManager extends AbstractServicesManager {
 
     @Override
     protected void loadInternal() {
-        final Map<String, TreeSet<RegisteredService>> localDomains = new ConcurrentHashMap<>();
+        val localDomains = new ConcurrentHashMap<String, TreeSet<RegisteredService>>();
         getAllServices().forEach(r -> addToDomain(r, localDomains));
         this.domains.clear();
         this.domains.putAll(localDomains);
@@ -103,12 +102,9 @@ public class DomainServicesManager extends AbstractServicesManager {
 
     private void addToDomain(final RegisteredService r, final Map<String, TreeSet<RegisteredService>> map) {
         val domain = extractDomain(r.getServiceId());
-        final TreeSet<RegisteredService> services;
-        if (map.containsKey(domain)) {
-            services = map.get(domain);
-        } else {
-            services = new TreeSet<>();
-        }
+        val services = map.containsKey(domain)
+            ? map.get(domain)
+            : new TreeSet<RegisteredService>();
         LOGGER.debug("Added service [{}] mapped to domain definition [{}]", r, domain);
         services.add(r);
         map.put(domain, services);

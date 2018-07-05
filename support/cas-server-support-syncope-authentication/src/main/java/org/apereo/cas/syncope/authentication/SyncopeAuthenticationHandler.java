@@ -25,7 +25,6 @@ import javax.security.auth.login.FailedLoginException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -76,7 +75,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     }
 
     private Map<String, Object> buildSyncopeUserAttributes(final UserTO user) {
-        final Map<String, Object> attributes = new LinkedHashMap<>();
+        val attributes = new HashMap<String, Object>();
 
         if (user.getRoles() != null) {
             attributes.put("syncopeUserRoles", user.getRoles());

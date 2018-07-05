@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -98,14 +97,14 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
      * @return the sso sessions
      */
     private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionReportOptions option) {
-        final Collection<Map<String, Object>> activeSessions = new ArrayList<>();
+        val activeSessions = new ArrayList<>();
         val dateFormat = new ISOStandardDateFormat();
         getNonExpiredTicketGrantingTickets().stream().map(TicketGrantingTicket.class::cast)
             .filter(tgt -> !(option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null))
             .forEach(tgt -> {
                 val authentication = tgt.getAuthentication();
                 val principal = authentication.getPrincipal();
-                final Map<String, Object> sso = new HashMap<>(SsoSessionAttributeKeys.values().length);
+                val sso = new HashMap<String, Object>(SsoSessionAttributeKeys.values().length);
                 sso.put(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString(), principal.getId());
                 sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE.toString(), authentication.getAuthenticationDate());
                 sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE_FORMATTED.toString(),
@@ -145,14 +144,14 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
      */
     @ReadOperation
     public Map<String, Object> getSsoSessions(final String type) {
-        final Map<String, Object> sessionsMap = new HashMap<>(1);
+        val sessionsMap = new HashMap<String, Object>(1);
         val option = SsoSessionReportOptions.valueOf(type);
         val activeSsoSessions = getActiveSsoSessions(option);
         sessionsMap.put("activeSsoSessions", activeSsoSessions);
         val totalTicketGrantingTickets = new AtomicLong();
         val totalProxyGrantingTickets = new AtomicLong();
         val totalUsageCount = new AtomicLong();
-        final Set<String> uniquePrincipals = new HashSet<>();
+        val uniquePrincipals = new HashSet<>();
         for (val activeSsoSession : activeSsoSessions) {
             if (activeSsoSession.containsKey(SsoSessionAttributeKeys.IS_PROXIED.toString())) {
                 val isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.toString()).toString());
@@ -188,7 +187,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
     @WriteOperation
     public Map<String, Object> destroySsoSession(@Selector final String ticketGrantingTicket) {
 
-        final Map<String, Object> sessionsMap = new HashMap<>(1);
+        val sessionsMap = new HashMap<String, Object>(1);
         try {
             this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
             sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
@@ -211,8 +210,8 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
     @WriteOperation
     public Map<String, Object> destroySsoSessions(final String type) {
 
-        final Map<String, Object> sessionsMap = new HashMap<>();
-        final Map<String, String> failedTickets = new HashMap<>();
+        val sessionsMap = new HashMap<String, Object>();
+        val failedTickets = new HashMap<String, String>();
         val option = SsoSessionReportOptions.valueOf(type);
         val collection = getActiveSsoSessions(option);
         collection

@@ -28,7 +28,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
@@ -72,7 +71,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
                 authZGen.generate(context, profile);
                 LOGGER.debug("Assembled user profile with roles after generating authorization claims [{}]", profile);
 
-                final Collection<GrantedAuthority> authorities = new ArrayList<>();
+                val authorities = new ArrayList<GrantedAuthority>();
                 authorities.addAll(profile.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
                 LOGGER.debug("List of authorities remapped from profile roles are [{}]", authorities);
 

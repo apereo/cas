@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -98,7 +97,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         val principal = super.filter(service, profile, registeredService, context, accessToken);
 
         if (registeredService instanceof OidcRegisteredService) {
-            final Collection<String> scopes = new LinkedHashSet<>(accessToken.getScopes());
+            val scopes = new LinkedHashSet<>(accessToken.getScopes());
             if (!scopes.contains(OidcConstants.StandardScopes.OPENID.getScope())) {
                 LOGGER.warn("Request does not indicate a scope [{}] that can identify an OpenID Connect request. "
                     + "This is a REQUIRED scope that MUST be present in the request. Given its absence, "
@@ -121,7 +120,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                                                         final Service service,
                                                         final RegisteredService registeredService,
                                                         final AccessToken accessToken) {
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         stream.stream()
             .distinct()
             .filter(this.filters::containsKey)
@@ -141,7 +140,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
 
         LOGGER.debug("Reconciling OpenId Connect scopes and claims for [{}]", service.getServiceId());
 
-        final List<String> otherScopes = new ArrayList<>();
+        val otherScopes = new ArrayList<String>();
         val policy = new ChainingAttributeReleasePolicy();
         val oidc = OidcRegisteredService.class.cast(service);
 

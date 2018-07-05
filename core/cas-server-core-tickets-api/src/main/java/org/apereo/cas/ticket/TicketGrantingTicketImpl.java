@@ -208,7 +208,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @JsonIgnore
     @Override
     public List<Authentication> getChainedAuthentications() {
-        final List<Authentication> list = new ArrayList<>();
+        val list = new ArrayList<Authentication>();
         list.add(getAuthentication());
         if (this.getTicketGrantingTicket() == null) {
             return new ArrayList<>(list);

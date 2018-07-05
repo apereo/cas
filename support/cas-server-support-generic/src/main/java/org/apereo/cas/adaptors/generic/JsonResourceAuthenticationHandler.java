@@ -28,7 +28,6 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -89,7 +88,7 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
                     LOGGER.debug("Account status is OK");
             }
 
-            final List<MessageDescriptor> warnings = new ArrayList<>();
+            val warnings = new ArrayList<MessageDescriptor>();
             if (account.getExpirationDate() != null) {
                 val now = LocalDate.now(ZoneOffset.UTC);
                 if (now.isEqual(account.getExpirationDate()) || now.isAfter(account.getExpirationDate())) {

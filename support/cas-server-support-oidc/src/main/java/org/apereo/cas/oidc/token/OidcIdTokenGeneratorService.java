@@ -30,9 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 
@@ -88,7 +86,7 @@ public class OidcIdTokenGeneratorService {
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
         val context = Pac4jUtils.getPac4jJ2EContext(request, response);
         val manager = Pac4jUtils.getPac4jProfileManager(request, response);
-        final Optional<UserProfile> profile = manager.get(true);
+        val profile = manager.get(true);
 
         if (!profile.isPresent()) {
             throw new IllegalArgumentException("Unable to determine the user profile from the context");
@@ -141,11 +139,11 @@ public class OidcIdTokenGeneratorService {
         val attributes = authentication.getAttributes();
 
         if (attributes.containsKey(mfa.getAuthenticationContextAttribute())) {
-            final Collection<Object> val = CollectionUtils.toCollection(attributes.get(mfa.getAuthenticationContextAttribute()));
+            val val = CollectionUtils.toCollection(attributes.get(mfa.getAuthenticationContextAttribute()));
             claims.setStringClaim(OidcConstants.ACR, val.iterator().next().toString());
         }
         if (attributes.containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {
-            final Collection<Object> val = CollectionUtils.toCollection(attributes.get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
+            val val = CollectionUtils.toCollection(attributes.get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
             claims.setStringListClaim(OidcConstants.AMR, val.toArray(new String[]{}));
         }
 

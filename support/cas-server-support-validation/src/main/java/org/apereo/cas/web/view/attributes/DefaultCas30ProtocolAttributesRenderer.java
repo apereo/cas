@@ -9,7 +9,6 @@ import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,7 +22,7 @@ public class DefaultCas30ProtocolAttributesRenderer implements CasProtocolAttrib
 
     @Override
     public Collection<String> render(final Map<String, Object> attributes) {
-        final List<String> formattedAttributes = new ArrayList<>(attributes.size());
+        val formattedAttributes = new ArrayList<String>(attributes.size());
         LOGGER.debug("Beginning to format/render attributes for the response");
         attributes.forEach((k, v) -> {
             val values = CollectionUtils.toCollection(v);

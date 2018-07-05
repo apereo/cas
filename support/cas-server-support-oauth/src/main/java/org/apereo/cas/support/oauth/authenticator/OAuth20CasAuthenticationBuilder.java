@@ -133,7 +133,7 @@ public class OAuth20CasAuthenticationBuilder {
     }
 
     private static Map<String, Object> getPrincipalAttributesFromProfile(final UserProfile profile) {
-        final Map<String, Object> profileAttributes = new HashMap<>(profile.getAttributes());
+        val profileAttributes = new HashMap<String, Object>(profile.getAttributes());
         profileAttributes.remove(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN);
         profileAttributes.remove(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME);
         profileAttributes.remove(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);

@@ -14,7 +14,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -106,7 +105,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public Map<String, String> getSecurityQuestions(final String username) {
-        final Map<String, String> set = new LinkedHashMap<>();
+        val set = new HashMap<String, String>();
         try {
             val ldap = properties.getLdap();
             val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),

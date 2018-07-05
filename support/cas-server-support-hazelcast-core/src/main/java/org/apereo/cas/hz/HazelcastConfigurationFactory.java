@@ -81,7 +81,7 @@ public class HazelcastConfigurationFactory {
      * @return the config
      */
     public Config build(final BaseHazelcastProperties hz, final MapConfig mapConfig) {
-        final Map<String, MapConfig> cfg = new HashMap<>();
+        val cfg = new HashMap<String, MapConfig>();
         cfg.put(mapConfig.getName(), mapConfig);
         return build(hz, cfg);
     }

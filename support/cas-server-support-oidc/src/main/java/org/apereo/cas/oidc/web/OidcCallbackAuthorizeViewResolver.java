@@ -15,7 +15,6 @@ import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link OidcCallbackAuthorizeViewResolver}.
@@ -35,7 +34,7 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
             if (manager.get(true) != null) {
                 return new ModelAndView(url);
             }
-            final Map<String, String> model = new HashMap<>();
+            val model = new HashMap<String, String>();
             model.put(OAuth20Constants.ERROR, OidcConstants.LOGIN_REQUIRED);
             return new ModelAndView(new MappingJackson2JsonView(), model);
         }

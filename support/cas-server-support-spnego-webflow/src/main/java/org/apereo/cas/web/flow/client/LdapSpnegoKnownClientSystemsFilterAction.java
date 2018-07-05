@@ -123,7 +123,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
                 this.searchRequest.getSearchFilter().format(),
                 this.searchRequest.getBaseDn());
 
-            final Response<SearchResult> searchResult = searchOperation.execute(this.searchRequest);
+            val searchResult = searchOperation.execute(this.searchRequest);
             if (searchResult.getResultCode() == ResultCode.SUCCESS) {
                 return processSpnegoAttribute(searchResult);
             }

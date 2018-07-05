@@ -16,7 +16,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * The {@link AbstractCasMultifactorWebflowConfigurer} is responsible for
@@ -102,8 +101,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
 
             LOGGER.debug("Locating transition id [{}] to process multifactor authentication for state [{}", CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, s);
             val targetWarningsId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS).getTargetStateId();
-            
-            final List<DefaultMapping> mappings = new ArrayList<>();
+            val mappings = new ArrayList<DefaultMapping>();
             val inputMapper = createMapperToSubflowState(mappings);
             val subflowMapper = createSubflowAttributeMapper(inputMapper, null);
             subflowState.setAttributeMapper(subflowMapper);

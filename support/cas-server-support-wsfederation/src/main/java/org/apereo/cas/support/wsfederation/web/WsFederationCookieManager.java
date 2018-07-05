@@ -15,7 +15,6 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -65,7 +64,7 @@ public class WsFederationCookieManager {
             throw new IllegalArgumentException("No cookie could be found to determine session state");
         }
         val blob = EncodingUtils.hexDecode(value);
-        final Map<String, Object> session = serializer.from(blob);
+        val session = serializer.from(blob);
         request.setAttribute(this.themeParamName, session.get(this.themeParamName));
         request.setAttribute(this.localParamName, session.get(this.localParamName));
         request.setAttribute(CasProtocolConstants.PARAMETER_METHOD, session.get(CasProtocolConstants.PARAMETER_METHOD));
@@ -88,7 +87,7 @@ public class WsFederationCookieManager {
      */
     public void store(final HttpServletRequest request, final HttpServletResponse response,
                       final String wctx, final Service service, final WsFederationConfiguration configuration) {
-        final Map<String, Object> session = new LinkedHashMap<>();
+        val session = new HashMap<String, Object>();
         session.put(CasProtocolConstants.PARAMETER_SERVICE + '-' + wctx, service);
         val methods = request.getParameter(CasProtocolConstants.PARAMETER_METHOD);
         if (StringUtils.isNotBlank(methods)) {

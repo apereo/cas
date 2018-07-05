@@ -13,7 +13,7 @@ import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 import org.springframework.boot.Banner;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -37,7 +37,7 @@ public class CasEmbeddedContainerUtils {
      * @return the runtime properties
      */
     public static Map<String, Object> getRuntimeProperties(final Boolean embeddedContainerActive) {
-        final Map<String, Object> properties = new LinkedHashMap<>();
+        val properties = new HashMap<String, Object>();
         properties.put(EMBEDDED_CONTAINER_CONFIG_ACTIVE, embeddedContainerActive);
         return properties;
     }
@@ -62,7 +62,7 @@ public class CasEmbeddedContainerUtils {
             return new DefaultCasBanner();
         }
         try {
-            final Class<? extends AbstractCasBanner> clz = subTypes.iterator().next();
+            val clz = subTypes.iterator().next();
             return clz.getDeclaredConstructor().newInstance();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

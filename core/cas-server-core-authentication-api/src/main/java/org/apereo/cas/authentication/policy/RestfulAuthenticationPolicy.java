@@ -42,7 +42,7 @@ public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
         try {
             val acceptHeaders = new HttpHeaders();
             acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            final HttpEntity<Principal> entity = new HttpEntity<>(principal, acceptHeaders);
+            val entity = new HttpEntity<>(principal, acceptHeaders);
             LOGGER.warn("Checking authentication policy for [{}] via POST at [{}]", principal, this.endpoint);
             val resp = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, String.class);
             if (resp == null) {

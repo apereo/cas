@@ -44,7 +44,7 @@ public class CasRegisteredServiceHazelcastStreamPublisher extends BaseCasRegiste
 
     private DistributedCacheObject<RegisteredService> getCacheObject(final RegisteredService service, final ApplicationEvent event) {
         val time = new Date().getTime();
-        final DistributedCacheObject<RegisteredService> item = new DistributedCacheObject<>(time, service);
+        val item = new DistributedCacheObject<RegisteredService>(time, service);
         item.getProperties().put("event", event);
         return item;
     }

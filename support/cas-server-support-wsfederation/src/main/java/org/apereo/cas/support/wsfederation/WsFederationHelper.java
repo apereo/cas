@@ -109,7 +109,7 @@ public class WsFederationHelper {
             credential.setAuthenticationMethod(assertion.getAuthenticationStatements().get(0).getAuthenticationMethod());
         }
         //retrieve an attributes from the assertion
-        final HashMap<String, List<Object>> attributes = new HashMap<>();
+        val attributes = new HashMap<String, List<Object>>();
         assertion.getAttributeStatements().stream().flatMap(attributeStatement -> attributeStatement.getAttributes().stream()).forEach(item -> {
             LOGGER.debug("Processed attribute: [{}]", item.getAttributeName());
             final List<Object> itemList = IntStream.range(0, item.getAttributeValues().size())
@@ -342,7 +342,7 @@ public class WsFederationHelper {
     }
 
     private static Decrypter buildAssertionDecrypter(final WsFederationConfiguration config) {
-        final List<EncryptedKeyResolver> list = new ArrayList<>();
+        val list = new ArrayList<EncryptedKeyResolver>();
         list.add(new InlineEncryptedKeyResolver());
         list.add(new EncryptedElementTypeEncryptedKeyResolver());
         list.add(new SimpleRetrievalMethodEncryptedKeyResolver());

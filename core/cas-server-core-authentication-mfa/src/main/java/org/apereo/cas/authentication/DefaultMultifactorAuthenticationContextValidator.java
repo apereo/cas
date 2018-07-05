@@ -51,7 +51,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
                                                                                final RegisteredService service) {
         val attributes = authentication.getAttributes();
         val ctxAttr = attributes.get(this.authenticationContextAttribute);
-        final Collection<Object> contexts = CollectionUtils.toCollection(ctxAttr);
+        val contexts = CollectionUtils.toCollection(ctxAttr);
         LOGGER.debug("Attempting to match requested authentication context [{}] against [{}]", requestedContext, contexts);
         val providerMap =
             MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
@@ -127,7 +127,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
 
     private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(final Authentication authentication,
                                                                                               final Collection<MultifactorAuthenticationProvider> providers) {
-        final Collection<Object> contexts = CollectionUtils.toCollection(authentication.getAttributes().get(this.authenticationContextAttribute));
+        val contexts = CollectionUtils.toCollection(authentication.getAttributes().get(this.authenticationContextAttribute));
         if (contexts == null || contexts.isEmpty()) {
             LOGGER.debug("No authentication context could be determined based on authentication attribute [{}]", this.authenticationContextAttribute);
             return null;

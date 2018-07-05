@@ -22,7 +22,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -229,7 +228,7 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
     }
 
     private Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(final Predicate<RegisteredService>... p) {
-        final List<Predicate<RegisteredService>> predicates = new ArrayList<>();
+        val predicates = new ArrayList<Predicate<RegisteredService>>();
 
         val expirationPolicyPredicate = getRegisteredServiceExpirationPolicyPredicate();
         predicates.add(expirationPolicyPredicate);

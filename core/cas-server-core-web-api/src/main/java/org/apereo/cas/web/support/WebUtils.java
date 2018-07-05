@@ -712,7 +712,7 @@ public class WebUtils {
      */
     public static void putResolvedMultifactorAuthenticationProviders(final RequestContext context,
                                                                      final Collection<MultifactorAuthenticationProvider> value) {
-        final Collection<String> providerIds = value.stream().map(MultifactorAuthenticationProvider::getId).collect(Collectors.toSet());
+        val providerIds = value.stream().map(MultifactorAuthenticationProvider::getId).collect(Collectors.toSet());
         context.getConversationScope().put("resolvedMultifactorAuthenticationProviders", providerIds);
     }
 

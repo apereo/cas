@@ -984,7 +984,7 @@ public class LdapUtils {
             entryResolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
         }
 
-        final List<SearchEntryHandler> handlers = new ArrayList<>();
+        val handlers = new ArrayList<SearchEntryHandler>();
         l.getSearchEntryHandlers().forEach(h -> {
             switch (h.getType()) {
                 case CASE_CHANGE:

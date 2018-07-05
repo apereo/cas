@@ -131,7 +131,7 @@ public class BasePasswordManagementService implements PasswordManagementService 
      * @return A list of questions in a consistent order
      */
     public static List<String> canonicalizeSecurityQuestions(final Map<String, String> questionMap) {
-        final List<String> keys = new ArrayList<>(questionMap.keySet());
+        val keys = new ArrayList<String>(questionMap.keySet());
         keys.sort(String.CASE_INSENSITIVE_ORDER);
         return keys;
     }

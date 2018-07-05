@@ -71,7 +71,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     public List<RadiusServer> radiusTokenServers() {
-        final List<RadiusServer> list = new ArrayList<>();
+        val list = new ArrayList<RadiusServer>();
         val client = casProperties.getAuthn().getMfa().getRadius().getClient();
         val server = casProperties.getAuthn().getMfa().getRadius().getServer();
 

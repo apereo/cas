@@ -38,7 +38,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -175,9 +174,9 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     private void enableServicesDirectoryPathWatcher() {
         LOGGER.info("Watching service registry directory at [{}]", this.serviceRegistryDirectory);
-        final Consumer<File> onCreate = new CreateResourceBasedRegisteredServiceWatcher(this);
-        final Consumer<File> onDelete = new DeleteResourceBasedRegisteredServiceWatcher(this);
-        final Consumer<File> onModify = new ModifyResourceBasedRegisteredServiceWatcher(this);
+        val onCreate = new CreateResourceBasedRegisteredServiceWatcher(this);
+        val onDelete = new DeleteResourceBasedRegisteredServiceWatcher(this);
+        val onModify = new ModifyResourceBasedRegisteredServiceWatcher(this);
         this.serviceRegistryConfigWatcher = new PathWatcherService(this.serviceRegistryDirectory, onCreate, onModify, onDelete);
         this.serviceRegistryConfigWatcher.start(getClass().getSimpleName());
         LOGGER.debug("Started service registry watcher thread");
@@ -248,7 +247,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             .sorted()
             .collect(Collectors.toMap(RegisteredService::getId, Function.identity(),
                 LOG_DUPLICATE_AND_RETURN_FIRST_ONE, LinkedHashMap::new));
-        final List<RegisteredService> services = new ArrayList<>(this.serviceMap.values());
+        val services = new ArrayList<RegisteredService>(this.serviceMap.values());
         val results =
             this.registeredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache(services, this);
         results.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)));

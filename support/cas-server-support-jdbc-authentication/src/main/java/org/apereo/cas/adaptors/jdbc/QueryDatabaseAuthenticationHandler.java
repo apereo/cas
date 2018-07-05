@@ -23,6 +23,7 @@ import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -74,7 +75,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                 + "No SQL statement or JDBC template is found.");
         }
 
-        final Map<String, Object> attributes = new LinkedHashMap<>(this.principalAttributeMap.size());
+        val attributes = new HashMap<String, Object>(this.principalAttributeMap.size());
         val username = credential.getUsername();
         val password = credential.getPassword();
         try {

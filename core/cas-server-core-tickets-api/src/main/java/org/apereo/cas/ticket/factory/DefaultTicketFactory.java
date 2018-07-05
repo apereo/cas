@@ -7,7 +7,6 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The {@link DefaultTicketFactory} is responsible for creating ticket factory objects.
@@ -18,7 +17,7 @@ import java.util.Map;
 @Slf4j
 @NoArgsConstructor
 public class DefaultTicketFactory implements TicketFactory {
-    private final Map<String, Object> factoryMap = new HashMap<>();
+    private val factoryMap = new HashMap<String, Object>();
 
     @Override
     public TicketFactory get(final Class<? extends Ticket> clazz) {
