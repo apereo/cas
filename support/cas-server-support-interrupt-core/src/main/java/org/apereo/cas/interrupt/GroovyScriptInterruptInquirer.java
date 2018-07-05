@@ -12,9 +12,6 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
 import org.springframework.core.io.Resource;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * This is {@link GroovyScriptInterruptInquirer}.
  *
@@ -31,7 +28,7 @@ public class GroovyScriptInterruptInquirer extends BaseInterruptInquirer {
                                              final Service service, final Credential credential) {
         if (ResourceUtils.doesResourceExist(resource)) {
             val principal = authentication.getPrincipal();
-            final Map<String, Object> attributes = new LinkedHashMap<>(principal.getAttributes());
+            val attributes = new HashMap<String, Object>(principal.getAttributes());
             attributes.putAll(authentication.getAttributes());
             final Object[] args = {principal.getId(), attributes, service != null ? service.getId() : null, LOGGER};
             return ScriptingUtils.executeGroovyScript(resource, args, InterruptResponse.class);

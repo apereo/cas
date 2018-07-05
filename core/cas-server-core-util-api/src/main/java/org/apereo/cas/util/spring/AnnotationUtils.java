@@ -45,7 +45,7 @@ public class AnnotationUtils {
      */
     public static List<String> getBeansWithAnnotation(final ConfigurableApplicationContext applicationContext,
                                                       final Class<? extends Annotation> type, final Predicate<Map<String, Object>> attributeFilter) {
-        final List<String> result = new ArrayList<>();
+        val result = new ArrayList<String>();
         val factory = applicationContext.getBeanFactory();
         for (val name : factory.getBeanDefinitionNames()) {
             val bd = factory.getBeanDefinition(name);

@@ -83,7 +83,7 @@ public class SamlIdPResponseProperties implements Serializable {
         if (this.attributeNameFormats.isEmpty()) {
             return new HashMap<>(0);
         }
-        final Map<String, String> nameFormats = new HashMap<>();
+        val nameFormats = new HashMap<String, String>();
         this.attributeNameFormats.forEach(value -> Arrays.stream(value.split(",")).forEach(format -> {
             val values = Splitter.on("->").splitToList(format);
 

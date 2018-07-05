@@ -87,7 +87,7 @@ public class HttpRequestUtils {
      * @return the request headers
      */
     public static Map<String, String> getRequestHeaders(final HttpServletRequest request) {
-        final Map<String, String> headers = new LinkedHashMap<>();
+        val headers = new LinkedHashMap<String, Object>();
         val headerNames = request.getHeaderNames();
         if (headerNames != null) {
             while (headerNames.hasMoreElements()) {
@@ -96,7 +96,7 @@ public class HttpRequestUtils {
                 headers.put(headerName, headerValue);
             }
         }
-        return headers;
+        return (Map) headers;
     }
 
     /**

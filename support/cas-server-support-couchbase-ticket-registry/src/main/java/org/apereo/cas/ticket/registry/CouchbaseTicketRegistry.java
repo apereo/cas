@@ -23,7 +23,6 @@ import org.springframework.beans.factory.DisposableBean;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -131,7 +130,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
 
     @Override
     public Collection<Ticket> getTickets() {
-        final List<Ticket> tickets = new ArrayList<>();
+        val tickets = new ArrayList<Ticket>();
         this.ticketCatalog.findAll().forEach(t -> {
             val it = getViewResultIteratorForPrefixedTickets(t.getPrefix() + '-').iterator();
             while (it.hasNext()) {
@@ -177,7 +176,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
 
     @Override
     public long deleteAll() {
-        final Consumer<? super ViewRow> remove = t -> this.couchbase.getBucket().remove(t.document());
+        val remove = (Consumer<? super ViewRow>) t -> this.couchbase.getBucket().remove(t.document());
         return this.ticketCatalog.findAll()
             .stream()
             .mapToLong(t -> {

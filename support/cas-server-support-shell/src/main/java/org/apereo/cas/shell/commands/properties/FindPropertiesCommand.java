@@ -14,7 +14,6 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
@@ -91,7 +90,7 @@ public class FindPropertiesCommand {
      * @return the map
      */
     public Map<String, ConfigurationMetadataProperty> find(final boolean strict, final Pattern propertyPattern) {
-        final Map<String, ConfigurationMetadataProperty> results = new LinkedHashMap<>();
+        val results = new HashMap<String, ConfigurationMetadataProperty>();
 
         val repository = new CasConfigurationMetadataRepository();
         val props = repository.getRepository().getAllProperties();

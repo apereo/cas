@@ -10,7 +10,6 @@ import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastJ
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link HazelcastJCloudsDiscoveryStrategy}.
@@ -24,7 +23,7 @@ public class HazelcastJCloudsDiscoveryStrategy implements HazelcastDiscoveryStra
     @Override
     public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster) {
         val jclouds = cluster.getDiscovery().getJclouds();
-        final Map<String, Comparable> properties = new HashMap<>();
+        val properties = new HashMap<String, Comparable>();
         if (StringUtils.hasText(jclouds.getCredential())) {
             properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_CREDENTIAL, jclouds.getCredential());
         }

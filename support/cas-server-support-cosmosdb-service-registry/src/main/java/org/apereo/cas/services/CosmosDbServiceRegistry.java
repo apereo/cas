@@ -93,7 +93,7 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
         val results = queryDocuments(query);
         val it = results.getQueryIterator();
 
-        final List<RegisteredService> services = new ArrayList<>();
+        val services = new ArrayList<RegisteredService>();
         while (it.hasNext()) {
             val doc = it.next();
             val svc = getRegisteredServiceFromDocumentBody(doc);

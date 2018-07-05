@@ -32,7 +32,6 @@ import java.security.PublicKey;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Builds the google accounts service response.
@@ -88,7 +87,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     public Response build(final WebApplicationService webApplicationService, final String serviceTicket,
                           final Authentication authentication) {
         val service = (GoogleAccountsService) webApplicationService;
-        final Map<String, String> parameters = new HashMap<>();
+        val parameters = new HashMap<String, String>();
         val samlResponse = constructSamlResponse(service, authentication);
         val signedResponse = this.samlObjectBuilder.signSamlResponse(samlResponse, this.privateKey, this.publicKey);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, signedResponse);

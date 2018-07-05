@@ -159,7 +159,7 @@ public class MongoDbConnectionFactory {
     }
 
     private Set<Class<?>> getInitialEntitySet() {
-        final Set<Class<?>> initialEntitySet = new HashSet<>();
+        val initialEntitySet = new HashSet<>();
         for (val basePackage : getMappingBasePackages()) {
             initialEntitySet.addAll(scanForEntities(basePackage));
         }
@@ -175,8 +175,7 @@ public class MongoDbConnectionFactory {
             return new HashSet<>(0);
         }
 
-        final Set<Class<?>> initialEntitySet = new HashSet<>();
-
+        val initialEntitySet = new HashSet<Class<?>>();
         if (StringUtils.isNotBlank(basePackage)) {
             val componentProvider = new ClassPathScanningCandidateComponentProvider(
                 false);

@@ -11,7 +11,6 @@ import org.springframework.core.OrderComparator;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * This is {@link RankedMultifactorAuthenticationProviderSelector}
@@ -28,7 +27,7 @@ public class RankedMultifactorAuthenticationProviderSelector implements Multifac
     @Override
     public MultifactorAuthenticationProvider resolve(final Collection<MultifactorAuthenticationProvider> providers,
                                                      final RegisteredService service, final Principal principal) {
-        final List<MultifactorAuthenticationProvider> sorted = new ArrayList<>(providers);
+        val sorted = new ArrayList<MultifactorAuthenticationProvider>(providers);
         if (sorted.isEmpty()) {
             throw new IllegalArgumentException("List of candidate multifactor authentication providers is empty");
         }

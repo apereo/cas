@@ -15,7 +15,6 @@ import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -49,7 +48,7 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
     public ChainingMetadataResolver load(final SamlRegisteredServiceCacheKey cacheKey) {
 
         val metadataResolver = new ChainingMetadataResolver();
-        final List<MetadataResolver> metadataResolvers = new ArrayList<>();
+        val metadataResolvers = new ArrayList<MetadataResolver>();
 
         val service = cacheKey.getRegisteredService();
         val availableResolvers = this.metadataResolutionPlan.getRegisteredMetadataResolvers();

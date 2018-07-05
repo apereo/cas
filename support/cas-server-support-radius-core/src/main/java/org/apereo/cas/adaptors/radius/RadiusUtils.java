@@ -42,7 +42,7 @@ public class RadiusUtils {
             try {
                 val response = radiusServer.authenticate(username, password);
                 if (response != null) {
-                    final Map<String, Object> attributes = new HashMap<>();
+                    val attributes = new HashMap<String, Object>();
                     response.getAttributes().forEach(attribute -> attributes.put(attribute.getAttributeName(), attribute.getValue().toString()));
                     return Pair.of(Boolean.TRUE, Optional.of(attributes));
                 }

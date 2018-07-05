@@ -12,7 +12,6 @@ import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import lombok.Setter;
@@ -39,8 +38,8 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
 
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
-        final Map<String, Object> allAttributes = new HashMap<>(principalAttributes);
-        final List<String> grouperGroups = new ArrayList<>();
+        val allAttributes = new HashMap<String, Object>(principalAttributes);
+        val grouperGroups = new ArrayList<String>();
         val facade = new GrouperFacade();
         val results = facade.getGroupsForSubjectId(principal);
         if (results.isEmpty()) {

@@ -281,7 +281,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         SamlUtils.logSamlObject(this.configBean, samlMessage);
 
         val encoder = new CasHttpSoap11Encoder();
-        final MessageContext<SAMLObject> context = new MessageContext();
+        val context = new MessageContext<SAMLObject>();
         context.setMessage(samlMessage);
         encoder.setHttpServletResponse(httpResponse);
         encoder.setMessageContext(context);

@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -55,7 +54,7 @@ public class RestResourceUtils {
                     + ": "
                     + StringUtils.defaultIfBlank(ex.getMessage(), "Authentication Failure: " + e.getMessage()))
                 .collect(Collectors.toList());
-            final Map<String, List<String>> errorsMap = new HashMap<>();
+            val errorsMap = new HashMap<String, List<String>>();
             errorsMap.put("authentication_exceptions", authnExceptions);
             LOGGER.warn("[{}] Caused by: [{}]", e.getMessage(), authnExceptions);
             return new ResponseEntity<>(MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);

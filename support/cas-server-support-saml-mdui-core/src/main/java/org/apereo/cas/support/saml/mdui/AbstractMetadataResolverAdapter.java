@@ -116,7 +116,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
     public void buildMetadataResolverAggregate(final String entityId) {
         LOGGER.debug("Building metadata resolver aggregate");
         this.metadataResolver = new ChainingMetadataResolver();
-        final List<MetadataResolver> resolvers = new ArrayList<>();
+        val resolvers = new ArrayList<MetadataResolver>();
         val entries = this.metadataResources.entrySet();
         entries.forEach(entry -> {
             val resource = entry.getKey();
@@ -174,7 +174,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
             }
             LOGGER.debug("Initializing metadata resolver for [{}]", resource);
             metadataProvider.initialize();
-            final List<MetadataResolver> resolvers = new ArrayList<>();
+            val resolvers = new ArrayList<MetadataResolver>();
             resolvers.add(metadataProvider);
             return resolvers;
         } catch (final Exception ex) {

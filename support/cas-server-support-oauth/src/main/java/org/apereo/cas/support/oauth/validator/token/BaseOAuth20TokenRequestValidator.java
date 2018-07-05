@@ -10,6 +10,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.Pac4jUtils;
 import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 
@@ -41,7 +42,7 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
         }
 
         val manager = Pac4jUtils.getPac4jProfileManager(request, response);
-        final Optional<UserProfile> profile = manager.get(true);
+        val profile = (Optional<CommonProfile>) manager.get(true);
         if (profile == null || !profile.isPresent()) {
             LOGGER.warn("Could not locate authenticated profile for this request");
             return false;

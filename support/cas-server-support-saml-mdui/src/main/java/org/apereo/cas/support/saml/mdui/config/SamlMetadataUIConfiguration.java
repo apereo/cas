@@ -31,7 +31,6 @@ import org.springframework.core.io.ResourceLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -63,7 +62,7 @@ public class SamlMetadataUIConfiguration {
     }
 
     private MetadataResolverAdapter configureAdapter(final AbstractMetadataResolverAdapter adapter) {
-        final Map<Resource, MetadataFilterChain> resources = new HashMap<>();
+        val resources = new HashMap<Resource, MetadataFilterChain>();
         val chain = new MetadataFilterChain();
         casProperties.getSamlMetadataUi().getResources().forEach(Unchecked.consumer(r -> configureResource(resources, chain, r)));
         adapter.setRequireValidMetadata(casProperties.getSamlMetadataUi().isRequireValidMetadata());
@@ -81,7 +80,7 @@ public class SamlMetadataUIConfiguration {
             val metadataFile = arr.get(0);
             val signingKey = arr.size() > 1 ? arr.get(1) : null;
 
-            final List<MetadataFilter> filters = new ArrayList<>();
+            val filters = new ArrayList<MetadataFilter>();
             if (casProperties.getSamlMetadataUi().getMaxValidity() > 0) {
                 filters.add(new RequiredValidUntilFilter(casProperties.getSamlMetadataUi().getMaxValidity()));
             }

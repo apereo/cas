@@ -16,7 +16,6 @@ import org.springframework.shell.standard.ShellOption;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
-import java.util.Set;
 
 /**
  * This is {@link JasyptTestAlgorithmsCommand}.
@@ -55,7 +54,7 @@ public class JasyptTestAlgorithmsCommand {
         val password = "SecretKeyValue";
         val value = "ValueToEncrypt";
 
-        final Set<String> pbeAlgos = AlgorithmRegistry.getAllPBEAlgorithms();
+        val pbeAlgos = AlgorithmRegistry.getAllPBEAlgorithms();
         for (val provider: providers) {
             for (val algorithm: pbeAlgos) {
                 val cipher = new CasConfigurationJasyptCipherExecutor(this.environment);

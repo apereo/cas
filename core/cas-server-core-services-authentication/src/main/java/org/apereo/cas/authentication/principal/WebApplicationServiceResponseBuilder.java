@@ -37,7 +37,7 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
 
     @Override
     public Response build(final WebApplicationService service, final String serviceTicketId, final Authentication authentication) {
-        final Map<String, String> parameters = new HashMap<>();
+        val parameters = new HashMap<String, String>();
         if (StringUtils.hasText(serviceTicketId)) {
             parameters.put(CasProtocolConstants.PARAMETER_TICKET, serviceTicketId);
         }

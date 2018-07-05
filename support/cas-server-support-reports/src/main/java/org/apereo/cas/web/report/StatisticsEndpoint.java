@@ -41,7 +41,7 @@ public class StatisticsEndpoint extends BaseCasMvcEndpoint {
      */
     @ReadOperation
     public Map<String, Object> handle() {
-        final Map<String, Object> model = new HashMap<>();
+        val model = new HashMap<String, Object>();
 
         val diff = Duration.between(this.upTimeStartDate, ZonedDateTime.now(ZoneOffset.UTC));
         model.put("upTime", diff.getSeconds());

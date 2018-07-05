@@ -118,7 +118,7 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
     }
 
     private static MessageContext<SAMLObject> bindRelayStateParameter(final HttpServletRequest request) {
-        final MessageContext<SAMLObject> messageContext = new MessageContext<>();
+        val messageContext = new MessageContext<SAMLObject>();
         val relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
         LOGGER.debug("Relay state is [{}]", relayState);
         SAMLBindingSupport.setRelayState(messageContext, relayState);

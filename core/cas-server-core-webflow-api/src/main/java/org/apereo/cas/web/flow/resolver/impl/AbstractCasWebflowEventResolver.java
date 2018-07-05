@@ -193,7 +193,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     protected Event validateEventIdForMatchingTransitionInContext(final String eventId, final RequestContext context,
                                                                   final Map<String, Object> attributes) {
 
-        final AttributeMap<Object> attributesMap = new LocalAttributeMap<>(attributes);
+        val attributesMap = new LocalAttributeMap<Object>(attributes);
         val event = new Event(this, eventId, attributesMap);
 
         LOGGER.debug("Resulting event id is [{}] by provider [{}]. Locating transitions in the context for that event id...",
@@ -220,7 +220,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      */
     protected static Map<String, Object> buildEventAttributeMap(final Principal principal, final RegisteredService service,
                                                                 final MultifactorAuthenticationProvider provider) {
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put(Principal.class.getName(), principal);
         if (service != null) {
             map.put(RegisteredService.class.getName(), service);
@@ -235,7 +235,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                            final RequestContext context,
                                                            final MultifactorAuthenticationProvider provider,
                                                            final Predicate<String> predicate) {
-        final Set<Event> events = new HashSet<>();
+        val events = new HashSet<>();
         if (attributeValue instanceof Collection) {
             LOGGER.debug("Attribute value [{}] is a multi-valued attribute", attributeValue);
             val values = (Collection<String>) attributeValue;

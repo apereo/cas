@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
 
 /**
  * {@link RestController} implementation of a REST API
@@ -83,7 +82,7 @@ public class RegisteredServiceResource {
         }
         val pattern = RegexUtils.createPattern(this.attributeValue);
         if (attributes.containsKey(this.attributeName)) {
-            final Collection<Object> values = CollectionUtils.toCollection(attributes.get(this.attributeName));
+            val values = CollectionUtils.toCollection(attributes.get(this.attributeName));
             return values.stream().anyMatch(t -> RegexUtils.matches(pattern, t.toString()));
         }
         return false;

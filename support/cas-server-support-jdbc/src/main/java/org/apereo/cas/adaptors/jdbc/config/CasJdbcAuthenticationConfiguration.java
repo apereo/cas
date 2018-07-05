@@ -62,7 +62,7 @@ public class CasJdbcAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public Collection<AuthenticationHandler> jdbcAuthenticationHandlers() {
-        final Collection<AuthenticationHandler> handlers = new HashSet<>();
+        val handlers = new HashSet<AuthenticationHandler>();
         val jdbc = casProperties.getAuthn().getJdbc();
         jdbc.getBind().forEach(b -> handlers.add(bindModeSearchDatabaseAuthenticationHandler(b)));
         jdbc.getEncode().forEach(b -> handlers.add(queryAndEncodeDatabaseAuthenticationHandler(b)));

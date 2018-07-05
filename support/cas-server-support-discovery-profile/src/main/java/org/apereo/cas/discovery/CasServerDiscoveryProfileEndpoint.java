@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -54,7 +53,7 @@ public class CasServerDiscoveryProfileEndpoint extends BaseCasMvcEndpoint {
     @ResponseBody
     @ReadOperation
     public Map<String, Object> discovery(final HttpServletRequest request, final HttpServletResponse response) {
-        final Map<String, Object> results = new LinkedHashMap<>();
+        val results = new HashMap<String, Object>();
         results.put("profile", casServerProfileRegistrar.getProfile());
         return results;
     }

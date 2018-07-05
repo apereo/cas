@@ -12,7 +12,6 @@ import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthe
 import org.apereo.cas.util.HttpUtils;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -34,7 +33,7 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
     @Override
     public Optional<PasswordlessUserAccount> findUser(final String username) {
         try {
-            final Map<String, Object> parameters = new HashMap<>();
+            val parameters = new HashMap<String, Object>();
             parameters.put("username", username);
 
             val response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),

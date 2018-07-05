@@ -53,7 +53,7 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
             throw new FailedLoginException(AuthyClientInstance.getErrorMessage(user.getError()));
         }
 
-        final Map<String, String> options = new HashMap<>(1);
+        val options = new HashMap<String, String>(1);
         options.put("force", Boolean.toString(this.forceVerification));
 
         val verification = verifyAuthyToken(tokenCredential, user, options);

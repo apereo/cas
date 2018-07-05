@@ -11,7 +11,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.springframework.beans.factory.FactoryBean;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link OidcServerDiscoverySettingsFactory}.
@@ -40,7 +39,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discoveryProperties.setSubjectTypesSupported(oidc.getSubjectTypes());
         discoveryProperties.setClaimTypesSupported(CollectionUtils.wrap("normal"));
 
-        final List<String> authnMethods = new ArrayList<>();
+        val authnMethods = new ArrayList<String>();
         authnMethods.add("client_secret_basic");
         discoveryProperties.setIntrospectionSupportedAuthenticationMethods(authnMethods);
 

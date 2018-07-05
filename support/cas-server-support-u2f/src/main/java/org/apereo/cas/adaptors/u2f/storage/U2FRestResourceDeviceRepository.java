@@ -61,7 +61,7 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     @Override
     public void writeDevicesBackToResource(final List<U2FDeviceRegistration> list) {
         try (val writer = new StringWriter()) {
-            final Map<String, List<U2FDeviceRegistration>> newDevices = new HashMap<>();
+            val newDevices = new HashMap<String, List<U2FDeviceRegistration>>();
             newDevices.put(MAP_KEY_DEVICES, list);
             mapper.writer(new MinimalPrettyPrinter()).writeValue(writer, newDevices);
             HttpUtils.executePost(restProperties.getUrl(),

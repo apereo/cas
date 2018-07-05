@@ -114,7 +114,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public Collection<WsFederationConfiguration> wsFederationConfigurations() {
-        final Collection<WsFederationConfiguration> col = new HashSet<>();
+        val col = new HashSet<>();
         casProperties.getAuthn().getWsfed().forEach(wsfed -> {
             val cfg = getWsFederationConfiguration(wsfed);
             col.add(cfg);

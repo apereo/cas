@@ -29,7 +29,6 @@ import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
-import org.pac4j.core.credentials.extractor.CredentialsExtractor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -96,7 +95,7 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
     public ResponseEntity<OidcIntrospectionAccessTokenResponse> handlePostRequest(final HttpServletRequest request,
                                                                                   final HttpServletResponse response) {
         try {
-            final CredentialsExtractor<UsernamePasswordCredentials> authExtractor = new BasicAuthExtractor();
+            val authExtractor = new BasicAuthExtractor();
             val credentials = authExtractor.extract(Pac4jUtils.getPac4jJ2EContext(request, response));
             if (credentials == null) {
                 throw new IllegalArgumentException("No credentials are provided to verify introspection on the access token");

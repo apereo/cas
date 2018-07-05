@@ -107,7 +107,7 @@ public class CasThemesConfiguration {
 
     @Bean
     public Map serviceThemeResolverSupportedBrowsers() {
-        final Map<String, String> map = new HashMap<>();
+        val map = new HashMap<String, String>();
         map.put(".*iPhone.*", "iphone");
         map.put(".*Android.*", "android");
         map.put(".*Safari.*Pre.*", "safari");

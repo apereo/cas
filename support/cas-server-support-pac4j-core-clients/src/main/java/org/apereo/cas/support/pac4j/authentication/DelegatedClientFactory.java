@@ -473,7 +473,7 @@ public class DelegatedClientFactory {
      * @return the set
      */
     public Set<BaseClient> build() {
-        final Set<BaseClient> clients = new LinkedHashSet<>();
+        val clients = new LinkedHashSet<>();
 
         configureCasClient(clients);
         configureFacebookClient(clients);

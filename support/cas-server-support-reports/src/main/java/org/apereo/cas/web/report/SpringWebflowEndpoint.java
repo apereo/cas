@@ -57,19 +57,19 @@ public class SpringWebflowEndpoint extends BaseCasMvcEndpoint {
      */
     @ReadOperation
     public Map<?, ?> getReport() {
-        final Map<String, Object> jsonMap = new HashMap<>();
+        val jsonMap = new HashMap<String, Object>();
         val map =
             this.applicationContext.getBeansOfType(FlowDefinitionRegistry.class, false, true);
 
         map.forEach((k, v) -> Arrays.stream(v.getFlowDefinitionIds()).forEach(id -> {
-            final Map<String, Object> flowDetails = new HashMap<>();
+            val flowDetails = new HashMap<String, Object>();
             val def = Flow.class.cast(v.getFlowDefinition(id));
 
-            final Map<String, Map> states = new HashMap<>();
+            val states = new HashMap<String, Map>();
             Arrays.stream(def.getStateIds()).forEach(st -> {
 
                 val state = (State) def.getState(st);
-                final Map<String, Object> stateMap = new HashMap<>();
+                val stateMap = new HashMap<String, Object>();
 
                 if (!state.getAttributes().asMap().isEmpty()) {
                     stateMap.put("attributes", CollectionUtils.wrap(state.getAttributes()));

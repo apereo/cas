@@ -11,13 +11,10 @@ import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.exception.TechnicalException;
 import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.Optional;
 
 /**
  * This is {@link DelegatedAuthenticationSAML2ClientLogoutAction}.
@@ -77,8 +74,8 @@ public class DelegatedAuthenticationSAML2ClientLogoutAction extends AbstractActi
      * @return The currently used client's name or {@code null} if there is no active profile.
      */
     private String findCurrentClientName(final WebContext webContext) {
-        final ProfileManager<? extends CommonProfile> pm = Pac4jUtils.getPac4jProfileManager(webContext);
-        final Optional<? extends CommonProfile> profile = pm.get(true);
+        val pm = Pac4jUtils.getPac4jProfileManager(webContext);
+        val profile = pm.get(true);
         return profile.map(CommonProfile::getClientName).orElse(null);
     }
 

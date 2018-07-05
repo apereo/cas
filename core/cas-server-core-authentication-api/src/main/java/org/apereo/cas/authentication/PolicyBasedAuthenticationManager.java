@@ -403,11 +403,10 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      */
     protected Pair<Boolean, Set<Throwable>> evaluateAuthenticationPolicies(final Authentication authentication,
                                                                            final AuthenticationTransaction transaction) {
-        final Set<Throwable> failures = new LinkedHashSet<>();
+        val failures = new LinkedHashSet<Throwable>();
         val policies = authenticationEventExecutionPlan.getAuthenticationPolicies(transaction);
 
         policies
-            .stream()
             .forEach(p -> {
                 try {
                     val simpleName = p.getClass().getSimpleName();

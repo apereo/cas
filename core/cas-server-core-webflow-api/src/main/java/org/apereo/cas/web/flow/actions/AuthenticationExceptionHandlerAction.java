@@ -14,7 +14,6 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -105,8 +104,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
                 return CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK;
             }
         }
-
-        final Collection<Class> values = e.getHandlerErrors().values().stream().map(Throwable::getClass).collect(Collectors.toList());
+        val values = e.getHandlerErrors().values().stream().map(Throwable::getClass).collect(Collectors.toList());
         val handlerErrorName = this.errors
             .stream()
             .filter(values::contains)

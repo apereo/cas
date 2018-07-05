@@ -17,7 +17,7 @@ import org.springframework.core.SpringVersion;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,8 +31,6 @@ import java.util.Map;
 @UtilityClass
 public class SystemUtils {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-    private static final String SEPARATOR_CHAR = "-";
-
     private static final int SYSTEM_INFO_DEFAULT_SIZE = 20;
     private static final String UPDATE_CHECK_MAVEN_URL = "https://search.maven.org/solrsearch/select?q=g:%22org.apereo.cas%22%20AND%20a:%22cas-server%22";
 
@@ -44,7 +42,7 @@ public class SystemUtils {
     public static Map<String, Object> getSystemInfo() {
         val properties = System.getProperties();
 
-        final Map<String, Object> info = new LinkedHashMap<>(SYSTEM_INFO_DEFAULT_SIZE);
+        val info = new HashMap<String, Object>(SYSTEM_INFO_DEFAULT_SIZE);
 
         info.put("CAS Version", StringUtils.defaultString(CasVersion.getVersion(), "Not Available"));
         info.put("CAS Commit Id", StringUtils.defaultString(CasVersion.getSpecificationVersion(), "Not Available"));

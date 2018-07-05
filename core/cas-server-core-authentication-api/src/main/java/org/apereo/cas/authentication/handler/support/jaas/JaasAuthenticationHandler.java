@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
@@ -25,7 +24,6 @@ import java.io.File;
 import java.security.GeneralSecurityException;
 import java.security.URIParameter;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * JAAS Authentication Handler for CAAS. This is a simple bridge from CAS'
@@ -125,7 +123,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         val strategy = getPasswordPolicyHandlingStrategy();
         if (principal != null && strategy != null) {
             LOGGER.debug("Attempting to examine and handle password policy via [{}]", strategy.getClass().getSimpleName());
-            final List<MessageDescriptor> messageList = strategy.handle(principal, getPasswordPolicyConfiguration());
+            val messageList = strategy.handle(principal, getPasswordPolicyConfiguration());
             return createHandlerResult(credential, principal, messageList);
         }
         throw new FailedLoginException("Unable to authenticate " + credential.getId());

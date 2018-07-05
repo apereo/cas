@@ -195,7 +195,7 @@ public class ScriptingUtils {
         try (val loader = new GroovyClassLoader(parent)) {
             val groovyFile = groovyScript.getFile();
             if (groovyFile.exists()) {
-                final Class<?> groovyClass = loader.parseClass(groovyFile);
+                val groovyClass = loader.parseClass(groovyFile);
                 LOGGER.trace("Creating groovy object instance from class [{}]", groovyFile.getCanonicalPath());
 
                 val groovyObject = (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();

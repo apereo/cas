@@ -153,7 +153,7 @@ public class ValidateLdapConnectionCommand {
 
     @SuppressWarnings("JdkObsolete")
     private Hashtable<String, String> getLdapDirectoryContextSettings(final String bindDn, final String bindCredential, final String url) {
-        final Hashtable<String, String> env = new Hashtable<>(6);
+        val env = new Hashtable<String, String>();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL, url.trim());
         env.put(Context.SECURITY_AUTHENTICATION, "simple");

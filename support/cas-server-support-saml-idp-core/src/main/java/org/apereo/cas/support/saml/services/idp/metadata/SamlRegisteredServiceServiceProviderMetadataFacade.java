@@ -192,7 +192,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
      * @return the supported name formats
      */
     public List<String> getSupportedNameIdFormats() {
-        final List<String> nameIdFormats = new ArrayList<>();
+        val nameIdFormats = new ArrayList<String>();
         val children = this.ssoDescriptor.getOrderedChildren();
         if (children != null) {
             nameIdFormats.addAll(children.stream().filter(NameIDFormat.class::isInstance)

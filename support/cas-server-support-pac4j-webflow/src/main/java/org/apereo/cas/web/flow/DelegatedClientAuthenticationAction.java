@@ -49,9 +49,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -235,8 +233,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
-
-        final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();
+        val urls = new LinkedHashSet<ProviderLoginPageConfiguration>();
         this.clients.findAllClients()
             .stream()
             .filter(client -> client instanceof IndirectClient && isDelegatedClientAuthorizedForService(client, service))
@@ -335,7 +332,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     public static Optional<ModelAndView> hasDelegationRequestFailed(final HttpServletRequest request, final int status) {
         val params = request.getParameterMap();
         if (params.containsKey("error") || params.containsKey("error_code") || params.containsKey("error_description") || params.containsKey("error_message")) {
-            final Map<String, Object> model = new HashMap<>();
+            val model = new HashMap<String, Object>();
             if (params.containsKey("error_code")) {
                 model.put("code", StringEscapeUtils.escapeHtml4(request.getParameter("error_code")));
             } else {

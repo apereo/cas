@@ -58,7 +58,7 @@ public class CoreAuthenticationUtils {
      * @return the map
      */
     public static Multimap<String, Object> transformPrincipalAttributesListIntoMultiMap(final List<String> list) {
-        final Multimap<String, Object> multimap = ArrayListMultimap.create();
+        val multimap = ArrayListMultimap.<String, Object>create();
         if (list.isEmpty()) {
             LOGGER.debug("No principal attributes are defined");
         } else {

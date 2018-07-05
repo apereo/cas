@@ -147,7 +147,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
 
     private IMap<String, Ticket> getTicketMapInstance(final String mapName) {
         try {
-            final IMap<String, Ticket> inst = hazelcastInstance.getMap(mapName);
+            val inst = hazelcastInstance.<String, Ticket>getMap(mapName);
             LOGGER.debug("Located Hazelcast map instance [{}]", mapName);
             return inst;
         } catch (final Exception e) {

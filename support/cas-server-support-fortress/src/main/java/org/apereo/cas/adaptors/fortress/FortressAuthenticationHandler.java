@@ -20,7 +20,6 @@ import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Fortress authentication handler, this class will delegate the authentication to call fortress rest authentication.
@@ -67,7 +66,7 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
                 marshaller.marshal(fortressSession, writer);
                 val fortressXmlSession = writer.toString();
                 LOGGER.debug("Fortress session result: [{}]", fortressXmlSession);
-                final Map<String, Object> attributes = new HashMap<>();
+                val attributes = new HashMap<String, Object>();
                 attributes.put(FORTRESS_SESSION_KEY, fortressXmlSession);
                 return createHandlerResult(c, principalFactory.createPrincipal(username, attributes));
             }

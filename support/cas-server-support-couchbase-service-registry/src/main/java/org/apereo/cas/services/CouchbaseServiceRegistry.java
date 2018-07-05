@@ -88,7 +88,7 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
     public List<RegisteredService> load() {
         try {
             val allKeys = executeViewQueryForAllServices();
-            final List<RegisteredService> services = new ArrayList<>();
+            val services = new ArrayList<RegisteredService>();
             for (val row : allKeys) {
                 val document = row.document(RawJsonDocument.class);
                 if (document != null) {

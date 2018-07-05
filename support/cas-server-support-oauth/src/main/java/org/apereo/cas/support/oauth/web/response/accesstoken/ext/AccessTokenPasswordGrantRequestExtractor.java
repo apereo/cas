@@ -16,7 +16,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilde
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.Pac4jUtils;
-import org.pac4j.core.profile.UserProfile;
+import org.pac4j.core.profile.CommonProfile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,7 +56,7 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
 
         val context = Pac4jUtils.getPac4jJ2EContext(request, response);
         val manager = Pac4jUtils.getPac4jProfileManager(request, response);
-        final Optional<UserProfile> profile = manager.get(true);
+        val profile = (Optional<CommonProfile>) manager.get(true);
         if (!profile.isPresent()) {
             throw new UnauthorizedServiceException("OAuth user profile cannot be determined");
         }

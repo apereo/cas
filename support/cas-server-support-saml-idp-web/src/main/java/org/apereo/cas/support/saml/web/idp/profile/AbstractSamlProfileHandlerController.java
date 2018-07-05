@@ -290,7 +290,7 @@ public abstract class AbstractSamlProfileHandlerController {
      * @return the authentication context mappings
      */
     protected Map<String, String> getAuthenticationContextMappings() {
-        final Map<String, String> mappings = new TreeMap();
+        val mappings = new TreeMap<String, String>();
         casProperties.getAuthn().getSamlIdp().getAuthenticationContextClassMappings()
             .stream()
             .map(s -> {

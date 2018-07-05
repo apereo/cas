@@ -86,7 +86,7 @@ public class CasCoreWebConfiguration {
     @Autowired
     @Bean
     public ArgumentExtractor argumentExtractor(final List<ServiceFactoryConfigurer> configurers) {
-        final List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList = new ArrayList<>();
+        val serviceFactoryList = new ArrayList<ServiceFactory<? extends WebApplicationService>>();
         configurers.forEach(c -> serviceFactoryList.addAll(c.buildServiceFactories()));
         return new DefaultArgumentExtractor(serviceFactoryList);
     }

@@ -94,7 +94,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
             val failure = createAuthenticationFailure(model);
             casResponse.setAuthenticationFailure(failure);
         } finally {
-            final Map<String, Object> casModel = new HashMap<>();
+            val casModel = new HashMap<String, Object>();
             casModel.put(ATTRIBUTE_NAME_MODEL_SERVICE_RESPONSE, casResponse);
             model.clear();
             model.putAll(casModel);

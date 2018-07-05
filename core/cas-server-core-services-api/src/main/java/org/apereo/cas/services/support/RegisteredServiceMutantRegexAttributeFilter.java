@@ -31,7 +31,7 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
 
     @Override
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
-        final Map<String, Object> attributesToRelease = new HashMap<>();
+        val attributesToRelease = new HashMap<String, Object>();
         givenAttributes.entrySet().stream().filter(filterProvidedGivenAttributes()).forEach(entry -> {
             val attributeName = entry.getKey();
             if (getPatterns().containsKey(attributeName)) {
@@ -64,7 +64,7 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
 
     private Collection<Pair<Pattern, String>> createPatternsAndReturnValue(final String attributeName) {
         val patternDef = getPatterns().get(attributeName);
-        final List<Object> patternAndReturnVal = new ArrayList<>(CollectionUtils.toCollection(patternDef));
+        val patternAndReturnVal = new ArrayList<Object>(CollectionUtils.toCollection(patternDef));
         return patternAndReturnVal
             .stream()
             .map(this::mapPattern)
@@ -72,7 +72,7 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
     }
 
     private List<Object> filterAndMapAttributeValuesByPattern(final Set<Object> attributeValues, final Pattern pattern, final String returnValue) {
-        final List<Object> values = new ArrayList<>();
+        val values = new ArrayList<Object>();
         attributeValues.forEach(v -> {
             val matcher = pattern.matcher(v.toString());
             val matches = isCompleteMatch() ? matcher.matches() : matcher.find();

@@ -114,7 +114,7 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
         bean.setAsyncSupported(true);
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
 
-        final Map<String, String> initParams = new HashMap<>();
+        val initParams = new HashMap<String, String>();
         if (StringUtils.isNotBlank(audit.getAlternateClientAddrHeaderName())) {
             initParams.put(ClientInfoThreadLocalFilter.CONST_IP_ADDRESS_HEADER, audit.getAlternateClientAddrHeaderName());
         }

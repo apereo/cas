@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link Saml2AttributeQueryProfileHandlerController}.
@@ -94,7 +93,7 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
             val facade = adaptor.get();
             verifyAuthenticationContextSignature(ctx, request, query, facade);
 
-            final Map<String, Object> attrs = new LinkedHashMap<>();
+            val attrs = new LinkedHashMap<String, Object>();
             if (query.getAttributes().isEmpty()) {
                 val id = this.samlAttributeQueryTicketFactory.createTicketIdFor(query.getSubject().getNameID().getValue());
                 val ticket = this.ticketRegistry.getTicket(id, SamlAttributeQueryTicket.class);

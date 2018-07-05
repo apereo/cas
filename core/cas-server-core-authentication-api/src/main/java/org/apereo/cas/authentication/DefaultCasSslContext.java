@@ -64,7 +64,7 @@ public class DefaultCasSslContext {
         final KeyManager[] keyManagers = {
             new CompositeX509KeyManager(CollectionUtils.wrapList(jvmKeyManager, customKeyManager))
         };
-        final List<X509TrustManager> allManagers = new ArrayList<>(customTrustManager);
+        val allManagers = new ArrayList<X509TrustManager>(customTrustManager);
         allManagers.addAll(jvmTrustManagers);
         val trustManagers = new TrustManager[]{new CompositeX509TrustManager(allManagers)};
 
@@ -148,14 +148,14 @@ public class DefaultCasSslContext {
 
         @Override
         public String[] getClientAliases(final String keyType, final Principal[] issuers) {
-            final List<String> aliases = new ArrayList<>();
+            val aliases = new ArrayList<String>();
             this.keyManagers.forEach(keyManager -> aliases.addAll(CollectionUtils.wrapList(keyManager.getClientAliases(keyType, issuers))));
             return aliases.toArray(new String[]{});
         }
 
         @Override
         public String[] getServerAliases(final String keyType, final Principal[] issuers) {
-            final List<String> aliases = new ArrayList<>();
+            val aliases = new ArrayList<String>();
             this.keyManagers.forEach(keyManager -> aliases.addAll(CollectionUtils.wrapList(keyManager.getServerAliases(keyType, issuers))));
             return aliases.toArray(new String[]{});
         }
@@ -219,7 +219,7 @@ public class DefaultCasSslContext {
 
         @Override
         public X509Certificate[] getAcceptedIssuers() {
-            final List<X509Certificate> certificates = new ArrayList<>();
+            val certificates = new ArrayList<X509Certificate>();
             this.trustManagers.forEach(trustManager -> certificates.addAll(CollectionUtils.wrapList(trustManager.getAcceptedIssuers())));
             return certificates.toArray(new X509Certificate[0]);
         }

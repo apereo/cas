@@ -103,7 +103,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         val reflections = new Reflections(new ConfigurationBuilder()
             .setUrls(ClasspathHelper.forPackage(packageNamespace))
             .setScanners(new SubTypesScanner(false)));
-        final Set<Class<?>> subTypes = (Set) reflections.getSubTypesOf(parentType);
+        val subTypes = (Set) reflections.getSubTypesOf(parentType);
         return subTypes.stream()
             .filter(c -> !Modifier.isInterface(c.getModifiers()) && !Modifier.isAbstract(c.getModifiers()) && filter.test(c))
             .map(mapper)

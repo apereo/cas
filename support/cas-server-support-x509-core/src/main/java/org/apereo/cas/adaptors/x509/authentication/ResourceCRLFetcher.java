@@ -15,7 +15,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Handles the fetching of CRL objects based on resources.
@@ -29,7 +28,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
 
     @Override
     public Collection<X509CRL> fetch(final Collection<Resource> crls) throws IOException, CRLException {
-        final Set<X509CRL> results = new HashSet<>();
+        val results = new HashSet<>();
         for (val r : crls) {
             LOGGER.debug("Fetching CRL data from [{}]", r);
             try (val ins = r.getInputStream()) {

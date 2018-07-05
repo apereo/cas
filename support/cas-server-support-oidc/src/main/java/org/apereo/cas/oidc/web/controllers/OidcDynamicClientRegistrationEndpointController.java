@@ -36,8 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -116,13 +114,11 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             registeredService.setClientId(clientIdGenerator.getNewString());
             registeredService.setClientSecret(clientSecretGenerator.getNewString());
             registeredService.setEvaluationOrder(Integer.MIN_VALUE);
-
-            final Set<String> supportedScopes = new HashSet<>(casProperties.getAuthn().getOidc().getScopes());
+            val supportedScopes = new HashSet<String>(casProperties.getAuthn().getOidc().getScopes());
             supportedScopes.retainAll(registrationRequest.getScopes());
-
             val clientResponse = getClientRegistrationResponse(registrationRequest, registeredService);
             registeredService.setScopes(supportedScopes);
-            final Set<String> processedScopes = new LinkedHashSet<>(supportedScopes);
+            val processedScopes = new LinkedHashSet<>(supportedScopes);
             registeredService.setScopes(processedScopes);
             registeredService.setDescription("Dynamically registered service "
                     .concat(registeredService.getName())
@@ -138,7 +134,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            final Map<String, String> map = new HashMap<>();
+            val map = new HashMap<String, String>();
             map.put("error", "invalid_client_metadata");
             map.put("error_message", e.getMessage());
             return new ResponseEntity(map, HttpStatus.BAD_REQUEST);

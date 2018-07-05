@@ -137,7 +137,7 @@ public class DynamoDbTicketRegistryFacilitator {
      * @return the all
      */
     public Collection<Ticket> getAll() {
-        final Collection<Ticket> tickets = new ArrayList<>();
+        val tickets = new ArrayList<>();
         val metadata = this.ticketCatalog.findAll();
         metadata.forEach(r -> {
             val scan = new ScanRequest(r.getProperties().getStorageName());
@@ -159,7 +159,7 @@ public class DynamoDbTicketRegistryFacilitator {
     public Ticket get(final String ticketId, final String encodedTicketId) {
         val metadata = this.ticketCatalog.find(ticketId);
         if (metadata != null) {
-            final Map<String, AttributeValue> keys = new HashMap<>();
+            val keys = new HashMap<String, AttributeValue>();
             keys.put(ColumnNames.ID.getColumnName(), new AttributeValue(encodedTicketId));
             val request = new GetItemRequest().withKey(keys).withTableName(metadata.getProperties().getStorageName());
             LOGGER.debug("Submitting request [{}] to get ticket item [{}]", request, ticketId);
@@ -244,7 +244,7 @@ public class DynamoDbTicketRegistryFacilitator {
      * @return the map
      */
     public Map<String, AttributeValue> buildTableAttributeValuesMapFromTicket(final Ticket ticket, final Ticket encTicket) {
-        final Map<String, AttributeValue> values = new HashMap<>();
+        val values = new HashMap<String, AttributeValue>();
         values.put(ColumnNames.ID.getColumnName(), new AttributeValue(encTicket.getId()));
         values.put(ColumnNames.PREFIX.getColumnName(), new AttributeValue(ticket.getPrefix()));
         values.put(ColumnNames.CREATION_TIME.getColumnName(), new AttributeValue(ticket.getCreationTime().toString()));

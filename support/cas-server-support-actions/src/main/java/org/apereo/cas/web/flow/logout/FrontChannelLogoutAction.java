@@ -17,7 +17,6 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Logout action for front SLO : find the next eligible service and perform front logout.
@@ -36,7 +35,7 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
                                       final RequestContext context) {
 
         val logoutRequests = WebUtils.getLogoutRequests(context);
-        final Map<LogoutRequest, LogoutHttpMessage> logoutUrls = new HashMap<>();
+        val logoutUrls = new HashMap<LogoutRequest, LogoutHttpMessage>();
 
         if (logoutRequests != null) {
             logoutRequests.stream()

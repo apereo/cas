@@ -100,7 +100,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      */
     @Override
     public Collection<Logo> getLogoUrls() {
-        final List<Logo> list = new ArrayList<>();
+        val list = new ArrayList<Logo>();
         if (this.uiInfo != null) {
             list.addAll(this.uiInfo.getLogos().stream().map(l -> new Logo(l.getURL(), l.getHeight(), l.getWidth())).collect(Collectors.toList()));
         }
@@ -114,7 +114,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      * @return the string values
      */
     private static Collection<String> getStringValues(final List<?> items) {
-        final List<String> list = new ArrayList<>();
+        val list = new ArrayList<String>();
         items.forEach(d -> {
             if (d instanceof XSURI) {
                 list.add(((XSURI) d).getValue());

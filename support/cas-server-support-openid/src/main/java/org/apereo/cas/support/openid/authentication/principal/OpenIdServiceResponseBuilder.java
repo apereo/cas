@@ -66,7 +66,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
         val service = (OpenIdService) webApplicationService;
         val parameterList = new ParameterList(HttpRequestUtils.getHttpServletRequestFromRequestAttributes().getParameterMap());
 
-        final Map<String, String> parameters = new HashMap<>();
+        val parameters = new HashMap<String, String>();
 
         if (StringUtils.isBlank(ticketId)) {
             parameters.put(OpenIdProtocolConstants.OPENID_MODE, OpenIdProtocolConstants.CANCEL);

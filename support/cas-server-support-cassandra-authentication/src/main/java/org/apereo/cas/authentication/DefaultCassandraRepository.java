@@ -33,7 +33,7 @@ public class DefaultCassandraRepository implements CassandraRepository {
 
     @Override
     public Map<String, Object> getUser(final String uid) {
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         val row = session.execute(bind(selectUserQuery, uid)).one();
         if (row != null) {
             row.getColumnDefinitions().forEach(c -> {

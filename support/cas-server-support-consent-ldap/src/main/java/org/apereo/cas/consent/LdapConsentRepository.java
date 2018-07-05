@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -89,7 +88,7 @@ public class LdapConsentRepository implements ConsentRepository {
     public Collection<ConsentDecision> findConsentDecisions() {
         val entries = readConsentEntries();
         if (entries != null && !entries.isEmpty()) {
-            final Set<ConsentDecision> decisions = new HashSet<>();
+            val decisions = new HashSet<>();
             entries
                 .stream()
                 .map(e -> e.getAttribute(this.ldap.getConsentAttributeName()))
@@ -135,7 +134,7 @@ public class LdapConsentRepository implements ConsentRepository {
      * @return true / false
      */
     private boolean executeModifyOperation(final Set<String> newConsent, final LdapEntry entry) {
-        final Map<String, Set<String>> attrMap = new HashMap<>();
+        val attrMap = new HashMap<String, Set<String>>();
         attrMap.put(this.ldap.getConsentAttributeName(), newConsent);
 
         LOGGER.debug("Storing consent decisions [{}] at LDAP attribute [{}] for [{}]", newConsent, attrMap.keySet(), entry.getDn());
@@ -165,7 +164,7 @@ public class LdapConsentRepository implements ConsentRepository {
             LOGGER.debug("Merged consent decision [{}] with LDAP attribute [{}]", decision, ldapConsent.getName());
             return CollectionUtils.wrap(result);
         }
-        final Set<String> result = new HashSet<>();
+        val result = new HashSet<>();
         val json = mapToJson(decision);
         if (StringUtils.isBlank(json)) {
             throw new IllegalArgumentException("Could not map consent decision to JSON");
@@ -182,7 +181,7 @@ public class LdapConsentRepository implements ConsentRepository {
      * @return the new decision set
      */
     private Set<String> removeDecision(final LdapAttribute ldapConsent, final long decisionId) {
-        final Set<String> result = new HashSet<>();
+        val result = new HashSet<>();
         if (ldapConsent.size() != 0) {
             ldapConsent.getStringValues()
                 .stream()

@@ -1,6 +1,6 @@
 package org.apereo.cas.support.openid.web.mvc;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +25,7 @@ import java.util.Map;
  * @since 3.5
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SmartOpenIdController extends AbstractDelegateController implements Serializable {
     private static final long serialVersionUID = -594058549445950430L;
 
@@ -52,7 +52,7 @@ public class SmartOpenIdController extends AbstractDelegateController implements
             () -> null)
             .get();
 
-        final Map<String, String> responseParams = new HashMap<>();
+        val responseParams = new HashMap<String, String>();
         if (response != null) {
             responseParams.putAll(response.getParameterMap());
         }
@@ -61,7 +61,7 @@ public class SmartOpenIdController extends AbstractDelegateController implements
 
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
-        final Map<String, String> parameters = new HashMap<>(getAssociationResponse(request));
+        val parameters = new HashMap<String, String>(getAssociationResponse(request));
         return new ModelAndView(this.successView, parameters);
     }
 

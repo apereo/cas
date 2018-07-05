@@ -13,7 +13,6 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -83,7 +82,7 @@ public class RegisteredServiceAccessStrategyUtils {
         ensureServiceAccessIsAllowed(service, registeredService);
         if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principalId, attributes)) {
             LOGGER.warn("Cannot grant access to service [{}] because it is not authorized for use by [{}].", service.getId(), principalId);
-            final Map<String, Throwable> handlerErrors = new HashMap<>();
+            val handlerErrors = new HashMap<String, Throwable>();
             val message = String.format("Cannot grant service access to %s", principalId);
             val exception = new UnauthorizedServiceForPrincipalException(message, registeredService, principalId, attributes);
             handlerErrors.put(UnauthorizedServiceForPrincipalException.class.getSimpleName(), exception);
@@ -131,7 +130,7 @@ public class RegisteredServiceAccessStrategyUtils {
         } else {
             principalAttrs = authentication.getPrincipal().getAttributes();
         }
-        final Map<String, Object> attributes = new LinkedHashMap<>(principalAttrs);
+        val attributes = new HashMap<String, Object>(principalAttrs);
         attributes.putAll(authentication.getAttributes());
         ensurePrincipalAccessIsAllowedForService(service, registeredService, principal.getId(), attributes);
     }

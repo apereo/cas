@@ -76,7 +76,7 @@ public class HazelcastTicketRegistryConfiguration {
     }
 
     private Map<String, MapConfig> buildHazelcastMapConfigurations(final TicketCatalog ticketCatalog) {
-        final Map<String, MapConfig> mapConfigs = new HashMap<>();
+        val mapConfigs = new HashMap<String, MapConfig>();
 
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
         val factory = new HazelcastConfigurationFactory();

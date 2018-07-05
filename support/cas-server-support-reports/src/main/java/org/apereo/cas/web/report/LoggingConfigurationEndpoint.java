@@ -31,7 +31,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -94,9 +93,9 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
      */
     @ReadOperation
     public Map<String, Object> configuration() throws Exception {
-        final Collection<Map<String, Object>> configuredLoggers = new HashSet<>();
+        val configuredLoggers = new HashSet<>();
         getLoggerConfigurations().forEach(config -> {
-            final Map<String, Object> loggerMap = new HashMap<>();
+            val loggerMap = new HashMap<String, Object>();
             loggerMap.put("name", StringUtils.defaultIfBlank(config.getName(), LOGGER_NAME_ROOT));
             loggerMap.put("state", config.getState());
             if (config.getPropertyList() != null) {
@@ -104,7 +103,7 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
             }
             loggerMap.put("additive", config.isAdditive());
             loggerMap.put("level", config.getLevel().name());
-            final Collection<String> appenders = new HashSet<>();
+            val appenders = new HashSet<>();
             config.getAppenders().keySet().stream().map(key -> config.getAppenders().get(key)).forEach(appender -> {
                 val builder = new ToStringBuilder(this, ToStringStyle.JSON_STYLE);
                 builder.append("name", appender.getName());
@@ -136,7 +135,7 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
             loggerMap.put("appenders", appenders);
             configuredLoggers.add(loggerMap);
         });
-        final Map<String, Object> responseMap = new HashMap<>();
+        val responseMap = new HashMap<String, Object>();
         responseMap.put("loggers", configuredLoggers);
 
         val loggers = getActiveLoggersInFactory();
@@ -185,9 +184,9 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
                                   final boolean additive) {
 
 
-        final Collection<LoggerConfig> loggerConfigs = getLoggerConfigurations();
-        loggerConfigs.stream().
-            filter(cfg -> cfg.getName().equals(loggerName))
+        val loggerConfigs = getLoggerConfigurations();
+        loggerConfigs.stream()
+            .filter(cfg -> cfg.getName().equals(loggerName))
             .forEachOrdered(cfg -> {
                 cfg.setLevel(Level.getLevel(loggerLevel));
                 cfg.setAdditive(additive);

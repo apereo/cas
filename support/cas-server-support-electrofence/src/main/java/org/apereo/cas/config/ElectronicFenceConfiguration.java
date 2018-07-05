@@ -37,7 +37,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * This is {@link ElectronicFenceConfiguration}.
@@ -142,7 +141,7 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     @RefreshScope
     public AuthenticationRiskEvaluator authenticationRiskEvaluator() {
         val risk = casProperties.getAuthn().getAdaptive().getRisk();
-        final Set<AuthenticationRequestRiskCalculator> calculators = new HashSet<>();
+        val calculators = new HashSet<>();
 
         if (risk.getIp().isEnabled()) {
             calculators.add(ipAddressAuthenticationRequestRiskCalculator());

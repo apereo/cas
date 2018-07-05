@@ -14,9 +14,7 @@ import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.config.IniSecurityManagerFactory;
-import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.Factory;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
@@ -145,7 +143,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
         if (shiroResource != null && shiroResource.exists()) {
             val location = shiroResource.getURI().toString();
             LOGGER.debug("Loading Shiro configuration from [{}]", location);
-            final Factory<SecurityManager> factory = new IniSecurityManagerFactory(location);
+            val factory = new IniSecurityManagerFactory(location);
             val securityManager = factory.getInstance();
             SecurityUtils.setSecurityManager(securityManager);
         } else {

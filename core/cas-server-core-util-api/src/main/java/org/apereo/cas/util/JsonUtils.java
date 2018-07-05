@@ -42,7 +42,7 @@ public class JsonUtils {
      */
     @SneakyThrows
     public static void render(final HttpServletResponse response) {
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         response.setStatus(HttpServletResponse.SC_OK);
         render(map, response);
     }
@@ -55,7 +55,7 @@ public class JsonUtils {
      * @param response the response
      */
     public static void renderException(final Exception ex, final HttpServletResponse response) {
-        final Map<String, String> map = new HashMap<>();
+        val map = new HashMap<String, String>();
         map.put("error", ex.getMessage());
         map.put("stacktrace", Arrays.deepToString(ex.getStackTrace()));
         renderException(map, response);

@@ -15,8 +15,6 @@ import org.cryptacular.x509.dn.StandardAttributeType;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -93,7 +91,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
         LOGGER.debug("Resolving principal for [{}]", certificate);
         val sb = new StringBuffer();
         val m = ATTR_PATTERN.matcher(this.descriptor);
-        final Map<String, AttributeContext> attrMap = new HashMap<>();
+        val attrMap = new HashMap<String, AttributeContext>();
         val rdnSequence = new NameReader(certificate).readSubject();
         while (m.find()) {
             val name = m.group(1);
@@ -124,7 +122,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      */
     private static String[] getAttributeValues(final RDNSequence rdnSequence, final AttributeType attribute) {
         // Iterates sequence in reverse order as specified in section 2.1 of RFC 2253
-        final List<String> values = new ArrayList<>();
+        val values = new ArrayList<String>();
         for (val rdn : rdnSequence.backward()) {
             for (val attr : rdn.getAttributes()) {
                 if (attr.getType().equals(attribute)) {

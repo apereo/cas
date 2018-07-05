@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
 
     @Override
     public Map<String, Object> getAttributes(final Principal p, final Service selectedService, final RegisteredService service) {
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         policies.forEach(policy -> attributes.putAll(policy.getAttributes(p, selectedService, service)));
         return attributes;
     }

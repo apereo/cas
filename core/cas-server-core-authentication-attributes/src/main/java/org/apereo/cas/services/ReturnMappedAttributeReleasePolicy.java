@@ -50,9 +50,9 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
 
     @Override
     public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs, final RegisteredService service) {
-        final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        val resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
-        final Map<String, Object> attributesToRelease = new HashMap<>();
+        val attributesToRelease = new HashMap<String, Object>();
         /*
          * Map each entry in the allowed list into an array first
          * by the original key, value and the original entry itself.

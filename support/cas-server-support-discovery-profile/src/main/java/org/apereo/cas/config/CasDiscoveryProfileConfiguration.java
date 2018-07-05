@@ -63,7 +63,7 @@ public class CasDiscoveryProfileConfiguration {
 
     @Bean
     public Set<String> availableAttributes() {
-        final Set<String> attributes = new LinkedHashSet<>(0);
+        val attributes = new LinkedHashSet<>(0);
         val possibleUserAttributeNames = attributeRepository.getPossibleUserAttributeNames();
         if (possibleUserAttributeNames != null) {
             attributes.addAll(possibleUserAttributeNames);
@@ -86,7 +86,7 @@ public class CasDiscoveryProfileConfiguration {
     }
 
     private Set<String> transformAttributes(final List<String> attributes) {
-        final Set<String> attributeSet = new LinkedHashSet<>();
+        val attributeSet = new LinkedHashSet<>();
         CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributes)
             .values()
             .stream()

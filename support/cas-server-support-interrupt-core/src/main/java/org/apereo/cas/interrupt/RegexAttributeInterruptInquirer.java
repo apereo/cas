@@ -9,8 +9,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -28,7 +26,7 @@ public class RegexAttributeInterruptInquirer extends BaseInterruptInquirer {
     @Override
     protected InterruptResponse inquireInternal(final Authentication authentication, final RegisteredService registeredService,
                                                 final Service service, final Credential credential) {
-        final Map<String, Object> attributes = new LinkedHashMap<>(authentication.getAttributes());
+        val attributes = new HashMap<String, Object>(authentication.getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());
 
         LOGGER.debug("Looking for [{}] in attributes [{}]", this.interruptAttributeName, attributes);

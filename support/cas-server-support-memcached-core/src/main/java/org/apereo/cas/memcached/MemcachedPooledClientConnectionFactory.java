@@ -91,7 +91,7 @@ public class MemcachedPooledClientConnectionFactory extends BasePooledObjectFact
      * @return the object pool
      */
     public ObjectPool<MemcachedClientIF> getObjectPool() {
-        final GenericObjectPool<MemcachedClientIF> pool = new GenericObjectPool<>(this);
+        val pool = new GenericObjectPool<MemcachedClientIF>(this);
         pool.setMaxIdle(memcachedProperties.getMaxIdle());
         pool.setMinIdle(memcachedProperties.getMinIdle());
         pool.setMaxTotal(memcachedProperties.getMaxTotal());

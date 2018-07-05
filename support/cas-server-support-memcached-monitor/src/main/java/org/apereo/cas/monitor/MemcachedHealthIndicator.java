@@ -10,7 +10,6 @@ import org.springframework.boot.actuate.health.Health;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Monitors the memcached hosts known to an instance of {@link net.spy.memcached.MemcachedClientIF}.
@@ -61,7 +60,7 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
      */
     @Override
     protected CacheStatistics[] getStatistics() {
-        final List<CacheStatistics> statsList = new ArrayList<>();
+        val statsList = new ArrayList<CacheStatistics>();
         try {
             val client = getClientFromPool();
             client.getStats()

@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link SamlProfileSamlConditionsBuilder}.
@@ -71,7 +70,7 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
             skewAllowance = casProperties.getSamlCore().getSkewAllowance();
         }
 
-        final List<String> audienceUrls = new ArrayList<>();
+        val audienceUrls = new ArrayList<String>();
         audienceUrls.add(adaptor.getEntityId());
         if (StringUtils.isNotBlank(service.getAssertionAudiences())) {
             val audiences = org.springframework.util.StringUtils.commaDelimitedListToSet(service.getAssertionAudiences());

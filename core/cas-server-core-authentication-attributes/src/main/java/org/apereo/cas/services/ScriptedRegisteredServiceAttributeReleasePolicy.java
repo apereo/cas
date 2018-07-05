@@ -55,13 +55,13 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
     private static Map<String, Object> getAttributesFromInlineGroovyScript(final Map<String, Object> attributes, final Matcher matcherInline) {
         val script = matcherInline.group(1).trim();
         val args = CollectionUtils.wrap("attributes", attributes, "logger", LOGGER);
-        final Map<String, Object> map = ScriptingUtils.executeGroovyScriptEngine(script, args, Map.class);
+        val map = ScriptingUtils.executeGroovyScriptEngine(script, args, Map.class);
         return ObjectUtils.defaultIfNull(map, new HashMap<>());
     }
 
     private Map<String, Object> getScriptedAttributesFromFile(final Map<String, Object> attributes) {
         final Object[] args = {attributes, LOGGER};
-        final Map<String, Object> map = ScriptingUtils.executeScriptEngine(this.scriptFile, args, Map.class);
+        val map = ScriptingUtils.executeScriptEngine(this.scriptFile, args, Map.class);
         return ObjectUtils.defaultIfNull(map, new HashMap<>());
     }
 }

@@ -50,7 +50,7 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
 
         val requiredHandlers = registeredService.getRequiredHandlers();
         LOGGER.debug("Authentication transaction requires [{}] for service [{}]", requiredHandlers, service);
-        final Set<AuthenticationHandler> handlerSet = new LinkedHashSet<>(candidateHandlers);
+        val handlerSet = new LinkedHashSet<>(candidateHandlers);
         LOGGER.info("Candidate authentication handlers examined this transaction are [{}]", handlerSet);
 
         val it = handlerSet.iterator();

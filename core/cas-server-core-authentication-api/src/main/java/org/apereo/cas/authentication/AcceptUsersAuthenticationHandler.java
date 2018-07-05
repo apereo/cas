@@ -14,7 +14,6 @@ import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -84,7 +83,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
         if (!StringUtils.equals(credential.getPassword(), cachedPassword)) {
             throw new FailedLoginException();
         }
-        final List<MessageDescriptor> list = new ArrayList<>();
+        val list = new ArrayList<MessageDescriptor>();
         return createHandlerResult(credential, this.principalFactory.createPrincipal(username), list);
     }
 }

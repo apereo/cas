@@ -122,7 +122,7 @@ public class DynamoDbServiceRegistryFacilitator {
      * @return the registered service
      */
     public RegisteredService get(final String id) {
-        final Map<String, AttributeValue> keys = new HashMap<>();
+        val keys = new HashMap<String, AttributeValue>();
         keys.put(ColumnNames.SERVICE_ID.getColumnName(), new AttributeValue(id));
         return getRegisteredServiceByKeys(keys);
     }
@@ -134,7 +134,7 @@ public class DynamoDbServiceRegistryFacilitator {
      * @return the registered service
      */
     public RegisteredService get(final long id) {
-        final Map<String, AttributeValue> keys = new HashMap<>();
+        val keys = new HashMap<String, AttributeValue>();
         keys.put(ColumnNames.ID.getColumnName(), new AttributeValue(String.valueOf(id)));
         return getRegisteredServiceByKeys(keys);
     }
@@ -211,7 +211,7 @@ public class DynamoDbServiceRegistryFacilitator {
      * @return the map
      */
     public Map<String, AttributeValue> buildTableAttributeValuesMapFromService(final RegisteredService service) {
-        final Map<String, AttributeValue> values = new HashMap<>();
+        val values = new HashMap<String, AttributeValue>();
         values.put(ColumnNames.ID.getColumnName(), new AttributeValue(String.valueOf(service.getId())));
         values.put(ColumnNames.NAME.getColumnName(), new AttributeValue(service.getName()));
         values.put(ColumnNames.DESCRIPTION.getColumnName(), new AttributeValue(service.getDescription()));

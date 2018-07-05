@@ -122,7 +122,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
         LOGGER.debug("Retrieved authentication attributes [{}] from the model", authnAttributes);
         
         val registeredService = this.servicesManager.findServiceBy(service);
-        final Map<String, Object> attributesToReturn = new HashMap<>();
+        val attributesToReturn = new HashMap<String, Object>();
         attributesToReturn.putAll(getPrincipalAttributesAsMultiValuedAttributes(model));
         attributesToReturn.putAll(authnAttributes);
 

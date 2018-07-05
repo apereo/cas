@@ -10,7 +10,6 @@ import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastA
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link HazelcastAzureDiscoveryStrategy}.
@@ -23,7 +22,7 @@ public class HazelcastAzureDiscoveryStrategy implements HazelcastDiscoveryStrate
     @Override
     public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster) {
         val azure = cluster.getDiscovery().getAzure();
-        final Map<String, Comparable> properties = new HashMap<>();
+        val properties = new HashMap<String, Comparable>();
         if (StringUtils.hasText(azure.getClientId())) {
             properties.put(HazelcastAzureDiscoveryProperties.AZURE_DISCOVERY_CLIENT_ID, azure.getClientId());
         }

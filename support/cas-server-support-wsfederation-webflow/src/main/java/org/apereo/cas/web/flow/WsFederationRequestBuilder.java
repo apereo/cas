@@ -20,7 +20,6 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -47,7 +46,7 @@ public class WsFederationRequestBuilder {
      * @return the event
      */
     public Event buildAuthenticationRequestEvent(final RequestContext context) {
-        final List<WsFedClient> clients = new ArrayList<>();
+        val clients = new ArrayList<WsFedClient>();
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val service = (Service) context.getFlowScope().get(CasProtocolConstants.PARAMETER_SERVICE);
         this.configurations.forEach(cfg -> {

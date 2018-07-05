@@ -72,7 +72,7 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
         if (this.configuration.getAttributesType() == WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.CAS) {
             return super.retrievePersonAttributes(principalId, credential);
         }
-        final Map<String, List<Object>> mergedAttributes = new HashMap<>(wsFedCredentials.getAttributes());
+        val mergedAttributes = new HashMap<String, List<Object>>(wsFedCredentials.getAttributes());
         mergedAttributes.putAll(super.retrievePersonAttributes(principalId, credential));
         return mergedAttributes;
     }

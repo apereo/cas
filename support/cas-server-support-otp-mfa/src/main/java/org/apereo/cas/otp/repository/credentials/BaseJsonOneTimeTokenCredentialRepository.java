@@ -12,7 +12,6 @@ import org.apereo.cas.util.serialization.StringSerializer;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -45,8 +44,7 @@ public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTi
                 LOGGER.warn("JSON account repository file [{}] is empty.", this.location.getFile());
                 return null;
             }
-
-            final Collection<OneTimeTokenAccount> c = this.serializer.from(this.location.getFile());
+            val c = this.serializer.from(this.location.getFile());
             val account = c.stream()
                 .filter(a -> StringUtils.isNotBlank(a.getUsername()) && a.getUsername().equals(username))
                 .findAny()
@@ -106,12 +104,10 @@ public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTi
         if (result) {
             LOGGER.debug("Created JSON repository file at [{}]", this.location.getFile());
         }
-        final TreeSet<OneTimeTokenAccount> accounts;
+        val accounts = new TreeSet<OneTimeTokenAccount>();
         if (this.location.getFile().length() > 0) {
             LOGGER.debug("Reading JSON repository file at [{}]", this.location.getFile());
-            accounts = this.serializer.from(this.location.getFile());
-        } else {
-            accounts = new TreeSet<>();
+            accounts.addAll(this.serializer.from(this.location.getFile()));
         }
         return accounts;
     }

@@ -482,7 +482,7 @@ public class CasCoreWebflowConfiguration {
          * due to a bad password, we want the error associated with the account policy
          * to be processed first, rather than presenting a more generic error associated
          */
-        final Set<Class<? extends Throwable>> errors = new LinkedHashSet<>();
+        val errors = new LinkedHashSet<>();
         errors.add(javax.security.auth.login.AccountLockedException.class);
         errors.add(javax.security.auth.login.CredentialExpiredException.class);
         errors.add(javax.security.auth.login.AccountExpiredException.class);

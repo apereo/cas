@@ -68,7 +68,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
     @Override
     @SuppressWarnings("unchecked")
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
-        final Map<String, Object> attributesToRelease = new HashMap<>();
+        val attributesToRelease = new HashMap<String, Object>();
         givenAttributes.entrySet().stream().filter(entry -> {
             val attributeName = entry.getKey();
             val attributeValue = entry.getValue();
