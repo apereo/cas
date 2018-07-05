@@ -55,7 +55,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         headers.put("password", CollectionUtils.wrap(bean.getPassword()));
         headers.put("oldPassword", CollectionUtils.wrap(upc.getPassword()));
 
-        final HttpEntity<String> entity = new HttpEntity<>(headers);
+        val entity = new HttpEntity<>(headers);
         val result = restTemplate.exchange(rest.getEndpointUrlChange(), HttpMethod.POST, entity, Boolean.class);
         if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
             return result.getBody();
@@ -73,7 +73,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         val headers = new HttpHeaders();
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         headers.put("username", CollectionUtils.wrap(username));
-        final HttpEntity<String> entity = new HttpEntity<>(headers);
+        val entity = new HttpEntity<>(headers);
         val result = restTemplate.exchange(rest.getEndpointUrlEmail(), HttpMethod.GET, entity, String.class);
 
         if (result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()) {
@@ -91,7 +91,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         val headers = new HttpHeaders();
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         headers.put("username", CollectionUtils.wrap(username));
-        final HttpEntity<String> entity = new HttpEntity<>(headers);
+        val entity = new HttpEntity<>(headers);
         val result = restTemplate.exchange(rest.getEndpointUrlSecurityQuestions(),
             HttpMethod.GET, entity, Map.class);
 

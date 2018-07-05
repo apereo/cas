@@ -25,7 +25,6 @@ import org.springframework.web.servlet.View;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * An Openid controller that delegates to its own views on service validates.
@@ -65,7 +64,7 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
 
             val message = (VerifyResponse) this.serverManager.verify(new ParameterList(request.getParameterMap()));
 
-            final Map<String, String> parameters = new HashMap<>(message.getParameterMap());
+            val parameters = new HashMap<String, String>(message.getParameterMap());
             if (message.isSignatureVerified()) {
                 LOGGER.debug("Signature verification request successful.");
                 return new ModelAndView(getSuccessView(), parameters);

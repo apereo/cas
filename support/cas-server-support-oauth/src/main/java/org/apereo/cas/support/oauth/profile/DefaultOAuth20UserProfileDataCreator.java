@@ -43,7 +43,7 @@ public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileD
         resourceResolverName = "OAUTH2_USER_PROFILE_DATA_RESOURCE_RESOLVER")
     public Map<String, Object> createFrom(final AccessToken accessToken, final J2EContext context) {
         val principal = getAccessTokenAuthenticationPrincipal(accessToken, context);
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, principal.getId());
         map.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES, principal.getAttributes());
         finalizeProfileResponse(accessToken, map, principal);

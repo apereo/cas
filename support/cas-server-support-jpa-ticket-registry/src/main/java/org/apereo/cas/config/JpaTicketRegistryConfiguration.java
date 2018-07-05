@@ -61,7 +61,7 @@ public class JpaTicketRegistryConfiguration {
             new Reflections(new ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE))
                 .setScanners(new SubTypesScanner(false)));
-        final Set<Class<?>> subTypes = (Set) reflections.getSubTypesOf(AbstractTicket.class);
+        val subTypes = (Set) reflections.getSubTypesOf(AbstractTicket.class);
         val packages = subTypes
             .stream()
             .map(t -> t.getPackage().getName())

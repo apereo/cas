@@ -210,7 +210,7 @@ public class SamlObjectEncrypter {
 
         val kekCredentialResolver = new MetadataCredentialResolver();
 
-        final List<KeyInfoProvider> providers = new ArrayList<>();
+        val providers = new ArrayList<KeyInfoProvider>();
         providers.add(new RSAKeyValueProvider());
         providers.add(new DSAKeyValueProvider());
         providers.add(new InlineX509DataProvider());

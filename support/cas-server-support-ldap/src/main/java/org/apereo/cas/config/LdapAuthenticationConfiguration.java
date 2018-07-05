@@ -47,8 +47,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.function.Predicate;
 
 /**
@@ -82,7 +80,7 @@ public class LdapAuthenticationConfiguration {
 
     @Bean
     public Collection<AuthenticationHandler> ldapAuthenticationHandlers() {
-        final Collection<AuthenticationHandler> handlers = new HashSet<>();
+        val handlers = new HashSet<AuthenticationHandler>();
 
         casProperties.getAuthn().getLdap()
             .stream()
@@ -105,7 +103,7 @@ public class LdapAuthenticationConfiguration {
                     servicesManager, ldapPrincipalFactory(), l.getOrder(), authenticator, strategy);
                 handler.setCollectDnAttribute(l.isCollectDnAttribute());
 
-                final List<String> additionalAttributes = l.getAdditionalAttributes();
+                val additionalAttributes = l.getAdditionalAttributes();
                 if (StringUtils.isNotBlank(l.getPrincipalAttributeId())) {
                     additionalAttributes.add(l.getPrincipalAttributeId());
                 }
@@ -184,7 +182,7 @@ public class LdapAuthenticationConfiguration {
                                                                               final Authenticator authenticator,
                                                                               final Multimap<String, Object> attributes) {
         val cfg = new PasswordPolicyConfiguration(passwordPolicy);
-        final Set<AuthenticationResponseHandler> handlers = new HashSet<>();
+        val handlers = new HashSet<>();
 
         val customPolicyClass = passwordPolicy.getCustomPolicyClass();
         if (StringUtils.isNotBlank(customPolicyClass)) {

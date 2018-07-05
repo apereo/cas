@@ -12,7 +12,6 @@ import org.apereo.cas.configuration.model.support.sms.AmazonSnsProperties;
 import org.apereo.cas.util.io.SmsSender;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link AmazonSimpleNotificationServiceSmsSender}.
@@ -29,7 +28,7 @@ public class AmazonSimpleNotificationServiceSmsSender implements SmsSender {
     @Override
     public boolean send(final String from, final String to, final String message) {
         try {
-            final Map<String, MessageAttributeValue> smsAttributes = new HashMap<>();
+            val smsAttributes = new HashMap<String, MessageAttributeValue>();
             if (StringUtils.isNotBlank(snsProperties.getSenderId())) {
                 smsAttributes.put("AWS.SNS.SMS.SenderID", new MessageAttributeValue().withStringValue("mySenderID").withDataType("String"));
             }

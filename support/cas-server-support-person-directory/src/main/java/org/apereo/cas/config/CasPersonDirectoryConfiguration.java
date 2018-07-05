@@ -73,7 +73,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @Bean
     @RefreshScope
     public List<IPersonAttributeDao> attributeRepositories() {
-        final List<IPersonAttributeDao> list = new ArrayList<>();
+        val list = new ArrayList<IPersonAttributeDao>();
 
         list.addAll(ldapAttributeRepositories());
         list.addAll(jdbcAttributeRepositories());
@@ -106,7 +106,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @Bean
     @RefreshScope
     public List<IPersonAttributeDao> jsonAttributeRepositories() {
-        final List<IPersonAttributeDao> list = new ArrayList<>();
+        val list = new ArrayList<IPersonAttributeDao>();
         casProperties.getAuthn().getAttributeRepository().getJson().forEach(Unchecked.consumer(json -> {
             val r = json.getLocation();
             if (r != null) {
@@ -124,7 +124,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @Bean
     @RefreshScope
     public List<IPersonAttributeDao> groovyAttributeRepositories() {
-        final List<IPersonAttributeDao> list = new ArrayList<>();
+        val list = new ArrayList<IPersonAttributeDao>();
         casProperties.getAuthn().getAttributeRepository().getGroovy().forEach(groovy -> {
             if (groovy.getLocation() != null) {
                 val dao = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties));
@@ -142,7 +142,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @Bean
     @RefreshScope
     public List<IPersonAttributeDao> grouperAttributeRepositories() {
-        final List<IPersonAttributeDao> list = new ArrayList<>();
+        val list = new ArrayList<IPersonAttributeDao>();
         val gp = casProperties.getAuthn().getAttributeRepository().getGrouper();
 
         if (gp.isEnabled()) {
@@ -158,7 +158,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @Bean
     @RefreshScope
     public List<IPersonAttributeDao> stubAttributeRepositories() {
-        final List<IPersonAttributeDao> list = new ArrayList<>();
+        val list = new ArrayList<IPersonAttributeDao>();
         val attrs = casProperties.getAuthn().getAttributeRepository().getStub().getAttributes();
         if (!attrs.isEmpty() && list.isEmpty()) {
             LOGGER.info("Found and added static attributes [{}] to the list of candidate attribute repositories", attrs.keySet());
@@ -171,7 +171,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @Bean
     @RefreshScope
     public List<IPersonAttributeDao> jdbcAttributeRepositories() {
-        final List<IPersonAttributeDao> list = new ArrayList<>();
+        val list = new ArrayList<IPersonAttributeDao>();
         val attrs = casProperties.getAuthn().getAttributeRepository();
         attrs.getJdbc().forEach(jdbc -> {
             if (StringUtils.isNotBlank(jdbc.getSql()) && StringUtils.isNotBlank(jdbc.getUrl())) {
@@ -215,7 +215,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @Bean
     @RefreshScope
     public List<IPersonAttributeDao> ldapAttributeRepositories() {
-        final List<IPersonAttributeDao> list = new ArrayList<>();
+        val list = new ArrayList<IPersonAttributeDao>();
         val attrs = casProperties.getAuthn().getAttributeRepository();
         attrs.getLdap().forEach(ldap -> {
             if (StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl())) {
@@ -262,7 +262,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @Bean
     @RefreshScope
     public List<IPersonAttributeDao> scriptedAttributeRepositories() {
-        final List<IPersonAttributeDao> list = new ArrayList<>();
+        val list = new ArrayList<IPersonAttributeDao>();
         casProperties.getAuthn().getAttributeRepository().getScript()
             .forEach(Unchecked.consumer(script -> {
                 val dao = new ScriptEnginePersonAttributeDao();
@@ -280,7 +280,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @Bean
     @RefreshScope
     public List<IPersonAttributeDao> restfulAttributeRepositories() {
-        final List<IPersonAttributeDao> list = new ArrayList<>();
+        val list = new ArrayList<IPersonAttributeDao>();
         casProperties.getAuthn().getAttributeRepository().getRest().forEach(rest -> {
             if (StringUtils.isNotBlank(rest.getUrl())) {
 

@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -62,7 +61,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      */
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> principal, final Optional<AuthenticationHandler> handler) {
-        final List<Principal> principals = new ArrayList<>();
+        val principals = new ArrayList<Principal>();
         chain.stream()
             .filter(resolver -> resolver.supports(credential))
             .forEach(resolver -> {
@@ -76,7 +75,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
             LOGGER.warn("None of the principal resolvers in the chain were able to produce a principal");
             return NullPrincipal.getInstance();
         }
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         principals.forEach(p -> {
             if (p != null) {
                 LOGGER.debug("Resolved principal [{}]", p);

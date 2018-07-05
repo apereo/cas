@@ -52,7 +52,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * This is {@link SamlIdPObjectSigner}.
@@ -113,7 +112,7 @@ public class SamlIdPObjectSigner {
                                            final RequestAbstractType authnRequest) throws SamlException {
 
         LOGGER.debug("Attempting to encode [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
-        final MessageContext<T> outboundContext = new MessageContext<>();
+        val outboundContext = new MessageContext<T>();
         prepareOutboundContext(samlObject, adaptor, outboundContext, binding, authnRequest);
         prepareSecurityParametersContext(adaptor, outboundContext, service);
         prepareEndpointURLSchemeSecurityHandler(outboundContext);
@@ -289,8 +288,8 @@ public class SamlIdPObjectSigner {
         criteriaSet.add(new EntityIdCriterion(casProperties.getAuthn().getSamlIdp().getEntityId()));
         criteriaSet.add(new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME));
 
-        final Set<Credential> credentials = Sets.newLinkedHashSet(kekCredentialResolver.resolve(criteriaSet));
-        final List<Credential> creds = new ArrayList<>();
+        val credentials = Sets.<Credential>newLinkedHashSet(kekCredentialResolver.resolve(criteriaSet));
+        val creds = new ArrayList<Credential>();
 
         credentials.forEach(c -> {
             val cred = getResolvedSigningCredential(c, privateKey, service);

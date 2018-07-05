@@ -14,7 +14,6 @@ import org.pac4j.core.context.J2EContext;
 
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link OidcConsentApprovalViewResolver}.
@@ -51,8 +50,7 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
             val oidcRegisteredService = (OidcRegisteredService) svc;
             model.put("dynamic", oidcRegisteredService.isDynamicallyRegistered());
             model.put("dynamicTime", oidcRegisteredService.getDynamicRegistrationDateTime());
-
-            final Set<String> supportedScopes = new HashSet<>(casProperties.getAuthn().getOidc().getScopes());
+            val supportedScopes = new HashSet<String>(casProperties.getAuthn().getOidc().getScopes());
             supportedScopes.retainAll(oidcRegisteredService.getScopes());
             supportedScopes.retainAll(OAuth20Utils.getRequestedScopes(ctx));
             model.put("scopes", supportedScopes);

@@ -24,9 +24,7 @@ import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * LDAP authentication handler that uses the ldaptive {@code Authenticator} component underneath.
@@ -160,7 +158,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @return the map
      */
     protected Map<String, Object> collectAttributesForLdapEntry(final LdapEntry ldapEntry, final String username) {
-        final Map<String, Object> attributeMap = new LinkedHashMap<>(this.principalAttributeMap.size());
+        val attributeMap = new HashMap<String, Object>(this.principalAttributeMap.size());
         LOGGER.debug("The following attributes are requested to be retrieved and mapped: [{}]", attributeMap.keySet());
         this.principalAttributeMap.forEach((key, attributeNames) -> {
             val attr = ldapEntry.getAttribute(key);
@@ -234,7 +232,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         /*
          * Use a set to ensure we ignore duplicates.
          */
-        final Set<String> attributes = new HashSet<>();
+        val attributes = new HashSet<>();
         LOGGER.debug("Initializing LDAP attribute configuration...");
         if (StringUtils.isNotBlank(this.principalIdAttribute)) {
             LOGGER.debug("Configured to retrieve principal id attribute [{}]", this.principalIdAttribute);

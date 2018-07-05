@@ -17,7 +17,6 @@ import org.apereo.cas.util.ScriptingUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 /**
  * Resolves the username for the service to be the default principal id.
@@ -84,7 +83,7 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
     }
 
     private static Object getGroovyAttributeValue(final Principal principal, final String script) {
-        final Map<String, Object> args = CollectionUtils.wrap("attributes", principal.getAttributes(), "id", principal.getId(), "logger", LOGGER);
+        val args = CollectionUtils.wrap("attributes", principal.getAttributes(), "id", principal.getId(), "logger", LOGGER);
         return ScriptingUtils.executeGroovyShellScript(script, args, Object.class);
     }
 

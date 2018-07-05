@@ -30,8 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link DelegatedClientWebflowManager}.
@@ -64,7 +62,7 @@ public class DelegatedClientWebflowManager {
      * @return the ticket
      */
     public Ticket store(final J2EContext webContext, final BaseClient client) {
-        final Map<String, Serializable> properties = new LinkedHashMap<>();
+        val properties = new HashMap<String, Serializable>();
 
         val service = determineService(webContext);
         properties.put(CasProtocolConstants.PARAMETER_SERVICE, service);

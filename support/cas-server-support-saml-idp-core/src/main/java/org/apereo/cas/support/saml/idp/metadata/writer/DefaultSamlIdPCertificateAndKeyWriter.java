@@ -99,7 +99,7 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
     }
 
     private ASN1Encodable[] buildSubjectAltNames() {
-        final ArrayList<ASN1Encodable> subjectAltNames = new ArrayList<>();
+        val subjectAltNames = new ArrayList<ASN1Encodable>();
         subjectAltNames.add(new GeneralName(GeneralName.dNSName, hostname));
 
         if (uriSubjectAltNames != null) {

@@ -150,7 +150,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public List<RegisteredService> load() {
-        final List<RegisteredService> list = new ArrayList<>();
+        val list = new ArrayList<RegisteredService>();
         try {
             val response = getSearchResultResponse();
             if (LdapUtils.containsResultEntry(response)) {

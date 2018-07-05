@@ -24,7 +24,6 @@ import org.jasig.cas.client.validation.TicketValidator;
 
 import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -48,7 +47,7 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
     @SneakyThrows
     public String build(final String serviceTicketId, final Service service) {
         val assertion = this.ticketValidator.validate(serviceTicketId, service.getId());
-        final Map<String, Object> attributes = new LinkedHashMap<>(assertion.getAttributes());
+        val attributes = new HashMap<String, Object>(assertion.getAttributes());
         attributes.putAll(assertion.getPrincipal().getAttributes());
 
         val validUntilDate = FunctionUtils.doIf(
@@ -67,7 +66,7 @@ public class JWTTokenTicketBuilder implements TokenTicketBuilder {
     @SneakyThrows
     public String build(final TicketGrantingTicket ticketGrantingTicket) {
         val authentication = ticketGrantingTicket.getAuthentication();
-        final Map<String, Object> attributes = new LinkedHashMap<>(authentication.getAttributes());
+        val attributes = new HashMap<String, Object>(authentication.getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());
 
         val dt = ZonedDateTime.now().plusSeconds(expirationPolicy.getTimeToLive());

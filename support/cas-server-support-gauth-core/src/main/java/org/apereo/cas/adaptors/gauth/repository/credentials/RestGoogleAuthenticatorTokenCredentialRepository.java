@@ -49,7 +49,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         headers.put("username", CollectionUtils.wrap(username));
 
-        final HttpEntity<String> entity = new HttpEntity<>(headers);
+        val entity = new HttpEntity<>(headers);
         val result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.GET, entity, OneTimeTokenAccount.class);
         if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
             return decode(result.getBody());
@@ -87,7 +87,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
         headers.put("secretKey", CollectionUtils.wrap(account.getSecretKey()));
         headers.put("scratchCodes", account.getScratchCodes().stream().map(String::valueOf).collect(Collectors.toList()));
 
-        final HttpEntity<String> entity = new HttpEntity<>(headers);
+        val entity = new HttpEntity<>(headers);
         val result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.POST, entity, Object.class);
         if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
             LOGGER.debug("Posted google authenticator account successfully");

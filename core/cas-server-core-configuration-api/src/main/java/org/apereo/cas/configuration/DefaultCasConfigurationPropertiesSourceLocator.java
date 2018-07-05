@@ -48,20 +48,20 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
 
         val configFile = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile();
         if (configFile != null) {
-            final PropertySource<?> sourceStandalone = loadSettingsFromStandaloneConfigFile(configFile);
+            val sourceStandalone = loadSettingsFromStandaloneConfigFile(configFile);
             compositePropertySource.addPropertySource(sourceStandalone);
         }
 
         val config = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
         LOGGER.debug("Located CAS standalone configuration directory at [{}]", config);
         if (config.isDirectory() && config.exists()) {
-            final PropertySource<?> sourceProfiles = loadSettingsByApplicationProfiles(environment, config);
+            val sourceProfiles = loadSettingsByApplicationProfiles(environment, config);
             compositePropertySource.addPropertySource(sourceProfiles);
         } else {
             LOGGER.info("Configuration directory [{}] is not a directory or cannot be found at the specific path", config);
         }
 
-        final PropertySource<?> sourceYaml = loadEmbeddedYamlOverriddenProperties(resourceLoader);
+        val sourceYaml = loadEmbeddedYamlOverriddenProperties(resourceLoader);
         compositePropertySource.addPropertySource(sourceYaml);
 
         return compositePropertySource;
@@ -93,7 +93,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         configFiles.forEach(Unchecked.consumer(f -> {
             LOGGER.debug("Loading configuration file [{}]", f);
             if (f.getName().toLowerCase().endsWith("yml")) {
-                final Map<String, Object> pp = CasCoreConfigurationUtils.loadYamlProperties(new FileSystemResource(f));
+                val pp = CasCoreConfigurationUtils.loadYamlProperties(new FileSystemResource(f));
                 LOGGER.debug("Found settings [{}] in YAML file [{}]", pp.keySet(), f);
                 props.putAll(decryptProperties(pp));
             } else {
@@ -147,7 +147,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     }
 
     private List<String> getApplicationProfiles(final Environment environment) {
-        final List<String> profiles = new ArrayList<>();
+        val profiles = new ArrayList<String>();
         profiles.add(casConfigurationPropertiesEnvironmentManager.getApplicationName());
         profiles.addAll(Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toList()));
         return profiles;

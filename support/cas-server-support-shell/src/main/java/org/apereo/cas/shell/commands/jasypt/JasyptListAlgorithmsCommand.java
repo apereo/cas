@@ -11,7 +11,6 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
 import java.security.Security;
-import java.util.Set;
 
 /**
  * This is {@link JasyptListAlgorithmsCommand}.
@@ -44,7 +43,7 @@ public class JasyptListAlgorithmsCommand {
         for (val provider: providers) {
             LOGGER.info("Provider: [{}] [{}]", provider.getName(), provider.getClass().getName());
         }
-        final Set<String> pbeAlgos = AlgorithmRegistry.getAllPBEAlgorithms();
+        val pbeAlgos = AlgorithmRegistry.getAllPBEAlgorithms();
         LOGGER.info("==== JASYPT Password Based Encryption Algorithms ====\n");
         for (val pbeAlgo: pbeAlgos) {
             LOGGER.info(pbeAlgo);

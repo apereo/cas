@@ -34,7 +34,7 @@ public class RegisteredServiceChainingAttributeFilter implements RegisteredServi
     @Override
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
         OrderComparator.sort(this.filters);
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         filters.forEach(policy -> attributes.putAll(policy.filter(givenAttributes)));
         return attributes;
     }

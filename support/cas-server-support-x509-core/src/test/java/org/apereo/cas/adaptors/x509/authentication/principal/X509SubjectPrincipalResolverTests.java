@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,7 +58,7 @@ public class X509SubjectPrincipalResolverTests {
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() throws Exception {
-        final Collection<Object[]> params = new ArrayList<>();
+        val params = new ArrayList<Object[]>();
 
         // Test case #1
         // Use CN for principal ID

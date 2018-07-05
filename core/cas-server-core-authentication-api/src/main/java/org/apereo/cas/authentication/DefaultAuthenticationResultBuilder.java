@@ -10,7 +10,6 @@ import org.apereo.cas.util.CollectionUtils;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -87,8 +86,8 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
             LOGGER.warn("No authentication event has been recorded; CAS cannot finalize the authentication result");
             return null;
         }
-        final Map<String, Object> authenticationAttributes = new HashMap<>();
-        final Map<String, Object> principalAttributes = new HashMap<>();
+        val authenticationAttributes = new HashMap<String, Object>();
+        val principalAttributes = new HashMap<String, Object>();
         val authenticationBuilder = DefaultAuthenticationBuilder.newInstance();
 
         buildAuthenticationHistory(this.authentications, authenticationAttributes, principalAttributes, authenticationBuilder);
@@ -125,7 +124,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
                     val oldValue = authenticationAttributes.remove(attrName);
 
                     LOGGER.debug("Converting authentication attribute [{}] to a collection of values", attrName);
-                    final Collection<Object> listOfValues = CollectionUtils.toCollection(oldValue);
+                    val listOfValues = CollectionUtils.toCollection(oldValue);
                     val newValue = authn.getAttributes().get(attrName);
                     listOfValues.addAll(CollectionUtils.toCollection(newValue));
                     authenticationAttributes.put(attrName, listOfValues);

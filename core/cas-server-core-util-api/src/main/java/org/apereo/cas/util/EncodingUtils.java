@@ -24,7 +24,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link EncodingUtils} that encapsulates common base64, signing and encryption calls and operations in one spot.
@@ -303,7 +302,7 @@ public class EncodingUtils {
      */
     @SneakyThrows
     public static Key generateJsonWebKey(final String secret) {
-        final Map<String, Object> keys = new HashMap<>(2);
+        val keys = new HashMap<String, Object>(2);
         keys.put("kty", "oct");
         keys.put(EncodingUtils.JSON_WEB_KEY, secret);
         val jwk = JsonWebKey.Factory.newJwk(keys);

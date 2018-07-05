@@ -15,7 +15,6 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -52,7 +51,7 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
 
     @Override
     public Collection<? extends CasEvent> load() {
-        final List<CasEvent> events = new ArrayList<>();
+        val events = new ArrayList<CasEvent>();
         val results = influxDbConnectionFactory.query(MEASUREMENT);
         results.getResults()
             .stream()

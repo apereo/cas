@@ -58,8 +58,7 @@ public class SamlSPUtils {
         service.setDescription(sp.getDescription());
         service.setEvaluationOrder(Integer.MIN_VALUE);
         service.setMetadataLocation(sp.getMetadata());
-
-        final List<String> attributesToRelease = new ArrayList<>(sp.getAttributes());
+        val attributesToRelease = new ArrayList<String>(sp.getAttributes());
         if (StringUtils.isNotBlank(sp.getNameIdAttribute())) {
             attributesToRelease.add(sp.getNameIdAttribute());
             service.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider(sp.getNameIdAttribute()));
@@ -107,7 +106,7 @@ public class SamlSPUtils {
         if (entityIDList.isEmpty()) {
             val metadataResolver = resolver.resolve(service);
 
-            final List<MetadataResolver> resolvers = new ArrayList<>();
+            val resolvers = new ArrayList<MetadataResolver>();
             if (metadataResolver instanceof ChainingMetadataResolver) {
                 resolvers.addAll(((ChainingMetadataResolver) metadataResolver).getResolvers());
             } else {

@@ -45,7 +45,7 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
     @Override
     public Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final RegisteredService registeredService) {
         LOGGER.debug("Starting to encode attributes for release to service [{}]", registeredService);
-        final Map<String, Object> newEncodedAttributes = new HashMap<>(attributes);
+        val newEncodedAttributes = new HashMap<String, Object>(attributes);
         val cachedAttributesToEncode = initialize(newEncodedAttributes);
         if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             encodeAttributesInternal(newEncodedAttributes, cachedAttributesToEncode, this.cipherExecutor, registeredService);
@@ -80,7 +80,7 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
      * @return a map of attributes that are to be encoded and encrypted
      */
     protected Map<String, String> initialize(final Map<String, Object> attributes) {
-        final Map<String, String> cachedAttributesToEncode = new HashMap<>();
+        val cachedAttributesToEncode = new HashMap<String, String>();
         val messageFormat = "Removed [{}] as an authentication attribute and cached it locally.";
         Collection<?> collection = (Collection<?>) attributes.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
         if (collection != null && collection.size() == 1) {

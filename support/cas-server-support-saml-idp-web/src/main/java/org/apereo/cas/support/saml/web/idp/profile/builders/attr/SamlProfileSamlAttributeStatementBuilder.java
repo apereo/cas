@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link SamlProfileSamlAttributeStatementBuilder}.
@@ -61,12 +60,12 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
                                                        final MessageContext messageContext) throws SamlException {
 
         val assertion = Assertion.class.cast(casAssertion);
-        final Map<String, Object> attributes = new HashMap<>(assertion.getAttributes());
+        val attributes = new HashMap<String, Object>(assertion.getAttributes());
         attributes.putAll(assertion.getPrincipal().getAttributes());
         val encodedAttrs = this.samlAttributeEncoder.encodeAttributes(attributes, service);
 
         val resp = casProperties.getAuthn().getSamlIdp().getResponse();
-        final Map<String, String> nameFormats = new HashMap<>(resp.configureAttributeNameFormats());
+        val nameFormats = new HashMap<String, String>(resp.configureAttributeNameFormats());
         nameFormats.putAll(service.getAttributeNameFormats());
         return newAttributeStatement(encodedAttrs, service.getAttributeFriendlyNames(),
             nameFormats,

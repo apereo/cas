@@ -11,7 +11,6 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.util.StringUtils;
 
@@ -39,8 +38,8 @@ public class RedisObjectFactory {
      */
     public <K, V> RedisTemplate<K, V> newRedisTemplate(final RedisConnectionFactory connectionFactory,
                                                        final Class<K> keyClass, final Class<V> valueClass) {
-        final RedisTemplate<K, V> template = new RedisTemplate();
-        final RedisSerializer<String> string = new StringRedisSerializer();
+        val template = new RedisTemplate<K, V>();
+        val string = new StringRedisSerializer();
         val jdk = new JdkSerializationRedisSerializer();
         template.setKeySerializer(string);
         template.setValueSerializer(jdk);
@@ -114,7 +113,7 @@ public class RedisObjectFactory {
     }
 
     private List<RedisNode> createRedisNodesForProperties(final BaseRedisProperties redis) {
-        final List<RedisNode> redisNodes = new ArrayList<>();
+        val redisNodes = new ArrayList<RedisNode>();
         if (redis.getSentinel().getNode() != null) {
             val nodes = redis.getSentinel().getNode();
             for (val hostAndPort : nodes) {

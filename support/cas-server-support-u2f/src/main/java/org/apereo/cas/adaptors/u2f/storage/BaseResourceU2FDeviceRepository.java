@@ -109,7 +109,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
             device.setCreatedDate(LocalDate.now());
 
             val devices = readDevicesFromResource();
-            final List<U2FDeviceRegistration> list = new ArrayList<>(0);
+            val list = new ArrayList<U2FDeviceRegistration>(0);
 
             if (!devices.isEmpty()) {
                 val devs = devices.get(MAP_KEY_DEVICES);

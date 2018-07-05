@@ -22,7 +22,7 @@ public class CommaSeparatedStringToThrowablesConverter implements Converter<Stri
     public List<Class<? extends Throwable>> convert(final String source) {
         try {
             val strings = StringUtils.commaDelimitedListToStringArray(source);
-            final List<Class<? extends Throwable>> classes = new ArrayList<>(strings.length);
+            val classes = new ArrayList<Class<? extends Throwable>>(strings.length);
             for (val className : strings) {
                 classes.add((Class<? extends Throwable>) ClassUtils.forName(className.trim(), getClass().getClassLoader()));
             }

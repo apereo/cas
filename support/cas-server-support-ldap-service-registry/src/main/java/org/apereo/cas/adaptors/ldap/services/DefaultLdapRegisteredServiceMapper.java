@@ -15,7 +15,6 @@ import org.springframework.util.StringUtils;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Default implementation of {@link LdapRegisteredServiceMapper} that is able
@@ -47,7 +46,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
         val newDn = getDnForRegisteredService(dn, svc);
         LOGGER.debug("Creating entry DN [{}]", newDn);
 
-        final Collection<LdapAttribute> attrs = new ArrayList<>();
+        val attrs = new ArrayList<LdapAttribute>();
         attrs.add(new LdapAttribute(ldap.getIdAttribute(), String.valueOf(svc.getId())));
 
         try (val writer = new StringWriter()) {
