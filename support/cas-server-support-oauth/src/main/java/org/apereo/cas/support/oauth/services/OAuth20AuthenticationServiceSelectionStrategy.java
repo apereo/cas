@@ -49,7 +49,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
                 return this.webApplicationServiceFactory.createService(redirectUri.get().getValue());
             }
             if (grantType.isPresent()) {
-                String id = null;
+                var id = StringUtils.EMPTY;
                 val grantValue = grantType.get().getValue();
                 if (OAuth20Utils.isGrantType(grantValue, OAuth20GrantTypes.CLIENT_CREDENTIALS)) {
                     LOGGER.debug("Located grant type [{}]; checking for service headers", grantValue);

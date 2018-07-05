@@ -1,10 +1,9 @@
 package org.apereo.cas.util;
 
-import lombok.val;
-
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.core.io.VfsResource;
 
 import java.io.File;
@@ -21,6 +20,7 @@ import java.time.ZonedDateTime;
 @Slf4j
 @UtilityClass
 public class CasVersion {
+    private static final int JAR_PROTOCOL_STARTING_INDEX = 5;
 
     /**
      * To string.
@@ -62,7 +62,7 @@ public class CasVersion {
         }
         if ("jar".equals(resource.getProtocol())) {
             val path = resource.getPath();
-            val file = new File(path.substring(5, path.indexOf('!')));
+            val file = new File(path.substring(JAR_PROTOCOL_STARTING_INDEX, path.indexOf('!')));
             return DateTimeUtils.zonedDateTimeOf(file.lastModified());
         }
         if ("vfs".equals(resource.getProtocol())) {

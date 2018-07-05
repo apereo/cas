@@ -1,9 +1,8 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.springframework.context.ApplicationContext;
@@ -31,20 +30,13 @@ public class MultifactorAuthenticationUtils {
     public static MultifactorAuthenticationProviderBypass newMultifactorAuthenticationProviderBypass(
         final MultifactorAuthenticationProviderBypassProperties props) {
 
-        final MultifactorAuthenticationProviderBypass bypass;
-        switch (props.getType()) {
-            case GROOVY:
-                bypass = new GroovyMultifactorAuthenticationProviderBypass(props);
-                break;
-            case REST:
-                bypass = new RestMultifactorAuthenticationProviderBypass(props);
-                break;
-            case DEFAULT:
-            default:
-                bypass = new DefaultMultifactorAuthenticationProviderBypass(props);
-                break;
+        if (props.getType() == MultifactorAuthenticationProviderBypassProperties.MultifactorProviderBypassTypes.GROOVY) {
+            return new GroovyMultifactorAuthenticationProviderBypass(props);
         }
-        return bypass;
+        if (props.getType() == MultifactorAuthenticationProviderBypassProperties.MultifactorProviderBypassTypes.REST) {
+            return new RestMultifactorAuthenticationProviderBypass(props);
+        }
+        return new DefaultMultifactorAuthenticationProviderBypass(props);
     }
 
     /**

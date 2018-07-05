@@ -1,10 +1,9 @@
 package org.apereo.cas.oidc.token;
 
-import lombok.val;
-
 import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Service;
@@ -179,21 +178,18 @@ public class OidcIdTokenGeneratorService {
     private String generateAccessTokenHash(final AccessToken accessTokenId,
                                            final OidcRegisteredService service) {
         val tokenBytes = accessTokenId.getId().getBytes(StandardCharsets.UTF_8);
-        final String hashAlg;
-
-        switch (signingService.getJsonWebKeySigningAlgorithm()) {
-            case AlgorithmIdentifiers.RSA_USING_SHA512:
-                hashAlg = MessageDigestAlgorithms.SHA_512;
-                break;
-            case AlgorithmIdentifiers.RSA_USING_SHA256:
-            default:
-                hashAlg = MessageDigestAlgorithms.SHA_256;
-        }
-
+        val hashAlg = getSigningHashAlgorithm();
         LOGGER.debug("Digesting access token hash via algorithm [{}]", hashAlg);
         val digested = DigestUtils.rawDigest(hashAlg, tokenBytes);
         val hashBytesLeftHalf = Arrays.copyOf(digested, digested.length / 2);
         return EncodingUtils.encodeUrlSafeBase64(hashBytesLeftHalf);
+    }
+
+    private String getSigningHashAlgorithm() {
+        if (signingService.getJsonWebKeySigningAlgorithm() == AlgorithmIdentifiers.RSA_USING_SHA512) {
+            return MessageDigestAlgorithms.SHA_512;
+        }
+        return MessageDigestAlgorithms.SHA_256;
     }
 }
 

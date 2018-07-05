@@ -1,12 +1,10 @@
 package org.apereo.cas.util.http;
 
-import lombok.val;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -89,19 +87,21 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
 
     @Override
     public HttpMessage sendMessageToEndPoint(final URL url) {
-        HttpEntity entity = null;
-
         try (val response = this.wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
             val responseCode = response.getStatusLine().getStatusCode();
 
             for (val acceptableCode : this.acceptableCodes) {
                 if (responseCode == acceptableCode) {
                     LOGGER.debug("Response code received from server matched [{}].", responseCode);
-                    entity = response.getEntity();
-                    val msg = new HttpMessage(url, IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8));
-                    msg.setContentType(entity.getContentType().getValue());
-                    msg.setResponseCode(responseCode);
-                    return msg;
+                    val entity = response.getEntity();
+                    try {
+                        val msg = new HttpMessage(url, IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8));
+                        msg.setContentType(entity.getContentType().getValue());
+                        msg.setResponseCode(responseCode);
+                        return msg;
+                    } finally {
+                        EntityUtils.consumeQuietly(entity);
+                    }
                 }
             }
             LOGGER.warn("Response code [{}] from [{}] did not match any of the acceptable response codes.", responseCode, url);
@@ -111,9 +111,8 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
             }
         } catch (final Exception e) {
             LOGGER.error("Unable to send message", e);
-        } finally {
-            EntityUtils.consumeQuietly(entity);
         }
+
         return null;
     }
 
@@ -130,11 +129,8 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
 
     @Override
     public boolean isValidEndPoint(final URL url) {
-        HttpEntity entity = null;
-
         try (val response = this.wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
             val responseCode = response.getStatusLine().getStatusCode();
-
             val idx = Collections.binarySearch(this.acceptableCodes, responseCode);
             if (idx >= 0) {
                 LOGGER.debug("Response code from server matched [{}].", responseCode);
@@ -148,11 +144,14 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
                 LOGGER.error("There was an error contacting the endpoint: [{}]; The error was:\n[{}]", url.toExternalForm(), value);
             }
 
-            entity = response.getEntity();
+            val entity = response.getEntity();
+            try {
+                LOGGER.debug("Located entity with length [{}]", entity.getContentLength());
+            } finally {
+                EntityUtils.consumeQuietly(entity);
+            }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-        } finally {
-            EntityUtils.consumeQuietly(entity);
         }
         return false;
     }
@@ -164,5 +163,5 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
     public void destroy() {
         IOUtils.closeQuietly(this.requestExecutorService);
     }
-    
+
 }

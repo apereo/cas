@@ -81,20 +81,19 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
      * @param service              the service
      * @param ticketGrantingTicket the ticket granting ticket
      * @param credentialProvided   whether credentials where directly provided
-     * @return the tI don't knowet id
+     * @return ticket id
      */
     protected String produceTicketIdentifier(final Service service, final TicketGrantingTicket ticketGrantingTicket,
                                              final boolean credentialProvided) {
         val uniqueTicketIdGenKey = service.getClass().getName();
-        UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator = null;
+        var serviceTicketUniqueTicketIdGenerator = (UniqueTicketIdGenerator) null;
         if (this.uniqueTicketIdGeneratorsForService != null && !this.uniqueTicketIdGeneratorsForService.isEmpty()) {
             LOGGER.debug("Looking up service ticket id generator for [{}]", uniqueTicketIdGenKey);
             serviceTicketUniqueTicketIdGenerator = this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
         }
         if (serviceTicketUniqueTicketIdGenerator == null) {
             serviceTicketUniqueTicketIdGenerator = this.defaultServiceTicketIdGenerator;
-            LOGGER.debug("Service ticket id generator not found for [{}]. Using the default generator...",
-                uniqueTicketIdGenKey);
+            LOGGER.debug("Service ticket id generator not found for [{}]. Using the default generator.", uniqueTicketIdGenKey);
         }
 
         return serviceTicketUniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX);
