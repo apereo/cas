@@ -1,10 +1,9 @@
 package org.apereo.cas.util;
 
-import lombok.val;
-
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.ReaderInputStream;
@@ -20,11 +19,9 @@ import org.springframework.core.io.UrlResource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -53,15 +50,13 @@ public class ResourceUtils {
         if (StringUtils.isBlank(location)) {
             throw new IllegalArgumentException("Provided location does not exist and is empty");
         }
-        final AbstractResource res;
         if (location.toLowerCase().startsWith(HTTP_URL_PREFIX)) {
-            res = new UrlResource(location);
-        } else if (location.toLowerCase().startsWith(CLASSPATH_URL_PREFIX)) {
-            res = new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
-        } else {
-            res = new FileSystemResource(StringUtils.remove(location, FILE_URL_PREFIX));
+            return new UrlResource(location);
         }
-        return res;
+        if (location.toLowerCase().startsWith(CLASSPATH_URL_PREFIX)) {
+            return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
+        }
+        return new FileSystemResource(StringUtils.remove(location, FILE_URL_PREFIX));
     }
 
     /**
@@ -185,19 +180,19 @@ public class ResourceUtils {
             FileUtils.forceDelete(destination);
         }
 
-        try (var jFile = new JarFile(file)) {
-            final Enumeration e = jFile.entries();
+        try (val jFile = new JarFile(file)) {
+            val e = jFile.entries();
             while (e.hasMoreElements()) {
                 val entry = (ZipEntry) e.nextElement();
                 if (entry.getName().contains(resource.getFilename()) && entry.getName().contains(containsName)) {
-                    try (var stream = jFile.getInputStream(entry)) {
+                    try (val stream = jFile.getInputStream(entry)) {
                         var copyDestination = destination;
                         if (isDirectory) {
                             val entryFileName = new File(entry.getName());
                             copyDestination = new File(destination, entryFileName.getName());
                         }
 
-                        try (var writer = Files.newBufferedWriter(copyDestination.toPath(), StandardCharsets.UTF_8)) {
+                        try (val writer = Files.newBufferedWriter(copyDestination.toPath(), StandardCharsets.UTF_8)) {
                             IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
                         }
                     }
@@ -206,7 +201,7 @@ public class ResourceUtils {
         }
         return new FileSystemResource(destination);
     }
-    
+
 
     /**
      * Build input stream resource from string value.
@@ -217,7 +212,7 @@ public class ResourceUtils {
      */
     public static InputStreamResource buildInputStreamResourceFrom(final String value, final String description) {
         val reader = new StringReader(value);
-        final InputStream is = new ReaderInputStream(reader, StandardCharsets.UTF_8);
+        val is = new ReaderInputStream(reader, StandardCharsets.UTF_8);
         return new InputStreamResource(is, description);
     }
 

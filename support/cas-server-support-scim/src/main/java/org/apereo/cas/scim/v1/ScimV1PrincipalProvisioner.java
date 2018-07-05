@@ -1,7 +1,5 @@
 package org.apereo.cas.scim.v1;
 
-import lombok.val;
-
 import com.unboundid.scim.data.UserResource;
 import com.unboundid.scim.schema.CoreSchema;
 import com.unboundid.scim.sdk.OAuthToken;
@@ -9,11 +7,12 @@ import com.unboundid.scim.sdk.SCIMEndpoint;
 import com.unboundid.scim.sdk.SCIMService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.api.PrincipalProvisioner;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.api.PrincipalProvisioner;
 
 import javax.ws.rs.core.MediaType;
 import java.net.URI;
@@ -36,13 +35,10 @@ public class ScimV1PrincipalProvisioner implements PrincipalProvisioner {
         this.mapper = mapper;
 
         val uri = URI.create(target);
-        final SCIMService scimService;
+        val scimService = StringUtils.isNotBlank(oauthToken)
+            ? new SCIMService(uri, new OAuthToken(oauthToken))
+            : new SCIMService(uri, username, password);
 
-        if (StringUtils.isNotBlank(oauthToken)) {
-            scimService = new SCIMService(uri, new OAuthToken(oauthToken));
-        } else {
-            scimService = new SCIMService(uri, username, password);
-        }
         scimService.setAcceptType(MediaType.APPLICATION_JSON_TYPE);
         this.endpoint = scimService.getUserEndpoint();
     }

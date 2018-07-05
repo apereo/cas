@@ -32,7 +32,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.sql.DataSource;
-import java.util.Collection;
 
 import static org.junit.Assert.*;
 
@@ -89,7 +88,7 @@ public class SurrogateJdbcAuthenticationServiceTests {
 
     @Test
     public void verifyAccountsQualifying() {
-        final Collection results = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy("casuser");
+        val results = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy("casuser");
         assertFalse(results.isEmpty());
         assertEquals(3, results.size());
     }

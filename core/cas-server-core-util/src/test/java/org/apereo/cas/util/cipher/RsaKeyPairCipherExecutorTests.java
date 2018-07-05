@@ -31,7 +31,7 @@ public class RsaKeyPairCipherExecutorTests {
     public void verifyRsaKeyPairResource() {
         val publicKey = "classpath:keys/RSA2048Public.key";
         val privateKey = "classpath:keys/RSA2048Private.key";
-        final CipherExecutor cipher = new RsaKeyPairCipherExecutor(privateKey, publicKey, privateKey, publicKey);
+        val cipher = new RsaKeyPairCipherExecutor(privateKey, publicKey, privateKey, publicKey);
         val testValue = cipher.encode("TestValue");
         assertNotNull(testValue);
         assertEquals("TestValue", cipher.decode(testValue));
@@ -43,7 +43,7 @@ public class RsaKeyPairCipherExecutorTests {
         val privateKey = "classpath:keys/RSA2048Private.key";
         val kp = new KeyPair(AbstractCipherExecutor.extractPublicKeyFromResource(publicKey),
             AbstractCipherExecutor.extractPrivateKeyFromResource(privateKey));
-        final CipherExecutor cipher = new RsaKeyPairCipherExecutor(kp, kp);
+        val cipher = new RsaKeyPairCipherExecutor(kp, kp);
         val testValue = cipher.encode("TestValue");
         assertNotNull(testValue);
         assertEquals("TestValue", cipher.decode(testValue));
@@ -55,7 +55,7 @@ public class RsaKeyPairCipherExecutorTests {
         val privateKey = "classpath:keys/RSA2048Private.key";
         val kp = new KeyPair(AbstractCipherExecutor.extractPublicKeyFromResource(publicKey),
             AbstractCipherExecutor.extractPrivateKeyFromResource(privateKey));
-        final CipherExecutor cipher = new RsaKeyPairCipherExecutor(kp);
+        val cipher = new RsaKeyPairCipherExecutor(kp);
         val testValue = cipher.encode("Value");
         assertEquals("Value", cipher.decode(testValue));
     }
@@ -64,7 +64,7 @@ public class RsaKeyPairCipherExecutorTests {
     public void verifyRsaKeyPairSigningOnly() {
         val publicKey = "classpath:keys/RSA2048Public.key";
         val privateKey = "classpath:keys/RSA2048Private.key";
-        final CipherExecutor cipher = new RsaKeyPairCipherExecutor(privateKey, publicKey);
+        val cipher = new RsaKeyPairCipherExecutor(privateKey, publicKey);
         val testValue = cipher.encode("TestValue");
         assertNotNull(testValue);
         assertEquals("TestValue", cipher.decode(testValue));
@@ -72,7 +72,7 @@ public class RsaKeyPairCipherExecutorTests {
 
     @Test
     public void verifyRsaKeyPairDoesNothing() {
-        final CipherExecutor cipher = new RsaKeyPairCipherExecutor();
+        val cipher = new RsaKeyPairCipherExecutor();
         val testValue = cipher.encode("TestValue");
         assertNotNull(testValue);
         assertEquals("TestValue", cipher.decode(testValue));

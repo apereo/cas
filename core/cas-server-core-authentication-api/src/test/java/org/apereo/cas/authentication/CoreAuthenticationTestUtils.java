@@ -121,8 +121,8 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static Principal getPrincipal(final String name) {
-        final Map backingMap = getAttributeRepository().getBackingMap();
-        return getPrincipal(name, backingMap);
+        val backingMap = getAttributeRepository().getBackingMap();
+        return getPrincipal(name, (Map) backingMap);
     }
 
     public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {
@@ -150,8 +150,8 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static Authentication getAuthentication(final Principal principal, final Map<String, Object> attributes, final ZonedDateTime authnDate) {
-        final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
+        val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         return new DefaultAuthenticationBuilder(principal)
             .addCredential(meta)
             .setAuthenticationDate(authnDate)
@@ -207,8 +207,8 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static AuthenticationBuilder getAuthenticationBuilder(final Principal principal) {
-        final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
-        final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
+        val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         return new DefaultAuthenticationBuilder(principal)
             .addCredential(meta)
             .addSuccess("test", new DefaultAuthenticationHandlerExecutionResult(handler, meta));

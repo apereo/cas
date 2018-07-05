@@ -122,7 +122,7 @@ public class RegexRegisteredServiceTests {
         val serviceWritten = newService("serviceId");
         serviceWritten.setLogoutType(RegisteredService.LogoutType.FRONT_CHANNEL);
         MAPPER.writeValue(JSON_FILE, serviceWritten);
-        final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, RegexRegisteredService.class);
+        val serviceRead = MAPPER.readValue(JSON_FILE, RegexRegisteredService.class);
         assertEquals(serviceWritten, serviceRead);
     }
 }

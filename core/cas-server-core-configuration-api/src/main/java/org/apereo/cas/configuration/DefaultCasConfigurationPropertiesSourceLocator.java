@@ -70,7 +70,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     private PropertySource<?> loadSettingsFromStandaloneConfigFile(final File configFile) {
         val props = new Properties();
 
-        try (var r = Files.newBufferedReader(configFile.toPath(), StandardCharsets.UTF_8)) {
+        try (val r = Files.newBufferedReader(configFile.toPath(), StandardCharsets.UTF_8)) {
             LOGGER.debug("Located CAS standalone configuration file at [{}]", configFile);
             props.load(r);
             LOGGER.debug("Found settings [{}] in file [{}]", props.keySet(), configFile);
@@ -98,7 +98,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
                 props.putAll(decryptProperties(pp));
             } else {
                 val pp = new Properties();
-                try (var reader = Files.newBufferedReader(f.toPath(), StandardCharsets.UTF_8)) {
+                try (val reader = Files.newBufferedReader(f.toPath(), StandardCharsets.UTF_8)) {
                     pp.load(reader);
                 }
                 LOGGER.debug("Found settings [{}] in file [{}]", pp.keySet(), f);

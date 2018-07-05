@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.junit.Before;
 import org.junit.rules.ExpectedException;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.credentials.Credentials;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
 import org.pac4j.oauth.profile.facebook.FacebookProfile;
@@ -56,7 +55,7 @@ public class ClientAuthenticationHandlerTests {
         this.handler = new ClientAuthenticationHandler("", mock(ServicesManager.class), null, clients);
         this.handler.setTypedIdUsed(true);
 
-        final Credentials credentials = new OAuth20Credentials(null);
+        val credentials = new OAuth20Credentials(null);
         this.clientCredential = new ClientCredential(credentials, fbClient.getName());
         val mock = new ServletExternalContext(new MockServletContext(),
             new MockHttpServletRequest(), new MockHttpServletResponse());

@@ -1,9 +1,7 @@
 package org.apereo.cas.support.saml.util;
 
-import lombok.val;
-
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -42,7 +40,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 /**
  * This is {@link AbstractSaml20ObjectBuilder}.
@@ -53,7 +50,6 @@ import java.util.stream.IntStream;
  */
 @Slf4j
 public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuilder {
-    private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
     private static final long serialVersionUID = -4325127376598205277L;
 
     public AbstractSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {
@@ -399,28 +395,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
     @Override
     public String generateSecureRandomId() {
-        val generator = RandomUtils.getNativeInstance();
-        final char[] charMappings = {
-            'a', 'b', 'c', 'd', 'e', 'f', 'g',
-            'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-            'p'};
-
-        val charsLength = 40;
-        val generatorBytesLength = 20;
-        val shiftLength = 4;
-
-        // 160 bits
-        val bytes = new byte[generatorBytesLength];
-        generator.nextBytes(bytes);
-
-        val chars = new char[charsLength];
-        IntStream.range(0, bytes.length).forEach(i -> {
-            val left = bytes[i] >> shiftLength & HEX_HIGH_BITS_BITWISE_FLAG;
-            val right = bytes[i] & HEX_HIGH_BITS_BITWISE_FLAG;
-            chars[i * 2] = charMappings[left];
-            chars[i * 2 + 1] = charMappings[right];
-        });
-        return String.valueOf(chars);
+        return RandomUtils.generateSecureRandomId();
     }
 
     /**

@@ -31,7 +31,6 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.soap.messaging.context.SOAP11Context;
-import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -128,7 +127,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
 
             LOGGER.debug("Building ECP SAML response for [{}]", credential.getId());
             val issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
-            final Service service = webApplicationServiceFactory.createService(issuer);
+            val service = webApplicationServiceFactory.createService(issuer);
             val casAssertion = buildCasAssertion(authentication, service, serviceRequest.getKey(), new LinkedHashMap<>());
 
             LOGGER.debug("CAS assertion to use for building ECP SAML response is [{}]", casAssertion);
@@ -175,7 +174,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
         val issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest.getKey());
         LOGGER.debug("Located issuer [{}] from request prior to authenticating [{}]", issuer, credential.getId());
 
-        final Service service = webApplicationServiceFactory.createService(issuer);
+        val service = webApplicationServiceFactory.createService(issuer);
         LOGGER.debug("Executing authentication request for service [{}] on behalf of credential id [{}]", service, credential.getId());
         val authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
         return authenticationResult.getAuthentication();
@@ -186,7 +185,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                                             final HttpServletResponse response) {
         try {
             val extractor = new BasicAuthExtractor();
-            final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
+            val webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
             val credentials = extractor.extract(webContext);
             if (credentials != null) {
                 LOGGER.debug("Received basic authentication ECP request from credentials [{}]", credentials);

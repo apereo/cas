@@ -48,7 +48,6 @@ import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser;
 import org.springframework.webflow.mvc.builder.MvcViewFactoryCreator;
-import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
 import org.springframework.webflow.mvc.servlet.FlowHandlerMapping;
 
 import java.util.ArrayList;
@@ -122,7 +121,7 @@ public class CasWebflowContextConfiguration {
     @RefreshScope
     @Bean
     public HandlerAdapter logoutHandlerAdapter() {
-        final FlowHandlerAdapter handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_LOGOUT);
+        val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_LOGOUT);
         handler.setFlowExecutor(logoutFlowExecutor());
         handler.setFlowUrlHandler(logoutFlowUrlHandler());
         return handler;
@@ -141,7 +140,7 @@ public class CasWebflowContextConfiguration {
 
     @Bean
     public HandlerAdapter loginHandlerAdapter() {
-        final FlowHandlerAdapter handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_LOGIN);
         handler.setFlowExecutor(loginFlowExecutor());
         handler.setFlowUrlHandler(loginFlowUrlHandler());
         return handler;
@@ -169,7 +168,7 @@ public class CasWebflowContextConfiguration {
     @Lazy
     @Bean
     public Object[] loginFlowHandlerMappingInterceptors() {
-        final List interceptors = new ArrayList<>();
+        val interceptors = new ArrayList<>();
         interceptors.add(localeChangeInterceptor());
         val plan = authenticationThrottlingExecutionPlan.getIfAvailable();
         if (plan != null) {

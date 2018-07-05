@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.DefaultMessageDescriptor;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -81,7 +80,7 @@ public class CreateTicketGrantingTicketActionTests extends AbstractCentralAuthen
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(this.context).getId());
 
         when(tgt.getId()).thenReturn("TGT-111111");
-        final AuthenticationHandlerExecutionResult handlerResult = new DefaultAuthenticationHandlerExecutionResult();
+        val handlerResult = new DefaultAuthenticationHandlerExecutionResult();
         handlerResult.getWarnings().addAll(CollectionUtils.wrapList(new DefaultMessageDescriptor("some.authn.message")));
         authentication.getSuccesses().putAll(CollectionUtils.wrap("handler", handlerResult));
         when(tgt.getAuthentication()).thenReturn(authentication);

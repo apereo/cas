@@ -11,7 +11,6 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchExecutor;
-import org.ldaptive.SearchResult;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.exception.AccountNotFoundException;
@@ -64,7 +63,7 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
     @Override
     public CommonProfile generate(final WebContext context, final CommonProfile profile) {
         val username = profile.getId();
-        final SearchResult userResult;
+
         try {
             LOGGER.debug("Attempting to get details for user [{}].", username);
             val filter = LdapUtils.newLdaptiveSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(),
@@ -72,8 +71,7 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
             val response = this.userSearchExecutor.search(this.connectionFactory, filter);
 
             LOGGER.debug("LDAP user search response: [{}]", response);
-            userResult = response.getResult();
-
+            val userResult = response.getResult();
             if (userResult.size() == 0) {
                 throw new IllegalArgumentException(new AccountNotFoundException(username + " not found."));
             }

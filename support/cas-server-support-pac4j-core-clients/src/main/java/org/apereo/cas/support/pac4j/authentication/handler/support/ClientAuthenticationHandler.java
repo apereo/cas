@@ -13,9 +13,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.context.WebContext;
 import org.pac4j.core.exception.HttpAction;
-import org.pac4j.core.profile.UserProfile;
 
 import java.security.GeneralSecurityException;
 
@@ -59,9 +57,9 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
 
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
-            final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
+            val webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
 
-            final UserProfile userProfile = client.getUserProfile(credentials, webContext);
+            val userProfile = client.getUserProfile(credentials, webContext);
             LOGGER.debug("Final user profile is: [{}]", userProfile);
             return createResult(clientCredentials, userProfile);
         } catch (final HttpAction e) {

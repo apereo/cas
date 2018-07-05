@@ -66,7 +66,7 @@ public class ValidateCaptchaAction extends AbstractAction {
 
             LOGGER.debug("Sending 'POST' request to URL: [{}]", obj);
             con.setDoOutput(true);
-            try (var wr = new DataOutputStream(con.getOutputStream())) {
+            try (val wr = new DataOutputStream(con.getOutputStream())) {
                 wr.writeBytes(postParams);
                 wr.flush();
             }
@@ -74,7 +74,7 @@ public class ValidateCaptchaAction extends AbstractAction {
             LOGGER.debug("Response Code: [{}]", responseCode);
 
             if (responseCode == HttpStatus.OK.value()) {
-                try (var in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
+                try (val in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
                     val response = in.lines().collect(Collectors.joining());
                     LOGGER.debug("Google captcha response received: [{}]", response);
                     val node = READER.readTree(response);

@@ -28,11 +28,8 @@ public class DenyAllAttributeReleasePolicyTests {
     @Test
     public void verifySerializeADenyAllAttributeReleasePolicyToJson() throws IOException {
         val policyWritten = new DenyAllAttributeReleasePolicy();
-
         MAPPER.writeValue(JSON_FILE, policyWritten);
-
-        final RegisteredServiceAttributeReleasePolicy policyRead = MAPPER.readValue(JSON_FILE, DenyAllAttributeReleasePolicy.class);
-
+        val policyRead = MAPPER.readValue(JSON_FILE, DenyAllAttributeReleasePolicy.class);
         assertEquals(policyWritten, policyRead);
     }
 }

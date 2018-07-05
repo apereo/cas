@@ -1,8 +1,7 @@
 package org.apereo.cas;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
@@ -373,15 +372,16 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
     private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context, final TicketGrantingTicket ticketGrantingTicket)
         throws MixedPrincipalException {
-        Authentication currentAuthentication = null;
-        if (context != null) {
-            currentAuthentication = context.getAuthentication();
-            if (currentAuthentication != null) {
-                val original = ticketGrantingTicket.getAuthentication();
-                if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
-                    throw new MixedPrincipalException(
-                        currentAuthentication, currentAuthentication.getPrincipal(), original.getPrincipal());
-                }
+
+        if (context == null) {
+            return null;
+        }
+
+        val currentAuthentication = context.getAuthentication();
+        if (currentAuthentication != null) {
+            val original = ticketGrantingTicket.getAuthentication();
+            if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
+                throw new MixedPrincipalException(currentAuthentication, currentAuthentication.getPrincipal(), original.getPrincipal());
             }
         }
         return currentAuthentication;

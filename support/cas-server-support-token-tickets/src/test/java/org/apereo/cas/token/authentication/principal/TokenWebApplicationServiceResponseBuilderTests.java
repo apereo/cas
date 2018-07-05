@@ -118,7 +118,7 @@ public class TokenWebApplicationServiceResponseBuilderTests {
     @Test
     public void verifyTokenBuilder() {
         val data = "yes\ncasuser";
-        try (var webServer = new MockWebServer(8281,
+        try (val webServer = new MockWebServer(8281,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
 

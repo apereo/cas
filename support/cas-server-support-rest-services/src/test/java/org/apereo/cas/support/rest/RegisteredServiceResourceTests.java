@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
@@ -99,9 +98,9 @@ public class RegisteredServiceResourceTests {
 
     private void runTest(final String attrName, final String attrValue, final String credentials, final ResultMatcher result) throws Exception {
         val registeredServiceResource = getRegisteredServiceResource(attrName, attrValue);
-        final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService();
+        val service = RegisteredServiceTestUtils.getRegisteredService();
         val sz = new DefaultRegisteredServiceJsonSerializer();
-        try (var writer = new StringWriter()) {
+        try (val writer = new StringWriter()) {
             sz.to(writer, service);
             configureMockMvcFor(registeredServiceResource)
                 .perform(post("/cas/v1/services")

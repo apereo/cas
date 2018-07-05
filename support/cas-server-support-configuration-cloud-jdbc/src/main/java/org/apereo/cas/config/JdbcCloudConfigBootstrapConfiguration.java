@@ -13,7 +13,6 @@ import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -36,7 +35,7 @@ public class JdbcCloudConfigBootstrapConfiguration implements PropertySourceLoca
             val dataSource = JpaBeans.newDataSource(connection);
             val jdbcTemplate = new JdbcTemplate(dataSource);
             val rows = jdbcTemplate.queryForList(connection.getSql());
-            for (final Map row : rows) {
+            for (val row : rows) {
                 props.put(row.get("name"), row.get("value"));
             }
         } catch (final Exception e) {

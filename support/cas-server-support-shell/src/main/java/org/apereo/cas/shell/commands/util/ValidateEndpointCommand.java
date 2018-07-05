@@ -1,10 +1,11 @@
 package org.apereo.cas.shell.commands.util;
 
-import lombok.val;
-
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -33,7 +34,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * This is {@link ValidateEndpointCommand}.
@@ -70,8 +70,8 @@ public class ValidateEndpointCommand {
             LOGGER.info("Setting connection timeout to [{}]", timeout);
             conn.setConnectTimeout(timeout);
 
-            try (var reader = new InputStreamReader(conn.getInputStream(), "UTF-8");
-                 var in = new BufferedReader(reader)) {
+            try (val reader = new InputStreamReader(conn.getInputStream(), "UTF-8");
+                 val in = new BufferedReader(reader)) {
                 in.readLine();
 
                 if (conn instanceof HttpURLConnection) {
@@ -91,17 +91,15 @@ public class ValidateEndpointCommand {
 
     private URLConnection createConnection(final String url, final String proxy) throws Exception {
         val constructedUrl = new URL(url);
-        final URLConnection conn;
-
-        if (StringUtils.isNotBlank(proxy)) {
-            val proxyUrl = new URL(proxy);
-            LOGGER.info("Using proxy address [{}]", proxy);
-            val proxyAddr = new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort());
-            conn = constructedUrl.openConnection(new Proxy(Proxy.Type.HTTP, proxyAddr));
-        } else {
-            conn = constructedUrl.openConnection();
-        }
-
+        val conn = FunctionUtils.doIf(StringUtils.isNotBlank(proxy),
+            Unchecked.supplier(() -> {
+                val proxyUrl = new URL(proxy);
+                LOGGER.info("Using proxy address [{}]", proxy);
+                val proxyAddr = new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort());
+                return constructedUrl.openConnection(new Proxy(Proxy.Type.HTTP, proxyAddr));
+            }),
+            Unchecked.supplier(constructedUrl::openConnection))
+            .get();
         return conn;
     }
 
@@ -133,7 +131,7 @@ public class ValidateEndpointCommand {
             // Setting our own Trust Manager so the connection completes and we can examine the server cert chain.
             httpsConnection.setSSLSocketFactory(getTheAllTrustingSSLContext().getSocketFactory());
 
-            try (var reader = new InputStreamReader(httpsConnection.getInputStream(), "UTF-8")) {
+            try (val reader = new InputStreamReader(httpsConnection.getInputStream(), "UTF-8")) {
                 tlsConnectionReport(httpsConnection);
             }
         } catch (final Exception e) {
@@ -156,15 +154,14 @@ public class ValidateEndpointCommand {
             Arrays.copyOf(certificates, certificates.length, X509Certificate[].class);
 
         LOGGER.info("Server provided certs: ");
-        for (val certificate: serverCertificates) {
-
-            String validity;
-            try {
-                certificate.checkValidity();
-                validity = "valid";
-            } catch (final Exception e) {
-                validity = "invalid: " + e.getMessage();
-            }
+        for (val certificate : serverCertificates) {
+            val validity = FunctionUtils.doAndHandle(
+                o -> {
+                    certificate.checkValidity();
+                    return "valid";
+                },
+                e -> "invalid: " + e.getMessage()
+            ).apply(certificate);
 
             LOGGER.info("  subject: {}", certificate.getSubjectDN().getName());
             LOGGER.info("  issuer: {}", certificate.getIssuerDN().getName());
@@ -175,32 +172,29 @@ public class ValidateEndpointCommand {
     }
 
     private static X509TrustManager[] getSystemTrustManagers() {
-        TrustManagerFactory trustManagerFactory = null;
         try {
-            trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            var trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init((KeyStore) null);
+            LOGGER.info("Detected Truststore: {}", trustManagerFactory.getProvider().getName());
+            val x509TrustManagers = new ArrayList<X509TrustManager>();
+            for (val trustManager : trustManagerFactory.getTrustManagers()) {
+                if (trustManager instanceof X509TrustManager) {
+                    val x509TrustManager = (X509TrustManager) trustManager;
+                    LOGGER.info("Trusted issuers found: {}", x509TrustManager.getAcceptedIssuers().length);
+                    x509TrustManagers.add(x509TrustManager);
+                }
+            }
+            return x509TrustManagers.toArray(new X509TrustManager[]{});
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
         }
-
-        LOGGER.info("Detected Truststore: {}", trustManagerFactory.getProvider().getName());
-        final List<X509TrustManager> x509TrustManagers = new ArrayList<>();
-
-        for (val trustManager: trustManagerFactory.getTrustManagers()) {
-            if (trustManager instanceof X509TrustManager) {
-                val x509TrustManager = (X509TrustManager) trustManager;
-                LOGGER.info("Trusted issuers found: {}", x509TrustManager.getAcceptedIssuers().length);
-                x509TrustManagers.add(x509TrustManager);
-            }
-        }
-
-        return x509TrustManagers.toArray(new X509TrustManager[]{});
+        return new X509TrustManager[]{};
     }
 
     private String checkTrustedCertStatus(final X509Certificate certificate, final X509TrustManager[] trustManagers) {
 
-        for (val trustManager: trustManagers) {
-            for (val trustedCert: trustManager.getAcceptedIssuers()) {
+        for (val trustManager : trustManagers) {
+            for (val trustedCert : trustManager.getAcceptedIssuers()) {
                 try {
                     certificate.verify(trustedCert.getPublicKey());
                     return "Matches found: " + trustedCert.getIssuerDN().getName();

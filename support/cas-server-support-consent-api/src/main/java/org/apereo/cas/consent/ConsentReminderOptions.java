@@ -9,11 +9,17 @@ import java.util.Arrays;
  * @since 5.2.0
  */
 public enum ConsentReminderOptions {
-    /** Always ask for consent. */
+    /**
+     * Always ask for consent.
+     */
     ALWAYS(0),
-    /** Always ask for consent. */
+    /**
+     * Always ask for consent.
+     */
     ATTRIBUTE_NAME(1),
-    /** Always ask for consent. */
+    /**
+     * Always ask for consent.
+     */
     ATTRIBUTE_VALUE(2);
 
     private final int value;
@@ -33,10 +39,9 @@ public enum ConsentReminderOptions {
      * @return the consent options
      */
     public static ConsentReminderOptions valueOf(final int value) {
-        final var option = Arrays.stream(values())
-                .filter(v -> v.getValue() == value)
-                .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
-        return option;
+        return Arrays.stream(values())
+            .filter(v -> v.getValue() == value)
+            .findFirst()
+            .orElseThrow(IllegalArgumentException::new);
     }
 }

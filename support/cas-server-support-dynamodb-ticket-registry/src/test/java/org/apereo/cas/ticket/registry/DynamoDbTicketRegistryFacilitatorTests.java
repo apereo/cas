@@ -25,7 +25,6 @@ import org.apereo.cas.config.DynamoDbTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
@@ -44,8 +43,6 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -100,10 +97,10 @@ public class DynamoDbTicketRegistryFacilitatorTests {
 
     @Test
     public void verifyBuildAttributeMap() {
-        final Ticket ticket = new MockTicketGrantingTicket("casuser",
+        val ticket = new MockTicketGrantingTicket("casuser",
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
             CollectionUtils.wrap("name", "CAS"));
-        final Map map = dynamoDbTicketRegistryFacilitator.buildTableAttributeValuesMapFromTicket(ticket, ticket);
+        val map = dynamoDbTicketRegistryFacilitator.buildTableAttributeValuesMapFromTicket(ticket, ticket);
         assertFalse(map.isEmpty());
         Arrays.stream(DynamoDbTicketRegistryFacilitator.ColumnNames.values())
             .forEach(c -> assertTrue(map.containsKey(c.getColumnName())));
@@ -112,11 +109,11 @@ public class DynamoDbTicketRegistryFacilitatorTests {
     @Test
     public void verifyTicketOperations() {
         dynamoDbTicketRegistryFacilitator.createTicketTables(true);
-        final Ticket ticket = new MockTicketGrantingTicket("casuser",
+        val ticket = new MockTicketGrantingTicket("casuser",
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
             CollectionUtils.wrap("name", "CAS"));
         dynamoDbTicketRegistryFacilitator.put(ticket, ticket);
-        final Collection col = dynamoDbTicketRegistryFacilitator.getAll();
+        val col = dynamoDbTicketRegistryFacilitator.getAll();
         assertFalse(col.isEmpty());
         val ticketFetched = dynamoDbTicketRegistryFacilitator.get(ticket.getId(), ticket.getId());
         assertEquals(ticket, ticketFetched);

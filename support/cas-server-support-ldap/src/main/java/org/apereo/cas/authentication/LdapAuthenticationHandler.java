@@ -1,9 +1,8 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
@@ -106,8 +105,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             LOGGER.debug("Attempting LDAP authentication for [{}]. Authenticator pre-configured attributes are [{}], "
                     + "additional requested attributes for this authentication request are [{}]", upc, authenticator.getReturnAttributes(),
                 authenticatedEntryAttributes);
-            val request = new AuthenticationRequest(upc.getUsername(),
-                new org.ldaptive.Credential(upc.getPassword()), authenticatedEntryAttributes);
+            val request = new AuthenticationRequest(upc.getUsername(), new org.ldaptive.Credential(upc.getPassword()), authenticatedEntryAttributes);
             response = authenticator.authenticate(request);
         } catch (final LdapException e) {
             LOGGER.trace(e.getMessage(), e);

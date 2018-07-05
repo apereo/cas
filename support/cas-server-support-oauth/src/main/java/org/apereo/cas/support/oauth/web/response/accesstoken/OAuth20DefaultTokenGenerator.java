@@ -1,9 +1,8 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
-import lombok.val;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -17,6 +16,7 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.function.FunctionUtils;
 
 /**
  * This is {@link OAuth20DefaultTokenGenerator}.
@@ -72,13 +72,12 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             this.ticketRegistry.updateTicket(holder.getTicketGrantingTicket());
         }
 
-        RefreshToken refreshToken = null;
-        if (holder.isGenerateRefreshToken()) {
-            refreshToken = generateRefreshToken(holder);
-            LOGGER.debug("Refresh Token: [{}]", refreshToken);
-        } else {
-            LOGGER.debug("Service [{}] is not able/allowed to receive refresh tokens", holder.getService());
-        }
+        val refreshToken = FunctionUtils.doIf(holder.isGenerateRefreshToken(),
+            () -> generateRefreshToken(holder),
+            () -> {
+                LOGGER.debug("Service [{}] is not able/allowed to receive refresh tokens", holder.getService());
+                return null;
+            }).get();
 
         return Pair.of(accessToken, refreshToken);
     }

@@ -19,7 +19,6 @@ import org.apereo.cas.util.ScriptingUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.UrlResource;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
@@ -97,7 +96,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             });
 
         val context = RequestContextHolder.getRequestContext();
-        final Service serviceContext = WebUtils.getService(context);
+        val serviceContext = WebUtils.getService(context);
         val service = this.authenticationRequestServiceSelectionStrategies.resolveService(serviceContext);
         if (service == null) {
             LOGGER.trace("No service is found in the request context. Falling back to the default theme [{}]", getDefaultThemeName());
@@ -132,7 +131,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
         try {
             LOGGER.debug("Service [{}] is configured to use a custom theme [{}]", rService, rService.getTheme());
 
-            final Resource resource = ResourceUtils.getRawResourceFrom(rService.getTheme());
+            val resource = ResourceUtils.getRawResourceFrom(rService.getTheme());
             if (resource instanceof FileSystemResource && resource.exists()) {
                 LOGGER.debug("Executing groovy script to determine theme for [{}]", service.getId());
                 val result = ScriptingUtils.executeGroovyScript(resource, new Object[]{service, rService,

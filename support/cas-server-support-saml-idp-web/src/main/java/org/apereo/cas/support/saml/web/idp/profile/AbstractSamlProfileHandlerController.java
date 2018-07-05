@@ -35,9 +35,7 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.support.WebUtils;
-import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
-import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
 import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
@@ -220,8 +218,8 @@ public abstract class AbstractSamlProfileHandlerController {
                                           final Map<String, Object> attributesToCombine) {
         final Map attributes = registeredService.getAttributeReleasePolicy()
             .getAttributes(authentication.getPrincipal(), service, registeredService);
-        final AttributePrincipal principal = new AttributePrincipalImpl(authentication.getPrincipal().getId(), attributes);
-        final Map authnAttrs = new LinkedHashMap(authentication.getAttributes());
+        val principal = new AttributePrincipalImpl(authentication.getPrincipal().getId(), attributes);
+        val authnAttrs = new LinkedHashMap(authentication.getAttributes());
         authnAttrs.putAll(attributesToCombine);
         return new AssertionImpl(principal, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
             null, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
@@ -239,7 +237,7 @@ public abstract class AbstractSamlProfileHandlerController {
     protected Assertion buildCasAssertion(final String principal,
                                           final RegisteredService registeredService,
                                           final Map<String, Object> attributes) {
-        final AttributePrincipal p = new AttributePrincipalImpl(principal, attributes);
+        val p = new AttributePrincipalImpl(principal, attributes);
         return new AssertionImpl(p, DateTimeUtils.dateOf(ZonedDateTime.now()),
             null, DateTimeUtils.dateOf(ZonedDateTime.now()), attributes);
     }
@@ -282,7 +280,7 @@ public abstract class AbstractSamlProfileHandlerController {
         val urlToRedirectTo = buildRedirectUrlByRequestedAuthnContext(initialUrl, authnRequest, request);
 
         LOGGER.debug("Redirecting SAML authN request to [{}]", urlToRedirectTo);
-        final AuthenticationRedirectStrategy authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
+        val authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
         authenticationRedirectStrategy.redirect(request, response, urlToRedirectTo);
     }
 
@@ -352,7 +350,7 @@ public abstract class AbstractSamlProfileHandlerController {
         val authnRequest = (AuthnRequest) pair.getLeft();
         val messageContext = pair.getRight();
 
-        try (var writer = SamlUtils.transformSamlObject(this.configBean, authnRequest)) {
+        try (val writer = SamlUtils.transformSamlObject(this.configBean, authnRequest)) {
             val builder = new URLBuilder(this.callbackService.getId());
             builder.getQueryParams().add(
                 new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID,

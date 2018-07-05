@@ -159,7 +159,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicketAndPgtUrlMismatch() throws Exception {
-        final Service svc = RegisteredServiceTestUtils.getService("proxyService");
+        val svc = RegisteredServiceTestUtils.getService("proxyService");
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -178,7 +178,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicketAndFormatAsJson() throws Exception {
-        final Service svc = RegisteredServiceTestUtils.getService("proxyService");
+        val svc = RegisteredServiceTestUtils.getService("proxyService");
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
 
@@ -195,7 +195,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicketAndBadFormat() throws Exception {
-        final Service svc = RegisteredServiceTestUtils.getService("proxyService");
+        val svc = RegisteredServiceTestUtils.getService("proxyService");
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -224,7 +224,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
      */
     @Test
     public void verifyValidServiceTicketWithDifferentEncoding() throws Exception {
-        final Service svc = RegisteredServiceTestUtils.getService("http://www.jasig.org?param=hello+world");
+        val svc = RegisteredServiceTestUtils.getService("http://www.jasig.org?param=hello+world");
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -267,7 +267,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     @Test
     public void verifyValidServiceTicketWithDifferentEncodingAndIgnoringCase() throws Exception {
         val origSvc = "http://www.jasig.org?param=hello+world";
-        final Service svc = RegisteredServiceTestUtils.getService(origSvc);
+        val svc = RegisteredServiceTestUtils.getService(origSvc);
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);

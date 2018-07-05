@@ -1,11 +1,10 @@
 package org.apereo.cas.support.saml.util;
 
-import lombok.val;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CollectionUtils;
@@ -252,19 +251,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
                 .newDigestMethod(DigestMethod.SHA1, null), envelopedTransform, null, null);
 
             // Create the SignatureMethod based on the type of key
-            final SignatureMethod signatureMethod;
-            val algorithm = pubKey.getAlgorithm();
-            switch (algorithm) {
-                case "DSA":
-                    signatureMethod = sigFactory.newSignatureMethod(SignatureMethod.DSA_SHA1, null);
-                    break;
-                case "RSA":
-                    signatureMethod = sigFactory.newSignatureMethod(SignatureMethod.RSA_SHA1, null);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Error signing SAML element: Unsupported type of key");
-            }
-
+            val signatureMethod = getSignatureMethodFromPublicKey(pubKey, sigFactory);
             val canonicalizationMethod = sigFactory
                 .newCanonicalizationMethod(
                     CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
@@ -300,6 +287,19 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         }
     }
 
+    @SneakyThrows
+    private static SignatureMethod getSignatureMethodFromPublicKey(final PublicKey pubKey,
+                                                                   final XMLSignatureFactory sigFactory) {
+        val algorithm = pubKey.getAlgorithm();
+        if ("DSA".equals(algorithm)) {
+            return sigFactory.newSignatureMethod(SignatureMethod.DSA_SHA1, null);
+        }
+        if ("RSA".equals(algorithm)) {
+            return sigFactory.newSignatureMethod(SignatureMethod.RSA_SHA1, null);
+        }
+        throw new IllegalArgumentException("Error signing SAML element: Unsupported type of key");
+    }
+
     /**
      * Gets the xml signature insert location.
      *
@@ -307,15 +307,12 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @return the xml signature insert location
      */
     private static Node getXmlSignatureInsertLocation(final Element elem) {
-        final Node insertLocation;
-        var nodeList = elem.getElementsByTagNameNS(SAMLConstants.SAML20P_NS, "Extensions");
-        if (nodeList.getLength() != 0) {
-            insertLocation = nodeList.item(nodeList.getLength() - 1);
-        } else {
-            nodeList = elem.getElementsByTagNameNS(SAMLConstants.SAML20P_NS, "Status");
-            insertLocation = nodeList.item(nodeList.getLength() - 1);
+        val nodeListExtensions = elem.getElementsByTagNameNS(SAMLConstants.SAML20P_NS, "Extensions");
+        if (nodeListExtensions.getLength() != 0) {
+            return nodeListExtensions.item(nodeListExtensions.getLength() - 1);
         }
-        return insertLocation;
+        val nodeListStatus = elem.getElementsByTagNameNS(SAMLConstants.SAML20P_NS, "Status");
+        return nodeListStatus.item(nodeListStatus.getLength() - 1);
     }
 
     /**

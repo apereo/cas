@@ -76,8 +76,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         val subTypes =
             reflections.getSubTypesOf(BaseOidcScopeAttributeReleasePolicy.class);
         subTypes.forEach(Unchecked.consumer(t -> {
-            final BaseOidcScopeAttributeReleasePolicy ex = t.getDeclaredConstructor().newInstance();
-
+            val ex = t.getDeclaredConstructor().newInstance();
             if (oidc.getScopes().contains(ex.getScopeName())) {
                 LOGGER.debug("Found OpenID Connect scope [{}] to filter attributes", ex.getScopeName());
                 filters.put(ex.getScopeName(), ex);
@@ -187,7 +186,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                 LOGGER.debug("[{}] appears to be a user-defined scope and does not match any of the predefined standard scopes. "
                     + "Checking [{}] against user-defined scopes provided as [{}]", s, s, userScopes);
 
-                final var userPolicy = userScopes.stream()
+                val userPolicy = userScopes.stream()
                     .filter(t -> t.getScopeName().equals(s.trim()))
                     .findFirst()
                     .orElse(null);

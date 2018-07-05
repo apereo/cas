@@ -39,7 +39,6 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `spring-webflow`          | Provides a JSON representation of the CAS authentication webflows.
 | `events`                  | Provides a JSON representation of all CAS recorded events.
 | `audit-log`               | Provides a JSON representation of all the audit log.
-| `authn-audit-log`         | Provides a JSON representation of all authentication events, in summary mode from the audit log.
 | `discovery-profile`       | Provides a JSON representation of the [CAS configuration and capabilities](Configuration-Discovery.html).
 | `registered-services`     | Provides a JSON representation of the [CAS service registry](Service-Management.html).
 | `configuration-metadata`  | Exposes [CAS configuration metadata](Configuration-Metadata-Repository.html) that can be used to query settings.

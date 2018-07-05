@@ -35,7 +35,7 @@ public class RestAcceptableUsagePolicyRepositoryTests {
         val r = new RestAcceptableUsagePolicyRepository(ticketRegistrySupport, "givenName", props);
 
         val data = "";
-        try (var webServer = new MockWebServer(9298,
+        try (val webServer = new MockWebServer(9298,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertFalse(r.isUsagePolicyAcceptedBy(CoreAuthenticationTestUtils.getPrincipal()));

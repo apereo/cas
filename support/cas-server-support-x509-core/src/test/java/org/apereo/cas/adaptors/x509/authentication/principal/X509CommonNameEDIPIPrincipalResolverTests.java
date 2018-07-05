@@ -8,7 +8,6 @@ import org.apereo.cas.util.crypto.CertUtils;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.InputStreamSource;
 
 import java.security.cert.X509Certificate;
 import java.util.Optional;
@@ -26,8 +25,8 @@ public class X509CommonNameEDIPIPrincipalResolverTests extends AbstractX509Certi
 
     @Test
     public void verifyResolvePrincipalInternal() throws Exception {
-        try (var is = new ClassPathResource("edipi.cer").getInputStream()) {
-            final InputStreamSource iso = new InputStreamResource(is);
+        try (val is = new ClassPathResource("edipi.cer").getInputStream()) {
+            val iso = new InputStreamResource(is);
             val cert = CertUtils.readCertificate(iso);
             val c = new X509CertificateCredential(new X509Certificate[]{cert});
             c.setCertificate(cert);

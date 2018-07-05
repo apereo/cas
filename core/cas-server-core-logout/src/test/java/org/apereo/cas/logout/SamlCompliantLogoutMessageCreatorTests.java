@@ -10,7 +10,6 @@ import org.junit.runners.JUnit4;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
@@ -41,7 +40,7 @@ public class SamlCompliantLogoutMessageCreatorTests {
         val factory = DocumentBuilderFactory.newInstance();
         val builder = factory.newDocumentBuilder();
 
-        final InputStream is = new ByteArrayInputStream(msg.getBytes(StandardCharsets.UTF_8));
+        val is = new ByteArrayInputStream(msg.getBytes(StandardCharsets.UTF_8));
         val document = builder.parse(is);
         
         val list = document.getDocumentElement().getElementsByTagName("samlp:SessionIndex");

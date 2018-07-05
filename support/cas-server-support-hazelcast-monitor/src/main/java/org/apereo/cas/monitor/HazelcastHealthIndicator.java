@@ -36,7 +36,7 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
         LOGGER.debug("Locating hazelcast instance [{}]...", instanceName);
         @NonNull val instance = Hazelcast.getHazelcastInstanceByName(this.instanceName);
         instance.getConfig().getMapConfigs().keySet().forEach(key -> {
-            final IMap map = instance.getMap(key);
+            val map = instance.getMap(key);
             LOGGER.debug("Starting to collect hazelcast statistics for map [{}] identified by key [{}]...", map, key);
             statsList.add(new HazelcastStatistics(map, clusterSize));
         });

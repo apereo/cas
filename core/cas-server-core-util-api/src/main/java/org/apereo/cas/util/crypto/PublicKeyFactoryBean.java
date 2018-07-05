@@ -33,7 +33,7 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
     @Override
     protected PublicKey createInstance() throws Exception {
         LOGGER.debug("Creating public key instance from [{}] using [{}]", this.resource.getFilename(), this.algorithm);
-        try (var pubKey = this.resource.getInputStream()) {
+        try (val pubKey = this.resource.getInputStream()) {
             val bytes = new byte[(int) this.resource.contentLength()];
             pubKey.read(bytes);
             val pubSpec = new X509EncodedKeySpec(bytes);

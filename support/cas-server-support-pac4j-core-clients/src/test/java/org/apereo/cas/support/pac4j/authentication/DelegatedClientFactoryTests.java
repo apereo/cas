@@ -15,8 +15,6 @@ import org.pac4j.cas.config.CasProtocol;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
-import java.util.Set;
-
 import static org.junit.Assert.*;
 
 /**
@@ -47,7 +45,7 @@ public class DelegatedClientFactoryTests {
         configureIdentifiableClient(props.getYahoo());
 
         val factory = new DelegatedClientFactory(props);
-        final Set clients = factory.build();
+        val clients = factory.build();
         assertEquals(13, clients.size());
     }
 
@@ -60,7 +58,7 @@ public class DelegatedClientFactoryTests {
         props.getCas().add(cas);
 
         val factory = new DelegatedClientFactory(props);
-        final Set clients = factory.build();
+        val clients = factory.build();
         assertEquals(1, clients.size());
     }
 
@@ -75,7 +73,7 @@ public class DelegatedClientFactoryTests {
         props.getSaml().add(saml);
 
         val factory = new DelegatedClientFactory(props);
-        final Set clients = factory.build();
+        val clients = factory.build();
         assertEquals(1, clients.size());
     }
 
@@ -87,7 +85,7 @@ public class DelegatedClientFactoryTests {
         props.getOauth2().add(oauth);
 
         val factory = new DelegatedClientFactory(props);
-        final Set clients = factory.build();
+        val clients = factory.build();
         assertEquals(1, clients.size());
     }
 
@@ -115,7 +113,7 @@ public class DelegatedClientFactoryTests {
         props.getOidc().add(oidc4);
 
         val factory = new DelegatedClientFactory(props);
-        final Set clients = factory.build();
+        val clients = factory.build();
         assertEquals(4, clients.size());
     }
 

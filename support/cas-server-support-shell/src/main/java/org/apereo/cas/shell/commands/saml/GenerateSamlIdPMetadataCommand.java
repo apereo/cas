@@ -1,12 +1,11 @@
 package org.apereo.cas.shell.commands.saml;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.DefaultSamlIdPMetadataLocator;
-import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificateAndKeyWriter;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.shell.standard.ShellCommandGroup;
@@ -55,16 +54,17 @@ public class GenerateSamlIdPMetadataCommand {
         @ShellOption(value = {"force"},
             help = "Force metadata generation, disregarding anything that might already be available at the specified location") final boolean force) {
 
-        final SamlIdPMetadataLocator locator = new DefaultSamlIdPMetadataLocator(new File(metadataLocation));
+        val locator = new DefaultSamlIdPMetadataLocator(new File(metadataLocation));
         val writer = new DefaultSamlIdPCertificateAndKeyWriter();
         val generator = new FileSystemSamlIdPMetadataGenerator(entityId, this.resourceLoader,
             serverPrefix, scope, locator, writer);
 
-        var generateMetadata = true;
-        if (!locator.exists()) {
-            LOGGER.warn("Metadata artifacts are available at the specified location: [{}]", metadataLocation);
-            generateMetadata = force;
-        }
+        val generateMetadata = FunctionUtils.doIf(locator.exists(),
+            () -> true,
+            () -> {
+                LOGGER.warn("Metadata artifacts are available at the specified location: [{}]", metadataLocation);
+                return force;
+            }).get();
         if (generateMetadata) {
             generator.initialize();
             generator.generate();

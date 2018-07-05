@@ -1,10 +1,9 @@
 package org.apereo.cas.authentication.support;
 
-import lombok.val;
-
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.DefaultMessageDescriptor;
 import org.apereo.cas.authentication.AuthenticationAccountStateHandler;
 import org.apereo.cas.authentication.MessageDescriptor;
@@ -124,9 +123,8 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
                                final PasswordPolicyConfiguration configuration, final List<MessageDescriptor> messages) throws LoginException {
 
         LOGGER.debug("Handling LDAP account state error [{}]", error);
-        val ex = this.errorMap.get(error);
-        if (ex != null) {
-            throw ex;
+        if (errorMap.containsKey(error)) {
+            throw errorMap.get(error);
         }
         LOGGER.debug("No LDAP error mapping defined for [{}]", error);
     }

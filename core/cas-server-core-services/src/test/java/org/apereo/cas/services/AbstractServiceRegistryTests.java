@@ -1,13 +1,12 @@
 package org.apereo.cas.services;
 
-import lombok.val;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
@@ -103,14 +102,14 @@ public abstract class AbstractServiceRegistryTests {
     @Test
     public void verifySaveAndLoad() {
         final List<RegisteredService> list = new ArrayList<>();
-        for (var i = 0; i < getLoadSize(); i++) {
-            final RegisteredService svc = buildRegisteredServiceInstance(i);
+        IntStream.range(0, getLoadSize()).forEach(i -> {
+            val svc = buildRegisteredServiceInstance(i);
             list.add(svc);
             this.serviceRegistry.save(svc);
             val svc2 = this.serviceRegistry.findServiceByExactServiceName(svc.getName());
             assertNotNull(svc2);
             this.serviceRegistry.delete(svc2);
-        }
+        });
         assertTrue(this.serviceRegistry.load().isEmpty());
     }
 
@@ -122,11 +121,11 @@ public abstract class AbstractServiceRegistryTests {
     @Test
     public void verifySavingServices() {
         this.serviceRegistry.save(buildRegisteredServiceInstance(100));
-        var services = this.serviceRegistry.load();
+        val services = this.serviceRegistry.load();
         assertEquals(1, services.size());
         this.serviceRegistry.save(buildRegisteredServiceInstance(101));
-        services = this.serviceRegistry.load();
-        assertEquals(2, services.size());
+        val services2 = this.serviceRegistry.load();
+        assertEquals(2, services2.size());
     }
 
     @Test
@@ -157,8 +156,8 @@ public abstract class AbstractServiceRegistryTests {
 
     @Test
     public void verifyDeletingSingleService() {
-        final RegisteredService rs = buildRegisteredServiceInstance(300);
-        final RegisteredService rs2 = buildRegisteredServiceInstance(301);
+        val rs = buildRegisteredServiceInstance(300);
+        val rs2 = buildRegisteredServiceInstance(301);
         this.serviceRegistry.save(rs2);
         this.serviceRegistry.save(rs);
         this.serviceRegistry.load();
@@ -196,11 +195,11 @@ public abstract class AbstractServiceRegistryTests {
         val expirationDate = LocalDateTime.now().plusSeconds(1);
         r.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(false, expirationDate));
         val r2 = this.serviceRegistry.save(r);
-        var svc = this.serviceRegistry.findServiceByExactServiceName(r2.getName());
+        val svc = this.serviceRegistry.findServiceByExactServiceName(r2.getName());
         assertNotNull(svc);
         DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis() + 2000);
-        svc = this.serviceRegistry.findServiceByExactServiceName(r2.getName());
-        assertNotNull(svc);
+        val svc2 = this.serviceRegistry.findServiceByExactServiceName(r2.getName());
+        assertNotNull(svc2);
     }
 
     @Test

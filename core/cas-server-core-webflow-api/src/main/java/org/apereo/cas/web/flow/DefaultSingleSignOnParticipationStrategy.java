@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
@@ -33,7 +32,7 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
         }
 
         val authentication = WebUtils.getAuthentication(ctx);
-        final Service service = WebUtils.getService(ctx);
+        val service = WebUtils.getService(ctx);
         if (service != null) {
             val registeredService = this.servicesManager.findServiceBy(service);
             if (registeredService != null) {

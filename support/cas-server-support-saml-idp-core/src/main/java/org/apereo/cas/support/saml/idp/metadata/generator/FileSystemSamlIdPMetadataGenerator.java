@@ -88,8 +88,8 @@ public class FileSystemSamlIdPMetadataGenerator implements SamlIdPMetadataGenera
             FileUtils.forceDelete(encKey);
         }
 
-        try (var keyWriter = Files.newBufferedWriter(encKey.toPath(), StandardCharsets.UTF_8);
-             var certWriter = Files.newBufferedWriter(encCert.toPath(), StandardCharsets.UTF_8)) {
+        try (val keyWriter = Files.newBufferedWriter(encKey.toPath(), StandardCharsets.UTF_8);
+             val certWriter = Files.newBufferedWriter(encCert.toPath(), StandardCharsets.UTF_8)) {
             this.samlIdPCertificateAndKeyWriter.writeCertificateAndKey(keyWriter, certWriter);
         }
     }
@@ -107,8 +107,8 @@ public class FileSystemSamlIdPMetadataGenerator implements SamlIdPMetadataGenera
         if (signingKey.exists()) {
             FileUtils.forceDelete(signingKey);
         }
-        try (var keyWriter = Files.newBufferedWriter(signingKey.toPath(), StandardCharsets.UTF_8);
-             var certWriter = Files.newBufferedWriter(signingCert.toPath(), StandardCharsets.UTF_8)) {
+        try (val keyWriter = Files.newBufferedWriter(signingKey.toPath(), StandardCharsets.UTF_8);
+             val certWriter = Files.newBufferedWriter(signingCert.toPath(), StandardCharsets.UTF_8)) {
             this.samlIdPCertificateAndKeyWriter.writeCertificateAndKey(keyWriter, certWriter);
         }
 
@@ -130,7 +130,7 @@ public class FileSystemSamlIdPMetadataGenerator implements SamlIdPMetadataGenera
         encryptionCert = StringUtils.remove(encryptionCert, BEGIN_CERTIFICATE);
         encryptionCert = StringUtils.remove(encryptionCert, END_CERTIFICATE).trim();
 
-        try (var writer = new StringWriter()) {
+        try (val writer = new StringWriter()) {
             IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);
             val metadata = writer.toString()
                 .replace("${entityId}", this.entityId)

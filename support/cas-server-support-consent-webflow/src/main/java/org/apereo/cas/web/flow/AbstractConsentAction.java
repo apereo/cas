@@ -78,7 +78,7 @@ public abstract class AbstractConsentAction extends AbstractAction {
         val decision = consentEngine.findConsentDecision(service, registeredService, authentication);
         flowScope.put("option", decision == null ? ConsentReminderOptions.ATTRIBUTE_NAME.getValue() : decision.getOptions().getValue());
 
-        final long reminder = decision == null ? consentProperties.getReminder() : decision.getReminder();
+        val reminder = decision == null ? consentProperties.getReminder() : decision.getReminder();
         flowScope.put("reminder", Long.valueOf(reminder));
         flowScope.put("reminderTimeUnit", decision == null
             ? consentProperties.getReminderTimeUnit().name() : decision.getReminderTimeUnit().name());

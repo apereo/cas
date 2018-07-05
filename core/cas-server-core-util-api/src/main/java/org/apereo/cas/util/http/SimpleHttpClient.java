@@ -91,10 +91,10 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
     public HttpMessage sendMessageToEndPoint(final URL url) {
         HttpEntity entity = null;
 
-        try (var response = this.wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
+        try (val response = this.wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
             val responseCode = response.getStatusLine().getStatusCode();
 
-            for (final int acceptableCode : this.acceptableCodes) {
+            for (val acceptableCode : this.acceptableCodes) {
                 if (responseCode == acceptableCode) {
                     LOGGER.debug("Response code received from server matched [{}].", responseCode);
                     entity = response.getEntity();
@@ -132,7 +132,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
     public boolean isValidEndPoint(final URL url) {
         HttpEntity entity = null;
 
-        try (var response = this.wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
+        try (val response = this.wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
             val responseCode = response.getStatusLine().getStatusCode();
 
             val idx = Collections.binarySearch(this.acceptableCodes, responseCode);

@@ -21,7 +21,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -56,7 +55,7 @@ public class CasSupportJdbcAuditConfigurationTests {
             "CAS", since, "1.2.3.4",
             "1.2.3.4");
         jdbcAuditTrailManager.record(ctx);
-        final Set results = jdbcAuditTrailManager.getAuditRecordsSince(time);
+        val results = jdbcAuditTrailManager.getAuditRecordsSince(time);
         assertFalse(results.isEmpty());
     }
 }

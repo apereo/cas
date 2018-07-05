@@ -10,7 +10,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
@@ -86,7 +85,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
 
     @Override
     public RegisteredService read(final Kryo kryo, final Input input, final Class<? extends RegisteredService> type) {
-        final AbstractRegisteredService svc = new RegexRegisteredService();
+        val svc = new RegexRegisteredService();
         svc.setServiceId(kryo.readObject(input, String.class));
         svc.setName(kryo.readObject(input, String.class));
         svc.setDescription(kryo.readObject(input, String.class));
@@ -137,7 +136,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
     private static <T> T readObjectByReflection(final Kryo kryo, final Input input, final Class<T> clazz) {
         val className = kryo.readObject(input, String.class);
         val foundClass = (Class<T>) Class.forName(className);
-        final Object result = kryo.readObject(input, foundClass);
+        val result = kryo.readObject(input, foundClass);
 
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [" + result

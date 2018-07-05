@@ -4,7 +4,6 @@ import lombok.val;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.ws.idp.WSFederationClaims;
@@ -23,7 +22,7 @@ public class WSFederationClaimsReleasePolicyTests {
 
     @Test
     public void verifyAttributeReleaseNone() {
-        final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
+        val service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
         val policy = new WSFederationClaimsReleasePolicy(
                 CollectionUtils.wrap("uid", "casuser", "cn", "CAS"));
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
@@ -34,7 +33,7 @@ public class WSFederationClaimsReleasePolicyTests {
 
     @Test
     public void verifyAttributeRelease() {
-        final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
+        val service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
         val policy = new WSFederationClaimsReleasePolicy(
                 CollectionUtils.wrap(WSFederationClaims.COMMON_NAME.name(), "cn", WSFederationClaims.EMAIL_ADDRESS.name(), "email"));
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",

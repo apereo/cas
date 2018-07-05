@@ -18,7 +18,6 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -206,8 +205,8 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
      */
     @SneakyThrows
     private CloseableHttpClient buildHttpClient() {
-        final ConnectionSocketFactory plainsf = PlainConnectionSocketFactory.getSocketFactory();
-        final LayeredConnectionSocketFactory sslsf = this.sslSocketFactory;
+        val plainsf = PlainConnectionSocketFactory.getSocketFactory();
+        val sslsf = this.sslSocketFactory;
         val registry = RegistryBuilder.<ConnectionSocketFactory>create()
             .register("http", plainsf).register("https", sslsf).build();
         val connMgmr = new PoolingHttpClientConnectionManager(registry);

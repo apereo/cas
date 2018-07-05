@@ -116,10 +116,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
             encryptionKey = EncodingUtils.decodeBase64(key);
         } else {
             val base64 = EncodingUtils.isBase64(encryptionSecretKey);
-            var key = new byte[0];
-            if (base64) {
-                key = EncodingUtils.decodeBase64(encryptionSecretKey);
-            }
+            val key = base64 ? EncodingUtils.decodeBase64(encryptionSecretKey) : new byte[0];
             if (base64 && key.length == encryptionKeySize) {
                 LOGGER.debug("Secret key for encryption defined under [{}] is Base64 encoded.", getEncryptionKeySetting());
                 encryptionKey = key;

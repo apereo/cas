@@ -40,7 +40,7 @@ public class TicketValidationResourceResolver extends TicketAsFirstParameterReso
             val assertion = Assertion.class.cast(object);
             val authn = assertion.getPrimaryAuthentication();
 
-            try (var writer = new StringWriter()) {
+            try (val writer = new StringWriter()) {
                 val objectWriter = mapper.writer();
 
                 final Map<String, Object> results = new LinkedHashMap<>();

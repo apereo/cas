@@ -99,7 +99,7 @@ public class ValidateCaptchaActionTests {
 
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        try (var webServer = new MockWebServer(9294,
+        try (val webServer = new MockWebServer(9294,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val result = validateCaptchaAction.execute(context);
@@ -115,7 +115,7 @@ public class ValidateCaptchaActionTests {
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        try (var webServer = new MockWebServer(9294,
+        try (val webServer = new MockWebServer(9294,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val result = validateCaptchaAction.execute(context);

@@ -109,7 +109,7 @@ public class DelegatedClientWebflowManager {
     }
 
     private Service determineService(final J2EContext ctx) {
-        final Service service = argumentExtractor.extractService(ctx.getRequest());
+        val service = argumentExtractor.extractService(ctx.getRequest());
         return this.authenticationRequestServiceSelectionStrategies.resolveService(service);
     }
 

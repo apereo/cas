@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.val;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +78,7 @@ public interface CipherExecutor<I, O> {
         properties.forEach((key, value) -> {
             try {
                 LOGGER.debug("Attempting to decode key [{}]", key);
-                final Object result = decode((I) value, parameters);
+                val result = decode((I) value, parameters);
                 if (result != null) {
                     LOGGER.debug("Decrypted key [{}] successfully", key);
                     decrypted.put(key, result);

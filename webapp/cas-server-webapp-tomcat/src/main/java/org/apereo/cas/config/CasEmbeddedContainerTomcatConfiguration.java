@@ -127,9 +127,9 @@ public class CasEmbeddedContainerTomcatConfiguration {
                 @SneakyThrows
                 protected synchronized void startInternal() {
                     super.startInternal();
-                    try (var is = res.getInputStream();
-                         var isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-                         var buffer = new BufferedReader(isr)) {
+                    try (val is = res.getInputStream();
+                         val isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+                         val buffer = new BufferedReader(isr)) {
                         parse(buffer);
                     }
                 }

@@ -1,8 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.util.HttpRequestUtils;
@@ -52,7 +51,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
                                                                             final String serviceToUse) {
         val artifactId = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_TICKET) : null;
         val id = cleanupUrl(serviceToUse);
-        final AbstractWebApplicationService newService = new SimpleWebApplicationServiceImpl(id, serviceToUse, artifactId);
+        val newService = new SimpleWebApplicationServiceImpl(id, serviceToUse, artifactId);
         determineWebApplicationFormat(request, newService);
         val source = getSourceParameter(request, CasProtocolConstants.PARAMETER_TARGET_SERVICE, CasProtocolConstants.PARAMETER_SERVICE);
         newService.setSource(source);
@@ -71,23 +70,19 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         val service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
         val serviceAttribute = request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
 
-        String serviceToUse = null;
         if (StringUtils.isNotBlank(targetService)) {
-            serviceToUse = targetService;
-        } else if (StringUtils.isNotBlank(service)) {
-            serviceToUse = service;
-        } else if (serviceAttribute != null) {
+            return targetService;
+        }
+        if (StringUtils.isNotBlank(service)) {
+            return service;
+        }
+        if (serviceAttribute != null) {
             if (serviceAttribute instanceof Service) {
-                serviceToUse = ((Service) serviceAttribute).getId();
-            } else {
-                serviceToUse = serviceAttribute.toString();
+                return ((Service) serviceAttribute).getId();
             }
+            return serviceAttribute.toString();
         }
-
-        if (StringUtils.isBlank(serviceToUse)) {
-            return null;
-        }
-        return serviceToUse;
+        return null;
     }
 
     @Override

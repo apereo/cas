@@ -95,7 +95,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @ConditionalOnMissingBean(name = "globalPrincipalAttributeRepository")
     public PrincipalAttributesRepository globalPrincipalAttributeRepository() {
         val props = casProperties.getAuthn().getAttributeRepository();
-        final long cacheTime = props.getExpirationTime();
+        val cacheTime = props.getExpirationTime();
         if (cacheTime < 0) {
             return new DefaultPrincipalAttributesRepository();
         }

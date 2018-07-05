@@ -1,8 +1,7 @@
 package org.apereo.cas.redis.core;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -109,11 +108,8 @@ public class RedisObjectFactory {
         if (redis.getSentinel() == null) {
             return null;
         }
-        RedisSentinelConfiguration sentinelConfig = null;
-        if (redis.getSentinel() != null) {
-            sentinelConfig = new RedisSentinelConfiguration().master(redis.getSentinel().getMaster());
-            sentinelConfig.setSentinels(createRedisNodesForProperties(redis));
-        }
+        val sentinelConfig = new RedisSentinelConfiguration().master(redis.getSentinel().getMaster());
+        sentinelConfig.setSentinels(createRedisNodesForProperties(redis));
         return sentinelConfig;
     }
 
@@ -121,7 +117,7 @@ public class RedisObjectFactory {
         final List<RedisNode> redisNodes = new ArrayList<>();
         if (redis.getSentinel().getNode() != null) {
             val nodes = redis.getSentinel().getNode();
-            for (val hostAndPort: nodes) {
+            for (val hostAndPort : nodes) {
                 val args = StringUtils.split(hostAndPort, ":");
                 redisNodes.add(new RedisNode(args[0], Integer.parseInt(args[1])));
             }

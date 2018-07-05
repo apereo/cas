@@ -92,7 +92,7 @@ public class RestfulPasswordlessTokenRepositoryTests {
     public void verifyFindToken() {
         val token = passwordlessTokenRepository.createToken("casuser");
         val data = passwordlessCipherExecutor.encode(token).toString();
-        try (var webServer = new MockWebServer(9293,
+        try (val webServer = new MockWebServer(9293,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val foundToken = passwordlessTokenRepository.findToken("casuser");
@@ -106,7 +106,7 @@ public class RestfulPasswordlessTokenRepositoryTests {
     @Test
     public void verifySaveToken() {
         val data = "THE_TOKEN";
-        try (var webServer = new MockWebServer(9293,
+        try (val webServer = new MockWebServer(9293,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             passwordlessTokenRepository.saveToken("casuser", data);
@@ -117,7 +117,7 @@ public class RestfulPasswordlessTokenRepositoryTests {
 
     @Test
     public void verifyDeleteToken() {
-        try (var webServer = new MockWebServer(9293,
+        try (val webServer = new MockWebServer(9293,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             passwordlessTokenRepository.deleteToken("casuser", "123456");

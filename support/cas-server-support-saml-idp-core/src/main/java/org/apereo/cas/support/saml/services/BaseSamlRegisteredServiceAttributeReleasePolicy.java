@@ -1,8 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
@@ -19,6 +18,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -45,23 +45,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
                 return super.getAttributesInternal(principal, attributes, service);
             }
 
-            var entityId = request.getParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID);
-            if (StringUtils.isBlank(entityId)) {
-                val svcParam = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
-                if (StringUtils.isNotBlank(svcParam)) {
-                    try {
-                        val builder = new URIBuilder(svcParam);
-                        entityId = builder.getQueryParams().stream()
-                            .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
-                            .map(NameValuePair::getValue)
-                            .findFirst()
-                            .orElse(StringUtils.EMPTY);
-                    } catch (final Exception e) {
-                        LOGGER.error(e.getMessage());
-                    }
-                }
-            }
-
+            val entityId = getEntityIdFromRequest(request);
             if (StringUtils.isBlank(entityId)) {
                 LOGGER.warn("Could not locate the entity id for SAML attribute release policy processing");
                 return super.getAttributesInternal(principal, attributes, service);
@@ -91,6 +75,28 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
             return getAttributesForSamlRegisteredService(attributes, saml, ctx, resolver, facade.get(), input);
         }
         return super.getAttributesInternal(principal, attributes, service);
+    }
+
+    private String getEntityIdFromRequest(final HttpServletRequest request) {
+        val entityId = request.getParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID);
+        if (StringUtils.isNotBlank(entityId)) {
+            return entityId;
+        }
+        val svcParam = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
+        if (StringUtils.isNotBlank(svcParam)) {
+            try {
+                val builder = new URIBuilder(svcParam);
+                return builder.getQueryParams()
+                    .stream()
+                    .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
+                    .map(NameValuePair::getValue)
+                    .findFirst()
+                    .orElse(StringUtils.EMPTY);
+            } catch (final Exception e) {
+                LOGGER.error(e.getMessage());
+            }
+        }
+        return null;
     }
 
     /**

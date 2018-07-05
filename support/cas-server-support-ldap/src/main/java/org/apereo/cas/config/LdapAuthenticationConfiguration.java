@@ -98,7 +98,7 @@ public class LdapAuthenticationConfiguration {
                     multiMapAttributes.keySet(), l.getLdapUrl(), l.getBaseDn());
 
                 LOGGER.debug("Creating LDAP password policy handling strategy for [{}]", l.getLdapUrl());
-                final AuthenticationPasswordPolicyHandlingStrategy strategy = createLdapPasswordPolicyHandlingStrategy(l);
+                val strategy = createLdapPasswordPolicyHandlingStrategy(l);
 
                 LOGGER.debug("Creating LDAP authentication handler for [{}]", l.getLdapUrl());
                 val handler = new LdapAuthenticationHandler(l.getName(),

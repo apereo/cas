@@ -3,6 +3,7 @@ package org.apereo.cas.monitor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.Formatter;
 
@@ -47,7 +48,7 @@ public class SimpleCacheStatistics implements CacheStatistics {
         if (this.name != null) {
             builder.append(this.name).append(':');
         }
-        try (var formatter = new Formatter(builder)) {
+        try (val formatter = new Formatter(builder)) {
             formatter.format("%.2f", this.size / BYTES_PER_MB);
         }
         builder.append("MB used, ");

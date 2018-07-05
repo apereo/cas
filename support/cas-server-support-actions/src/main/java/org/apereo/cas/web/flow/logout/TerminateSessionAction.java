@@ -1,14 +1,14 @@
 package org.apereo.cas.web.flow.logout;
 
-import lombok.val;
-
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.util.Pac4jUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
@@ -44,10 +44,11 @@ public class TerminateSessionAction extends AbstractAction {
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        var terminateSession = true;
-        if (logoutProperties.isConfirmLogout()) {
-            terminateSession = isLogoutRequestConfirmed(requestContext);
-        }
+        val terminateSession = FunctionUtils.doIf(logoutProperties.isConfirmLogout(),
+            () -> isLogoutRequestConfirmed(requestContext),
+            () -> true)
+            .get();
+
         if (terminateSession) {
             return terminate(requestContext);
         }
@@ -65,10 +66,7 @@ public class TerminateSessionAction extends AbstractAction {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
-        var tgtId = WebUtils.getTicketGrantingTicketId(context);
-        if (StringUtils.isBlank(tgtId)) {
-            tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
-        }
+        val tgtId = getTicketGrantingTicket(context);
         if (StringUtils.isNotBlank(tgtId)) {
             LOGGER.debug("Destroying SSO session linked to ticket-granting ticket [{}]", tgtId);
             val logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
@@ -87,6 +85,15 @@ public class TerminateSessionAction extends AbstractAction {
         }
 
         return this.eventFactorySupport.success(this);
+    }
+
+    private String getTicketGrantingTicket(final RequestContext context) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val tgtId = WebUtils.getTicketGrantingTicketId(context);
+        if (StringUtils.isBlank(tgtId)) {
+            return this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+        }
+        return tgtId;
     }
 
     /**

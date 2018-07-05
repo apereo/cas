@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.services.AbstractRegisteredService;
 import org.junit.Test;
 
 import java.io.File;
@@ -27,7 +26,7 @@ public class OAuth20WebApplicationServiceTests {
 
     @Test
     public void verifySerializeACompletePrincipalToJson() throws IOException {
-        final AbstractRegisteredService service = new OAuthRegisteredService();
+        val service = new OAuthRegisteredService();
         service.setName("checkCloning");
         service.setServiceId("testId");
         service.setTheme("theme");

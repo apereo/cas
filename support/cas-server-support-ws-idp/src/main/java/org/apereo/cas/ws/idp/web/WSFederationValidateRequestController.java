@@ -16,11 +16,11 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
-import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
 import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
 import org.jasig.cas.client.util.CommonUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -80,16 +80,20 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
 
     private void handleLogoutRequest(final WSFederationRequest fedRequest, final HttpServletRequest request,
                                      final HttpServletResponse response) throws Exception {
-        var logoutUrl = casProperties.getServer().getLogoutUrl();
-        if (StringUtils.isNotBlank(fedRequest.getWreply())) {
-            final Service service = webApplicationServiceFactory.createService(fedRequest.getWreply());
-            val registeredService = getWsFederationRegisteredService(service);
-            LOGGER.debug("Invoking logout operation for request [{}], redirecting next to [{}] matched against [{}]",
-                fedRequest, fedRequest.getWreply(), registeredService);
-            val logoutParam = casProperties.getLogout().getRedirectParameter();
-            logoutUrl = logoutUrl.concat("?").concat(logoutParam).concat("=").concat(service.getId());
-        }
-        final AuthenticationRedirectStrategy authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
+
+        val logoutUrl = FunctionUtils.doIf(StringUtils.isNotBlank(fedRequest.getWreply()),
+            () -> {
+                val service = webApplicationServiceFactory.createService(fedRequest.getWreply());
+                val registeredService = getWsFederationRegisteredService(service);
+                LOGGER.debug("Invoking logout operation for request [{}], redirecting next to [{}] matched against [{}]",
+                    fedRequest, fedRequest.getWreply(), registeredService);
+                val logoutParam = casProperties.getLogout().getRedirectParameter();
+                return casProperties.getServer().getLogoutUrl().concat("?").concat(logoutParam).concat("=").concat(service.getId());
+            },
+            () -> casProperties.getServer().getLogoutUrl())
+            .get();
+
+        val authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
         authenticationRedirectStrategy.redirect(request, response, logoutUrl);
     }
 
@@ -109,7 +113,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
         val initialUrl = CommonUtils.constructRedirectUrl(casProperties.getServer().getLoginUrl(),
             CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, renew, false);
         LOGGER.debug("Redirecting authN request to [{}]", initialUrl);
-        final AuthenticationRedirectStrategy authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
+        val authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
         authenticationRedirectStrategy.redirect(request, response, initialUrl);
     }
 }

@@ -71,10 +71,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
         val c = this.dataSource.getConnection();
         val s = c.createStatement();
         c.setAutoCommit(true);
-
-        for (var i = 0; i < 5; i++) {
-            s.execute("delete from casusers;");
-        }
+        s.execute("delete from casusers;");
         c.close();
     }
 

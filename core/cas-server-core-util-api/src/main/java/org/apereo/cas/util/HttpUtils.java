@@ -9,7 +9,6 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -306,7 +305,7 @@ public class HttpUtils {
     private static HttpClientBuilder prepareCredentialsIfNeeded(final HttpClientBuilder builder, final String basicAuthUsername,
                                                                 final String basicAuthPassword) {
         if (StringUtils.isNotBlank(basicAuthUsername) && StringUtils.isNotBlank(basicAuthPassword)) {
-            final CredentialsProvider provider = new BasicCredentialsProvider();
+            val provider = new BasicCredentialsProvider();
             val credentials = new UsernamePasswordCredentials(basicAuthUsername, basicAuthPassword);
             provider.setCredentials(AuthScope.ANY, credentials);
             return builder.setDefaultCredentialsProvider(provider);

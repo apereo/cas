@@ -1,6 +1,6 @@
 package org.apereo.cas.monitor;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
@@ -18,7 +18,7 @@ import java.util.concurrent.TimeoutException;
  * @since 3.5.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicator {
 
     /**
@@ -40,14 +40,17 @@ public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicato
             poolBuilder = result.get(this.maxWait, TimeUnit.MILLISECONDS);
             message = "OK";
         } catch (final InterruptedException e) {
-            message = "Validator thread interrupted during pool validation.";
+            message = "Validator thread interrupted during pool validation";
             poolBuilder.outOfService();
+            LOGGER.trace(e.getMessage(), e);
         } catch (final TimeoutException e) {
             poolBuilder.down();
             message = String.format("Pool validation timed out. Max wait is %s ms.", this.maxWait);
+            LOGGER.trace(e.getMessage(), e);
         } catch (final Exception e) {
             poolBuilder.outOfService();
             message = e.getMessage();
+            LOGGER.trace(e.getMessage(), e);
         }
         poolBuilder
             .withDetail("message", message)

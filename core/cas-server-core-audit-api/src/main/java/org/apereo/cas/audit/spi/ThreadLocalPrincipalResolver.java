@@ -1,11 +1,12 @@
 package org.apereo.cas.audit.spi;
 
-import lombok.val;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
 
@@ -40,10 +41,13 @@ public class ThreadLocalPrincipalResolver implements PrincipalResolver {
 
     private String getCurrentPrincipal(final Object returnValue, final Exception exception) {
         val authn = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
-        var principal = this.auditPrincipalIdProvider.getPrincipalIdFrom(authn, returnValue, exception);
-        if (principal == null) {
-            principal = AuthenticationCredentialsThreadLocalBinder.getCurrentCredentialIdsAsString();
-        }
-        return principal != null ? principal : UNKNOWN_USER;
+        val principal = this.auditPrincipalIdProvider.getPrincipalIdFrom(authn, returnValue, exception);
+
+        final String id = FunctionUtils.doIfNull(principal,
+            AuthenticationCredentialsThreadLocalBinder::getCurrentCredentialIdsAsString,
+            () -> principal)
+            .get();
+
+        return StringUtils.defaultIfBlank(id, UNKNOWN_USER);
     }
 }

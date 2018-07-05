@@ -1,19 +1,18 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.JdbcPrincipalAttributesProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.persondir.DefaultPersonDirectoryAttributeRepositoryPlan;
-import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
@@ -87,7 +86,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
 
         final List<PersonDirectoryAttributeRepositoryPlanConfigurer> configurers =
             ObjectUtils.defaultIfNull(attributeRepositoryConfigurers.getIfAvailable(), new ArrayList<>());
-        final PersonDirectoryAttributeRepositoryPlan plan = new DefaultPersonDirectoryAttributeRepositoryPlan();
+        val plan = new DefaultPersonDirectoryAttributeRepositoryPlan();
         configurers.forEach(c -> c.configureAttributeRepositoryPlan(plan));
         list.addAll(plan.getAttributeRepositories());
 
@@ -176,24 +175,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         val attrs = casProperties.getAuthn().getAttributeRepository();
         attrs.getJdbc().forEach(jdbc -> {
             if (StringUtils.isNotBlank(jdbc.getSql()) && StringUtils.isNotBlank(jdbc.getUrl())) {
-                final AbstractJdbcPersonAttributeDao jdbcDao;
-
-                if (jdbc.isSingleRow()) {
-                    LOGGER.debug("Configured single-row JDBC attribute repository for [{}]", jdbc.getUrl());
-                    jdbcDao = new SingleRowJdbcPersonAttributeDao(
-                        JpaBeans.newDataSource(jdbc),
-                        jdbc.getSql()
-                    );
-                } else {
-                    LOGGER.debug("Configured multi-row JDBC attribute repository for [{}]", jdbc.getUrl());
-                    jdbcDao = new MultiRowJdbcPersonAttributeDao(
-                        JpaBeans.newDataSource(jdbc),
-                        jdbc.getSql()
-                    );
-                    LOGGER.debug("Configured multi-row JDBC column mappings for [{}] are [{}]", jdbc.getUrl(), jdbc.getColumnMappings());
-                    ((MultiRowJdbcPersonAttributeDao) jdbcDao).setNameValueColumnMappings(jdbc.getColumnMappings());
-                }
-
+                val jdbcDao = createJdbcPersonAttributeDao(jdbc);
                 jdbcDao.setQueryAttributeMapping(CollectionUtils.wrap("username", jdbc.getUsername()));
                 val mapping = jdbc.getAttributes();
                 if (mapping != null && !mapping.isEmpty()) {
@@ -209,6 +191,24 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
             }
         });
         return list;
+    }
+
+    private AbstractJdbcPersonAttributeDao createJdbcPersonAttributeDao(final JdbcPrincipalAttributesProperties jdbc) {
+        if (jdbc.isSingleRow()) {
+            LOGGER.debug("Configured single-row JDBC attribute repository for [{}]", jdbc.getUrl());
+            return new SingleRowJdbcPersonAttributeDao(
+                JpaBeans.newDataSource(jdbc),
+                jdbc.getSql()
+            );
+        }
+        LOGGER.debug("Configured multi-row JDBC attribute repository for [{}]", jdbc.getUrl());
+        val jdbcDao = new MultiRowJdbcPersonAttributeDao(
+            JpaBeans.newDataSource(jdbc),
+            jdbc.getSql()
+        );
+        LOGGER.debug("Configured multi-row JDBC column mappings for [{}] are [{}]", jdbc.getUrl(), jdbc.getColumnMappings());
+        jdbcDao.setNameValueColumnMappings(jdbc.getColumnMappings());
+        return jdbcDao;
     }
 
     @ConditionalOnMissingBean(name = "ldapAttributeRepositories")

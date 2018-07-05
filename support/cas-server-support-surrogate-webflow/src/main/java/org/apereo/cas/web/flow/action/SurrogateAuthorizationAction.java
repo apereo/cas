@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
@@ -30,7 +29,7 @@ public class SurrogateAuthorizationAction extends AbstractAction {
     protected Event doExecute(final RequestContext requestContext) {
         val ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
         try {
-            final Service service = WebUtils.getService(requestContext);
+            val service = WebUtils.getService(requestContext);
             val authentication = WebUtils.getAuthentication(requestContext);
             val svc = WebUtils.getRegisteredService(requestContext);
             if (svc != null) {

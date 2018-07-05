@@ -11,7 +11,6 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
@@ -74,7 +73,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
         val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         LOGGER.debug("Located ticket-granting ticket [{}] from the request context", ticketGrantingTicketId);
 
-        final Service service = WebUtils.getService(context);
+        val service = WebUtils.getService(context);
         LOGGER.debug("Located service [{}] from the request context", service);
 
         val renewParam = casProperties.getSso().isRenewAuthnEnabled()
@@ -116,7 +115,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
         val credential = getCredentialFromContext(context);
 
         try {
-            final Service service = WebUtils.getService(context);
+            val service = WebUtils.getService(context);
             val authn = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);
             val registeredService = this.servicesManager.findServiceBy(service);
 

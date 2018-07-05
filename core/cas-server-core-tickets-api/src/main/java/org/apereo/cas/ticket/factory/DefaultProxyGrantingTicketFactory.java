@@ -1,9 +1,8 @@
 package org.apereo.cas.ticket.factory;
 
-import lombok.val;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -62,7 +61,7 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
     protected <T extends ProxyGrantingTicket> T produceTicket(final ServiceTicket serviceTicket, final Authentication authentication,
                                                               final String pgtId, final Class<T> clazz) {
         val result = serviceTicket.grantProxyGrantingTicket(pgtId,
-                authentication, this.ticketGrantingTicketExpirationPolicy);
+            authentication, this.ticketGrantingTicketExpirationPolicy);
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [" + result
                 + " is of type " + result.getClass()
@@ -77,13 +76,14 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      * @return the ticket
      */
     protected String produceTicketIdentifier() {
-        var pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
-        if (this.cipherExecutor != null) {
-            LOGGER.debug("Attempting to encode proxy-granting ticket [{}]", pgtId);
-            pgtId = this.cipherExecutor.encode(pgtId);
-            LOGGER.debug("Encoded proxy-granting ticket id [{}]", pgtId);
+        val pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
+        if (this.cipherExecutor == null) {
+            return pgtId;
         }
-        return pgtId;
+        LOGGER.debug("Attempting to encode proxy-granting ticket [{}]", pgtId);
+        val pgtEncoded = this.cipherExecutor.encode(pgtId);
+        LOGGER.debug("Encoded proxy-granting ticket id [{}]", pgtEncoded);
+        return pgtEncoded;
     }
 
     @Override

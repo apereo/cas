@@ -49,6 +49,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
             .collect(Collectors.toSet());
         val principal = authentication != null ? authentication.getPrincipal() : null;
 
+
         var provider = resolveRequestParameterTrigger(request, validProviderIds);
 
         if (!provider.isPresent()) {

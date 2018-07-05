@@ -5,7 +5,6 @@ import lombok.val;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.junit.Test;
 
 import java.io.File;
@@ -36,8 +35,7 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
     public void verifySerializeACachingPrincipalAttributesRepositoryToJson() throws IOException {
         val repositoryWritten = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.toString(), 1);
         MAPPER.writeValue(JSON_FILE, repositoryWritten);
-        final PrincipalAttributesRepository repositoryRead = MAPPER.readValue(JSON_FILE, CachingPrincipalAttributesRepository.class);
-
+        val repositoryRead = MAPPER.readValue(JSON_FILE, CachingPrincipalAttributesRepository.class);
         assertEquals(repositoryWritten, repositoryRead);
     }
 }

@@ -2,7 +2,6 @@ package org.apereo.cas.support.saml.services;
 
 import lombok.val;
 
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.junit.Test;
 
@@ -22,7 +21,7 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategyTests {
             new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(factory,
                 "http://localhost:8080/cas");
 
-        final Service service = factory.createService("http://localhost:8080/cas/idp/profile/SAML2/Callback.+?"
+        val service = factory.createService("http://localhost:8080/cas/idp/profile/SAML2/Callback.+?"
             + "entityId=http%3A%2F%2Flocalhost%3A8081%2Fcallback%3Fclient_name%3DSAML2Client&SAMLRequest=PD94bWwgdmVyc2lvbj0i"
             + "MS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c2FtbDJwOkF1dGhuUmVxdWVzdCB4bWxuczpzYW1sMnA9InVybjpvYXNpczpuYW1lczp0YzpTQU1MOjI"
             + "uMDpwcm90b2NvbCIgQXNzZXJ0aW9uQ29uc3VtZXJTZXJ2aWNlVVJMPSJodHRwOi8vbG9jYWxob3N0OjgwODEvY2FsbGJhY2s%2FY2xpZW50X25"

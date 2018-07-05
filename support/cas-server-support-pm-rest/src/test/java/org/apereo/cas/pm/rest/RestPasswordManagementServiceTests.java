@@ -21,7 +21,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -65,7 +64,7 @@ public class RestPasswordManagementServiceTests {
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);
         webServer.start();
-        final Map questions = this.passwordChangeService.getSecurityQuestions("casuser");
+        val questions = this.passwordChangeService.getSecurityQuestions("casuser");
         assertFalse(questions.isEmpty());
         assertTrue(questions.containsKey("question1"));
         webServer.stop();

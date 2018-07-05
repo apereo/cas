@@ -34,15 +34,16 @@ public class DefaultDeviceFingerprintStrategyTests extends AbstractMultifactorAu
 
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        var f1 = deviceFingerprintStrategy.determineFingerprint("casuser", context, false);
-        var f2 = deviceFingerprintStrategy.determineFingerprint("casuser", context, false);
+        val f1 = deviceFingerprintStrategy.determineFingerprint("casuser", context, false);
+        val f2 = deviceFingerprintStrategy.determineFingerprint("casuser", context, false);
         assertNotEquals(f1, f2);
 
-        f1 = deviceFingerprintStrategy.determineFingerprint("casuser", context, true);
+        val f3 = deviceFingerprintStrategy.determineFingerprint("casuser", context, true);
         assertNotNull(response.getCookies());
         assertTrue(response.getCookies().length == 1);
         request.setCookies(response.getCookies());
-        f2 = deviceFingerprintStrategy.determineFingerprint("casuser", context, false);
-        assertEquals(f1, f2);
+
+        val f4 = deviceFingerprintStrategy.determineFingerprint("casuser", context, false);
+        assertEquals(f3, f4);
     }
 }

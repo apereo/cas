@@ -44,7 +44,7 @@ public class GroovyRegisteredServiceAccessStrategyTests {
         authz.setGroovyScript("classpath:accessstrategy.groovy");
         MAPPER.writeValue(JSON_FILE, authz);
 
-        final RegisteredServiceAccessStrategy strategyRead = MAPPER.readValue(JSON_FILE, GroovyRegisteredServiceAccessStrategy.class);
+        val strategyRead = MAPPER.readValue(JSON_FILE, GroovyRegisteredServiceAccessStrategy.class);
         assertEquals(authz, strategyRead);
     }
 }

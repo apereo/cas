@@ -28,7 +28,7 @@ public class RefuseRegisteredServiceProxyPolicyTests {
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
 
-        final RegisteredServiceProxyPolicy policyRead = MAPPER.readValue(JSON_FILE, RefuseRegisteredServiceProxyPolicy.class);
+        val policyRead = MAPPER.readValue(JSON_FILE, RefuseRegisteredServiceProxyPolicy.class);
 
         assertEquals(policyWritten, policyRead);
     }

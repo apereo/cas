@@ -115,7 +115,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         LOGGER.debug("Distribution points for [{}]: [{}].", CertUtils.toString(cert), CollectionUtils.wrap(urls));
         final List<X509CRL> listOfLocations = new ArrayList<>(urls.length);
         var stopFetching = false;
-        
+
         for (var index = 0; !stopFetching && index < urls.length; index++) {
             val url = urls[index];
             val item = this.crlCache.get(url);
@@ -165,7 +165,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
             LOGGER.debug("No CRL was passed. Removing [{}] from cache...", id);
             return this.crlCache.remove(id);
         }
-        
+
         this.crlCache.put(new Element(id, crl.getEncoded()));
         return this.crlCache.get(id) != null;
 
@@ -219,18 +219,14 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      */
     private static void addURL(final List<URI> list, final String uriString) {
         try {
-            URI uri;
             try {
                 val url = new URL(URLDecoder.decode(uriString, StandardCharsets.UTF_8.name()));
-                uri = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null);
+                list.add(new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null));
             } catch (final MalformedURLException e) {
-                uri = new URI(uriString);
+                list.add(new URI(uriString));
             }
-            list.add(uri);
         } catch (final Exception e) {
             LOGGER.warn("[{}] is not a valid distribution point URI.", uriString);
         }
     }
-
-
 }

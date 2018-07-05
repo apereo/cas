@@ -1,19 +1,20 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import lombok.val;
-
+import com.google.common.base.Predicates;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.ASN1TaggedObject;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -87,11 +88,13 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
             val id = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
             if (id != null && UPN_OBJECTID.equals(id.getId())) {
                 val obj = (ASN1TaggedObject) seq.getObjectAt(1);
-                var prim = obj.getObject();
-                // Due to bug in java cert.getSubjectAltName, it can be tagged an extra time
-                if (prim instanceof ASN1TaggedObject) {
-                    prim = ASN1TaggedObject.getInstance(prim).getObject();
-                }
+                val primitiveObj = obj.getObject();
+
+                val func = FunctionUtils.doIf(Predicates.instanceOf(ASN1TaggedObject.class),
+                    () -> ASN1TaggedObject.getInstance(primitiveObj).getObject(),
+                    () -> primitiveObj);
+                val prim = func.apply(primitiveObj);
+
                 if (prim instanceof ASN1OctetString) {
                     return new String(((ASN1OctetString) prim).getOctets(), StandardCharsets.UTF_8);
                 }
@@ -137,14 +140,9 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      * X509Certificate#getSubjectAlternativeNames</a>
      */
     private static ASN1Sequence getAltnameSequence(final byte[] sanValue) {
-        ASN1Primitive oct = null;
-        try (var bInput = new ByteArrayInputStream(sanValue)) {
-            try (var input = new ASN1InputStream(bInput)) {
-                oct = input.readObject();
-            } catch (final IOException e) {
-                LOGGER.error("Error on getting Alt Name as a DERSEquence: [{}]", e.getMessage(), e);
-            }
-            return ASN1Sequence.getInstance(oct);
+        try (val bInput = new ByteArrayInputStream(sanValue);
+             val input = new ASN1InputStream(bInput)) {
+            return ASN1Sequence.getInstance(input.readObject());
         } catch (final IOException e) {
             LOGGER.error("An error has occurred while reading the subject alternative name value", e);
         }

@@ -23,7 +23,7 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.time.LocalDate;
-import java.util.Set;
+
 import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
@@ -66,7 +66,7 @@ public class MongoDbAuditTrailManagerTests {
             "serverIp");
         auditTrailExecutionPlan.record(ctx);
 
-        final Set results = auditTrailExecutionPlan.getAuditRecordsSince(twoDaysAgo);
+        val results = auditTrailExecutionPlan.getAuditRecordsSince(twoDaysAgo);
         assertFalse(results.isEmpty());
     }
 }

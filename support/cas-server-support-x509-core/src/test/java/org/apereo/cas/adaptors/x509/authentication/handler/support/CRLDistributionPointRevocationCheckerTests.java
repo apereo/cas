@@ -1,8 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import org.apache.commons.io.IOUtils;
@@ -13,8 +12,8 @@ import org.apereo.cas.adaptors.x509.authentication.revocation.checker.Revocation
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.AllowRevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import org.apereo.cas.util.MockWebServer;
-import org.junit.AfterClass;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -24,7 +23,6 @@ import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.time.ZoneOffset;
@@ -75,7 +73,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         if (file.exists()) {
             file.delete();
         }
-        final OutputStream out = new FileOutputStream(file);
+        val out = new FileOutputStream(file);
         IOUtils.copy(new ClassPathResource(crlFile).getInputStream(), out);
 
         this.checker = checker;

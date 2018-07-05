@@ -1,10 +1,9 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -75,7 +74,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
         }
         if (attributes.containsKey(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA)
             && attributes.containsKey(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER)) {
-            final boolean isBypass = Boolean.class.cast(attributes.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA));
+            val isBypass = Boolean.class.cast(attributes.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA));
             val bypassedId = attributes.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER).toString();
             LOGGER.debug("Found multifactor authentication bypass attributes for provider [{}]", bypassedId);
             if (isBypass && StringUtils.equals(bypassedId, requestedContext)) {
@@ -91,9 +90,9 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
             return Pair.of(Boolean.FALSE, requestedProvider);
         }
         if (!satisfiedProviders.isEmpty()) {
-            val providers = satisfiedProviders.toArray(new MultifactorAuthenticationProvider[] {});
+            val providers = satisfiedProviders.toArray(new MultifactorAuthenticationProvider[]{});
             OrderComparator.sortIfNecessary(providers);
-            final var result = Arrays.stream(providers)
+            val result = Arrays.stream(providers)
                 .filter(provider -> {
                     val p = requestedProvider.get();
                     return provider.equals(p) || provider.getOrder() >= p.getOrder();

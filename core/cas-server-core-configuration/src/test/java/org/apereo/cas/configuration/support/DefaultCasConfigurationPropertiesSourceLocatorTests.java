@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -53,7 +52,7 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
 
     @Test
     public void verifyLocator() {
-        final PropertySource source = casConfigurationPropertiesSourceLocator.locate(environment, resourceLoader);
+        val source = casConfigurationPropertiesSourceLocator.locate(environment, resourceLoader);
         assertTrue(source instanceof CompositePropertySource);
 
         val composite = (CompositePropertySource) source;
@@ -63,15 +62,8 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
 
     @Test
     public void verifyPriority() {
-        final PropertySource source = casConfigurationPropertiesSourceLocator.locate(environment, resourceLoader);
+        val source = casConfigurationPropertiesSourceLocator.locate(environment, resourceLoader);
         assertTrue(source instanceof CompositePropertySource);
-
-        // Ensure standalone property sources priority order is:
-        // 1. file
-        // 2. dir cas.props
-        // 3. dir app.props
-        // 4. classpath app.yml
-
         val composite = (CompositePropertySource) source;
         assertEquals("file", composite.getProperty("test.file"));
         assertEquals("dirCasProp", composite.getProperty("test.dir.cas"));

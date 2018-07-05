@@ -19,7 +19,6 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.ResourceLoader;
 
 import java.nio.charset.StandardCharsets;
 import java.security.AccessController;
@@ -94,7 +93,7 @@ public class CoreAuthenticationUtils {
             }
 
             if (selectionCriteria.endsWith(".groovy")) {
-                final ResourceLoader loader = new DefaultResourceLoader();
+                val loader = new DefaultResourceLoader();
                 val resource = loader.getResource(selectionCriteria);
                 if (resource != null) {
                     val script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
@@ -108,7 +107,7 @@ public class CoreAuthenticationUtils {
                 }
             }
 
-            final Class predicateClazz = ClassUtils.getClass(selectionCriteria);
+            val predicateClazz = ClassUtils.getClass(selectionCriteria);
             return (Predicate<org.apereo.cas.authentication.Credential>) predicateClazz.getDeclaredConstructor().newInstance();
         } catch (final Exception e) {
             val predicate = Pattern.compile(selectionCriteria).asPredicate();

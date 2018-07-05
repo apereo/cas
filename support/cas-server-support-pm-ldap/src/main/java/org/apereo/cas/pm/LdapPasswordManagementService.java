@@ -12,7 +12,6 @@ import org.apereo.cas.configuration.model.support.pm.PasswordManagementPropertie
 
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
-import org.ldaptive.ConnectionFactory;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -41,7 +40,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 CollectionUtils.wrap(username));
             LOGGER.debug("Constructed LDAP filter [{}] to locate account email", filter);
 
-            final ConnectionFactory factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+            val factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
             val response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
             LOGGER.debug("LDAP response to locate account email is [{}]", response);
 
@@ -83,7 +82,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 CollectionUtils.wrap(c.getId()));
             LOGGER.debug("Constructed LDAP filter [{}] to update account password", filter);
 
-            final ConnectionFactory factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+            val factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
             val response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
             LOGGER.debug("LDAP response to update password is [{}]", response);
 
@@ -115,7 +114,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 CollectionUtils.wrap(username));
             LOGGER.debug("Constructed LDAP filter [{}] to locate security questions", filter);
 
-            final ConnectionFactory factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+            val factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
             val response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
             LOGGER.debug("LDAP response for security questions [{}]", response);
 

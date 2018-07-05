@@ -34,7 +34,7 @@ public class UsernamePasswordRestHttpRequestCredentialFactory implements RestHtt
             LOGGER.debug("Invalid payload. 'username' and 'password' form fields are required.");
             return new ArrayList<>(0);
         }
-        final Credential c = new UsernamePasswordCredential(username, password);
+        val c = new UsernamePasswordCredential(username, password);
         return CollectionUtils.wrap(c);
     }
 }

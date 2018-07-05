@@ -121,7 +121,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         val providerWritten =
             new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
         MAPPER.writeValue(JSON_FILE, providerWritten);
-        final RegisteredServiceUsernameAttributeProvider providerRead = MAPPER.readValue(JSON_FILE, PrincipalAttributeRegisteredServiceUsernameProvider.class);
+        val providerRead = MAPPER.readValue(JSON_FILE, PrincipalAttributeRegisteredServiceUsernameProvider.class);
         assertEquals(providerWritten, providerRead);
     }
 }

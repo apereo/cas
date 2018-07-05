@@ -12,7 +12,6 @@ import org.junit.runners.JUnit4;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -31,7 +30,7 @@ public class GroovyScriptAttributeReleasePolicyTests {
     public void verifySerializeAGroovyScriptAttributeReleasePolicyToJson() throws IOException {
         val policyWritten = new GroovyScriptAttributeReleasePolicy();
         MAPPER.writeValue(JSON_FILE, policyWritten);
-        final RegisteredServiceAttributeReleasePolicy policyRead = MAPPER.readValue(JSON_FILE, GroovyScriptAttributeReleasePolicy.class);
+        val policyRead = MAPPER.readValue(JSON_FILE, GroovyScriptAttributeReleasePolicy.class);
         assertEquals(policyWritten, policyRead);
     }
 
@@ -39,7 +38,7 @@ public class GroovyScriptAttributeReleasePolicyTests {
     public void verifyAction() {
         val policy = new GroovyScriptAttributeReleasePolicy();
         policy.setGroovyScript("classpath:GroovyAttributeRelease.groovy");
-        final Map attributes = policy.getAttributes(CoreAuthenticationTestUtils.getPrincipal(), CoreAuthenticationTestUtils.getService(),
+        val attributes = policy.getAttributes(CoreAuthenticationTestUtils.getPrincipal(), CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
         assertTrue(attributes.containsKey("username"));
         assertTrue(attributes.containsKey("likes"));

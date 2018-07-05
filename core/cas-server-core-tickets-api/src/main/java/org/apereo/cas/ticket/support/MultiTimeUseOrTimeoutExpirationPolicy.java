@@ -56,7 +56,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
             LOGGER.debug("Ticket state is null for [{}]. Ticket has expired.", this.getClass().getSimpleName());
             return true;
         }
-        final long countUses = ticketState.getCountOfUses();
+        val countUses = ticketState.getCountOfUses();
         if (countUses >= this.numberOfUses) {
             LOGGER.debug("Ticket usage count [{}] is greater than or equal to [{}]. Ticket has expired", countUses, this.numberOfUses);
             return true;

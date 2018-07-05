@@ -9,7 +9,6 @@ import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
-
  * @since 3.0.0
  */
 @Slf4j
@@ -32,9 +31,8 @@ public class DefaultUniqueTicketIdGeneratorTests {
 
     @Test
     public void verifyNullSuffix() {
-        final String nullSuffix = null;
         val lengthWithoutSuffix = 23;
-        val generator = new DefaultUniqueTicketIdGenerator(12, nullSuffix);
+        val generator = new DefaultUniqueTicketIdGenerator(12, null);
 
         val ticketId = generator.getNewTicketId("test");
         assertEquals(lengthWithoutSuffix, ticketId.length());

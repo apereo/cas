@@ -28,7 +28,7 @@ public class RegexMatchingRegisteredServiceProxyPolicyTests {
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
 
-        final RegisteredServiceProxyPolicy policyRead = MAPPER.readValue(JSON_FILE, RegexMatchingRegisteredServiceProxyPolicy.class);
+        val policyRead = MAPPER.readValue(JSON_FILE, RegexMatchingRegisteredServiceProxyPolicy.class);
 
         assertEquals(policyWritten, policyRead);
     }

@@ -89,7 +89,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private String getPasswordOnRecord(final String username) throws IOException {
-        try (var stream = Files.lines(fileName.getFile().toPath())) {
+        try (val stream = Files.lines(fileName.getFile().toPath())) {
             return stream.map(line -> line.split(this.separator))
                 .filter(lineFields -> {
                     val userOnRecord = lineFields[0];

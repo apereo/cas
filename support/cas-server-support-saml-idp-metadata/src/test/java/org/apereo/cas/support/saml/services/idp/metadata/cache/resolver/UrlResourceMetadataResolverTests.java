@@ -23,8 +23,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import java.util.Collection;
-
 import static org.junit.Assert.*;
 
 /**
@@ -74,7 +72,7 @@ public class UrlResourceMetadataResolverTests {
         service.setName("TestShib");
         service.setId(1000);
         service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
-        final Collection results = resolver.resolve(service);
+        val results = resolver.resolve(service);
         assertFalse(results.isEmpty());
     }
 }

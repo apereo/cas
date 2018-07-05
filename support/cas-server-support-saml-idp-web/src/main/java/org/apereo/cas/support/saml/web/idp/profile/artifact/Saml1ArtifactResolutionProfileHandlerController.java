@@ -89,7 +89,7 @@ public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSam
             val ticketId = artifactTicketFactory.createTicketIdFor(artifactId);
             val ticket = this.ticketRegistry.getTicket(ticketId, SamlArtifactTicket.class);
 
-            final Service issuerService = webApplicationServiceFactory.createService(issuer);
+            val issuerService = webApplicationServiceFactory.createService(issuer);
             val casAssertion = buildCasAssertion(ticket.getTicketGrantingTicket().getAuthentication(),
                     issuerService, service,
                     CollectionUtils.wrap("artifact", ticket));

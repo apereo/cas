@@ -4,7 +4,6 @@ import lombok.val;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.webflow.InterruptUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -26,7 +25,7 @@ public class InquireInterruptAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
-        final Service service = WebUtils.getService(requestContext);
+        val service = WebUtils.getService(requestContext);
         val registeredService = WebUtils.getRegisteredService(requestContext);
         val credential = WebUtils.getCredential(requestContext);
 

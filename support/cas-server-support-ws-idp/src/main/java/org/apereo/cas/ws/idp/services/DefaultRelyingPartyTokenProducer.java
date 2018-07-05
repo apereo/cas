@@ -28,7 +28,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
-import java.util.Collection;
 
 /**
  * This is {@link DefaultRelyingPartyTokenProducer}.
@@ -79,8 +78,8 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
                         writer.writeAttribute("Uri", uri);
                         writer.writeAttribute("Optional", Boolean.TRUE.toString());
 
-                        final Collection vv = CollectionUtils.toCollection(v);
-                        for (val value: vv) {
+                        val vv = CollectionUtils.toCollection(v);
+                        for (val value : vv) {
                             if (value instanceof String) {
                                 writer.writeStartElement("ic", "Value", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
                                 writer.writeCharacters((String) value);

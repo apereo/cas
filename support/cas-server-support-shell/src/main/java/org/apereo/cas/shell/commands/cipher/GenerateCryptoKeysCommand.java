@@ -55,7 +55,7 @@ public class GenerateCryptoKeysCommand {
             .forEach(e -> {
                 val grp = e.getValue();
                 grp.getSources().forEach(Unchecked.biConsumer((k, v) -> {
-                    final Object obj = ClassUtils.getClass(k, true).getDeclaredConstructor().newInstance();
+                    val obj = ClassUtils.getClass(k, true).getDeclaredConstructor().newInstance();
                     if (obj instanceof EncryptionJwtSigningJwtCryptographyProperties) {
                         val crypto = (EncryptionJwtSigningJwtCryptographyProperties) obj;
                         LOGGER.info(cryptoGroup.concat(".encryption.key=" + EncodingUtils.generateJsonWebKey(crypto.getEncryption().getKeySize())));

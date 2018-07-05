@@ -61,10 +61,10 @@ public class ScimV1PrincipalAttributeMapper {
             getPrincipalAttributeValue(p, "honorificSuffix"));
         user.setName(name);
 
-        var entry = new Entry(getPrincipalAttributeValue(p, "mail"), "primary");
+        val entry = new Entry(getPrincipalAttributeValue(p, "mail"), "primary");
         user.setEmails(CollectionUtils.wrap(entry));
 
-        entry = new Entry(getPrincipalAttributeValue(p, "phoneNumber"), "primary");
-        user.setPhoneNumbers(CollectionUtils.wrap(entry));
+        val entry2 = new Entry(getPrincipalAttributeValue(p, "phoneNumber"), "primary");
+        user.setPhoneNumbers(CollectionUtils.wrap(entry2));
     }
 }

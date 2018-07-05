@@ -14,7 +14,6 @@ import org.apereo.cas.util.ScriptingUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -61,7 +60,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
          */
         this.allowedAttributes.entrySet().forEach(entry -> {
             val attributeName = entry.getKey();
-            final Collection mappedAttributes = CollectionUtils.wrap(entry.getValue());
+            val mappedAttributes = CollectionUtils.wrap(entry.getValue());
             LOGGER.debug("Attempting to map allowed attribute name [{}]", attributeName);
             val attributeValue = resolvedAttributes.get(attributeName);
             mappedAttributes.forEach(mapped -> {

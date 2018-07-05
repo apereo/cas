@@ -1,8 +1,7 @@
 package org.apereo.cas.authentication.support.password;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.util.RandomUtils;
@@ -22,6 +21,7 @@ import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
  */
 @Slf4j
 public class PasswordEncoderUtils {
+    private static final int HASH_WIDTH = 256;
 
     /**
      * New password encoder password encoder.
@@ -48,7 +48,7 @@ public class PasswordEncoderUtils {
                 return clazz.getDeclaredConstructor().newInstance();
             } catch (final Exception e) {
                 LOGGER.error("Falling back to a no-op password encoder as CAS has failed to create "
-                        + "an instance of the custom password encoder class " + type, e);
+                    + "an instance of the custom password encoder class " + type, e);
                 return NoOpPasswordEncoder.getInstance();
             }
         }
@@ -57,14 +57,14 @@ public class PasswordEncoderUtils {
         switch (encoderType) {
             case DEFAULT:
                 LOGGER.debug("Creating default password encoder with encoding alg [{}] and character encoding [{}]",
-                        properties.getEncodingAlgorithm(), properties.getCharacterEncoding());
+                    properties.getEncodingAlgorithm(), properties.getCharacterEncoding());
                 return new DefaultPasswordEncoder(properties.getEncodingAlgorithm(), properties.getCharacterEncoding());
             case STANDARD:
                 LOGGER.debug("Creating standard password encoder with the secret defined in the configuration");
                 return new StandardPasswordEncoder(properties.getSecret());
             case BCRYPT:
                 LOGGER.debug("Creating BCRYPT password encoder given the strength [{}] and secret in the configuration",
-                        properties.getStrength());
+                    properties.getStrength());
                 if (StringUtils.isBlank(properties.getSecret())) {
                     LOGGER.debug("Creating BCRYPT encoder without secret");
                     return new BCryptPasswordEncoder(properties.getStrength());
@@ -79,8 +79,7 @@ public class PasswordEncoderUtils {
                     LOGGER.debug("Creating PBKDF2 encoder without secret");
                     return new Pbkdf2PasswordEncoder();
                 }
-                val hashWidth = 256;
-                return new Pbkdf2PasswordEncoder(properties.getSecret(), properties.getStrength(), hashWidth);
+                return new Pbkdf2PasswordEncoder(properties.getSecret(), properties.getStrength(), HASH_WIDTH);
             case NONE:
             default:
                 LOGGER.debug("No password encoder shall be created given the requested encoder type [{}]", type);

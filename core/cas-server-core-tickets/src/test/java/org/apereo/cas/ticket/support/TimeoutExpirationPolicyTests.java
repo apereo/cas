@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -57,7 +58,7 @@ public class TimeoutExpirationPolicyTests {
     @Test
     public void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
         MAPPER.writeValue(JSON_FILE, expirationPolicy);
-        final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, TimeoutExpirationPolicy.class);
+        val policyRead = MAPPER.readValue(JSON_FILE, TimeoutExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);
     }
 }

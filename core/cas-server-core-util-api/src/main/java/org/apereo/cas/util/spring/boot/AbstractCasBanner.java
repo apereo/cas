@@ -52,13 +52,13 @@ public abstract class AbstractCasBanner implements Banner {
     private String collectEnvironmentInfo(final Environment environment, final Class<?> sourceClass) {
         val properties = System.getProperties();
         if (properties.containsKey("CAS_BANNER_SKIP")) {
-            try (var formatter = new Formatter()) {
+            try (val formatter = new Formatter()) {
                 formatter.format("CAS Version: %s%n", CasVersion.getVersion());
                 return formatter.toString();
             }
         }
 
-        try (var formatter = new Formatter()) {
+        try (val formatter = new Formatter()) {
             val sysInfo = SystemUtils.getSystemInfo();
             sysInfo.forEach((k, v) -> {
                 if (k.startsWith(SEPARATOR_CHAR)) {

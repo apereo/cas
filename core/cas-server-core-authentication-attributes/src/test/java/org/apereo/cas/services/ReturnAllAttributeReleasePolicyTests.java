@@ -29,7 +29,7 @@ public class ReturnAllAttributeReleasePolicyTests {
     public void verifySerializeAReturnAllAttributeReleasePolicyToJson() throws IOException {
         val policyWritten = new ReturnAllAttributeReleasePolicy();
         MAPPER.writeValue(JSON_FILE, policyWritten);
-        final RegisteredServiceAttributeReleasePolicy policyRead = MAPPER.readValue(JSON_FILE, ReturnAllAttributeReleasePolicy.class);
+        val policyRead = MAPPER.readValue(JSON_FILE, ReturnAllAttributeReleasePolicy.class);
         assertEquals(policyWritten, policyRead);
     }
 }

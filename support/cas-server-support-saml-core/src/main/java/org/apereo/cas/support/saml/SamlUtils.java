@@ -54,7 +54,7 @@ public class SamlUtils {
      * @return the x 509 certificate
      */
     public static X509Certificate readCertificate(final Resource resource) {
-        try (var in = resource.getInputStream()) {
+        try (val in = resource.getInputStream()) {
             return CertUtil.readCertificate(in);
         } catch (final Exception e) {
             throw new IllegalArgumentException("Error reading certificate " + resource, e);
@@ -90,7 +90,7 @@ public class SamlUtils {
 
             val marshaller = configBean.getUnmarshallerFactory().getUnmarshaller(root);
             if (marshaller != null) {
-                final Object result = marshaller.unmarshall(root);
+                val result = marshaller.unmarshall(root);
                 if (!clazz.isAssignableFrom(result.getClass())) {
                     throw new ClassCastException("Result [" + result
                         + " is of type " + result.getClass()

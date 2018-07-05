@@ -1,13 +1,12 @@
 package org.apereo.cas.support.openid.web.mvc;
 
-import lombok.val;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.AbstractDelegateController;
-import org.openid4java.message.Message;
 import org.openid4java.message.ParameterList;
 import org.openid4java.server.ServerManager;
 import org.springframework.web.servlet.ModelAndView;
@@ -48,18 +47,16 @@ public class SmartOpenIdController extends AbstractDelegateController implements
             ? parameters.getParameterValue(OpenIdProtocolConstants.OPENID_MODE)
             : null;
 
-        Message response = null;
+        val response = FunctionUtils.doIf(StringUtils.equals(mode, OpenIdProtocolConstants.ASSOCIATE),
+            () -> this.serverManager.associationResponse(parameters),
+            () -> null)
+            .get();
 
-        if (StringUtils.equals(mode, OpenIdProtocolConstants.ASSOCIATE)) {
-            response = this.serverManager.associationResponse(parameters);
-        }
         final Map<String, String> responseParams = new HashMap<>();
         if (response != null) {
             responseParams.putAll(response.getParameterMap());
         }
-
         return responseParams;
-
     }
 
     @Override

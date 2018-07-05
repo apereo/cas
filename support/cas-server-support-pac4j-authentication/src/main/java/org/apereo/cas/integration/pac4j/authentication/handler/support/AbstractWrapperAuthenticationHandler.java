@@ -15,7 +15,6 @@ import org.apereo.cas.util.Pac4jUtils;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.profile.creator.AuthenticatorProfileCreator;
 import org.pac4j.core.profile.creator.ProfileCreator;
 import org.pac4j.core.util.InitializableObject;
@@ -61,7 +60,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
                 ((InitializableObject) authenticator).init();
             }
             authenticator.validate(credentials, getWebContext());
-            final UserProfile profile = this.profileCreator.create(credentials, getWebContext());
+            val profile = this.profileCreator.create(credentials, getWebContext());
             LOGGER.debug("profile: [{}]", profile);
             return createResult(new ClientCredential(credentials, authenticator.getClass().getSimpleName()), profile);
         } catch (final Exception e) {

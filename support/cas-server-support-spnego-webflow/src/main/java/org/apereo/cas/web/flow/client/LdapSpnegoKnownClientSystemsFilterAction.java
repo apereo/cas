@@ -1,9 +1,8 @@
 package org.apereo.cas.web.flow.client;
 
-import lombok.val;
-
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
@@ -14,7 +13,6 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
-import org.ldaptive.Operation;
 
 import java.util.regex.Pattern;
 
@@ -28,7 +26,7 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
-    
+
     /**
      * The must-have attribute name.
      */
@@ -38,17 +36,18 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
 
     /**
      * Instantiates a new action.
-     * @param ipsToCheckPattern the ips to check pattern
+     *
+     * @param ipsToCheckPattern              the ips to check pattern
      * @param alternativeRemoteHostAttribute the alternative remote host attribute
-     * @param dnsTimeout # of milliseconds to wait for a DNS request to return
-     * @param connectionFactory   the connection factory
-     * @param searchRequest       the search request
-     * @param spnegoAttributeName the certificate revocation list attribute name
+     * @param dnsTimeout                     # of milliseconds to wait for a DNS request to return
+     * @param connectionFactory              the connection factory
+     * @param searchRequest                  the search request
+     * @param spnegoAttributeName            the certificate revocation list attribute name
      */
     public LdapSpnegoKnownClientSystemsFilterAction(final Pattern ipsToCheckPattern,
                                                     final String alternativeRemoteHostAttribute,
-                                                    final long dnsTimeout, 
-                                                    final ConnectionFactory connectionFactory, 
+                                                    final long dnsTimeout,
+                                                    final ConnectionFactory connectionFactory,
                                                     final SearchRequest searchRequest,
                                                     final String spnegoAttributeName) {
         super(ipsToCheckPattern, alternativeRemoteHostAttribute, dnsTimeout);
@@ -113,28 +112,22 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      */
     @SneakyThrows
     protected boolean executeSearchForSpnegoAttribute(final String remoteIp) {
-        Connection connection = null;
         val remoteHostName = getRemoteHostName(remoteIp);
         LOGGER.debug("Resolved remote hostname [{}] based on ip [{}]", remoteHostName, remoteIp);
 
-        try {
-            connection = createConnection();
-            final Operation searchOperation = new SearchOperation(connection);
+        try (val connection = createConnection()) {
+            val searchOperation = new SearchOperation(connection);
             this.searchRequest.getSearchFilter().setParameter(0, remoteHostName);
 
             LOGGER.debug("Using search filter [{}] on baseDn [{}]",
-                    this.searchRequest.getSearchFilter().format(),
-                    this.searchRequest.getBaseDn());
+                this.searchRequest.getSearchFilter().format(),
+                this.searchRequest.getBaseDn());
 
             final Response<SearchResult> searchResult = searchOperation.execute(this.searchRequest);
             if (searchResult.getResultCode() == ResultCode.SUCCESS) {
                 return processSpnegoAttribute(searchResult);
             }
             throw new IllegalArgumentException("Failed to establish a connection ldap. " + searchResult.getMessage());
-        } finally {
-            if (connection != null) {
-                connection.close();
-            }
         }
     }
 

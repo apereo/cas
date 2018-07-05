@@ -64,7 +64,7 @@ public class RestMultifactorAuthenticationTrustStorageTests {
         val r =
             MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap(r));
-        try (var webServer = new MockWebServer(9297,
+        try (val webServer = new MockWebServer(9297,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
 
@@ -83,7 +83,7 @@ public class RestMultifactorAuthenticationTrustStorageTests {
         r.setRecordDate(LocalDateTime.now().minusDays(2));
 
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap(r));
-        try (var webServer = new MockWebServer(9297,
+        try (val webServer = new MockWebServer(9297,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             mfaTrustEngine.set(r);

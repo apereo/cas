@@ -37,13 +37,14 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     @Override
     public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket, final Service service,
                                        final boolean credentialProvided, final Class<T> clazz) {
-        var ticketId = produceTicketIdentifier(service, ticketGrantingTicket, credentialProvided);
-        if (this.cipherExecutor != null) {
-            LOGGER.debug("Attempting to encode service ticket [{}]", ticketId);
-            ticketId = this.cipherExecutor.encode(ticketId);
-            LOGGER.debug("Encoded service ticket id [{}]", ticketId);
+        val ticketId = produceTicketIdentifier(service, ticketGrantingTicket, credentialProvided);
+        if (this.cipherExecutor == null) {
+            return produceTicket(ticketGrantingTicket, service, credentialProvided, ticketId, clazz);
         }
-        return produceTicket(ticketGrantingTicket, service, credentialProvided, ticketId, clazz);
+        LOGGER.debug("Attempting to encode service ticket [{}]", ticketId);
+        val encodedId = this.cipherExecutor.encode(ticketId);
+        LOGGER.debug("Encoded service ticket id [{}]", encodedId);
+        return produceTicket(ticketGrantingTicket, service, credentialProvided, encodedId, clazz);
     }
 
     /**

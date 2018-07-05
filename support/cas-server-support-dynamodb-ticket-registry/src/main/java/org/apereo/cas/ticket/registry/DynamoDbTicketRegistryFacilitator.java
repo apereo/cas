@@ -182,7 +182,7 @@ public class DynamoDbTicketRegistryFacilitator {
     private static Ticket deserializeTicket(final Map<String, AttributeValue> returnItem) {
         val bb = returnItem.get(ColumnNames.ENCODED.getColumnName()).getB();
         LOGGER.debug("Located binary encoding of ticket item [{}]. Transforming item into ticket object", returnItem);
-        try (var is = new ByteArrayInputStream(bb.array(), bb.arrayOffset() + bb.position(), bb.remaining())) {
+        try (val is = new ByteArrayInputStream(bb.array(), bb.arrayOffset() + bb.position(), bb.remaining())) {
             return SerializationUtils.deserialize(is);
         } catch (final Exception e){
             LOGGER.error(e.getMessage(), e);

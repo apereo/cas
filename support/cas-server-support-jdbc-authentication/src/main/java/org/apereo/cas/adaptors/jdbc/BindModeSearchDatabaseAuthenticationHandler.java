@@ -1,19 +1,16 @@
 package org.apereo.cas.adaptors.jdbc;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -40,21 +37,15 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                                         final String originalPassword)
         throws GeneralSecurityException, PreventedException {
-        Connection connection = null;
-        try {
-            val username = credential.getUsername();
-            val password = credential.getPassword();
-            connection = getDataSource().getConnection(username, password);
+        val username = credential.getUsername();
+        val password = credential.getPassword();
+        try (val connection = getDataSource().getConnection(username, password)) {
             val principal = this.principalFactory.createPrincipal(username);
             return createHandlerResult(credential, principal, new ArrayList<>(0));
         } catch (final SQLException e) {
             throw new FailedLoginException(e.getMessage());
         } catch (final Exception e) {
             throw new PreventedException("Unexpected SQL connection error", e);
-        } finally {
-            if (connection != null) {
-                DataSourceUtils.releaseConnection(connection, getDataSource());
-            }
         }
     }
 }

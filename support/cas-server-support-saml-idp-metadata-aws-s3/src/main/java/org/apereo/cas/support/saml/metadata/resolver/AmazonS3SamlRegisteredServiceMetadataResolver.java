@@ -53,7 +53,7 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
                     val objectKey = obj.getKey();
                     LOGGER.debug("Fetching object [{}] from bucket [{}]", objectKey, bucketName);
                     val object = s3Client.getObject(obj.getBucketName(), objectKey);
-                    try (var is = object.getObjectContent()) {
+                    try (val is = object.getObjectContent()) {
                         val document = new SamlMetadataDocument();
                         document.setId(System.nanoTime());
                         document.setName(objectKey);

@@ -1,9 +1,8 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
@@ -25,11 +24,8 @@ public class BasicCredentialMetaDataTests {
     @Test
     public void verifySerializeABasicCredentialMetaDataToJson() throws IOException {
         val credentialMetaDataWritten = new BasicCredentialMetaData(new UsernamePasswordCredential());
-
         MAPPER.writeValue(JSON_FILE, credentialMetaDataWritten);
-
-        final CredentialMetaData credentialMetaDataRead = MAPPER.readValue(JSON_FILE, BasicCredentialMetaData.class);
-
+        val credentialMetaDataRead = MAPPER.readValue(JSON_FILE, BasicCredentialMetaData.class);
         assertEquals(credentialMetaDataWritten, credentialMetaDataRead);
     }
 }

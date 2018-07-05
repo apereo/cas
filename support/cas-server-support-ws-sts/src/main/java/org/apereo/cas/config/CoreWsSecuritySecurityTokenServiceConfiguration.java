@@ -167,7 +167,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public List transportTokenValidators() {
-        final List list = new ArrayList<>();
+        val list = new ArrayList<>();
         list.add(transportSamlTokenValidator());
         list.add(new X509TokenValidator());
         return list;
@@ -176,7 +176,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public List transportTokenProviders() {
-        final List list = new ArrayList<>();
+        val list = new ArrayList<>();
         list.add(transportSamlTokenProvider());
         return list;
     }

@@ -34,7 +34,7 @@ public class DefaultRegisteredServiceMultifactorPolicyTests {
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
 
-        final RegisteredServiceMultifactorPolicy policyRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceMultifactorPolicy.class);
+        val policyRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceMultifactorPolicy.class);
 
         assertEquals(policyWritten, policyRead);
     }

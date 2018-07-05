@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
 import org.apereo.cas.services.JsonServiceRegistry;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
@@ -75,11 +74,8 @@ public class OAuthRegisteredServiceTests {
         serviceWritten.setClientId("clientid");
         serviceWritten.setServiceId("secret");
         serviceWritten.setBypassApprovalPrompt(true);
-
         MAPPER.writeValue(JSON_FILE, serviceWritten);
-
-        final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, OAuthRegisteredService.class);
-
+        val serviceRead = MAPPER.readValue(JSON_FILE, OAuthRegisteredService.class);
         assertEquals(serviceWritten, serviceRead);
     }
 }

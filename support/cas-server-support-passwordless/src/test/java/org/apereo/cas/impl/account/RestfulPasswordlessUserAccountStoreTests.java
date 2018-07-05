@@ -90,7 +90,7 @@ public class RestfulPasswordlessUserAccountStoreTests {
     public void verifyAction() throws Exception {
         val u = new PasswordlessUserAccount("casuser", "casuser@example.org", "123-456-7890", "CAS");
         val data = MAPPER.writeValueAsString(u);
-        try (var webServer = new MockWebServer(9291,
+        try (val webServer = new MockWebServer(9291,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val user = passwordlessUserAccountStore.findUser("casuser");

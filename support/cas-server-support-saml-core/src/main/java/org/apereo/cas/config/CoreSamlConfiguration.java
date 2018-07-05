@@ -80,7 +80,7 @@ public class CoreSamlConfiguration {
         pool.setNamespaceAware(true);
 
         final Map<String, Object> attributes = new HashMap<>();
-        final Class clazz = ClassUtils.getClass(casProperties.getSamlCore().getSecurityManager());
+        val clazz = ClassUtils.getClass(casProperties.getSamlCore().getSecurityManager());
         attributes.put("http://apache.org/xml/properties/security-manager", clazz.getDeclaredConstructor().newInstance());
         pool.setBuilderAttributes(attributes);
 

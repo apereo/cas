@@ -50,8 +50,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import java.util.Collection;
-
 import static org.junit.Assert.*;
 
 /**
@@ -112,7 +110,7 @@ public class SurrogateLdapAuthenticationServiceTests {
 
     @Test
     public void verifyAccountsQualifying() {
-        final Collection results = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy("casuser");
+        val results = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy("casuser");
         assertFalse(results.isEmpty());
     }
 

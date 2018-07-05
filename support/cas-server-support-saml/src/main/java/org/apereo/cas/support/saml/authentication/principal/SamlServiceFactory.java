@@ -85,7 +85,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
      */
     private static String getRequestBody(final HttpServletRequest request) {
         String body = null;
-        try (var reader = request.getReader()) {
+        try (val reader = request.getReader()) {
             if (reader == null) {
                 LOGGER.debug("Request body could not be read because it's empty.");
             } else {

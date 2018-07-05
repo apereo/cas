@@ -1,8 +1,7 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apereo.cas.CipherExecutor;
@@ -148,16 +147,13 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
     public CipherExecutor passwordlessCipherExecutor() {
         val tokens = casProperties.getAuthn().getPasswordless().getTokens();
         val crypto = tokens.getRest().getCrypto();
-        final CipherExecutor cipher;
         if (crypto.isEnabled()) {
-            cipher = new PasswordlessTokenCipherExecutor(
+            return new PasswordlessTokenCipherExecutor(
                 crypto.getEncryption().getKey(),
                 crypto.getSigning().getKey(),
                 crypto.getAlg());
-        } else {
-            cipher = CipherExecutor.noOpOfSerializableToString();
         }
-        return cipher;
+        return CipherExecutor.noOpOfSerializableToString();
     }
 
     @Bean

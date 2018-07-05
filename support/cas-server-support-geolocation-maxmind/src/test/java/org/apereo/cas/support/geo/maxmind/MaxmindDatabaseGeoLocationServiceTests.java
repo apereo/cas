@@ -44,9 +44,9 @@ public class MaxmindDatabaseGeoLocationServiceTests {
         when(country.country(any(InetAddress.class))).thenReturn(countryResponse);
 
         val service = new MaxmindDatabaseGeoLocationService(city, country);
-        var response = service.locate("127.0.0.1");
+        val response = service.locate("127.0.0.1");
         assertNotNull(response);
-        response = service.locate(100D, 100D);
-        assertNull(response);
+        val response2 = service.locate(100D, 100D);
+        assertNull(response2);
     }
 }

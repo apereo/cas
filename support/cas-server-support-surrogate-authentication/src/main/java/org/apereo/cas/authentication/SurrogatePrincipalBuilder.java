@@ -32,8 +32,9 @@ public class SurrogatePrincipalBuilder {
      */
     public Principal buildSurrogatePrincipal(final String surrogate, final Principal primaryPrincipal, final Credential credentials) {
         val person = attributeRepository.getPerson(surrogate);
-        final Map attributes = person != null ? person.getAttributes() : new LinkedHashMap<>();
-        return new SurrogatePrincipal(primaryPrincipal, principalFactory.createPrincipal(surrogate, attributes));
+        val attributes = person != null ? person.getAttributes() : new LinkedHashMap<>();
+        val principal = principalFactory.createPrincipal(surrogate, (Map) attributes);
+        return new SurrogatePrincipal(primaryPrincipal, principal);
     }
 
     /**

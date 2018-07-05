@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -54,7 +53,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
      */
     @Override
     protected Event doExecute(final RequestContext context) {
-        final Service service = WebUtils.getService(context);
+        val service = WebUtils.getService(context);
         LOGGER.debug("Service asking for service ticket is [{}]", service);
 
         val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);

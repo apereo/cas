@@ -12,7 +12,6 @@ import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.Assert.*;
@@ -31,7 +30,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
     @Test
     public void verifyNullTicket() throws Exception {
         val ctx = new MockRequestContext();
-        final Action action = new TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
+        val action = new TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
         val event = action.execute(ctx);
         assertEquals(CasWebflowConstants.TRANSITION_ID_TGT_NOT_EXISTS, event.getId());
     }
@@ -41,7 +40,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
         val ctx = new MockRequestContext();
         val tgt = new MockTicketGrantingTicket("user");
         WebUtils.putTicketGrantingTicketInScopes(ctx, tgt);
-        final Action action = new TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
+        val action = new TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
         val event = action.execute(ctx);
         assertEquals(CasWebflowConstants.TRANSITION_ID_TGT_INVALID, event.getId());
     }
@@ -52,7 +51,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
         val ctxAuthN = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
         val tgt = this.getCentralAuthenticationService().createTicketGrantingTicket(ctxAuthN);
         WebUtils.putTicketGrantingTicketInScopes(ctx, tgt);
-        final Action action = new TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
+        val action = new TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
         val event = action.execute(ctx);
         assertEquals(CasWebflowConstants.TRANSITION_ID_TGT_VALID, event.getId());
     }

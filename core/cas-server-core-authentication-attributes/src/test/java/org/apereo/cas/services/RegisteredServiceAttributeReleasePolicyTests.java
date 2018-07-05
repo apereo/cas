@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Test;
@@ -192,7 +191,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         attributes.put("cn", Arrays.asList(new Object[]{"commonName"}));
         attributes.put("username", Arrays.asList(new Object[]{"uid"}));
 
-        final IPersonAttributeDao dao = new StubPersonAttributeDao(attributes);
+        val dao = new StubPersonAttributeDao(attributes);
         val person = mock(IPersonAttributes.class);
         when(person.getName()).thenReturn("uid");
         when(person.getAttributes()).thenReturn(attributes);

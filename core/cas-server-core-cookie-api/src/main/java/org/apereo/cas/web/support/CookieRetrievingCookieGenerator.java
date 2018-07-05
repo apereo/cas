@@ -1,18 +1,17 @@
 package org.apereo.cas.web.support;
 
-import lombok.val;
-
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import lombok.Setter;
 
 /**
  * Extends CookieGenerator to allow you to retrieve a value from a request.
@@ -105,25 +104,38 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
     }
 
     private Boolean isRememberMeAuthentication(final RequestContext requestContext) {
+        if (isRememberMeProvidedInRequest(requestContext)) {
+            LOGGER.debug("This request is from a remember-me authentication event");
+            return true;
+        }
+        if (isRememberMeRecordedInAuthentication(requestContext)) {
+            LOGGER.debug("The recorded authentication is from a remember-me request");
+            return true;
+        }
+        return false;
+    }
+
+    private Boolean isRememberMeRecordedInAuthentication(final RequestContext requestContext) {
+        LOGGER.debug("Request does not indicate a remember-me authentication event. Locating authentication object from the request context...");
+        val auth = WebUtils.getAuthentication(requestContext);
+        if (auth == null) {
+            return false;
+        }
+        val attributes = auth.getAttributes();
+        LOGGER.debug("Located authentication attributes [{}]", attributes);
+        if (attributes.containsKey(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME)) {
+            val rememberMeValue = attributes.getOrDefault(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.FALSE);
+            LOGGER.debug("Located remember-me authentication attribute [{}]", rememberMeValue);
+            return CollectionUtils.wrapSet(rememberMeValue).contains(Boolean.TRUE);
+        }
+        return false;
+    }
+
+    private boolean isRememberMeProvidedInRequest(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val value = request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME);
         LOGGER.debug("Locating request parameter [{}] with value [{}]", RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, value);
-        var isRememberMe = StringUtils.isNotBlank(value) && WebUtils.isRememberMeAuthenticationEnabled(requestContext);
-        if (!isRememberMe) {
-            LOGGER.debug("Request does not indicate a remember-me authentication event. Locating authentication object from the request context...");
-            val auth = WebUtils.getAuthentication(requestContext);
-            if (auth != null) {
-                val attributes = auth.getAttributes();
-                LOGGER.debug("Located authentication attributes [{}]", attributes);
-                if (attributes.containsKey(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME)) {
-                    val rememberMeValue = attributes.getOrDefault(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.FALSE);
-                    LOGGER.debug("Located remember-me authentication attribute [{}]", rememberMeValue);
-                    isRememberMe = CollectionUtils.wrapSet(rememberMeValue).contains(Boolean.TRUE);
-                }
-            }
-        }
-        LOGGER.debug("Is this request from a remember-me authentication event? [{}]", BooleanUtils.toStringYesNo(isRememberMe));
-        return isRememberMe;
+        return StringUtils.isNotBlank(value) && WebUtils.isRememberMeAuthenticationEnabled(requestContext);
     }
 
     /**

@@ -51,7 +51,7 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
                 return true;
             }
             LOGGER.debug("Executing SQL query [{}]", surrogateSearchQuery);
-            final int count = this.jdbcTemplate.queryForObject(surrogateSearchQuery, Integer.class, surrogate.getId(), username);
+            val count = this.jdbcTemplate.queryForObject(surrogateSearchQuery, Integer.class, surrogate.getId(), username);
             return count > 0;
         } catch (final NoResultException e) {
             LOGGER.debug(e.getMessage());

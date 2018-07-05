@@ -1,9 +1,8 @@
 package org.apereo.cas.adaptors.fortress;
 
-import lombok.val;
-
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.directory.fortress.core.AccessMgr;
 import org.apache.directory.fortress.core.model.Session;
 import org.apache.directory.fortress.core.model.User;
@@ -59,11 +58,10 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
                                                                                         final String originalPassword) throws GeneralSecurityException, PreventedException {
         val username = c.getUsername();
         val password = c.getPassword();
-        Session fortressSession = null;
         try {
             LOGGER.debug("Trying to delegate authentication for [{}] to fortress", new Object[]{username});
             val user = new User(username, password);
-            fortressSession = accessManager.createSession(user, false);
+            val fortressSession = accessManager.createSession(user, false);
             if (fortressSession != null && fortressSession.isAuthenticated()) {
                 val writer = new StringWriter();
                 marshaller.marshal(fortressSession, writer);
@@ -79,8 +77,7 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
             LOGGER.error(errorMessage, e);
             throw new FailedLoginException(errorMessage);
         } catch (final JAXBException e) {
-            val errorMessage = String.format("Cannot marshal fortress session with value: %s", fortressSession);
-            LOGGER.warn(errorMessage);
+            LOGGER.warn("Cannot marshal fortress session with value", e);
             throw new PreventedException(e);
         }
         throw new FailedLoginException(String.format("[%s] could not authenticate with fortress", username));

@@ -68,11 +68,6 @@ public class PathWatcherService implements Runnable, Closeable {
             WatchKey key;
             while ((key = watcher.take()) != null) {
                 handleEvent(key);
-                /*
-                    Reset the key -- this step is critical to receive
-                    further watch events. If the key is no longer valid, the directory
-                    is inaccessible so exit the loop.
-                 */
                 val valid = key != null && key.reset();
                 if (!valid) {
                     LOGGER.info("Directory key is no longer valid. Quitting watcher service");

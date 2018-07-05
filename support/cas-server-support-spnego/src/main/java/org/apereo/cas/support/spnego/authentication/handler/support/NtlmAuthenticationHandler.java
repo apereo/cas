@@ -1,7 +1,5 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
-import lombok.val;
-
 import jcifs.Config;
 import jcifs.UniAddress;
 import jcifs.netbios.NbtAddress;
@@ -11,7 +9,9 @@ import jcifs.ntlmssp.Type3Message;
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbAuthException;
 import jcifs.smb.SmbSession;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
@@ -71,23 +71,9 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
         val ntlmCredential = (SpnegoCredential) credential;
         val src = ntlmCredential.getInitToken();
 
-        final UniAddress dc;
         var success = false;
         try {
-            if (this.loadBalance) {
-                if (StringUtils.isNotBlank(this.includePattern)) {
-                    val dcs = NbtAddress.getAllByName(this.domainController, NBT_ADDRESS_TYPE, null, null);
-                    dc = Arrays.stream(dcs)
-                            .filter(dc2 -> dc2.getHostAddress().matches(this.includePattern))
-                            .findFirst()
-                            .map(UniAddress::new)
-                            .orElse(null);
-                } else {
-                    dc = new UniAddress(NbtAddress.getByName(this.domainController, NBT_ADDRESS_TYPE, null));
-                }
-            } else {
-                dc = UniAddress.getByName(this.domainController, true);
-            }
+            final val dc = getUniAddress();
             val challenge = SmbSession.getChallenge(dc);
 
             switch (src[NTLM_TOKEN_TYPE_FIELD_INDEX]) {
@@ -95,7 +81,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
                     LOGGER.debug("Type 1 received");
                     val type1 = new Type1Message(src);
                     val type2 = new Type2Message(type1,
-                            challenge, null);
+                        challenge, null);
                     LOGGER.debug("Type 2 returned. Setting next token.");
                     ntlmCredential.setNextToken(type2.toByteArray());
                     break;
@@ -105,8 +91,8 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
                     val lmResponse = type3.getLMResponse() == null ? new byte[0] : type3.getLMResponse();
                     val ntResponse = type3.getNTResponse() == null ? new byte[0] : type3.getNTResponse();
                     val ntlm = new NtlmPasswordAuthentication(
-                            type3.getDomain(), type3.getUser(), challenge,
-                            lmResponse, ntResponse);
+                        type3.getDomain(), type3.getUser(), challenge,
+                        lmResponse, ntResponse);
                     LOGGER.debug("Trying to authenticate [{}] with domain controller", type3.getUser());
                     try {
                         SmbSession.logon(dc, ntlm);
@@ -127,6 +113,22 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
             throw new FailedLoginException();
         }
         return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(ntlmCredential), ntlmCredential.getPrincipal());
+    }
+
+    @SneakyThrows
+    private UniAddress getUniAddress() {
+        if (this.loadBalance) {
+            if (StringUtils.isNotBlank(this.includePattern)) {
+                val dcs = NbtAddress.getAllByName(this.domainController, NBT_ADDRESS_TYPE, null, null);
+                return Arrays.stream(dcs)
+                    .filter(dc2 -> dc2.getHostAddress().matches(this.includePattern))
+                    .findFirst()
+                    .map(UniAddress::new)
+                    .orElse(null);
+            }
+            return new UniAddress(NbtAddress.getByName(this.domainController, NBT_ADDRESS_TYPE, null));
+        }
+        return UniAddress.getByName(this.domainController, true);
     }
 
     @Override

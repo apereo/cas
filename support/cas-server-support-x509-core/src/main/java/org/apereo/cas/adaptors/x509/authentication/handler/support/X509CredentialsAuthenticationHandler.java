@@ -1,20 +1,20 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
-import lombok.val;
-
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.NoOpRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.crypto.CertUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -231,15 +231,16 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
             return !this.requireKeyUsage;
         }
 
-        final boolean valid;
-        if (isCritical(certificate, KEY_USAGE_OID) || this.requireKeyUsage) {
-            LOGGER.debug("KeyUsage extension is marked critical or required by configuration.");
-            valid = keyUsage[0];
-        } else {
-            LOGGER.debug("KeyUsage digitalSignature=%s, Returning true since keyUsage validation not required by configuration.");
-            valid = true;
-        }
-        return valid;
+        val func = FunctionUtils.doIf(c -> isCritical(certificate, KEY_USAGE_OID) || requireKeyUsage,
+            t -> {
+                LOGGER.debug("KeyUsage extension is marked critical or required by configuration.");
+                return keyUsage[0];
+            },
+            f -> {
+                LOGGER.debug("KeyUsage digitalSignature=%s, Returning true since keyUsage validation not required by configuration.");
+                return true;
+            });
+        return func.apply(certificate);
     }
 
     /**

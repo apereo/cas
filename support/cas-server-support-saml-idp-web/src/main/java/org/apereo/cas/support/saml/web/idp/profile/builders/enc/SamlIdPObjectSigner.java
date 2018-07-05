@@ -178,7 +178,7 @@ public class SamlIdPObjectSigner {
                                                                            final SamlRegisteredService service) throws SAMLException {
         @NonNull
         val secParametersContext = outboundContext.getSubcontext(SecurityParametersContext.class, true);
-        final RoleDescriptor roleDesc = adaptor.getSsoDescriptor();
+        val roleDesc = adaptor.getSsoDescriptor();
         val signingParameters = buildSignatureSigningParameters(roleDesc, service);
         secParametersContext.setSignatureSigningParameters(signingParameters);
     }

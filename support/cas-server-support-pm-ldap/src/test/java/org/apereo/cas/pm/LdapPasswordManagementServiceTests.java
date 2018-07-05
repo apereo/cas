@@ -5,7 +5,6 @@ import lombok.val;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -32,7 +31,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import java.util.Map;
 import lombok.SneakyThrows;
 
 import static org.junit.Assert.*;
@@ -81,7 +79,7 @@ public class LdapPasswordManagementServiceTests {
 
     @Test
     public void verifyPasswordChangedFails() {
-        final Credential credential = new UsernamePasswordCredential("caspm", "123456");
+        val credential = new UsernamePasswordCredential("caspm", "123456");
         val bean = new PasswordChangeBean();
         bean.setConfirmedPassword("Mellon");
         bean.setPassword("Mellon");
@@ -96,7 +94,7 @@ public class LdapPasswordManagementServiceTests {
 
     @Test
     public void verifyFindSecurityQuestions() {
-        final Map questions = passwordChangeService.getSecurityQuestions("caspm");
+        val questions = passwordChangeService.getSecurityQuestions("caspm");
         assertEquals(2, questions.size());
         assertTrue(questions.containsKey("RegisteredAddressQuestion"));
         assertTrue(questions.containsKey("PostalCodeQuestion"));

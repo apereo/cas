@@ -69,7 +69,7 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
         if (service.getId() == AbstractRegisteredService.INITIAL_IDENTIFIER_VALUE) {
             service.setId(service.hashCode());
         }
-        try (var stringWriter = new StringWriter()) {
+        try (val stringWriter = new StringWriter()) {
             this.registeredServiceJsonSerializer.to(stringWriter, service);
             val document = RawJsonDocument.create(String.valueOf(service.getId()), 0, stringWriter.toString());
             this.couchbase.getBucket().upsert(document);

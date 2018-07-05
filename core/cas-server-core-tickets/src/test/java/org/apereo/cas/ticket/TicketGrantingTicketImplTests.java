@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
@@ -86,9 +85,7 @@ public class TicketGrantingTicketImplTests {
     @Test
     public void verifyGetAuthentication() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
-
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, null, null, authentication, new NeverExpiresExpirationPolicy());
-
+        val t = new TicketGrantingTicketImpl(TGT_ID, null, null, authentication, new NeverExpiresExpirationPolicy());
         assertEquals(t.getAuthentication(), authentication);
         assertEquals(t.getId(), t.toString());
     }
@@ -203,25 +200,25 @@ public class TicketGrantingTicketImplTests {
 
     @Test
     public void verifyWebApplicationServices() {
-        final Service testService = RegisteredServiceTestUtils.getService(TGT_ID);
+        val testService = RegisteredServiceTestUtils.getService(TGT_ID);
         final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, null, null,
                 CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         t.grantServiceTicket(ID_GENERATOR
             .getNewTicketId(ServiceTicket.PREFIX), testService,
             new NeverExpiresExpirationPolicy(), false, true);
-        var services = t.getServices();
+        val services = t.getServices();
         assertEquals(1, services.size());
         val ticketId = services.keySet().iterator().next();
         assertEquals(testService, services.get(ticketId));
         t.removeAllServices();
-        services = t.getServices();
-        assertEquals(0, services.size());
+        val services2 = t.getServices();
+        assertEquals(0, services2.size());
     }
 
     @Test
     public void verifyWebApplicationExpire() {
-        final Service testService = RegisteredServiceTestUtils.getService(TGT_ID);
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, null, null,
+        val testService = RegisteredServiceTestUtils.getService(TGT_ID);
+        val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
             CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         t.grantServiceTicket(ID_GENERATOR
                         .getNewTicketId(ServiceTicket.PREFIX), testService,
@@ -233,7 +230,7 @@ public class TicketGrantingTicketImplTests {
 
     @Test
     public void verifyDoubleGrantSameServiceTicketKeepMostRecentSession() {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, null, null,
+        val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
                 CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         t.grantServiceTicket(
@@ -254,7 +251,7 @@ public class TicketGrantingTicketImplTests {
 
     @Test
     public void verifyDoubleGrantSimilarServiceTicketKeepMostRecentSession() {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, null, null,
+        val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
                 CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         t.grantServiceTicket(
@@ -275,7 +272,7 @@ public class TicketGrantingTicketImplTests {
 
     @Test
     public void verifyDoubleGrantSimilarServiceWithPathTicketKeepMostRecentSession() {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, null, null,
+        val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
                 CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         t.grantServiceTicket(
@@ -296,7 +293,7 @@ public class TicketGrantingTicketImplTests {
 
     @Test
     public void verifyDoubleGrantSameServiceTicketKeepAll() {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, null, null,
+        val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
                 CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         t.grantServiceTicket(
@@ -317,7 +314,7 @@ public class TicketGrantingTicketImplTests {
 
     @Test
     public void verifyDoubleGrantDifferentServiceTicket() {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, null, null,
+        val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
                 CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         t.grantServiceTicket(
@@ -338,7 +335,7 @@ public class TicketGrantingTicketImplTests {
 
     @Test
     public void verifyDoubleGrantDifferentServiceOnPathTicket() {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, null, null,
+        val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
                 CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         t.grantServiceTicket(

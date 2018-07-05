@@ -53,19 +53,8 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     @Override
     public void decrement() {
         LOGGER.info("Beginning audit cleanup...");
-
-        val keys = this.ipMap.entrySet();
-        LOGGER.debug("Decrementing counts for throttler.  Starting key count: [{}]", keys.size());
-
         val now = ZonedDateTime.now(ZoneOffset.UTC);
-        val iter = keys.iterator();
-        while (iter.hasNext()) {
-            final var entry = iter.next();
-            if (submissionRate(now, entry.getValue()) < getThresholdRate()) {
-                LOGGER.trace("Removing entry for key [{}]", entry.getKey());
-                iter.remove();
-            }
-        }
+        this.ipMap.entrySet().removeIf(entry -> submissionRate(now, entry.getValue()) < getThresholdRate());
         LOGGER.debug("Done decrementing count for throttler.");
     }
 

@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.radius;
 import lombok.val;
 
 import net.jradius.dictionary.Attr_ClientId;
-import net.jradius.packet.attribute.RadiusAttribute;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,7 +26,7 @@ public class RadiusUtilsTests {
     @Test
     public void verifyActionPasses() throws Exception {
         val server = mock(RadiusServer.class);
-        final RadiusAttribute attribute = new Attr_ClientId("client_id");
+        val attribute = new Attr_ClientId("client_id");
         val response = new RadiusResponse(100, 100, CollectionUtils.wrapList(attribute));
         when(server.authenticate(anyString(), anyString())).thenReturn(response);
         val result = RadiusUtils.authenticate("casuser", "Mellon",

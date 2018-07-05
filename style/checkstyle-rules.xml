@@ -330,7 +330,7 @@
         </module>
         <module name="FinalParameters">
             <property name="severity" value="error"/>
-            <property name="tokens" value="METHOD_DEF,CTOR_DEF,LITERAL_CATCH,FOR_EACH_CLAUSE"/>
+            <property name="tokens" value="METHOD_DEF,CTOR_DEF,LITERAL_CATCH"/>
         </module>
         <module name="FinalLocalVariable">
             <property name="severity" value="error"/>
@@ -488,16 +488,34 @@
                       value="Consider not checking for logging levels. Let the logging framework handle that."/>
         </module>
         <module name="RegexpSinglelineJava">
+            <property name="id" value="useLombokVarForGenerics"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
             <property name="severity" value="error"/>
-            <property name="format" value="(final\s+)*var\s"/>
-            <property name="message" value="Use lombok.val when declaring variable definitions."/>
+            <property name="format" value="^(?!private|public)*\s+final\s+\w+&lt;.+&gt;\s+\w+\s+=.+;"/>
+            <property name="message" value="Use lombok.val when declaring collections with generics"/>
         </module>
         <module name="RegexpSinglelineJava">
+            <property name="id" value="useLombokVaLForFinalVar"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
             <property name="severity" value="error"/>
-            <property name="format" value="^\s*(?!return|private|public|protected|val)(final\s+)*\w+\s+\w+(\s+=.+)*;"/>
-            <property name="message" value="Use lombok.val when declaring variable definitions."/>
+            <property name="format" value="final\s+var\s+"/>
+            <property name="message" value="Use lombok.val when declaring final variable definitions."/>
+        </module>
+
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="useLombokVar"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="^\s*(?!return|throw|private|public|protected|val)(final\s+)*\b(?!var)\w+\b\s*(\b[a-z]\w*\b)(\s*=.+)*;"/>
+            <property name="message" value="Use lombok.val or JDK var keyword when declaring variable definitions."/>
+        </module>
+
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="valForLoop"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="\s*for\s*\((final\s+)*(?!val|var)\w+\s+\w+\s*:"/>
+            <property name="message" value="Use lombok.val when declaring variable definitions for loops."/>
         </module>
     </module>
 

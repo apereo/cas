@@ -65,13 +65,13 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
         val currentSystemTime = getCurrentSystemTime();
         val creationTime = ticketState.getCreationTime();
         val lastTimeUsed = ticketState.getLastTimeUsed();
-        var expirationTime = creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
+        val expirationTime = creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
         if (currentSystemTime.isAfter(expirationTime)) {
             LOGGER.debug("Ticket is expired because the time since creation [{}] is greater than current system time [{}]", expirationTime, currentSystemTime);
             return true;
         }
-        expirationTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-        if (currentSystemTime.isAfter(expirationTime)) {
+        val expirationTimeKill = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        if (currentSystemTime.isAfter(expirationTimeKill)) {
             LOGGER.debug("Ticket is expired because the time since last use is greater than timeToKillInSeconds");
             return true;
         }

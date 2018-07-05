@@ -11,7 +11,6 @@ import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.JsonServiceRegistry;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy;
@@ -106,7 +105,7 @@ public class SamlRegisteredServiceTests {
         serviceWritten.setServiceId("http://mmoayyed.unicon.net");
         serviceWritten.setMetadataLocation(METADATA_LOCATION);
         MAPPER.writeValue(JSON_FILE, serviceWritten);
-        final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, SamlRegisteredService.class);
+        val serviceRead = MAPPER.readValue(JSON_FILE, SamlRegisteredService.class);
         assertEquals(serviceWritten, serviceRead);
     }
 }

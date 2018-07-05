@@ -10,7 +10,6 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.web.flow.configurer.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -83,7 +82,7 @@ public class MultifactorAuthenticationTrustUtils {
      * @param requestContext the request context
      */
     public static void setMultifactorAuthenticationTrustedInScope(final RequestContext requestContext) {
-        final MutableAttributeMap flashScope = requestContext.getFlashScope();
+        val flashScope = requestContext.getFlashScope();
         flashScope.put(AbstractMultifactorTrustedDeviceWebflowConfigurer.MFA_TRUSTED_AUTHN_SCOPE_ATTR, Boolean.TRUE);
     }
 }

@@ -50,7 +50,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
         final Collection<LdapAttribute> attrs = new ArrayList<>();
         attrs.add(new LdapAttribute(ldap.getIdAttribute(), String.valueOf(svc.getId())));
 
-        try (var writer = new StringWriter()) {
+        try (val writer = new StringWriter()) {
             this.jsonSerializer.to(writer, svc);
             attrs.add(new LdapAttribute(ldap.getServiceDefinitionAttribute(), writer.toString()));
             attrs.add(new LdapAttribute(LdapUtils.OBJECT_CLASS_ATTRIBUTE, "top", ldap.getObjectClass()));

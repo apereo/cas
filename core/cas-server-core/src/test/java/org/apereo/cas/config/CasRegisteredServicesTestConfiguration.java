@@ -45,9 +45,9 @@ public class CasRegisteredServicesTestConfiguration {
 
     @Bean
     public List inMemoryRegisteredServices() {
-        final List l = new ArrayList();
+        val l = new ArrayList();
 
-        var svc = RegisteredServiceTestUtils.getRegisteredService("testencryption$");
+        val svc = RegisteredServiceTestUtils.getRegisteredService("testencryption$");
         val policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAuthorizedToReleaseCredentialPassword(true);
         policy.setAuthorizedToReleaseProxyGrantingTicket(true);
@@ -57,27 +57,27 @@ public class CasRegisteredServicesTestConfiguration {
         svc.setAttributeReleasePolicy(policy);
         l.add(svc);
 
-        svc = RegisteredServiceTestUtils.getRegisteredService("testDefault");
+        val svc2 = RegisteredServiceTestUtils.getRegisteredService("testDefault");
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
-        l.add(svc);
+        l.add(svc2);
 
-        svc = RegisteredServiceTestUtils.getRegisteredService("https://example\\.com/normal/.*");
+        val svc3 = RegisteredServiceTestUtils.getRegisteredService("https://example\\.com/normal/.*");
         svc.setEvaluationOrder(10);
         svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
-        l.add(svc);
+        l.add(svc3);
 
-        svc = RegisteredServiceTestUtils.getRegisteredService("https://example\\.com/high/.*");
+        val svc4 = RegisteredServiceTestUtils.getRegisteredService("https://example\\.com/high/.*");
         svc.setEvaluationOrder(20);
         svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         final HashSet handlers = CollectionUtils.wrapHashSet(AcceptUsersAuthenticationHandler.class.getSimpleName(),
                 TestOneTimePasswordAuthenticationHandler.class.getSimpleName());
         svc.setRequiredHandlers(handlers);
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
-        l.add(svc);
+        l.add(svc4);
         
-        svc = RegisteredServiceTestUtils.getRegisteredService("(https://)*google.com$");
+        val svc5 = RegisteredServiceTestUtils.getRegisteredService("(https://)*google.com$");
         svc.setEvaluationOrder(1);
         svc.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(".+"));
         svc.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:keys/RSA4096Public.key", "RSA"));
@@ -87,15 +87,15 @@ public class CasRegisteredServicesTestConfiguration {
         svc.setAttributeReleasePolicy(policy1);
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
-        l.add(svc);
+        l.add(svc5);
 
-        svc = RegisteredServiceTestUtils.getRegisteredService("eduPersonTest");
+        val svc6 = RegisteredServiceTestUtils.getRegisteredService("eduPersonTest");
         svc.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("eduPersonAffiliation"));
         svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
-        l.add(svc);
+        l.add(svc6);
 
-        svc = RegisteredServiceTestUtils.getRegisteredService("testencryption$");
+        val svc7 = RegisteredServiceTestUtils.getRegisteredService("testencryption$");
         val policy2 = new ReturnAllowedAttributeReleasePolicy();
         policy2.setAuthorizedToReleaseCredentialPassword(true);
         policy2.setAuthorizedToReleaseProxyGrantingTicket(true);
@@ -103,95 +103,95 @@ public class CasRegisteredServicesTestConfiguration {
         svc.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:keys/RSA1024Public.key", "RSA"));
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
-        l.add(svc);
+        l.add(svc7);
         
-        svc = RegisteredServiceTestUtils.getRegisteredService("^TestServiceAttributeForAuthzFails");
+        val svc8 = RegisteredServiceTestUtils.getRegisteredService("^TestServiceAttributeForAuthzFails");
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("cn", CollectionUtils.wrapSet("cnValue"),
                 "givenName", CollectionUtils.wrapSet("gnameValue"))));
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
-        l.add(svc);
+        l.add(svc8);
 
-        svc = RegisteredServiceTestUtils.getRegisteredService("^TestSsoFalse");
+        val svc9 = RegisteredServiceTestUtils.getRegisteredService("^TestSsoFalse");
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
-        l.add(svc);
+        l.add(svc9);
 
-        svc = RegisteredServiceTestUtils.getRegisteredService("TestServiceAttributeForAuthzPasses");
+        val svc10 = RegisteredServiceTestUtils.getRegisteredService("TestServiceAttributeForAuthzPasses");
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("groupMembership", CollectionUtils.wrapSet("adopters"))));
         svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
-        l.add(svc);
+        l.add(svc10);
 
-        svc = RegisteredServiceTestUtils.getRegisteredService("eduPersonTestInvalid");
+        val svc11 = RegisteredServiceTestUtils.getRegisteredService("eduPersonTestInvalid");
         svc.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("nonExistentAttributeName"));
         svc.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(CollectionUtils.wrap("groupMembership")));
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
-        l.add(svc);
+        l.add(svc11);
 
 
-        svc = RegisteredServiceTestUtils.getRegisteredService("testAnonymous");
+        val svc12 = RegisteredServiceTestUtils.getRegisteredService("testAnonymous");
         svc.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider());
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
-        l.add(svc);
+        l.add(svc12);
 
-        svc = RegisteredServiceTestUtils.getRegisteredService("^http://www.jasig.org.+");
+        val svc13 = RegisteredServiceTestUtils.getRegisteredService("^http://www.jasig.org.+");
         svc.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(".+"));
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
-        l.add(svc);
+        l.add(svc13);
 
-        svc = RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService");
+        val svc14 = RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService");
         svc.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("cn"));
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
-        l.add(svc);
+        l.add(svc14);
 
-        svc = RegisteredServiceTestUtils.getRegisteredService("proxyService");
+        val svc15 = RegisteredServiceTestUtils.getRegisteredService("proxyService");
         svc.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https://.+"));
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
-        l.add(svc);
+        l.add(svc15);
 
-        svc = RegisteredServiceTestUtils.getRegisteredService("^test.*");
+        val svc16 = RegisteredServiceTestUtils.getRegisteredService("^test.*");
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         svc.setEvaluationOrder(1000);
-        l.add(svc);
+        l.add(svc16);
 
-        svc = RegisteredServiceTestUtils.getRegisteredService("https://localhost.*");
+        val svc17 = RegisteredServiceTestUtils.getRegisteredService("https://localhost.*");
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         svc.setEvaluationOrder(100);
-        l.add(svc);
+        l.add(svc17);
 
-        svc = RegisteredServiceTestUtils.getRegisteredService("https://github.com/apereo/cas");
+        val svc18 = RegisteredServiceTestUtils.getRegisteredService("https://github.com/apereo/cas");
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         svc.setEvaluationOrder(98);
-        l.add(svc);
+        l.add(svc18);
 
-        svc = RegisteredServiceTestUtils.getRegisteredService("https://carmenwiki.osu.edu.*");
+        val svc19 = RegisteredServiceTestUtils.getRegisteredService("https://carmenwiki.osu.edu.*");
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         svc.setEvaluationOrder(99);
-        l.add(svc);
+        l.add(svc19);
 
-        svc = RegisteredServiceTestUtils.getRegisteredService("consentService");
+        val svc20 = RegisteredServiceTestUtils.getRegisteredService("consentService");
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         val attrPolicy = new ReturnAllAttributeReleasePolicy();
         attrPolicy.setConsentPolicy(new DefaultRegisteredServiceConsentPolicy());
         svc.setAttributeReleasePolicy(attrPolicy);
         svc.setEvaluationOrder(88);
-        l.add(svc);
+        l.add(svc20);
         
-        svc = RegisteredServiceTestUtils.getRegisteredService("jwtservice");
+        val svc21 = RegisteredServiceTestUtils.getRegisteredService("jwtservice");
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         val prop = new DefaultRegisteredServiceProperty();
         prop.setValues(CollectionUtils.wrapSet(Boolean.TRUE.toString()));
         svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.getPropertyName(), prop);
         svc.setEvaluationOrder(2000);
-        l.add(svc);
+        l.add(svc21);
         return l;
     }
 

@@ -34,7 +34,7 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
     public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
         val metadataLocation = service.getMetadataLocation();
         LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
-        try (var in = ResourceUtils.getResourceFrom(metadataLocation).getInputStream()) {
+        try (val in = ResourceUtils.getResourceFrom(metadataLocation).getInputStream()) {
             LOGGER.debug("Parsing metadata from [{}]", metadataLocation);
             val document = this.configBean.getParserPool().parse(in);
 

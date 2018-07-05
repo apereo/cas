@@ -31,7 +31,7 @@ public class DefaultSecurityTokenTicketFactory implements SecurityTokenTicketFac
     public SecurityTokenTicket create(final TicketGrantingTicket ticket, final SecurityToken securityToken) {
         val token = EncodingUtils.encodeBase64(SerializationUtils.serialize(securityToken));
         val id = ticketUniqueTicketIdGenerator.getNewTicketId(SecurityTokenTicket.PREFIX);
-        final SecurityTokenTicket stt = new DefaultSecurityTokenTicket(id, ticket, this.expirationPolicy, token);
+        val stt = new DefaultSecurityTokenTicket(id, ticket, this.expirationPolicy, token);
         ticket.getDescendantTickets().add(stt.getId());
         return stt;
     }

@@ -1,8 +1,7 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
@@ -31,7 +30,7 @@ import java.util.Map;
  */
 @Slf4j
 public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
-    
+
     private static final long serialVersionUID = -4581238964007702423L;
 
     private final ServerManager serverManager;
@@ -106,13 +105,10 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
      * @return the string
      */
     protected String determineIdentity(final OpenIdService service, final Assertion assertion) {
-        final String id;
         if (assertion != null && OpenIdProtocolConstants.OPENID_IDENTIFIERSELECT.equals(service.getIdentity())) {
-            id = this.openIdPrefixUrl + '/' + assertion.getPrimaryAuthentication().getPrincipal().getId();
-        } else {
-            id = service.getIdentity();
+            return this.openIdPrefixUrl + '/' + assertion.getPrimaryAuthentication().getPrincipal().getId();
         }
-        return id;
+        return service.getIdentity();
     }
 
     /**

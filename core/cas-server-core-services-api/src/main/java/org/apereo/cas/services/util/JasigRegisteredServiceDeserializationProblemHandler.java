@@ -1,7 +1,5 @@
 package org.apereo.cas.services.util;
 
-import lombok.val;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JavaType;
@@ -9,12 +7,14 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
 import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
 import com.fasterxml.jackson.databind.type.SimpleType;
+import com.google.common.base.Predicates;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
-
-import java.io.IOException;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.jooq.lambda.Unchecked;
 
 /**
  * This is {@link JasigRegisteredServiceDeserializationProblemHandler}
@@ -43,7 +43,7 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
                     + "While CAS will attempt to convert the legacy definition to [{}] for the time being, "
                     + "the definition SHOULD manually be upgraded to the new supported syntax",
                 subTypeId, newTypeName);
-            final Class newType = ClassUtils.getClass(newTypeName);
+            val newType = ClassUtils.getClass(newTypeName);
             return SimpleType.construct(newType);
         }
         return null;
@@ -52,30 +52,34 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
     @Override
     public boolean handleUnknownProperty(final DeserializationContext ctxt, final JsonParser p,
                                          final JsonDeserializer<?> deserializer,
-                                         final Object beanOrClass, final String propertyName) throws IOException {
-        var handled = false;
-        if (beanOrClass instanceof CachingPrincipalAttributesRepository) {
-            val repo = CachingPrincipalAttributesRepository.class.cast(beanOrClass);
-            if ("duration".equals(propertyName)) {
-                for (var i = 1; i <= TOKEN_COUNT_DURATION; i++) {
-                    p.nextToken();
+                                         final Object beanOrClass, final String propertyName) {
+        val handled = FunctionUtils.doIf(Predicates.instanceOf(CachingPrincipalAttributesRepository.class),
+            () -> {
+                if (!"duration".equals(propertyName)) {
+                    return false;
                 }
-                val timeUnit = p.getText();
-                for (var i = 1; i <= TOKEN_COUNT_EXPIRATION; i++) {
-                    p.nextToken();
-                }
-                val expiration = p.getValueAsInt();
+                return Unchecked.supplier(() -> {
+                    for (var i = 1; i <= TOKEN_COUNT_DURATION; i++) {
+                        p.nextToken();
+                    }
+                    val timeUnit = p.getText();
+                    for (var i = 1; i <= TOKEN_COUNT_EXPIRATION; i++) {
+                        p.nextToken();
+                    }
 
-                repo.setTimeUnit(timeUnit);
-                repo.setExpiration(expiration);
+                    val expiration = p.getValueAsInt();
+                    val repo = CachingPrincipalAttributesRepository.class.cast(beanOrClass);
+                    repo.setTimeUnit(timeUnit);
+                    repo.setExpiration(expiration);
 
-                LOGGER.warn("CAS has converted legacy JSON property [{}] for type [{}]. It parsed 'expiration' value [{}] with time unit of [{}]."
-                        + "It is STRONGLY recommended that you review the configuration and upgrade from the legacy syntax.",
-                    propertyName, beanOrClass.getClass().getName(), expiration, timeUnit);
-
-                handled = true;
-            }
-        }
+                    LOGGER.warn("CAS has converted legacy JSON property [{}] for type [{}]. It parsed 'expiration' value [{}] with time unit of [{}]."
+                            + "It is STRONGLY recommended that you review the configuration and upgrade from the legacy syntax.",
+                        propertyName, beanOrClass.getClass().getName(), expiration, timeUnit);
+                    return true;
+                }).get();
+            },
+            () -> false)
+            .apply(beanOrClass);
 
         return handled;
     }

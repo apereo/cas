@@ -6,7 +6,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
@@ -207,7 +206,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
                     service.setArtifactId(null);
 
                     val authentication = CoreAuthenticationTestUtils.getAuthentication();
-                    final AuthenticationResultBuilder authenticationResultBuilder = new DefaultAuthenticationResultBuilder();
+                    val authenticationResultBuilder = new DefaultAuthenticationResultBuilder();
                     val principal = CoreAuthenticationTestUtils.getPrincipal();
                     authenticationResultBuilder.collect(authentication);
                     authenticationResultBuilder.collect(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());

@@ -168,7 +168,7 @@ public class SpringWebflowEndpoint extends BaseCasMvcEndpoint {
                 flowDetails.put("exceptionHandlers", acts);
             }
 
-            final var vars = Arrays.stream(def.getVariables())
+            val vars = Arrays.stream(def.getVariables())
                 .map(FlowVariable::getName)
                 .collect(Collectors.joining(","));
 

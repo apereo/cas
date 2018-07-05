@@ -60,9 +60,9 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
                                         final RevocationPolicy<X509CRL> expiredCRLPolicy) {
         this.checkAll = checkAll;
         this.unavailableCRLPolicy = unavailableCRLPolicy == null
-                ? new DenyRevocationPolicy() : unavailableCRLPolicy;
+            ? new DenyRevocationPolicy() : unavailableCRLPolicy;
         this.expiredCRLPolicy = expiredCRLPolicy == null
-                ? new ThresholdExpiredCRLRevocationPolicy(0) : expiredCRLPolicy;
+            ? new ThresholdExpiredCRLRevocationPolicy(0) : expiredCRLPolicy;
     }
 
     @Override

@@ -10,7 +10,6 @@ import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.InputStreamSource;
 import org.springframework.util.MultiValueMap;
 
 import java.io.ByteArrayInputStream;
@@ -42,7 +41,7 @@ public class X509RestHttpRequestCredentialFactory implements RestHttpRequestCred
             return new ArrayList<>(0);
         }
         try (InputStream is = new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8))) {
-            final InputStreamSource iso = new InputStreamResource(is);
+            val iso = new InputStreamResource(is);
             val certificate = CertUtils.readCertificate(iso);
             val credential = new X509CertificateCredential(new X509Certificate[]{certificate});
             credential.setCertificate(certificate);

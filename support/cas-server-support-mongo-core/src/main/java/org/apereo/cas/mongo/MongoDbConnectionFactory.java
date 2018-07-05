@@ -30,7 +30,6 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
-import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -142,7 +141,7 @@ public class MongoDbConnectionFactory {
     }
 
     private MappingMongoConverter mappingMongoConverter(final MongoDbFactory mongoDbFactory) {
-        final DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
+        val dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
         val converter = new MappingMongoConverter(dbRefResolver, this.mongoMappingContext());
         converter.setCustomConversions(customConversions);
         converter.afterPropertiesSet();

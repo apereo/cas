@@ -4,7 +4,6 @@ import lombok.val;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.gauth.token.GoogleAuthenticatorToken;
-import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -104,19 +103,19 @@ public class GoogleAuthenticatorMongoDbTokenRepositoryTests {
 
     @Test
     public void verifyTokenSave() {
-        OneTimeToken token = new GoogleAuthenticatorToken(1234, "casuser");
+        val token = new GoogleAuthenticatorToken(1234, "casuser");
         repository.store(token);
         assertTrue(repository.exists("casuser", 1234));
-        token = repository.get("casuser", 1234);
-        assertTrue(token.getId() > 0);
+        val token2 = repository.get("casuser", 1234);
+        assertTrue(token2.getId() > 0);
     }
 
     @Test
     public void verifyTokensWithUniqueIdsSave() {
-        final OneTimeToken token = new GoogleAuthenticatorToken(1111, "casuser");
+        val token = new GoogleAuthenticatorToken(1111, "casuser");
         repository.store(token);
 
-        final OneTimeToken token2 = new GoogleAuthenticatorToken(5678, "casuser");
+        val token2 = new GoogleAuthenticatorToken(5678, "casuser");
         repository.store(token2);
 
         val t1 = repository.get("casuser", 1111);

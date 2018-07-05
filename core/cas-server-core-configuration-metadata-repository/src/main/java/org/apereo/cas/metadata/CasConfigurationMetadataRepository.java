@@ -43,7 +43,7 @@ public class CasConfigurationMetadataRepository {
         val resources = new PathMatchingResourcePatternResolver().getResources(resource);
         val builder = ConfigurationMetadataRepositoryJsonBuilder.create();
         Arrays.stream(resources).forEach(Unchecked.consumer(r -> {
-            try (var in = r.getInputStream()) {
+            try (val in = r.getInputStream()) {
                 builder.withJsonResource(in);
             }
         }));

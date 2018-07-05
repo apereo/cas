@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.Principal;
@@ -136,24 +137,25 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      * @return the map
      */
     protected Map<String, Object> resolveAttributesFromPrincipalAttributeRepository(final Principal principal) {
-        var repository = getPrincipalAttributesRepository();
-        if (repository == null) {
-            LOGGER.debug("No principal attribute repository is defined for the service. Evaluating global attribute caching policy...");
-            val applicationContext = ApplicationContextProvider.getApplicationContext();
-            if (applicationContext != null) {
-                if (applicationContext.containsBean("globalPrincipalAttributeRepository")) {
-                    LOGGER.debug("Loading global principal attribute repository with caching policies...");
-                    repository = applicationContext.getBean("globalPrincipalAttributeRepository", PrincipalAttributesRepository.class);
-                } else {
-                    LOGGER.warn("No global principal attribute repository can be located from the application context.");
-                }
-            }
-        }
+        val repository = ObjectUtils.defaultIfNull(this.principalAttributesRepository,
+            getPrincipalAttributesRepositoryFromApplicationContext());
         if (repository != null) {
             LOGGER.debug("Using principal attribute repository [{}] to retrieve attributes", repository);
             return repository.getAttributes(principal);
         }
         return principal.getAttributes();
+    }
+
+    private PrincipalAttributesRepository getPrincipalAttributesRepositoryFromApplicationContext() {
+        val applicationContext = ApplicationContextProvider.getApplicationContext();
+        if (applicationContext != null) {
+            if (applicationContext.containsBean("globalPrincipalAttributeRepository")) {
+                LOGGER.debug("Loading global principal attribute repository with caching policies...");
+                return applicationContext.getBean("globalPrincipalAttributeRepository", PrincipalAttributesRepository.class);
+            }
+            LOGGER.warn("No global principal attribute repository can be located from the application context.");
+        }
+        return null;
     }
 
     /**
