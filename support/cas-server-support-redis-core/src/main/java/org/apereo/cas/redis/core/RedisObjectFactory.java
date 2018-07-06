@@ -109,6 +109,7 @@ public class RedisObjectFactory {
         }
         val sentinelConfig = new RedisSentinelConfiguration().master(redis.getSentinel().getMaster());
         sentinelConfig.setSentinels(createRedisNodesForProperties(redis));
+
         return sentinelConfig;
     }
 
