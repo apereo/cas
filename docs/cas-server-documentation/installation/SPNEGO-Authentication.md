@@ -28,6 +28,9 @@ ticket expires.
 
 <div class="alert alert-info"><strong>JCE Requirement</strong><p>It's safe to make sure you have the proper JCE bundle installed in your Java environment that is used by CAS, specially if you need to consume encrypted payloads issued by ADFS. Be sure to pick the right version of the JCE for your Java version. Java versions can be detected via the <code>java -version</code> command.</p></div>
 
+<div class="alert alert-info"><strong>Large Kerberos Tickets</strong><p>If organization users have large kerberos tickets, likely cause by being a member of a large number of groups, the Tomcat connector will need to have the <code>maxHttpHeaderSize</code> value increased from the default amount to allow the ticket to be passed to the CAS Server application.</p></div>
+ 
+
 ## Components
 
 SPNEGO support is enabled by including the following dependency in the WAR overlay:
