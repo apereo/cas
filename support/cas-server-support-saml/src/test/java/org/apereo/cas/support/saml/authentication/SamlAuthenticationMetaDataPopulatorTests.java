@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.junit.Before;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -53,7 +52,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     public void verifyAuthenticationTypeFoundCustom() {
         val credentials = new CustomCredential();
 
-        final Map<String, String> added = new HashMap<>();
+        val added = new HashMap<String, String>();
         added.put(CustomCredential.class.getName(), "FF");
 
         this.populator.setUserDefinedMappings(added);

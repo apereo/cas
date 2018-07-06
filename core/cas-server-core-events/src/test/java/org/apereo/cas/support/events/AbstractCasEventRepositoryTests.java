@@ -8,8 +8,6 @@ import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.junit.Test;
 
-import java.util.Collection;
-
 import static org.junit.Assert.*;
 
 /**
@@ -29,7 +27,7 @@ public abstract class AbstractCasEventRepositoryTests {
         val dto2 = getCasEvent();
         getRepositoryInstance().save(dto2);
         
-        final Collection<? extends CasEvent> col = getRepositoryInstance().load();
+        val col = getRepositoryInstance().load();
         assertEquals(2, col.size());
         
         assertNotEquals(dto1.getId(), 0);

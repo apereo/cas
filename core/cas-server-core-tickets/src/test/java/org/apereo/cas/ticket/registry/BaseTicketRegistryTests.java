@@ -21,7 +21,6 @@ import org.springframework.test.util.AopTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.IntStream;
 
@@ -254,7 +253,7 @@ public abstract class BaseTicketRegistryTests {
     @Test
     public void verifyGetTicketsFromRegistryEqualToTicketsAdded() {
         Assume.assumeTrue(isIterableRegistry());
-        final Collection<Ticket> tickets = new ArrayList<>();
+        val tickets = new ArrayList<Ticket>();
 
         for (var i = 0; i < TICKETS_IN_REGISTRY; i++) {
             val ticketGrantingTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + i,

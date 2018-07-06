@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -127,7 +126,7 @@ public class TicketGrantingTicketImplTests {
     @Test
     public void verifyGetChainedPrincipalsWithOne() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
-        final List<Authentication> principals = new ArrayList<>();
+        val principals = new ArrayList<Authentication>();
         principals.add(authentication);
 
         final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, null, null,
@@ -139,7 +138,7 @@ public class TicketGrantingTicketImplTests {
     @Test
     public void verifyCheckCreationTime() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
-        final List<Authentication> principals = new ArrayList<>();
+        val principals = new ArrayList<Authentication>();
         principals.add(authentication);
 
         val startTime = ZonedDateTime.now(ZoneOffset.UTC).minusNanos(100);
@@ -153,7 +152,7 @@ public class TicketGrantingTicketImplTests {
     public void verifyGetChainedPrincipalsWithTwo() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val authentication1 = CoreAuthenticationTestUtils.getAuthentication("test1");
-        final List<Authentication> principals = new ArrayList<>();
+        val principals = new ArrayList<Authentication>();
         principals.add(authentication);
         principals.add(authentication1);
 

@@ -6,7 +6,6 @@ import com.github.scribejava.core.model.OAuth1RequestToken;
 import org.junit.Test;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -26,7 +25,7 @@ public class Pac4jJacksonTests {
         val key = "requestToken";
         val requestToken = new OAuth1RequestToken("token", "secret", true, "token=token&secret=secret");
 
-        final Map<String, Object> session = new HashMap<>();
+        val session = new HashMap<String, Object>();
         session.put(key, requestToken);
         val serialisedSession = sessionStoreCookieSerializer.toString(session);
 

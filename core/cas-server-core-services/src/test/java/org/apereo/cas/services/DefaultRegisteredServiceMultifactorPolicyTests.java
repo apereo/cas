@@ -28,7 +28,7 @@ public class DefaultRegisteredServiceMultifactorPolicyTests {
         val policyWritten = new DefaultRegisteredServiceMultifactorPolicy();
         policyWritten.setPrincipalAttributeNameTrigger("trigger");
         policyWritten.setPrincipalAttributeValueToMatch("attribute");
-        final HashSet<String> providers = new HashSet<>();
+        val providers = new HashSet<String>();
         providers.add("providerOne");
         policyWritten.setMultifactorAuthenticationProviders(providers);
 

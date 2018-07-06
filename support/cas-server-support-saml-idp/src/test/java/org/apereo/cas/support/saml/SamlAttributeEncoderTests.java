@@ -11,7 +11,6 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -38,7 +37,7 @@ public class SamlAttributeEncoderTests {
     @Test
     public void ensureSamlUrnAttributesEncoded() {
         val encoder = new SamlAttributeEncoder();
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         attributes.put(EncodingUtils.hexEncode("urn:oid:2.5.4.3"), "testValue");
         val result =
             encoder.encodeAttributes(attributes, CoreAuthenticationTestUtils.getRegisteredService("test"));
@@ -48,7 +47,7 @@ public class SamlAttributeEncoderTests {
     @Test
     public void ensureSamlMsftClaimsAttributesEncoded() {
         val encoder = new SamlAttributeEncoder();
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         attributes.put("http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname", "testValue");
         val result = encoder.encodeAttributes(attributes, CoreAuthenticationTestUtils.getRegisteredService("test"));
         assertTrue(result.containsKey("http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname"));

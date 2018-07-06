@@ -15,7 +15,6 @@ import javax.security.auth.login.FailedLoginException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
-import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -32,7 +31,7 @@ public class RejectUsersAuthenticationHandlerTests {
     private final RejectUsersAuthenticationHandler authenticationHandler;
 
     public RejectUsersAuthenticationHandlerTests() {
-        final Set<String> users = new HashSet<>();
+        val users = new HashSet<String>();
         users.add("scott");
         users.add("dima");
         users.add("bill");
