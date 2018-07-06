@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ektorp.UpdateConflictException;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
@@ -60,7 +60,7 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public List<RegisteredService> load() {
+    public Collection<RegisteredService> load() {
         return dbClient.getAll().stream().map(RegisteredServiceDocument::getService).collect(Collectors.toList());
     }
 
