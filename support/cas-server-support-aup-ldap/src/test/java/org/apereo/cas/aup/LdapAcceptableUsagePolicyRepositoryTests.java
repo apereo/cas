@@ -24,7 +24,6 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.ConditionalIgnore;
@@ -113,7 +112,7 @@ public class LdapAcceptableUsagePolicyRepositoryTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casaup");
-        final TicketGrantingTicket tgt = new MockTicketGrantingTicket("casaup", c, CollectionUtils.wrap("carLicense", "false"));
+        val tgt = new MockTicketGrantingTicket("casaup", c, CollectionUtils.wrap("carLicense", "false"));
         ticketRegistry.addTicket(tgt);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 

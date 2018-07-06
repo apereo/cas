@@ -74,8 +74,8 @@ public class X509CredentialsAuthenticationHandlerTests {
     public static Collection<Object[]> getTestParameters() {
         val params = new ArrayList<Object[]>();
 
-        X509CredentialsAuthenticationHandler handler;
-        X509CertificateCredential credential;
+        var handler = (X509CredentialsAuthenticationHandler) null;
+        var credential = (X509CertificateCredential) null;
 
         // Test case #1: Unsupported credential type
         handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"));
@@ -160,10 +160,9 @@ public class X509CredentialsAuthenticationHandlerTests {
         //===================================
         // Revocation tests
         //===================================
-        ResourceCRLRevocationChecker checker;
+        var checker = (ResourceCRLRevocationChecker) null;
 
         // Test case #10: Valid certificate with CRL checking
-
         checker = new ResourceCRLRevocationChecker(new ClassPathResource("userCA-valid.crl"));
         checker.init();
         handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"), checker);
