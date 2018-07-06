@@ -14,7 +14,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -98,7 +97,7 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
     public void verifyValidateSignatureBadKey() {
         val cfg = new WsFederationConfiguration();
         cfg.setSigningCertificateResources(ctx.getResource("classpath:bad-signing.crt"));
-        final List<Credential> signingWallet = new ArrayList<>(cfg.getSigningWallet());
+        val signingWallet = new ArrayList<Credential>(cfg.getSigningWallet());
         val wResult = testTokens.get(GOOD_TOKEN);
         val requestSecurityTokenFromResult = wsFederationHelper.getRequestSecurityTokenFromResult(wResult);
         val assertion = wsFederationHelper.buildAndVerifyAssertion(requestSecurityTokenFromResult, wsFederationConfigurations);

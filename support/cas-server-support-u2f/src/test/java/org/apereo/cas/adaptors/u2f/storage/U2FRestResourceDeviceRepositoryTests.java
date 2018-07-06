@@ -25,7 +25,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link U2FRestResourceDeviceRepositoryTests}.
@@ -60,7 +59,7 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        final Map<String, List<U2FDeviceRegistration>> devices = new HashMap<>();
+        val devices = new HashMap<String, List<U2FDeviceRegistration>>();
         val reg = new DeviceRegistration("123456", "bjsdghj3b", "njsdkhjdfjh45", 1, false);
         val device1 = new U2FDeviceRegistration(2000, "casuser", reg.toJson(), LocalDate.now());
         val device2 = new U2FDeviceRegistration(1000, "casuser", reg.toJson(), LocalDate.now());

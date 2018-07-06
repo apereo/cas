@@ -87,7 +87,7 @@ public class TokenAuthenticationHandlerTests {
 
     @Test
     public void verifyKeysAreSane() throws Exception {
-        final JwtGenerator<CommonProfile> g = new JwtGenerator<>();
+        val g = new JwtGenerator<CommonProfile>();
         g.setSignatureConfiguration(new SecretSignatureConfiguration(SIGNING_SECRET, JWSAlgorithm.HS256));
         g.setEncryptionConfiguration(new SecretEncryptionConfiguration(ENCRYPTION_SECRET, JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
 

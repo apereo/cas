@@ -29,7 +29,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -107,7 +106,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyOK() throws Exception {
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put(NAME, VALUE);
         val list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
@@ -141,7 +140,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyOKWithExpiredTicketGrantingTicket() throws Exception {
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put(NAME, VALUE);
         val list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
@@ -183,7 +182,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyOKWithAuthorizationHeader() throws Exception {
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put(NAME, VALUE);
         val list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);

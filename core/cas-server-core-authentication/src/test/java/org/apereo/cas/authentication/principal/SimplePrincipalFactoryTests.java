@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -19,7 +18,7 @@ public class SimplePrincipalFactoryTests {
     @Test
     public void checkPrincipalCreation() {
         val fact = new DefaultPrincipalFactory();
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put("a1", "v1");
         map.put("a2", "v3");
 
@@ -31,7 +30,7 @@ public class SimplePrincipalFactoryTests {
     @Test
     public void checkPrincipalEquality() {
         val fact = new DefaultPrincipalFactory();
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put("a1", "v1");
         map.put("a2", "v3");
 

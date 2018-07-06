@@ -14,7 +14,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -34,7 +33,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     private final AcceptUsersAuthenticationHandler authenticationHandler;
 
     public AcceptUsersAuthenticationHandlerTests() {
-        final Map<String, String> users = new HashMap<>();
+        val users = new HashMap<String, String>();
         users.put(SCOTT, RUTGERS);
         users.put("dima", "javarules");
         users.put("bill", "thisisAwesoME");
