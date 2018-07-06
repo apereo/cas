@@ -9,7 +9,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -24,7 +23,7 @@ public class ImmutableAssertionTests {
 
     @Test
     public void verifyGettersForChainedPrincipals() {
-        final List<Authentication> list = new ArrayList<>();
+        val list = new ArrayList<Authentication>();
 
         list.add(CoreAuthenticationTestUtils.getAuthentication("test"));
         list.add(CoreAuthenticationTestUtils.getAuthentication("test1"));
@@ -38,7 +37,7 @@ public class ImmutableAssertionTests {
 
     @Test
     public void verifyGetterFalseForNewLogin() {
-        final List<Authentication> list = new ArrayList<>();
+        val list = new ArrayList<Authentication>();
 
         list.add(CoreAuthenticationTestUtils.getAuthentication());
 
@@ -50,7 +49,7 @@ public class ImmutableAssertionTests {
 
     @Test
     public void verifyGetterTrueForNewLogin() {
-        final List<Authentication> list = new ArrayList<>();
+        val list = new ArrayList<Authentication>();
 
         list.add(CoreAuthenticationTestUtils.getAuthentication());
 
@@ -62,7 +61,7 @@ public class ImmutableAssertionTests {
 
     @Test
     public void verifyEqualsWithNull() {
-        final List<Authentication> list = new ArrayList<>();
+        val list = new ArrayList<Authentication>();
         list.add(CoreAuthenticationTestUtils.getAuthentication());
 
         val assertion = new ImmutableAssertion(
@@ -73,7 +72,7 @@ public class ImmutableAssertionTests {
 
     @Test
     public void verifyEqualsWithInvalidObject() {
-        final List<Authentication> list = new ArrayList<>();
+        val list = new ArrayList<Authentication>();
         list.add(CoreAuthenticationTestUtils.getAuthentication());
 
         val assertion = new ImmutableAssertion(
@@ -84,8 +83,8 @@ public class ImmutableAssertionTests {
 
     @Test
     public void verifyEqualsWithValidObject() {
-        final List<Authentication> list1 = new ArrayList<>();
-        final List<Authentication> list2 = new ArrayList<>();
+        val list1 = new ArrayList<Authentication>();
+        val list2 = new ArrayList<Authentication>();
 
         val auth = CoreAuthenticationTestUtils.getAuthentication();
         list1.add(auth);
@@ -101,7 +100,7 @@ public class ImmutableAssertionTests {
     public void verifyGetService() {
         val service = RegisteredServiceTestUtils.getService();
 
-        final List<Authentication> list = new ArrayList<>();
+        val list = new ArrayList<Authentication>();
         list.add(CoreAuthenticationTestUtils.getAuthentication());
 
         final Assertion assertion = new ImmutableAssertion(

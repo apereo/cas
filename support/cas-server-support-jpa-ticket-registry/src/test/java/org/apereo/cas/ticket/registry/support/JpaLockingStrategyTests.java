@@ -50,7 +50,6 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -237,7 +236,7 @@ public class JpaLockingStrategyTests {
 
     private static void testConcurrency(final ExecutorService executor,
                                         final Collection<LockingStrategy> locks) throws Exception {
-        final List<Locker> lockers = new ArrayList<>(locks.size());
+        val lockers = new ArrayList<Locker>(locks.size());
         lockers.addAll(locks.stream().map(Locker::new).collect(Collectors.toList()));
 
         val lockCount = executor.invokeAll(lockers).stream().filter(result -> {
@@ -249,7 +248,7 @@ public class JpaLockingStrategyTests {
         }).count();
         assertTrue("Lock count should be <= 1 but was " + lockCount, lockCount <= 1);
 
-        final List<Releaser> releasers = new ArrayList<>(locks.size());
+        val releasers = new ArrayList<Releaser>(locks.size());
 
         releasers.addAll(locks.stream().map(Releaser::new).collect(Collectors.toList()));
         val releaseCount = executor.invokeAll(lockers).stream().filter(result -> {

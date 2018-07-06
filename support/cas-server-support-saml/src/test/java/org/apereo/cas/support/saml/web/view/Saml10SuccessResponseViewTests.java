@@ -31,8 +31,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -55,7 +53,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
     @Before
     public void initialize() {
-        final List<RegisteredService> list = new ArrayList<>();
+        val list = new ArrayList<RegisteredService>();
         list.add(RegisteredServiceTestUtils.getRegisteredService("https://.+"));
         val dao = new InMemoryServiceRegistry();
         dao.setRegisteredServices(list);
@@ -75,15 +73,15 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyResponse() throws Exception {
-        final Map<String, Object> model = new HashMap<>();
+        val model = new HashMap<String, Object>();
 
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         attributes.put(TEST_ATTRIBUTE, TEST_VALUE);
         attributes.put("testEmptyCollection", new ArrayList<>(0));
         attributes.put("testAttributeCollection", Arrays.asList("tac1", "tac2"));
         val principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID, attributes);
 
-        final Map<String, Object> authAttributes = new HashMap<>();
+        val authAttributes = new HashMap<String, Object>();
         authAttributes.put(
             SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
             SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
@@ -116,11 +114,11 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyResponseWithNoAttributes() throws Exception {
-        final Map<String, Object> model = new HashMap<>();
+        val model = new HashMap<String, Object>();
 
         val principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID);
 
-        final Map<String, Object> authAttributes = new HashMap<>();
+        val authAttributes = new HashMap<String, Object>();
         authAttributes.put(
             SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
             SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
@@ -147,13 +145,13 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyResponseWithoutAuthMethod() throws Exception {
-        final Map<String, Object> model = new HashMap<>();
+        val model = new HashMap<String, Object>();
 
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         attributes.put(TEST_ATTRIBUTE, TEST_VALUE);
         val principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID, attributes);
 
-        final Map<String, Object> authnAttributes = new HashMap<>();
+        val authnAttributes = new HashMap<String, Object>();
         authnAttributes.put("authnAttribute1", "authnAttrbuteV1");
         authnAttributes.put("authnAttribute2", "authnAttrbuteV2");
         authnAttributes.put(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);

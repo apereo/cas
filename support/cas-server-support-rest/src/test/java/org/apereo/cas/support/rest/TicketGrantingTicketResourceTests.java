@@ -31,7 +31,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import javax.security.auth.login.LoginException;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -204,7 +203,7 @@ public class TicketGrantingTicketResourceTests {
     }
 
     private void configureCasMockTGTCreationToThrowAuthenticationException() {
-        final Map<String, Throwable> handlerErrors = new HashMap<>(1);
+        val handlerErrors = new HashMap<String, Throwable>(1);
         handlerErrors.put("TestCaseAuthenticationHandler", new LoginException("Login failed"));
         when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class)))
             .thenThrow(new AuthenticationException(handlerErrors));

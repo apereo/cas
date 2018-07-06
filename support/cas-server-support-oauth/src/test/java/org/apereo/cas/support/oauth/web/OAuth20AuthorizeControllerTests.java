@@ -26,7 +26,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -174,7 +173,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         val profile = new CasProfile();
         profile.setId(ID);
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
         attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
         profile.addAttributes(attributes);
@@ -219,7 +218,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         val profile = new CasProfile();
         profile.setId(ID);
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
         attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
         profile.addAttributes(attributes);
@@ -265,7 +264,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         val profile = new CasProfile();
         profile.setId(ID);
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
         attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
         profile.addAttributes(attributes);
@@ -311,7 +310,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         val profile = new CasProfile();
         profile.setId(ID);
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
         attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
         profile.addAttributes(attributes);
@@ -357,7 +356,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         val profile = new CasProfile();
         profile.setId(ID);
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
         attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
         profile.addAttributes(attributes);
@@ -403,7 +402,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         val profile = new CasProfile();
         profile.setId(ID);
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
         attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
         profile.addAttributes(attributes);
@@ -450,7 +449,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         val profile = new CasProfile();
         profile.setId(ID);
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
         attributes.put(LAST_NAME_ATTRIBUTE, LAST_NAME);
         profile.addAttributes(attributes);

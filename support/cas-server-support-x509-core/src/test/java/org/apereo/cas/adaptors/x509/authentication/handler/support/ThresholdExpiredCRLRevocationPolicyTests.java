@@ -51,7 +51,7 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() {
-        final Collection<Object[]> params = new ArrayList<>();
+        val params = new ArrayList<Object[]>();
 
         val now = ZonedDateTime.now(ZoneOffset.UTC);
         val twoHoursAgo = now.minusHours(2);
@@ -103,8 +103,8 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
                 e.printStackTrace();
                 Assert.fail("Revocation check failed unexpectedly with exception: " + e);
             } else {
-                final Class<?> expectedClass = this.expected.getClass();
-                final Class<?> actualClass = e.getClass();
+                val expectedClass = this.expected.getClass();
+                val actualClass = e.getClass();
                 Assert.assertTrue(
                         String.format("Expected exception of type %s but got %s", expectedClass, actualClass),
                         expectedClass.isAssignableFrom(actualClass));

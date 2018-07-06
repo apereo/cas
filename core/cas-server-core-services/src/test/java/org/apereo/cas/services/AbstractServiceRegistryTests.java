@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -34,8 +33,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.IntStream;
 
@@ -101,7 +98,7 @@ public abstract class AbstractServiceRegistryTests {
 
     @Test
     public void verifySaveAndLoad() {
-        final List<RegisteredService> list = new ArrayList<>();
+        val list = new ArrayList<RegisteredService>();
         IntStream.range(0, getLoadSize()).forEach(i -> {
             val svc = buildRegisteredServiceInstance(i);
             list.add(svc);
@@ -236,7 +233,7 @@ public abstract class AbstractServiceRegistryTests {
             new DefaultRegisteredServiceMultifactorPolicy();
         policy.setFailureMode(RegisteredServiceMultifactorPolicy.FailureModes.PHANTOM);
 
-        final Set<String> set = new HashSet<>();
+        val set = new HashSet<String>();
         set.add("duoAuthenticationProvider");
         policy.setMultifactorAuthenticationProviders(set);
         policy.setPrincipalAttributeNameTrigger("memberOf");
@@ -331,7 +328,7 @@ public abstract class AbstractServiceRegistryTests {
     @Test
     public void verifySaveAttributeReleasePolicyMappingRules() {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt());
-        final Multimap<String, Object> map = ArrayListMultimap.create();
+        val map = ArrayListMultimap.<String, Object>create();
         map.put("attr1", "newattr1");
         map.put("attr2", "newattr2");
         map.put("attr2", "newattr3");
@@ -393,7 +390,7 @@ public abstract class AbstractServiceRegistryTests {
     @Test
     @SneakyThrows
     public void verifyServiceRemovals() {
-        final List<RegisteredService> list = new ArrayList<>(5);
+        val list = new ArrayList<RegisteredService>(5);
         IntStream.range(1, 5).forEach(i -> {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt());
             list.add(this.serviceRegistry.save(r));
@@ -413,7 +410,7 @@ public abstract class AbstractServiceRegistryTests {
         val authz =
             new DefaultRegisteredServiceAccessStrategy(false, false);
 
-        final Map<String, Set<String>> attrs = new HashMap<>();
+        val attrs = new HashMap<String, Set<String>>();
         attrs.put("cn", Collections.singleton("v1, v2, v3"));
         attrs.put("memberOf", Collections.singleton("v4, v5, v6"));
         authz.setRequiredAttributes(attrs);
@@ -499,16 +496,16 @@ public abstract class AbstractServiceRegistryTests {
     public void persistCustomServiceProperties() {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt());
 
-        final Map<String, RegisteredServiceProperty> properties = new HashMap<>();
+        val properties = new HashMap<String, RegisteredServiceProperty>();
         val property = new DefaultRegisteredServiceProperty();
-        final Set<String> values = new HashSet<>();
+        val values = new HashSet<String>();
         values.add("value1");
         values.add("value2");
         property.setValues(values);
         properties.put("field1", property);
 
         val property2 = new DefaultRegisteredServiceProperty();
-        final Set<String> values2 = new HashSet<>();
+        val values2 = new HashSet<String>();
         values2.add("value12");
         values2.add("value22");
         property2.setValues(values2);
@@ -544,9 +541,9 @@ public abstract class AbstractServiceRegistryTests {
      * Implementing classes may override this if more is necessary.
      */
     protected AbstractRegisteredService initializeServiceInstance(final AbstractRegisteredService rs) {
-        final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
+        val propertyMap = new HashMap<String, RegisteredServiceProperty>();
         val property = new DefaultRegisteredServiceProperty();
-        final Set<String> values = new HashSet<>();
+        val values = new HashSet<String>();
         values.add("value1");
         values.add("value2");
         property.setValues(values);

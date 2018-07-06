@@ -25,14 +25,11 @@ import org.junit.runners.JUnit4;
 import javax.security.auth.login.AccountNotFoundException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -75,7 +72,7 @@ public class CasKryoTranscoderTests {
     }
 
     public CasKryoTranscoderTests() {
-        final Collection<Class> classesToRegister = new ArrayList<>();
+        val classesToRegister = new ArrayList<Class>();
         classesToRegister.add(MockServiceTicket.class);
         classesToRegister.add(MockTicketGrantingTicket.class);
         this.transcoder = new CasKryoTranscoder(new CasKryoPool(classesToRegister));
@@ -152,9 +149,9 @@ public class CasKryoTranscoderTests {
     @Test
     public void verifyEncodeDecodeTGTWithUnmodifiableList() {
         val userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
-        final List<String> values = new ArrayList<>();
+        val values = new ArrayList<String>();
         values.add(NICKNAME_VALUE);
-        final Map<String, Object> newAttributes = new HashMap<>();
+        val newAttributes = new HashMap<String, Object>();
         newAttributes.put(NICKNAME_KEY, new ArrayList<>(values));
         val expectedTGT = new MockTicketGrantingTicket(TGT_ID, userPassCredential, newAttributes);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
@@ -187,8 +184,8 @@ public class CasKryoTranscoderTests {
 
     @Test
     public void verifyEncodeDecodeTGTWithUnmodifiableSet() {
-        final Map<String, Object> newAttributes = new HashMap<>();
-        final Set<String> values = new HashSet<>();
+        val newAttributes = new HashMap<String, Object>();
+        val values = new HashSet<String>();
         values.add(NICKNAME_VALUE);
         //CHECKSTYLE:OFF
         newAttributes.put(NICKNAME_KEY, Collections.unmodifiableSet(values));
@@ -203,7 +200,7 @@ public class CasKryoTranscoderTests {
 
     @Test
     public void verifyEncodeDecodeTGTWithSingleton() {
-        final Map<String, Object> newAttributes = new HashMap<>();
+        val newAttributes = new HashMap<String, Object>();
         newAttributes.put(NICKNAME_KEY, Collections.singleton(NICKNAME_VALUE));
         val userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         val expectedTGT = new MockTicketGrantingTicket(TGT_ID, userPassCredential, newAttributes);
@@ -215,7 +212,7 @@ public class CasKryoTranscoderTests {
 
     @Test
     public void verifyEncodeDecodeTGTWithSingletonMap() {
-        final Map<String, Object> newAttributes = Collections.singletonMap(NICKNAME_KEY, NICKNAME_VALUE);
+        val newAttributes = Collections.<String, Object>singletonMap(NICKNAME_KEY, NICKNAME_VALUE);
         val userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         val expectedTGT = new MockTicketGrantingTicket(TGT_ID, userPassCredential, newAttributes);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);

@@ -26,7 +26,6 @@ import org.springframework.mock.web.MockHttpSession;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -216,7 +215,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         val registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET);
         servicesManager.save(registeredService);
 
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put(NAME, VALUE);
         val list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);

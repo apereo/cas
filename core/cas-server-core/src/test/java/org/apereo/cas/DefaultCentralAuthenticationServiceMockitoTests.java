@@ -81,7 +81,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
@@ -153,7 +152,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests {
         when(this.authentication.getAuthenticationDate()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC));
         final CredentialMetaData metadata = new BasicCredentialMetaData(
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
-        final Map<String, AuthenticationHandlerExecutionResult> successes = new HashMap<>();
+        val successes = new HashMap<String, AuthenticationHandlerExecutionResult>();
         successes.put("handler1", new DefaultAuthenticationHandlerExecutionResult(mock(AuthenticationHandler.class), metadata));
         when(this.authentication.getCredentials()).thenReturn(Arrays.asList(metadata));
         when(this.authentication.getSuccesses()).thenReturn(successes);
@@ -168,7 +167,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests {
             tgtRootMock, new ArrayList<>());
         when(tgtMock.getProxiedBy()).thenReturn(getService("proxiedBy"));
 
-        final List<Authentication> authnListMock = mock(List.class);
+        val authnListMock = mock(List.class);
         // Size is required to be 2, so that we can simulate proxying capabilities
         when(authnListMock.size()).thenReturn(2);
         when(authnListMock.toArray()).thenReturn(new Object[]{this.authentication, this.authentication});

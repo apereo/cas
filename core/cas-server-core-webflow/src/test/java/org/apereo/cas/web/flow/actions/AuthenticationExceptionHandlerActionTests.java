@@ -21,7 +21,6 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -42,7 +41,7 @@ public class AuthenticationExceptionHandlerActionTests {
         );
         val req = getMockRequestContext();
 
-        final Map<String, Throwable> map = new HashMap<>();
+        val map = new HashMap<String, Throwable>();
         map.put("notFound", new AccountNotFoundException());
         val id = handler.handle(new AuthenticationException(map), req);
         assertEquals(AccountNotFoundException.class.getSimpleName(), id);
@@ -58,7 +57,7 @@ public class AuthenticationExceptionHandlerActionTests {
     public void handleUnknownExceptionByDefault() {
         val handler = new AuthenticationExceptionHandlerAction();
         val req = getMockRequestContext();
-        final Map<String, Throwable> map = new HashMap<>();
+        val map = new HashMap<String, Throwable>();
         map.put("unknown", new GeneralSecurityException());
         val id = handler.handle(new AuthenticationException(map), req);
         assertEquals("UNKNOWN", id);
@@ -81,7 +80,7 @@ public class AuthenticationExceptionHandlerActionTests {
         );
         val req = getMockRequestContext();
 
-        final ContextualAuthenticationPolicy<?> policy = new TestContextualAuthenticationPolicy();
+        val policy = new TestContextualAuthenticationPolicy();
         val id = handler.handle(new UnsatisfiedAuthenticationPolicyException(policy), req);
         assertEquals("UnsatisfiedAuthenticationPolicyException", id);
         val message = ArgumentCaptor.forClass(DefaultMessageResolver.class);

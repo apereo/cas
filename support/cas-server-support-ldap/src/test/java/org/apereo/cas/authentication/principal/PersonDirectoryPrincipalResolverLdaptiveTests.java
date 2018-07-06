@@ -23,7 +23,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -59,7 +58,7 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests {
         val resolver = new PersonDirectoryPrincipalResolver(this.attributeRepository);
         val chain = new ChainingPrincipalResolver();
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
-        final Map<String, Object> attributes = new HashMap<>(2);
+        val attributes = new HashMap<String, Object>(2);
         attributes.put("a1", "v1");
         attributes.put("a2", "v2");
         val p = chain.resolve(new UsernamePasswordCredential("castest1", "castest1"),

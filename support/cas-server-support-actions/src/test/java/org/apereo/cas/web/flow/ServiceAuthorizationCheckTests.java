@@ -18,7 +18,6 @@ import org.junit.rules.ExpectedException;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -51,7 +50,7 @@ public class ServiceAuthorizationCheckTests {
         val unauthorizedRegisteredService = new RegexRegisteredService();
         unauthorizedRegisteredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(false, false));
 
-        final List<RegisteredService> list = new ArrayList<>();
+        val list = new ArrayList<RegisteredService>();
         list.add(authorizedRegisteredService);
         list.add(unauthorizedRegisteredService);
         

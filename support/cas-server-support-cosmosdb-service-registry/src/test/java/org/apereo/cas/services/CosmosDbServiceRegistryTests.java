@@ -18,7 +18,6 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.IntStream;
 import lombok.extern.slf4j.Slf4j;
 
@@ -59,7 +58,7 @@ public class CosmosDbServiceRegistryTests {
         assertTrue(this.serviceRegistry.load().isEmpty());
         assertTrue(this.serviceRegistry.size() == 0);
         
-        final List<RegisteredService> list = new ArrayList<>();
+        val list = new ArrayList<RegisteredService>();
         IntStream.range(0, 5).forEach(i -> {
             list.add(buildService(i));
             this.serviceRegistry.save(list.get(i));

@@ -234,7 +234,7 @@ public abstract class AbstractOAuth20Tests {
     }
 
     protected static Principal createPrincipal() {
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put(NAME, VALUE);
         val list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);

@@ -82,7 +82,7 @@ public class LdapTestUtils {
     public static void createLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries) {
         try {
             for (val entry : entries) {
-                final Collection<Attribute> attrs = new ArrayList<>(entry.getAttributeNames().length);
+                val attrs = new ArrayList<Attribute>(entry.getAttributeNames().length);
                 attrs.addAll(entry.getAttributes().stream()
                     .map(a -> new Attribute(a.getName(), a.getStringValues()))
                     .collect(Collectors.toList()));
@@ -110,7 +110,7 @@ public class LdapTestUtils {
      */
     public static void modifyLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries) {
         for (val entry : entries) {
-            final Collection<Attribute> attrs = new ArrayList<>(entry.getAttributeNames().length);
+            val attrs = new ArrayList<Attribute>(entry.getAttributeNames().length);
             attrs.addAll(entry.getAttributes().stream()
                 .map(a -> new Attribute(a.getName(), a.getStringValues()))
                 .collect(Collectors.toList()));

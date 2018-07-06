@@ -11,7 +11,6 @@ import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -27,7 +26,7 @@ public class JsonResourceInterruptInquirerTests {
     
     @Test
     public void verifyResponseCanSerializeIntoJson() throws Exception {
-        final Map<String, InterruptResponse> map = new LinkedHashMap<>();
+        val map = new LinkedHashMap<String, InterruptResponse>();
         var response = new InterruptResponse("Message",
                 CollectionUtils.wrap("text", "link", "text2", "link2"), false, true);
         map.put("casuser", response);

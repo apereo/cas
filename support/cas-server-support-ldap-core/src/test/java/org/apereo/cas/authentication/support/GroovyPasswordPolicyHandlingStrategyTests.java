@@ -1,9 +1,7 @@
 package org.apereo.cas.authentication.support;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.MessageDescriptor;
+import lombok.val;
 import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.junit.Test;
@@ -12,8 +10,6 @@ import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -39,8 +35,7 @@ public class GroovyPasswordPolicyHandlingStrategyTests {
 
         when(res.getResult()).thenReturn(false);
         assertTrue(s.supports(res));
-
-        final List<MessageDescriptor> results = s.handle(res, mock(PasswordPolicyConfiguration.class));
+        val results = s.handle(res, mock(PasswordPolicyConfiguration.class));
         assertFalse(results.isEmpty());
     }
 }

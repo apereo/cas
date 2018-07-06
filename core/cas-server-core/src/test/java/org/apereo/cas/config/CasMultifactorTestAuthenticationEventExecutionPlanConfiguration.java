@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.TestOneTimePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
@@ -20,12 +21,12 @@ import java.util.HashMap;
 public class CasMultifactorTestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        final HashMap<String, String> users = new HashMap<>();
+        val users = new HashMap<String, String>();
         users.put("alice", "alice");
         users.put("bob", "bob");
         users.put("mallory", "mallory");
 
-        final HashMap<String, String> credentials = new HashMap<>();
+        val credentials = new HashMap<String, String>();
         credentials.put("alice", "31415");
         credentials.put("bob", "62831");
         credentials.put("mallory", "14142");

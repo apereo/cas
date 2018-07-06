@@ -268,7 +268,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     private static Map<String, Set<String>> getRequiredAttributes() {
-        final Map<String, Set<String>> map = new HashMap<>();
+        val map = new HashMap<String, Set<String>>();
         map.put(CN, Stream.of(CAS, "SSO").collect(Collectors.toSet()));
         map.put(GIVEN_NAME, Stream.of("CAS", KAZ).collect(Collectors.toSet()));
         map.put(PHONE, Collections.singleton("\\d\\d\\d-\\d\\d\\d-\\d\\d\\d"));
@@ -276,14 +276,14 @@ public class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     private static Map<String, Set<String>> getRejectedAttributes() {
-        final Map<String, Set<String>> map = new HashMap<>();
+        val map = new HashMap<String, Set<String>>();
         map.put("address", Collections.singleton(".+"));
         map.put("role", Collections.singleton("staff"));
         return map;
     }
     
     private static Map<String, Object> getPrincipalAttributes() {
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put(CN, CAS);
         map.put(GIVEN_NAME, Arrays.asList(CAS, KAZ));
         map.put("sn", "surname");

@@ -23,9 +23,9 @@ public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests
 
     @Test
     public void verifyModifyAttributes() {
-        final Map<String, List<Object>> attributes = new HashMap<>();
+        val attributes = new HashMap<String, List<Object>>();
 
-        final List<Object> values = new ArrayList<>();
+        val values = new ArrayList<Object>();
         values.add("test@example.com");
         attributes.put(UPN_PARAM, values);
         

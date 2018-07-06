@@ -117,7 +117,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
 
             val mailAttr = repository.getAttributes(this.principal).get(MAIL);
             assertTrue(mailAttr instanceof List);
-            final List<?> values = (List) mailAttr;
+            val values = (List) mailAttr;
             assertTrue(values.contains("final@example.com"));
             assertTrue(values.contains("final@school.com"));
         }

@@ -72,7 +72,7 @@ public class X509CredentialsAuthenticationHandlerTests {
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() {
-        final Collection<Object[]> params = new ArrayList<>();
+        val params = new ArrayList<Object[]>();
 
         X509CredentialsAuthenticationHandler handler;
         X509CertificateCredential credential;

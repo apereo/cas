@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,7 +55,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() {
-        final Collection<Object[]> params = new ArrayList<>();
+        val params = new ArrayList<Object[]>();
 
         params.add(new Object[] {
                 "/x509-san-upn-resolver.crt",

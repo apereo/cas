@@ -100,7 +100,7 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static StubPersonAttributeDao getAttributeRepository() {
-        final Map<String, List<Object>> attributes = new HashMap<>();
+        val attributes = new HashMap<String, List<Object>>();
         attributes.put("uid", CollectionUtils.wrap(CONST_USERNAME));
         attributes.put("cn", CollectionUtils.wrap(CONST_USERNAME.toUpperCase()));
         attributes.put("givenName", CollectionUtils.wrap(CONST_USERNAME));

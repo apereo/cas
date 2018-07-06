@@ -20,7 +20,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -95,7 +94,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
         when(argumentExtractor.extractService(any(HttpServletRequest.class))).thenReturn(webApplicationService);
 
         val registeredService = mock(RegisteredService.class);
-        final Map<String, RegisteredServiceProperty> props = new LinkedHashMap<>();
+        val props = new LinkedHashMap<String, RegisteredServiceProperty>();
         val prop = mock(RegisteredServiceProperty.class);
         when(prop.getValue()).thenReturn(Boolean.TRUE.toString());
         props.put(p.getPropertyName(), prop);

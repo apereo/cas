@@ -15,7 +15,6 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,7 +37,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
     @Before
     public void initialize() {
         val dao = new InMemoryServiceRegistry();
-        final List<RegisteredService> list = new ArrayList<>();
+        val list = new ArrayList<RegisteredService>();
 
         var svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1");
         svc.setRequiredHandlers(CollectionUtils.wrapHashSet("handler1", "handler2"));

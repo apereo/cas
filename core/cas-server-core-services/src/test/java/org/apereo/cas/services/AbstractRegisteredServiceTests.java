@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -13,7 +12,6 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -115,7 +113,7 @@ public class AbstractRegisteredServiceTests {
         prepareService();
         this.r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         val p = mock(Principal.class);
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put(ATTR_1, "value1");
         map.put(ATTR_2, "value2");
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
@@ -133,7 +131,7 @@ public class AbstractRegisteredServiceTests {
         policy.setAllowedAttributes(Arrays.asList(ATTR_1, ATTR_3));
         this.r.setAttributeReleasePolicy(policy);
         val p = mock(Principal.class);
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put(ATTR_1, "value1");
         map.put(ATTR_2, "value2");
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
@@ -150,12 +148,12 @@ public class AbstractRegisteredServiceTests {
     public void verifyServiceAttributeFilterMappedAttributes() {
         prepareService();
         val policy = new ReturnMappedAttributeReleasePolicy();
-        final Multimap<String, Object> mappedAttr = ArrayListMultimap.create();
+        val mappedAttr = ArrayListMultimap.<String, Object>create();
         mappedAttr.put(ATTR_1, "newAttr1");
         policy.setAllowedAttributes(CollectionUtils.wrap(mappedAttr));
         this.r.setAttributeReleasePolicy(policy);
         val p = mock(Principal.class);
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put(ATTR_1, "value1");
         map.put(ATTR_2, "value2");
         map.put(ATTR_3, Arrays.asList("v3", "v4"));

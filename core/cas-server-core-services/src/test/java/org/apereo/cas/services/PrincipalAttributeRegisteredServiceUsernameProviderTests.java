@@ -4,7 +4,6 @@ import lombok.val;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.Principal;
@@ -16,7 +15,6 @@ import org.junit.runners.JUnit4;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -37,14 +35,14 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         val provider =
             new PrincipalAttributeRegisteredServiceUsernameProvider("email");
 
-        final Multimap<String, Object> allowedAttributes = ArrayListMultimap.create();
+        val allowedAttributes = ArrayListMultimap.<String, Object>create();
         val mappedAttribute = "urn:oid:0.9.2342.19200300.100.1.3";
         allowedAttributes.put("email", mappedAttribute);
         val policy = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowedAttributes));
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         registeredService.setAttributeReleasePolicy(policy);
 
-        final Map<String, Object> principalAttributes = new HashMap<>();
+        val principalAttributes = new HashMap<String, Object>();
         principalAttributes.put("email", "user@example.org");
         val p = mock(Principal.class);
         when(p.getId()).thenReturn("person");
@@ -59,7 +57,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         val provider =
             new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
 
-        final Map<String, Object> attrs = new HashMap<>();
+        val attrs = new HashMap<String, Object>();
         attrs.put("userid", CollectionUtils.wrap("u1"));
         attrs.put("cn", CollectionUtils.wrap("TheName"));
 
@@ -77,7 +75,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         val provider =
             new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
 
-        final Map<String, Object> attrs = new HashMap<>();
+        val attrs = new HashMap<String, Object>();
         attrs.put("userid", "u1");
         attrs.put("cn", "TheName");
 
@@ -95,7 +93,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         val provider =
             new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
 
-        final Map<String, Object> attrs = new HashMap<>();
+        val attrs = new HashMap<String, Object>();
         attrs.put("userid", "u1");
 
         val p = mock(Principal.class);

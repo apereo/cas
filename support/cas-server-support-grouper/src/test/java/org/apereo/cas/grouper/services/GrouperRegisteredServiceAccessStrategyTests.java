@@ -41,8 +41,8 @@ public class GrouperRegisteredServiceAccessStrategyTests {
     @Test
     public void checkAccessStrategyJson() throws Exception {
 
-        final Map<String, Set<String>> attributes = new HashMap<>();
-        final Set<String> v1 = new HashSet<>();
+        val attributes = new HashMap<String, Set<String>>();
+        val v1 = new HashSet<String>();
         v1.add("admin");
         attributes.put("memberOf", v1);
 
@@ -63,7 +63,7 @@ public class GrouperRegisteredServiceAccessStrategyTests {
         val resource = new ClassPathResource("grouper.client.properties");
         if (resource.exists()) {
             val strategy = new GrouperRegisteredServiceAccessStrategy();
-            final Map<String, Set<String>> requiredAttributes = new HashMap<>();
+            val requiredAttributes = new HashMap<String, Set<String>>();
             requiredAttributes.put("memberOf", Collections.singleton("admin"));
             strategy.setRequiredAttributes(requiredAttributes);
             strategy.doPrincipalAttributesAllowServiceAccess("banderson", (Map) RegisteredServiceTestUtils.getTestAttributes());

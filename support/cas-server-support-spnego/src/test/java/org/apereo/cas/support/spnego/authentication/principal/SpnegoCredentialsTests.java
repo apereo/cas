@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Test;
 
 import java.util.HashSet;
-import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -39,7 +38,7 @@ public class SpnegoCredentialsTests {
     @Test
     public void verifyCredentialsHashSafelyWithoutPrincipal() {
         val credential = new SpnegoCredential(new byte[] {});
-        final Set<SpnegoCredential> set = new HashSet<>();
+        val set = new HashSet<SpnegoCredential>();
         try {
             set.add(credential);
         } catch(final Exception e) {

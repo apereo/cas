@@ -63,8 +63,8 @@ public abstract class AbstractCRLRevocationCheckerTests {
             if (this.expected == null) {
                 Assert.fail("Revocation check failed unexpectedly with exception: " + e);
             } else {
-                final Class<?> expectedClass = this.expected.getClass();
-                final Class<?> actualClass = e.getClass();
+                val expectedClass = this.expected.getClass();
+                val actualClass = e.getClass();
                 Assert.assertTrue(
                     String.format("Expected exception of type %s but got %s", expectedClass, actualClass),
                     expectedClass.isAssignableFrom(actualClass));

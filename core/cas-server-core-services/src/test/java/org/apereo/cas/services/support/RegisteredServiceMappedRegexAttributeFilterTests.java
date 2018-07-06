@@ -59,7 +59,7 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
         this.givenAttributesMap.put("arrayAttribute", new String[]{"math", "science", "chemistry"});
         this.givenAttributesMap.put("setAttribute", Stream.of("math", "science", "chemistry").collect(Collectors.toSet()));
 
-        final Map<String, String> mapAttributes = new HashMap<>();
+        val mapAttributes = new HashMap<String, String>();
         mapAttributes.put(UID, "loggedInTestUid");
         mapAttributes.put(PHONE, "890");
         mapAttributes.put(FAMILY_NAME, "Smith");
