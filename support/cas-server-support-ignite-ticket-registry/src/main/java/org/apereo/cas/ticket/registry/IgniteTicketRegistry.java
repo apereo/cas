@@ -120,7 +120,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
     }
 
     @Override
-    public Collection<Ticket> getTickets() {
+    public Collection<? extends Ticket> getTickets() {
         return this.ticketCatalog.findAll().stream().map(this::getIgniteCacheFromMetadata)
             .map(cache -> cache.query(new ScanQuery<>()).getAll().stream()).flatMap(Function.identity())
             .map(Cache.Entry::getValue).map(object -> decodeTicket((Ticket) object)).collect(Collectors.toSet());

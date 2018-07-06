@@ -109,7 +109,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     }
 
     @Override
-    public Collection<Ticket> getTickets() {
+    public Collection<? extends Ticket> getTickets() {
         return this.ticketCatalog.findAll()
             .stream()
             .map(metadata -> getTicketMapInstanceByMetadata(metadata).values())

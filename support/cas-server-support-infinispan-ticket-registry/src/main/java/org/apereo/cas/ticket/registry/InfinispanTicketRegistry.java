@@ -82,7 +82,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
      * might or might not be valid i.e. expired.
      */
     @Override
-    public Collection<Ticket> getTickets() {
+    public Collection<? extends Ticket> getTickets() {
         return decodeTickets(this.cache.values());
     }
 }

@@ -151,7 +151,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Collection<Ticket> getTickets() {
+    public Collection<? extends Ticket> getTickets() {
         return this.ticketCatalog.findAll().stream()
             .map(this::getTicketCacheFor)
             .flatMap(map -> getAllExpired(map).values().stream())

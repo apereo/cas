@@ -108,7 +108,7 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
 
 
     @Override
-    public Collection<Ticket> getTickets() {
+    public Collection<? extends Ticket> getTickets() {
         return decodeTickets(couchDb.getAll().stream().map(TicketDocument::getTicket).collect(Collectors.toList()));
     }
 

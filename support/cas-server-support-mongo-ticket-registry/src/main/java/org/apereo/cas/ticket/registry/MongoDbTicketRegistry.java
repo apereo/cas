@@ -214,7 +214,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Collection<Ticket> getTickets() {
+    public Collection<? extends Ticket> getTickets() {
         return this.ticketCatalog.findAll().stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .map(map -> mongoTemplate.findAll(TicketHolder.class, map))

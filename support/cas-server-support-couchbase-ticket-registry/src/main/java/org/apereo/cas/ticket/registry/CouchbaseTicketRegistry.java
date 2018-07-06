@@ -20,11 +20,11 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * A Ticket Registry storage backend which uses the memcached protocol.
@@ -157,27 +157,20 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    public Collection<Ticket> getTickets() {
-        val tickets = new ArrayList<Ticket>();
-        this.ticketCatalog.findAll().forEach(t -> {
-            val it = getViewResultIteratorForPrefixedTickets(t.getPrefix() + '-').iterator();
-            while (it.hasNext()) {
-                val row = it.next();
-                if (StringUtils.isNotBlank(row.id())) {
-                    val document = row.document();
-                    val ticket = (Ticket) document.content();
-                    LOGGER.debug("Got ticket [{}] from the registry.", ticket);
-
-                    val decoded = decodeTicket(ticket);
-                    if (decoded == null || decoded.isExpired()) {
-                        LOGGER.warn("Ticket has expired or cannot be decoded");
-                    } else {
-                        tickets.add(decoded);
-                    }
+    public Collection<? extends Ticket> getTickets() {
+        return this.ticketCatalog.findAll().stream().flatMap(t -> getViewResultIteratorForPrefixedTickets(t.getPrefix() + '-').allRows().stream())
+            .filter(row -> StringUtils.isNotBlank(row.id())).map(row -> {
+                val ticket = (Ticket) row.document().content();
+                LOGGER.debug("Got ticket [{}] from the registry.", ticket);
+                return decodeTicket(ticket);
+            }).map(decoded -> {
+                if (decoded == null || decoded.isExpired()) {
+                    LOGGER.warn("Ticket has expired or cannot be decoded");
+                    return null;
+                } else {
+                    return decoded;
                 }
-            }
-        });
-        return tickets;
+            }).collect(Collectors.toList());
     }
 
     @Override
