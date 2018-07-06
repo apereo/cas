@@ -60,7 +60,7 @@ public abstract class BaseTicketRegistryTests {
     protected abstract TicketRegistry getNewTicketRegistry();
 
     private void setUpEncryption() {
-        final AbstractTicketRegistry registry = AopTestUtils.getTargetObject(this.ticketRegistry);
+        var registry = (AbstractTicketRegistry) AopTestUtils.getTargetObject(this.ticketRegistry);
         if (this.useEncryption) {
             val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(
                 new EncryptionRandomizedSigningJwtCryptographyProperties(), "[tests]");

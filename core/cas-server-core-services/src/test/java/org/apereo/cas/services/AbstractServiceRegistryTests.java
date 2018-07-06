@@ -208,7 +208,7 @@ public abstract class AbstractServiceRegistryTests {
 
     @Test
     public void checkSaveMethodWithNonExistentServiceAndNoAttributes() {
-        final RegisteredService r = buildRegisteredServiceInstance(RandomUtils.nextInt());
+       val r = buildRegisteredServiceInstance(RandomUtils.nextInt());
         val r2 = this.serviceRegistry.save(r);
         val r3 = this.serviceRegistry.findServiceById(r2.getId());
         assertEquals(r2, r3);

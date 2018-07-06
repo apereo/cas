@@ -4,7 +4,6 @@ import lombok.val;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -40,7 +39,7 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
 
     @Test
     public void verifyServiceNotFound() {
-        final Service svc = RegisteredServiceTestUtils.getService("https://www.example.org?param1=value1");
+        val svc = RegisteredServiceTestUtils.getService("https://www.example.org?param1=value1");
         val result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
         assertEquals(svc.getId(), result.getId());
         assertFalse(shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.supports(svc));

@@ -1,8 +1,6 @@
 package org.apereo.cas.util.cipher;
 
 import lombok.val;
-
-import org.apereo.cas.CipherExecutor;
 import org.junit.Test;
 
 import java.security.KeyPair;
@@ -20,10 +18,10 @@ public class RsaKeyPairCipherExecutorTests {
     public void verifyActionOneWay() {
         val secretKeyEncryption = "classpath:keys/RSA2048Public.key";
         val secretKeySigning = "classpath:keys/RSA2048Private.key";
-        CipherExecutor cipher = new TicketGrantingCookieCipherExecutor(secretKeyEncryption, secretKeySigning);
-        assertNotNull(cipher.encode("TestValue"));
+        val cipher1 = new TicketGrantingCookieCipherExecutor(secretKeyEncryption, secretKeySigning);
+        assertNotNull(cipher1.encode("TestValue"));
 
-        cipher = new ProtocolTicketCipherExecutor(secretKeyEncryption, secretKeySigning);
+        val cipher = new ProtocolTicketCipherExecutor(secretKeyEncryption, secretKeySigning);
         assertNotNull(cipher.encode("TestValue"));
     }
 

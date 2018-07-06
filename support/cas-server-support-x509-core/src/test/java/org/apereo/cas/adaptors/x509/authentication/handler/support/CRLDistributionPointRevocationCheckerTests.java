@@ -91,7 +91,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
     public static Collection<Object[]> getTestParameters() {
         CacheManager.getInstance().removeAllCaches();
         val params = new ArrayList<Object[]>();
-        Cache cache;
+        var cache = (Cache) null;
         val defaultPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
         val zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
 

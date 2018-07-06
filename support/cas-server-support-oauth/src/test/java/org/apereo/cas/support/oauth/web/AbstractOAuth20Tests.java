@@ -327,8 +327,8 @@ public abstract class AbstractOAuth20Tests {
         assertEquals(HttpStatus.SC_OK, mockResponse.getStatus());
         val body = mockResponse.getContentAsString();
 
-        final String accessTokenId;
-        String refreshTokenId = null;
+        var accessTokenId = StringUtils.EMPTY;
+        var refreshTokenId = StringUtils.EMPTY;
 
         if (json) {
             assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
@@ -366,7 +366,7 @@ public abstract class AbstractOAuth20Tests {
     }
 
     protected static int getTimeLeft(final String body, final boolean refreshToken, final boolean json) {
-        final int timeLeft;
+        var timeLeft = 0;
         if (json) {
             if (refreshToken) {
                 timeLeft = Integer.parseInt(StringUtils.substringBetween(body, OAuth20Constants.EXPIRES_IN + "\":", ","));
@@ -404,7 +404,7 @@ public abstract class AbstractOAuth20Tests {
         assertEquals(200, mockResponse.getStatus());
         val body = mockResponse.getContentAsString();
 
-        final String accessTokenId;
+        var accessTokenId = StringUtils.EMPTY;
         if (json) {
             val results = MAPPER.readValue(body, Map.class);
 
