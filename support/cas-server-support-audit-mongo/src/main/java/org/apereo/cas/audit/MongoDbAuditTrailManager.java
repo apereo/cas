@@ -7,7 +7,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
-import org.apereo.inspektr.audit.AuditTrailManager;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -27,29 +26,25 @@ import java.util.concurrent.Executors;
 @Slf4j
 @Setter
 @RequiredArgsConstructor
-public class MongoDbAuditTrailManager implements AuditTrailManager {
+public class MongoDbAuditTrailManager extends AbstractAuditTrailManager {
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private final transient MongoTemplate mongoTemplate;
     private final String collectionName;
-    @Setter
-    private boolean asynchronous = true;
 
-    @Override
-    public void record(final AuditActionContext audit) {
-        if (this.asynchronous) {
-            this.executorService.execute(() -> saveAuditRecord(audit));
-        } else {
-            saveAuditRecord(audit);
-        }
+    public MongoDbAuditTrailManager(final MongoTemplate mongoTemplate, final String collectionName, final boolean asynchronous) {
+        super(asynchronous);
+        this.mongoTemplate = mongoTemplate;
+        this.collectionName = collectionName;
     }
 
-    private void saveAuditRecord(final AuditActionContext audit) {
+    @Override
+    protected void saveAuditRecord(final AuditActionContext audit) {
         this.mongoTemplate.save(audit, this.collectionName);
     }
 
     @Override
-    public Set<AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
+    public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
         val dt = DateTimeUtils.dateOf(localDate);
         LOGGER.debug("Retrieving audit records since [{}] from [{}]", dt, this.collectionName);
         val query = new Query().addCriteria(Criteria.where("whenActionWasPerformed").gte(dt));

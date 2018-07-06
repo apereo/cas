@@ -5,23 +5,17 @@ import org.apereo.cas.configuration.model.core.audit.AuditRestProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
 import org.apereo.inspektr.audit.AuditActionContext;
-import org.apereo.inspektr.audit.AuditTrailManager;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -35,34 +29,22 @@ import java.util.concurrent.Executors;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class RestAuditTrailManager implements AuditTrailManager {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .findAndRegisterModules()
-        .registerModule(new SimpleModule().setMixInAnnotation(AuditActionContext.class, AbstractAuditActionContextMixin.class));
+public class RestAuditTrailManager extends AbstractAuditTrailManager {
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private final AuditActionContextJsonSerializer serializer = new AuditActionContextJsonSerializer();
     private final AuditRestProperties properties;
-    @Setter
-    private boolean asynchronous = true;
 
     @Override
-    public void record(final AuditActionContext audit) {
-        final Runnable task = () -> {
-            val auditJson = serializer.toString(audit);
-            LOGGER.debug("Sending audit action context to REST endpoint [{}]", properties.getUrl());
-            HttpUtils.executePost(properties.getUrl(), properties.getBasicAuthUsername(), properties.getBasicAuthPassword(), auditJson);
-        };
-
-        if (this.asynchronous) {
-            this.executorService.execute(task);
-        } else {
-            task.run();
-        }
+    public void saveAuditRecord(final AuditActionContext audit) {
+        val auditJson = serializer.toString(audit);
+        LOGGER.debug("Sending audit action context to REST endpoint [{}]", properties.getUrl());
+        HttpUtils.executePost(properties.getUrl(), properties.getBasicAuthUsername(), properties.getBasicAuthPassword(), auditJson);
     }
 
     @Override
-    public Set<AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
+    public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
         try {
             LOGGER.debug("Sending query to audit REST endpoint to fetch records from [{}]", localDate);
             val response = HttpUtils.executeGet(properties.getUrl(), properties.getBasicAuthUsername(),
@@ -77,24 +59,6 @@ public class RestAuditTrailManager implements AuditTrailManager {
             LOGGER.error(e.getMessage(), e);
         }
         return new HashSet<>(0);
-    }
-
-
-    private abstract static class AbstractAuditActionContextMixin extends AuditActionContext {
-        private static final long serialVersionUID = -7839084408338396531L;
-
-        @JsonCreator
-        AbstractAuditActionContextMixin(@JsonProperty("principal") final String principal,
-                                        @JsonProperty("resourceOperatedUpon") final String resourceOperatedUpon,
-                                        @JsonProperty("actionPerformed") final String actionPerformed,
-                                        @JsonProperty("applicationCode") final String applicationCode,
-                                        @JsonProperty("whenActionWasPerformed") final Date whenActionWasPerformed,
-                                        @JsonProperty("clientIpAddress") final String clientIpAddress,
-                                        @JsonProperty("serverIpAddress") final String serverIpAddress) {
-            super(principal, resourceOperatedUpon, actionPerformed,
-                applicationCode, whenActionWasPerformed,
-                clientIpAddress, serverIpAddress);
-        }
     }
 
 }

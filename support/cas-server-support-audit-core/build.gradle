@@ -1,0 +1,5 @@
+description = "Apereo CAS Couchbase Audit Support"
+dependencies {
+    api project(":api:cas-server-core-api")
+    api project(":api:cas-server-core-api-audit")
+}

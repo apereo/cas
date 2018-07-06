@@ -15,7 +15,6 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
-import org.apereo.inspektr.audit.AuditTrailManager;
 
 import java.io.StringWriter;
 import java.time.LocalDate;
@@ -23,13 +22,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import static com.couchbase.client.java.query.Select.select;
-import static com.couchbase.client.java.query.dsl.Expression.i;
-import static com.couchbase.client.java.query.dsl.Expression.x;
+import static com.couchbase.client.java.query.Select.*;
+import static com.couchbase.client.java.query.dsl.Expression.*;
 
 /**
  * This is {@link CouchbaseAuditTrailManager}.
@@ -39,7 +35,7 @@ import static com.couchbase.client.java.query.dsl.Expression.x;
  */
 @Setter
 @RequiredArgsConstructor
-public class CouchbaseAuditTrailManager implements AuditTrailManager {
+public class CouchbaseAuditTrailManager extends AbstractAuditTrailManager {
     /**
      * The utils document.
      */
@@ -57,23 +53,16 @@ public class CouchbaseAuditTrailManager implements AuditTrailManager {
      */
     public static final Collection<View> ALL_VIEWS = CollectionUtils.wrap(ALL_RECORDS_VIEW);
 
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-
     private final CouchbaseClientFactory couchbase;
     private final StringSerializer<AuditActionContext> serializer;
-    private final boolean asynchronous;
 
-    @Override
-    public void record(final AuditActionContext audit) {
-        if (this.asynchronous) {
-            this.executorService.execute(() -> saveAuditRecord(audit));
-        } else {
-            saveAuditRecord(audit);
-        }
+    public CouchbaseAuditTrailManager(final CouchbaseClientFactory couchbase, final StringSerializer<AuditActionContext> serializer, final boolean asynchronous) {
+        this(couchbase, serializer);
+        this.asynchronous = asynchronous;
     }
-
     @SneakyThrows
-    private void saveAuditRecord(final AuditActionContext audit) {
+    @Override
+    protected void saveAuditRecord(final AuditActionContext audit) {
         try (val stringWriter = new StringWriter()) {
             this.serializer.to(stringWriter, audit);
             val id = UUID.randomUUID().toString();
@@ -83,7 +72,7 @@ public class CouchbaseAuditTrailManager implements AuditTrailManager {
     }
 
     @Override
-    public Set<AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
+    public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
         val couchbaseBucket = this.couchbase.getBucket();
         val name = couchbaseBucket.name();
         val statement = select("*").from(i(name)).where(x("whenActionWasPerformed").gte(x("$whenActionWasPerformed")));
