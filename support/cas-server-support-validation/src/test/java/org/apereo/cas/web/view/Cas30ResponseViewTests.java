@@ -138,7 +138,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
 
     @Test
     public void verifyViewAuthnAttributes() throws Exception {
-        final Map<?, ?> attributes = renderView();
+        val attributes = renderView();
         assertTrue(attributes.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE));
         assertTrue(attributes.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN));
         assertTrue(attributes.containsKey(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME));
@@ -146,7 +146,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
 
     @Test
     public void verifyPasswordAsAuthenticationAttributeCanDecrypt() throws Exception {
-        final Map<?, ?> attributes = renderView();
+        val attributes = renderView();
         assertTrue(attributes.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL));
 
         val encodedPsw = (String) attributes.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
@@ -157,7 +157,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
 
     @Test
     public void verifyProxyGrantingTicketAsAuthenticationAttributeCanDecrypt() throws Exception {
-        final Map<?, ?> attributes = renderView();
+        val attributes = renderView();
         LOGGER.warn("Attributes are [{}]", attributes.keySet());
         assertTrue(attributes.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET));
 

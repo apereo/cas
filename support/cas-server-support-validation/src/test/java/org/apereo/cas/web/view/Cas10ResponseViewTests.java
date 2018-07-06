@@ -13,7 +13,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -33,7 +32,7 @@ public class Cas10ResponseViewTests {
     @Before
     public void initialize() {
         this.model = new HashMap<>();
-        final List<Authentication> list = new ArrayList<>();
+        val list = new ArrayList<Authentication>();
         list.add(CoreAuthenticationTestUtils.getAuthentication("someothername"));
         this.model.put("assertion", new DefaultAssertionBuilder(
                 CoreAuthenticationTestUtils.getAuthentication()).with(list).with(

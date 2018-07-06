@@ -90,7 +90,7 @@ public class RegisteredServiceTestUtils {
     }
 
     public static Map<String, Set<String>> getTestAttributes() {
-        final Map<String, Set<String>> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Set<String>>();
         Set<String> attributeValues = new HashSet<>();
         attributeValues.add("uid");
 

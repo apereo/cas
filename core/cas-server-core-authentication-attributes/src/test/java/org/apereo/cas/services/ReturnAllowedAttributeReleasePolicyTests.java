@@ -12,7 +12,6 @@ import org.junit.runners.JUnit4;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -29,7 +28,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
 
     @Test
     public void verifySerializeAReturnAllowedAttributeReleasePolicyToJson() throws IOException {
-        final List<String> allowedAttributes = new ArrayList<>();
+        val allowedAttributes = new ArrayList<String>();
         allowedAttributes.add("attributeOne");
         val policyWritten = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
         MAPPER.writeValue(JSON_FILE, policyWritten);

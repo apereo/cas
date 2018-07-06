@@ -12,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -38,7 +37,7 @@ public class X509RestHttpRequestCredentialFactoryTests {
 
     @Test
     public void createX509Credential() throws IOException {
-        final MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        val requestBody = new LinkedMultiValueMap<String, String>();
         val scan = new Scanner(new ClassPathResource("ldap-crl.crt").getFile(), StandardCharsets.UTF_8.name());
         val certStr = scan.useDelimiter("\\Z").next();
         scan.close();
@@ -50,7 +49,7 @@ public class X509RestHttpRequestCredentialFactoryTests {
 
     @Test
     public void createDefaultCredential() {
-        final MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        val requestBody = new LinkedMultiValueMap<String, String>();
         requestBody.add("username", "name");
         requestBody.add("password", "passwd");
         val cred = factory.fromRequestBody(requestBody);

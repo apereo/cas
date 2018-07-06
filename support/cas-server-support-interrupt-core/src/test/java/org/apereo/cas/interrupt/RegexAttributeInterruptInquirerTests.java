@@ -8,7 +8,6 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.junit.Test;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -40,7 +39,7 @@ public class RegexAttributeInterruptInquirerTests {
             new RegexAttributeInterruptInquirer("member..", "CA.|system");
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
 
-        final Map<String, RegisteredServiceProperty> properties = new LinkedHashMap<>();
+        val properties = new LinkedHashMap<String, RegisteredServiceProperty>();
         val value = new DefaultRegisteredServiceProperty();
         value.addValue(Boolean.TRUE.toString());
         properties.put(RegisteredServiceProperty.RegisteredServiceProperties.SKIP_INTERRUPT_NOTIFICATIONS.getPropertyName(), value);

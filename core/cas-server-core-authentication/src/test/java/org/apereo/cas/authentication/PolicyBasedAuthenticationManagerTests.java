@@ -46,7 +46,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateAnySuccess() throws Exception {
-        final Map<AuthenticationHandler, PrincipalResolver> map = new HashMap<>();
+        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(true), null);
         map.put(newMockHandler(false), null);
 
@@ -62,7 +62,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateAnyButTryAllSuccess() throws Exception {
-        final Map<AuthenticationHandler, PrincipalResolver> map = new HashMap<>();
+        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(true), null);
         map.put(newMockHandler(false), null);
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
@@ -86,7 +86,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateAnyFailure() throws Exception {
-        final Map<AuthenticationHandler, PrincipalResolver> map = new LinkedHashMap<>();
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(false), null);
         map.put(newMockHandler(false), null);
 
@@ -103,7 +103,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateAllSuccess() throws Exception {
-        final Map<AuthenticationHandler, PrincipalResolver> map = new LinkedHashMap<>();
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(true), null);
         map.put(newMockHandler(true), null);
 
@@ -120,7 +120,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateAllFailure() throws Exception {
-        final Map<AuthenticationHandler, PrincipalResolver> map = new LinkedHashMap<>();
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(false), null);
         map.put(newMockHandler(false), null);
 
@@ -137,7 +137,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateRequiredHandlerSuccess() throws Exception {
-        final Map<AuthenticationHandler, PrincipalResolver> map = new LinkedHashMap<>();
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(HANDLER_A, true), null);
         map.put(newMockHandler(HANDLER_B, false), null);
 
@@ -154,7 +154,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateRequiredHandlerFailure() throws Exception {
-        final Map<AuthenticationHandler, PrincipalResolver> map = new LinkedHashMap<>();
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(HANDLER_A, true), null);
         map.put(newMockHandler(HANDLER_B, false), null);
 
@@ -170,7 +170,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateRequiredHandlerTryAllSuccess() throws Exception {
-        final Map<AuthenticationHandler, PrincipalResolver> map = new LinkedHashMap<>();
+        val map = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>();
         map.put(newMockHandler(HANDLER_A, true), null);
         map.put(newMockHandler(HANDLER_B, false), null);
 

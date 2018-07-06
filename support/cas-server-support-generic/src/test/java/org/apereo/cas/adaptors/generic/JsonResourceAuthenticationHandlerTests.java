@@ -29,7 +29,6 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -49,7 +48,7 @@ public class JsonResourceAuthenticationHandlerTests {
     private JsonResourceAuthenticationHandler handler;
 
     public JsonResourceAuthenticationHandlerTests() throws Exception {
-        final Map<String, CasUserAccount> accounts = new LinkedHashMap<>();
+        val accounts = new LinkedHashMap<String, CasUserAccount>();
 
         var acct = new CasUserAccount();
         acct.setPassword("Mellon");
