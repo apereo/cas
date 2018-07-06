@@ -3,7 +3,7 @@ package org.apereo.cas.shell.commands.jasypt;
 import lombok.val;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.exceptions.EncryptionInitializationException;
