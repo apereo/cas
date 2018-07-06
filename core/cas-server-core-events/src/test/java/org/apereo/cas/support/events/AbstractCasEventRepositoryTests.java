@@ -5,7 +5,6 @@ import lombok.val;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -34,12 +33,12 @@ public abstract class AbstractCasEventRepositoryTests {
         assertNotEquals(dto2.getId(), 0);
         assertNotEquals(dto2.getId(), dto1.getId());
         
-        final CasEvent casEvent = col.stream().findFirst().get();
+        val casEvent = col.stream().findFirst().get();
         assertFalse(casEvent.getProperties().isEmpty());
     }
 
     private CasEvent getCasEvent() {
-        final TicketGrantingTicket ticket = new MockTicketGrantingTicket("casuser");
+       val ticket = new MockTicketGrantingTicket("casuser");
         val event = new CasTicketGrantingTicketCreatedEvent(this, ticket);
 
         val dto = new CasEvent();

@@ -47,7 +47,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
     public void verifyAction() {
 
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
-        DistributedCacheObject obj = mgr.get(registeredService);
+        var obj = mgr.get(registeredService);
         assertNull(obj);
         assertFalse(mgr.contains(registeredService));
 

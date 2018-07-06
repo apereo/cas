@@ -9,6 +9,7 @@ import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.ResultCode;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
 import org.ldaptive.DefaultConnectionFactory;
@@ -59,7 +60,7 @@ public class LdapTestUtils {
      * @throws IOException On IO errors reading LDIF.
      */
     public static Collection<LdapEntry> readLdif(final InputStream ldif, final String baseDn) throws IOException {
-        final String ldapString;
+        var ldapString = StringUtils.EMPTY;
         try (val reader = new BufferedReader(new InputStreamReader(ldif, StandardCharsets.UTF_8))) {
             ldapString = reader.lines()
                 .map(line -> {

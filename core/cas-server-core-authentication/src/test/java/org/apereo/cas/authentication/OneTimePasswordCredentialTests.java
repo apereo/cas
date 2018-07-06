@@ -26,7 +26,7 @@ public class OneTimePasswordCredentialTests {
     public void verifySerializeAnOneTimePasswordCredentialToJson() throws IOException {
         val credentialWritten = new OneTimePasswordCredential("id", "password");
         MAPPER.writeValue(JSON_FILE, credentialWritten);
-        final CredentialMetaData credentialRead = MAPPER.readValue(JSON_FILE, OneTimePasswordCredential.class);
+        val credentialRead = MAPPER.readValue(JSON_FILE, OneTimePasswordCredential.class);
         assertEquals(credentialWritten, credentialRead);
     }
 }

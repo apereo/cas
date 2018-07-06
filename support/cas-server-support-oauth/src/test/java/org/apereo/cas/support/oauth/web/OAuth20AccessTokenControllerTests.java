@@ -446,7 +446,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         assertEquals(200, mockResponse.getStatus());
         val body = mockResponse.getContentAsString();
 
-        final String accessTokenId;
+        var accessTokenId = StringUtils.EMPTY;
         if (json) {
             assertEquals("application/json", mockResponse.getContentType());
             assertTrue(body.contains('"' + OAuth20Constants.ACCESS_TOKEN + "\":\"AT-"));

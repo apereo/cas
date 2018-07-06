@@ -33,7 +33,7 @@ public class SamlRequestAuditResourceResolverTests {
         when(issuer.getValue()).thenReturn("https://idp.example.org");
         when(authnRequest.getIssuer()).thenReturn(issuer);
         when(authnRequest.getProtocolBinding()).thenReturn("ProtocolBinding");
-        Pair pair = Pair.of(authnRequest, null);
+        var pair = Pair.of(authnRequest, null);
         var result = r.resolveFrom(mock(JoinPoint.class), pair);
         assertNotNull(result);
         assertTrue(result.length > 0);

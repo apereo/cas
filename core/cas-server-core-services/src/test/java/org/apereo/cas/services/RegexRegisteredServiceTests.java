@@ -5,7 +5,6 @@ import lombok.val;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.authentication.principal.Service;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -37,9 +36,9 @@ public class RegexRegisteredServiceTests {
     private final boolean expected;
 
     public RegexRegisteredServiceTests(
-            final RegexRegisteredService service,
-            final String serviceToMatch,
-            final boolean expectedResult) {
+        final RegexRegisteredService service,
+        final String serviceToMatch,
+        final boolean expectedResult) {
         this.service = service;
         this.serviceToMatch = serviceToMatch;
         this.expected = expectedResult;
@@ -51,63 +50,58 @@ public class RegexRegisteredServiceTests {
         val domainCatchallHttpImap = "(https*|imaps*)://([A-Za-z0-9_-]+\\.)+vt\\.edu/.*";
         val globalCatchallHttpImap = "(https*|imaps*)://.*";
         return Arrays.asList(new Object[][]{
-                // CAS-1071 domain-specific HTTP catch-all #1
-                {
-                        newService(domainCatchallHttp),
-                        "https://service.vt.edu/webapp?a=1",
-                        true,
-                },
-                {
-                        newService(domainCatchallHttp),
-                        "http://test-01.service.vt.edu/webapp?a=1",
-                        true,
-                },
-                {
-                        newService(domainCatchallHttp),
-                        "https://thepiratebay.se?service.vt.edu/webapp?a=1",
-                        false,
-                },
-                // Domain-specific catch-all for HTTP(S)/IMAP(S) #1
-                {
-                        newService(domainCatchallHttpImap),
-                        "http://test_service.vt.edu/login",
-                        true,
-                },
-                // Domain-specific catch-all for HTTP(S)/IMAP(S) #2
-                {
-                        newService(domainCatchallHttpImap),
-                        "imaps://imap-server-01.vt.edu/",
-                        true,
-                },
-                // Global catch-all for HTTP(S)/IMAP(S) #1
-                {
-                        newService(globalCatchallHttpImap),
-                        "https://host-01.example.com/",
-                        true,
-                },
-                // Global catch-all for HTTP(S)/IMAP(S) #2
-                {
-                        newService(globalCatchallHttpImap),
-                        "imap://host-02.example.edu/",
-                        true,
-                },
-                // Null case
-                {
-                        newService(globalCatchallHttpImap),
-                        null,
-                        false,
-                },
+            // CAS-1071 domain-specific HTTP catch-all #1
+            {
+                newService(domainCatchallHttp),
+                "https://service.vt.edu/webapp?a=1",
+                true,
+            },
+            {
+                newService(domainCatchallHttp),
+                "http://test-01.service.vt.edu/webapp?a=1",
+                true,
+            },
+            {
+                newService(domainCatchallHttp),
+                "https://thepiratebay.se?service.vt.edu/webapp?a=1",
+                false,
+            },
+            // Domain-specific catch-all for HTTP(S)/IMAP(S) #1
+            {
+                newService(domainCatchallHttpImap),
+                "http://test_service.vt.edu/login",
+                true,
+            },
+            // Domain-specific catch-all for HTTP(S)/IMAP(S) #2
+            {
+                newService(domainCatchallHttpImap),
+                "imaps://imap-server-01.vt.edu/",
+                true,
+            },
+            // Global catch-all for HTTP(S)/IMAP(S) #1
+            {
+                newService(globalCatchallHttpImap),
+                "https://host-01.example.com/",
+                true,
+            },
+            // Global catch-all for HTTP(S)/IMAP(S) #2
+            {
+                newService(globalCatchallHttpImap),
+                "imap://host-02.example.edu/",
+                true,
+            },
+            // Null case
+            {
+                newService(globalCatchallHttpImap),
+                null,
+                false,
+            },
         });
     }
 
     @Test
     public void verifyMatches() {
-        final Service testService;
-        if (serviceToMatch == null) {
-            testService = null;
-        } else {
-            testService = RegisteredServiceTestUtils.getService(serviceToMatch);
-        }
+        val testService = serviceToMatch == null ? null : RegisteredServiceTestUtils.getService(serviceToMatch);
         assertEquals(expected, service.matches(testService));
     }
 

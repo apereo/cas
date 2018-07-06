@@ -46,7 +46,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
         attributes = new HashMap<>();
         attributes.put("a1", Arrays.asList("v1", "v2", "v3"));
 
-        List email = new ArrayList<>();
+        var email = new ArrayList<>();
         email.add("final@example.com");
         attributes.put(MAIL, email);
 
