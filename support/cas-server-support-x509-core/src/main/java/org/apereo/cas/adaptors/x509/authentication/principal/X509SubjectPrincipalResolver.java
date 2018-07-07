@@ -1,8 +1,8 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @ToString(callSuper = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver {
 
     /**

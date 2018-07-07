@@ -1,8 +1,8 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -17,7 +17,7 @@ import java.security.cert.X509Certificate;
  */
 @Slf4j
 @ToString(callSuper = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class X509SerialNumberPrincipalResolver extends AbstractX509PrincipalResolver {
 
     private static final int DEFAULT_RADIX = 10;

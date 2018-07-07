@@ -1,8 +1,8 @@
 package org.apereo.cas.ws.idp.web;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 @ToString
 @Getter
 @Setter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class WSFederationRequest {
 
     private final String wtrealm;

@@ -1,8 +1,8 @@
 package org.apereo.cas.adaptors.x509.util;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import java.math.BigInteger;
 import java.security.Principal;
@@ -27,7 +27,7 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MockX509CRL extends X509CRL {
 
     /** Issuer name */

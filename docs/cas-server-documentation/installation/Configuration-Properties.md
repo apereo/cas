@@ -2592,18 +2592,36 @@ Delegate authentication to an generic OAuth2 server. Common settings for this id
 
 ### OpenID Connect
 
-Delegate authentication to an external OpenID Connect server. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.oidc[0]`.
+Delegate authentication to an external OpenID Connect server.
+
+Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) 
+under the configuration key `cas.authn.pac4j.oidc[0]`.
+
+#### Google
+
+Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
+under the configuration key `cas.authn.pac4j.oidc[0].google`.
+
+#### Azure AD
+
+Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
+under the configuration key `cas.authn.pac4j.oidc[0].azure`.
+
+The following settings specifically apply to this provider:
 
 ```properties
-# cas.authn.pac4j.oidc[0].type=KEYCLOAK|GOOGLE|AZURE|GENERIC
-# cas.authn.pac4j.oidc[0].discoveryUri=
-# cas.authn.pac4j.oidc[0].logoutUrl=
-# cas.authn.pac4j.oidc[0].maxClockSkew=
-# cas.authn.pac4j.oidc[0].scope=
-# cas.authn.pac4j.oidc[0].useNonce=
-# cas.authn.pac4j.oidc[0].preferredJwsAlgorithm=
-# cas.authn.pac4j.oidc[0].customParams.param1=value1
+# cas.authn.pac4j.oidc[0].azure.tenant=tenant-name
 ```
+
+#### KeyCloak
+
+Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
+under the configuration key `cas.authn.pac4j.oidc[0].keycloak`.
+
+#### Generic
+
+Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
+under the configuration key `cas.authn.pac4j.oidc[0].generic`.
 
 ### SAML2
 

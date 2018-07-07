@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.metadata;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationBuilder;
@@ -18,13 +18,10 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
  */
 @Slf4j
 @ToString(callSuper = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AuthenticationContextAttributeMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
-
     private final String authenticationContextAttribute;
-
     private final AuthenticationHandler authenticationHandler;
-
     private final MultifactorAuthenticationProvider provider;
 
     @Override

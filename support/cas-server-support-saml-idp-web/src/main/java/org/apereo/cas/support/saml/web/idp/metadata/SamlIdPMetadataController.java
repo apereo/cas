@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.web.idp.metadata;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.support.saml.SamlIdPConstants;
@@ -25,7 +25,7 @@ import java.nio.charset.StandardCharsets;
  */
 @Controller("samlIdPMetadataController")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SamlIdPMetadataController implements InitializingBean {
     private static final String CONTENT_TYPE = "text/xml;charset=UTF-8";
 

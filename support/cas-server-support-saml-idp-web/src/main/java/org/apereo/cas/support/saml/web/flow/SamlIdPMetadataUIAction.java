@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.web.flow;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
@@ -24,7 +24,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SamlIdPMetadataUIAction extends AbstractAction {
     private final ServicesManager servicesManager;
 

@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow.action;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
@@ -20,7 +20,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SurrogateAuthorizationAction extends AbstractAction {
     private final ServicesManager servicesManager;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;

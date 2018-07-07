@@ -1,8 +1,8 @@
 package org.apereo.cas.support.validation;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.handler.RequestData;
@@ -17,7 +17,7 @@ import org.apereo.cas.CipherExecutor;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CipheredCredentialsValidator implements Validator {
     private final CipherExecutor cipherExecutor;
 
