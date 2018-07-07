@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.mdui;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
@@ -14,7 +14,7 @@ import java.util.Set;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ChainingMetadataResolverAdapter implements MetadataResolverAdapter {
 
     private final Set<MetadataResolverAdapter> adapters;

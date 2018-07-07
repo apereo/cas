@@ -2,6 +2,10 @@ package org.apereo.cas.configuration.model.support.pac4j;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apereo.cas.configuration.model.support.pac4j.cas.Pac4jCasClientProperties;
+import org.apereo.cas.configuration.model.support.pac4j.oauth.Pac4jOAuth20ClientProperties;
+import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
+import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 

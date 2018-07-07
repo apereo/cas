@@ -1,8 +1,8 @@
 package org.apereo.cas.adaptors.gauth;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.authentication.OneTimeToken;
@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenRepository {
     private final MongoOperations mongoTemplate;
     private final String collectionName;
