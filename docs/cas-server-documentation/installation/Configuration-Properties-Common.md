@@ -907,7 +907,7 @@ topic, [please review this guide](SMS-Messaging-Configuration.html).
  
 ## Delegated Authentication Settings
 
-The following  options are shared and apply when CAS is configured to delegate authentication 
+The following options are shared and apply when CAS is configured to delegate authentication 
 to an external provider such as Yahoo, given the provider's *configuration key*:
 
 ```properties
@@ -917,6 +917,20 @@ to an external provider such as Yahoo, given the provider's *configuration key*:
 # ${configurationKey}.autoRedirect=false
 ```
 
+### Delegated Authentication OpenID Connect Settings
+
+The following options are shared and apply when CAS is configured to delegate authentication 
+to an external OpenID Connect provider such as Azure AD, given the provider's *configuration key*:
+
+```properties
+# ${configurationKey}.discoveryUri=
+# ${configurationKey}.logoutUrl=
+# ${configurationKey}.maxClockSkew=
+# ${configurationKey}.scope=
+# ${configurationKey}.useNonce=
+# ${configurationKey}.preferredJwsAlgorithm=
+# ${configurationKey}.customParams.param1=value1
+```
 
 ## LDAP Connection Settings
 

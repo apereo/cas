@@ -1,5 +1,6 @@
-package org.apereo.cas.configuration.model.support.pac4j;
+package org.apereo.cas.configuration.model.support.pac4j.oauth;
 
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jIdentifiableClientProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import java.util.Map;

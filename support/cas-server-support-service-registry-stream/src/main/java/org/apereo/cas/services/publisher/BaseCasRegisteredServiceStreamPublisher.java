@@ -1,6 +1,6 @@
 package org.apereo.cas.services.publisher;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.services.RegisteredService;
@@ -17,7 +17,7 @@ import org.springframework.context.ApplicationEvent;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class BaseCasRegisteredServiceStreamPublisher implements CasRegisteredServiceStreamPublisher {
     /**
      * Publisher id.

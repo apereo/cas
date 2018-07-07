@@ -9,7 +9,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.pac4j.Pac4jOidcClientProperties;
+import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClientProperties;
+import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
@@ -62,7 +63,7 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureGithubClient(final Collection<BaseClient> properties) {
+    protected void configureGitHubClient(final Collection<BaseClient> properties) {
         val github = pac4jProperties.getGithub();
         if (StringUtils.isNotBlank(github.getId()) && StringUtils.isNotBlank(github.getSecret())) {
             val client = new GitHubClient(github.getId(), github.getSecret());
@@ -78,7 +79,7 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureDropboxClient(final Collection<BaseClient> properties) {
+    protected void configureDropBoxClient(final Collection<BaseClient> properties) {
         val db = pac4jProperties.getDropbox();
         if (StringUtils.isNotBlank(db.getId()) && StringUtils.isNotBlank(db.getSecret())) {
             val client = new DropBoxClient(db.getId(), db.getSecret());
@@ -238,7 +239,7 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureWordpressClient(final Collection<BaseClient> properties) {
+    protected void configureWordPressClient(final Collection<BaseClient> properties) {
         val wp = pac4jProperties.getWordpress();
         if (StringUtils.isNotBlank(wp.getId()) && StringUtils.isNotBlank(wp.getSecret())) {
             val client = new WordPressClient(wp.getId(), wp.getSecret());
@@ -254,7 +255,7 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configureBitbucketClient(final Collection<BaseClient> properties) {
+    protected void configureBitBucketClient(final Collection<BaseClient> properties) {
         val bb = pac4jProperties.getBitbucket();
         if (StringUtils.isNotBlank(bb.getId()) && StringUtils.isNotBlank(bb.getSecret())) {
             val client = new BitbucketClient(bb.getId(), bb.getSecret());
@@ -270,7 +271,7 @@ public class DelegatedClientFactory {
      *
      * @param properties the properties
      */
-    protected void configurePaypalClient(final Collection<BaseClient> properties) {
+    protected void configurePayPalClient(final Collection<BaseClient> properties) {
         val paypal = pac4jProperties.getPaypal();
         if (StringUtils.isNotBlank(paypal.getId()) && StringUtils.isNotBlank(paypal.getSecret())) {
             val client = new PayPalClient(paypal.getId(), paypal.getSecret());
@@ -430,25 +431,30 @@ public class DelegatedClientFactory {
     }
 
     private OidcClient getOidcClientFrom(final Pac4jOidcClientProperties oidc) {
-        val type = oidc.getType().toUpperCase();
-        if ("GOOGLE".equals(type)) {
-            val cfg = getOidcConfigurationForClient(oidc, OidcConfiguration.class);
+        if (StringUtils.isNotBlank(oidc.getAzure().getId())) {
+            LOGGER.debug("Building OpenID Connect client for Azure AD...");
+            val azure = getOidcConfigurationForClient(oidc.getAzure(), AzureAdOidcConfiguration.class);
+            azure.setTenant(oidc.getAzure().getTenant());
+            val cfg = new AzureAdOidcConfiguration(azure);
+            return new AzureAdClient(cfg);
+        }
+        if (StringUtils.isNotBlank(oidc.getGoogle().getId())) {
+            LOGGER.debug("Building OpenID Connect client for Google...");
+            val cfg = getOidcConfigurationForClient(oidc.getGoogle(), OidcConfiguration.class);
             return new GoogleOidcClient(cfg);
         }
-        if ("AZURE".equals(type)) {
-            val azure = getOidcConfigurationForClient(oidc, AzureAdOidcConfiguration.class);
-            return new AzureAdClient(new AzureAdOidcConfiguration(azure));
+        if (StringUtils.isNotBlank(oidc.getKeycloak().getId())) {
+            LOGGER.debug("Building OpenID Connect client for KeyCloak...");
+            val cfg = getOidcConfigurationForClient(oidc.getKeycloak(), KeycloakOidcConfiguration.class);
+            return new KeycloakOidcClient(cfg);
         }
-        if ("KEYCLOAK".equals(type)) {
-            val keycfg = getOidcConfigurationForClient(oidc, KeycloakOidcConfiguration.class);
-            return new KeycloakOidcClient(keycfg);
-        }
-        val gencfg = getOidcConfigurationForClient(oidc, OidcConfiguration.class);
-        return new OidcClient(gencfg);
+        LOGGER.debug("Building generic OpenID Connect client...");
+        val generic = getOidcConfigurationForClient(oidc.getGeneric(), OidcConfiguration.class);
+        return new OidcClient(generic);
     }
 
     @SneakyThrows
-    private <T extends OidcConfiguration> T getOidcConfigurationForClient(final Pac4jOidcClientProperties oidc, final Class<T> clazz) {
+    private <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc, final Class<T> clazz) {
         val cfg = clazz.getDeclaredConstructor().newInstance();
         if (StringUtils.isNotBlank(oidc.getScope())) {
             cfg.setScope(oidc.getScope());
@@ -481,16 +487,16 @@ public class DelegatedClientFactory {
         configureOAuth20Client(clients);
         configureSamlClient(clients);
         configureTwitterClient(clients);
-        configureDropboxClient(clients);
+        configureDropBoxClient(clients);
         configureFoursquareClient(clients);
-        configureGithubClient(clients);
+        configureGitHubClient(clients);
         configureGoogleClient(clients);
         configureWindowsLiveClient(clients);
         configureYahooClient(clients);
         configureLinkedInClient(clients);
-        configurePaypalClient(clients);
-        configureWordpressClient(clients);
-        configureBitbucketClient(clients);
+        configurePayPalClient(clients);
+        configureWordPressClient(clients);
+        configureBitBucketClient(clients);
         configureOrcidClient(clients);
 
         return clients;

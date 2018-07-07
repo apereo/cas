@@ -1,6 +1,6 @@
 package org.apereo.cas.support.realm;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -18,7 +18,7 @@ import java.util.StringTokenizer;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UriRealmParser implements RealmParser {
 
     private final Map<String, RealmProperties> realmMap;

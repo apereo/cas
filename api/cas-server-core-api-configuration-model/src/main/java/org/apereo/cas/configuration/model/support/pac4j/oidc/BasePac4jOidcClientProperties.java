@@ -1,30 +1,26 @@
-package org.apereo.cas.configuration.model.support.pac4j;
+package org.apereo.cas.configuration.model.support.pac4j.oidc;
 
-import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.RequiredProperty;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jIdentifiableClientProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * This is {@link Pac4jOidcClientProperties}.
+ * This is {@link BasePac4jOidcClientProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-pac4j-webflow")
-
 @Getter
 @Setter
-public class Pac4jOidcClientProperties extends Pac4jIdentifiableClientProperties {
+public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableClientProperties {
 
     private static final long serialVersionUID = 3359382317533639638L;
-
-    /**
-     * The type of the provider. "google" and "azure" are also acceptable values.
-     */
-    private String type = "generic";
 
     /**
      * The discovery endpoint to locate the provide metadata.
