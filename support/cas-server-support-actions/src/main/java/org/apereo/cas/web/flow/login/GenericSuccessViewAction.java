@@ -1,9 +1,8 @@
 package org.apereo.cas.web.flow.login;
 
-import lombok.val;
-
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.NullPrincipal;
@@ -25,7 +24,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 4.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GenericSuccessViewAction extends AbstractAction {
     private final CentralAuthenticationService centralAuthenticationService;
     private final ServicesManager servicesManager;

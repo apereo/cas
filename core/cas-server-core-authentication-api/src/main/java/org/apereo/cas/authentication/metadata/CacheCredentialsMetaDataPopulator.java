@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication.metadata;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
@@ -22,7 +22,7 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
  */
 @Slf4j
 @ToString(callSuper = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CacheCredentialsMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
     private final CipherExecutor<String, String> cipherExecutor;

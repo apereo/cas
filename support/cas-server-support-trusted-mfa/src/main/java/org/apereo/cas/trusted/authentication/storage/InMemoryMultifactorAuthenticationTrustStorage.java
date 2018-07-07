@@ -1,9 +1,9 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
     private final LoadingCache<String, MultifactorAuthenticationTrustRecord> storage;

@@ -1,7 +1,8 @@
-package org.apereo.cas.configuration.model.support.pac4j;
+package org.apereo.cas.configuration.model.support.pac4j.saml;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 

@@ -1,8 +1,8 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.DateTimeUtils;
 
@@ -20,7 +20,7 @@ import java.time.ZonedDateTime;
  *
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RevokedCertificateException extends GeneralSecurityException {
 
     /** OID for reasonCode CRL extension. */

@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.token;
 
 import com.google.common.base.Preconditions;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
@@ -35,7 +36,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-
 /**
  * This is {@link OidcIdTokenGeneratorService}.
  *
@@ -44,24 +44,12 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @Getter
+@RequiredArgsConstructor
 public class OidcIdTokenGeneratorService {
 
     private final CasConfigurationProperties casProperties;
     private final OidcIdTokenSigningAndEncryptionService signingService;
     private final ServicesManager servicesManager;
-
-    private final String oAuthCallbackUrl;
-
-    public OidcIdTokenGeneratorService(final CasConfigurationProperties casProperties,
-                                       final OidcIdTokenSigningAndEncryptionService signingService,
-                                       final ServicesManager servicesManager) {
-        this.casProperties = casProperties;
-        this.signingService = signingService;
-        this.servicesManager = servicesManager;
-        this.oAuthCallbackUrl = casProperties.getServer().getPrefix()
-            + OAuth20Constants.BASE_OAUTH20_URL + '/'
-            + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
-    }
 
     /**
      * Generate string.
@@ -165,12 +153,16 @@ public class OidcIdTokenGeneratorService {
     }
 
     private Entry<String, Service> getOAuthServiceTicket(final TicketGrantingTicket tgt) {
+        val oAuthCallbackUrl = casProperties.getServer().getPrefix()
+            + OAuth20Constants.BASE_OAUTH20_URL + '/'
+            + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+
         val oAuthServiceTicket = Stream.concat(
             tgt.getServices().entrySet().stream(),
             tgt.getProxyGrantingTickets().entrySet().stream())
             .filter(e -> servicesManager.findServiceBy(e.getValue()).getServiceId().equals(oAuthCallbackUrl))
             .findFirst();
-        Preconditions.checkState(oAuthServiceTicket.isPresent(), "Cannot find service ticket issues to "
+        Preconditions.checkState(oAuthServiceTicket.isPresent(), "Cannot find service ticket issued to "
             + oAuthCallbackUrl + " as part of the authentication context");
         return oAuthServiceTicket.get();
     }
@@ -186,7 +178,7 @@ public class OidcIdTokenGeneratorService {
     }
 
     private String getSigningHashAlgorithm() {
-        if (signingService.getJsonWebKeySigningAlgorithm() == AlgorithmIdentifiers.RSA_USING_SHA512) {
+        if (AlgorithmIdentifiers.RSA_USING_SHA512.equalsIgnoreCase(signingService.getJsonWebKeySigningAlgorithm())) {
             return MessageDigestAlgorithms.SHA_512;
         }
         return MessageDigestAlgorithms.SHA_256;

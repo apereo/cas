@@ -1,8 +1,8 @@
 package org.apereo.cas.ticket.query;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -23,7 +23,7 @@ import org.opensaml.saml.common.SAMLObject;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQueryTicketFactory {
 
     /**
