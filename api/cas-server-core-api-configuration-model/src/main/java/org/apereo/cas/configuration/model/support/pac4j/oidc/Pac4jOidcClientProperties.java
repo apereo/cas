@@ -43,4 +43,5 @@ public class Pac4jOidcClientProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private Pac4jKeyCloakOidcClientProperties generic = new Pac4jKeyCloakOidcClientProperties();
+
 }

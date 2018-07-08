@@ -124,7 +124,7 @@ public abstract class AbstractJpaProperties implements Serializable {
      *       and {@code connectionInitSql} are valid.  If those validations fail, an exception
      *       will be thrown.  If a connection cannot be obtained, the validation is skipped
      *       and the the pool will start and continue to try to obtain connections in the
-     *       background.  This can mean that callers to {@code DataSource#getConnection()} may
+     *       background. This can mean that callers to {@code DataSource#getConnection()} may
      *       encounter exceptions. </li>
      *   <li>A value less than zero will <i>not</i> bypass any connection attempt and
      *       validation during startup, and therefore the pool will start immediately.  The

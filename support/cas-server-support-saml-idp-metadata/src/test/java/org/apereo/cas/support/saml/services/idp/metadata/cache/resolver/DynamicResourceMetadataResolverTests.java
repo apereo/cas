@@ -46,7 +46,7 @@ public class DynamicResourceMetadataResolverTests {
     public void verifyResolverSupports() {
         val props = new SamlIdPProperties();
         props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
-        val resolver = new DynamicMetadataResolver(props, openSamlConfigBean);
+        val resolver = new MetadataQueryProtocolMetadataResolver(props, openSamlConfigBean);
         val service = new SamlRegisteredService();
         service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
         assertFalse(resolver.supports(service));
@@ -58,7 +58,7 @@ public class DynamicResourceMetadataResolverTests {
     public void verifyResolverResolves() {
         val props = new SamlIdPProperties();
         props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
-        val resolver = new DynamicMetadataResolver(props, openSamlConfigBean);
+        val resolver = new MetadataQueryProtocolMetadataResolver(props, openSamlConfigBean);
         val service = new SamlRegisteredService();
         service.setId(100);
         service.setName("Dynamic");

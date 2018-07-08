@@ -23,8 +23,6 @@ import java.util.Collection;
  */
 @Slf4j
 public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
-
-
     public ClasspathResourceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                              final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);
@@ -58,5 +56,10 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
             LOGGER.error(e.getMessage(), e);
         }
         return false;
+    }
+
+    @Override
+    public boolean isAvailable(final SamlRegisteredService service) {
+        return supports(service);
     }
 }

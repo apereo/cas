@@ -69,4 +69,9 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
         }
         return false;
     }
+
+    @Override
+    public boolean isAvailable(final SamlRegisteredService service) {
+        return supports(service);
+    }
 }
