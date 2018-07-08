@@ -161,10 +161,6 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @Qualifier("ticketGrantingTicketCookieGenerator")
     private ObjectProvider<CookieRetrievingCookieGenerator> ticketGrantingTicketCookieGenerator;
 
-    @Autowired
-    @Qualifier("registeredServiceAccessStrategyEnforcer")
-    private AuditableExecution registeredServiceAccessStrategyEnforcer;
-
     @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
     @Bean
     public AccessTokenResponseGenerator accessTokenResponseGenerator() {
