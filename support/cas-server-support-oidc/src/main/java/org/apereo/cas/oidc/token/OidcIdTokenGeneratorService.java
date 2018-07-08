@@ -153,9 +153,7 @@ public class OidcIdTokenGeneratorService {
     }
 
     private Entry<String, Service> getOAuthServiceTicket(final TicketGrantingTicket tgt) {
-        val oAuthCallbackUrl = casProperties.getServer().getPrefix()
-            + OAuth20Constants.BASE_OAUTH20_URL + '/'
-            + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+        val oAuthCallbackUrl = getOAuthCallbackUrl();
 
         val oAuthServiceTicket = Stream.concat(
             tgt.getServices().entrySet().stream(),
@@ -165,6 +163,17 @@ public class OidcIdTokenGeneratorService {
         Preconditions.checkState(oAuthServiceTicket.isPresent(), "Cannot find service ticket issued to "
             + oAuthCallbackUrl + " as part of the authentication context");
         return oAuthServiceTicket.get();
+    }
+
+    /**
+     * Gets o auth callback url.
+     *
+     * @return the o auth callback url
+     */
+    public String getOAuthCallbackUrl() {
+        return casProperties.getServer().getPrefix()
+            + OAuth20Constants.BASE_OAUTH20_URL + '/'
+            + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
     }
 
     private String generateAccessTokenHash(final AccessToken accessTokenId,
