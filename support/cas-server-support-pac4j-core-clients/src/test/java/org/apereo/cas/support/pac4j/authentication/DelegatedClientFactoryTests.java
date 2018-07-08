@@ -1,12 +1,11 @@
 package org.apereo.cas.support.pac4j.authentication;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.configuration.model.support.pac4j.cas.Pac4jCasClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jIdentifiableClientProperties;
+import org.apereo.cas.configuration.model.support.pac4j.cas.Pac4jCasClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oauth.Pac4jOAuth20ClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
@@ -92,24 +91,22 @@ public class DelegatedClientFactoryTests {
     @Test
     public void verifyFactoryForOidcClients() {
         val props = new Pac4jDelegatedAuthenticationProperties();
+
         val oidc1 = new Pac4jOidcClientProperties();
-        configureIdentifiableClient(oidc1);
+        configureIdentifiableClient(oidc1.getGeneric());
         props.getOidc().add(oidc1);
 
         val oidc2 = new Pac4jOidcClientProperties();
-        configureIdentifiableClient(oidc2);
-        oidc2.setType("GOOGLE");
+        configureIdentifiableClient(oidc2.getGoogle());
         props.getOidc().add(oidc2);
 
         val oidc3 = new Pac4jOidcClientProperties();
-        configureIdentifiableClient(oidc3);
-        oidc3.setType("AZURE");
-        oidc3.setLogoutUrl("https://example.logout");
+        configureIdentifiableClient(oidc3.getAzure());
+        oidc3.getAzure().setLogoutUrl("https://example.logout");
         props.getOidc().add(oidc3);
 
         val oidc4 = new Pac4jOidcClientProperties();
-        configureIdentifiableClient(oidc4);
-        oidc4.setType("KEYCLOAK");
+        configureIdentifiableClient(oidc4.getKeycloak());
         props.getOidc().add(oidc4);
 
         val factory = new DelegatedClientFactory(props);

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
@@ -289,8 +290,15 @@ public class DelegatedClientFactory {
      * @param props  the props
      */
     protected void configureClient(final BaseClient client, final Pac4jBaseClientProperties props) {
-        if (StringUtils.isNotBlank(props.getClientName())) {
-            client.setName(props.getClientName());
+        val cname = props.getClientName();
+        if (StringUtils.isNotBlank(cname)) {
+            client.setName(cname);
+        } else {
+            val className = client.getClass().getSimpleName();
+            val genName = className.concat(RandomStringUtils.randomNumeric(2));
+            client.setName(genName);
+            LOGGER.warn("Client name for [{}] is set to a generated value of [{}]. "
+                + "Consider defining an explicit name for the delegated provider", className, genName);
         }
         client.getCustomProperties().put("autoRedirect", props.isAutoRedirect());
     }
@@ -344,12 +352,15 @@ public class DelegatedClientFactory {
                 cfg.setDestinationBindingType(saml.getDestinationBinding());
                 cfg.setForceAuth(saml.isForceAuth());
                 cfg.setPassive(saml.isPassive());
+                if (StringUtils.isNotBlank(saml.getPrincipalIdAttribute())) {
+                    cfg.setAttributeAsId(saml.getPrincipalIdAttribute());
+                }
                 cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
+                cfg.setUseNameQualifier(saml.isUseNameQualifier());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
                 if (saml.getAssertionConsumerServiceIndex() >= 0) {
                     cfg.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex());
                 }
-
                 if (StringUtils.isNotBlank(saml.getAuthnContextClassRef())) {
                     cfg.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase());
                     cfg.setAuthnContextClassRef(saml.getAuthnContextClassRef());
@@ -360,6 +371,7 @@ public class DelegatedClientFactory {
                 if (StringUtils.isNotBlank(saml.getNameIdPolicyFormat())) {
                     cfg.setNameIdPolicyFormat(saml.getNameIdPolicyFormat());
                 }
+
                 val client = new SAML2Client(cfg);
 
                 val count = index.intValue();
@@ -413,18 +425,10 @@ public class DelegatedClientFactory {
      * @param properties the properties
      */
     protected void configureOidcClient(final Collection<BaseClient> properties) {
-        val index = new AtomicInteger();
         pac4jProperties.getOidc()
             .stream()
-            .filter(oidc -> StringUtils.isNotBlank(oidc.getId()) && StringUtils.isNotBlank(oidc.getSecret()))
             .forEach(oidc -> {
                 val client = getOidcClientFrom(oidc);
-                val count = index.intValue();
-                if (StringUtils.isBlank(oidc.getClientName())) {
-                    client.setName(client.getClass().getSimpleName() + count);
-                }
-                configureClient(client, oidc);
-                index.incrementAndGet();
                 LOGGER.debug("Created client [{}]", client);
                 properties.add(client);
             });
@@ -436,21 +440,29 @@ public class DelegatedClientFactory {
             val azure = getOidcConfigurationForClient(oidc.getAzure(), AzureAdOidcConfiguration.class);
             azure.setTenant(oidc.getAzure().getTenant());
             val cfg = new AzureAdOidcConfiguration(azure);
-            return new AzureAdClient(cfg);
+            val azureClient = new AzureAdClient(cfg);
+            configureClient(azureClient, oidc.getAzure());
+            return azureClient;
         }
         if (StringUtils.isNotBlank(oidc.getGoogle().getId())) {
             LOGGER.debug("Building OpenID Connect client for Google...");
             val cfg = getOidcConfigurationForClient(oidc.getGoogle(), OidcConfiguration.class);
-            return new GoogleOidcClient(cfg);
+            val googleClient = new GoogleOidcClient(cfg);
+            configureClient(googleClient, oidc.getGoogle());
+            return googleClient;
         }
         if (StringUtils.isNotBlank(oidc.getKeycloak().getId())) {
             LOGGER.debug("Building OpenID Connect client for KeyCloak...");
             val cfg = getOidcConfigurationForClient(oidc.getKeycloak(), KeycloakOidcConfiguration.class);
-            return new KeycloakOidcClient(cfg);
+            val kc = new KeycloakOidcClient(cfg);
+            configureClient(kc, oidc.getKeycloak());
+            return kc;
         }
         LOGGER.debug("Building generic OpenID Connect client...");
         val generic = getOidcConfigurationForClient(oidc.getGeneric(), OidcConfiguration.class);
-        return new OidcClient(generic);
+        val oc = new OidcClient(generic);
+        configureClient(oc, oidc.getKeycloak());
+        return oc;
     }
 
     @SneakyThrows

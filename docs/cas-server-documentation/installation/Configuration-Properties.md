@@ -2650,6 +2650,8 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].passive=false
 
 # cas.authn.pac4j.saml[0].wantsAssertionsSigned=
+# cas.authn.pac4j.saml[0].principalIdAttribute=eduPersonPrincipalName
+# cas.authn.pac4j.saml[0].useNameQualifier=true
 # cas.authn.pac4j.saml[0].attributeConsumingServiceIndex=
 # cas.authn.pac4j.saml[0].assertionConsumerServiceIndex=-1
 ```

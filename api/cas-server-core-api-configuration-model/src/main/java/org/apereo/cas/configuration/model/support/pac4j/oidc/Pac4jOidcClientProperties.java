@@ -2,9 +2,10 @@ package org.apereo.cas.configuration.model.support.pac4j.oidc;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apereo.cas.configuration.model.support.pac4j.Pac4jIdentifiableClientProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
 
 /**
  * This is {@link Pac4jOidcClientProperties}.
@@ -15,7 +16,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @RequiresModule(name = "cas-server-support-pac4j-webflow")
 @Getter
 @Setter
-public class Pac4jOidcClientProperties extends Pac4jIdentifiableClientProperties {
+public class Pac4jOidcClientProperties implements Serializable {
 
     private static final long serialVersionUID = 3359382317533639638L;
 
