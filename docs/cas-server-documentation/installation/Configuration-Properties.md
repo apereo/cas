@@ -2506,15 +2506,17 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.dynamicClientRegistrationMode=OPEN|PROTECTED
 
 # cas.authn.oidc.subjectTypes=public,pairwise
-
-# Supported scopes
 # cas.authn.oidc.scopes=openid,profile,email,address,phone,offline_access
-
-# Supported claims
 # cas.authn.oidc.claims=sub,name,preferred_username,family_name, \
 #    given_name,middle_name,given_name,profile, \
 #    picture,nickname,website,zoneinfo,locale,updated_at,birthdate, \
 #    email,email_verified,phone_number,phone_number_verified,address
+
+# cas.authn.oidc.responseTypesSupported=code,token,id_token token
+# cas.authn.oidc.introspectionSupportedAuthenticationMethods=client_secret_basic
+# cas.authn.oidc.claimTypesSupported=normal
+# cas.authn.oidc.grantTypesSupported=authorization_code,password,client_credentials,refresh_token
+# cas.authn.oidc.idTokenSigningAlgValuesSupported=none,RS256
 
 # Define custom scopes and claims
 # cas.authn.oidc.userDefinedScopes.scope1=cn,givenName,photos,customAttribute

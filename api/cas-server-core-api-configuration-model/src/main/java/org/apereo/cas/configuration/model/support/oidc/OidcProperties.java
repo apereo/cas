@@ -85,4 +85,30 @@ public class OidcProperties implements Serializable {
      * that should take its place and value.
      */
     private Map<String, String> claimsMap = new HashMap<>();
+
+    /**
+     * Supported response types.
+     */
+    private List<String> responseTypesSupported = Stream.of("code", "token", "id_token token").collect(Collectors.toList());
+
+    /**
+     * Supported authentication methods for introspection.
+     */
+    private List<String> introspectionSupportedAuthenticationMethods = Stream.of("client_secret_basic").collect(Collectors.toList());
+
+    /**
+     * Supported claim types.
+     */
+    private List<String> claimTypesSupported = Stream.of("normal").collect(Collectors.toList());
+
+    /**
+     * Supported grant types.
+     */
+    private List<String> grantTypesSupported = Stream.of("authorization_code", "password", "client_credentials", "refresh_token").collect(Collectors.toList());
+
+    /**
+     * Supported grant types.
+     */
+    private List<String> idTokenSigningAlgValuesSupported = Stream.of("none", "RS256").collect(Collectors.toList());
+
 }
