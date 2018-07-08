@@ -7,11 +7,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.web.support.ArgumentExtractor;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +39,8 @@ public class HttpRequestUtils {
     private static final int GEO_LOC_LONG_INDEX = 1;
     private static final int GEO_LOC_ACCURACY_INDEX = 2;
     private static final int GEO_LOC_TIME_INDEX = 3;
+
+    private static final int PING_URL_TIMEOUT = 5_000;
 
     /**
      * Gets http servlet request from request attributes.
@@ -141,4 +147,24 @@ public class HttpRequestUtils {
         return true;
     }
 
+    /**
+     * Ping url and return http status.
+     *
+     * @param location the location
+     * @return the http status
+     */
+    public static HttpStatus pingUrl(final String location) {
+        try {
+            val url = new URL(location);
+            val connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(PING_URL_TIMEOUT);
+            connection.setReadTimeout(PING_URL_TIMEOUT);
+            connection.setRequestMethod(HttpMethod.HEAD.name());
+            val status = HttpStatus.valueOf(connection.getResponseCode());
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return HttpStatus.SERVICE_UNAVAILABLE;
+
+    }
 }
