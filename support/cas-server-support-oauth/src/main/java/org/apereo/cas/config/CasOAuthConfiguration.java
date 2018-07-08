@@ -1,8 +1,7 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
@@ -47,6 +46,7 @@ import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourc
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20CallbackAuthorizeEndpointController;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.OAuth20DefaultCasClientRedirectActionBuilder;
@@ -161,6 +161,10 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @Qualifier("ticketGrantingTicketCookieGenerator")
     private ObjectProvider<CookieRetrievingCookieGenerator> ticketGrantingTicketCookieGenerator;
 
+    @Autowired
+    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    private AuditableExecution registeredServiceAccessStrategyEnforcer;
+
     @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
     @Bean
     public AccessTokenResponseGenerator accessTokenResponseGenerator() {
@@ -217,7 +221,6 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         return new OAuth20CallbackAuthorizeViewResolver() {
         };
     }
-
 
 
     @Bean
@@ -346,6 +349,23 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
 
         return CollectionUtils.wrapList(authzCodeExt, refreshTokenExt, pswExt, credsExt);
     }
+
+    @ConditionalOnMissingBean(name = "introspectionEndpointController")
+    @Bean
+    public OAuth20IntrospectionEndpointController introspectionEndpointController() {
+        return new OAuth20IntrospectionEndpointController(
+            servicesManager,
+            ticketRegistry,
+            defaultAccessTokenFactory(),
+            oauthPrincipalFactory(),
+            webApplicationServiceFactory,
+            profileScopeToAttributesFilter(),
+            casProperties,
+            ticketGrantingTicketCookieGenerator.getIfAvailable(),
+            centralAuthenticationService,
+            registeredServiceAccessStrategyEnforcer);
+    }
+
 
     @ConditionalOnMissingBean(name = "accessTokenController")
     @Bean
