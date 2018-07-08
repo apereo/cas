@@ -1,6 +1,6 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Controller;
  */
 @Controller
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class BaseOAuth20Controller {
 
     /**
@@ -58,7 +58,7 @@ public abstract class BaseOAuth20Controller {
      * Collection of CAS settings.
      */
     protected final CasConfigurationProperties casProperties;
-    
+
     /**
      * Cookie retriever.
      */

@@ -29,11 +29,12 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 After enabling OAuth support, the following endpoints will be available:
 
-| Endpoint                        | Description                                                           | Method
-|---------------------------------|-----------------------------------------------------------------------|---------
-| `/oauth2.0/authorize`       | Authorize the user and start the CAS authentication flow.                 | `GET`
-| `/oauth2.0/accessToken`,`/oauth2.0/token`      | Get an access token in plain-text or JSON           | `POST`
-| `/oauth2.0/profile`         | Get the authenticated user profile in JSON via `access_token` parameter.  | `GET`
+| Endpoint                  | Description                                                           | Method
+|---------------------------|-----------------------------------------------------------------------|---------
+| `/oauth2.0/authorize`     | Authorize the user and start the CAS authentication flow.                   | `GET`
+| `/oauth2.0/accessToken`,`/oauth2.0/token`      | Get an access token in plain-text or JSON              | `POST`
+| `/oauth2.0/profile`       | Get the authenticated user profile in JSON via `access_token` parameter.    | `GET`
+| `/oauth2.0/introspect`    | Query CAS to detect the status of a given access token via [introspection](https://tools.ietf.org/html/rfc7662).
 
 ## Response/Grant Types
 

@@ -88,6 +88,9 @@ public interface OAuth20Constants {
     /** The authorize url. */
     String AUTHORIZE_URL = "authorize";
 
+    /** The introspection url. */
+    String INTROSPECTION_URL = "introspect";
+
     /** The callback authorize url. */
     String CALLBACK_AUTHORIZE_URL = "callbackAuthorize";
 
