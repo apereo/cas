@@ -1,8 +1,7 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
@@ -66,7 +65,7 @@ public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMet
     public HibernateJpaVendorAdapter jpaSamlMetadataVendorAdapter() {
         return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
-    
+
     @Bean
     public DataSource dataSourceSamlMetadata() {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
@@ -82,14 +81,12 @@ public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMet
     @Bean
     public LocalContainerEntityManagerFactoryBean samlMetadataEntityManagerFactory() {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
-        val bean =
-            JpaBeans.newHibernateEntityManagerFactoryBean(
-                new JpaConfigDataHolder(
-                    jpaSamlMetadataVendorAdapter(),
-                    "jpaSamlMetadataContext",
-                    jpaSamlMetadataPackagesToScan(),
-                    dataSourceSamlMetadata()), idp.getJpa());
-        return bean;
+        return JpaBeans.newHibernateEntityManagerFactoryBean(
+            new JpaConfigDataHolder(
+                jpaSamlMetadataVendorAdapter(),
+                "jpaSamlMetadataContext",
+                jpaSamlMetadataPackagesToScan(),
+                dataSourceSamlMetadata()), idp.getJpa());
     }
 
     @Autowired
@@ -100,5 +97,5 @@ public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMet
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }
-    
+
 }
