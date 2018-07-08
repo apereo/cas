@@ -1,9 +1,8 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
-import lombok.val;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -11,6 +10,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.http.MediaType;
@@ -58,6 +58,16 @@ public class RestSamlRegisteredServiceMetadataResolver extends BaseSamlRegistere
             return metadataLocation.trim().startsWith("rest://");
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isAvailable(final SamlRegisteredService service) {
+        if (supports(service)) {
+            val rest = samlIdPProperties.getMetadata().getRest();
+            val status = HttpRequestUtils.pingUrl(rest.getUrl());
+            return !status.isError();
         }
         return false;
     }

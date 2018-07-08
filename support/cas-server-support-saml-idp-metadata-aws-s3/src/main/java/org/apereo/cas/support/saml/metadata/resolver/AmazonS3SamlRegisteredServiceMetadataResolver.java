@@ -1,12 +1,11 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
-import lombok.val;
-
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.util.IOUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -97,5 +96,13 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
         val metadata = new ObjectMetadata();
         metadata.getUserMetadata().put("signature", document.getSignature());
         this.s3Client.putObject(bucketName, document.getName(), is, metadata);
+    }
+
+    @Override
+    public boolean isAvailable(final SamlRegisteredService service) {
+        if (supports(service)) {
+            return !s3Client.listBuckets().isEmpty();
+        }
+        return false;
     }
 }

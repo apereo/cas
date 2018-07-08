@@ -63,4 +63,12 @@ public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
     public void saveOrUpdate(final SamlMetadataDocument document) {
         this.mongoTemplate.save(document, this.collectionName);
     }
+
+    @Override
+    public boolean isAvailable(final SamlRegisteredService service) {
+        if (supports(service)) {
+            return mongoTemplate.collectionExists(this.collectionName);
+        }
+        return false;
+    }
 }

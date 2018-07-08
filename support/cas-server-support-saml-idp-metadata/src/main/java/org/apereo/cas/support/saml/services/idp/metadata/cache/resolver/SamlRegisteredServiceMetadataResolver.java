@@ -48,4 +48,14 @@ public interface SamlRegisteredServiceMetadataResolver {
     default String getName() {
         return getClass().getSimpleName();
     }
+
+    /**
+     * Is the resolver available and able to resolve metadata?
+     * This method may contact the metadata source checking for
+     * the source availability.
+     *
+     * @param service the service
+     * @return true /false
+     */
+    boolean isAvailable(SamlRegisteredService service);
 }
