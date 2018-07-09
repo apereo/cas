@@ -78,6 +78,7 @@ The following fields are specifically available for OpenID connect services:
 | `jwks`                        | Optional. Resource path to the keystore location that holds the keys for this application.
 | `encryptIdToken`              | Optional. Whether ID tokens should be encrypted. Default is `false`.
 | `idTokenEncryptionAlg`        | Optional. The algorithm header value used to encrypt the id token.
+| `idTokenSigingAlg`            | Optional. The algorithm header value used to sign the id token.
 | `idTokenEncryptionEncoding`   | Optional. The algorithm method header value used to encrypt the id token.
 | `subjectType`                 | Optional value chosen from `public` or `pairwise`. Type to use when generating principal identifiers. Default is `public`.
 | `sectoreIdentifierUri`        | Optional. Host value of this URL is used as the sector identifier for the pairwise identifier calculation. If left undefined, the host value of the `serviceId` will be used instead.

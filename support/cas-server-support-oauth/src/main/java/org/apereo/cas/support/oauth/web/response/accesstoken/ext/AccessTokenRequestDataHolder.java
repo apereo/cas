@@ -1,16 +1,18 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
+import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
-import lombok.ToString;
-import lombok.Getter;
 
 /**
  * This is {@link AccessTokenRequestDataHolder}.
@@ -23,21 +25,25 @@ import lombok.Getter;
 @Getter
 public class AccessTokenRequestDataHolder {
 
-    private final Service service;
+    private Service service;
 
-    private final Authentication authentication;
+    private Authentication authentication;
 
-    private final OAuthToken token;
+    private OAuthToken token;
 
-    private final boolean generateRefreshToken;
+    private boolean generateRefreshToken;
 
-    private final OAuthRegisteredService registeredService;
+    private OAuthRegisteredService registeredService;
 
-    private final TicketGrantingTicket ticketGrantingTicket;
+    private TicketGrantingTicket ticketGrantingTicket;
 
-    private final OAuth20GrantTypes grantType;
+    private OAuth20GrantTypes grantType;
 
-    private final Set<String> scopes;
+    private Set<String> scopes;
+
+    private OAuth20ResponseTypes responseType;
+
+    private String deviceCode;
 
     public AccessTokenRequestDataHolder(final OAuthToken token, final OAuthRegisteredService registeredService, final OAuth20GrantTypes grantType,
                                         final boolean isAllowedToGenerateRefreshToken, final Set<String> scopes) {
@@ -68,4 +74,11 @@ public class AccessTokenRequestDataHolder {
         this.scopes = new LinkedHashSet<>(scopes);
     }
 
+    public AccessTokenRequestDataHolder(final Service service, final OAuthRegisteredService registeredService,
+                                        final OAuth20ResponseTypes responseType, final String deviceCode) {
+        this.service = service;
+        this.registeredService = registeredService;
+        this.responseType = responseType;
+        this.deviceCode = deviceCode;
+    }
 }
