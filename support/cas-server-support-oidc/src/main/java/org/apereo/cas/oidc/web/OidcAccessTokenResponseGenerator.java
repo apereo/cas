@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -25,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponseGenerator {
     private final OidcIdTokenGeneratorService idTokenGenerator;
 

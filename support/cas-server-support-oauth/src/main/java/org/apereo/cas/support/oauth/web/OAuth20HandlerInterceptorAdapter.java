@@ -1,12 +1,10 @@
 package org.apereo.cas.support.oauth.web;
 
-import lombok.val;
-
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessTokenGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +19,7 @@ import java.util.regex.Pattern;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter {
     /**
      * Access token interceptor.
@@ -33,8 +31,7 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
      */
     protected final HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor;
 
-    private final Collection<BaseAccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
-
+    private final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
 
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
@@ -59,16 +56,15 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
     protected boolean isAccessTokenRequestRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val requestPath = request.getRequestURI();
         val value = doesUriMatchPattern(requestPath, OAuth20Constants.ACCESS_TOKEN_URL)
-                || doesUriMatchPattern(requestPath, OAuth20Constants.TOKEN_URL);
+            || doesUriMatchPattern(requestPath, OAuth20Constants.TOKEN_URL);
         if (!value) {
             val extractor = this.accessTokenGrantRequestExtractors
-                    .stream()
-                    .filter(ext -> ext.supports(request))
-                    .findFirst()
-                    .orElse(null);
+                .stream()
+                .filter(ext -> ext.supports(request))
+                .findFirst()
+                .orElse(null);
             if (extractor != null) {
-                return extractor.getGrantType() == OAuth20GrantTypes.CLIENT_CREDENTIALS
-                        || extractor.getGrantType() == OAuth20GrantTypes.PASSWORD;
+                return extractor.requestMustBeAuthenticated();
             }
         }
         return value;

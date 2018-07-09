@@ -47,6 +47,9 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     private String idTokenEncryptionAlg;
 
     @Column
+    private String idTokenSigningAlg;
+
+    @Column
     private String idTokenEncryptionEncoding;
 
     @Column

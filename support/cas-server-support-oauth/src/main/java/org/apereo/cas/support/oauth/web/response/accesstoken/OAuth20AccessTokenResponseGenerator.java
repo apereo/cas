@@ -1,12 +1,11 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
-import lombok.val;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -35,7 +34,6 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
 
     private static final JsonFactory JSON_FACTORY = new JsonFactory(new ObjectMapper().findAndRegisterModules());
 
-
     /**
      * The Resource loader.
      */
@@ -54,21 +52,48 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                          final HttpServletResponse response,
                          final OAuthRegisteredService registeredService,
                          final Service service,
-                         final AccessToken accessTokenId,
-                         final RefreshToken refreshTokenId,
-                         final long timeout,
+                         final OAuth20TokenGeneratedResult result,
+                         final long accessTokenTimeout,
                          final OAuth20ResponseTypes responseType) {
 
+        if (OAuth20ResponseTypes.DEVICE_CODE == responseType) {
+            generateResponseForDeviceToken(request, response, registeredService, service, result);
+        } else {
+            generateResponseForAccessToken(request, response, registeredService, service, result, accessTokenTimeout, responseType);
+        }
+    }
+
+    @SneakyThrows
+    private void generateResponseForDeviceToken(final HttpServletRequest request, final HttpServletResponse response,
+                                                final OAuthRegisteredService registeredService, final Service service,
+                                                final OAuth20TokenGeneratedResult result) {
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        try (val jsonGenerator = getResponseJsonGenerator(response)) {
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeStringField(OAuth20Constants.DEVICE_VERIFICATION_URI, "");
+            jsonGenerator.writeStringField(OAuth20Constants.DEVICE_USER_CODE, result.getUserCode().get());
+            jsonGenerator.writeStringField(OAuth20Constants.DEVICE_CODE, result.getDeviceCode().get());
+            jsonGenerator.writeNumberField(OAuth20Constants.DEVICE_INTERVAL, 30);
+            jsonGenerator.writeEndObject();
+        }
+    }
+
+    private void generateResponseForAccessToken(final HttpServletRequest request, final HttpServletResponse response,
+                                                final OAuthRegisteredService registeredService, final Service service,
+                                                final OAuth20TokenGeneratedResult result, final long timeout,
+                                                final OAuth20ResponseTypes responseType) throws Exception {
+        val accessToken = result.getAccessToken().get();
+        val refreshToken = result.getRefreshToken().get();
         if (registeredService.isJsonFormat()) {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             try (val jsonGenerator = getResponseJsonGenerator(response)) {
                 jsonGenerator.writeStartObject();
-                generateJsonInternal(request, response, jsonGenerator, accessTokenId,
-                    refreshTokenId, timeout, service, registeredService, responseType);
+                generateJsonInternal(request, response, jsonGenerator, accessToken,
+                    refreshToken, timeout, service, registeredService, responseType);
                 jsonGenerator.writeEndObject();
             }
         } else {
-            generateTextInternal(request, response, accessTokenId, refreshTokenId, timeout);
+            generateTextInternal(request, response, accessToken, refreshToken, timeout);
         }
     }
 
@@ -97,15 +122,14 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                                         final AccessToken accessTokenId,
                                         final RefreshToken refreshTokenId,
                                         final long timeout) {
-        val builder = new StringBuilder(
-                String.format("%s=%s&%s=%s", OAuth20Constants.ACCESS_TOKEN, accessTokenId.getId(),
-                        OAuth20Constants.EXPIRES_IN, timeout));
+        val builder = new StringBuilder(String.format("%s=%s&%s=%s", OAuth20Constants.ACCESS_TOKEN,
+            accessTokenId.getId(), OAuth20Constants.EXPIRES_IN, timeout));
 
         if (refreshTokenId != null) {
             builder.append('&')
-                    .append(OAuth20Constants.REFRESH_TOKEN)
-                    .append('=')
-                    .append(refreshTokenId.getId());
+                .append(OAuth20Constants.REFRESH_TOKEN)
+                .append('=')
+                .append(refreshTokenId.getId());
         }
         OAuth20Utils.writeText(response, builder.toString(), HttpStatus.SC_OK);
     }
