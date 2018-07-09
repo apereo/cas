@@ -111,7 +111,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * This method purposefully doesn't lock any rows, because the stream traversing can take an indeterminate
      * amount of time, and logging in to an application with an existing TGT will update the TGT row in the database.
      *
-     * @return {@inheritDoc}
+     * @return tickets
      */
     @Override
     @SuppressWarnings("unchecked")

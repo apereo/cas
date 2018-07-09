@@ -9,6 +9,23 @@ package org.apereo.cas.support.oauth;
 public interface OAuth20Constants {
 
     /**
+     * Device code flow verification uri.
+     */
+    String DEVICE_VERIFICATION_URI = "verification_uri";
+    /**
+     * Device code flow user code.
+     */
+    String DEVICE_USER_CODE = "user_code";
+    /**
+     * Device code flow device code.
+     */
+    String DEVICE_CODE = "device_code";
+    /**
+     * Device code flow refresh interval.
+     */
+    String DEVICE_INTERVAL = "interval";
+
+    /**
      * Authentication context reference values.
      */
     String ACR_VALUES = "acr_values";
