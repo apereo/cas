@@ -17,7 +17,6 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 @Getter
 @Setter
 public class JaasAuthenticationProperties implements Serializable {

@@ -12,7 +12,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-oauth")
-
 @Getter
 @Setter
 public class OAuthProperties implements Serializable {
@@ -54,6 +53,11 @@ public class OAuthProperties implements Serializable {
      * Settings related to oauth refresh tokens.
      */
     private OAuthRefreshTokenProperties refreshToken = new OAuthRefreshTokenProperties();
+
+    /**
+     * Settings related to oauth device tokens.
+     */
+    private OAuthDeviceTokenProperties deviceToken = new OAuthDeviceTokenProperties();
 
     /**
      * User profile view type determines how the final user profile should be rendered

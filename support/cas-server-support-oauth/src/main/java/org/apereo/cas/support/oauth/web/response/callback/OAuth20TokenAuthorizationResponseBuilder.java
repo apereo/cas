@@ -42,11 +42,11 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
 
         val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
         LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
-        val accessToken = accessTokenGenerator.generate(holder);
-        val key = accessToken.getKey();
+        val result = accessTokenGenerator.generate(holder);
+        val key = result.getAccessToken();
         LOGGER.debug("Generated OAuth access token: [{}]", key);
-        return buildCallbackUrlResponseType(holder, redirectUri, key, new ArrayList<>(), accessToken.getValue(), context);
-
+        return buildCallbackUrlResponseType(holder, redirectUri, key.get(),
+            new ArrayList<>(), result.getRefreshToken().get(), context);
     }
 
 
