@@ -24,7 +24,6 @@ public abstract class BaseResourceBasedRegisteredServiceWatcher implements Consu
             + "This will overwrite previous service definitions and is likely a configuration problem. "
             + "Make sure all services have a unique id and try again.", service.getServiceId(), service.getId());
 
-
     /**
      * Service registry instance.
      */
