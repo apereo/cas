@@ -31,6 +31,10 @@ def generatePom() {
                     name "Jérôme Leleu"
                 }
                 developer {
+                    id "tduehr"
+                    name "Timur Duehr"
+                }
+                developer {
                     id "mindblender"
                     name "Jeff Sittler"
                 }
