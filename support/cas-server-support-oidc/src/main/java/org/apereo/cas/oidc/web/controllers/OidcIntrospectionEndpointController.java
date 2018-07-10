@@ -62,7 +62,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
     @Override
     public ResponseEntity<OAuth20IntrospectionAccessTokenResponse> handleRequest(final HttpServletRequest request,
                                                                                  final HttpServletResponse response) {
-        return handleRequest(request, response);
+        return super.handleRequest(request, response);
     }
 
     /**
