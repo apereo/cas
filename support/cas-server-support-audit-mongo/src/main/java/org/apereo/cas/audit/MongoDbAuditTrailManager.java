@@ -37,7 +37,6 @@ public class MongoDbAuditTrailManager implements AuditTrailManager {
     private final transient MongoTemplate mongoTemplate;
     private final String collectionName;
 
-
     @Override
     public void record(final AuditActionContext audit) {
         if (this.asynchronous) {

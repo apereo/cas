@@ -235,11 +235,18 @@ public class WsFederationHelper {
      * @return true if the assertion's signature is valid, otherwise false
      */
     public boolean validateSignature(final Pair<Assertion, WsFederationConfiguration> assertion) {
-        if (assertion == null || assertion.getKey() == null || assertion.getValue() == null) {
+        if (assertion == null) {
             LOGGER.warn("No assertion or its configuration was provided to validate signatures");
             return false;
         }
-        val signature = assertion.getKey().getSignature();
+        val value = assertion.getValue();
+        val key = assertion.getKey();
+        if (key == null || value == null) {
+            LOGGER.warn("No signature or configuration was provided to validate signatures");
+            return false;
+        }
+
+        val signature = key.getSignature();
         SamlUtils.logSamlObject(this.configBean, assertion.getKey());
         if (signature != null) {
             return false;
@@ -253,10 +260,10 @@ public class WsFederationHelper {
             criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
             criteriaSet.add(new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME));
             criteriaSet.add(new ProtocolCriterion(SAMLConstants.SAML20P_NS));
-            criteriaSet.add(new EntityIdCriterion(assertion.getValue().getIdentityProviderIdentifier()));
+            criteriaSet.add(new EntityIdCriterion(value.getIdentityProviderIdentifier()));
             try {
-                val engine = buildSignatureTrustEngine(assertion.getValue());
-                LOGGER.debug("Validating signature via trust engine for [{}]", assertion.getValue().getIdentityProviderIdentifier());
+                val engine = buildSignatureTrustEngine(value);
+                LOGGER.debug("Validating signature via trust engine for [{}]", value.getIdentityProviderIdentifier());
                 return engine.validate(signature, criteriaSet);
             } catch (final SecurityException e) {
                 LOGGER.warn(e.getMessage(), e);
