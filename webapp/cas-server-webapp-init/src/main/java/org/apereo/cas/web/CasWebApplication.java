@@ -1,8 +1,7 @@
 package org.apereo.cas.web;
 
-import lombok.val;
-
 import lombok.NoArgsConstructor;
+import lombok.val;
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.boot.WebApplicationType;
