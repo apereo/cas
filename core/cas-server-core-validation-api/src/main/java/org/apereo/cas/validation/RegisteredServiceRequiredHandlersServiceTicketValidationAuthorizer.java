@@ -1,8 +1,8 @@
 package org.apereo.cas.validation;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.3.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RegisteredServiceRequiredHandlersServiceTicketValidationAuthorizer implements ServiceTicketValidationAuthorizer {
     private final ServicesManager servicesManager;
 

@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -24,11 +23,10 @@ import java.util.Optional;
  */
 @Slf4j
 @ToString
-@AllArgsConstructor
 @RequiredArgsConstructor
 public class ProxyingPrincipalResolver implements PrincipalResolver {
 
-    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> currentPrincipal, final Optional<AuthenticationHandler> handler) {

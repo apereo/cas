@@ -1,10 +1,10 @@
 package org.apereo.cas.web.flow;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ValidateCaptchaAction extends AbstractAction {
     /**
      * Recaptcha response as a request parameter.
