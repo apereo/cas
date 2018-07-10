@@ -177,7 +177,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
 
         if (values.containsKey(this.numberOfIterationsFieldName)) {
             val longAsStr = values.get(this.numberOfIterationsFieldName).toString();
-            hashService.setHashIterations(Integer.valueOf(longAsStr));
+            hashService.setHashIterations(Integer.parseInt(longAsStr));
         } else {
             hashService.setHashIterations(this.numberOfIterations);
         }

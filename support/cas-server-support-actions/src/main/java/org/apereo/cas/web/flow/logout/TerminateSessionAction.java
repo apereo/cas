@@ -46,7 +46,7 @@ public class TerminateSessionAction extends AbstractAction {
     public Event doExecute(final RequestContext requestContext) {
         val terminateSession = FunctionUtils.doIf(logoutProperties.isConfirmLogout(),
             () -> isLogoutRequestConfirmed(requestContext),
-            () -> true)
+            () -> Boolean.TRUE)
             .get();
 
         if (terminateSession) {

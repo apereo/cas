@@ -1,7 +1,5 @@
 package org.apereo.cas.audit;
 
-import lombok.val;
-
 import com.couchbase.client.java.document.StringDocument;
 import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.query.N1qlQuery;
@@ -11,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
@@ -86,11 +85,12 @@ public class CouchbaseAuditTrailManager implements AuditTrailManager {
 
     @Override
     public Set<AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
-        val name = this.couchbase.getBucket().name();
+        val couchbaseBucket = this.couchbase.getBucket();
+        val name = couchbaseBucket.name();
         val statement = select("*").from(i(name)).where(x("whenActionWasPerformed").gte(x("$whenActionWasPerformed")));
         val placeholderValues = JsonObject.create().put("whenActionWasPerformed", DateTimeUtils.dateOf(localDate).getTime());
         val q = N1qlQuery.parameterized(statement, placeholderValues);
-        val result = this.couchbase.getBucket().query(q);
+        val result = couchbaseBucket.query(q);
         return result.allRows()
             .stream()
             .map(row -> {
