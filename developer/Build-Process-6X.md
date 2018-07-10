@@ -59,6 +59,9 @@ The following commandline boolean flags are supported by the build:
 | `skipNpmCache`                    | Skip cleaning the NPM cache.
 | `skipNpmLint`                     | Skip running the linter for resources managed by NPM, such as Javascript files.
 | `forceBom`                        | Force the generation of the CAS Maven BOM.
+| `ignoreJavadocFailures`           | Ignore javadoc fialures and let the build resume.
+| `ignoreFindbugsFailures`          | Ignore Findbugs fialures and let the build resume.
+| `ignoreTestFailures`              | Ignore test fialures and let the build resume.
 
 - You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`, `-x check`).
 - If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.
