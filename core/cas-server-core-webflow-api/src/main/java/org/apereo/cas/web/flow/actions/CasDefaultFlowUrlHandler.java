@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
+import lombok.val;
+
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -47,11 +49,11 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
     @Override
     public String createFlowExecutionUrl(final String flowId, final String flowExecutionKey, final HttpServletRequest request) {
-        final var encoding = getEncodingScheme(request);
+        val encoding = getEncodingScheme(request);
 
 
-        final var executionKey = encodeSingleParameter(this.flowExecutionKeyParameter, flowExecutionKey, encoding);
-        final var flowUrl = request.getParameterMap().entrySet().stream()
+        val executionKey = encodeSingleParameter(this.flowExecutionKeyParameter, flowExecutionKey, encoding);
+        val flowUrl = request.getParameterMap().entrySet().stream()
             .flatMap(entry -> encodeMultiParameter(entry.getKey(), entry.getValue(), encoding))
             .collect(Collectors.joining(DELIMITER, request.getRequestURI() + '?', DELIMITER + executionKey));
         return flowUrl;

@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.trusted.authentication.principal.RemoteRequestPrincipalAttributesExtractor;
@@ -10,8 +12,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,22 +40,22 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsAction extends B
 
     @Override
     protected String getRemotePrincipalId(final HttpServletRequest request) {
-        final var principal = request.getUserPrincipal();
+        val principal = request.getUserPrincipal();
         if (principal != null) {
             LOGGER.debug("Principal [{}] found in request", principal.getName());
             return principal.getName();
         }
-        final var remoteUser = request.getRemoteUser();
+        val remoteUser = request.getRemoteUser();
         if (StringUtils.isNotBlank(remoteUser)) {
             LOGGER.debug("Remote user [{}] found in HttpServletRequest", remoteUser);
             return remoteUser;
         }
 
         if (StringUtils.isNotBlank(this.remotePrincipalHeader)) {
-            final var headers = getAllRequestHeaderValues(request);
+            val headers = getAllRequestHeaderValues(request);
             LOGGER.debug("Available request headers are [{}]. Locating first header value for [{}]", headers, this.remotePrincipalHeader);
             if (headers.containsKey(this.remotePrincipalHeader)) {
-                final var header = headers.get(this.remotePrincipalHeader).get(0);
+                val header = headers.get(this.remotePrincipalHeader).get(0);
                 LOGGER.debug("Remote user [{}] found in [{}] header", header, this.remotePrincipalHeader);
                 return remoteUser;
             }
@@ -64,15 +65,15 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsAction extends B
     }
 
     private Map<String, List<String>> getAllRequestHeaderValues(final HttpServletRequest request) {
-        final Map<String, List<String>> headers = new LinkedHashMap<>(DEFAULT_SIZE);
-        final Enumeration names = request.getHeaderNames();
+        val headers = new HashMap<String, List<String>>(DEFAULT_SIZE);
+        val names = request.getHeaderNames();
         while (names.hasMoreElements()) {
-            final var name = (String) names.nextElement();
-            final Enumeration values = request.getHeaders(name);
+            val name = (String) names.nextElement();
+            val values = request.getHeaders(name);
             if (values != null) {
-                final List<String> listValues = new ArrayList<>(DEFAULT_SIZE);
+                val listValues = new ArrayList<String>(DEFAULT_SIZE);
                 while (values.hasMoreElements()) {
-                    final var value = (String) values.nextElement();
+                    val value = (String) values.nextElement();
                     listValues.add(value);
                 }
                 headers.put(name, listValues);

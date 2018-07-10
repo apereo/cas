@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +29,9 @@ public class JsonUtils {
      */
     @SneakyThrows
     public static void render(final Object model, final HttpServletResponse response) {
-        final var jsonConverter = new MappingJackson2HttpMessageConverter();
+        val jsonConverter = new MappingJackson2HttpMessageConverter();
         jsonConverter.setPrettyPrint(true);
-        final var jsonMimeType = MediaType.APPLICATION_JSON;
+        val jsonMimeType = MediaType.APPLICATION_JSON;
         jsonConverter.write(model, jsonMimeType, new ServletServerHttpResponse(response));
     }
 
@@ -40,7 +42,7 @@ public class JsonUtils {
      */
     @SneakyThrows
     public static void render(final HttpServletResponse response) {
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         response.setStatus(HttpServletResponse.SC_OK);
         render(map, response);
     }
@@ -53,7 +55,7 @@ public class JsonUtils {
      * @param response the response
      */
     public static void renderException(final Exception ex, final HttpServletResponse response) {
-        final Map<String, String> map = new HashMap<>();
+        val map = new HashMap<String, String>();
         map.put("error", ex.getMessage());
         map.put("stacktrace", Arrays.deepToString(ex.getStackTrace()));
         renderException(map, response);

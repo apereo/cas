@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.sso.request;
 
+import lombok.val;
+
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -41,10 +43,10 @@ public class DefaultSSOSamlHttpRequestExtractor implements SSOSamlHttpRequestExt
         decoder.initialize();
         decoder.decode();
 
-        final var messageContext = decoder.getMessageContext();
+        val messageContext = decoder.getMessageContext();
         LOGGER.debug("Locating SAML object from message context...");
         @NonNull
-        final var object = (SignableSAMLObject) messageContext.getMessage();
+        val object = (SignableSAMLObject) messageContext.getMessage();
         if (!clazz.isAssignableFrom(object.getClass())) {
             throw new ClassCastException("SAML object [" + object.getClass().getName() + " type does not match " + clazz);
         }

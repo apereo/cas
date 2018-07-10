@@ -1,5 +1,7 @@
 package org.apereo.cas.otp.repository.token;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -70,7 +72,7 @@ public class CachingOneTimeTokenRepositoryTests {
 
     @Test
     public void verifyTokenSave() {
-        final var token = new OneTimeToken(1234, "casuser");
+        val token = new OneTimeToken(1234, "casuser");
         repository.store(token);
         repository.store(token);
         repository.clean();

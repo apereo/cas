@@ -1,9 +1,10 @@
 package org.apereo.cas.pm;
 
+import lombok.val;
+
 import com.unboundid.ldap.sdk.LDAPConnection;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -30,7 +31,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import java.util.Map;
 import lombok.SneakyThrows;
 
 import static org.junit.Assert.*;
@@ -71,16 +71,16 @@ public class LdapPasswordManagementServiceTests {
 
     @Test
     public void verifyTokenCreationAndParsing() {
-        final var token = passwordChangeService.createToken("casuser");
+        val token = passwordChangeService.createToken("casuser");
         assertNotNull(token);
-        final var result = passwordChangeService.parseToken(token);
+        val result = passwordChangeService.parseToken(token);
         assertEquals("casuser", result);
     }
 
     @Test
     public void verifyPasswordChangedFails() {
-        final Credential credential = new UsernamePasswordCredential("caspm", "123456");
-        final var bean = new PasswordChangeBean();
+        val credential = new UsernamePasswordCredential("caspm", "123456");
+        val bean = new PasswordChangeBean();
         bean.setConfirmedPassword("Mellon");
         bean.setPassword("Mellon");
         assertFalse(passwordChangeService.change(credential, bean));
@@ -88,13 +88,13 @@ public class LdapPasswordManagementServiceTests {
 
     @Test
     public void verifyFindEmail() {
-        final var email = passwordChangeService.findEmail("caspm");
+        val email = passwordChangeService.findEmail("caspm");
         assertEquals("caspm@example.org", email);
     }
 
     @Test
     public void verifyFindSecurityQuestions() {
-        final Map questions = passwordChangeService.getSecurityQuestions("caspm");
+        val questions = passwordChangeService.getSecurityQuestions("caspm");
         assertEquals(2, questions.size());
         assertTrue(questions.containsKey("RegisteredAddressQuestion"));
         assertTrue(questions.containsKey("PostalCodeQuestion"));
@@ -105,7 +105,7 @@ public class LdapPasswordManagementServiceTests {
     public static void bootstrap() {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
 
-        final var localhost = new LDAPConnection("localhost", LDAP_PORT,
+        val localhost = new LDAPConnection("localhost", LDAP_PORT,
             "cn=Directory Manager", "password");
         LdapIntegrationTestsOperations.populateEntries(localhost,
             new ClassPathResource("ldif/ldap-pm.ldif").getInputStream(),

@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.web;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
@@ -12,7 +14,6 @@ import org.pac4j.core.context.J2EContext;
 
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link OidcConsentApprovalViewResolver}.
@@ -29,8 +30,8 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
 
     @Override
     protected boolean isConsentApprovalBypassed(final J2EContext context, final OAuthRegisteredService service) {
-        final var url = context.getFullRequestURL();
-        final var prompts = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
+        val url = context.getFullRequestURL();
+        val prompts = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
         if (prompts.contains(OidcConstants.PROMPT_CONSENT) || service.isGenerateRefreshToken()) {
             return false;
         }
@@ -46,11 +47,10 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
     protected void prepareApprovalViewModel(final Map<String, Object> model, final J2EContext ctx, final OAuthRegisteredService svc) {
         super.prepareApprovalViewModel(model, ctx, svc);
         if (svc instanceof OidcRegisteredService) {
-            final var oidcRegisteredService = (OidcRegisteredService) svc;
+            val oidcRegisteredService = (OidcRegisteredService) svc;
             model.put("dynamic", oidcRegisteredService.isDynamicallyRegistered());
             model.put("dynamicTime", oidcRegisteredService.getDynamicRegistrationDateTime());
-
-            final Set<String> supportedScopes = new HashSet<>(casProperties.getAuthn().getOidc().getScopes());
+            val supportedScopes = new HashSet<String>(casProperties.getAuthn().getOidc().getScopes());
             supportedScopes.retainAll(oidcRegisteredService.getScopes());
             supportedScopes.retainAll(OAuth20Utils.getRequestedScopes(ctx));
             model.put("scopes", supportedScopes);

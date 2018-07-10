@@ -1,5 +1,7 @@
 package org.apereo.cas.support.rest.resources;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -15,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -47,13 +48,13 @@ public class RestResourceUtils {
      */
     public static ResponseEntity<String> createResponseEntityForAuthnFailure(final AuthenticationException e) {
         try {
-            final var authnExceptions = e.getHandlerErrors().values()
+            val authnExceptions = e.getHandlerErrors().values()
                 .stream()
                 .map(ex -> ex.getClass().getSimpleName()
                     + ": "
                     + StringUtils.defaultIfBlank(ex.getMessage(), "Authentication Failure: " + e.getMessage()))
                 .collect(Collectors.toList());
-            final Map<String, List<String>> errorsMap = new HashMap<>();
+            val errorsMap = new HashMap<String, List<String>>();
             errorsMap.put("authentication_exceptions", authnExceptions);
             LOGGER.warn("[{}] Caused by: [{}]", e.getMessage(), authnExceptions);
             return new ResponseEntity<>(MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);

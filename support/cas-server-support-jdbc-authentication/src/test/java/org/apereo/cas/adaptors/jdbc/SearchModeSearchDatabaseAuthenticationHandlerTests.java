@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.jdbc;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.junit.Rule;
@@ -52,8 +54,8 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
     public void initialize() throws Exception {
         this.handler = new SearchModeSearchDatabaseAuthenticationHandler("", null, null, null, this.dataSource, "username", "password", "cassearchusers");
 
-        final var c = this.dataSource.getConnection();
-        final var s = c.createStatement();
+        val c = this.dataSource.getConnection();
+        val s = c.createStatement();
         c.setAutoCommit(true);
 
         s.execute(getSqlInsertStatementToCreateUserAccount(0));
@@ -66,13 +68,10 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
 
     @After
     public void afterEachTest() throws Exception {
-        final var c = this.dataSource.getConnection();
-        final var s = c.createStatement();
+        val c = this.dataSource.getConnection();
+        val s = c.createStatement();
         c.setAutoCommit(true);
-
-        for (var i = 0; i < 5; i++) {
-            s.execute("delete from casusers;");
-        }
+        s.execute("delete from casusers;");
         c.close();
     }
 
@@ -92,7 +91,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyNotFoundUser() throws Exception {
-        final var c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("hello", "world");
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("hello", "world");
 
         this.thrown.expect(FailedLoginException.class);
 
@@ -102,13 +101,13 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyFoundUser() throws Exception {
-        final var c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3");
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3");
         assertNotNull(this.handler.authenticate(c));
     }
 
     @Test
     public void verifyMultipleUsersFound() throws Exception {
-        final var c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0");
+        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0");
         assertNotNull(this.handler.authenticate(c));
     }
 }

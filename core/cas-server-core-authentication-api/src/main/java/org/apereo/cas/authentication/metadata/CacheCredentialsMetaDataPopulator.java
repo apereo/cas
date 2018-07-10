@@ -1,6 +1,8 @@
 package org.apereo.cas.authentication.metadata;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
@@ -20,7 +22,7 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
  */
 @Slf4j
 @ToString(callSuper = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CacheCredentialsMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
     private final CipherExecutor<String, String> cipherExecutor;
@@ -34,8 +36,8 @@ public class CacheCredentialsMetaDataPopulator extends BaseAuthenticationMetaDat
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         transaction.getPrimaryCredential().ifPresent(credential -> {
             LOGGER.debug("Processing request to capture the credential for [{}]", credential.getId());
-            final var c = (UsernamePasswordCredential) credential;
-            final var psw = this.cipherExecutor == null ? c.getPassword() : this.cipherExecutor.encode(c.getPassword(), new Object[]{});
+            val c = (UsernamePasswordCredential) credential;
+            val psw = this.cipherExecutor == null ? c.getPassword() : this.cipherExecutor.encode(c.getPassword(), new Object[]{});
             builder.addAttribute(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD, psw);
             LOGGER.debug("Credential is added as the authentication attribute [{}] to the authentication",
                 UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);

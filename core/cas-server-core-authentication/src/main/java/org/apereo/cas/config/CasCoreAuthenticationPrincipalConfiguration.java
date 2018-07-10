@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
@@ -65,15 +67,15 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "personDirectoryPrincipalResolver")
     public PrincipalResolver personDirectoryPrincipalResolver() {
-        final var personDirectory = casProperties.getPersonDirectory();
-        final var bean = new PersonDirectoryPrincipalResolver(
+        val personDirectory = casProperties.getPersonDirectory();
+        val bean = new PersonDirectoryPrincipalResolver(
             attributeRepository,
             principalFactory(),
             personDirectory.isReturnNull(),
             personDirectory.getPrincipalAttribute()
         );
         
-        final var resolver = new ChainingPrincipalResolver();
+        val resolver = new ChainingPrincipalResolver();
         if (!attributeRepositories.isEmpty()) {
             LOGGER.debug("Attribute repository sources are defined and available for the principal resolution chain. "
                 + "The principal resolver will use a combination of attributes collected from attribute repository sources "
@@ -92,8 +94,8 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "globalPrincipalAttributeRepository")
     public PrincipalAttributesRepository globalPrincipalAttributeRepository() {
-        final var props = casProperties.getAuthn().getAttributeRepository();
-        final long cacheTime = props.getExpirationTime();
+        val props = casProperties.getAuthn().getAttributeRepository();
+        val cacheTime = props.getExpirationTime();
         if (cacheTime < 0) {
             return new DefaultPrincipalAttributesRepository();
         }

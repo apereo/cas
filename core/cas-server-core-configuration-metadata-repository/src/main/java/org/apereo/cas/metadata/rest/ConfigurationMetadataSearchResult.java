@@ -1,5 +1,7 @@
 package org.apereo.cas.metadata.rest;
 
+import lombok.val;
+
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +14,6 @@ import org.apereo.cas.util.RegexUtils;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.core.Ordered;
 
-import java.util.Set;
 import java.util.regex.Pattern;
 import lombok.Getter;
 import lombok.Setter;
@@ -58,9 +59,9 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
             setType(prop.getType());
             setGroup(CasConfigurationMetadataRepository.getPropertyGroupId(prop));
             setOrder(CasConfigurationMetadataRepository.isCasProperty(prop) ? Ordered.HIGHEST_PRECEDENCE : Ordered.LOWEST_PRECEDENCE);
-            final var valueHints = prop.getHints().getValueHints();
+            val valueHints = prop.getHints().getValueHints();
             valueHints.forEach(hint -> {
-                final Set values = CollectionUtils.toCollection(hint.getValue());
+                val values = CollectionUtils.toCollection(hint.getValue());
                 if (values.contains(RequiresModule.class.getName())) {
                     setRequiredModule(hint.getDescription());
                     setRequiredModuleAutomated(values.contains(Boolean.TRUE));
@@ -76,7 +77,7 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
 
     private String cleanUpDescription(final String propDescription) {
         var description = propDescription;
-        final var format = "<code>%s</code>";
+        val format = "<code>%s</code>";
         if (StringUtils.isNotBlank(description)) {
             var matcher = PATTERN_DESCRIPTION_CODE.matcher(description);
             if (matcher.find()) {
@@ -84,12 +85,12 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
             }
             matcher = PATTERN_DESCRIPTION_LINK.matcher(description);
             if (matcher.find()) {
-                final var replacement = "See ".concat(String.format(format, matcher.group(1)));
+                val replacement = "See ".concat(String.format(format, matcher.group(1)));
                 description = StringUtils.replacePattern(description, PATTERN_DESCRIPTION_LINK.pattern(), replacement);
             }
             matcher = PATTERN_DESCRIPTION_SEE.matcher(description);
             if (matcher.find()) {
-                final var replacement = "See ".concat(String.format(format, matcher.group(1)));
+                val replacement = "See ".concat(String.format(format, matcher.group(1)));
                 description = StringUtils.replacePattern(description, PATTERN_DESCRIPTION_SEE.pattern(), replacement);
             }
             return description;

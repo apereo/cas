@@ -1,5 +1,7 @@
 package org.apereo.cas.services.support;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -59,7 +61,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
         this.givenAttributesMap.put("arrayAttribute", new String[]{"math", "science", "chemistry"});
         this.givenAttributesMap.put("setAttribute", Stream.of("math", "science", "chemistry").collect(Collectors.toSet()));
 
-        final Map<String, String> mapAttributes = new HashMap<>();
+        val mapAttributes = new HashMap<String, String>();
         mapAttributes.put(UID, "loggedInTestUid");
         mapAttributes.put(PHONE, "890");
         mapAttributes.put(FAMILY_NAME, "Smith");
@@ -77,7 +79,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     @Test
     public void verifyPatternFilter() {
 
-        final var attrs = this.filter.filter(this.givenAttributesMap);
+        val attrs = this.filter.filter(this.givenAttributesMap);
         assertEquals(7, attrs.size());
 
         assertFalse(attrs.containsKey(PHONE));
@@ -87,23 +89,23 @@ public class RegisteredServiceRegexAttributeFilterTests {
         assertTrue(attrs.containsKey("memberOf"));
         assertTrue(attrs.containsKey("mapAttribute"));
 
-        final var mapAttributes = (Map<String, String>) attrs.get("mapAttribute");
+        val mapAttributes = (Map<String, String>) attrs.get("mapAttribute");
         assertTrue(mapAttributes.containsKey(UID));
         assertTrue(mapAttributes.containsKey(FAMILY_NAME));
         assertFalse(mapAttributes.containsKey(PHONE));
 
-        final List<?> obj = (List<?>) attrs.get("memberOf");
+        val obj = (List<?>) attrs.get("memberOf");
         assertEquals(2, obj.size());
     }
 
     @Test
     public void verifyServiceAttributeFilterAllowedAttributesWithARegexFilter() {
-        final var policy = new ReturnAllowedAttributeReleasePolicy();
+        val policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("attr1", "attr3", "another"));
         policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("v3"));
-        final var p = mock(Principal.class);
+        val p = mock(Principal.class);
 
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
         map.put("attr3", Arrays.asList("v3", "v4"));
@@ -111,13 +113,13 @@ public class RegisteredServiceRegexAttributeFilterTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
 
-        final var attr = policy.getAttributes(p, RegisteredServiceTestUtils.getService(),
+        val attr = policy.getAttributes(p, RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getRegisteredService("test"));
         assertEquals(1, attr.size());
         assertTrue(attr.containsKey("attr3"));
 
-        final var data = SerializationUtils.serialize(policy);
-        final var p2 =
+        val data = SerializationUtils.serialize(policy);
+        val p2 =
                 SerializationUtils.deserializeAndCheckObject(data, ReturnAllowedAttributeReleasePolicy.class);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
@@ -126,8 +128,8 @@ public class RegisteredServiceRegexAttributeFilterTests {
 
     @Test
     public void verifySerialization() {
-        final var data = SerializationUtils.serialize(this.filter);
-        final var secondFilter =
+        val data = SerializationUtils.serialize(this.filter);
+        val secondFilter =
                 SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
         assertEquals(secondFilter, this.filter);
     }
@@ -136,7 +138,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     public void verifySerializeARegisteredServiceRegexAttributeFilterToJson() throws IOException {
         MAPPER.writeValue(JSON_FILE, filter);
 
-        final RegisteredServiceAttributeFilter filterRead = MAPPER.readValue(JSON_FILE, RegisteredServiceRegexAttributeFilter.class);
+        val filterRead = MAPPER.readValue(JSON_FILE, RegisteredServiceRegexAttributeFilter.class);
 
         assertEquals(filter, filterRead);
     }

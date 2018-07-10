@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
+import lombok.val;
+
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.junit.Test;
@@ -13,7 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Map;
+import java.util.HashMap;
 
 import static org.junit.Assert.*;
 
@@ -34,9 +36,9 @@ public class InternalGroovyScriptDaoTests {
 
     @Test
     public void verifyAction() {
-        final var d = new InternalGroovyScriptDao(new StaticApplicationContext(), casProperties);
-        final Map results = d.getAttributesForUser("casuser");
+        val d = new InternalGroovyScriptDao(new StaticApplicationContext(), casProperties);
+        val results = d.getAttributesForUser("casuser");
         assertFalse(results.isEmpty());
-        assertFalse(d.getPersonAttributesFromMultivaluedAttributes(results).isEmpty());
+        assertFalse(d.getPersonAttributesFromMultivaluedAttributes(new HashMap(results)).isEmpty());
     }
 }

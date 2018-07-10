@@ -1,5 +1,7 @@
 package org.apereo.cas.web.support.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -31,12 +33,12 @@ public class CasMongoDbThrottlingConfiguration {
     @Bean
     @RefreshScope
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailExecutionPlan) {
-        final var throttle = casProperties.getAuthn().getThrottle();
-        final var failure = throttle.getFailure();
+        val throttle = casProperties.getAuthn().getThrottle();
+        val failure = throttle.getFailure();
 
-        final var mongo = casProperties.getAudit().getMongo();
-        final var factory = new MongoDbConnectionFactory();
-        final var mongoTemplate = factory.buildMongoTemplate(mongo);
+        val mongo = casProperties.getAudit().getMongo();
+        val factory = new MongoDbConnectionFactory();
+        val mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
 
         return new MongoDbThrottledSubmissionHandlerInterceptorAdapter(failure.getThreshold(),

@@ -1,15 +1,16 @@
 package org.apereo.cas.web.flow.logout;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.Event;
@@ -29,9 +30,9 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class LogoutAction extends AbstractLogoutAction {
-    
+
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     private final ServicesManager servicesManager;
@@ -42,29 +43,29 @@ public class LogoutAction extends AbstractLogoutAction {
     protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
                                       final RequestContext context) {
 
-        var needFrontSlo = false;
-        final var logoutRequests = WebUtils.getLogoutRequests(context);
-        if (logoutRequests != null) {
-            needFrontSlo = logoutRequests
-                    .stream()
-                    .anyMatch(logoutRequest -> logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED);
-        }
+        val logoutRequests = WebUtils.getLogoutRequests(context);
+        val needFrontSlo = FunctionUtils.doIf(logoutRequests != null,
+            () -> logoutRequests
+                .stream()
+                .anyMatch(logoutRequest -> logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED),
+            () -> false)
+            .get();
 
-        final var paramName = StringUtils.defaultIfEmpty(logoutProperties.getRedirectParameter(), CasProtocolConstants.PARAMETER_SERVICE);
+        val paramName = StringUtils.defaultIfEmpty(logoutProperties.getRedirectParameter(), CasProtocolConstants.PARAMETER_SERVICE);
         LOGGER.debug("Using parameter name [{}] to detect destination service, if any", paramName);
-        final var service = request.getParameter(paramName);
+        val service = request.getParameter(paramName);
         LOGGER.debug("Located target service [{}] for redirection after logout", paramName);
 
         if (logoutProperties.isFollowServiceRedirects() && StringUtils.isNotBlank(service)) {
-            final Service webAppService = webApplicationServiceFactory.createService(service);
-            final var rService = this.servicesManager.findServiceBy(webAppService);
+            val webAppService = webApplicationServiceFactory.createService(service);
+            val rService = this.servicesManager.findServiceBy(webAppService);
 
             if (rService != null && rService.getAccessStrategy().isServiceAccessAllowed()) {
                 LOGGER.debug("Redirecting to service [{}]", service);
                 WebUtils.putLogoutRedirectUrl(context, service);
             } else {
                 LOGGER.warn("Cannot redirect to [{}] given the service is unauthorized to use CAS. "
-                        + "Ensure the service is registered with CAS and is enabled to allowed access", service);
+                    + "Ensure the service is registered with CAS and is enabled to allowed access", service);
             }
         } else {
             LOGGER.debug("No target service is located for redirection after logout, or CAS is not allowed to follow redirects after logout");

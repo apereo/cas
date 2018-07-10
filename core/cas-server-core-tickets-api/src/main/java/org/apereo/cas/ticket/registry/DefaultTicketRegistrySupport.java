@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
@@ -25,25 +27,25 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
 
     @Override
     public Authentication getAuthenticationFrom(final String ticketGrantingTicketId) throws RuntimeException {
-        final var tgt = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        val tgt = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
         return tgt == null || tgt.isExpired() ? null : tgt.getAuthentication();
     }
 
     @Override
     public Principal getAuthenticatedPrincipalFrom(final String ticketGrantingTicketId) throws RuntimeException {
-        final var auth = getAuthenticationFrom(ticketGrantingTicketId);
+        val auth = getAuthenticationFrom(ticketGrantingTicketId);
         return auth == null ? null : auth.getPrincipal();
     }
 
     @Override
     public Map<String, Object> getPrincipalAttributesFrom(final String ticketGrantingTicketId) throws RuntimeException {
-        final var principal = getAuthenticatedPrincipalFrom(ticketGrantingTicketId);
+        val principal = getAuthenticatedPrincipalFrom(ticketGrantingTicketId);
         return principal == null ? null : principal.getAttributes();
     }
 
     @Override
     public void updateAuthentication(final String ticketGrantingTicketId, final Authentication authentication) {
-        final var tgt = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        val tgt = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
         tgt.getAuthentication().update(authentication);
         this.ticketRegistry.updateTicket(tgt);
     }

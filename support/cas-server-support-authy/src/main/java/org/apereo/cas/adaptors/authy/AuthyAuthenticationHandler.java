@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.authy;
 
+import lombok.val;
+
 import com.authy.api.Token;
 import com.authy.api.User;
 import lombok.SneakyThrows;
@@ -38,23 +40,23 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
-        final var tokenCredential = (AuthyTokenCredential) credential;
+        val tokenCredential = (AuthyTokenCredential) credential;
 
-        final var authentication = WebUtils.getInProgressAuthentication();
+        val authentication = WebUtils.getInProgressAuthentication();
         if (authentication == null) {
             throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
         }
-        final var principal = authentication.getPrincipal();
+        val principal = authentication.getPrincipal();
 
-        final var user = instance.getOrCreateUser(principal);
+        val user = instance.getOrCreateUser(principal);
         if (!user.isOk()) {
             throw new FailedLoginException(AuthyClientInstance.getErrorMessage(user.getError()));
         }
 
-        final Map<String, String> options = new HashMap<>(1);
+        val options = new HashMap<String, String>(1);
         options.put("force", Boolean.toString(this.forceVerification));
 
-        final var verification = verifyAuthyToken(tokenCredential, user, options);
+        val verification = verifyAuthyToken(tokenCredential, user, options);
         if (!verification.isOk()) {
             throw new FailedLoginException(AuthyClientInstance.getErrorMessage(verification.getError()));
         }

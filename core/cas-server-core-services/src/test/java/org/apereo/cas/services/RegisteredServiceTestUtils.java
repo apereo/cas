@@ -1,12 +1,12 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
@@ -60,7 +60,7 @@ public class RegisteredServiceTestUtils {
     }
 
     public static UsernamePasswordCredential getCredentialsWithSameUsernameAndPassword(final String username) {
-        final var usernamePasswordCredentials = new UsernamePasswordCredential();
+        val usernamePasswordCredentials = new UsernamePasswordCredential();
         usernamePasswordCredentials.setUsername(username);
         usernamePasswordCredentials.setPassword(username);
 
@@ -68,7 +68,7 @@ public class RegisteredServiceTestUtils {
     }
 
     public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword(final String username, final String password) {
-        final var usernamePasswordCredentials = new UsernamePasswordCredential();
+        val usernamePasswordCredentials = new UsernamePasswordCredential();
         usernamePasswordCredentials.setUsername(username);
         usernamePasswordCredentials.setPassword(password);
 
@@ -80,7 +80,7 @@ public class RegisteredServiceTestUtils {
     }
 
     public static AbstractWebApplicationService getService(final String name) {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addParameter("service", name);
         return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
     }
@@ -90,7 +90,7 @@ public class RegisteredServiceTestUtils {
     }
 
     public static Map<String, Set<String>> getTestAttributes() {
-        final Map<String, Set<String>> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Set<String>>();
         Set<String> attributeValues = new HashSet<>();
         attributeValues.add("uid");
 
@@ -116,7 +116,7 @@ public class RegisteredServiceTestUtils {
 
     @SneakyThrows
     public static AbstractRegisteredService getRegisteredService(final String id, final Class<? extends RegisteredService> clazz) {
-        final var s = (AbstractRegisteredService) clazz.getDeclaredConstructor().newInstance();
+        val s = (AbstractRegisteredService) clazz.getDeclaredConstructor().newInstance();
         s.setServiceId(id);
         s.setEvaluationOrder(1);
         s.setName("TestService" + UUID.randomUUID().toString());
@@ -125,7 +125,7 @@ public class RegisteredServiceTestUtils {
         s.setId(RandomUtils.getNativeInstance().nextInt(Math.abs(s.hashCode())));
         s.setTheme("exampleTheme");
         s.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("uid"));
-        final var accessStrategy =
+        val accessStrategy =
             new DefaultRegisteredServiceAccessStrategy(true, true);
         accessStrategy.setRequireAllAttributes(true);
         accessStrategy.setRequiredAttributes(getTestAttributes());
@@ -137,11 +137,11 @@ public class RegisteredServiceTestUtils {
 
         s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA"));
 
-        final var policy = new ReturnAllowedAttributeReleasePolicy();
+        val policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAuthorizedToReleaseCredentialPassword(true);
         policy.setAuthorizedToReleaseProxyGrantingTicket(true);
 
-        final var repo =
+        val repo =
             new CachingPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 10);
         repo.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
         policy.setPrincipalAttributesRepository(repo);
@@ -182,8 +182,8 @@ public class RegisteredServiceTestUtils {
     }
 
     public static Authentication getAuthentication(final Principal principal, final Map<String, Object> attributes) {
-        final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
+        val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         return new DefaultAuthenticationBuilder(principal)
             .addCredential(meta)
             .addSuccess("testHandler", new DefaultAuthenticationHandlerExecutionResult(handler, meta))

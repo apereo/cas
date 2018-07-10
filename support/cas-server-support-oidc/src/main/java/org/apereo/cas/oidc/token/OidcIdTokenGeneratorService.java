@@ -2,7 +2,9 @@ package org.apereo.cas.oidc.token;
 
 import com.google.common.base.Preconditions;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Service;
@@ -23,17 +25,16 @@ import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.UserProfile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
-
 
 /**
  * This is {@link OidcIdTokenGeneratorService}.
@@ -43,24 +44,12 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @Getter
+@RequiredArgsConstructor
 public class OidcIdTokenGeneratorService {
 
     private final CasConfigurationProperties casProperties;
     private final OidcIdTokenSigningAndEncryptionService signingService;
     private final ServicesManager servicesManager;
-
-    private final String oAuthCallbackUrl;
-
-    public OidcIdTokenGeneratorService(final CasConfigurationProperties casProperties,
-                                       final OidcIdTokenSigningAndEncryptionService signingService,
-                                       final ServicesManager servicesManager) {
-        this.casProperties = casProperties;
-        this.signingService = signingService;
-        this.servicesManager = servicesManager;
-        this.oAuthCallbackUrl = casProperties.getServer().getPrefix()
-            + OAuth20Constants.BASE_OAUTH20_URL + '/'
-            + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
-    }
 
     /**
      * Generate string.
@@ -84,17 +73,17 @@ public class OidcIdTokenGeneratorService {
             throw new IllegalArgumentException("Registered service instance is not an OIDC service");
         }
 
-        final var oidcRegisteredService = (OidcRegisteredService) registeredService;
-        final var context = Pac4jUtils.getPac4jJ2EContext(request, response);
-        final var manager = Pac4jUtils.getPac4jProfileManager(request, response);
-        final Optional<UserProfile> profile = manager.get(true);
+        val oidcRegisteredService = (OidcRegisteredService) registeredService;
+        val context = Pac4jUtils.getPac4jJ2EContext(request, response);
+        val manager = Pac4jUtils.getPac4jProfileManager(request, response);
+        val profile = (Optional<CommonProfile>) manager.get(true);
 
         if (!profile.isPresent()) {
             throw new IllegalArgumentException("Unable to determine the user profile from the context");
         }
 
         LOGGER.debug("Attempting to produce claims for the id token [{}]", accessTokenId);
-        final var claims = produceIdTokenClaims(request, accessTokenId, timeoutInSeconds,
+        val claims = produceIdTokenClaims(request, accessTokenId, timeoutInSeconds,
             oidcRegisteredService, profile.get(), context, responseType);
         LOGGER.debug("Produce claims for the id token [{}] as [{}]", accessTokenId, claims);
 
@@ -120,31 +109,31 @@ public class OidcIdTokenGeneratorService {
                                              final UserProfile profile,
                                              final J2EContext context,
                                              final OAuth20ResponseTypes responseType) {
-        final var authentication = accessTokenId.getAuthentication();
-        final var principal = authentication.getPrincipal();
-        final var oidc = casProperties.getAuthn().getOidc();
+        val authentication = accessTokenId.getAuthentication();
+        val principal = authentication.getPrincipal();
+        val oidc = casProperties.getAuthn().getOidc();
 
-        final var claims = new JwtClaims();
+        val claims = new JwtClaims();
         claims.setJwtId(getOAuthServiceTicket(accessTokenId.getTicketGrantingTicket()).getKey());
         claims.setIssuer(oidc.getIssuer());
         claims.setAudience(service.getClientId());
 
-        final var expirationDate = NumericDate.now();
+        val expirationDate = NumericDate.now();
         expirationDate.addSeconds(timeoutInSeconds);
         claims.setExpirationTime(expirationDate);
         claims.setIssuedAtToNow();
         claims.setNotBeforeMinutesInThePast(oidc.getSkew());
         claims.setSubject(principal.getId());
 
-        final var mfa = casProperties.getAuthn().getMfa();
-        final var attributes = authentication.getAttributes();
+        val mfa = casProperties.getAuthn().getMfa();
+        val attributes = authentication.getAttributes();
 
         if (attributes.containsKey(mfa.getAuthenticationContextAttribute())) {
-            final Collection<Object> val = CollectionUtils.toCollection(attributes.get(mfa.getAuthenticationContextAttribute()));
+            val val = CollectionUtils.toCollection(attributes.get(mfa.getAuthenticationContextAttribute()));
             claims.setStringClaim(OidcConstants.ACR, val.iterator().next().toString());
         }
         if (attributes.containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {
-            final Collection<Object> val = CollectionUtils.toCollection(attributes.get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
+            val val = CollectionUtils.toCollection(attributes.get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
             claims.setStringListClaim(OidcConstants.AMR, val.toArray(new String[]{}));
         }
 
@@ -164,34 +153,44 @@ public class OidcIdTokenGeneratorService {
     }
 
     private Entry<String, Service> getOAuthServiceTicket(final TicketGrantingTicket tgt) {
-        final var oAuthServiceTicket = Stream.concat(
+        val oAuthCallbackUrl = getOAuthCallbackUrl();
+
+        val oAuthServiceTicket = Stream.concat(
             tgt.getServices().entrySet().stream(),
             tgt.getProxyGrantingTickets().entrySet().stream())
             .filter(e -> servicesManager.findServiceBy(e.getValue()).getServiceId().equals(oAuthCallbackUrl))
             .findFirst();
-        Preconditions.checkState(oAuthServiceTicket.isPresent(), "Cannot find service ticket issues to "
+        Preconditions.checkState(oAuthServiceTicket.isPresent(), "Cannot find service ticket issued to "
             + oAuthCallbackUrl + " as part of the authentication context");
         return oAuthServiceTicket.get();
     }
 
+    /**
+     * Gets o auth callback url.
+     *
+     * @return the o auth callback url
+     */
+    public String getOAuthCallbackUrl() {
+        return casProperties.getServer().getPrefix()
+            + OAuth20Constants.BASE_OAUTH20_URL + '/'
+            + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+    }
+
     private String generateAccessTokenHash(final AccessToken accessTokenId,
                                            final OidcRegisteredService service) {
-        final var tokenBytes = accessTokenId.getId().getBytes(StandardCharsets.UTF_8);
-        final String hashAlg;
-
-        switch (signingService.getJsonWebKeySigningAlgorithm()) {
-            case AlgorithmIdentifiers.RSA_USING_SHA512:
-                hashAlg = MessageDigestAlgorithms.SHA_512;
-                break;
-            case AlgorithmIdentifiers.RSA_USING_SHA256:
-            default:
-                hashAlg = MessageDigestAlgorithms.SHA_256;
-        }
-
+        val tokenBytes = accessTokenId.getId().getBytes(StandardCharsets.UTF_8);
+        val hashAlg = getSigningHashAlgorithm();
         LOGGER.debug("Digesting access token hash via algorithm [{}]", hashAlg);
-        final var digested = DigestUtils.rawDigest(hashAlg, tokenBytes);
-        final var hashBytesLeftHalf = Arrays.copyOf(digested, digested.length / 2);
+        val digested = DigestUtils.rawDigest(hashAlg, tokenBytes);
+        val hashBytesLeftHalf = Arrays.copyOf(digested, digested.length / 2);
         return EncodingUtils.encodeUrlSafeBase64(hashBytesLeftHalf);
+    }
+
+    private String getSigningHashAlgorithm() {
+        if (AlgorithmIdentifiers.RSA_USING_SHA512.equalsIgnoreCase(signingService.getJsonWebKeySigningAlgorithm())) {
+            return MessageDigestAlgorithms.SHA_512;
+        }
+        return MessageDigestAlgorithms.SHA_256;
     }
 }
 

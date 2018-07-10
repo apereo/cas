@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.DateTimeUtils;
 
@@ -18,7 +20,7 @@ import java.time.ZonedDateTime;
  *
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RevokedCertificateException extends GeneralSecurityException {
 
     /** OID for reasonCode CRL extension. */
@@ -67,7 +69,7 @@ public class RevokedCertificateException extends GeneralSecurityException {
          * @return the reason
          */
         public static Reason fromCode(final int code) {
-            final var reasons = Reason.values();
+            val reasons = Reason.values();
 
             for (var i = 0; i < reasons.length; i++) {
                 if (i == code) {
@@ -114,7 +116,7 @@ public class RevokedCertificateException extends GeneralSecurityException {
     private static Reason getReasonFromX509Entry(final X509CRLEntry entry) {
         if (entry.hasExtensions()) {
             try {
-                final var code = Integer.parseInt(
+                val code = Integer.parseInt(
                         new String(entry.getExtensionValue(CRL_REASON_OID), "ASCII"));
                 if (code < Reason.values().length) {
                     return Reason.fromCode(code);

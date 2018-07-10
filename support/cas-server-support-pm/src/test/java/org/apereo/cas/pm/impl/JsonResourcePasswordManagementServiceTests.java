@@ -1,8 +1,9 @@
 package org.apereo.cas.pm.impl;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -31,8 +32,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -76,40 +75,40 @@ public class JsonResourcePasswordManagementServiceTests {
 
     @Test
     public void verifyUserEmailCanBeFound() {
-        final var email = passwordChangeService.findEmail("casuser");
+        val email = passwordChangeService.findEmail("casuser");
         assertEquals("casuser@example.org", email);
     }
 
     @Test
     public void verifyUserEmailCanNotBeFound() {
-        final var email = passwordChangeService.findEmail("casusernotfound");
+        val email = passwordChangeService.findEmail("casusernotfound");
         assertNull(email);
     }
 
     @Test
     public void verifyUserQuestionsCanBeFound() {
-        final Map questions = passwordChangeService.getSecurityQuestions("casuser");
+        val questions = passwordChangeService.getSecurityQuestions("casuser");
         assertEquals(2, questions.size());
 
     }
 
     @Test
     public void verifyUserPasswordChange() {
-        final Credential c = new UsernamePasswordCredential("casuser", "password");
-        final var bean = new PasswordChangeBean();
+        val c = new UsernamePasswordCredential("casuser", "password");
+        val bean = new PasswordChangeBean();
         bean.setConfirmedPassword("newPassword");
         bean.setPassword("newPassword");
-        final var res = passwordChangeService.change(c, bean);
+        val res = passwordChangeService.change(c, bean);
         assertTrue(res);
     }
 
     @Test
     public void verifyPasswordValidationService() {
-        final var c = new UsernamePasswordCredential("casuser", "password");
-        final var bean = new PasswordChangeBean();
+        val c = new UsernamePasswordCredential("casuser", "password");
+        val bean = new PasswordChangeBean();
         bean.setConfirmedPassword("Test@1234");
         bean.setPassword("Test@1234");
-        final var isValid = passwordValidationService.isValid(c, bean);
+        val isValid = passwordValidationService.isValid(c, bean);
         assertTrue(isValid);
     }
 }

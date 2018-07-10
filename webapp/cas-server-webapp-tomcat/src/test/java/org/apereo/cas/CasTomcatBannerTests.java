@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import lombok.val;
+
 import org.apache.commons.io.output.WriterOutputStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,13 +35,13 @@ public class CasTomcatBannerTests {
 
     @Test
     public void verifyAction() {
-        final var banner = new CasTomcatBanner();
-        final var writer = new StringWriter();
-        final var out = new WriterOutputStream(writer, StandardCharsets.UTF_8);
-        try (var stream = new PrintStream(out)) {
+        val banner = new CasTomcatBanner();
+        val writer = new StringWriter();
+        val out = new WriterOutputStream(writer, StandardCharsets.UTF_8);
+        try (val stream = new PrintStream(out)) {
             banner.printBanner(environment, CasTomcatBanner.class, stream);
         }
-        final var output = writer.toString();
+        val output = writer.toString();
         assertNotNull(output);
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.tokens;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -39,13 +41,13 @@ public class JWTTicketGrantingTicketResourceEntityResponseFactory extends Defaul
             return super.build(ticketGrantingTicket, request);
         }
 
-        final var jwt = this.tokenTicketBuilder.build(ticketGrantingTicket);
+        val jwt = this.tokenTicketBuilder.build(ticketGrantingTicket);
         LOGGER.debug("Generated JWT [{}]", jwt);
 
-        final var headers = new HttpHeaders();
+        val headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);
 
-        final ResponseEntity<String> entity = new ResponseEntity<>(jwt, headers, HttpStatus.CREATED);
+        val entity = new ResponseEntity<String>(jwt, headers, HttpStatus.CREATED);
         LOGGER.debug("Created response entity [{}]", entity);
         return entity;
 

@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -22,12 +24,9 @@ public class RegisteredServicePublicKeyImplTests {
 
     @Test
     public void verifySerializeAX509CertificateCredentialToJson() throws IOException {
-        final var publicKeyWritten = new RegisteredServicePublicKeyImpl("location", "algorithm");
-
+        val publicKeyWritten = new RegisteredServicePublicKeyImpl("location", "algorithm");
         MAPPER.writeValue(JSON_FILE, publicKeyWritten);
-
-        final RegisteredServicePublicKey credentialRead = MAPPER.readValue(JSON_FILE, RegisteredServicePublicKeyImpl.class);
-
+        val credentialRead = MAPPER.readValue(JSON_FILE, RegisteredServicePublicKeyImpl.class);
         assertEquals(publicKeyWritten, credentialRead);
     }
 }

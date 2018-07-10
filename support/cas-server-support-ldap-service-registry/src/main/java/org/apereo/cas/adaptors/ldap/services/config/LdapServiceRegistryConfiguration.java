@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.ldap.services.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.ldap.services.DefaultLdapRegisteredServiceMapper;
 import org.apereo.cas.adaptors.ldap.services.LdapRegisteredServiceMapper;
@@ -9,7 +11,6 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.util.LdapUtils;
-import org.ldaptive.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -41,8 +42,8 @@ public class LdapServiceRegistryConfiguration implements ServiceRegistryExecutio
     @Bean
     @RefreshScope
     public ServiceRegistry ldapServiceRegistry() {
-        final var ldap = casProperties.getServiceRegistry().getLdap();
-        final ConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+        val ldap = casProperties.getServiceRegistry().getLdap();
+        val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new LdapServiceRegistry(connectionFactory, ldap.getBaseDn(), ldapServiceRegistryMapper(), ldap);
     }
 

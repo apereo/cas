@@ -18,7 +18,7 @@ import java.util.Map;
 @Slf4j
 @NoArgsConstructor
 public class DefaultTicketFactory implements TicketFactory {
-    private final Map<String, Object> factoryMap = new HashMap<>();
+    private final Map factoryMap = new HashMap<String, Object>();
 
     @Override
     public TicketFactory get(final Class<? extends Ticket> clazz) {

@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.util;
 
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -40,7 +40,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 /**
  * This is {@link AbstractSaml20ObjectBuilder}.
@@ -51,7 +50,6 @@ import java.util.stream.IntStream;
  */
 @Slf4j
 public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuilder {
-    private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
     private static final long serialVersionUID = -4325127376598205277L;
 
     public AbstractSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {
@@ -66,7 +64,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @return the name iD
      */
     public NameID getNameID(final String nameIdFormat, final String nameIdValue) {
-        final var nameId = newSamlObject(NameID.class);
+        val nameId = newSamlObject(NameID.class);
         nameId.setFormat(nameIdFormat);
         nameId.setValue(nameIdValue);
         return nameId;
@@ -79,7 +77,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @return the response
      */
     public org.opensaml.saml.saml2.ecp.Response newEcpResponse(final String assertionConsumerUrl) {
-        final var samlResponse = newSamlObject(org.opensaml.saml.saml2.ecp.Response.class);
+        val samlResponse = newSamlObject(org.opensaml.saml.saml2.ecp.Response.class);
         samlResponse.setSOAP11MustUnderstand(Boolean.TRUE);
         samlResponse.setSOAP11Actor(ActorBearing.SOAP11_ACTOR_NEXT);
         samlResponse.setAssertionConsumerServiceURL(assertionConsumerUrl);
@@ -98,7 +96,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     public Response newResponse(final String id, final ZonedDateTime issueInstant,
                                 final String recipient, final WebApplicationService service) {
 
-        final var samlResponse = newSamlObject(Response.class);
+        val samlResponse = newSamlObject(Response.class);
         samlResponse.setID(id);
         samlResponse.setIssueInstant(DateTimeUtils.dateTimeOf(issueInstant));
         samlResponse.setVersion(SAMLVersion.VERSION_20);
@@ -119,12 +117,12 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @return the status
      */
     public Status newStatus(final String codeValue, final String statusMessage) {
-        final var status = newSamlObject(Status.class);
-        final var statusCode = newSamlObject(StatusCode.class);
+        val status = newSamlObject(Status.class);
+        val statusCode = newSamlObject(StatusCode.class);
         statusCode.setValue(codeValue);
         status.setStatusCode(statusCode);
         if (StringUtils.isNotBlank(statusMessage)) {
-            final var message = newSamlObject(StatusMessage.class);
+            val message = newSamlObject(StatusMessage.class);
             message.setMessage(statusMessage);
             status.setStatusMessage(message);
         }
@@ -142,7 +140,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      */
     public Assertion newAssertion(final AuthnStatement authnStatement, final String issuer,
                                   final ZonedDateTime issuedAt, final String id) {
-        final List<Statement> list = new ArrayList<>();
+        val list = new ArrayList<Statement>();
         list.add(authnStatement);
         return newAssertion(list, issuer, issuedAt, id);
     }
@@ -158,7 +156,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      */
     public Assertion newAssertion(final List<Statement> authnStatement, final String issuer,
                                   final ZonedDateTime issuedAt, final String id) {
-        final var assertion = newSamlObject(Assertion.class);
+        val assertion = newSamlObject(Assertion.class);
         assertion.setID(id);
         assertion.setIssueInstant(DateTimeUtils.dateTimeOf(issuedAt));
         assertion.setIssuer(newIssuer(issuer));
@@ -173,7 +171,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @return the issuer
      */
     public Issuer newIssuer(final String issuerValue) {
-        final var issuer = newSamlObject(Issuer.class);
+        val issuer = newSamlObject(Issuer.class);
         issuer.setValue(issuerValue);
         return issuer;
     }
@@ -191,14 +189,14 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                                                     final Map<String, String> attributeFriendlyNames,
                                                     final Map<String, String> configuredNameFormats,
                                                     final String defaultNameFormat) {
-        final var attrStatement = newSamlObject(AttributeStatement.class);
-        for (final var e : attributes.entrySet()) {
+        val attrStatement = newSamlObject(AttributeStatement.class);
+        for (val e : attributes.entrySet()) {
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
                 LOGGER.info("Skipping attribute [{}] because it does not have any values.", e.getKey());
                 continue;
             }
-            final var friendlyName = attributeFriendlyNames.getOrDefault(e.getKey(), null);
-            final var attribute = newAttribute(friendlyName, e, configuredNameFormats, defaultNameFormat);
+            val friendlyName = attributeFriendlyNames.getOrDefault(e.getKey(), null);
+            val attribute = newAttribute(friendlyName, e, configuredNameFormats, defaultNameFormat);
             attrStatement.getAttributes().add(attribute);
         }
 
@@ -232,7 +230,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                                      final Map.Entry<String, Object> e,
                                      final Map<String, String> configuredNameFormats,
                                      final String defaultNameFormat) {
-        final var attribute = newSamlObject(Attribute.class);
+        val attribute = newSamlObject(Attribute.class);
         attribute.setName(e.getKey());
 
         if (StringUtils.isNotBlank(attributeFriendlyName)) {
@@ -244,7 +242,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         addAttributeValuesToSaml2Attribute(e.getKey(), e.getValue(), attribute.getAttributeValues());
 
         if (!configuredNameFormats.isEmpty() && configuredNameFormats.containsKey(attribute.getName())) {
-            final var nameFormat = configuredNameFormats.get(attribute.getName());
+            val nameFormat = configuredNameFormats.get(attribute.getName());
             LOGGER.debug("Found name format [{}] for attribute [{}]", nameFormat, attribute.getName());
             configureAttributeNameFormat(attribute, nameFormat);
             LOGGER.debug("Attribute [{}] is assigned the name format of [{}]", attribute.getName(), attribute.getNameFormat());
@@ -262,7 +260,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             return;
         }
 
-        final var compareFormat = nameFormat.trim().toLowerCase();
+        val compareFormat = nameFormat.trim().toLowerCase();
         if ("basic".equals(compareFormat) || compareFormat.equals(Attribute.BASIC)) {
             attribute.setNameFormat(Attribute.BASIC);
         } else if ("uri".equals(compareFormat) || compareFormat.equals(Attribute.URI_REFERENCE)) {
@@ -287,10 +285,10 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         LOGGER.debug("Building authentication statement with context class ref [{}] @ [{}] with index [{}]",
             contextClassRef, authnInstant, sessionIndex);
 
-        final var stmt = newSamlObject(AuthnStatement.class);
-        final var ctx = newSamlObject(AuthnContext.class);
+        val stmt = newSamlObject(AuthnStatement.class);
+        val ctx = newSamlObject(AuthnContext.class);
 
-        final var classRef = newSamlObject(AuthnContextClassRef.class);
+        val classRef = newSamlObject(AuthnContextClassRef.class);
         classRef.setAuthnContextClassRef(contextClassRef);
 
         ctx.setAuthnContextClassRef(classRef);
@@ -310,13 +308,13 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      */
     public Conditions newConditions(final ZonedDateTime notBefore, final ZonedDateTime notOnOrAfter, final String... audienceUri) {
         LOGGER.debug("Building conditions for audience [{}] that enforce not-before [{}] and not-after [{}]", audienceUri, notBefore, notOnOrAfter);
-        final var conditions = newSamlObject(Conditions.class);
+        val conditions = newSamlObject(Conditions.class);
         conditions.setNotBefore(DateTimeUtils.dateTimeOf(notBefore));
         conditions.setNotOnOrAfter(DateTimeUtils.dateTimeOf(notOnOrAfter));
 
-        final var audienceRestriction = newSamlObject(AudienceRestriction.class);
+        val audienceRestriction = newSamlObject(AudienceRestriction.class);
         Arrays.stream(audienceUri).forEach(audienceEntry -> {
-            final var audience = newSamlObject(Audience.class);
+            val audience = newSamlObject(Audience.class);
             audience.setAudienceURI(audienceEntry);
             audienceRestriction.getAudiences().add(audience);
         });
@@ -338,7 +336,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     public Subject newSubject(final String nameIdFormat, final String nameIdValue,
                               final String recipient, final ZonedDateTime notOnOrAfter,
                               final String inResponseTo, final ZonedDateTime notBefore) {
-        final var nameID = getNameID(nameIdFormat, nameIdValue);
+        val nameID = getNameID(nameIdFormat, nameIdValue);
         return newSubject(nameID, recipient, notOnOrAfter, inResponseTo, notBefore);
     }
 
@@ -356,10 +354,10 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                               final String inResponseTo, final ZonedDateTime notBefore) {
 
         LOGGER.debug("Building subject for NameID [{}] and recipient [{}], in response to [{}]", nameId, recipient, inResponseTo);
-        final var confirmation = newSamlObject(SubjectConfirmation.class);
+        val confirmation = newSamlObject(SubjectConfirmation.class);
         confirmation.setMethod(SubjectConfirmation.METHOD_BEARER);
 
-        final var data = newSamlObject(SubjectConfirmationData.class);
+        val data = newSamlObject(SubjectConfirmationData.class);
 
         if (StringUtils.isNotBlank(recipient)) {
             data.setRecipient(recipient);
@@ -372,7 +370,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         if (StringUtils.isNotBlank(inResponseTo)) {
             data.setInResponseTo(inResponseTo);
 
-            final var ip = InetAddressUtils.getByName(inResponseTo);
+            val ip = InetAddressUtils.getByName(inResponseTo);
             if (ip != null) {
                 data.setAddress(ip.getHostName());
             }
@@ -385,7 +383,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         confirmation.setSubjectConfirmationData(data);
 
-        final var subject = newSamlObject(Subject.class);
+        val subject = newSamlObject(Subject.class);
         if (nameId != null) {
             subject.setNameID(nameId);
         }
@@ -397,28 +395,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
     @Override
     public String generateSecureRandomId() {
-        final var generator = RandomUtils.getNativeInstance();
-        final char[] charMappings = {
-            'a', 'b', 'c', 'd', 'e', 'f', 'g',
-            'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-            'p'};
-
-        final var charsLength = 40;
-        final var generatorBytesLength = 20;
-        final var shiftLength = 4;
-
-        // 160 bits
-        final var bytes = new byte[generatorBytesLength];
-        generator.nextBytes(bytes);
-
-        final var chars = new char[charsLength];
-        IntStream.range(0, bytes.length).forEach(i -> {
-            final var left = bytes[i] >> shiftLength & HEX_HIGH_BITS_BITWISE_FLAG;
-            final var right = bytes[i] & HEX_HIGH_BITS_BITWISE_FLAG;
-            chars[i * 2] = charMappings[left];
-            chars[i * 2 + 1] = charMappings[right];
-        });
-        return String.valueOf(chars);
+        return RandomUtils.generateSecureRandomId();
     }
 
     /**
@@ -432,12 +409,12 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             return null;
         }
 
-        final var decodedBytes = EncodingUtils.decodeBase64(encodedRequestXmlString);
+        val decodedBytes = EncodingUtils.decodeBase64(encodedRequestXmlString);
         if (decodedBytes == null) {
             return null;
         }
 
-        final var inflated = CompressionUtils.inflate(decodedBytes);
+        val inflated = CompressionUtils.inflate(decodedBytes);
         if (!StringUtils.isEmpty(inflated)) {
             return inflated;
         }

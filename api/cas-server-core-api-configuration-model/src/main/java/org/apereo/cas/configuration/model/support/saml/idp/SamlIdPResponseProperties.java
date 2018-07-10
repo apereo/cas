@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
+import lombok.val;
+
 import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.Setter;
@@ -81,9 +83,9 @@ public class SamlIdPResponseProperties implements Serializable {
         if (this.attributeNameFormats.isEmpty()) {
             return new HashMap<>(0);
         }
-        final Map<String, String> nameFormats = new HashMap<>();
+        val nameFormats = new HashMap<String, String>();
         this.attributeNameFormats.forEach(value -> Arrays.stream(value.split(",")).forEach(format -> {
-            final var values = Splitter.on("->").splitToList(format);
+            val values = Splitter.on("->").splitToList(format);
 
             if (values.size() == 2) {
                 nameFormats.put(values.get(0), values.get(1));

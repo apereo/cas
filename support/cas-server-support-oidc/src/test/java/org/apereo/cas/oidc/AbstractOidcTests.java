@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc;
 
+import lombok.val;
+
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -157,7 +159,7 @@ public abstract class AbstractOidcTests {
     }
 
     protected OidcRegisteredService getOidcRegisteredService() {
-        final var svc = new OidcRegisteredService();
+        val svc = new OidcRegisteredService();
         svc.setClientId("clientid");
         svc.setName("oauth");
         svc.setDescription("description");
@@ -174,12 +176,12 @@ public abstract class AbstractOidcTests {
     }
 
     protected JwtClaims getClaims() {
-        final var claims = new JwtClaims();
+        val claims = new JwtClaims();
         claims.setJwtId(RandomStringUtils.randomAlphanumeric(16));
         claims.setIssuer("https://cas.example.org");
         claims.setAudience(getOidcRegisteredService().getClientId());
 
-        final var expirationDate = NumericDate.now();
+        val expirationDate = NumericDate.now();
         expirationDate.addSeconds(120);
         claims.setExpirationTime(expirationDate);
         claims.setIssuedAtToNow();

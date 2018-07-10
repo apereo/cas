@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.validator.token;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableExecution;
@@ -8,6 +10,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.Pac4jUtils;
 import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 
@@ -29,23 +32,23 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
 
     @Override
     public boolean validate(final J2EContext context) {
-        final var request = context.getRequest();
-        final var response = context.getResponse();
+        val request = context.getRequest();
+        val response = context.getResponse();
 
-        final var grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
+        val grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
         if (!isGrantTypeSupported(grantType, OAuth20GrantTypes.values())) {
             LOGGER.warn("Grant type is not supported: [{}]", grantType);
             return false;
         }
 
-        final var manager = Pac4jUtils.getPac4jProfileManager(request, response);
-        final Optional<UserProfile> profile = manager.get(true);
+        val manager = Pac4jUtils.getPac4jProfileManager(request, response);
+        val profile = (Optional<CommonProfile>) manager.get(true);
         if (profile == null || !profile.isPresent()) {
             LOGGER.warn("Could not locate authenticated profile for this request");
             return false;
         }
 
-        final var uProfile = profile.get();
+        val uProfile = profile.get();
         if (uProfile == null) {
             LOGGER.warn("Could not locate authenticated profile for this request as null");
             return false;
@@ -77,7 +80,7 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
 
     @Override
     public boolean supports(final J2EContext context) {
-        final var grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, getGrantType());
     }
 
@@ -90,7 +93,7 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
      */
     private static boolean isGrantTypeSupported(final String type, final OAuth20GrantTypes... expectedTypes) {
         LOGGER.debug("Grant type received: [{}]", type);
-        for (final var expectedType : expectedTypes) {
+        for (val expectedType : expectedTypes) {
             if (OAuth20Utils.isGrantType(type, expectedType)) {
                 return true;
             }

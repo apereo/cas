@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
@@ -67,7 +68,7 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
 
     @Override
     public ProxyTicket grantProxyTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy, final boolean onlyTrackMostRecentSession) {
-        final ProxyTicket serviceTicket = new ProxyTicketImpl(id, this, service, false, expirationPolicy);
+        val serviceTicket = new ProxyTicketImpl(id, this, service, false, expirationPolicy);
         trackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
         return serviceTicket;
     }

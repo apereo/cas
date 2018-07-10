@@ -2,8 +2,8 @@ package org.apereo.cas.adaptors.trusted.authentication.principal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Test;
 import org.junit.Before;
@@ -38,9 +38,7 @@ public class PrincipalBearingCredentialsTests {
     @Test
     public void verifySerializeAPrincipalBearingCredentialToJson() throws IOException {
         MAPPER.writeValue(JSON_FILE, principalBearingCredentials);
-
-        final CredentialMetaData credentialRead = MAPPER.readValue(JSON_FILE, PrincipalBearingCredential.class);
-
+        val credentialRead = MAPPER.readValue(JSON_FILE, PrincipalBearingCredential.class);
         assertEquals(principalBearingCredentials, credentialRead);
     }
 }

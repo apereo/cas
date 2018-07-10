@@ -1,6 +1,7 @@
 package org.apereo.cas.util.spring.boot;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.CasVersion;
@@ -49,16 +50,16 @@ public abstract class AbstractCasBanner implements Banner {
      * @return environment info
      */
     private String collectEnvironmentInfo(final Environment environment, final Class<?> sourceClass) {
-        final var properties = System.getProperties();
+        val properties = System.getProperties();
         if (properties.containsKey("CAS_BANNER_SKIP")) {
-            try (var formatter = new Formatter()) {
+            try (val formatter = new Formatter()) {
                 formatter.format("CAS Version: %s%n", CasVersion.getVersion());
                 return formatter.toString();
             }
         }
 
-        try (var formatter = new Formatter()) {
-            final var sysInfo = SystemUtils.getSystemInfo();
+        try (val formatter = new Formatter()) {
+            val sysInfo = SystemUtils.getSystemInfo();
             sysInfo.forEach((k, v) -> {
                 if (k.startsWith(SEPARATOR_CHAR)) {
                     formatter.format("%s%n", LINE_SEPARATOR);

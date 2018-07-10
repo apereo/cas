@@ -1,7 +1,8 @@
 package org.apereo.cas.adaptors.radius;
 
+import lombok.val;
+
 import net.jradius.dictionary.Attr_ClientId;
-import net.jradius.packet.attribute.RadiusAttribute;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,11 +25,11 @@ public class RadiusUtilsTests {
 
     @Test
     public void verifyActionPasses() throws Exception {
-        final var server = mock(RadiusServer.class);
-        final RadiusAttribute attribute = new Attr_ClientId("client_id");
-        final var response = new RadiusResponse(100, 100, CollectionUtils.wrapList(attribute));
+        val server = mock(RadiusServer.class);
+        val attribute = new Attr_ClientId("client_id");
+        val response = new RadiusResponse(100, 100, CollectionUtils.wrapList(attribute));
         when(server.authenticate(anyString(), anyString())).thenReturn(response);
-        final var result = RadiusUtils.authenticate("casuser", "Mellon",
+        val result = RadiusUtils.authenticate("casuser", "Mellon",
             CollectionUtils.wrapList(server), true, false);
         assertTrue(result.getKey());
         assertTrue(result.getRight().isPresent());
@@ -36,7 +37,7 @@ public class RadiusUtilsTests {
 
     @Test
     public void verifyActionFails() throws Exception {
-        final var server = mock(RadiusServer.class);
+        val server = mock(RadiusServer.class);
         when(server.authenticate(anyString(), anyString())).thenReturn(null);
         thrown.expect(FailedLoginException.class);
         RadiusUtils.authenticate("casuser", "Mellon",
@@ -45,7 +46,7 @@ public class RadiusUtilsTests {
 
     @Test
     public void verifyActionFailsWithException() throws Exception {
-        final var server = mock(RadiusServer.class);
+        val server = mock(RadiusServer.class);
         when(server.authenticate(anyString(), anyString())).thenThrow(RuntimeException.class);
         thrown.expect(RuntimeException.class);
         RadiusUtils.authenticate("casuser", "Mellon",

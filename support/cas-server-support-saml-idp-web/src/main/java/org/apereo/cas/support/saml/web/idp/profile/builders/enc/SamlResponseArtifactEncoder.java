@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -56,7 +58,7 @@ public class SamlResponseArtifactEncoder extends BaseSamlResponseEncoder {
 
     @Override
     protected BaseSAML2MessageEncoder getMessageEncoderInstance() {
-        final var encoder = new HTTPArtifactEncoder();
+        val encoder = new HTTPArtifactEncoder();
         encoder.setVelocityEngine(this.velocityEngineFactory);
         return encoder;
     }
@@ -66,10 +68,10 @@ public class SamlResponseArtifactEncoder extends BaseSamlResponseEncoder {
                                   final BaseSAML2MessageEncoder e,
                                   final Response samlResponse,
                                   final String relayState) throws Exception {
-        final var encoder = (HTTPArtifactEncoder) e;
+        val encoder = (HTTPArtifactEncoder) e;
         encoder.setArtifactMap(this.samlArtifactMap);
 
-        final var ctx = getEncoderMessageContext(authnRequest, samlResponse, relayState);
+        val ctx = getEncoderMessageContext(authnRequest, samlResponse, relayState);
         prepareArtifactContext(samlResponse, ctx);
         encoder.setMessageContext(ctx);
         super.finalizeEncode(authnRequest, encoder, samlResponse, relayState);
@@ -77,10 +79,10 @@ public class SamlResponseArtifactEncoder extends BaseSamlResponseEncoder {
 
 
     private void prepareArtifactContext(final Response samlResponse, final MessageContext ctx) {
-        final var art = ctx.getSubcontext(SAMLArtifactContext.class, true);
+        val art = ctx.getSubcontext(SAMLArtifactContext.class, true);
         art.setArtifactType(SAML2ArtifactType0004.TYPE_CODE);
         art.setSourceEntityId(samlResponse.getIssuer().getValue());
-        final var svc = adaptor.getAssertionConsumerServiceForArtifactBinding();
+        val svc = adaptor.getAssertionConsumerServiceForArtifactBinding();
         art.setSourceArtifactResolutionServiceEndpointIndex(svc.getIndex());
         art.setSourceArtifactResolutionServiceEndpointURL(svc.getLocation());
     }

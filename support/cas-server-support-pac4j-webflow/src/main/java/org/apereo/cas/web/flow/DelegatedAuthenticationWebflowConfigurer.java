@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
@@ -38,7 +40,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
 
     @Override
     protected void doInitialize() {
-        final var flow = getLoginFlow();
+        val flow = getLoginFlow();
         if (flow != null) {
             createClientActionActionState(flow);
             createStopWebflowViewState(flow);
@@ -47,13 +49,13 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
     }
 
     private void createSaml2ClientLogoutAction() {
-        final var logoutFlow = getLogoutFlow();
-        final var state = getState(logoutFlow, CasWebflowConstants.STATE_ID_FINISH_LOGOUT, DecisionState.class);
+        val logoutFlow = getLogoutFlow();
+        val state = getState(logoutFlow, CasWebflowConstants.STATE_ID_FINISH_LOGOUT, DecisionState.class);
         state.getEntryActionList().add(saml2ClientLogoutAction);
     }
 
     private void createClientActionActionState(final Flow flow) {
-        final var actionState = createActionState(flow, CasWebflowConstants.STATE_ID_CLIENT_ACTION, createEvaluateAction(CasWebflowConstants.STATE_ID_CLIENT_ACTION));
+        val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_CLIENT_ACTION, createEvaluateAction(CasWebflowConstants.STATE_ID_CLIENT_ACTION));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
@@ -63,13 +65,13 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
     }
 
     private void createStopWebflowViewState(final Flow flow) {
-        final var state = createViewState(flow, CasWebflowConstants.STATE_ID_STOP_WEBFLOW, CasWebflowConstants.VIEW_ID_PAC4J_STOP_WEBFLOW);
+        val state = createViewState(flow, CasWebflowConstants.STATE_ID_STOP_WEBFLOW, CasWebflowConstants.VIEW_ID_PAC4J_STOP_WEBFLOW);
         state.getEntryActionList().add(new AbstractAction() {
             @Override
             protected Event doExecute(final RequestContext requestContext) {
-                final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-                final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-                final var mv = DelegatedClientAuthenticationAction.hasDelegationRequestFailed(request, response.getStatus());
+                val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+                val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+                val mv = DelegatedClientAuthenticationAction.hasDelegationRequestFailed(request, response.getStatus());
                 mv.ifPresent(modelAndView -> modelAndView.getModel().forEach((k, v) -> requestContext.getFlowScope().put(k, v)));
                 return null;
             }

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.wsfederation.authentication.principal;
 
+import lombok.val;
+
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
@@ -41,17 +43,17 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
      */
     @Override
     protected String extractPrincipalId(final Credential credentials, final Optional<Principal> currentPrincipal) {
-        final var wsFedCredentials = (WsFederationCredential) credentials;
-        final var attributes = wsFedCredentials.getAttributes();
+        val wsFedCredentials = (WsFederationCredential) credentials;
+        val attributes = wsFedCredentials.getAttributes();
         LOGGER.debug("Credential attributes provided are: [{}]", attributes);
-        final var idAttribute = this.configuration.getIdentityAttribute();
+        val idAttribute = this.configuration.getIdentityAttribute();
         if (attributes.containsKey(idAttribute)) {
             LOGGER.debug("Extracting principal id from attribute [{}]", this.configuration.getIdentityAttribute());
-            final var idAttributeAsList = attributes.get(this.configuration.getIdentityAttribute());
+            val idAttributeAsList = attributes.get(this.configuration.getIdentityAttribute());
             if (idAttributeAsList.size() > 1) {
                 LOGGER.warn("Found multiple values for id attribute [{}].", idAttribute);
             }
-            final var principalId = idAttributeAsList.get(0).toString();
+            val principalId = idAttributeAsList.get(0).toString();
             LOGGER.debug("Principal Id extracted from credentials: [{}]", principalId);
             return principalId;
         }
@@ -63,14 +65,14 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
 
     @Override
     protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
-        final var wsFedCredentials = (WsFederationCredential) credential;
+        val wsFedCredentials = (WsFederationCredential) credential;
         if (this.configuration.getAttributesType() == WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.WSFED) {
             return wsFedCredentials.getAttributes();
         }
         if (this.configuration.getAttributesType() == WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.CAS) {
             return super.retrievePersonAttributes(principalId, credential);
         }
-        final Map<String, List<Object>> mergedAttributes = new HashMap<>(wsFedCredentials.getAttributes());
+        val mergedAttributes = new HashMap<String, List<Object>>(wsFedCredentials.getAttributes());
         mergedAttributes.putAll(super.retrievePersonAttributes(principalId, credential));
         return mergedAttributes;
     }

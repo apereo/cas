@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentRepository;
@@ -26,9 +28,9 @@ public class CasConsentMongoDbConfiguration {
 
     @Bean
     public ConsentRepository consentRepository() {
-        final var mongo = casProperties.getConsent().getMongo();
-        final var factory = new MongoDbConnectionFactory();
-        final var mongoTemplate = factory.buildMongoTemplate(mongo);
+        val mongo = casProperties.getConsent().getMongo();
+        val factory = new MongoDbConnectionFactory();
+        val mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return new MongoDbConsentRepository(mongoTemplate, mongo.getCollection());
     }

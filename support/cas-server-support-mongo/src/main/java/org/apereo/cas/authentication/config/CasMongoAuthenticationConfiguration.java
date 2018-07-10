@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.config;
 
+import lombok.val;
+
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import lombok.extern.slf4j.Slf4j;
@@ -56,8 +58,8 @@ public class CasMongoAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler mongoAuthenticationHandler() {
-        final var mongo = casProperties.getAuthn().getMongo();
-        final var handler = new MongoDbAuthenticationHandler(mongo.getName(), servicesManager, mongoPrincipalFactory());
+        val mongo = casProperties.getAuthn().getMongo();
+        val handler = new MongoDbAuthenticationHandler(mongo.getName(), servicesManager, mongoPrincipalFactory());
         handler.setAuthenticator(mongoAuthenticatorProfileService());
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(mongo.getPrincipalTransformation()));
         return handler;
@@ -72,14 +74,14 @@ public class CasMongoAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "mongoAuthenticatorProfileService")
     @Bean
     public MongoProfileService mongoAuthenticatorProfileService() {
-        final var mongo = casProperties.getAuthn().getMongo();
+        val mongo = casProperties.getAuthn().getMongo();
         
-        final var uri = new MongoClientURI(mongo.getMongoHostUri());
-        final var client = new MongoClient(uri);
+        val uri = new MongoClientURI(mongo.getMongoHostUri());
+        val client = new MongoClient(uri);
         LOGGER.info("Connected to MongoDb instance @ [{}] using database [{}]", uri.getHosts(), uri.getDatabase());
 
-        final var encoder = new SpringSecurityPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(mongo.getPasswordEncoder()));
-        final var auth = new MongoProfileService(client, mongo.getAttributes());
+        val encoder = new SpringSecurityPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(mongo.getPasswordEncoder()));
+        val auth = new MongoProfileService(client, mongo.getAttributes());
         auth.setUsersCollection(mongo.getCollectionName());
         auth.setUsersDatabase(uri.getDatabase());
         auth.setUsernameAttribute(mongo.getUsernameAttribute());

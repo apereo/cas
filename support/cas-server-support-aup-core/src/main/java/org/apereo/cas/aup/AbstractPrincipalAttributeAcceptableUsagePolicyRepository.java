@@ -1,8 +1,9 @@
 package org.apereo.cas.aup;
 
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -11,8 +12,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Set;
-
 /**
  * This is {@link AbstractPrincipalAttributeAcceptableUsagePolicyRepository}.
  *
@@ -20,7 +19,7 @@ import java.util.Set;
  * @since 4.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository implements AcceptableUsagePolicyRepository {
     private static final long serialVersionUID = 1883808902502739L;
 
@@ -38,7 +37,7 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
     @Override
     public Pair<Boolean, Principal> verify(final RequestContext requestContext, final Credential credential) {
         @NonNull
-        final var principal = WebUtils.getPrincipalFromRequestContext(requestContext, this.ticketRegistrySupport);
+        val principal = WebUtils.getPrincipalFromRequestContext(requestContext, this.ticketRegistrySupport);
 
         if (isUsagePolicyAcceptedBy(principal)) {
             LOGGER.debug("Usage policy has been accepted by [{}]", principal.getId());
@@ -57,11 +56,11 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
      * @return true if accepted, false otherwise.
      */
     protected boolean isUsagePolicyAcceptedBy(final Principal principal) {
-        final var attributes = principal.getAttributes();
+        val attributes = principal.getAttributes();
         LOGGER.debug("Principal attributes found for [{}] are [{}]", principal.getId(), attributes);
 
         if (attributes != null && attributes.containsKey(this.aupAttributeName)) {
-            final Set value = CollectionUtils.toCollection(attributes.get(this.aupAttributeName));
+            val value = CollectionUtils.toCollection(attributes.get(this.aupAttributeName));
             LOGGER.debug("Evaluating attribute value [{}] found for [{}]", value, this.aupAttributeName);
             return value.stream().anyMatch(v -> v.toString().equalsIgnoreCase(Boolean.TRUE.toString()));
         }

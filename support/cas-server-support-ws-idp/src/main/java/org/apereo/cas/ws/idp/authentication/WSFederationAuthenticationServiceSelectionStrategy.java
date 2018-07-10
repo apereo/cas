@@ -1,5 +1,7 @@
 package org.apereo.cas.ws.idp.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
@@ -31,7 +33,7 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
     @Override
     public Service resolveServiceFrom(final Service service) {
         if (service != null) {
-            final var serviceReply = getReplyAsParameter(service).get().getValue();
+            val serviceReply = getReplyAsParameter(service).get().getValue();
             LOGGER.debug("Located service id [{}] from service authentication request at [{}]", serviceReply, service.getId());
             return this.webApplicationServiceFactory.createService(serviceReply);
         }
@@ -45,7 +47,7 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
 
     private static Optional<NameValuePair> getRealmAsParameter(final Service service) {
         try {
-            final var builder = new URIBuilder(service.getId());
+            val builder = new URIBuilder(service.getId());
             final Optional param = builder.getQueryParams()
                     .stream()
                     .filter(p -> p.getName().equals(WSFederationConstants.WTREALM))
@@ -59,7 +61,7 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
 
     private static Optional<NameValuePair> getReplyAsParameter(final Service service) {
         try {
-            final var builder = new URIBuilder(service.getId());
+            val builder = new URIBuilder(service.getId());
             final Optional param = builder.getQueryParams()
                     .stream()
                     .filter(p -> p.getName().equals(WSFederationConstants.WREPLY))

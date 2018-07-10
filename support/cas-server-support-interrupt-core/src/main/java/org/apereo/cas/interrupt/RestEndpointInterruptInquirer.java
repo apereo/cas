@@ -1,5 +1,7 @@
 package org.apereo.cas.interrupt;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -13,7 +15,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.HttpUtils;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link RestEndpointInterruptInquirer}.
@@ -36,7 +37,7 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
     public InterruptResponse inquireInternal(final Authentication authentication, final RegisteredService registeredService,
                                              final Service service, final Credential credential) {
         try {
-            final Map<String, Object> parameters = new HashMap<>();
+            val parameters = new HashMap<String, Object>();
             parameters.put("username", authentication.getPrincipal().getId());
 
             if (service != null) {
@@ -45,7 +46,7 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
             if (registeredService != null) {
                 parameters.put("registeredService", registeredService.getServiceId());
             }
-            final var response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
+            val response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>());
             if (response != null && response.getEntity() != null) {

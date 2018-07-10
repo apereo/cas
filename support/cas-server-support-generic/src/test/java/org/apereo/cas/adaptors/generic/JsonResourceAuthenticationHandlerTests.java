@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.generic;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -27,7 +29,6 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -47,7 +48,7 @@ public class JsonResourceAuthenticationHandlerTests {
     private JsonResourceAuthenticationHandler handler;
 
     public JsonResourceAuthenticationHandlerTests() throws Exception {
-        final Map<String, CasUserAccount> accounts = new LinkedHashMap<>();
+        val accounts = new LinkedHashMap<String, CasUserAccount>();
 
         var acct = new CasUserAccount();
         acct.setPassword("Mellon");
@@ -87,7 +88,7 @@ public class JsonResourceAuthenticationHandlerTests {
 
         this.resource = new FileSystemResource(File.createTempFile("account", ".json"));
 
-        final var mapper = Jackson2ObjectMapperBuilder.json()
+        val mapper = Jackson2ObjectMapperBuilder.json()
             .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
             .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .build();
@@ -105,15 +106,15 @@ public class JsonResourceAuthenticationHandlerTests {
 
     @Test
     public void verifyExpiringAccount() throws Exception {
-        final var c =
+        val c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casexpiring", "Mellon");
-        final var result = handler.authenticate(c);
+        val result = handler.authenticate(c);
         assertFalse(result.getWarnings().isEmpty());
     }
 
     @Test
     public void verifyOkAccount() throws Exception {
-        final var c =
+        val c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         assertNotNull(handler.authenticate(c));
     }
@@ -121,7 +122,7 @@ public class JsonResourceAuthenticationHandlerTests {
     @Test
     public void verifyNotFoundAccount() throws Exception {
         this.thrown.expect(AccountNotFoundException.class);
-        final var c =
+        val c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("nobody", "Mellon");
         handler.authenticate(c);
     }
@@ -129,7 +130,7 @@ public class JsonResourceAuthenticationHandlerTests {
     @Test
     public void verifyExpiredAccount() throws Exception {
         this.thrown.expect(AccountExpiredException.class);
-        final var c =
+        val c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casexpired", "Mellon");
         handler.authenticate(c);
     }
@@ -137,7 +138,7 @@ public class JsonResourceAuthenticationHandlerTests {
     @Test
     public void verifyDisabledAccount() throws Exception {
         this.thrown.expect(AccountDisabledException.class);
-        final var c =
+        val c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casdisabled", "Mellon");
         handler.authenticate(c);
     }
@@ -145,7 +146,7 @@ public class JsonResourceAuthenticationHandlerTests {
     @Test
     public void verifyLockedAccount() throws Exception {
         this.thrown.expect(AccountLockedException.class);
-        final var c =
+        val c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("caslocked", "Mellon");
         handler.authenticate(c);
     }
@@ -153,7 +154,7 @@ public class JsonResourceAuthenticationHandlerTests {
     @Test
     public void verifyMustChangePswAccount() throws Exception {
         this.thrown.expect(AccountPasswordMustChangeException.class);
-        final var c =
+        val c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casmustchange", "Mellon");
         handler.authenticate(c);
     }

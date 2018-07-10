@@ -1,9 +1,10 @@
 package org.apereo.cas.aup;
 
+import lombok.val;
+
 import com.unboundid.ldap.sdk.LDAPConnection;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.config.CasAcceptableUsagePolicyLdapConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
@@ -23,7 +24,6 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.ConditionalIgnore;
@@ -107,12 +107,12 @@ public class LdapAcceptableUsagePolicyRepositoryTests {
 
     @Test
     public void verifyAction() {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casaup");
-        final TicketGrantingTicket tgt = new MockTicketGrantingTicket("casaup", c, CollectionUtils.wrap("carLicense", "false"));
+        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casaup");
+        val tgt = new MockTicketGrantingTicket("casaup", c, CollectionUtils.wrap("carLicense", "false"));
         ticketRegistry.addTicket(tgt);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
@@ -124,7 +124,7 @@ public class LdapAcceptableUsagePolicyRepositoryTests {
     @SneakyThrows
     public static void bootstrap() {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
-        final var localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
+        val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
         LdapIntegrationTestsOperations.populateEntries(localhost,
             new ClassPathResource("ldif/ldap-aup.ldif").getInputStream(), "ou=people,dc=example,dc=org");
     }

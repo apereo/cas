@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
@@ -28,9 +30,9 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
 
     @Override
     public boolean supports(final Set<AuthenticationHandler> handlers, final AuthenticationTransaction transaction) {
-        final var service = transaction.getService();
+        val service = transaction.getService();
         if (service != null) {
-            final var registeredService = this.servicesManager.findServiceBy(service);
+            val registeredService = this.servicesManager.findServiceBy(service);
             LOGGER.debug("Located registered service definition [{}] for this authentication transaction", registeredService);
             if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO.", registeredService);
@@ -43,18 +45,18 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
 
     @Override
     public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers, final AuthenticationTransaction transaction) {
-        final var service = transaction.getService();
-        final var registeredService = this.servicesManager.findServiceBy(service);
+        val service = transaction.getService();
+        val registeredService = this.servicesManager.findServiceBy(service);
 
-        final var requiredHandlers = registeredService.getRequiredHandlers();
+        val requiredHandlers = registeredService.getRequiredHandlers();
         LOGGER.debug("Authentication transaction requires [{}] for service [{}]", requiredHandlers, service);
-        final Set<AuthenticationHandler> handlerSet = new LinkedHashSet<>(candidateHandlers);
+        val handlerSet = new LinkedHashSet<>(candidateHandlers);
         LOGGER.info("Candidate authentication handlers examined this transaction are [{}]", handlerSet);
 
-        final var it = handlerSet.iterator();
+        val it = handlerSet.iterator();
         while (it.hasNext()) {
-            final var handler = it.next();
-            final var handlerName = handler.getName();
+            val handler = it.next();
+            val handlerName = handler.getName();
             if (!(handler instanceof HttpBasedServiceCredentialsAuthenticationHandler) && !requiredHandlers.contains(handlerName)) {
                 LOGGER.debug("Authentication handler [{}] is not required for this transaction and is removed", handlerName);
                 it.remove();

@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -96,7 +98,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
     @Bean
     public ServletRegistrationBean cxfServlet() {
-        final var bean = new ServletRegistrationBean();
+        val bean = new ServletRegistrationBean();
         bean.setEnabled(true);
         bean.setName("cxfServletSecurityTokenService");
         bean.setServlet(new CXFServlet());
@@ -113,7 +115,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public List<TokenDelegationHandler> delegationHandlers() {
-        final List<TokenDelegationHandler> handlers = new ArrayList<>();
+        val handlers = new ArrayList<TokenDelegationHandler>();
         handlers.add(new SAMLDelegationHandler());
         handlers.add(new X509TokenDelegationHandler());
         return handlers;
@@ -123,7 +125,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     @SneakyThrows
     public SecurityTokenServiceProvider transportSTSProviderBean() {
-        final var provider = new SecurityTokenServiceProvider();
+        val provider = new SecurityTokenServiceProvider();
         provider.setIssueOperation(transportIssueDelegate());
         provider.setValidateOperation(transportValidateDelegate());
         return provider;
@@ -132,15 +134,15 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public IssueOperation transportIssueDelegate() {
-        final var wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
-        final var idp = casProperties.getAuthn().getWsfedIdp().getIdp();
+        val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
+        val idp = casProperties.getAuthn().getWsfedIdp().getIdp();
 
-        final var claimsManager = new ClaimsManager();
+        val claimsManager = new ClaimsManager();
         claimsManager.setClaimHandlers(CollectionUtils.wrap(new WrappingSecurityTokenServiceClaimsHandler(
             idp.getRealmName(),
             wsfed.getRealm().getIssuer())));
 
-        final var op = new TokenIssueOperation();
+        val op = new TokenIssueOperation();
         op.setTokenProviders(transportTokenProviders());
         op.setServices(CollectionUtils.wrap(transportService()));
         op.setStsProperties(transportSTSProperties());
@@ -155,7 +157,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public ValidateOperation transportValidateDelegate() {
-        final var op = new TokenValidateOperation();
+        val op = new TokenValidateOperation();
         op.setTokenValidators(transportTokenValidators());
         op.setStsProperties(transportSTSProperties());
         op.setEventListener(loggerListener());
@@ -165,7 +167,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public List transportTokenValidators() {
-        final List list = new ArrayList<>();
+        val list = new ArrayList<>();
         list.add(transportSamlTokenValidator());
         list.add(new X509TokenValidator());
         return list;
@@ -174,7 +176,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public List transportTokenProviders() {
-        final List list = new ArrayList<>();
+        val list = new ArrayList<>();
         list.add(transportSamlTokenProvider());
         return list;
     }
@@ -182,8 +184,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public RealmProperties casRealm() {
-        final var wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
-        final var realm = new RealmProperties();
+        val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
+        val realm = new RealmProperties();
         realm.setIssuer(wsfed.getRealm().getIssuer());
         if (StringUtils.isBlank(wsfed.getRealm().getKeystoreFile())
             || StringUtils.isBlank(wsfed.getRealm().getKeyPassword())
@@ -191,7 +193,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
             throw new BeanCreationException("Keystore file, password or alias assigned to the realm must be defined");
         }
 
-        final var p = CryptoUtils.getSecurityProperties(wsfed.getRealm().getKeystoreFile(),
+        val p = CryptoUtils.getSecurityProperties(wsfed.getRealm().getKeystoreFile(),
             wsfed.getRealm().getKeystorePassword(), wsfed.getRealm().getKeystoreAlias());
         realm.setSignatureCryptoProperties(p);
         realm.setCallbackHandler(new RealmPasswordVerificationCallbackHandler(wsfed.getRealm().getKeyPassword()));
@@ -202,8 +204,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public Map<String, RealmProperties> realms() {
-        final var idp = casProperties.getAuthn().getWsfedIdp().getIdp();
-        final Map<String, RealmProperties> realms = new HashMap<>();
+        val idp = casProperties.getAuthn().getWsfedIdp().getIdp();
+        val realms = new HashMap<String, RealmProperties>();
         realms.put(idp.getRealmName(), casRealm());
         return realms;
     }
@@ -211,9 +213,9 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public SAMLTokenProvider transportSamlTokenProvider() {
-        final var wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
+        val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
 
-        final var s = new DefaultSubjectProvider();
+        val s = new DefaultSubjectProvider();
         switch (wsfed.getSubjectNameIdFormat().trim().toLowerCase()) {
             case "email":
                 s.setSubjectNameIDFormat(NameID.EMAIL);
@@ -230,10 +232,10 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
                 break;
         }
 
-        final var c = new DefaultConditionsProvider();
+        val c = new DefaultConditionsProvider();
         c.setAcceptClientLifetime(true);
 
-        final var provider = new SAMLTokenProvider();
+        val provider = new SAMLTokenProvider();
         provider.setAttributeStatementProviders(CollectionUtils.wrap(new ClaimsAttributeStatementProvider()));
         provider.setRealmMap(realms());
         provider.setConditionsProvider(c);
@@ -257,7 +259,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public StaticService transportService() {
-        final var s = new StaticService();
+        val s = new StaticService();
         s.setEndpoints(CollectionUtils.wrap(".*"));
         return s;
     }
@@ -266,16 +268,16 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @ConditionalOnMissingBean(name = "transportSTSProperties")
     @Bean
     public STSPropertiesMBean transportSTSProperties() {
-        final var wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
-        final var idp = casProperties.getAuthn().getWsfedIdp().getIdp();
+        val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
+        val idp = casProperties.getAuthn().getWsfedIdp().getIdp();
 
-        final var s = new StaticSTSProperties();
+        val s = new StaticSTSProperties();
         s.setIssuer(getClass().getSimpleName());
         s.setRealmParser(new UriRealmParser(realms()));
         s.setSignatureCryptoProperties(CryptoUtils.getSecurityProperties(wsfed.getSigningKeystoreFile(), wsfed.getSigningKeystorePassword()));
         s.setEncryptionCryptoProperties(CryptoUtils.getSecurityProperties(wsfed.getEncryptionKeystoreFile(), wsfed.getEncryptionKeystorePassword()));
 
-        final var rel = new Relationship();
+        val rel = new Relationship();
         rel.setType(Relationship.FED_TYPE_IDENTITY);
         rel.setSourceRealm(idp.getRealmName());
         rel.setTargetRealm(idp.getRealmName());
@@ -303,7 +305,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     public CipherExecutor securityTokenServiceCredentialCipherExecutor() {
-        final var wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
+        val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
         return new SecurityTokenServiceCredentialCipherExecutor(wsfed.getCrypto().getEncryption().getKey(),
             wsfed.getCrypto().getSigning().getKey(),
             wsfed.getCrypto().getAlg());

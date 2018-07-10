@@ -1,5 +1,7 @@
 package org.apereo.cas.syncope.authentication;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +25,6 @@ import javax.security.auth.login.FailedLoginException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -50,23 +51,23 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     @SneakyThrows
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c,
                                                                                         final String originalPassword) {
-        final var syncopeUrl = StringUtils.appendIfMissing(this.syncopeUrl, "/rest/users/self");
-        final var response = HttpUtils.executeGet(syncopeUrl, c.getUsername(), c.getPassword(),
+        val syncopeUrl = StringUtils.appendIfMissing(this.syncopeUrl, "/rest/users/self");
+        val response = HttpUtils.executeGet(syncopeUrl, c.getUsername(), c.getPassword(),
             new HashMap<>(), CollectionUtils.wrap("X-Syncope-Domain", this.syncopeDomain));
 
         LOGGER.debug("Received http response status as [{}]", response.getStatusLine());
 
         if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-            final var result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+            val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
             LOGGER.debug("Received user object as [{}]", result);
-            final var user = this.objectMapper.readValue(result, UserTO.class);
+            val user = this.objectMapper.readValue(result, UserTO.class);
             if (user.isSuspended()) {
                 throw new AccountDisabledException("Could not authenticate forbidden account for " + c.getUsername());
             }
             if (user.isMustChangePassword()) {
                 throw new AccountPasswordMustChangeException("Account password must change for " + c.getUsername());
             }
-            final var principal = this.principalFactory.createPrincipal(user.getUsername(), buildSyncopeUserAttributes(user));
+            val principal = this.principalFactory.createPrincipal(user.getUsername(), buildSyncopeUserAttributes(user));
             return createHandlerResult(c, principal, new ArrayList<>());
         }
 
@@ -74,7 +75,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     }
 
     private Map<String, Object> buildSyncopeUserAttributes(final UserTO user) {
-        final Map<String, Object> attributes = new LinkedHashMap<>();
+        val attributes = new HashMap<String, Object>();
 
         if (user.getRoles() != null) {
             attributes.put("syncopeUserRoles", user.getRoles());
@@ -92,11 +93,11 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         if (user.getCreationDate() != null) {
             attributes.put("syncopeUserCreationDate", user.getCreationDate().toString());
         }
-        final var changePwdDate = user.getChangePwdDate();
+        val changePwdDate = user.getChangePwdDate();
         if (changePwdDate != null) {
             attributes.put("syncopeUserChangePwdDate", changePwdDate.toString());
         }
-        final var lastLoginDate = user.getLastLoginDate();
+        val lastLoginDate = user.getLastLoginDate();
         if (lastLoginDate != null) {
             attributes.put("syncopeUserLastLoginDate", lastLoginDate);
         }

@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -24,7 +26,7 @@ public class X509SubjectDNPrincipalResolverTests extends AbstractX509Certificate
 
     @Test
     public void verifyResolvePrincipalInternal() {
-        final var c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
+        val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
         assertEquals(VALID_CERTIFICATE.getSubjectDN().getName(), this.resolver.resolve(c,
             Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
@@ -33,7 +35,7 @@ public class X509SubjectDNPrincipalResolverTests extends AbstractX509Certificate
 
     @Test
     public void verifySupport() {
-        final var c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
+        val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         assertTrue(this.resolver.supports(c));
     }
 

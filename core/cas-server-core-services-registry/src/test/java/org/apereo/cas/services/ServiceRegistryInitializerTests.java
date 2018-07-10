@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
@@ -17,26 +19,26 @@ public class ServiceRegistryInitializerTests {
 
     @Test
     public void ensureInitFromJsonDoesNotCreateDuplicates() {
-        var initialService = newService();
+        val initialService = newService();
 
-        final var servicesManager = mock(ServicesManager.class);
-        final var jsonServiceRegistry = mock(ServiceRegistry.class);
+        val servicesManager = mock(ServicesManager.class);
+        val jsonServiceRegistry = mock(ServiceRegistry.class);
         when(jsonServiceRegistry.load()).thenReturn(Arrays.asList(initialService));
 
-        final ServiceRegistry serviceRegistry = new InMemoryServiceRegistry();
-        final var serviceRegistryInitializer = new ServiceRegistryInitializer(jsonServiceRegistry, serviceRegistry, servicesManager);
+        val serviceRegistry = new InMemoryServiceRegistry();
+        val serviceRegistryInitializer = new ServiceRegistryInitializer(jsonServiceRegistry, serviceRegistry, servicesManager);
         serviceRegistryInitializer.initServiceRegistryIfNecessary();
         assertThat(serviceRegistry.size()).isEqualTo(1);
 
-        initialService = newService();
-        when(jsonServiceRegistry.load()).thenReturn(Arrays.asList(initialService));
+        val initialService2 = newService();
+        when(jsonServiceRegistry.load()).thenReturn(Arrays.asList(initialService2));
 
         serviceRegistryInitializer.initServiceRegistryIfNecessary();
         assertThat(serviceRegistry.size()).isEqualTo(1);
     }
 
     private RegisteredService newService() {
-        final var service = mock(RegisteredService.class);
+        val service = mock(RegisteredService.class);
         when(service.getServiceId()).thenReturn("^https?://.*");
         when(service.getName()).thenReturn("Test");
         when(service.getDescription()).thenReturn("Test");

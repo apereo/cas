@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.util;
 
+import lombok.val;
+
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
@@ -8,7 +10,6 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.web.flow.configurer.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -28,7 +29,7 @@ public class MultifactorAuthenticationTrustUtils {
      * @return the key for this trust record
      */
     public static String generateKey(final MultifactorAuthenticationTrustRecord r) {
-        final var builder = new StringBuilder(r.getPrincipal());
+        val builder = new StringBuilder(r.getPrincipal());
         return builder.append('@')
                 .append(r.getRecordDate())
                 .append('@')
@@ -42,8 +43,8 @@ public class MultifactorAuthenticationTrustUtils {
      * @return the geography
      */
     public static String generateGeography() {
-        final var clientInfo = ClientInfoHolder.getClientInfo();
-        final var geography = clientInfo.getClientIpAddress().concat("@").concat(WebUtils.getHttpServletRequestUserAgentFromRequestContext());
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        val geography = clientInfo.getClientIpAddress().concat("@").concat(WebUtils.getHttpServletRequestUserAgentFromRequestContext());
         return geography;
     }
 
@@ -57,7 +58,7 @@ public class MultifactorAuthenticationTrustUtils {
             final Authentication authn,
             final String attributeName) {
 
-        final var newAuthn = DefaultAuthenticationBuilder.newInstance(authn)
+        val newAuthn = DefaultAuthenticationBuilder.newInstance(authn)
                 .addAttribute(attributeName, Boolean.TRUE)
                 .build();
         LOGGER.debug("Updated authentication session to remember trusted multifactor record via [{}]", attributeName);
@@ -81,7 +82,7 @@ public class MultifactorAuthenticationTrustUtils {
      * @param requestContext the request context
      */
     public static void setMultifactorAuthenticationTrustedInScope(final RequestContext requestContext) {
-        final MutableAttributeMap flashScope = requestContext.getFlashScope();
+        val flashScope = requestContext.getFlashScope();
         flashScope.put(AbstractMultifactorTrustedDeviceWebflowConfigurer.MFA_TRUSTED_AUTHN_SCOPE_ATTR, Boolean.TRUE);
     }
 }

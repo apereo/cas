@@ -1,10 +1,11 @@
 package org.apereo.cas.support.rest.resources;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.rest.BadRestRequestException;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
 
 /**
  * {@link RestController} implementation of CAS' REST API.
@@ -56,12 +56,12 @@ public class UserAuthenticationResource {
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                              final HttpServletRequest request) {
         try {
-            final Collection<Credential> credential = this.credentialFactory.fromRequestBody(requestBody);
+            val credential = this.credentialFactory.fromRequestBody(requestBody);
             if (credential == null || credential.isEmpty()) {
                 throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
             }
-            final var service = this.serviceFactory.createService(request);
-            final var authenticationResult =
+            val service = this.serviceFactory.createService(request);
+            val authenticationResult =
                 authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
             if (authenticationResult == null) {
                 throw new FailedLoginException("Authentication failed");

@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -52,9 +54,9 @@ public class CasCoreHttpConfiguration {
     @SneakyThrows
     public SSLContext sslContext() {
 
-        final var client = casProperties.getHttpClient().getTruststore();
+        val client = casProperties.getHttpClient().getTruststore();
         if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
-            final var ctx =
+            val ctx =
                 new DefaultCasSslContext(client.getFile(), client.getPsw(), KeyStore.getDefaultType());
             return ctx.getSslContext();
         }
@@ -65,8 +67,8 @@ public class CasCoreHttpConfiguration {
     @ConditionalOnMissingBean(name = "httpClient")
     @Bean
     public FactoryBean<SimpleHttpClient> httpClient() {
-        final var c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
-        final var httpClient = casProperties.getHttpClient();
+        val c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
+        val httpClient = casProperties.getHttpClient();
         c.setConnectionTimeout(Beans.newDuration(httpClient.getConnectionTimeout()).toMillis());
         c.setReadTimeout((int) Beans.newDuration(httpClient.getReadTimeout()).toMillis());
         return c;
@@ -94,8 +96,8 @@ public class CasCoreHttpConfiguration {
     }
 
     private HttpClient getHttpClient(final boolean redirectEnabled) {
-        final var c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
-        final var httpClient = casProperties.getHttpClient();
+        val c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
+        val httpClient = casProperties.getHttpClient();
         c.setConnectionTimeout(Beans.newDuration(httpClient.getConnectionTimeout()).toMillis());
         c.setReadTimeout((int) Beans.newDuration(httpClient.getReadTimeout()).toMillis());
         c.setRedirectsEnabled(redirectEnabled);

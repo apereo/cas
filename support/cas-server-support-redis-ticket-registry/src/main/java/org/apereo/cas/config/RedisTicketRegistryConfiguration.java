@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
@@ -32,22 +34,22 @@ public class RedisTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "redisTicketConnectionFactory")
     @Bean
     public RedisConnectionFactory redisTicketConnectionFactory() {
-        final var redis = casProperties.getTicket().getRegistry().getRedis();
-        final var obj = new RedisObjectFactory();
+        val redis = casProperties.getTicket().getRegistry().getRedis();
+        val obj = new RedisObjectFactory();
         return obj.newRedisConnectionFactory(redis);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "ticketRedisTemplate")
     public RedisTemplate<String, Ticket> ticketRedisTemplate() {
-        final var obj = new RedisObjectFactory();
+        val obj = new RedisObjectFactory();
         return obj.newRedisTemplate(redisTicketConnectionFactory(), String.class, Ticket.class);
     }
 
     @Bean
     public TicketRegistry ticketRegistry() {
-        final var redis = casProperties.getTicket().getRegistry().getRedis();
-        final var r = new RedisTicketRegistry(ticketRedisTemplate());
+        val redis = casProperties.getTicket().getRegistry().getRedis();
+        val r = new RedisTicketRegistry(ticketRedisTemplate());
         r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(redis.getCrypto(), "redis"));
         return r;
     }

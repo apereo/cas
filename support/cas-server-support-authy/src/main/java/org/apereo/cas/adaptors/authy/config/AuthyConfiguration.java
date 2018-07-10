@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.authy.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowAction;
@@ -91,7 +93,7 @@ public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Bean
     public FlowDefinitionRegistry authyAuthenticatorFlowRegistry() {
-        final var builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-authy/*-webflow.xml");
         return builder.build();
@@ -140,7 +142,7 @@ public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer authyMultifactorTrustWebflowConfigurer() {
-            final var deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
+            val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
             return new AuthyMultifactorTrustWebflowConfigurer(flowBuilderServices,
                 loginFlowDefinitionRegistry, deviceRegistrationEnabled,
                 authyAuthenticatorFlowRegistry(), applicationContext, casProperties);

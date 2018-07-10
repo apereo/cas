@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
-import org.springframework.core.io.Resource;
 
 import javax.persistence.Transient;
 import java.util.Set;
@@ -27,7 +27,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServiceMultifactorPolicy {
-
     private static final long serialVersionUID = -3075860754996106437L;
 
     private String groovyScript;
@@ -74,7 +73,7 @@ public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServi
     @SneakyThrows
     private void buildGroovyMultifactorPolicyInstanceIfNeeded() {
         if (this.groovyPolicyInstance == null) {
-            final Resource groovyResource = ResourceUtils.getResourceFrom(this.groovyScript);
+            val groovyResource = ResourceUtils.getResourceFrom(this.groovyScript);
             this.groovyPolicyInstance = ScriptingUtils.getObjectInstanceFromGroovyResource(groovyResource, RegisteredServiceMultifactorPolicy.class);
         }
     }

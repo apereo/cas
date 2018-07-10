@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import lombok.val;
+
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.IMap;
 import lombok.NonNull;
@@ -7,7 +9,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link HazelcastHealthIndicator}.
@@ -30,11 +31,11 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
 
     @Override
     protected CacheStatistics[] getStatistics() {
-        final List<CacheStatistics> statsList = new ArrayList<>();
+        val statsList = new ArrayList<CacheStatistics>();
         LOGGER.debug("Locating hazelcast instance [{}]...", instanceName);
-        @NonNull final var instance = Hazelcast.getHazelcastInstanceByName(this.instanceName);
+        @NonNull val instance = Hazelcast.getHazelcastInstanceByName(this.instanceName);
         instance.getConfig().getMapConfigs().keySet().forEach(key -> {
-            final IMap map = instance.getMap(key);
+            val map = instance.getMap(key);
             LOGGER.debug("Starting to collect hazelcast statistics for map [{}] identified by key [{}]...", map, key);
             statsList.add(new HazelcastStatistics(map, clusterSize));
         });
@@ -81,7 +82,7 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
 
         @Override
         public long getPercentFree() {
-            final var capacity = getCapacity();
+            val capacity = getCapacity();
             if (capacity == 0) {
                 return 0;
             }
@@ -90,7 +91,7 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
 
         @Override
         public String toString(final StringBuilder builder) {
-            final var localMapStats = map.getLocalMapStats();
+            val localMapStats = map.getLocalMapStats();
             builder.append("Creation time: ")
                 .append(localMapStats.getCreationTime())
                 .append(", Cluster size: ")

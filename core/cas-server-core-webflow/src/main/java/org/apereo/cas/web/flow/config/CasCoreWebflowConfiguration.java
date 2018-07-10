@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -203,7 +205,7 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector() {
-        final var script = casProperties.getAuthn().getMfa().getProviderSelectorGroovyScript();
+        val script = casProperties.getAuthn().getMfa().getProviderSelectorGroovyScript();
         if (script != null) {
             return new GroovyScriptMultifactorAuthenticationProviderSelector(script);
         }
@@ -215,7 +217,7 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver() {
-        final var r = new InitialAuthenticationAttemptWebflowEventResolver(
+        val r = new InitialAuthenticationAttemptWebflowEventResolver(
             authenticationSystemSupport.getIfAvailable(),
             centralAuthenticationService.getIfAvailable(),
             servicesManager.getIfAvailable(),
@@ -403,8 +405,8 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CipherExecutor webflowCipherExecutor() {
-        final var webflow = casProperties.getWebflow();
-        final var crypto = webflow.getCrypto();
+        val webflow = casProperties.getWebflow();
+        val crypto = webflow.getCrypto();
 
         var enabled = crypto.isEnabled();
         if (!enabled && (StringUtils.isNotBlank(crypto.getEncryption().getKey())) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
@@ -458,7 +460,7 @@ public class CasCoreWebflowConfiguration {
     @ConditionalOnMissingBean(name = "singleSignOnParticipationStrategy")
     @RefreshScope
     public SingleSignOnParticipationStrategy singleSignOnParticipationStrategy() {
-        final var sso = casProperties.getSso();
+        val sso = casProperties.getSso();
         return new DefaultSingleSignOnParticipationStrategy(servicesManager.getIfAvailable(),
             sso.isCreateSsoCookieOnRenewAuthn(),
             sso.isRenewAuthnEnabled());
@@ -480,7 +482,7 @@ public class CasCoreWebflowConfiguration {
          * due to a bad password, we want the error associated with the account policy
          * to be processed first, rather than presenting a more generic error associated
          */
-        final Set<Class<? extends Throwable>> errors = new LinkedHashSet<>();
+        val errors = new LinkedHashSet<Class<? extends Throwable>>();
         errors.add(javax.security.auth.login.AccountLockedException.class);
         errors.add(javax.security.auth.login.CredentialExpiredException.class);
         errors.add(javax.security.auth.login.AccountExpiredException.class);

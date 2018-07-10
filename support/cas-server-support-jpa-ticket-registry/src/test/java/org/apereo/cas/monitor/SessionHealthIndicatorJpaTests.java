@@ -1,8 +1,8 @@
 package org.apereo.cas.monitor;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -109,21 +109,17 @@ public class SessionHealthIndicatorJpaTests {
     public void verifyObserveOkJpaTicketRegistry() {
         addTicketsToRegistry(jpaRegistry, 5, 5);
         assertEquals(10, jpaRegistry.getTickets().size());
-        final var monitor = new SessionMonitor(jpaRegistry, -1, -1);
-        final var status = monitor.health();
+        val monitor = new SessionMonitor(jpaRegistry, -1, -1);
+        val status = monitor.health();
         assertEquals(Status.UP, status.getStatus());
     }
 
     private static void addTicketsToRegistry(final TicketRegistry registry, final int tgtCount, final int stCount) {
-        TicketGrantingTicketImpl ticket = null;
         for (var i = 0; i < tgtCount; i++) {
-            ticket = new TicketGrantingTicketImpl(GENERATOR.getNewTicketId("TGT"), CoreAuthenticationTestUtils.getAuthentication(), TEST_EXP_POLICY);
+            val ticket = new TicketGrantingTicketImpl(GENERATOR.getNewTicketId("TGT"), CoreAuthenticationTestUtils.getAuthentication(), TEST_EXP_POLICY);
             registry.addTicket(ticket);
-        }
-
-        if (ticket != null) {
-            final Service testService = RegisteredServiceTestUtils.getService("junit");
-            for (var i = 0; i < stCount; i++) {
+            val testService = RegisteredServiceTestUtils.getService("junit");
+            for (var j = 0; j < stCount; j++) {
                 registry.addTicket(ticket.grantServiceTicket(GENERATOR.getNewTicketId("ST"),
                     testService,
                     TEST_EXP_POLICY,

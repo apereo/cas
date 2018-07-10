@@ -1,5 +1,7 @@
 package org.apereo.cas.config.support.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
@@ -43,7 +45,7 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationEventExecutionPlanConfigurer acceptUsersAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             if (StringUtils.isNotBlank(this.casProperties.getAuthn().getAccept().getUsers())) {
-                final var header =
+                val header =
                         "\nCAS is configured to accept a static list of credentials for authentication. "
                                 + "While this is generally useful for demo purposes, it is STRONGLY recommended "
                                 + "that you DISABLE this authentication method (by setting 'cas.authn.accept.users' "

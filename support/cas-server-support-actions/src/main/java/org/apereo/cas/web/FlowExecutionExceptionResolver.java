@@ -1,5 +1,7 @@
 package org.apereo.cas.web;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -13,7 +15,6 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryE
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The {@link FlowExecutionExceptionResolver} catches the {@link FlowExecutionRepositoryException}
@@ -52,12 +53,12 @@ public class FlowExecutionExceptionResolver implements HandlerExceptionResolver 
             return null;
         }
 
-        final var urlToRedirectTo = request.getRequestURI()
+        val urlToRedirectTo = request.getRequestURI()
                 + (request.getQueryString() != null ? '?'
                 + request.getQueryString() : StringUtils.EMPTY);
 
         LOGGER.debug("Error getting flow information for URL [{}]", urlToRedirectTo, exception);
-        final Map<String, Object> model = new HashMap<>();
+        val model = new HashMap<String, Object>();
         model.put(this.modelKey, StringEscapeUtils.escapeHtml4(exception.getMessage()));
 
         return new ModelAndView(new RedirectView(urlToRedirectTo), model);

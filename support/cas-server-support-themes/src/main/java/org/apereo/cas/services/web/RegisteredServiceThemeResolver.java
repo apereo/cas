@@ -1,5 +1,7 @@
 package org.apereo.cas.services.web;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +19,6 @@ import org.apereo.cas.util.ScriptingUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.UrlResource;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
@@ -79,7 +80,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             return rememberThemeName(request);
         }
 
-        final var userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
+        val userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
 
         if (StringUtils.isBlank(userAgent)) {
             return rememberThemeName(request);
@@ -94,15 +95,15 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
                 request.setAttribute("browserType", entry.getValue());
             });
 
-        final var context = RequestContextHolder.getRequestContext();
-        final Service serviceContext = WebUtils.getService(context);
-        final var service = this.authenticationRequestServiceSelectionStrategies.resolveService(serviceContext);
+        val context = RequestContextHolder.getRequestContext();
+        val serviceContext = WebUtils.getService(context);
+        val service = this.authenticationRequestServiceSelectionStrategies.resolveService(serviceContext);
         if (service == null) {
             LOGGER.trace("No service is found in the request context. Falling back to the default theme [{}]", getDefaultThemeName());
             return rememberThemeName(request);
         }
 
-        final var rService = this.servicesManager.findServiceBy(service);
+        val rService = this.servicesManager.findServiceBy(service);
         if (rService == null || !rService.getAccessStrategy().isServiceAccessAllowed()) {
             LOGGER.warn("No registered service is found to match [{}] or access is denied. Using default theme [{}]", service, getDefaultThemeName());
             return rememberThemeName(request);
@@ -112,7 +113,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             return rememberThemeName(request);
         }
 
-        final var themeName = determineThemeNameToChoose(request, service, rService);
+        val themeName = determineThemeNameToChoose(request, service, rService);
         return rememberThemeName(request, themeName);
     }
 
@@ -130,24 +131,24 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
         try {
             LOGGER.debug("Service [{}] is configured to use a custom theme [{}]", rService, rService.getTheme());
 
-            final Resource resource = ResourceUtils.getRawResourceFrom(rService.getTheme());
+            val resource = ResourceUtils.getRawResourceFrom(rService.getTheme());
             if (resource instanceof FileSystemResource && resource.exists()) {
                 LOGGER.debug("Executing groovy script to determine theme for [{}]", service.getId());
-                final var result = ScriptingUtils.executeGroovyScript(resource, new Object[]{service, rService,
+                val result = ScriptingUtils.executeGroovyScript(resource, new Object[]{service, rService,
                     request.getQueryString(), HttpRequestUtils.getRequestHeaders(request), LOGGER}, String.class);
                 return StringUtils.defaultIfBlank(result, getDefaultThemeName());
             }
             if (resource instanceof UrlResource) {
-                final var url = resource.getURL().toExternalForm();
+                val url = resource.getURL().toExternalForm();
                 LOGGER.debug("Executing URL [{}] to determine theme for [{}]", url, service.getId());
-                final var response = HttpUtils.executeGet(url, CollectionUtils.wrap("service", service.getId()));
+                val response = HttpUtils.executeGet(url, CollectionUtils.wrap("service", service.getId()));
                 if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                    final var result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                    val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                     return StringUtils.defaultIfBlank(result, getDefaultThemeName());
                 }
             }
 
-            final var messageSource = new CasThemeResourceBundleMessageSource();
+            val messageSource = new CasThemeResourceBundleMessageSource();
             messageSource.setBasename(rService.getTheme());
             if (messageSource.doGetBundle(rService.getTheme(), request.getLocale()) != null) {
                 LOGGER.trace("Found custom theme [{}] for service [{}]", rService.getTheme(), rService);
@@ -181,7 +182,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
         @Override
         protected ResourceBundle doGetBundle(final String basename, final Locale locale) {
             try {
-                final var bundle = ResourceBundle.getBundle(basename, locale, getBundleClassLoader());
+                val bundle = ResourceBundle.getBundle(basename, locale, getBundleClassLoader());
                 if (bundle != null && !bundle.keySet().isEmpty()) {
                     return bundle;
                 }

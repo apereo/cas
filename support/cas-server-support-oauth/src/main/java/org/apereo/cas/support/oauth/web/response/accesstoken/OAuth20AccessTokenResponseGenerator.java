@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
+import lombok.val;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,7 +61,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
 
         if (registeredService.isJsonFormat()) {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            try (var jsonGenerator = getResponseJsonGenerator(response)) {
+            try (val jsonGenerator = getResponseJsonGenerator(response)) {
                 jsonGenerator.writeStartObject();
                 generateJsonInternal(request, response, jsonGenerator, accessTokenId,
                     refreshTokenId, timeout, service, registeredService, responseType);
@@ -95,7 +97,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                                         final AccessToken accessTokenId,
                                         final RefreshToken refreshTokenId,
                                         final long timeout) {
-        final var builder = new StringBuilder(
+        val builder = new StringBuilder(
                 String.format("%s=%s&%s=%s", OAuth20Constants.ACCESS_TOKEN, accessTokenId.getId(),
                         OAuth20Constants.EXPIRES_IN, timeout));
 

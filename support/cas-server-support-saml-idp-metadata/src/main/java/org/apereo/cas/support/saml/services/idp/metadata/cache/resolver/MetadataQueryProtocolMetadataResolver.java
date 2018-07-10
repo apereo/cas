@@ -2,12 +2,14 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
 import com.google.common.io.ByteStreams;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.http.HttpResponse;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.springframework.http.HttpStatus;
@@ -15,19 +17,18 @@ import org.springframework.http.HttpStatus;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
- * This is {@link DynamicMetadataResolver}.
+ * This is {@link MetadataQueryProtocolMetadataResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
-public class DynamicMetadataResolver extends UrlResourceMetadataResolver {
+public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataResolver {
 
-    public DynamicMetadataResolver(final SamlIdPProperties samlIdPProperties,
-                                   final OpenSamlConfigBean configBean) {
+    public MetadataQueryProtocolMetadataResolver(final SamlIdPProperties samlIdPProperties,
+                                                 final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);
     }
 
@@ -39,8 +40,8 @@ public class DynamicMetadataResolver extends UrlResourceMetadataResolver {
 
     @Override
     protected HttpResponse fetchMetadata(final String metadataLocation) {
-        final var metadata = samlIdPProperties.getMetadata();
-        final Map headers = new LinkedHashMap();
+        val metadata = samlIdPProperties.getMetadata();
+        val headers = new LinkedHashMap();
         headers.put("Content-Type", metadata.getSupportedContentTypes());
         headers.put("Accept", "*/*");
         return HttpUtils.executeGet(metadataLocation, metadata.getBasicAuthnUsername(),
@@ -73,9 +74,18 @@ public class DynamicMetadataResolver extends UrlResourceMetadataResolver {
             return new InMemoryResourceMetadataResolver(backupFile, this.configBean);
         }
 
-        final var ins = response.getEntity().getContent();
-        final var source = ByteStreams.toByteArray(ins);
-        final var bais = new ByteArrayInputStream(source);
+        val ins = response.getEntity().getContent();
+        val source = ByteStreams.toByteArray(ins);
+        val bais = new ByteArrayInputStream(source);
         return new InMemoryResourceMetadataResolver(bais, this.configBean);
+    }
+
+    @Override
+    public boolean isAvailable(final SamlRegisteredService service) {
+        if (supports(service)) {
+            val status = HttpRequestUtils.pingUrl(service.getMetadataLocation());
+            return !status.isError();
+        }
+        return false;
     }
 }

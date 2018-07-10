@@ -4,6 +4,7 @@ import com.google.common.collect.Multimap;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -38,7 +39,7 @@ public class CollectionUtils {
      * @return the optional
      */
     public static Optional<Object> firstElement(final Object obj) {
-        final var object = CollectionUtils.toCollection(obj);
+        val object = CollectionUtils.toCollection(obj);
         if (object.isEmpty()) {
             return Optional.empty();
         }
@@ -55,8 +56,8 @@ public class CollectionUtils {
      */
     @SneakyThrows
     public static <T extends Collection> T toCollection(final Object obj, final Class<T> clazz) {
-        final var results = toCollection(obj);
-        final var col = clazz.getDeclaredConstructor().newInstance();
+        val results = toCollection(obj);
+        val col = clazz.getDeclaredConstructor().newInstance();
         col.addAll(results);
         return col;
     }
@@ -68,14 +69,15 @@ public class CollectionUtils {
      * @return The collection instance containing the object provided
      */
     public static Set<Object> toCollection(final Object obj) {
-        final Set<Object> c = new LinkedHashSet<>();
+        val c = new LinkedHashSet<>();
         if (obj == null) {
             LOGGER.debug("Converting null obj to empty collection");
         } else if (obj instanceof Collection) {
             c.addAll((Collection<Object>) obj);
             LOGGER.trace("Converting multi-valued attribute [{}]", obj);
         } else if (obj instanceof Map) {
-            final Set<Map.Entry> set = ((Map) obj).entrySet();
+            val map = (Map) obj;
+            val set = (Set<Map.Entry>) map.entrySet();
             c.addAll(set.stream().map(e -> Pair.of(e.getKey(), e.getValue())).collect(Collectors.toSet()));
         } else if (obj.getClass().isArray()) {
             c.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));
@@ -97,10 +99,10 @@ public class CollectionUtils {
      */
     public static <K, V> Map<K, V> wrap(final Multimap<K, V> source) {
         if (source != null && !source.isEmpty()) {
-            final Map inner = source.asMap();
-            final Map map = new HashMap<>();
+            val inner = source.asMap();
+            val map = new HashMap<>();
             inner.forEach((k, v) -> map.put(k, wrap(v)));
-            return map;
+            return (Map) map;
         }
         return new HashMap<>(0);
     }
@@ -130,7 +132,7 @@ public class CollectionUtils {
      * @return the map
      */
     public static <K, V> Map<K, V> wrap(final String key, final Object value) {
-        final Map map = new LinkedHashMap();
+        val map = new LinkedHashMap();
         if (value != null && StringUtils.isNotBlank(key)) {
             map.put(key, value);
         }
@@ -150,9 +152,9 @@ public class CollectionUtils {
      */
     public static <K extends String, V extends Object> Map<K, V> wrap(final String key, final Object value,
                                                                       final String key2, final Object value2) {
-        final Map m = wrap(key, value);
+        val m = wrap(key, value);
         m.put(key2, value2);
-        return m;
+        return (Map) m;
     }
 
     /**
@@ -171,9 +173,9 @@ public class CollectionUtils {
     public static <K, V> Map<K, V> wrap(final String key, final Object value,
                                         final String key2, final Object value2,
                                         final String key3, final Object value3) {
-        final Map m = wrap(key, value, key2, value2);
+        val m = wrap(key, value, key2, value2);
         m.put(key3, value3);
-        return m;
+        return (Map) m;
     }
 
     /**
@@ -195,9 +197,9 @@ public class CollectionUtils {
                                         final String key2, final Object value2,
                                         final String key3, final Object value3,
                                         final String key4, final Object value4) {
-        final Map m = wrap(key, value, key2, value2, key3, value3);
+        val m = wrap(key, value, key2, value2, key3, value3);
         m.put(key4, value4);
-        return m;
+        return (Map) m;
     }
 
     /**
@@ -222,9 +224,9 @@ public class CollectionUtils {
                                         final String key3, final Object value3,
                                         final String key4, final Object value4,
                                         final String key5, final Object value5) {
-        final Map m = wrap(key, value, key2, value2, key3, value3, key4, value4);
+        val m = wrap(key, value, key2, value2, key3, value3, key4, value4);
         m.put(key5, value5);
-        return m;
+        return (Map) m;
     }
 
     /**
@@ -252,9 +254,9 @@ public class CollectionUtils {
                                         final String key4, final Object value4,
                                         final String key5, final Object value5,
                                         final String key6, final Object value6) {
-        final Map m = wrap(key, value, key2, value2, key3, value3, key4, value4, key5, value5);
+        val m = wrap(key, value, key2, value2, key3, value3, key4, value4, key5, value5);
         m.put(key6, value6);
-        return m;
+        return (Map) m;
     }
 
     /**
@@ -285,9 +287,9 @@ public class CollectionUtils {
                                         final String key5, final Object value5,
                                         final String key6, final Object value6,
                                         final String key7, final Object value7) {
-        final Map m = wrap(key, value, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6);
+        val m = wrap(key, value, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6);
         m.put(key7, value7);
-        return m;
+        return (Map) m;
     }
 
     /**
@@ -298,16 +300,16 @@ public class CollectionUtils {
      * @return the list
      */
     public static <T> List<T> wrap(final T source) {
-        final List<T> list = new ArrayList<>();
+        val list = new ArrayList<T>();
         if (source != null) {
             if (source instanceof Collection) {
-                final var it = ((Collection) source).iterator();
+                val it = ((Collection) source).iterator();
                 while (it.hasNext()) {
                     list.add((T) it.next());
                 }
             } else if (source.getClass().isArray()) {
-                final List elements = Arrays.stream((Object[]) source).collect(Collectors.toList());
-                list.addAll(elements);
+                val elements = Arrays.stream((Object[]) source).collect(Collectors.toList());
+                list.addAll((List) elements);
             } else {
                 list.add(source);
             }
@@ -319,11 +321,11 @@ public class CollectionUtils {
      * Wraps a possibly null list in an immutable wrapper.
      *
      * @param <T>    the type parameter
-     * @param source Nullable list to wrap.
+     * @param source list to wrap.
      * @return the list
      */
     public static <T> List<T> wrap(final List<T> source) {
-        final List<T> list = new ArrayList<>();
+        val list = new ArrayList<T>();
         if (source != null && !source.isEmpty()) {
             list.addAll(source);
         }
@@ -338,7 +340,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> Set<T> wrap(final Set<T> source) {
-        final Set<T> list = new LinkedHashSet<>();
+        val list = new LinkedHashSet<T>();
         if (source != null && !source.isEmpty()) {
             list.addAll(source);
         }
@@ -353,7 +355,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> Set<T> wrapSet(final T source) {
-        final Set<T> list = new LinkedHashSet<>();
+        val list = new LinkedHashSet<T>();
         if (source != null) {
             list.add(source);
         }
@@ -368,7 +370,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> Set<T> wrapSet(final T... source) {
-        final Set<T> list = new LinkedHashSet<>();
+        val list = new LinkedHashSet<T>();
         addToCollection(list, source);
         return list;
     }
@@ -381,7 +383,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> HashSet<T> wrapHashSet(final T... source) {
-        final HashSet<T> list = new HashSet<>();
+        val list = new HashSet<T>();
         addToCollection(list, source);
         return list;
     }
@@ -394,7 +396,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> List<T> wrapList(final T... source) {
-        final List<T> list = new ArrayList<>();
+        val list = new ArrayList<T>();
         addToCollection(list, source);
         return list;
     }
@@ -402,8 +404,8 @@ public class CollectionUtils {
     private static <T> void addToCollection(final Collection<T> list, final T[] source) {
         if (source != null) {
             Arrays.stream(source).forEach(s -> {
-                final Collection col = toCollection(s);
-                list.addAll(col);
+                val col = toCollection(s);
+                list.addAll((Collection) col);
             });
         }
     }

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.mongodb.client.ListIndexesIterable;
 import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.BaseTicketSerializers;
@@ -54,13 +55,13 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     private MongoCollection createTicketCollection(final TicketDefinition ticket, final MongoDbConnectionFactory factory) {
-        final var collectionName = ticket.getProperties().getStorageName();
+        val collectionName = ticket.getProperties().getStorageName();
         LOGGER.debug("Setting up MongoDb Ticket Registry instance [{}]", collectionName);
         factory.createCollection(mongoTemplate, collectionName, this.dropCollection);
 
         LOGGER.debug("Creating indices on collection [{}] to auto-expire documents...", collectionName);
-        final MongoCollection collection = mongoTemplate.getCollection(collectionName);
-        final var index = new Index().on("expireAt", Sort.Direction.ASC).expire(ticket.getProperties().getStorageTimeout());
+        val collection = mongoTemplate.getCollection(collectionName);
+        val index = new Index().on(TicketHolder.FIELD_NAME_EXPIRE_AT, Sort.Direction.ASC).expire(ticket.getProperties().getStorageTimeout());
         removeDifferingIndexIfAny(collection, index);
         mongoTemplate.indexOps(TicketHolder.class).ensureIndex(index);
         return collection;
@@ -88,10 +89,10 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     private void createTicketCollections() {
-        final var definitions = ticketCatalog.findAll();
-        final var factory = new MongoDbConnectionFactory();
+        val definitions = ticketCatalog.findAll();
+        val factory = new MongoDbConnectionFactory();
         definitions.forEach(t -> {
-            final var c = createTicketCollection(t, factory);
+            val c = createTicketCollection(t, factory);
             LOGGER.debug("Created MongoDb collection configuration for [{}]", c.getNamespace().getFullName());
         });
     }
@@ -100,20 +101,20 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     public Ticket updateTicket(final Ticket ticket) {
         LOGGER.debug("Updating ticket [{}]", ticket);
         try {
-            final var holder = buildTicketAsDocument(ticket);
-            final var metadata = this.ticketCatalog.find(ticket);
+            val holder = buildTicketAsDocument(ticket);
+            val metadata = this.ticketCatalog.find(ticket);
             if (metadata == null) {
                 LOGGER.error("Could not locate ticket definition in the catalog for ticket [{}]", ticket.getId());
                 return null;
             }
             LOGGER.debug("Located ticket definition [{}] in the ticket catalog", metadata);
-            final var collectionName = getTicketCollectionInstanceByMetadata(metadata);
+            val collectionName = getTicketCollectionInstanceByMetadata(metadata);
             if (StringUtils.isBlank(collectionName)) {
                 LOGGER.error("Could not locate collection linked to ticket definition for ticket [{}]", ticket.getId());
                 return null;
             }
-            final var query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(holder.getTicketId()));
-            final var update = Update.update(TicketHolder.FIELD_NAME_JSON, holder.getJson());
+            val query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(holder.getTicketId()));
+            val update = Update.update(TicketHolder.FIELD_NAME_JSON, holder.getJson());
             this.mongoTemplate.upsert(query, update, collectionName);
             LOGGER.debug("Updated ticket [{}]", ticket);
         } catch (final Exception e) {
@@ -126,14 +127,14 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     public void addTicket(final Ticket ticket) {
         try {
             LOGGER.debug("Adding ticket [{}]", ticket.getId());
-            final var holder = buildTicketAsDocument(ticket);
-            final var metadata = this.ticketCatalog.find(ticket);
+            val holder = buildTicketAsDocument(ticket);
+            val metadata = this.ticketCatalog.find(ticket);
             if (metadata == null) {
                 LOGGER.error("Could not locate ticket definition in the catalog for ticket [{}]", ticket.getId());
                 return;
             }
             LOGGER.debug("Located ticket definition [{}] in the ticket catalog", metadata);
-            final var collectionName = getTicketCollectionInstanceByMetadata(metadata);
+            val collectionName = getTicketCollectionInstanceByMetadata(metadata);
             if (StringUtils.isBlank(collectionName)) {
                 LOGGER.error("Could not locate collection linked to ticket definition for ticket [{}]", ticket.getId());
                 return;
@@ -150,22 +151,22 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     public Ticket getTicket(final String ticketId) {
         try {
             LOGGER.debug("Locating ticket ticketId [{}]", ticketId);
-            final var encTicketId = encodeTicketId(ticketId);
+            val encTicketId = encodeTicketId(ticketId);
             if (encTicketId == null) {
                 LOGGER.debug("Ticket ticketId [{}] could not be found", ticketId);
                 return null;
             }
-            final var metadata = this.ticketCatalog.find(ticketId);
+            val metadata = this.ticketCatalog.find(ticketId);
             if (metadata == null) {
                 LOGGER.debug("Ticket definition [{}] could not be found in the ticket catalog", ticketId);
                 return null;
             }
-            final var collectionName = getTicketCollectionInstanceByMetadata(metadata);
-            final var query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(encTicketId));
-            final var d = this.mongoTemplate.findOne(query, TicketHolder.class, collectionName);
+            val collectionName = getTicketCollectionInstanceByMetadata(metadata);
+            val query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(encTicketId));
+            val d = this.mongoTemplate.findOne(query, TicketHolder.class, collectionName);
             if (d != null) {
-                final var decoded = deserializeTicketFromMongoDocument(d);
-                final var result = decodeTicket(decoded);
+                val decoded = deserializeTicketFromMongoDocument(d);
+                val result = decodeTicket(decoded);
 
                 if (result != null && result.isExpired()) {
                     LOGGER.debug("Ticket [{}] has expired and is now removed from the collection", result.getId());
@@ -192,13 +193,13 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketIdToDelete) {
-        final var ticketId = encodeTicketId(ticketIdToDelete);
+        val ticketId = encodeTicketId(ticketIdToDelete);
         LOGGER.debug("Deleting ticket [{}]", ticketId);
         try {
-            final var metadata = this.ticketCatalog.find(ticketIdToDelete);
-            final var collectionName = getTicketCollectionInstanceByMetadata(metadata);
-            final var query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(ticketId));
-            final var res = this.mongoTemplate.remove(query, collectionName);
+            val metadata = this.ticketCatalog.find(ticketIdToDelete);
+            val collectionName = getTicketCollectionInstanceByMetadata(metadata);
+            val query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(ticketId));
+            val res = this.mongoTemplate.remove(query, collectionName);
             LOGGER.debug("Deleted ticket [{}] with result [{}]", ticketIdToDelete, res);
             return true;
         } catch (final Exception e) {
@@ -213,7 +214,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .map(this::getTicketCollectionInstanceByMetadata)
             .filter(StringUtils::isNotBlank)
             .mapToLong(collectionName -> {
-                final var countTickets = this.mongoTemplate.count(SELECT_ALL_NAMES_QUERY, collectionName);
+                val countTickets = this.mongoTemplate.count(SELECT_ALL_NAMES_QUERY, collectionName);
                 mongoTemplate.remove(SELECT_ALL_NAMES_QUERY, collectionName);
                 return countTickets;
             })
@@ -225,14 +226,10 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
      * Makes the assumption that the CAS server date and the Mongo server date are in sync.
      */
     private static Date getExpireAt(final Ticket ticket) {
-        final long ttl;
-        if (ticket instanceof TicketState) {
-            ttl = ticket.getExpirationPolicy().getTimeToLive((TicketState) ticket);
-        } else {
-            ttl = ticket.getExpirationPolicy().getTimeToLive();
-        }
+        val ttl = ticket instanceof TicketState
+            ? ticket.getExpirationPolicy().getTimeToLive((TicketState) ticket)
+            : ticket.getExpirationPolicy().getTimeToLive();
 
-        // expiration policy can specify not to delete automatically
         if (ttl < 1) {
             return null;
         }
@@ -254,20 +251,20 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     private TicketHolder buildTicketAsDocument(final Ticket ticket) {
-        final var encTicket = encodeTicket(ticket);
-        final var json = serializeTicketForMongoDocument(encTicket);
+        val encTicket = encodeTicket(ticket);
+        val json = serializeTicketForMongoDocument(encTicket);
         if (StringUtils.isNotBlank(json)) {
             LOGGER.trace("Serialized ticket into a JSON document as \n [{}]", JsonValue.readJSON(json).toString(Stringify.FORMATTED));
-            final var expireAt = getExpireAt(ticket);
+            val expireAt = getExpireAt(ticket);
             return new TicketHolder(json, encTicket.getId(), encTicket.getClass().getName(), expireAt);
         }
         throw new IllegalArgumentException("Ticket " + ticket.getId() + " cannot be serialized to JSON");
     }
 
     private String getTicketCollectionInstanceByMetadata(final TicketDefinition metadata) {
-        final var mapName = metadata.getProperties().getStorageName();
+        val mapName = metadata.getProperties().getStorageName();
         LOGGER.debug("Locating collection name [{}] for ticket definition [{}]", mapName, metadata);
-        final var c = getTicketCollectionInstance(mapName);
+        val c = getTicketCollectionInstance(mapName);
         if (c != null) {
             return c.getNamespace().getCollectionName();
         }
@@ -276,7 +273,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     private MongoCollection getTicketCollectionInstance(final String mapName) {
         try {
-            final MongoCollection inst = this.mongoTemplate.getCollection(mapName);
+            val inst = this.mongoTemplate.getCollection(mapName);
             LOGGER.debug("Located MongoDb collection instance [{}]", mapName);
             return inst;
         } catch (final Exception e) {

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
+import lombok.val;
+
 import com.google.common.collect.Sets;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +52,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * This is {@link SamlIdPObjectSigner}.
@@ -111,7 +112,7 @@ public class SamlIdPObjectSigner {
                                            final RequestAbstractType authnRequest) throws SamlException {
 
         LOGGER.debug("Attempting to encode [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
-        final MessageContext<T> outboundContext = new MessageContext<>();
+        val outboundContext = new MessageContext<T>();
         prepareOutboundContext(samlObject, adaptor, outboundContext, binding, authnRequest);
         prepareSecurityParametersContext(adaptor, outboundContext, service);
         prepareEndpointURLSchemeSecurityHandler(outboundContext);
@@ -130,7 +131,7 @@ public class SamlIdPObjectSigner {
      */
     protected <T extends SAMLObject> void prepareSamlOutboundProtocolMessageSigningHandler(final MessageContext<T> outboundContext) throws Exception {
         LOGGER.debug("Attempting to sign the outbound SAML message...");
-        final var handler = new SAMLOutboundProtocolMessageSigningHandler();
+        val handler = new SAMLOutboundProtocolMessageSigningHandler();
         handler.setSignErrorResponses(casProperties.getAuthn().getSamlIdp().getResponse().isSignError());
         handler.invoke(outboundContext);
         LOGGER.debug("Signed SAML message successfully");
@@ -144,7 +145,7 @@ public class SamlIdPObjectSigner {
      * @throws Exception the exception
      */
     protected <T extends SAMLObject> void prepareSamlOutboundDestinationHandler(final MessageContext<T> outboundContext) throws Exception {
-        final var handlerDest = new SAMLOutboundDestinationHandler();
+        val handlerDest = new SAMLOutboundDestinationHandler();
         handlerDest.initialize();
         handlerDest.invoke(outboundContext);
     }
@@ -157,7 +158,7 @@ public class SamlIdPObjectSigner {
      * @throws Exception the exception
      */
     protected <T extends SAMLObject> void prepareEndpointURLSchemeSecurityHandler(final MessageContext<T> outboundContext) throws Exception {
-        final var handlerEnd = new EndpointURLSchemeSecurityHandler();
+        val handlerEnd = new EndpointURLSchemeSecurityHandler();
         handlerEnd.initialize();
         handlerEnd.invoke(outboundContext);
     }
@@ -175,9 +176,9 @@ public class SamlIdPObjectSigner {
                                                                            final MessageContext<T> outboundContext,
                                                                            final SamlRegisteredService service) throws SAMLException {
         @NonNull
-        final var secParametersContext = outboundContext.getSubcontext(SecurityParametersContext.class, true);
-        final RoleDescriptor roleDesc = adaptor.getSsoDescriptor();
-        final var signingParameters = buildSignatureSigningParameters(roleDesc, service);
+        val secParametersContext = outboundContext.getSubcontext(SecurityParametersContext.class, true);
+        val roleDesc = adaptor.getSsoDescriptor();
+        val signingParameters = buildSignatureSigningParameters(roleDesc, service);
         secParametersContext.setSignatureSigningParameters(signingParameters);
     }
 
@@ -213,14 +214,14 @@ public class SamlIdPObjectSigner {
     @SneakyThrows
     protected SignatureSigningParameters buildSignatureSigningParameters(final RoleDescriptor descriptor,
                                                                          final SamlRegisteredService service) {
-        final var criteria = new CriteriaSet();
-        final var signatureSigningConfiguration = getSignatureSigningConfiguration(descriptor, service);
+        val criteria = new CriteriaSet();
+        val signatureSigningConfiguration = getSignatureSigningConfiguration(descriptor, service);
         criteria.add(new SignatureSigningConfigurationCriterion(signatureSigningConfiguration));
         criteria.add(new RoleDescriptorCriterion(descriptor));
-        final var resolver = new SAMLMetadataSignatureSigningParametersResolver();
+        val resolver = new SAMLMetadataSignatureSigningParametersResolver();
         LOGGER.debug("Resolving signature signing parameters for [{}]", descriptor.getElementQName().getLocalPart());
         @NonNull
-        final var params = resolver.resolveSingle(criteria);
+        val params = resolver.resolveSingle(criteria);
         LOGGER.debug("Created signature signing parameters."
                 + "\nSignature algorithm: [{}]"
                 + "\nSignature canonicalization algorithm: [{}]"
@@ -243,9 +244,9 @@ public class SamlIdPObjectSigner {
      */
     protected SignatureSigningConfiguration getSignatureSigningConfiguration(final RoleDescriptor roleDescriptor,
                                                                              final SamlRegisteredService service) throws Exception {
-        final var config =
+        val config =
             DefaultSecurityConfigurationBootstrap.buildDefaultSignatureSigningConfiguration();
-        final var samlIdp = casProperties.getAuthn().getSamlIdp();
+        val samlIdp = casProperties.getAuthn().getSamlIdp();
 
         if (this.overrideBlackListedSignatureAlgorithms != null
             && !samlIdp.getAlgs().getOverrideBlackListedSignatureSigningAlgorithms().isEmpty()) {
@@ -273,25 +274,25 @@ public class SamlIdPObjectSigner {
         LOGGER.debug("Signature signing whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
         LOGGER.debug("Signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
 
-        final var privateKey = getSigningPrivateKey();
-        final var idp = casProperties.getAuthn().getSamlIdp();
+        val privateKey = getSigningPrivateKey();
+        val idp = casProperties.getAuthn().getSamlIdp();
 
-        final var kekCredentialResolver = new MetadataCredentialResolver();
-        final var roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, idp.getMetadata().isRequireValidMetadata());
+        val kekCredentialResolver = new MetadataCredentialResolver();
+        val roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, idp.getMetadata().isRequireValidMetadata());
         kekCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
         kekCredentialResolver.setKeyInfoCredentialResolver(DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
         kekCredentialResolver.initialize();
-        final var criteriaSet = new CriteriaSet();
+        val criteriaSet = new CriteriaSet();
         criteriaSet.add(new SignatureSigningConfigurationCriterion(config));
         criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
         criteriaSet.add(new EntityIdCriterion(casProperties.getAuthn().getSamlIdp().getEntityId()));
         criteriaSet.add(new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME));
 
-        final Set<Credential> credentials = Sets.newLinkedHashSet(kekCredentialResolver.resolve(criteriaSet));
-        final List<Credential> creds = new ArrayList<>();
+        val credentials = Sets.<Credential>newLinkedHashSet(kekCredentialResolver.resolve(criteriaSet));
+        val creds = new ArrayList<Credential>();
 
         credentials.forEach(c -> {
-            final var cred = getResolvedSigningCredential(c, privateKey, service);
+            val cred = getResolvedSigningCredential(c, privateKey, service);
             if (cred != null) {
                 creds.add(cred);
             }
@@ -305,10 +306,10 @@ public class SamlIdPObjectSigner {
 
     private AbstractCredential getResolvedSigningCredential(final Credential c, final PrivateKey privateKey,
                                                             final SamlRegisteredService service) {
-        final var samlIdp = casProperties.getAuthn().getSamlIdp();
+        val samlIdp = casProperties.getAuthn().getSamlIdp();
 
         try {
-            final var credType = SamlIdPResponseProperties.SignatureCredentialTypes.valueOf(
+            val credType = SamlIdPResponseProperties.SignatureCredentialTypes.valueOf(
                 StringUtils.defaultIfBlank(service.getSigningCredentialType(), samlIdp.getResponse().getCredentialType().name()).toUpperCase());
             LOGGER.debug("Requested credential type [{}] is found for service [{}]", credType, service);
 
@@ -319,13 +320,13 @@ public class SamlIdPObjectSigner {
                 case X509:
                 default:
                     if (c instanceof BasicX509Credential) {
-                        final var certificate = BasicX509Credential.class.cast(c).getEntityCertificate();
+                        val certificate = BasicX509Credential.class.cast(c).getEntityCertificate();
                         LOGGER.debug("Locating signature signing certificate from credential [{}]", CertUtils.toString(certificate));
                         return new BasicX509Credential(certificate, privateKey);
                     }
-                    final var signingCert = samlIdPMetadataLocator.getSigningCertificate();
+                    val signingCert = samlIdPMetadataLocator.getSigningCertificate();
                     LOGGER.debug("Locating signature signing certificate file from [{}]", signingCert);
-                    final var certificate = SamlUtils.readCertificate(signingCert);
+                    val certificate = SamlUtils.readCertificate(signingCert);
                     return new BasicX509Credential(certificate, privateKey);
             }
         } catch (final Exception e) {
@@ -341,9 +342,9 @@ public class SamlIdPObjectSigner {
      * @throws Exception the exception
      */
     protected PrivateKey getSigningPrivateKey() throws Exception {
-        final var samlIdp = casProperties.getAuthn().getSamlIdp();
-        final var signingKey = samlIdPMetadataLocator.getSigningKey();
-        final var privateKeyFactoryBean = new PrivateKeyFactoryBean();
+        val samlIdp = casProperties.getAuthn().getSamlIdp();
+        val signingKey = samlIdPMetadataLocator.getSigningKey();
+        val privateKeyFactoryBean = new PrivateKeyFactoryBean();
         privateKeyFactoryBean.setLocation(new FileSystemResource(signingKey.getFile()));
         privateKeyFactoryBean.setAlgorithm(samlIdp.getMetadata().getPrivateKeyAlgName());
         privateKeyFactoryBean.setSingleton(false);

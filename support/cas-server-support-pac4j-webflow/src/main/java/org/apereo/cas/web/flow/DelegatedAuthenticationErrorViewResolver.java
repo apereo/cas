@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,7 +29,7 @@ public class DelegatedAuthenticationErrorViewResolver implements ErrorViewResolv
     public ModelAndView resolveErrorView(final HttpServletRequest request,
                                          final HttpStatus status, final Map<String, Object> map) {
 
-        final var mv = DelegatedClientAuthenticationAction.hasDelegationRequestFailed(request, status.value());
+        val mv = DelegatedClientAuthenticationAction.hasDelegationRequestFailed(request, status.value());
         return mv.orElseGet(() -> conventionErrorViewResolver.resolveErrorView(request, status, map));
     }
 }

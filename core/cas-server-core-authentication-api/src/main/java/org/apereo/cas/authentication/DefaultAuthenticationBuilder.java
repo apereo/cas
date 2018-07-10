@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +11,6 @@ import org.apereo.cas.util.CollectionUtils;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -146,11 +147,11 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     public AuthenticationBuilder mergeAttribute(final String key, final Object value) {
-        final var currentValue = this.attributes.get(key);
+        val currentValue = this.attributes.get(key);
         if (currentValue == null) {
             return addAttribute(key, value);
         }
-        final Collection collection = CollectionUtils.toCollection(currentValue);
+        val collection = CollectionUtils.toCollection(currentValue);
         collection.addAll(CollectionUtils.toCollection(value));
         return addAttribute(key, collection);
     }
@@ -158,8 +159,8 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     @Override
     public boolean hasAttribute(final String name, final Predicate<Object> predicate) {
         if (this.attributes.containsKey(name)) {
-            final var value = this.attributes.get(name);
-            final Collection valueCol = CollectionUtils.toCollection(value);
+            val value = this.attributes.get(name);
+            val valueCol = CollectionUtils.toCollection(value);
             return valueCol.stream().anyMatch(predicate);
         }
         return false;
@@ -242,7 +243,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     public AuthenticationBuilder addFailure(final String key, final Throwable value) {
         LOGGER.debug("Recording authentication handler failure under key [{}]", key);
         if (this.successes.containsKey(key)) {
-            final var newKey = key + System.currentTimeMillis();
+            val newKey = key + System.currentTimeMillis();
             LOGGER.debug("Key mapped to authentication handler failure [{}] is recorded in the list of failed attempts. Overriding with [{}]", key, newKey);
             this.failures.put(newKey, value);
         } else {
@@ -268,7 +269,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @return New builder instance initialized with all fields in the given authentication source.
      */
     public static AuthenticationBuilder newInstance(final Authentication source) {
-        final var builder = new DefaultAuthenticationBuilder(source.getPrincipal());
+        val builder = new DefaultAuthenticationBuilder(source.getPrincipal());
         builder.setAuthenticationDate(source.getAuthenticationDate());
         builder.setCredentials(source.getCredentials());
         builder.setSuccesses(source.getSuccesses());

@@ -1,5 +1,7 @@
 package org.apereo.cas.audit;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.configuration.model.core.audit.AuditRestProperties;
@@ -36,15 +38,15 @@ public class RestAuditTrailManagerTests {
 
     @Test
     public void verifyAction() throws Exception {
-        final var props = new AuditRestProperties();
+        val props = new AuditRestProperties();
         props.setUrl("http://localhost:9296");
-        final var r = new RestAuditTrailManager(props);
+        val r = new RestAuditTrailManager(props);
         r.setAsynchronous(false);
 
-        final var audit = new AuditActionContext("casuser", "resource", "action",
+        val audit = new AuditActionContext("casuser", "resource", "action",
             "CAS", new Date(), "123.456.789.000", "123.456.789.000");
-        final var data = MAPPER.writeValueAsString(CollectionUtils.wrapSet(audit));
-        try (var webServer = new MockWebServer(9296,
+        val data = MAPPER.writeValueAsString(CollectionUtils.wrapSet(audit));
+        try (val webServer = new MockWebServer(9296,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             r.record(audit);

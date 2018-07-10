@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +33,8 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
     @Override
     public boolean registerAccountFor(final String uid, final String token) {
         if (getAccountValidator().isValid(uid, token)) {
-            final var yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
-            final var file = jsonResource.getFile();
+            val yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
+            val file = jsonResource.getFile();
             this.devices.put(uid, getCipherExecutor().encode(yubikeyPublicId));
             MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
             return true;
@@ -43,13 +45,13 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
     @SneakyThrows
     private static Map<String, String> getDevicesFromJsonResource(final Resource jsonResource) {
         if (!ResourceUtils.doesResourceExist(jsonResource)) {
-            final var res = jsonResource.getFile().createNewFile();
+            val res = jsonResource.getFile().createNewFile();
             if (res) {
                 LOGGER.debug("Created JSON resource @ [{}]", jsonResource);
             }
         }
         if (ResourceUtils.doesResourceExist(jsonResource)) {
-            final var file = jsonResource.getFile();
+            val file = jsonResource.getFile();
             if (file.canRead() && file.length() > 0) {
                 return MAPPER.readValue(file, Map.class);
             }

@@ -1,6 +1,8 @@
 package org.apereo.cas.support.saml.web.idp.profile.artifact;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -19,7 +21,7 @@ import java.io.IOException;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
 
     private final TicketRegistry ticketRegistry;
@@ -31,11 +33,11 @@ public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
                     final String issuerId, final SAMLObject samlMessage) throws IOException {
         super.put(artifact, relyingPartyId, issuerId, samlMessage);
 
-        final var request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-        final var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
+        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+        val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
                 ticketGrantingTicketCookieGenerator, this.ticketRegistry, request);
 
-        final var ticket = samlArtifactTicketFactory.create(artifact,
+        val ticket = samlArtifactTicketFactory.create(artifact,
                 ticketGrantingTicket.getAuthentication(),
                 ticketGrantingTicket,
                 issuerId,

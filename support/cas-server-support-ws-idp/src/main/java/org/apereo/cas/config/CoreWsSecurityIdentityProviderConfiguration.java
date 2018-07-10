@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -144,10 +146,10 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
 
     @Override
     public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        final var callbackService = wsFederationCallbackService();
+        val callbackService = wsFederationCallbackService();
         LOGGER.debug("Initializing callback service [{}]", callbackService);
 
-        final var service = new RegexRegisteredService();
+        val service = new RegexRegisteredService();
         service.setId(Math.abs(RandomUtils.getNativeInstance().nextLong()));
         service.setEvaluationOrder(0);
         service.setName(service.getClass().getSimpleName());

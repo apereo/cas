@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
@@ -24,15 +26,15 @@ public class SamlAuthenticationRequestTests extends AbstractOpenSamlTests {
 
     @Test
     public void ensureDeflation() throws Exception {
-        final var deflator = CompressionUtils.deflate(SAML_REQUEST);
-        final var deflatorStream = deflateViaStream(SAML_REQUEST);
+        val deflator = CompressionUtils.deflate(SAML_REQUEST);
+        val deflatorStream = deflateViaStream(SAML_REQUEST);
         assertEquals(deflatorStream, deflator);
     }
 
     private static String deflateViaStream(final String samlRequest) throws IOException {
-        final var xmlBytes = samlRequest.getBytes(StandardCharsets.UTF_8);
-        final var byteOutputStream = new ByteArrayOutputStream();
-        final var deflaterOutputStream = new DeflaterOutputStream(
+        val xmlBytes = samlRequest.getBytes(StandardCharsets.UTF_8);
+        val byteOutputStream = new ByteArrayOutputStream();
+        val deflaterOutputStream = new DeflaterOutputStream(
                 byteOutputStream);
         deflaterOutputStream.write(xmlBytes, 0, xmlBytes.length);
         deflaterOutputStream.close();

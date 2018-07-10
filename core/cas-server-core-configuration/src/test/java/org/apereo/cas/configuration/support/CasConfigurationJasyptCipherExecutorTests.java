@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.Before;
@@ -35,15 +37,15 @@ public class CasConfigurationJasyptCipherExecutorTests {
 
     @Test
     public void verifyDecryptionEncryption() {
-        final var result = jasypt.encryptValue(getClass().getSimpleName());
+        val result = jasypt.encryptValue(getClass().getSimpleName());
         assertNotNull(result);
-        final var plain = jasypt.decryptValue(result);
+        val plain = jasypt.decryptValue(result);
         assertEquals(plain, getClass().getSimpleName());
     }
 
     @Test
     public void verifyDecryptionEncryptionPairNotNeeded() {
-        final var result = jasypt.decryptValue("keyValue");
+        val result = jasypt.decryptValue("keyValue");
         assertNotNull(result);
         assertEquals("keyValue", result);
 
@@ -51,15 +53,15 @@ public class CasConfigurationJasyptCipherExecutorTests {
 
     @Test
     public void verifyDecryptionEncryptionPairFails() {
-        final var encVal = CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "keyValue";
-        final var result = jasypt.decode(encVal, new Object[]{});
+        val encVal = CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "keyValue";
+        val result = jasypt.decode(encVal, new Object[]{});
         assertNull(result);
     }
 
     @Test
     public void verifyDecryptionEncryptionPairSuccess() {
-        final var value = jasypt.encryptValue("Testing");
-        final var result = jasypt.decode(value, new Object[]{});
+        val value = jasypt.encryptValue("Testing");
+        val result = jasypt.decode(value, new Object[]{});
         assertNotNull(result);
         assertEquals("Testing", result);
     }

@@ -7,6 +7,7 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
@@ -29,7 +30,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -72,7 +72,7 @@ public class OAuth20Utils {
      * @return a null view
      */
     public static ModelAndView writeText(final HttpServletResponse response, final String text, final int status) {
-        try (var printWriter = response.getWriter()) {
+        try (val printWriter = response.getWriter()) {
             response.setStatus(status);
             printWriter.print(text);
         } catch (final IOException e) {
@@ -116,7 +116,7 @@ public class OAuth20Utils {
     @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     private static OAuthRegisteredService getRegisteredOAuthServiceByPredicate(final ServicesManager servicesManager,
                                                                                final Predicate<OAuthRegisteredService> predicate) {
-        final var services = servicesManager.getAllServices();
+        val services = servicesManager.getAllServices();
         return services.stream()
             .filter(OAuthRegisteredService.class::isInstance)
             .map(OAuthRegisteredService.class::cast)
@@ -137,8 +137,8 @@ public class OAuth20Utils {
         return attributes.stream()
             .filter(a -> StringUtils.isNotBlank(context.getParameter(a)))
             .map(m -> {
-                final var values = context.getParameterValues(m);
-                final Collection<String> valuesSet = new LinkedHashSet<>();
+                val values = context.getParameterValues(m);
+                val valuesSet = new LinkedHashSet<>();
                 if (values != null && values.length > 0) {
                     Arrays.stream(values).forEach(v -> valuesSet.addAll(Arrays.stream(v.split(" ")).collect(Collectors.toSet())));
                 }
@@ -164,7 +164,7 @@ public class OAuth20Utils {
      * @return the requested scopes
      */
     public static Collection<String> getRequestedScopes(final HttpServletRequest context) {
-        final var map = getRequestParameters(CollectionUtils.wrap(OAuth20Constants.SCOPE), context);
+        val map = getRequestParameters(CollectionUtils.wrap(OAuth20Constants.SCOPE), context);
         if (map == null || map.isEmpty()) {
             return new ArrayList<>(0);
         }
@@ -187,9 +187,7 @@ public class OAuth20Utils {
      * @return the model and view
      */
     public static ModelAndView produceErrorView(final Exception e) {
-        final Map model = new HashMap<>();
-        model.put("rootCauseException", e);
-        return new ModelAndView(OAuth20Constants.ERROR_VIEW, model);
+        return new ModelAndView(OAuth20Constants.ERROR_VIEW, CollectionUtils.wrap("rootCauseException", e));
     }
 
     /**
@@ -220,8 +218,8 @@ public class OAuth20Utils {
      * @return the response type
      */
     public static OAuth20ResponseTypes getResponseType(final J2EContext context) {
-        final var responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
-        final var type = Arrays.stream(OAuth20ResponseTypes.values())
+        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
+        val type = Arrays.stream(OAuth20ResponseTypes.values())
             .filter(t -> t.getType().equalsIgnoreCase(responseType))
             .findFirst()
             .orElse(OAuth20ResponseTypes.CODE);
@@ -260,7 +258,7 @@ public class OAuth20Utils {
      * @return the boolean
      */
     public static boolean isAuthorizedResponseTypeForService(final J2EContext context, final OAuthRegisteredService registeredService) {
-        final var responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
+        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
         if (registeredService.getSupportedResponseTypes() != null && !registeredService.getSupportedResponseTypes().isEmpty()) {
             LOGGER.debug("Checking response type [{}] against supported response types [{}]", responseType, registeredService.getSupportedResponseTypes());
             return registeredService.getSupportedResponseTypes().stream().anyMatch(s -> s.equalsIgnoreCase(responseType));
@@ -280,7 +278,7 @@ public class OAuth20Utils {
      * @return true/false
      */
     public static boolean isAuthorizedGrantTypeForService(final J2EContext context, final OAuthRegisteredService registeredService) {
-        final var grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
         if (registeredService.getSupportedGrantTypes() != null && !registeredService.getSupportedGrantTypes().isEmpty()) {
             LOGGER.debug("Checking grant type [{}] against supported grant types [{}]", grantType, registeredService.getSupportedGrantTypes());
             return registeredService.getSupportedGrantTypes().stream().anyMatch(s -> s.equalsIgnoreCase(grantType));
@@ -309,7 +307,7 @@ public class OAuth20Utils {
      * @return the set
      */
     public static Set<String> parseRequestScopes(final HttpServletRequest context) {
-        final var parameterValues = context.getParameter(OAuth20Constants.SCOPE);
+        val parameterValues = context.getParameter(OAuth20Constants.SCOPE);
         if (StringUtils.isBlank(parameterValues)) {
             return new HashSet<>(0);
         }
@@ -341,7 +339,7 @@ public class OAuth20Utils {
      * @return whether the callback url is valid
      */
     public static boolean checkCallbackValid(@NonNull final RegisteredService registeredService, final String redirectUri) {
-        final var registeredServiceId = registeredService.getServiceId();
+        val registeredServiceId = registeredService.getServiceId();
         LOGGER.debug("Found: [{}] vs redirectUri: [{}]", registeredService, redirectUri);
         if (!redirectUri.matches(registeredServiceId)) {
             LOGGER.error("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
@@ -382,7 +380,7 @@ public class OAuth20Utils {
      */
     public static boolean checkResponseTypes(final String type, final OAuth20ResponseTypes... expectedTypes) {
         LOGGER.debug("Response type: [{}]", type);
-        final var checked = Stream.of(expectedTypes).anyMatch(t -> OAuth20Utils.isResponseType(type, t));
+        val checked = Stream.of(expectedTypes).anyMatch(t -> OAuth20Utils.isResponseType(type, t));
         if (!checked) {
             LOGGER.error("Unsupported response type: [{}]", type);
         }

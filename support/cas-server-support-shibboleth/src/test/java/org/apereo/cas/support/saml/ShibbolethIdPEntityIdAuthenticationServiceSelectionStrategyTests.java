@@ -1,8 +1,9 @@
 package org.apereo.cas.support.saml;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -38,25 +39,25 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
 
     @Test
     public void verifyServiceNotFound() {
-        final Service svc = RegisteredServiceTestUtils.getService("https://www.example.org?param1=value1");
-        final var result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
+        val svc = RegisteredServiceTestUtils.getService("https://www.example.org?param1=value1");
+        val result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
         assertEquals(svc.getId(), result.getId());
         assertFalse(shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.supports(svc));
     }
 
     @Test
     public void verifyServiceFound() {
-        final Service svc = RegisteredServiceTestUtils.getService("https://www.example.org?entityId=https://idp.example.org");
-        final var result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
+        val svc = RegisteredServiceTestUtils.getService("https://www.example.org?entityId=https://idp.example.org");
+        val result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
         assertEquals("https://idp.example.org", result.getId());
     }
 
     @Test
     public void verifyServiceFoundEncoded() {
-        final var serviceUrl = "https%3A%2F%2Fidp.example.com%2Fidp%2FAuthn%2FExtCas%3Fconversation%3De1s1&entityId=https%3A%2F%2Fservice.example.com";
-        final Service svc = RegisteredServiceTestUtils.getService(
+        val serviceUrl = "https%3A%2F%2Fidp.example.com%2Fidp%2FAuthn%2FExtCas%3Fconversation%3De1s1&entityId=https%3A%2F%2Fservice.example.com";
+        val svc = RegisteredServiceTestUtils.getService(
             "https://cas.example.com/login?service=" + serviceUrl);
-        final var result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
+        val result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
         assertEquals("https://service.example.com", result.getId());
     }
 

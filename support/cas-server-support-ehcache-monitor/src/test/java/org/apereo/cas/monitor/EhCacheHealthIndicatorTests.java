@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -69,7 +71,7 @@ public class EhCacheHealthIndicatorTests {
 
         // Exceed the capacity and force evictions which should report WARN status
         IntStream.range(95, 110).forEach(i -> {
-            final var st = new MockServiceTicket("T" + i, RegisteredServiceTestUtils.getService(),
+            val st = new MockServiceTicket("T" + i, RegisteredServiceTestUtils.getService(),
                 new MockTicketGrantingTicket("test"));
             this.ticketRegistry.addTicket(st);
         });

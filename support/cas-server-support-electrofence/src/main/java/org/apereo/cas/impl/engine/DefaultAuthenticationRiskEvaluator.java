@@ -1,5 +1,7 @@
 package org.apereo.cas.impl.engine;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
@@ -11,8 +13,8 @@ import org.apereo.inspektr.audit.annotation.Audit;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -42,10 +44,10 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
             return new AuthenticationRiskScore(AuthenticationRequestRiskCalculator.HIGHEST_RISK_SCORE);
         }
 
-        final List<AuthenticationRiskScore> scores = new ArrayList<>();
+        val scores = new ArrayList<AuthenticationRiskScore>();
         this.calculators.forEach(r -> scores.add(r.calculate(authentication, service, request)));
-        final var sum = scores.stream().map(AuthenticationRiskScore::getScore).reduce(BigDecimal.ZERO, BigDecimal::add);
-        final var score = sum.divide(BigDecimal.valueOf(this.calculators.size()), 2, BigDecimal.ROUND_UP);
+        val sum = scores.stream().map(AuthenticationRiskScore::getScore).reduce(BigDecimal.ZERO, BigDecimal::add);
+        val score = sum.divide(BigDecimal.valueOf(this.calculators.size()), 2, RoundingMode.UP);
         return new AuthenticationRiskScore(score);
     }
 }

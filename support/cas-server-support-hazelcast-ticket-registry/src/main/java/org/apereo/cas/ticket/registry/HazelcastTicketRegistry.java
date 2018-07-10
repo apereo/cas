@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.val;
+
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import lombok.AllArgsConstructor;
@@ -41,38 +43,38 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
 
     @Override
     public void addTicket(final Ticket ticket) {
-        final long ttl = ticket.getExpirationPolicy().getTimeToLive();
+        val ttl = ticket.getExpirationPolicy().getTimeToLive();
         if (ttl < 0) {
             throw new IllegalArgumentException("The expiration policy of ticket " + ticket.getId() + "is set to use a negative ttl");
         }
 
         LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ttl);
-        final var encTicket = encodeTicket(ticket);
+        val encTicket = encodeTicket(ticket);
 
-        final var metadata = this.ticketCatalog.find(ticket);
-        final var ticketMap = getTicketMapInstanceByMetadata(metadata);
+        val metadata = this.ticketCatalog.find(ticket);
+        val ticketMap = getTicketMapInstanceByMetadata(metadata);
 
         ticketMap.set(encTicket.getId(), encTicket, ttl, TimeUnit.SECONDS);
         LOGGER.debug("Added ticket [{}] with ttl [{}s]", encTicket.getId(), ttl);
     }
 
     private IMap<String, Ticket> getTicketMapInstanceByMetadata(final TicketDefinition metadata) {
-        final var mapName = metadata.getProperties().getStorageName();
+        val mapName = metadata.getProperties().getStorageName();
         LOGGER.debug("Locating map name [{}] for ticket definition [{}]", mapName, metadata);
         return getTicketMapInstance(mapName);
     }
 
     @Override
     public Ticket getTicket(final String ticketId) {
-        final var encTicketId = encodeTicketId(ticketId);
+        val encTicketId = encodeTicketId(ticketId);
         if (StringUtils.isBlank(encTicketId)) {
             return null;
         }
-        final var metadata = this.ticketCatalog.find(ticketId);
+        val metadata = this.ticketCatalog.find(ticketId);
         if (metadata != null) {
-            final var map = getTicketMapInstanceByMetadata(metadata);
-            final var ticket = map.get(encTicketId);
-            final var result = decodeTicket(ticket);
+            val map = getTicketMapInstanceByMetadata(metadata);
+            val ticket = map.get(encTicketId);
+            val result = decodeTicket(ticket);
             if (result != null && result.isExpired()) {
                 LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
                 map.remove(encTicketId);
@@ -86,9 +88,9 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
 
     @Override
     public boolean deleteSingleTicket(final String ticketIdToDelete) {
-        final var encTicketId = encodeTicketId(ticketIdToDelete);
-        final var metadata = this.ticketCatalog.find(ticketIdToDelete);
-        final var map = getTicketMapInstanceByMetadata(metadata);
+        val encTicketId = encodeTicketId(ticketIdToDelete);
+        val metadata = this.ticketCatalog.find(ticketIdToDelete);
+        val map = getTicketMapInstanceByMetadata(metadata);
         return map.remove(encTicketId) != null;
     }
 
@@ -98,7 +100,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             .map(this::getTicketMapInstanceByMetadata)
             .filter(Objects::nonNull)
             .mapToInt(instance -> {
-                final var size = instance.size();
+                val size = instance.size();
                 instance.evictAll();
                 instance.clear();
                 return size;
@@ -145,7 +147,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
 
     private IMap<String, Ticket> getTicketMapInstance(final String mapName) {
         try {
-            final IMap<String, Ticket> inst = hazelcastInstance.getMap(mapName);
+            val inst = hazelcastInstance.<String, Ticket>getMap(mapName);
             LOGGER.debug("Located Hazelcast map instance [{}]", mapName);
             return inst;
         } catch (final Exception e) {

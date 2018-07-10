@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -28,7 +30,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder implements OAuth20Au
 
     @Override
     public View build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
-        final var accessToken = accessTokenGenerator.generate(holder);
+        val accessToken = accessTokenGenerator.generate(holder);
         accessTokenResponseGenerator.generate(context.getRequest(),
                 context.getResponse(),
                 holder.getRegisteredService(), holder.getService(),
@@ -40,7 +42,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder implements OAuth20Au
 
     @Override
     public boolean supports(final J2EContext context) {
-        final var grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+        val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.PASSWORD);
     }
 }

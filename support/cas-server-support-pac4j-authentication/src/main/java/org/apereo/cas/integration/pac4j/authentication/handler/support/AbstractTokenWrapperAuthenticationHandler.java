@@ -1,5 +1,7 @@
 package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
@@ -42,11 +44,11 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
         throws GeneralSecurityException {
         LOGGER.debug("CAS credentials: [{}]", casCredential);
 
-        final var id = this.principalNameTransformer.transform(casCredential.getId());
+        val id = this.principalNameTransformer.transform(casCredential.getId());
         if (id == null) {
             throw new AccountNotFoundException("Id is null.");
         }
-        final var credentials = new TokenCredentials(id);
+        val credentials = new TokenCredentials(id);
         LOGGER.debug("pac4j credentials: [{}]", credentials);
         return credentials;
     }

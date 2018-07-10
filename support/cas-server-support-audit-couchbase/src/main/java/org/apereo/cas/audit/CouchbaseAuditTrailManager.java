@@ -1,5 +1,7 @@
 package org.apereo.cas.audit;
 
+import lombok.val;
+
 import com.couchbase.client.java.document.StringDocument;
 import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.query.N1qlQuery;
@@ -74,26 +76,26 @@ public class CouchbaseAuditTrailManager implements AuditTrailManager {
 
     @SneakyThrows
     private void saveAuditRecord(final AuditActionContext audit) {
-        try (var stringWriter = new StringWriter()) {
+        try (val stringWriter = new StringWriter()) {
             this.serializer.to(stringWriter, audit);
-            final var id = UUID.randomUUID().toString();
-            final var document = StringDocument.create(id, 0, stringWriter.toString());
+            val id = UUID.randomUUID().toString();
+            val document = StringDocument.create(id, 0, stringWriter.toString());
             this.couchbase.getBucket().upsert(document);
         }
     }
 
     @Override
     public Set<AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
-        final var name = this.couchbase.getBucket().name();
-        final var statement = select("*").from(i(name)).where(x("whenActionWasPerformed").gte(x("$whenActionWasPerformed")));
-        final var placeholderValues = JsonObject.create().put("whenActionWasPerformed", DateTimeUtils.dateOf(localDate).getTime());
-        var q = N1qlQuery.parameterized(statement, placeholderValues);
-        final var result = this.couchbase.getBucket().query(q);
+        val name = this.couchbase.getBucket().name();
+        val statement = select("*").from(i(name)).where(x("whenActionWasPerformed").gte(x("$whenActionWasPerformed")));
+        val placeholderValues = JsonObject.create().put("whenActionWasPerformed", DateTimeUtils.dateOf(localDate).getTime());
+        val q = N1qlQuery.parameterized(statement, placeholderValues);
+        val result = this.couchbase.getBucket().query(q);
         return result.allRows()
             .stream()
             .map(row -> {
-                final var json = row.value().toString();
-                final var bucket = JsonObject.fromJson(json).getObject(name);
+                val json = row.value().toString();
+                val bucket = JsonObject.fromJson(json).getObject(name);
                 return new AuditActionContext(bucket.getString("principal"),
                     bucket.getString("resourceOperatedUpon"),
                     bucket.getString("actionPerformed"),

@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
@@ -139,7 +141,7 @@ public class SamlIdPEndpointsConfiguration implements ServiceRegistryExecutionPl
     @ConditionalOnMissingBean(name = "samlIdPObjectSignatureValidator")
     @Bean
     public SamlObjectSignatureValidator samlIdPObjectSignatureValidator() {
-        final var algs = casProperties.getAuthn().getSamlIdp().getAlgs();
+        val algs = casProperties.getAuthn().getSamlIdp().getAlgs();
         return new SamlIdPObjectSignatureValidator(
             algs.getOverrideSignatureReferenceDigestMethods(),
             algs.getOverrideSignatureAlgorithms(),
@@ -153,7 +155,7 @@ public class SamlIdPEndpointsConfiguration implements ServiceRegistryExecutionPl
     @ConditionalOnMissingBean(name = "samlObjectSignatureValidator")
     @Bean
     public SamlObjectSignatureValidator samlObjectSignatureValidator() {
-        final var algs = casProperties.getAuthn().getSamlIdp().getAlgs();
+        val algs = casProperties.getAuthn().getSamlIdp().getAlgs();
         return new SamlObjectSignatureValidator(
             algs.getOverrideSignatureReferenceDigestMethods(),
             algs.getOverrideSignatureAlgorithms(),
@@ -338,16 +340,16 @@ public class SamlIdPEndpointsConfiguration implements ServiceRegistryExecutionPl
 
     @Bean
     public Service samlIdPCallbackService() {
-        final var service = casProperties.getServer().getPrefix()
+        val service = casProperties.getServer().getPrefix()
             .concat(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK.concat(".+"));
         return this.webApplicationServiceFactory.createService(service);
     }
 
     @Override
     public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        final var callbackService = samlIdPCallbackService();
+        val callbackService = samlIdPCallbackService();
         LOGGER.debug("Initializing callback service [{}]", callbackService);
-        final var service = new RegexRegisteredService();
+        val service = new RegexRegisteredService();
         service.setId(Math.abs(RandomUtils.getNativeInstance().nextLong()));
         service.setEvaluationOrder(0);
         service.setName(service.getClass().getSimpleName());

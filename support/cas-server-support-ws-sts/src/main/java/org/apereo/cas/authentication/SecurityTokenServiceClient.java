@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.Bus;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
@@ -26,10 +28,7 @@ public class SecurityTokenServiceClient extends STSClient {
      * @throws Exception the exception
      */
     public Element requestSecurityTokenResponse(final String appliesTo) throws Exception {
-        String action = null;
-        if (isSecureConv) {
-            action = namespace + "/RST/SCT";
-        }
+        val action = isSecureConv ? namespace + "/RST/SCT" : null;
         return requestSecurityTokenResponse(appliesTo, action, "/Issue", null);
     }
 
@@ -45,7 +44,7 @@ public class SecurityTokenServiceClient extends STSClient {
      */
     public Element requestSecurityTokenResponse(final String appliesTo, final String action,
                                                 final String requestType, final SecurityToken target) throws Exception {
-        final var response = issue(appliesTo, null, "/Issue", null);
+        val response = issue(appliesTo, null, "/Issue", null);
         return getDocumentElement(response.getResponse());
     }
 }

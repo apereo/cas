@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -26,7 +28,7 @@ public class GroovyRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkDefaultAuthzStrategyConfig() {
-        final var authz = new GroovyRegisteredServiceAccessStrategy();
+        val authz = new GroovyRegisteredServiceAccessStrategy();
         authz.setGroovyScript("classpath:accessstrategy.groovy");
 
         assertTrue(authz.isServiceAccessAllowed());
@@ -38,11 +40,11 @@ public class GroovyRegisteredServiceAccessStrategyTests {
 
     @Test
     public void verifySerializationToJson() throws IOException {
-        final var authz = new GroovyRegisteredServiceAccessStrategy();
+        val authz = new GroovyRegisteredServiceAccessStrategy();
         authz.setGroovyScript("classpath:accessstrategy.groovy");
         MAPPER.writeValue(JSON_FILE, authz);
 
-        final RegisteredServiceAccessStrategy strategyRead = MAPPER.readValue(JSON_FILE, GroovyRegisteredServiceAccessStrategy.class);
+        val strategyRead = MAPPER.readValue(JSON_FILE, GroovyRegisteredServiceAccessStrategy.class);
         assertEquals(authz, strategyRead);
     }
 }

@@ -2,6 +2,8 @@ package org.apereo.cas.util;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.ReadableInstant;
 
@@ -36,68 +38,39 @@ public class DateTimeUtils {
      * @return the date/time instance
      */
     public static LocalDateTime localDateTimeOf(final String value) {
-        LocalDateTime result;
-        try {
-            result = LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        } catch (final Exception e) {
-            result = null;
-        }
+        var result = FunctionUtils.doAndHandle(
+            () -> LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+            f -> null).get();
 
-        try {
-            result = LocalDateTime.parse(value, DateTimeFormatter.ISO_ZONED_DATE_TIME);
-        } catch (final Exception e) {
-            result = null;
-        }
+        result = FunctionUtils.doIfNull(result,
+            () -> LocalDateTime.parse(value),
+            () -> null).get();
 
-        if (result == null) {
-            try {
-                result = LocalDateTime.parse(value);
-            } catch (final Exception e) {
-                result = null;
-            }
-        }
+        result = FunctionUtils.doIfNull(result,
+            () -> LocalDateTime.parse(value.toUpperCase(), DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a")),
+            () -> null).get();
 
-        if (result == null) {
-            try {
-                result = LocalDateTime.parse(value.toUpperCase(), DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a"));
-            } catch (final Exception e) {
-                result = null;
-            }
-        }
+        result = FunctionUtils.doIfNull(result,
+            () -> LocalDateTime.parse(value.toUpperCase(), DateTimeFormatter.ofPattern("MM/dd/yyyy h:mm a")),
+            () -> null).get();
 
-        if (result == null) {
-            try {
-                result = LocalDateTime.parse(value.toUpperCase(), DateTimeFormatter.ofPattern("MM/dd/yyyy h:mm a"));
-            } catch (final Exception e) {
-                result = null;
-            }
-        }
+        result = FunctionUtils.doIfNull(result,
+            () -> LocalDateTime.parse(value, DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm")),
+            () -> null).get();
 
-        if (result == null) {
-            try {
-                result = LocalDateTime.parse(value, DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm"));
-            } catch (final Exception e) {
-                result = null;
-            }
-        }
+        result = FunctionUtils.doIfNull(result,
+            () -> {
+                val ld = LocalDate.parse(value, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+                return LocalDateTime.of(ld, LocalTime.now());
+            },
+            () -> null).get();
 
-        if (result == null) {
-            try {
-                final var ld = LocalDate.parse(value, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-                result = LocalDateTime.of(ld, LocalTime.now());
-            } catch (final Exception e) {
-                result = null;
-            }
-        }
-
-        if (result == null) {
-            try {
-                final var ld = LocalDate.parse(value);
-                result = LocalDateTime.of(ld, LocalTime.now());
-            } catch (final Exception e) {
-                result = null;
-            }
-        }
+        result = FunctionUtils.doIfNull(result,
+            () -> {
+                val ld = LocalDate.parse(value);
+                return LocalDateTime.of(ld, LocalTime.now());
+            },
+            () -> null).get();
 
         return result;
     }

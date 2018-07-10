@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.surrogate;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -49,7 +51,7 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
                 return true;
             }
             LOGGER.debug("Executing SQL query [{}]", surrogateSearchQuery);
-            final int count = this.jdbcTemplate.queryForObject(surrogateSearchQuery, Integer.class, surrogate.getId(), username);
+            val count = this.jdbcTemplate.queryForObject(surrogateSearchQuery, Integer.class, surrogate.getId(), username);
             return count > 0;
         } catch (final NoResultException e) {
             LOGGER.debug(e.getMessage());
@@ -62,7 +64,7 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
     @Override
     public List<String> getEligibleAccountsForSurrogateToProxy(final String username) {
         try {
-            final var results = this.jdbcTemplate.query(this.surrogateAccountQuery,
+            val results = this.jdbcTemplate.query(this.surrogateAccountQuery,
                 new BeanPropertyRowMapper<>(SurrogateAccount.class), username);
             return results.stream().map(SurrogateAccount::getSurrogateAccount).collect(Collectors.toList());
         } catch (final Exception e) {

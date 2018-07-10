@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.actions;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
@@ -17,7 +18,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link AbstractAuthenticationAction}.
@@ -35,24 +35,24 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final var agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext();
-        final var geoLocation = WebUtils.getHttpServletRequestGeoLocationFromRequestContext();
+        val agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext();
+        val geoLocation = WebUtils.getHttpServletRequestGeoLocationFromRequestContext();
 
         if (geoLocation != null && StringUtils.isNotBlank(agent) && !adaptiveAuthenticationPolicy.apply(agent, geoLocation)) {
-            final var msg = "Adaptive authentication policy does not allow this request for " + agent + " and " + geoLocation;
-            final Map<String, Throwable> map = CollectionUtils.wrap(UnauthorizedAuthenticationException.class.getSimpleName(), new UnauthorizedAuthenticationException(msg));
-            final var error = new AuthenticationException(msg, map, new HashMap<>(0));
+            val msg = "Adaptive authentication policy does not allow this request for " + agent + " and " + geoLocation;
+            val map = CollectionUtils.<String, Throwable>wrap(UnauthorizedAuthenticationException.class.getSimpleName(), new UnauthorizedAuthenticationException(msg));
+            val error = new AuthenticationException(msg, map, new HashMap<>(0));
             return new Event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
                 new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
         }
 
-        final var serviceTicketEvent = this.serviceTicketRequestWebflowEventResolver.resolveSingle(requestContext);
+        val serviceTicketEvent = this.serviceTicketRequestWebflowEventResolver.resolveSingle(requestContext);
         if (serviceTicketEvent != null) {
             fireEventHooks(serviceTicketEvent, requestContext);
             return serviceTicketEvent;
         }
 
-        final var finalEvent = this.initialAuthenticationAttemptWebflowEventResolver.resolveSingle(requestContext);
+        val finalEvent = this.initialAuthenticationAttemptWebflowEventResolver.resolveSingle(requestContext);
         fireEventHooks(finalEvent, requestContext);
         return finalEvent;
     }

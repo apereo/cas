@@ -11,6 +11,7 @@
         <module name="NonEmptyAtclauseDescription">
             <property name="severity" value="error"/>
         </module>
+        <module name="LambdaParameterName"/>
         <module name="JavadocMethod">
             <property name="scope" value="protected"/>
             <property name="severity" value="error"/>
@@ -330,11 +331,11 @@
         </module>
         <module name="FinalParameters">
             <property name="severity" value="error"/>
-            <property name="tokens" value="METHOD_DEF, CTOR_DEF, LITERAL_CATCH, FOR_EACH_CLAUSE"/>
+            <property name="tokens" value="METHOD_DEF,CTOR_DEF,LITERAL_CATCH"/>
         </module>
         <module name="FinalLocalVariable">
             <property name="severity" value="error"/>
-            <property name="tokens" value="PARAMETER_DEF, VARIABLE_DEF"/>
+            <property name="tokens" value="PARAMETER_DEF"/>
             <property name="validateEnhancedForLoopVariable" value="true"/>
         </module>
         <module name="TodoComment">
@@ -487,6 +488,36 @@
             <property name="message"
                       value="Consider not checking for logging levels. Let the logging framework handle that."/>
         </module>
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="useLombokVarForGenerics"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="^(?!private|public)*\s+final\s+\w+&lt;.+&gt;\s+\w+(\s+)*(=.+)*;"/>
+            <property name="message" value="Use lombok.val when declaring collections with generics"/>
+        </module>
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="useLombokVaLForFinalVar"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="final\s+var\s+"/>
+            <property name="message" value="Use lombok.val when declaring final variable definitions."/>
+        </module>
+
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="useLombokVar"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="^\s*(?!return|throw|private|public|protected|val)(final\s+)*\b(?!var)\w+\b\s*(\b[a-z]\w*\b)(\s*=.+)*;"/>
+            <property name="message" value="Use lombok.val or JDK var keyword when declaring variable definitions."/>
+        </module>
+
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="valForLoop"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="\s*for\s*\((final\s+)*(?!val|var)\w+\s+\w+\s*:"/>
+            <property name="message" value="Use lombok.val when declaring variable definitions for loops."/>
+        </module>
     </module>
 
     <!-- Checker module checks -->
@@ -551,14 +582,12 @@
         <property name="format" value="import\s+static\s+org\.junit\.Assert\.\w+"/>
         <property name="message" value="JUnit Assert methods MUST be imported statically with a *"/>
     </module>
-
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Arrays.asList() method call"/>
         <property name="severity" value="error"/>
         <property name="format" value="Lists\.newArrayList\(.+"/>
         <property name="message" value="Use Arrays.asList() or Collections.singletonList() instead."/>
     </module>
-
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Mockito static import"/>
         <property name="severity" value="error"/>

@@ -1,5 +1,7 @@
 package org.apereo.cas.util.cipher;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -69,23 +71,23 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     @SneakyThrows
     public byte[] encode(final byte[] value, final Object[] parameters) {
         this.aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey);
-        final var result = this.aesCipher.doFinal(value);
+        val result = this.aesCipher.doFinal(value);
         return sign(result);
     }
 
     @Override
     @SneakyThrows
     public byte[] decode(final byte[] value, final Object[] parameters) {
-        final var verifiedValue = verifySignature(value);
+        val verifiedValue = verifySignature(value);
         this.aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey);
-        final var bytePlainText = aesCipher.doFinal(verifiedValue);
+        val bytePlainText = aesCipher.doFinal(verifiedValue);
         return bytePlainText;
     }
 
     @SneakyThrows
     private static String generateOctetJsonWebKeyOfSize(final int size) {
-        final var octetKey = OctJwkGenerator.generateJwk(size);
-        final var params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
+        val octetKey = OctJwkGenerator.generateJwk(size);
+        val params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
         return params.get("k").toString();
     }
 
@@ -108,16 +110,13 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         if (StringUtils.isBlank(encryptionSecretKey)) {
             LOGGER.warn("Secret key for encryption is not defined under [{}]. CAS will attempt to auto-generate the encryption key",
                 getEncryptionKeySetting());
-            final var key = new Base64RandomStringGenerator(encryptionKeySize).getNewString();
+            val key = new Base64RandomStringGenerator(encryptionKeySize).getNewString();
             LOGGER.warn("Generated encryption key [{}] of size [{}]. The generated key MUST be added to CAS settings under setting [{}].",
                 key, encryptionKeySize, getEncryptionKeySetting());
             encryptionKey = EncodingUtils.decodeBase64(key);
         } else {
-            final var base64 = EncodingUtils.isBase64(encryptionSecretKey);
-            var key = new byte[0];
-            if (base64) {
-                key = EncodingUtils.decodeBase64(encryptionSecretKey);
-            }
+            val base64 = EncodingUtils.isBase64(encryptionSecretKey);
+            val key = base64 ? EncodingUtils.decodeBase64(encryptionSecretKey) : new byte[0];
             if (base64 && key.length == encryptionKeySize) {
                 LOGGER.debug("Secret key for encryption defined under [{}] is Base64 encoded.", getEncryptionKeySetting());
                 encryptionKey = key;

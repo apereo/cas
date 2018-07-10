@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -25,13 +27,13 @@ public class ClearWebflowCredentialAction extends AbstractAction {
     protected Event doExecute(final RequestContext requestContext) {
         WebUtils.putCredential(requestContext, null);
 
-        final var current = requestContext.getCurrentEvent().getId();
+        val current = requestContext.getCurrentEvent().getId();
         if (current.equalsIgnoreCase(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)
             || current.equalsIgnoreCase(CasWebflowConstants.TRANSITION_ID_ERROR)) {
             LOGGER.debug("Current event signaled a failure. Recreating credentials instance from the context");
 
-            final var flow = (Flow) requestContext.getFlowExecutionContext().getDefinition();
-            final var var = flow.getVariable(CasWebflowConstants.VAR_ID_CREDENTIAL);
+            val flow = (Flow) requestContext.getFlowExecutionContext().getDefinition();
+            val var = flow.getVariable(CasWebflowConstants.VAR_ID_CREDENTIAL);
             var.create(requestContext);
 
         }

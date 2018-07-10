@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
@@ -15,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -60,12 +61,12 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      */
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> principal, final Optional<AuthenticationHandler> handler) {
-        final List<Principal> principals = new ArrayList<>();
+        val principals = new ArrayList<Principal>();
         chain.stream()
             .filter(resolver -> resolver.supports(credential))
             .forEach(resolver -> {
                 LOGGER.debug("Invoking principal resolver [{}]", resolver);
-                final var p = resolver.resolve(credential, principal, handler);
+                val p = resolver.resolve(credential, principal, handler);
                 if (p != null) {
                     principals.add(p);
                 }
@@ -74,11 +75,11 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
             LOGGER.warn("None of the principal resolvers in the chain were able to produce a principal");
             return NullPrincipal.getInstance();
         }
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         principals.forEach(p -> {
             if (p != null) {
                 LOGGER.debug("Resolved principal [{}]", p);
-                final var principalAttributes = p.getAttributes();
+                val principalAttributes = p.getAttributes();
                 if (principalAttributes != null && !principalAttributes.isEmpty()) {
                     LOGGER.debug("Adding attributes [{}] for the final principal", principalAttributes);
                     attributes.putAll(principalAttributes);
@@ -89,12 +90,12 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
             .stream()
             .map(p -> p.getId().trim().toLowerCase())
             .collect(Collectors.toCollection(LinkedHashSet::new));
-        final var count = principalIds.size();
+        val count = principalIds.size();
         if (count > 1) {
             LOGGER.debug("Principal resolvers produced [{}] distinct principal IDs [{}]; last resolved principal ID will be the final principal ID", count, principalIds);
         }
-        final var principalId = principals.get(principals.size() - 1).getId();
-        final var finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
+        val principalId = principals.get(principals.size() - 1).getId();
+        val finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
         LOGGER.debug("Final principal constructed by the chain of resolvers is [{}]", finalPrincipal);
         return finalPrincipal;
     }
@@ -113,7 +114,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
 
     @Override
     public IPersonAttributeDao getAttributeRepository() {
-        final var dao = new MergingPersonAttributeDaoImpl();
+        val dao = new MergingPersonAttributeDaoImpl();
         dao.setPersonAttributeDaos(this.chain.stream().map(PrincipalResolver::getAttributeRepository).collect(Collectors.toList()));
         return dao;
     }

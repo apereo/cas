@@ -1319,7 +1319,6 @@ To learn more about this topic, [please review this guide](Cassandra-Authenticat
 # cas.authn.cassandra.keyspace=
 # cas.authn.cassandra.contactPoints=localhost1,localhost2
 # cas.authn.cassandra.localDc=
-# cas.authn.cassandra.shuffleReplicas=true
 # cas.authn.cassandra.retryPolicy=DEFAULT_RETRY_POLICY|DOWNGRADING_CONSISTENCY_RETRY_POLICY|FALLTHROUGH_RETRY_POLICY
 # cas.authn.cassandra.compression=LZ4|SNAPPY|NONE
 # cas.authn.cassandra.consistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
@@ -2507,15 +2506,17 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.dynamicClientRegistrationMode=OPEN|PROTECTED
 
 # cas.authn.oidc.subjectTypes=public,pairwise
-
-# Supported scopes
 # cas.authn.oidc.scopes=openid,profile,email,address,phone,offline_access
-
-# Supported claims
 # cas.authn.oidc.claims=sub,name,preferred_username,family_name, \
 #    given_name,middle_name,given_name,profile, \
 #    picture,nickname,website,zoneinfo,locale,updated_at,birthdate, \
 #    email,email_verified,phone_number,phone_number_verified,address
+
+# cas.authn.oidc.responseTypesSupported=code,token,id_token token
+# cas.authn.oidc.introspectionSupportedAuthenticationMethods=client_secret_basic
+# cas.authn.oidc.claimTypesSupported=normal
+# cas.authn.oidc.grantTypesSupported=authorization_code,password,client_credentials,refresh_token
+# cas.authn.oidc.idTokenSigningAlgValuesSupported=none,RS256
 
 # Define custom scopes and claims
 # cas.authn.oidc.userDefinedScopes.scope1=cn,givenName,photos,customAttribute
@@ -2593,18 +2594,36 @@ Delegate authentication to an generic OAuth2 server. Common settings for this id
 
 ### OpenID Connect
 
-Delegate authentication to an external OpenID Connect server. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.oidc[0]`.
+Delegate authentication to an external OpenID Connect server.
+
+Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) 
+under the configuration key `cas.authn.pac4j.oidc[0]`.
+
+#### Google
+
+Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
+under the configuration key `cas.authn.pac4j.oidc[0].google`.
+
+#### Azure AD
+
+Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
+under the configuration key `cas.authn.pac4j.oidc[0].azure`.
+
+The following settings specifically apply to this provider:
 
 ```properties
-# cas.authn.pac4j.oidc[0].type=KEYCLOAK|GOOGLE|AZURE|GENERIC
-# cas.authn.pac4j.oidc[0].discoveryUri=
-# cas.authn.pac4j.oidc[0].logoutUrl=
-# cas.authn.pac4j.oidc[0].maxClockSkew=
-# cas.authn.pac4j.oidc[0].scope=
-# cas.authn.pac4j.oidc[0].useNonce=
-# cas.authn.pac4j.oidc[0].preferredJwsAlgorithm=
-# cas.authn.pac4j.oidc[0].customParams.param1=value1
+# cas.authn.pac4j.oidc[0].azure.tenant=tenant-name
 ```
+
+#### KeyCloak
+
+Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
+under the configuration key `cas.authn.pac4j.oidc[0].keycloak`.
+
+#### Generic
+
+Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings) 
+under the configuration key `cas.authn.pac4j.oidc[0].generic`.
 
 ### SAML2
 
@@ -2633,6 +2652,8 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].passive=false
 
 # cas.authn.pac4j.saml[0].wantsAssertionsSigned=
+# cas.authn.pac4j.saml[0].principalIdAttribute=eduPersonPrincipalName
+# cas.authn.pac4j.saml[0].useNameQualifier=true
 # cas.authn.pac4j.saml[0].attributeConsumingServiceIndex=
 # cas.authn.pac4j.saml[0].assertionConsumerServiceIndex=-1
 ```

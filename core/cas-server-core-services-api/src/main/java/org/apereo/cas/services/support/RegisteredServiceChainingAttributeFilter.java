@@ -3,6 +3,7 @@ package org.apereo.cas.services.support;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.springframework.core.OrderComparator;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class RegisteredServiceChainingAttributeFilter implements RegisteredServi
     @Override
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
         OrderComparator.sort(this.filters);
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         filters.forEach(policy -> attributes.putAll(policy.filter(givenAttributes)));
         return attributes;
     }

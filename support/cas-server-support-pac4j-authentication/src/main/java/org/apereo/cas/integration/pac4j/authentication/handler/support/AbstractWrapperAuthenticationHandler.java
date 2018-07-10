@@ -1,5 +1,7 @@
 package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
+import lombok.val;
+
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +15,6 @@ import org.apereo.cas.util.Pac4jUtils;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.profile.creator.AuthenticatorProfileCreator;
 import org.pac4j.core.profile.creator.ProfileCreator;
 import org.pac4j.core.util.InitializableObject;
@@ -50,16 +51,16 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
-        final var credentials = convertToPac4jCredentials((I) credential);
+        val credentials = convertToPac4jCredentials((I) credential);
         LOGGER.debug("credentials: [{}]", credentials);
         try {
             @NonNull
-            final var authenticator = getAuthenticator(credential);
+            val authenticator = getAuthenticator(credential);
             if (authenticator instanceof InitializableObject) {
                 ((InitializableObject) authenticator).init();
             }
             authenticator.validate(credentials, getWebContext());
-            final UserProfile profile = this.profileCreator.create(credentials, getWebContext());
+            val profile = this.profileCreator.create(credentials, getWebContext());
             LOGGER.debug("profile: [{}]", profile);
             return createResult(new ClientCredential(credentials, authenticator.getClass().getSimpleName()), profile);
         } catch (final Exception e) {

@@ -24,6 +24,7 @@ rebel.xml
 *.log.gz
 node_modules/
 gruntfile.js
+fileTemplates/
 nodejs
 .gradle/
 build/

@@ -1,7 +1,8 @@
-package org.apereo.cas.configuration.model.support.pac4j;
+package org.apereo.cas.configuration.model.support.pac4j.saml;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -122,4 +123,17 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * A negative value de-activates the selection process and is the default.
      */
     private int assertionConsumerServiceIndex = -1;
+
+    /**
+     * Whether name qualifiers should be produced
+     * in the final saml response.
+     */
+    private boolean useNameQualifier = true;
+
+    /**
+     * The attribute found in the saml response
+     * that may be used to establish the authenticated
+     * user and build a profile for CAS.
+     */
+    private String principalIdAttribute;
 }

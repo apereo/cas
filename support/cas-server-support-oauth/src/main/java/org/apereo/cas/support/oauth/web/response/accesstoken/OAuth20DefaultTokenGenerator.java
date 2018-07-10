@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web.response.accesstoken;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -15,6 +16,7 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.function.FunctionUtils;
 
 /**
  * This is {@link OAuth20DefaultTokenGenerator}.
@@ -45,13 +47,13 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     @Override
     public Pair<AccessToken, RefreshToken> generate(final AccessTokenRequestDataHolder holder) {
         LOGGER.debug("Creating refresh token for [{}]", holder.getService());
-        final var authn = DefaultAuthenticationBuilder
+        val authn = DefaultAuthenticationBuilder
             .newInstance(holder.getAuthentication())
             .addAttribute(OAuth20Constants.GRANT_TYPE, holder.getGrantType().toString())
             .build();
 
         LOGGER.debug("Creating access token for [{}]", holder);
-        final var accessToken = this.accessTokenFactory.create(holder.getService(),
+        val accessToken = this.accessTokenFactory.create(holder.getService(),
             authn, holder.getTicketGrantingTicket(), holder.getScopes());
 
         LOGGER.debug("Created access token [{}]", accessToken);
@@ -59,7 +61,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         LOGGER.debug("Added access token [{}] to registry", accessToken);
 
         if (holder.getToken() instanceof OAuthCode) {
-            final var codeState = TicketState.class.cast(holder.getToken());
+            val codeState = TicketState.class.cast(holder.getToken());
             codeState.update();
 
             if (holder.getToken().isExpired()) {
@@ -70,13 +72,12 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             this.ticketRegistry.updateTicket(holder.getTicketGrantingTicket());
         }
 
-        RefreshToken refreshToken = null;
-        if (holder.isGenerateRefreshToken()) {
-            refreshToken = generateRefreshToken(holder);
-            LOGGER.debug("Refresh Token: [{}]", refreshToken);
-        } else {
-            LOGGER.debug("Service [{}] is not able/allowed to receive refresh tokens", holder.getService());
-        }
+        val refreshToken = FunctionUtils.doIf(holder.isGenerateRefreshToken(),
+            () -> generateRefreshToken(holder),
+            () -> {
+                LOGGER.debug("Service [{}] is not able/allowed to receive refresh tokens", holder.getService());
+                return null;
+            }).get();
 
         return Pair.of(accessToken, refreshToken);
     }
@@ -99,7 +100,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
 
     private RefreshToken generateRefreshToken(final AccessTokenRequestDataHolder responseHolder) {
         LOGGER.debug("Creating refresh token for [{}]", responseHolder.getService());
-        final var refreshToken = this.refreshTokenFactory.create(responseHolder.getService(),
+        val refreshToken = this.refreshTokenFactory.create(responseHolder.getService(),
             responseHolder.getAuthentication(), responseHolder.getTicketGrantingTicket(), responseHolder.getScopes());
         LOGGER.debug("Adding refresh token [{}] to the registry", refreshToken);
         addTicketToRegistry(refreshToken, responseHolder.getTicketGrantingTicket());

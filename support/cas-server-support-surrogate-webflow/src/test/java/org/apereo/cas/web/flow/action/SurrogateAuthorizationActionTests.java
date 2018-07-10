@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.action;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.PrincipalException;
@@ -43,14 +45,14 @@ public class SurrogateAuthorizationActionTests extends BaseSurrogateInitialAuthe
     @Test
     public void verifyAuthorized() {
         try {
-            final var context = new MockRequestContext();
+            val context = new MockRequestContext();
             WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService());
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
-            final var registeredService = CoreAuthenticationTestUtils.getRegisteredService();
-            final var strategy = new SurrogateRegisteredServiceAccessStrategy();
+            val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+            val strategy = new SurrogateRegisteredServiceAccessStrategy();
             when(registeredService.getAccessStrategy()).thenReturn(strategy);
             WebUtils.putRegisteredService(context, registeredService);
-            final var request = new MockHttpServletRequest();
+            val request = new MockHttpServletRequest();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
             assertEquals("success", surrogateAuthorizationCheck.execute(context).getId());
         } catch (final Exception e) {
@@ -61,22 +63,22 @@ public class SurrogateAuthorizationActionTests extends BaseSurrogateInitialAuthe
     @Test
     @SneakyThrows
     public void verifyNotAuthorized() {
-        final var context = new MockRequestContext();
+        val context = new MockRequestContext();
         WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
-        final Map attributes = new LinkedHashMap<>();
+        val attributes = new LinkedHashMap<String, Object>();
         attributes.put(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true);
         attributes.putAll(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap());
 
-        final var p = CoreAuthenticationTestUtils.getPrincipal("casuser", attributes);
+        val p = CoreAuthenticationTestUtils.getPrincipal("casuser", (Map) attributes);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(p), context);
-        final var registeredService = CoreAuthenticationTestUtils.getRegisteredService();
-        final var strategy = new SurrogateRegisteredServiceAccessStrategy();
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        val strategy = new SurrogateRegisteredServiceAccessStrategy();
         strategy.setSurrogateEnabled(true);
         strategy.setSurrogateRequiredAttributes(CollectionUtils.wrap("surrogateAttribute", CollectionUtils.wrapSet("someValue")));
         when(registeredService.getAccessStrategy()).thenReturn(strategy);
         WebUtils.putRegisteredService(context, registeredService);
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         thrown.expect(PrincipalException.class);
         surrogateAuthorizationCheck.execute(context);

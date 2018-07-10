@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.authentication.Credential;
@@ -37,8 +39,8 @@ public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonI
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final var certificates = (X509Certificate[]) request.getAttribute(REQUEST_ATTRIBUTE_X509_CERTIFICATE);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val certificates = (X509Certificate[]) request.getAttribute(REQUEST_ATTRIBUTE_X509_CERTIFICATE);
 
         if (certificates == null || certificates.length == 0) {
             LOGGER.debug("Certificates not found in request attribute: {}", REQUEST_ATTRIBUTE_X509_CERTIFICATE);

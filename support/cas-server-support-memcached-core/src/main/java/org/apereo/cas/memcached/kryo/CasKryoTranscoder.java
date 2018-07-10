@@ -1,5 +1,7 @@
 package org.apereo.cas.memcached.kryo;
 
+import lombok.val;
+
 import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
@@ -48,15 +50,15 @@ public class CasKryoTranscoder implements Transcoder<Object> {
 
     @Override
     public CachedData encode(final Object obj) {
-        try (var kryo = this.kryoPool.borrow();
-             var byteStream = new ByteArrayOutputStream();
-             var output = new Output(byteStream)) {
+        try (val kryo = this.kryoPool.borrow();
+             val byteStream = new ByteArrayOutputStream();
+             val output = new Output(byteStream)) {
             if (obj != null) {
                 LOGGER.trace("Writing object [{}] to memcached ", obj.getClass());
             }
             kryo.writeClassAndObject(output, obj);
             output.flush();
-            final var bytes = byteStream.toByteArray();
+            val bytes = byteStream.toByteArray();
             return new CachedData(0, bytes, bytes.length);
         } catch (final Exception exception) {
             throw new KryoException(exception);
@@ -65,9 +67,9 @@ public class CasKryoTranscoder implements Transcoder<Object> {
 
     @Override
     public Object decode(final CachedData d) {
-        final var bytes = d.getData();
-        try (var kryo = this.kryoPool.borrow();
-             var input = new Input(new ByteArrayInputStream(bytes))) {
+        val bytes = d.getData();
+        try (val kryo = this.kryoPool.borrow();
+             val input = new Input(new ByteArrayInputStream(bytes))) {
             return kryo.readClassAndObject(input);
         } catch (final Exception exception) {
             throw new KryoException(exception);

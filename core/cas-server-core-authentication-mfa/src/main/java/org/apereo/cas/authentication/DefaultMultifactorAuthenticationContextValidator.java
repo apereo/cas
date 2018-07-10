@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -48,17 +49,17 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
     public Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validate(final Authentication authentication,
                                                                                final String requestedContext,
                                                                                final RegisteredService service) {
-        final var attributes = authentication.getAttributes();
-        final var ctxAttr = attributes.get(this.authenticationContextAttribute);
-        final Collection<Object> contexts = CollectionUtils.toCollection(ctxAttr);
+        val attributes = authentication.getAttributes();
+        val ctxAttr = attributes.get(this.authenticationContextAttribute);
+        val contexts = CollectionUtils.toCollection(ctxAttr);
         LOGGER.debug("Attempting to match requested authentication context [{}] against [{}]", requestedContext, contexts);
-        final var providerMap =
+        val providerMap =
             MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null) {
             LOGGER.debug("No multifactor authentication providers are configured");
             return Pair.of(Boolean.FALSE, Optional.empty());
         }
-        final var requestedProvider = locateRequestedProvider(providerMap.values(), requestedContext);
+        val requestedProvider = locateRequestedProvider(providerMap.values(), requestedContext);
         if (!requestedProvider.isPresent()) {
             LOGGER.debug("Requested authentication provider cannot be recognized.");
             return Pair.of(Boolean.FALSE, Optional.empty());
@@ -73,8 +74,8 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
         }
         if (attributes.containsKey(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA)
             && attributes.containsKey(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER)) {
-            final boolean isBypass = Boolean.class.cast(attributes.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA));
-            final var bypassedId = attributes.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER).toString();
+            val isBypass = Boolean.class.cast(attributes.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA));
+            val bypassedId = attributes.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER).toString();
             LOGGER.debug("Found multifactor authentication bypass attributes for provider [{}]", bypassedId);
             if (isBypass && StringUtils.equals(bypassedId, requestedContext)) {
                 LOGGER.debug("Requested authentication context [{}] is satisfied given mfa was bypassed for the authentication attempt", requestedContext);
@@ -83,17 +84,17 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
             LOGGER.debug("Either multifactor authentication was not bypassed or the requested context [{}] does not match the bypassed provider [{}]",
                 requestedProvider, bypassedId);
         }
-        final var satisfiedProviders = getSatisfiedAuthenticationProviders(authentication, providerMap.values());
+        val satisfiedProviders = getSatisfiedAuthenticationProviders(authentication, providerMap.values());
         if (satisfiedProviders == null) {
             LOGGER.warn("No satisfied multifactor authentication providers are recorded in the current authentication context.");
             return Pair.of(Boolean.FALSE, requestedProvider);
         }
         if (!satisfiedProviders.isEmpty()) {
-            final var providers = satisfiedProviders.toArray(new MultifactorAuthenticationProvider[] {});
+            val providers = satisfiedProviders.toArray(new MultifactorAuthenticationProvider[]{});
             OrderComparator.sortIfNecessary(providers);
-            final var result = Arrays.stream(providers)
+            val result = Arrays.stream(providers)
                 .filter(provider -> {
-                    final var p = requestedProvider.get();
+                    val p = requestedProvider.get();
                     return provider.equals(p) || provider.getOrder() >= p.getOrder();
                 })
                 .findFirst();
@@ -104,7 +105,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
             }
         }
         LOGGER.debug("No multifactor providers could be located to satisfy the requested context for [{}]", requestedProvider);
-        final var mode = getMultifactorFailureModeForService(service);
+        val mode = getMultifactorFailureModeForService(service);
         if (mode == RegisteredServiceMultifactorPolicy.FailureModes.PHANTOM) {
             if (!requestedProvider.get().isAvailable(service)) {
                 LOGGER.debug("Service [{}] is configured to use a [{}] failure mode for multifactor authentication policy. "
@@ -126,7 +127,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
 
     private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(final Authentication authentication,
                                                                                               final Collection<MultifactorAuthenticationProvider> providers) {
-        final Collection<Object> contexts = CollectionUtils.toCollection(authentication.getAttributes().get(this.authenticationContextAttribute));
+        val contexts = CollectionUtils.toCollection(authentication.getAttributes().get(this.authenticationContextAttribute));
         if (contexts == null || contexts.isEmpty()) {
             LOGGER.debug("No authentication context could be determined based on authentication attribute [{}]", this.authenticationContextAttribute);
             return null;
@@ -142,7 +143,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
     }
 
     private RegisteredServiceMultifactorPolicy.FailureModes getMultifactorFailureModeForService(final RegisteredService service) {
-        final var policy = service.getMultifactorPolicy();
+        val policy = service.getMultifactorPolicy();
         if (policy == null || policy.getFailureMode() == null) {
             return RegisteredServiceMultifactorPolicy.FailureModes.valueOf(this.globalFailureMode);
         }

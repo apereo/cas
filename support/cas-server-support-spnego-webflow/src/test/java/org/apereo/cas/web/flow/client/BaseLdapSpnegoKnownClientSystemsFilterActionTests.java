@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.client;
 
+import lombok.val;
+
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.web.flow.AbstractSpnegoTests;
 import org.junit.Test;
@@ -39,14 +41,14 @@ public abstract class BaseLdapSpnegoKnownClientSystemsFilterActionTests extends 
 
     @Test
     public void ensureLdapAttributeShouldDoSpnego() throws Exception {
-        final var ctx = new MockRequestContext();
-        final var req = new MockHttpServletRequest();
+        val ctx = new MockRequestContext();
+        val req = new MockHttpServletRequest();
         req.setRemoteAddr("localhost");
-        final var extCtx = new ServletExternalContext(
+        val extCtx = new ServletExternalContext(
             new MockServletContext(), req,
             new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
-        final var ev = ldapSpnegoClientAction.execute(ctx);
+        val ev = ldapSpnegoClientAction.execute(ctx);
         assertEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
     }
 }

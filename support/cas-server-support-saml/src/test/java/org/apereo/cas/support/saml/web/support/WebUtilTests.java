@@ -1,8 +1,9 @@
 package org.apereo.cas.support.saml.web.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.util.HttpRequestUtils;
@@ -24,12 +25,12 @@ public class WebUtilTests {
 
     @Test
     public void verifyFindService() {
-        final var casArgumentExtractor =
+        val casArgumentExtractor =
             new DefaultArgumentExtractor(new WebApplicationServiceFactory());
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
 
-        final Service service = HttpRequestUtils.getService(Arrays.asList(casArgumentExtractor), request);
+        val service = HttpRequestUtils.getService(Arrays.asList(casArgumentExtractor), request);
 
         assertNotNull(service);
         assertEquals("test", service.getId());
@@ -37,10 +38,10 @@ public class WebUtilTests {
 
     @Test
     public void verifyFoundNoService() {
-        final var casArgumentExtractor = new DefaultArgumentExtractor(new SamlServiceFactory(null));
-        final var request = new MockHttpServletRequest();
+        val casArgumentExtractor = new DefaultArgumentExtractor(new SamlServiceFactory(null));
+        val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
-        final Service service = HttpRequestUtils.getService(Collections.singletonList(casArgumentExtractor), request);
+        val service = HttpRequestUtils.getService(Collections.singletonList(casArgumentExtractor), request);
         assertNull(service);
     }
 }

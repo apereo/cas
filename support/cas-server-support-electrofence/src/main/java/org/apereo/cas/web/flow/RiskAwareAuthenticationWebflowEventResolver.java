@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
@@ -57,9 +59,9 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final var service = WebUtils.getRegisteredService(context);
-        final var authentication = WebUtils.getAuthentication(context);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val service = WebUtils.getRegisteredService(context);
+        val authentication = WebUtils.getAuthentication(context);
 
         if (service == null || authentication == null) {
             LOGGER.debug("No service or authentication is available to determine event for principal");
@@ -83,7 +85,7 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
         this.eventPublisher.publishEvent(new CasRiskBasedAuthenticationEvaluationStartedEvent(this, authentication, service));
         
         LOGGER.debug("Evaluating possible suspicious authentication attempt for [{}]", authentication.getPrincipal());
-        final var score = authenticationRiskEvaluator.eval(authentication, service, request);
+        val score = authenticationRiskEvaluator.eval(authentication, service, request);
 
         if (score.isRiskGreaterThan(threshold)) {
             this.eventPublisher.publishEvent(new CasRiskyAuthenticationDetectedEvent(this, authentication, service, score));
@@ -94,7 +96,7 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
                     threshold);
 
             this.eventPublisher.publishEvent(new CasRiskBasedAuthenticationMitigationStartedEvent(this, authentication, service, score));
-            final var res = authenticationRiskMitigator.mitigate(authentication, service, score, request);
+            val res = authenticationRiskMitigator.mitigate(authentication, service, score, request);
             this.eventPublisher.publishEvent(new CasRiskyAuthenticationMitigatedEvent(this, authentication, service, res));
             
             return CollectionUtils.wrapSet(res.getResult());

@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apereo.cas.authentication.DefaultCasSslContext;
@@ -26,7 +28,7 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
 
     @Before
     public void prepareHttpClient() {
-        final var clientFactory = new SimpleHttpClientFactoryBean();
+        val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(new SSLConnectionSocketFactory(
                 new DefaultCasSslContext(TRUST_STORE, TRUST_STORE_PSW, KeyStore.getDefaultType()).getSslContext()));
         this.client = clientFactory.getObject();
@@ -34,13 +36,13 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
 
     @Test
     public void verifySuccessfulConnection() {
-        final var valid = client.isValidEndPoint("https://www.github.com");
+        val valid = client.isValidEndPoint("https://www.github.com");
         assertTrue(valid);
     }
 
     @Test
     public void verifySuccessfulConnectionWithCustomSSLCert() {
-        final var valid = client.isValidEndPoint("https://self-signed.badssl.com");
+        val valid = client.isValidEndPoint("https://self-signed.badssl.com");
         assertTrue(valid);
     }
 

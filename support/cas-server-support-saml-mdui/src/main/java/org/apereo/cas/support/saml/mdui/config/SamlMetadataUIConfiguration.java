@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.mdui.config;
 
+import lombok.val;
+
 import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +31,6 @@ import org.springframework.core.io.ResourceLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -61,8 +62,8 @@ public class SamlMetadataUIConfiguration {
     }
 
     private MetadataResolverAdapter configureAdapter(final AbstractMetadataResolverAdapter adapter) {
-        final Map<Resource, MetadataFilterChain> resources = new HashMap<>();
-        final var chain = new MetadataFilterChain();
+        val resources = new HashMap<Resource, MetadataFilterChain>();
+        val chain = new MetadataFilterChain();
         casProperties.getSamlMetadataUi().getResources().forEach(Unchecked.consumer(r -> configureResource(resources, chain, r)));
         adapter.setRequireValidMetadata(casProperties.getSamlMetadataUi().isRequireValidMetadata());
         adapter.setMetadataResources(resources);
@@ -72,21 +73,21 @@ public class SamlMetadataUIConfiguration {
 
     private void configureResource(final Map<Resource, MetadataFilterChain> resources,
                                    final MetadataFilterChain chain, final String r) {
-        final var splitArray = org.springframework.util.StringUtils.commaDelimitedListToStringArray(r);
+        val splitArray = org.springframework.util.StringUtils.commaDelimitedListToStringArray(r);
 
         Arrays.stream(splitArray).forEach(Unchecked.consumer(entry -> {
-            final var arr = Splitter.on(DEFAULT_SEPARATOR).splitToList(entry);
-            final var metadataFile = arr.get(0);
-            final var signingKey = arr.size() > 1 ? arr.get(1) : null;
+            val arr = Splitter.on(DEFAULT_SEPARATOR).splitToList(entry);
+            val metadataFile = arr.get(0);
+            val signingKey = arr.size() > 1 ? arr.get(1) : null;
 
-            final List<MetadataFilter> filters = new ArrayList<>();
+            val filters = new ArrayList<MetadataFilter>();
             if (casProperties.getSamlMetadataUi().getMaxValidity() > 0) {
                 filters.add(new RequiredValidUntilFilter(casProperties.getSamlMetadataUi().getMaxValidity()));
             }
 
             var addResource = true;
             if (StringUtils.isNotBlank(signingKey)) {
-                final var sigFilter = SamlUtils.buildSignatureValidationFilter(this.resourceLoader, signingKey);
+                val sigFilter = SamlUtils.buildSignatureValidationFilter(this.resourceLoader, signingKey);
                 if (sigFilter != null) {
                     sigFilter.setRequireSignedRoot(casProperties.getSamlMetadataUi().isRequireSignedRoot());
                     filters.add(sigFilter);
@@ -97,7 +98,7 @@ public class SamlMetadataUIConfiguration {
             }
             chain.setFilters(filters);
 
-            final var resource = this.resourceLoader.getResource(metadataFile);
+            val resource = this.resourceLoader.getResource(metadataFile);
             if (addResource && ResourceUtils.doesResourceExist(resource)) {
                 resources.put(resource, chain);
             } else {
@@ -107,13 +108,13 @@ public class SamlMetadataUIConfiguration {
     }
 
     private MetadataResolverAdapter getDynamicMetadataResolverAdapter() {
-        final var adapter = new DynamicMetadataResolverAdapter();
+        val adapter = new DynamicMetadataResolverAdapter();
         configureAdapter(adapter);
         return adapter;
     }
 
     private MetadataResolverAdapter getStaticMetadataResolverAdapter() {
-        final var adapter = new StaticMetadataResolverAdapter();
+        val adapter = new StaticMetadataResolverAdapter();
         configureAdapter(adapter);
         adapter.buildMetadataResolverAggregate();
         return adapter;

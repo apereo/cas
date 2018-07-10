@@ -1,5 +1,7 @@
 package org.apereo.cas.web.view;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -11,7 +13,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -31,7 +32,7 @@ public class Cas10ResponseViewTests {
     @Before
     public void initialize() {
         this.model = new HashMap<>();
-        final List<Authentication> list = new ArrayList<>();
+        val list = new ArrayList<Authentication>();
         list.add(CoreAuthenticationTestUtils.getAuthentication("someothername"));
         this.model.put("assertion", new DefaultAssertionBuilder(
                 CoreAuthenticationTestUtils.getAuthentication()).with(list).with(
@@ -40,8 +41,8 @@ public class Cas10ResponseViewTests {
 
     @Test
     public void verifySuccessView() throws Exception {
-        final var response = new MockHttpServletResponse();
-        final var view = new Cas10ResponseView(true, null,
+        val response = new MockHttpServletResponse();
+        val view = new Cas10ResponseView(true, null,
                 null, null, null);
         view.render(this.model, new MockHttpServletRequest(), response);
         assertEquals("yes\ntest\n", response.getContentAsString());
@@ -49,8 +50,8 @@ public class Cas10ResponseViewTests {
 
     @Test
     public void verifyFailureView() throws Exception {
-        final var response = new MockHttpServletResponse();
-        final var view = new Cas10ResponseView(false, null,
+        val response = new MockHttpServletResponse();
+        val view = new Cas10ResponseView(false, null,
                 null, null, null);
         view.render(this.model, new MockHttpServletRequest(), response);
         assertEquals("no\n\n", response.getContentAsString());

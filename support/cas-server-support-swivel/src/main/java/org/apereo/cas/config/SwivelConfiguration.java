@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.swivel.web.flow.SwivelAuthenticationWebflowAction;
@@ -91,7 +93,7 @@ public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Bean
     public FlowDefinitionRegistry swivelAuthenticatorFlowRegistry() {
-        final var builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-swivel/*-webflow.xml");
         return builder.build();
@@ -119,7 +121,7 @@ public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Bean
     public SwivelTuringImageGeneratorController swivelTuringImageGeneratorController() {
-        final var swivel = this.casProperties.getAuthn().getMfa().getSwivel();
+        val swivel = this.casProperties.getAuthn().getMfa().getSwivel();
         return new SwivelTuringImageGeneratorController(swivel);
     }
 

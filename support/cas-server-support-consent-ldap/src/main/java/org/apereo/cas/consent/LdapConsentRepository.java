@@ -1,5 +1,7 @@
 package org.apereo.cas.consent;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -18,7 +20,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -49,12 +50,12 @@ public class LdapConsentRepository implements ConsentRepository {
     public ConsentDecision findConsentDecision(final Service service,
                                                final RegisteredService registeredService,
                                                final Authentication authentication) {
-        final var principal = authentication.getPrincipal().getId();
-        final var entry = readConsentEntry(principal);
+        val principal = authentication.getPrincipal().getId();
+        val entry = readConsentEntry(principal);
         if (entry != null) {
-            final var consentDecisions = entry.getAttribute(this.ldap.getConsentAttributeName());
+            val consentDecisions = entry.getAttribute(this.ldap.getConsentAttributeName());
             if (consentDecisions != null) {
-                final var values = consentDecisions.getStringValues();
+                val values = consentDecisions.getStringValues();
                 LOGGER.debug("Locating consent decision(s) for [{}] and service [{}]", principal, service.getId());
                 return values
                     .stream()
@@ -69,9 +70,9 @@ public class LdapConsentRepository implements ConsentRepository {
 
     @Override
     public Collection<ConsentDecision> findConsentDecisions(final String principal) {
-        final var entry = readConsentEntry(principal);
+        val entry = readConsentEntry(principal);
         if (entry != null) {
-            final var consentDecisions = entry.getAttribute(this.ldap.getConsentAttributeName());
+            val consentDecisions = entry.getAttribute(this.ldap.getConsentAttributeName());
             if (consentDecisions != null) {
                 LOGGER.debug("Located consent decision for [{}] at attribute [{}]", principal, this.ldap.getConsentAttributeName());
                 return consentDecisions.getStringValues()
@@ -85,9 +86,9 @@ public class LdapConsentRepository implements ConsentRepository {
 
     @Override
     public Collection<ConsentDecision> findConsentDecisions() {
-        final var entries = readConsentEntries();
+        val entries = readConsentEntries();
         if (entries != null && !entries.isEmpty()) {
-            final Set<ConsentDecision> decisions = new HashSet<>();
+            val decisions = new HashSet<ConsentDecision>();
             entries
                 .stream()
                 .map(e -> e.getAttribute(this.ldap.getConsentAttributeName()))
@@ -105,9 +106,9 @@ public class LdapConsentRepository implements ConsentRepository {
 
     @Override
     public boolean storeConsentDecision(final ConsentDecision decision) {
-        final var entry = readConsentEntry(decision.getPrincipal());
+        val entry = readConsentEntry(decision.getPrincipal());
         if (entry != null) {
-            final var newConsent = mergeDecision(entry.getAttribute(this.ldap.getConsentAttributeName()), decision);
+            val newConsent = mergeDecision(entry.getAttribute(this.ldap.getConsentAttributeName()), decision);
             return executeModifyOperation(newConsent, entry);
         }
         return false;
@@ -116,9 +117,9 @@ public class LdapConsentRepository implements ConsentRepository {
     @Override
     public boolean deleteConsentDecision(final long id, final String principal) {
         LOGGER.debug("Deleting consent decision [{}] for principal [{}]", id, principal);
-        final var entry = readConsentEntry(principal);
+        val entry = readConsentEntry(principal);
         if (entry != null) {
-            final var newConsent = removeDecision(entry.getAttribute(this.ldap.getConsentAttributeName()), id);
+            val newConsent = removeDecision(entry.getAttribute(this.ldap.getConsentAttributeName()), id);
             return executeModifyOperation(newConsent, entry);
         }
         return false;
@@ -133,7 +134,7 @@ public class LdapConsentRepository implements ConsentRepository {
      * @return true / false
      */
     private boolean executeModifyOperation(final Set<String> newConsent, final LdapEntry entry) {
-        final Map<String, Set<String>> attrMap = new HashMap<>();
+        val attrMap = new HashMap<String, Set<String>>();
         attrMap.put(this.ldap.getConsentAttributeName(), newConsent);
 
         LOGGER.debug("Storing consent decisions [{}] at LDAP attribute [{}] for [{}]", newConsent, attrMap.keySet(), entry.getDn());
@@ -154,8 +155,8 @@ public class LdapConsentRepository implements ConsentRepository {
         }
 
         if (ldapConsent != null) {
-            final var result = removeDecision(ldapConsent, decision.getId());
-            final var json = mapToJson(decision);
+            val result = removeDecision(ldapConsent, decision.getId());
+            val json = mapToJson(decision);
             if (StringUtils.isBlank(json)) {
                 throw new IllegalArgumentException("Could not map consent decision to JSON");
             }
@@ -163,8 +164,8 @@ public class LdapConsentRepository implements ConsentRepository {
             LOGGER.debug("Merged consent decision [{}] with LDAP attribute [{}]", decision, ldapConsent.getName());
             return CollectionUtils.wrap(result);
         }
-        final Set<String> result = new HashSet<>();
-        final var json = mapToJson(decision);
+        val result = new HashSet<String>();
+        val json = mapToJson(decision);
         if (StringUtils.isBlank(json)) {
             throw new IllegalArgumentException("Could not map consent decision to JSON");
         }
@@ -180,7 +181,7 @@ public class LdapConsentRepository implements ConsentRepository {
      * @return the new decision set
      */
     private Set<String> removeDecision(final LdapAttribute ldapConsent, final long decisionId) {
-        final Set<String> result = new HashSet<>();
+        val result = new HashSet<String>();
         if (ldapConsent.size() != 0) {
             ldapConsent.getStringValues()
                 .stream()
@@ -201,12 +202,12 @@ public class LdapConsentRepository implements ConsentRepository {
      */
     private LdapEntry readConsentEntry(final String principal) {
         try {
-            final var filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter, CollectionUtils.wrapList(principal));
+            val filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter, CollectionUtils.wrapList(principal));
             LOGGER.debug("Locating consent LDAP entry via filter [{}] based on attribute [{}]", filter, this.ldap.getConsentAttributeName());
-            final var response =
+            val response =
                 LdapUtils.executeSearchOperation(this.connectionFactory, this.ldap.getBaseDn(), filter, this.ldap.getConsentAttributeName());
             if (LdapUtils.containsResultEntry(response)) {
-                final var entry = response.getResult().getEntry();
+                val entry = response.getResult().getEntry();
                 LOGGER.debug("Locating consent LDAP entry [{}]", entry);
                 return entry;
             }
@@ -223,15 +224,15 @@ public class LdapConsentRepository implements ConsentRepository {
      */
     private Collection<LdapEntry> readConsentEntries() {
         try {
-            final var att = this.ldap.getConsentAttributeName();
-            final var filter = LdapUtils.newLdaptiveSearchFilter('(' + att + "=*)");
+            val att = this.ldap.getConsentAttributeName();
+            val filter = LdapUtils.newLdaptiveSearchFilter('(' + att + "=*)");
 
             LOGGER.debug("Locating consent LDAP entries via filter [{}] based on attribute [{}]", filter, att);
-            final var response = LdapUtils
+            val response = LdapUtils
                 .executeSearchOperation(this.connectionFactory, this.ldap.getBaseDn(), filter, att);
             if (LdapUtils.containsResultEntry(response)) {
 
-                final var results = response.getResult().getEntries();
+                val results = response.getResult().getEntries();
                 LOGGER.debug("Locating [{}] consent LDAP entries", results.size());
                 return results;
             }
@@ -253,7 +254,7 @@ public class LdapConsentRepository implements ConsentRepository {
 
     private static String mapToJson(final ConsentDecision consent) {
         try {
-            final var json = MAPPER.writeValueAsString(consent);
+            val json = MAPPER.writeValueAsString(consent);
             LOGGER.trace("Transformed consent object [{}] as JSON value [{}]", consent, json);
             return json;
         } catch (final Exception e) {

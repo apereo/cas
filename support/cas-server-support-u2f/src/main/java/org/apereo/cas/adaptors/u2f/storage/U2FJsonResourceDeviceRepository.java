@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.core.io.Resource;
 
 import java.util.HashMap;
@@ -57,7 +58,7 @@ public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceReposi
 
     @Override
     public void writeDevicesBackToResource(final List<U2FDeviceRegistration> list) throws Exception {
-        final Map<String, List<U2FDeviceRegistration>> newDevices = new HashMap<>();
+        val newDevices = new HashMap<String, List<U2FDeviceRegistration>>();
         newDevices.put(MAP_KEY_DEVICES, list);
         mapper.writerWithDefaultPrettyPrinter().writeValue(jsonResource.getFile(), newDevices);
         LOGGER.debug("Saved [{}] device(s) into repository [{}]", list.size(), jsonResource);

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
@@ -83,9 +85,9 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulatorTests {
 
     @Test
     public void verifySecurityPopulator() {
-        final var realm = casProperties.getAuthn().getWsfedIdp().getIdp().getRealm();
+        val realm = casProperties.getAuthn().getWsfedIdp().getIdp().getRealm();
 
-        final var registeredService = new WSFederationRegisteredService();
+        val registeredService = new WSFederationRegisteredService();
         registeredService.setRealm(realm);
         registeredService.setServiceId("http://app.example.org/wsfed-idp");
         registeredService.setName("WSFED App");
@@ -94,8 +96,8 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulatorTests {
         registeredService.setWsdlLocation("classpath:wsdl/ws-trust-1.4-service.wsdl");
         servicesManager.save(registeredService);
 
-        final var builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        final var service = CoreAuthenticationTestUtils.getService("http://example.org?"
+        val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        val service = CoreAuthenticationTestUtils.getService("http://example.org?"
             + WSFederationConstants.WREPLY + '=' + registeredService.getServiceId() + '&'
             + WSFederationConstants.WTREALM + '=' + realm);
         final AuthenticationTransaction transaction =

@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.refreshtoken;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -45,7 +47,7 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        final var expired = isRefreshTokenExpired(ticketState);
+        val expired = isRefreshTokenExpired(ticketState);
         if (!expired) {
             return super.isExpired(ticketState);
         }
@@ -71,7 +73,7 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
      */
     @JsonIgnore
     protected boolean isRefreshTokenExpired(final TicketState ticketState) {
-        final var expiringTime = ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        val expiringTime = ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
         return ticketState == null || expiringTime.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
     }
 

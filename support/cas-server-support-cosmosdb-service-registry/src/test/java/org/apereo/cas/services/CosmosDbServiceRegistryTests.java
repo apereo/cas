@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import org.apereo.cas.category.CosmosDbCategory;
 import org.apereo.cas.config.CosmosDbServiceRegistryConfiguration;
 import org.junit.ClassRule;
@@ -16,7 +18,6 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.IntStream;
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,7 +48,7 @@ public class CosmosDbServiceRegistryTests {
     private ServiceRegistry serviceRegistry;
 
     private void deleteAll() {
-        final var services = this.serviceRegistry.load();
+        val services = this.serviceRegistry.load();
         services.forEach(service -> this.serviceRegistry.delete(service));
     }
 
@@ -57,16 +58,16 @@ public class CosmosDbServiceRegistryTests {
         assertTrue(this.serviceRegistry.load().isEmpty());
         assertTrue(this.serviceRegistry.size() == 0);
         
-        final List<RegisteredService> list = new ArrayList<>();
+        val list = new ArrayList<RegisteredService>();
         IntStream.range(0, 5).forEach(i -> {
             list.add(buildService(i));
             this.serviceRegistry.save(list.get(i));
         });
-        final var results = this.serviceRegistry.load();
+        val results = this.serviceRegistry.load();
         assertEquals(results.size(), list.size());
         results.forEach(r -> {
-            final var s1 = this.serviceRegistry.findServiceById(r.getId());
-            final var s2 = this.serviceRegistry.findServiceById(r.getServiceId());
+            val s1 = this.serviceRegistry.findServiceById(r.getId());
+            val s2 = this.serviceRegistry.findServiceById(r.getServiceId());
             assertEquals(s1, s2);
         });
         deleteAll();

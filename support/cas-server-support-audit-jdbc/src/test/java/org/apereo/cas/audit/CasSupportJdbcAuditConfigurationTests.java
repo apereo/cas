@@ -1,5 +1,7 @@
 package org.apereo.cas.audit;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
@@ -19,7 +21,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -48,13 +49,13 @@ public class CasSupportJdbcAuditConfigurationTests {
 
     @Test
     public void verifyAuditManager() {
-        final var time = LocalDate.now().minusDays(2);
-        final var since = DateTimeUtils.dateOf(time);
-        final var ctx = new AuditActionContext("casuser", "TEST", "TEST",
+        val time = LocalDate.now().minusDays(2);
+        val since = DateTimeUtils.dateOf(time);
+        val ctx = new AuditActionContext("casuser", "TEST", "TEST",
             "CAS", since, "1.2.3.4",
             "1.2.3.4");
         jdbcAuditTrailManager.record(ctx);
-        final Set results = jdbcAuditTrailManager.getAuditRecordsSince(time);
+        val results = jdbcAuditTrailManager.getAuditRecordsSince(time);
         assertFalse(results.isEmpty());
     }
 }

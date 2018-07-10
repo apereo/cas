@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.surrogate;
 
+import lombok.val;
+
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.SneakyThrows;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
@@ -47,8 +49,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
-
-import java.util.Collection;
 
 import static org.junit.Assert.*;
 
@@ -110,13 +110,13 @@ public class SurrogateLdapAuthenticationServiceTests {
 
     @Test
     public void verifyAccountsQualifying() {
-        final Collection results = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy("casuser");
+        val results = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy("casuser");
         assertFalse(results.isEmpty());
     }
 
     @Test
     public void verifyAccountQualifying() {
-        final var result = surrogateAuthenticationService.canAuthenticateAs("cassurrogate",
+        val result = surrogateAuthenticationService.canAuthenticateAs("cassurrogate",
             CoreAuthenticationTestUtils.getPrincipal("casuser"),
             CoreAuthenticationTestUtils.getService());
         assertTrue(result);
@@ -125,7 +125,7 @@ public class SurrogateLdapAuthenticationServiceTests {
     @BeforeClass
     @SneakyThrows
     public static void bootstrap() {
-        final var localhost = new LDAPConnection("localhost", LDAP_PORT,
+        val localhost = new LDAPConnection("localhost", LDAP_PORT,
             "cn=Directory Manager", "password");
         localhost.connect("localhost", LDAP_PORT);
         localhost.bind("cn=Directory Manager", "password");

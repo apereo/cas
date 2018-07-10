@@ -1,6 +1,8 @@
 package org.apereo.cas.ws.idp.web;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -20,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 @ToString
 @Getter
 @Setter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class WSFederationRequest {
 
     private final String wtrealm;
@@ -56,19 +58,19 @@ public class WSFederationRequest {
      * @return the federation request
      */
     public static WSFederationRequest of(final HttpServletRequest request) {
-        final var wtrealm = request.getParameter(WSFederationConstants.WTREALM);
-        final var wreply = request.getParameter(WSFederationConstants.WREPLY);
-        final var wreq = request.getParameter(WSFederationConstants.WREQ);
-        final var wctx = request.getParameter(WSFederationConstants.WCTX);
-        final var wfresh = request.getParameter(WSFederationConstants.WREFRESH);
-        final var whr = request.getParameter(WSFederationConstants.WHR);
-        final var wresult = request.getParameter(WSFederationConstants.WRESULT);
-        final var relayState = request.getParameter(WSFederationConstants.RELAY_STATE);
-        final var samlResponse = request.getParameter(WSFederationConstants.SAML_RESPONSE);
-        final var state = request.getParameter(WSFederationConstants.STATE);
-        final var code = request.getParameter(WSFederationConstants.CODE);
-        final var wa = request.getParameter(WSFederationConstants.WA);
-        final var wauth = StringUtils.defaultIfBlank(request.getParameter(WSFederationConstants.WAUTH), "default");
+        val wtrealm = request.getParameter(WSFederationConstants.WTREALM);
+        val wreply = request.getParameter(WSFederationConstants.WREPLY);
+        val wreq = request.getParameter(WSFederationConstants.WREQ);
+        val wctx = request.getParameter(WSFederationConstants.WCTX);
+        val wfresh = request.getParameter(WSFederationConstants.WREFRESH);
+        val whr = request.getParameter(WSFederationConstants.WHR);
+        val wresult = request.getParameter(WSFederationConstants.WRESULT);
+        val relayState = request.getParameter(WSFederationConstants.RELAY_STATE);
+        val samlResponse = request.getParameter(WSFederationConstants.SAML_RESPONSE);
+        val state = request.getParameter(WSFederationConstants.STATE);
+        val code = request.getParameter(WSFederationConstants.CODE);
+        val wa = request.getParameter(WSFederationConstants.WA);
+        val wauth = StringUtils.defaultIfBlank(request.getParameter(WSFederationConstants.WAUTH), "default");
         return new WSFederationRequest(wtrealm, wreply, wctx, wfresh, whr, wresult, relayState, samlResponse, state, code, wa, wauth, wreq);
     }
 }

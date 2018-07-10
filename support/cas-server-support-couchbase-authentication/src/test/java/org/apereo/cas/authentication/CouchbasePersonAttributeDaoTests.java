@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import org.apereo.cas.category.CouchbaseCategory;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
@@ -32,8 +34,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
-
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -83,9 +83,9 @@ public class CouchbasePersonAttributeDaoTests {
 
     @Test
     public void verifyAttributes() {
-        final var person = attributeRepository.getPerson("casuser");
+        val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
-        final Map attributes = person.getAttributes();
+        val attributes = person.getAttributes();
         assertTrue(attributes.containsKey("firstname"));
         assertTrue(attributes.containsKey("lastname"));
         assertEquals("casuser", person.getName());

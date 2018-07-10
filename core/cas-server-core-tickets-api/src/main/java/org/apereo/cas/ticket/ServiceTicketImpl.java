@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
@@ -107,7 +108,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
             throw new InvalidProxyGrantingTicketForServiceTicketException(this.service);
         }
         this.grantedTicketAlready = Boolean.TRUE;
-        final ProxyGrantingTicket pgt = new ProxyGrantingTicketImpl(id, this.service, this.getTicketGrantingTicket(), authentication, expirationPolicy);
+        val pgt = new ProxyGrantingTicketImpl(id, this.service, this.getTicketGrantingTicket(), authentication, expirationPolicy);
         getTicketGrantingTicket().getProxyGrantingTickets().put(pgt.getId(), this.service);
         return pgt;
     }

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.wsfederation.authentication.handler.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
@@ -39,11 +41,10 @@ public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcess
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
-        final var wsFederationCredentials = (WsFederationCredential) credential;
+        val wsFederationCredentials = (WsFederationCredential) credential;
         if (wsFederationCredentials != null) {
-            final Map attributes = wsFederationCredentials.getAttributes();
-            final var principal = this.principalFactory.createPrincipal(wsFederationCredentials.getId(), attributes);
-
+            val attributes = wsFederationCredentials.getAttributes();
+            val principal = this.principalFactory.createPrincipal(wsFederationCredentials.getId(), (Map) attributes);
             return this.createHandlerResult(wsFederationCredentials, principal, new ArrayList<>());
         }
         throw new FailedLoginException();

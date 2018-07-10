@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.discovery.CasServerDiscoveryProfileEndpoint;
@@ -61,21 +62,20 @@ public class CasDiscoveryProfileConfiguration {
 
     @Bean
     public Set<String> availableAttributes() {
-        final Set<String> attributes = new LinkedHashSet<>(0);
-        final var possibleUserAttributeNames = attributeRepository.getPossibleUserAttributeNames();
+        val attributes = new LinkedHashSet<String>(0);
+        val possibleUserAttributeNames = attributeRepository.getPossibleUserAttributeNames();
         if (possibleUserAttributeNames != null) {
             attributes.addAll(possibleUserAttributeNames);
         }
-        
-        final var ldapProps = casProperties.getAuthn().getLdap();
+
+        val ldapProps = casProperties.getAuthn().getLdap();
         if (ldapProps != null) {
-            ldapProps.stream()
-                .forEach(ldap -> {
-                    attributes.addAll(transformAttributes(ldap.getPrincipalAttributeList()));
-                    attributes.addAll(transformAttributes(ldap.getAdditionalAttributes()));
-                });
+            ldapProps.forEach(ldap -> {
+                attributes.addAll(transformAttributes(ldap.getPrincipalAttributeList()));
+                attributes.addAll(transformAttributes(ldap.getAdditionalAttributes()));
+            });
         }
-        final var jdbcProps = casProperties.getAuthn().getJdbc();
+        val jdbcProps = casProperties.getAuthn().getJdbc();
         if (jdbcProps != null) {
             jdbcProps.getQuery().stream()
                 .forEach(jdbc -> attributes.addAll(transformAttributes(jdbc.getPrincipalAttributeList())));
@@ -84,7 +84,7 @@ public class CasDiscoveryProfileConfiguration {
     }
 
     private Set<String> transformAttributes(final List<String> attributes) {
-        final Set<String> attributeSet = new LinkedHashSet<>();
+        val attributeSet = new LinkedHashSet<String>();
         CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributes)
             .values()
             .stream()

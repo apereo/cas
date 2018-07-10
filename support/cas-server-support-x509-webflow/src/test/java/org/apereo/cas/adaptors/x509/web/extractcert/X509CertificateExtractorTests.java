@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.web.extractcert;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
 import org.apereo.cas.web.extractcert.RequestHeaderX509CertificateExtractor;
@@ -54,8 +56,8 @@ public class X509CertificateExtractorTests extends AbstractX509CertificateTests 
             = new RequestHeaderX509CertificateExtractor("ssl_client_cert");
 
     private static String certificateSingleLine(final String[] lines, final String separator) {
-        final var singleSpaced = new StringBuilder();
-        for (final var current : lines) {
+        val singleSpaced = new StringBuilder();
+        for (val current : lines) {
             singleSpaced.append(current).append(separator);
         }
         singleSpaced.deleteCharAt(singleSpaced.length() - 1);
@@ -74,21 +76,21 @@ public class X509CertificateExtractorTests extends AbstractX509CertificateTests 
 
     @Test
     public void verifyExtractX509FromHeaderSpaceSeperator() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addHeader(extractX509CertificateFromHeader.getSslClientCertHeader(), certificateSingleLine(" "));
         assertCertificateParsed(extractX509CertificateFromHeader.extract(request));
     }
 
     @Test
     public void verifyExtractX509FromHeaderNoSeparator() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addHeader(extractX509CertificateFromHeader.getSslClientCertHeader(), certificateSingleLine("\t"));
         assertCertificateParsed(extractX509CertificateFromHeader.extract(request));
     }
 
     @Test
     public void verifyExtractX509FromHeaderNoHeader() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         Assert.assertNull(extractX509CertificateFromHeader.extract(request));
     }
 }

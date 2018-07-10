@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -56,10 +58,10 @@ public abstract class BaseSamlResponseEncoder {
     @SneakyThrows
     public final Response encode(final RequestAbstractType authnRequest, final Response samlResponse, final String relayState) throws SamlException {
         if (httpResponse != null) {
-            final var encoder = getMessageEncoderInstance();
+            val encoder = getMessageEncoderInstance();
             encoder.setHttpServletResponse(httpResponse);
 
-            final var ctx = getEncoderMessageContext(authnRequest, samlResponse, relayState);
+            val ctx = getEncoderMessageContext(authnRequest, samlResponse, relayState);
             encoder.setMessageContext(ctx);
             finalizeEncode(authnRequest, encoder, samlResponse, relayState);
         }
@@ -76,11 +78,11 @@ public abstract class BaseSamlResponseEncoder {
      * @return the message context
      */
     protected MessageContext getEncoderMessageContext(final RequestAbstractType authnRequest, final Response samlResponse, final String relayState) {
-        final var ctx = new MessageContext<SAMLObject>();
+        val ctx = new MessageContext<SAMLObject>();
         ctx.setMessage(samlResponse);
         SAMLBindingSupport.setRelayState(ctx, relayState);
         SamlIdPUtils.preparePeerEntitySamlEndpointContext(authnRequest, ctx, adaptor, getBinding());
-        final var self = ctx.getSubcontext(SAMLSelfEntityContext.class, true);
+        val self = ctx.getSubcontext(SAMLSelfEntityContext.class, true);
         self.setEntityId(samlResponse.getIssuer().getValue());
         return ctx;
     }

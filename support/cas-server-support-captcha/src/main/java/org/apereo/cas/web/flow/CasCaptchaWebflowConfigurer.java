@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
@@ -15,7 +17,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link CasCaptchaWebflowConfigurer}.
@@ -35,7 +36,7 @@ public class CasCaptchaWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override
     protected void doInitialize() {
-        final var flow = getLoginFlow();
+        val flow = getLoginFlow();
         if (flow != null) {
             createInitialRecaptchaEnabledAction(flow);
             createValidateRecaptchaAction(flow);
@@ -43,8 +44,8 @@ public class CasCaptchaWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void createValidateRecaptchaAction(final Flow flow) {
-        final var state = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
-        final List<Action> currentActions = new ArrayList<>();
+        val state = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
+        val currentActions = new ArrayList<Action>();
         state.getActionList().forEach(currentActions::add);
         currentActions.forEach(a -> state.getActionList().remove(a));
 

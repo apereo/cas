@@ -1,5 +1,7 @@
 package org.apereo.cas.memcached.kryo;
 
+import lombok.val;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 import de.javakaffee.kryoserializers.ArraysAsListSerializer;
@@ -92,9 +94,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -135,11 +134,11 @@ public class CloseableKryoFactory extends AbstractFactoryBean<CloseableKryo> {
         kryo.register(Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer());
         kryo.register(Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer());
         // Can't directly access Collections classes (private class), so instantiate one and do a getClass().
-        final Set singletonSet = Collections.singleton("key");
+        val singletonSet = Collections.singleton("key");
         kryo.register(singletonSet.getClass());
-        final Map singletonMap = Collections.singletonMap("key", "value");
+        val singletonMap = Collections.singletonMap("key", "value");
         kryo.register(singletonMap.getClass());
-        final List list = Arrays.asList("key");
+        val list = Arrays.asList("key");
         kryo.register(list.getClass(), new ArraysAsListSerializer());
     }
 
@@ -234,8 +233,8 @@ public class CloseableKryoFactory extends AbstractFactoryBean<CloseableKryo> {
     }
 
     @Override
-    protected CloseableKryo createInstance() throws Exception {
-        final var kryo = new CloseableKryo(this.kryoPool);
+    public CloseableKryo createInstance() {
+        val kryo = new CloseableKryo(this.kryoPool);
         kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
         kryo.setWarnUnregisteredClasses(this.warnUnregisteredClasses);
         kryo.setAutoReset(this.autoReset);

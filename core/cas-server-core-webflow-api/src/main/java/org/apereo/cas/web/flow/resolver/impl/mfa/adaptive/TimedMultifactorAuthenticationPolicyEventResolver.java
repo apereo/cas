@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa.adaptive;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
@@ -57,8 +59,8 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final var service = resolveRegisteredServiceInRequestContext(context);
-        final var authentication = WebUtils.getAuthentication(context);
+        val service = resolveRegisteredServiceInRequestContext(context);
+        val authentication = WebUtils.getAuthentication(context);
 
         if (service == null || authentication == null) {
             LOGGER.debug("No service or authentication is available to determine event for principal");
@@ -70,14 +72,14 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
             return null;
         }
 
-        final var providerMap =
+        val providerMap =
                 MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
 
-        final var providerFound = checkTimedMultifactorProvidersForRequest(context, service, authentication);
+        val providerFound = checkTimedMultifactorProvidersForRequest(context, service, authentication);
         if (providerFound != null && !providerFound.isEmpty()) {
             LOGGER.warn("Found multifactor authentication providers [{}] required for this authentication event", providerFound);
             return providerFound;
@@ -90,15 +92,15 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
     private Set<Event> checkTimedMultifactorProvidersForRequest(final RequestContext context, final RegisteredService service,
                                                                 final Authentication authentication) {
 
-        final var now = LocalDateTime.now();
-        final var dow = DayOfWeek.from(now);
-        final var dayNamesForToday = Arrays.stream(TextStyle.values())
+        val now = LocalDateTime.now();
+        val dow = DayOfWeek.from(now);
+        val dayNamesForToday = Arrays.stream(TextStyle.values())
                 .map(style -> dow.getDisplayName(style, Locale.getDefault()))
                 .collect(Collectors.toList());
 
-        final var providerMap =
+        val providerMap =
                 MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        final var timed = this.timedMultifactor.stream()
+        val timed = this.timedMultifactor.stream()
                 .filter(t -> {
                     var providerEvent = false;
                     if (!t.getOnDays().isEmpty()) {
@@ -116,7 +118,7 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
                 .orElse(null);
 
         if (timed != null) {
-            final var providerFound = resolveProvider(providerMap, timed.getProviderId());
+            val providerFound = resolveProvider(providerMap, timed.getProviderId());
             if (!providerFound.isPresent()) {
                 LOGGER.error("Adaptive authentication is configured to require [{}] for [{}], yet [{}] absent in the configuration.",
                         timed.getProviderId(), service, timed.getProviderId());
@@ -133,7 +135,7 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
         if (provider.isAvailable(service)) {
             LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
                     provider, service.getName());
-            final var event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
+            val event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
                     buildEventAttributeMap(authentication.getPrincipal(), service, provider));
             return CollectionUtils.wrapSet(event);
         }

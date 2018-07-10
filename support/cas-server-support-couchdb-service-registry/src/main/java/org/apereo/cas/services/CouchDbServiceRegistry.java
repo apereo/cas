@@ -37,12 +37,12 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
     @Override
     public boolean delete(final RegisteredService service) {
         LOGGER.debug("Deleting service [{}]", service.getName());
-        UpdateConflictException exception = null;
+        var exception = (UpdateConflictException) null;
         var success = false;
         for (var retries = 0; retries < conflictRetries; retries++) {
             try {
                 exception = null;
-                final var serviceDocument = dbClient.get(service.getId());
+                val serviceDocument = dbClient.get(service.getId());
                 dbClient.remove(serviceDocument);
                 success = true;
             } catch (final UpdateConflictException e) {

@@ -2,6 +2,7 @@ package org.apereo.cas.util.gen;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.util.RandomUtils;
 
 import java.nio.charset.StandardCharsets;
@@ -60,7 +61,7 @@ public abstract class AbstractRandomStringGenerator implements RandomStringGener
 
     @Override
     public String getNewString(final int size) {
-        final var random = getNewStringAsBytes(size);
+        val random = getNewStringAsBytes(size);
         return convertBytesToString(random);
     }
 
@@ -71,7 +72,7 @@ public abstract class AbstractRandomStringGenerator implements RandomStringGener
 
     @Override
     public byte[] getNewStringAsBytes(final int size) {
-        final var random = new byte[size];
+        val random = new byte[size];
         this.randomizer.nextBytes(random);
         return random;
     }

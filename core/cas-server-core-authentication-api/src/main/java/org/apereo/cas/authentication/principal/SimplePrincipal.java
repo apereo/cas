@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -71,14 +73,14 @@ public class SimplePrincipal implements Principal {
      */
     @Override
     public Map<String, Object> getAttributes() {
-        final Map<String, Object> attrs = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        val attrs = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         attrs.putAll(this.attributes);
         return attrs;
     }
 
     @Override
     public int hashCode() {
-        final var builder = new HashCodeBuilder(83, 31);
+        val builder = new HashCodeBuilder(83, 31);
         builder.append(this.id.toLowerCase());
         return builder.toHashCode();
     }
@@ -94,7 +96,7 @@ public class SimplePrincipal implements Principal {
         if (obj.getClass() != getClass()) {
             return false;
         }
-        final var rhs = (SimplePrincipal) obj;
+        val rhs = (SimplePrincipal) obj;
         return StringUtils.equalsIgnoreCase(this.id, rhs.getId());
     }
 }

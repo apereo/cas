@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.response;
 
+import lombok.val;
+
 import org.apereo.cas.CasProtocolConstants;
 import org.jasig.cas.client.util.CommonUtils;
 import org.pac4j.cas.client.CasClient;
@@ -20,7 +22,7 @@ public class OAuth20DefaultCasClientRedirectActionBuilder implements OAuth20CasC
 
     @Override
     public RedirectAction build(final CasClient casClient, final WebContext context) {
-        final var casConfiguration = casClient.getConfiguration();
+        val casConfiguration = casClient.getConfiguration();
         return build(casClient, context, casConfiguration.isRenew(), casConfiguration.isGateway());
     }
 
@@ -34,7 +36,7 @@ public class OAuth20DefaultCasClientRedirectActionBuilder implements OAuth20CasC
      * @return the redirect action
      */
     protected RedirectAction build(final CasClient casClient, final WebContext context, final boolean renew, final boolean gateway) {
-        final var redirectionUrl = CommonUtils.constructRedirectUrl(casClient.getConfiguration().getLoginUrl(),
+        val redirectionUrl = CommonUtils.constructRedirectUrl(casClient.getConfiguration().getLoginUrl(),
                 CasProtocolConstants.PARAMETER_SERVICE,
                 casClient.computeFinalCallbackUrl(context),
                 renew, gateway);

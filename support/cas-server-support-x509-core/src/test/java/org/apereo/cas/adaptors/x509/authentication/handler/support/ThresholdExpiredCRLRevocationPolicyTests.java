@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
@@ -30,7 +32,7 @@ import java.util.Collection;
  */
 @RunWith(Parameterized.class)
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ThresholdExpiredCRLRevocationPolicyTests {
     /** Policy instance under test. */
     private final ThresholdExpiredCRLRevocationPolicy policy;
@@ -49,17 +51,17 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() {
-        final Collection<Object[]> params = new ArrayList<>();
+        val params = new ArrayList<Object[]>();
 
-        final var now = ZonedDateTime.now(ZoneOffset.UTC);
-        final var twoHoursAgo = now.minusHours(2);
-        final var oneHourAgo = now.minusHours(1);
-        final var halfHourAgo = now.minusMinutes(30);
-        final var issuer = new X500Principal("CN=CAS");
+        val now = ZonedDateTime.now(ZoneOffset.UTC);
+        val twoHoursAgo = now.minusHours(2);
+        val oneHourAgo = now.minusHours(1);
+        val halfHourAgo = now.minusMinutes(30);
+        val issuer = new X500Principal("CN=CAS");
 
         // Test case #1
         // Expect expired for zero leniency on CRL expiring 1ms ago
-        final var zeroThreshold = new ThresholdExpiredCRLRevocationPolicy(0);
+        val zeroThreshold = new ThresholdExpiredCRLRevocationPolicy(0);
         params.add(new Object[] {
                 zeroThreshold,
                 new MockX509CRL(issuer, DateTimeUtils.dateOf(oneHourAgo), DateTimeUtils.dateOf(now.minusSeconds(1))),
@@ -68,7 +70,7 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
 
         // Test case #2
         // Expect expired for 1h leniency on CRL expired 1 hour 1ms ago
-        final var oneHourThreshold = new ThresholdExpiredCRLRevocationPolicy(3600);
+        val oneHourThreshold = new ThresholdExpiredCRLRevocationPolicy(3600);
         params.add(new Object[] {
                 oneHourThreshold,
                 new MockX509CRL(issuer, DateTimeUtils.dateOf(twoHoursAgo), DateTimeUtils.dateOf(oneHourAgo.minusSeconds(1))),
@@ -101,8 +103,8 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
                 e.printStackTrace();
                 Assert.fail("Revocation check failed unexpectedly with exception: " + e);
             } else {
-                final Class<?> expectedClass = this.expected.getClass();
-                final Class<?> actualClass = e.getClass();
+                val expectedClass = this.expected.getClass();
+                val actualClass = e.getClass();
                 Assert.assertTrue(
                         String.format("Expected exception of type %s but got %s", expectedClass, actualClass),
                         expectedClass.isAssignableFrom(actualClass));

@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
@@ -49,7 +50,7 @@ public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMet
 
     @Bean
     public SamlRegisteredServiceMetadataResolver jpaSamlRegisteredServiceMetadataResolver() {
-        final var idp = casProperties.getAuthn().getSamlIdp();
+        val idp = casProperties.getAuthn().getSamlIdp();
         return new JpaSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean);
     }
 
@@ -64,10 +65,10 @@ public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMet
     public HibernateJpaVendorAdapter jpaSamlMetadataVendorAdapter() {
         return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
-    
+
     @Bean
     public DataSource dataSourceSamlMetadata() {
-        final var idp = casProperties.getAuthn().getSamlIdp().getMetadata();
+        val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
         return JpaBeans.newDataSource(idp.getJpa());
     }
 
@@ -79,24 +80,22 @@ public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMet
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean samlMetadataEntityManagerFactory() {
-        final var idp = casProperties.getAuthn().getSamlIdp().getMetadata();
-        final var bean =
-            JpaBeans.newHibernateEntityManagerFactoryBean(
-                new JpaConfigDataHolder(
-                    jpaSamlMetadataVendorAdapter(),
-                    "jpaSamlMetadataContext",
-                    jpaSamlMetadataPackagesToScan(),
-                    dataSourceSamlMetadata()), idp.getJpa());
-        return bean;
+        val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
+        return JpaBeans.newHibernateEntityManagerFactoryBean(
+            new JpaConfigDataHolder(
+                jpaSamlMetadataVendorAdapter(),
+                "jpaSamlMetadataContext",
+                jpaSamlMetadataPackagesToScan(),
+                dataSourceSamlMetadata()), idp.getJpa());
     }
 
     @Autowired
     @Bean
     public PlatformTransactionManager transactionManagerSamlMetadata(
         @Qualifier("samlMetadataEntityManagerFactory") final EntityManagerFactory emf) {
-        final var mgmr = new JpaTransactionManager();
+        val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }
-    
+
 }

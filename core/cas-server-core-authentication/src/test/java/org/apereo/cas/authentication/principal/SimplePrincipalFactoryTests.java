@@ -1,10 +1,11 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -16,25 +17,25 @@ import static org.junit.Assert.*;
 public class SimplePrincipalFactoryTests {
     @Test
     public void checkPrincipalCreation() {
-        final PrincipalFactory fact = new DefaultPrincipalFactory();
-        final Map<String, Object> map = new HashMap<>();
+        val fact = new DefaultPrincipalFactory();
+        val map = new HashMap<String, Object>();
         map.put("a1", "v1");
         map.put("a2", "v3");
 
-        final var p = fact.createPrincipal("user", map);
+        val p = fact.createPrincipal("user", map);
         assertTrue(p instanceof SimplePrincipal);
         assertEquals(p.getAttributes(), map);
     }
 
     @Test
     public void checkPrincipalEquality() {
-        final PrincipalFactory fact = new DefaultPrincipalFactory();
-        final Map<String, Object> map = new HashMap<>();
+        val fact = new DefaultPrincipalFactory();
+        val map = new HashMap<String, Object>();
         map.put("a1", "v1");
         map.put("a2", "v3");
 
-        final var p = fact.createPrincipal("user", map);
-        final var p2 = fact.createPrincipal("USER", map);
+        val p = fact.createPrincipal("user", map);
+        val p2 = fact.createPrincipal("USER", map);
         assertTrue(p instanceof SimplePrincipal);
         assertTrue(p2 instanceof SimplePrincipal);
         assertEquals(p.getAttributes(), map);

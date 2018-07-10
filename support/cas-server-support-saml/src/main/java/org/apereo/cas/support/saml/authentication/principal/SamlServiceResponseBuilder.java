@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.authentication.principal;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
 import org.apereo.cas.authentication.principal.Response;
@@ -11,7 +12,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Builds responses to SAML service requests.
@@ -32,7 +32,7 @@ public class SamlServiceResponseBuilder extends AbstractWebApplicationServiceRes
 
     @Override
     public Response build(final WebApplicationService service, final String ticketId, final Authentication authentication) {
-        final Map<String, String> parameters = new HashMap<>();
+        val parameters = new HashMap<String, String>();
         parameters.put(SamlProtocolConstants.CONST_PARAM_ARTIFACT, ticketId);
         return buildRedirect(service, parameters);
     }

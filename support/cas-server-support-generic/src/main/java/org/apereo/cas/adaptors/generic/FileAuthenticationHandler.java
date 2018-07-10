@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.generic;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
@@ -65,8 +67,8 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             if (this.fileName == null) {
                 throw new FileNotFoundException("Filename does not exist");
             }
-            final var username = transformedCredential.getUsername();
-            final var passwordOnRecord = getPasswordOnRecord(username);
+            val username = transformedCredential.getUsername();
+            val passwordOnRecord = getPasswordOnRecord(username);
             if (StringUtils.isBlank(passwordOnRecord)) {
                 throw new AccountNotFoundException(username + " not found in backing file.");
             }
@@ -87,10 +89,10 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private String getPasswordOnRecord(final String username) throws IOException {
-        try (var stream = Files.lines(fileName.getFile().toPath())) {
+        try (val stream = Files.lines(fileName.getFile().toPath())) {
             return stream.map(line -> line.split(this.separator))
                 .filter(lineFields -> {
-                    final var userOnRecord = lineFields[0];
+                    val userOnRecord = lineFields[0];
                     return username.equals(userOnRecord);
                 })
                 .map(lineFields -> lineFields[1])

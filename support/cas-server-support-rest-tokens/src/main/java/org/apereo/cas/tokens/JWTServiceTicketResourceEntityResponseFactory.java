@@ -1,6 +1,7 @@
 package org.apereo.cas.tokens;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -42,26 +43,19 @@ public class JWTServiceTicketResourceEntityResponseFactory extends CasProtocolSe
     @Override
     protected String grantServiceTicket(final String ticketGrantingTicket, final Service service,
                                         final AuthenticationResult authenticationResult) {
-        final var registeredService = this.servicesManager.findServiceBy(service);
+        val registeredService = this.servicesManager.findServiceBy(service);
 
         LOGGER.debug("Located registered service [{}] for [{}]", registeredService, service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-        var tokenAsResponse = RegisteredServiceProperties.TOKEN_AS_RESPONSE.isAssignedTo(registeredService, BooleanUtils::toBoolean);
-        if (tokenAsResponse) {
-            LOGGER.warn("Service [{}] is configured to generate JWTs as tickets using a deprecated property [{}]. Consider switching to [{}] instead.",
-                service, RegisteredServiceProperties.TOKEN_AS_RESPONSE.getPropertyName(),
-                RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET);
-        } else {
-            tokenAsResponse = RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService, BooleanUtils::toBoolean);
-        }
+        val tokenAsResponse = RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService, BooleanUtils::toBoolean);
 
         if (!tokenAsResponse) {
             LOGGER.debug("Service [{}] does not require JWTs as tickets, given the properties assigned are [{}]", service, registeredService.getProperties());
             return super.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
         }
 
-        final var serviceTicket = super.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
-        final var jwt = this.tokenTicketBuilder.build(serviceTicket, service);
+        val serviceTicket = super.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
+        val jwt = this.tokenTicketBuilder.build(serviceTicket, service);
         LOGGER.debug("Generated JWT [{}] for service [{}]", jwt, service);
         return jwt;
     }

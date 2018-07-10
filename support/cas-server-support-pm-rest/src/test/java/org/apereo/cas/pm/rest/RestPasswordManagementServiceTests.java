@@ -1,5 +1,7 @@
 package org.apereo.cas.pm.rest;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.pm.RestPasswordManagementConfiguration;
@@ -19,7 +21,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -45,12 +46,12 @@ public class RestPasswordManagementServiceTests {
 
     @Test
     public void verifyEmailFound() {
-        final var data = "casuser@example.org";
-        final var webServer = new MockWebServer(9090,
+        val data = "casuser@example.org";
+        val webServer = new MockWebServer(9090,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);
         webServer.start();
-        final var email = this.passwordChangeService.findEmail("casuser");
+        val email = this.passwordChangeService.findEmail("casuser");
         webServer.stop();
         assertNotNull(email);
         assertEquals(data, email);
@@ -58,12 +59,12 @@ public class RestPasswordManagementServiceTests {
 
     @Test
     public void verifySecurityQuestions() {
-        final var data = "{\"question1\":\"answer1\"}";
-        final var webServer = new MockWebServer(9090,
+        val data = "{\"question1\":\"answer1\"}";
+        val webServer = new MockWebServer(9090,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);
         webServer.start();
-        final Map questions = this.passwordChangeService.getSecurityQuestions("casuser");
+        val questions = this.passwordChangeService.getSecurityQuestions("casuser");
         assertFalse(questions.isEmpty());
         assertTrue(questions.containsKey("question1"));
         webServer.stop();
@@ -71,12 +72,12 @@ public class RestPasswordManagementServiceTests {
 
     @Test
     public void verifyPasswordChanged() {
-        final var data = "true";
-        final var webServer = new MockWebServer(9090,
+        val data = "true";
+        val webServer = new MockWebServer(9090,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);
         webServer.start();
-        final var result = this.passwordChangeService.change(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+        val result = this.passwordChangeService.change(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
             new PasswordChangeBean("123456", "123456"));
         assertTrue(result);
         webServer.stop();

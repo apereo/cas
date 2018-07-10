@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -32,26 +34,26 @@ public class HttpBasedServiceCredentialTests {
 
     @Test
     public void verifyEqualsWithNull() throws Exception {
-        final var registeredService = CoreAuthenticationTestUtils.getRegisteredService(SOME_APP_URL);
-        final var c = new HttpBasedServiceCredential(new URL(CNN_URL), registeredService);
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(SOME_APP_URL);
+        val c = new HttpBasedServiceCredential(new URL(CNN_URL), registeredService);
         assertNotEquals(c, null);
     }
 
     @Test
     public void verifyEqualsWithFalse() throws Exception {
-        final var registeredService = CoreAuthenticationTestUtils.getRegisteredService(SOME_APP_URL);
-        final var c = new HttpBasedServiceCredential(new URL(CNN_URL), registeredService);
-        final var c2 = new HttpBasedServiceCredential(new URL("http://www.msn.com"), registeredService);
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(SOME_APP_URL);
+        val c = new HttpBasedServiceCredential(new URL(CNN_URL), registeredService);
+        val c2 = new HttpBasedServiceCredential(new URL("http://www.msn.com"), registeredService);
         assertFalse(c.equals(c2));
         assertFalse(c.equals(new Object()));
     }
 
     @Test
     public void verifyEqualsWithTrue() throws Exception {
-        final var registeredService = RegisteredServiceTestUtils.getRegisteredService(SOME_APP_URL);
-        final var callbackUrl = new URL(CNN_URL);
-        final var c = new HttpBasedServiceCredential(callbackUrl, registeredService);
-        final var c2 = new HttpBasedServiceCredential(callbackUrl, registeredService);
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(SOME_APP_URL);
+        val callbackUrl = new URL(CNN_URL);
+        val c = new HttpBasedServiceCredential(callbackUrl, registeredService);
+        val c2 = new HttpBasedServiceCredential(callbackUrl, registeredService);
 
         assertTrue(c.equals(c2));
         assertTrue(c2.equals(c));
@@ -59,12 +61,12 @@ public class HttpBasedServiceCredentialTests {
 
     @Test
     public void verifySerializeAnHttpBasedServiceCredentialToJson() throws IOException {
-        final var credentialMetaDataWritten =
+        val credentialMetaDataWritten =
                 new HttpBasedServiceCredential(new URL(CNN_URL),
                 RegisteredServiceTestUtils.getRegisteredService(SOME_APP_URL));
 
         MAPPER.writeValue(JSON_FILE, credentialMetaDataWritten);
-        final CredentialMetaData credentialMetaDataRead = MAPPER.readValue(JSON_FILE, HttpBasedServiceCredential.class);
+        val credentialMetaDataRead = MAPPER.readValue(JSON_FILE, HttpBasedServiceCredential.class);
         assertEquals(credentialMetaDataWritten, credentialMetaDataRead);
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.util.io;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.category.MailCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -61,7 +63,7 @@ public class CommunicationsManagerTests {
     public void verifyMailSender() {
         assertTrue(communicationsManager.isMailSenderDefined());
         assertTrue(communicationsManager.email("Test Body", "cas@example.org", "Subject", "sample@example.org"));
-        final var p = mock(Principal.class);
+        val p = mock(Principal.class);
         when(p.getId()).thenReturn("casuser");
         when(p.getAttributes()).thenReturn(CollectionUtils.wrap("email", "cas@example.org"));
         assertTrue(communicationsManager.email(p, "email", "Body",

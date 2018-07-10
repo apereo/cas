@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import org.apache.commons.io.IOUtils;
@@ -11,8 +12,8 @@ import org.apereo.cas.adaptors.x509.authentication.revocation.checker.Revocation
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.AllowRevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import org.apereo.cas.util.MockWebServer;
-import org.junit.AfterClass;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -22,7 +23,6 @@ import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.time.ZoneOffset;
@@ -69,11 +69,11 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
 
         super(certFiles, expected);
 
-        final var file = new File(System.getProperty("java.io.tmpdir"), "ca.crl");
+        val file = new File(System.getProperty("java.io.tmpdir"), "ca.crl");
         if (file.exists()) {
             file.delete();
         }
-        final OutputStream out = new FileOutputStream(file);
+        val out = new FileOutputStream(file);
         IOUtils.copy(new ClassPathResource(crlFile).getInputStream(), out);
 
         this.checker = checker;
@@ -90,10 +90,10 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
     @Parameters
     public static Collection<Object[]> getTestParameters() {
         CacheManager.getInstance().removeAllCaches();
-        final Collection<Object[]> params = new ArrayList<>();
-        Cache cache;
-        final var defaultPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
-        final var zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
+        val params = new ArrayList<Object[]>();
+        var cache = (Cache) null;
+        val defaultPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
+        val zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
 
         // Test case #0
         // Valid certificate on valid CRL data with encoded url
@@ -157,7 +157,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         // "AllowRevocationPolicy" set to allow unavailable CRL data
         cache = new Cache("crlCache-5", 100, false, false, 20, 10);
         CacheManager.getInstance().addCache(cache);
-        final var checker5 =
+        val checker5 =
                 new CRLDistributionPointRevocationChecker(cache, defaultPolicy, new AllowRevocationPolicy());
         params.add(new Object[]{checker5,
             new String[]{"user-valid.crt"},
@@ -207,7 +207,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
 
     @AfterClass
     public static void destroy() {
-        final var file = new File("ca.crl");
+        val file = new File("ca.crl");
         if (file.exists()) {
             file.delete();
         }

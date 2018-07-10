@@ -1,5 +1,7 @@
 package org.apereo.cas.audit;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -51,9 +53,9 @@ public class MongoDbAuditTrailManager implements AuditTrailManager {
 
     @Override
     public Set<AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
-        final var dt = DateTimeUtils.dateOf(localDate);
+        val dt = DateTimeUtils.dateOf(localDate);
         LOGGER.debug("Retrieving audit records since [{}] from [{}]", dt, this.collectionName);
-        final var query = new Query().addCriteria(Criteria.where("whenActionWasPerformed").gte(dt));
+        val query = new Query().addCriteria(Criteria.where("whenActionWasPerformed").gte(dt));
         return new LinkedHashSet<>(this.mongoTemplate.find(query, AuditActionContext.class, this.collectionName));
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,10 +44,11 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         if (providers == null || providers.isEmpty()) {
             return Optional.empty();
         }
-        final var validProviderIds = providers.stream()
+        val validProviderIds = providers.stream()
             .map(MultifactorAuthenticationProvider::getId)
             .collect(Collectors.toSet());
-        final var principal = authentication != null ? authentication.getPrincipal() : null;
+        val principal = authentication != null ? authentication.getPrincipal() : null;
+
 
         var provider = resolveRequestParameterTrigger(request, validProviderIds);
 
@@ -79,9 +82,9 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
             return Optional.empty();
         }
 
-        final var policy = service.getMultifactorPolicy();
-        final var attrName = policy.getPrincipalAttributeNameTrigger();
-        final var attrValue = policy.getPrincipalAttributeValueToMatch();
+        val policy = service.getMultifactorPolicy();
+        val attrName = policy.getPrincipalAttributeNameTrigger();
+        val attrValue = policy.getPrincipalAttributeValueToMatch();
 
         // Principal attribute name and/or value is not defined, enforce policy
         if (!StringUtils.hasText(attrName) || !StringUtils.hasText(attrValue)) {
@@ -177,7 +180,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         }
 
         // check to see if any of the specified attributes match the value pattern
-        final var valuePredicate = Pattern.compile(value).asPredicate();
+        val valuePredicate = Pattern.compile(value).asPredicate();
         return commaDelimitedListToSet(names).stream()
             .map(attributes::get)
             .filter(Objects::nonNull)

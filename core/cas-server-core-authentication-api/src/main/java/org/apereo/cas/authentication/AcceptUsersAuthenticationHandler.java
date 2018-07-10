@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.StringUtils;
@@ -12,7 +14,6 @@ import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -73,8 +74,8 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
         if (this.users == null || this.users.isEmpty()) {
             throw new FailedLoginException("No user can be accepted because none is defined");
         }
-        final var username = credential.getUsername();
-        final var cachedPassword = this.users.get(username);
+        val username = credential.getUsername();
+        val cachedPassword = this.users.get(username);
         if (cachedPassword == null) {
             LOGGER.debug("[{}] was not found in the map.", username);
             throw new AccountNotFoundException(username + " not found in backing map.");
@@ -82,7 +83,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
         if (!StringUtils.equals(credential.getPassword(), cachedPassword)) {
             throw new FailedLoginException();
         }
-        final List<MessageDescriptor> list = new ArrayList<>();
+        val list = new ArrayList<MessageDescriptor>();
         return createHandlerResult(credential, this.principalFactory.createPrincipal(username), list);
     }
 }

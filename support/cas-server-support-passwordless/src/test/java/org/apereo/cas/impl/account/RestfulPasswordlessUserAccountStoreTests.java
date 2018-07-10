@@ -1,5 +1,7 @@
 package org.apereo.cas.impl.account;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
@@ -86,12 +88,12 @@ public class RestfulPasswordlessUserAccountStoreTests {
 
     @Test
     public void verifyAction() throws Exception {
-        final var u = new PasswordlessUserAccount("casuser", "casuser@example.org", "123-456-7890", "CAS");
-        final var data = MAPPER.writeValueAsString(u);
-        try (var webServer = new MockWebServer(9291,
+        val u = new PasswordlessUserAccount("casuser", "casuser@example.org", "123-456-7890", "CAS");
+        val data = MAPPER.writeValueAsString(u);
+        try (val webServer = new MockWebServer(9291,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            final var user = passwordlessUserAccountStore.findUser("casuser");
+            val user = passwordlessUserAccountStore.findUser("casuser");
             assertTrue(user.isPresent());
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);

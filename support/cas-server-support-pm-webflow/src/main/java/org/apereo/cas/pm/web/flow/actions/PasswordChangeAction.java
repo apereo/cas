@@ -1,6 +1,8 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -23,7 +25,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PasswordChangeAction extends AbstractAction {
 
     /**
@@ -34,7 +36,6 @@ public class PasswordChangeAction extends AbstractAction {
     private static final String PASSWORD_VALIDATION_FAILURE_CODE = "pm.validationFailure";
     private static final String DEFAULT_MESSAGE = "Could not update the account password";
 
-
     private static final MessageBuilder ERROR_MSG_BUILDER = new MessageBuilder().error();
 
     private final PasswordManagementService passwordManagementService;
@@ -43,8 +44,8 @@ public class PasswordChangeAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         try {
-            final var c = (UsernamePasswordCredential) WebUtils.getCredential(requestContext);
-            final var bean = requestContext.getFlowScope()
+            val c = (UsernamePasswordCredential) WebUtils.getCredential(requestContext);
+            val bean = requestContext.getFlowScope()
                     .get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeBean.class);
 
             if (!passwordValidationService.isValid(c, bean)) {

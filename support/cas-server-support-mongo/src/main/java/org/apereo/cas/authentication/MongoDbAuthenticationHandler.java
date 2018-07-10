@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.integration.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler;
@@ -27,7 +29,7 @@ public class MongoDbAuthenticationHandler extends UsernamePasswordWrapperAuthent
     @Override
     public void close() {
         try {
-            final var service = MongoProfileService.class.cast(authenticator);
+            val service = MongoProfileService.class.cast(authenticator);
             service.getMongoClient().close();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

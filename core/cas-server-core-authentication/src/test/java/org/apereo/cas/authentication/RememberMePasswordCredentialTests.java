@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import static org.junit.Assert.*;
 
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +19,7 @@ public class RememberMePasswordCredentialTests {
 
     @Test
     public void verifyGettersAndSetters() {
-        final var c = new RememberMeUsernamePasswordCredential();
+        val c = new RememberMeUsernamePasswordCredential();
         c.setPassword("password");
         c.setUsername("username");
         c.setRememberMe(true);

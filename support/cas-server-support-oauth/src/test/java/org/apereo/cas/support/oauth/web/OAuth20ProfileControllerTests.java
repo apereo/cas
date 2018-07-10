@@ -1,13 +1,13 @@
 package org.apereo.cas.support.oauth.web;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.Principal;
@@ -29,7 +29,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -63,10 +62,10 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyNoGivenAccessToken() throws Exception {
-        final var mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
-        final var mockResponse = new MockHttpServletResponse();
+        val mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
+        val mockResponse = new MockHttpServletResponse();
 
-        final var entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
+        val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
 
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
@@ -75,11 +74,11 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyNoExistingAccessToken() throws Exception {
-        final var mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
+        val mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, "DOES NOT EXIST");
-        final var mockResponse = new MockHttpServletResponse();
+        val mockResponse = new MockHttpServletResponse();
 
-        final var entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
+        val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
 
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
@@ -88,18 +87,18 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyExpiredAccessToken() throws Exception {
-        final var principal = CoreAuthenticationTestUtils.getPrincipal(ID, new HashMap<>());
-        final var authentication = getAuthentication(principal);
-        final var expiringAccessTokenFactory = new DefaultAccessTokenFactory(new AlwaysExpiresExpirationPolicy());
-        final var accessToken = expiringAccessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
+        val principal = CoreAuthenticationTestUtils.getPrincipal(ID, new HashMap<>());
+        val authentication = getAuthentication(principal);
+        val expiringAccessTokenFactory = new DefaultAccessTokenFactory(new AlwaysExpiresExpirationPolicy());
+        val accessToken = expiringAccessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
             new MockTicketGrantingTicket("casuser"), new ArrayList<>());
         this.ticketRegistry.addTicket(accessToken);
 
-        final var mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
+        val mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
-        final var mockResponse = new MockHttpServletResponse();
+        val mockResponse = new MockHttpServletResponse();
 
-        final var entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
+        val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
         assertTrue(entity.getBody().contains(OAuth20Constants.EXPIRED_ACCESS_TOKEN));
@@ -107,33 +106,33 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyOK() throws Exception {
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put(NAME, VALUE);
-        final var list = Arrays.asList(VALUE, VALUE);
+        val list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
 
-        final var principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
-        final var authentication = getAuthentication(principal);
-        final var accessToken = accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
+        val principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
+        val authentication = getAuthentication(principal);
+        val accessToken = accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
             new MockTicketGrantingTicket("casuser"), new ArrayList<>());
         this.ticketRegistry.addTicket(accessToken);
 
-        final var mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
+        val mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
-        final var mockResponse = new MockHttpServletResponse();
+        val mockResponse = new MockHttpServletResponse();
 
-        final var entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
+        val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 
-        final var expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
+        val expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
             + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
-        final var expectedObj = MAPPER.readTree(expected);
-        final var receivedObj = MAPPER.readTree(entity.getBody());
+        val expectedObj = MAPPER.readTree(expected);
+        val receivedObj = MAPPER.readTree(entity.getBody());
         assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
 
-        final var expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);
-        final var receivedAttributes = receivedObj.get(ATTRIBUTES_PARAM);
+        val expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);
+        val receivedAttributes = receivedObj.get(ATTRIBUTES_PARAM);
 
         assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
         assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
@@ -141,41 +140,41 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyOKWithExpiredTicketGrantingTicket() throws Exception {
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put(NAME, VALUE);
-        final var list = Arrays.asList(VALUE, VALUE);
+        val list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
 
-        final var principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
-        final var authentication = getAuthentication(principal);
-        final var accessToken = accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
+        val principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
+        val authentication = getAuthentication(principal);
+        val accessToken = accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
             new MockTicketGrantingTicket("casuser"), new ArrayList<>());
         accessToken.getTicketGrantingTicket().markTicketExpired();
         this.ticketRegistry.addTicket(accessToken);
 
-        final var mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
+        val mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
         mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
-        final var mockResponse = new MockHttpServletResponse();
+        val mockResponse = new MockHttpServletResponse();
 
-        final var entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
+        val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 
-        final var expectedObj = MAPPER.createObjectNode();
-        final var attrNode = MAPPER.createObjectNode();
+        val expectedObj = MAPPER.createObjectNode();
+        val attrNode = MAPPER.createObjectNode();
         attrNode.put(NAME, VALUE);
-        final var values = MAPPER.createArrayNode();
+        val values = MAPPER.createArrayNode();
         values.add(VALUE);
         values.add(VALUE);
         attrNode.put(NAME2, values);
         expectedObj.put("id", ID);
         expectedObj.put("attributes", attrNode);
 
-        final var receivedObj = MAPPER.readTree(entity.getBody());
+        val receivedObj = MAPPER.readTree(entity.getBody());
         assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
 
-        final var expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);
-        final var receivedAttributes = receivedObj.get(ATTRIBUTES_PARAM);
+        val expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);
+        val receivedAttributes = receivedObj.get(ATTRIBUTES_PARAM);
 
         assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
         assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
@@ -183,40 +182,40 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyOKWithAuthorizationHeader() throws Exception {
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put(NAME, VALUE);
-        final var list = Arrays.asList(VALUE, VALUE);
+        val list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
 
-        final var principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
-        final var authentication = getAuthentication(principal);
-        final var accessToken = accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
+        val principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
+        val authentication = getAuthentication(principal);
+        val accessToken = accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
             new MockTicketGrantingTicket("casuser"), new ArrayList<>());
         this.ticketRegistry.addTicket(accessToken);
 
-        final var mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
+        val mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
         mockRequest.addHeader("Authorization", OAuth20Constants.BEARER_TOKEN + ' ' + accessToken.getId());
-        final var mockResponse = new MockHttpServletResponse();
-        final var entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
+        val mockResponse = new MockHttpServletResponse();
+        val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 
-        final var expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
+        val expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
             + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
-        final var expectedObj = MAPPER.readTree(expected);
-        final var receivedObj = MAPPER.readTree(entity.getBody());
+        val expectedObj = MAPPER.readTree(expected);
+        val receivedObj = MAPPER.readTree(entity.getBody());
         assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
 
-        final var expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);
-        final var receivedAttributes = receivedObj.get(ATTRIBUTES_PARAM);
+        val expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);
+        val receivedAttributes = receivedObj.get(ATTRIBUTES_PARAM);
 
         assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
         assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
     }
 
     protected static Authentication getAuthentication(final Principal principal) {
-        final CredentialMetaData metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(principal.getId()));
-        final AuthenticationHandlerExecutionResult handlerResult = new DefaultAuthenticationHandlerExecutionResult(principal.getClass().getCanonicalName(),
+        val metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(principal.getId()));
+        val handlerResult = new DefaultAuthenticationHandlerExecutionResult(principal.getClass().getCanonicalName(),
             metadata, principal, new ArrayList<>());
 
         return DefaultAuthenticationBuilder.newInstance()

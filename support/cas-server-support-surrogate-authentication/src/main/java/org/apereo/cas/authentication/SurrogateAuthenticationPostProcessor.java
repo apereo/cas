@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,12 +40,12 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
 
     @Override
     public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws AuthenticationException {
-        final var authentication = builder.build();
-        final var primaryPrincipal = authentication.getPrincipal();
+        val authentication = builder.build();
+        val primaryPrincipal = authentication.getPrincipal();
 
         @NonNull
-        final var surrogateCredentials = (SurrogateUsernamePasswordCredential) transaction.getPrimaryCredential().get();
-        final var targetUserId = surrogateCredentials.getSurrogateUsername();
+        val surrogateCredentials = (SurrogateUsernamePasswordCredential) transaction.getPrimaryCredential().get();
+        val targetUserId = surrogateCredentials.getSurrogateUsername();
 
         try {
             if (StringUtils.isBlank(targetUserId)) {
@@ -52,16 +54,16 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
             }
             LOGGER.debug("Authenticated [{}] will be checked for surrogate eligibility next for [{}]...", primaryPrincipal, targetUserId);
             if (transaction.getService() != null) {
-                final var svc = this.servicesManager.findServiceBy(transaction.getService());
+                val svc = this.servicesManager.findServiceBy(transaction.getService());
 
-                final var serviceAccessAudit = AuditableContext.builder()
+                val serviceAccessAudit = AuditableContext.builder()
                     .service(transaction.getService())
                     .authentication(authentication)
                     .registeredService(svc)
                     .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                     .build();
 
-                final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(serviceAccessAudit);
+                val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(serviceAccessAudit);
                 accessResult.throwExceptionIfNeeded();
             }
 
@@ -69,7 +71,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                 LOGGER.debug("Principal [{}] is authorized to authenticate as [{}]", primaryPrincipal, targetUserId);
                 publishSuccessEvent(primaryPrincipal, targetUserId);
 
-                final var surrogateEligibleAudit = AuditableContext.builder()
+                val surrogateEligibleAudit = AuditableContext.builder()
                     .service(transaction.getService())
                     .authentication(authentication)
                     .properties(CollectionUtils.wrap("targetUserId", targetUserId, "eligible", Boolean.TRUE))
@@ -85,7 +87,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
             final Map<String, Throwable> map = CollectionUtils.wrap(getClass().getSimpleName(),
                 new SurrogateAuthenticationException("Principal " + primaryPrincipal + " is unauthorized to authenticate as " + targetUserId));
 
-            final var surrogateIneligibleAudit = AuditableContext.builder()
+            val surrogateIneligibleAudit = AuditableContext.builder()
                 .service(transaction.getService())
                 .authentication(authentication)
                 .build();
@@ -101,12 +103,12 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
     }
 
     private void publishFailureEvent(final Principal principal, final String surrogate) {
-        final AbstractCasEvent event = new CasSurrogateAuthenticationFailureEvent(this, principal, surrogate);
+        val event = new CasSurrogateAuthenticationFailureEvent(this, principal, surrogate);
         publishEvent(event);
     }
 
     private void publishSuccessEvent(final Principal principal, final String surrogate) {
-        final AbstractCasEvent event = new CasSurrogateAuthenticationSuccessfulEvent(this, principal, surrogate);
+        val event = new CasSurrogateAuthenticationSuccessfulEvent(this, principal, surrogate);
         publishEvent(event);
     }
 

@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +43,7 @@ public class PoolHealthIndicatorTests {
                 return 2;
             }
         };
-        final var health = monitor.health();
+        val health = monitor.health();
         assertEquals(health.getStatus(), Status.UP);
     }
 
@@ -64,7 +66,7 @@ public class PoolHealthIndicatorTests {
                 return 1;
             }
         };
-        final var health = monitor.health();
+        val health = monitor.health();
         assertEquals(Status.DOWN, health.getStatus());
     }
 
@@ -86,7 +88,7 @@ public class PoolHealthIndicatorTests {
                 return 1;
             }
         };
-        final var health = monitor.health();
+        val health = monitor.health();
         assertEquals(health.getStatus(), Status.OUT_OF_SERVICE);
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.report;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -40,9 +42,9 @@ public class StatusEndpoint extends BaseCasMvcEndpoint {
     @ReadOperation
     public Map<String, Object> handle() {
 
-        final var model = new LinkedHashMap<String, Object>();
-        final var health = this.healthEndpoint.health();
-        final var status = health.getStatus();
+        val model = new LinkedHashMap<String, Object>();
+        val health = this.healthEndpoint.health();
+        val status = health.getStatus();
 
         if (status.equals(Status.DOWN) || status.equals(Status.OUT_OF_SERVICE)) {
             model.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());

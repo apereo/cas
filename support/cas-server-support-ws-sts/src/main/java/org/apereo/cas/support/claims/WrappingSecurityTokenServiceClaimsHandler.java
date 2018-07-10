@@ -1,5 +1,7 @@
 package org.apereo.cas.support.claims;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,9 +55,9 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
             LOGGER.warn("No claims are available to process");
             return new ProcessedClaimCollection();
         }
-        final var claimCollection = new ProcessedClaimCollection();
+        val claimCollection = new ProcessedClaimCollection();
         claims.stream().map(requestClaim -> {
-            final var claim = new ProcessedClaim();
+            val claim = new ProcessedClaim();
             claim.setClaimType(requestClaim.getClaimType());
             claim.setIssuer(this.issuer);
             claim.setOriginalIssuer(this.issuer);

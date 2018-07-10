@@ -1,10 +1,11 @@
 package org.apereo.cas.ticket.artifact;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -22,7 +23,7 @@ import org.opensaml.saml.common.SAMLObject;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFactory {
     
     /**
@@ -46,10 +47,10 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
                                      final Authentication authentication,
                                      final TicketGrantingTicket ticketGrantingTicket, final String issuer,
                                      final String relyingParty, final SAMLObject samlObject) {
-        try (var w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
-            final var codeId = createTicketIdFor(artifactId);
+        try (val w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
+            val codeId = createTicketIdFor(artifactId);
             
-            final Service service = this.webApplicationServiceFactory.createService(relyingParty);
+            val service = this.webApplicationServiceFactory.createService(relyingParty);
             final SamlArtifactTicket at = new SamlArtifactTicketImpl(codeId, service, authentication,
                     this.expirationPolicy, ticketGrantingTicket, issuer, relyingParty, w.toString());
             if (ticketGrantingTicket != null) {

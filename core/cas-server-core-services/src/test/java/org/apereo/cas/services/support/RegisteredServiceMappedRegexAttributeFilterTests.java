@@ -1,5 +1,7 @@
 package org.apereo.cas.services.support;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -57,7 +59,7 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
         this.givenAttributesMap.put("arrayAttribute", new String[]{"math", "science", "chemistry"});
         this.givenAttributesMap.put("setAttribute", Stream.of("math", "science", "chemistry").collect(Collectors.toSet()));
 
-        final Map<String, String> mapAttributes = new HashMap<>();
+        val mapAttributes = new HashMap<String, String>();
         mapAttributes.put(UID, "loggedInTestUid");
         mapAttributes.put(PHONE, "890");
         mapAttributes.put(FAMILY_NAME, "Smith");
@@ -74,7 +76,7 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
     @Test
     public void verifyPatternFilter() {
         this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
-        final var attrs = this.filter.filter(this.givenAttributesMap);
+        val attrs = this.filter.filter(this.givenAttributesMap);
         assertEquals(attrs.size(), this.givenAttributesMap.size());
         assertEquals(2, CollectionUtils.toCollection(attrs.get("memberOf")).size());
     }
@@ -83,7 +85,7 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
     public void verifyPatternFilterExcludeUnmatched() {
         this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
         this.filter.setExcludeUnmappedAttributes(true);
-        final var attrs = this.filter.filter(this.givenAttributesMap);
+        val attrs = this.filter.filter(this.givenAttributesMap);
         assertEquals(1, attrs.size());
         assertEquals(2, CollectionUtils.toCollection(attrs.get("memberOf")).size());
     }
@@ -92,15 +94,15 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
     public void verifyPatternFilterFullMatch() {
         this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
         this.filter.setCompleteMatch(true);
-        final var attrs = this.filter.filter(this.givenAttributesMap);
+        val attrs = this.filter.filter(this.givenAttributesMap);
         assertEquals(attrs.size(), this.givenAttributesMap.size() - 1);
         assertFalse(attrs.containsKey("memberOf"));
     }
 
     @Test
     public void verifySerialization() {
-        final var data = SerializationUtils.serialize(this.filter);
-        final var secondFilter =
+        val data = SerializationUtils.serialize(this.filter);
+        val secondFilter =
                 SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
         assertEquals(secondFilter, this.filter);
     }
@@ -109,7 +111,7 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
     public void verifySerializeARegisteredServiceRegexAttributeFilterToJson() throws IOException {
         this.filter.setPatterns(Collections.singletonMap("memberOf", "^\\w{3}$"));
         MAPPER.writeValue(JSON_FILE, this.filter);
-        final RegisteredServiceAttributeFilter filterRead = MAPPER.readValue(JSON_FILE, RegisteredServiceMappedRegexAttributeFilter.class);
+        val filterRead = MAPPER.readValue(JSON_FILE, RegisteredServiceMappedRegexAttributeFilter.class);
         assertEquals(filter, filterRead);
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -44,16 +46,16 @@ public class OidcRegisteredServiceTests {
 
     @Test
     public void checkSaveMethod() {
-        final var r = new OidcRegisteredService();
+        val r = new OidcRegisteredService();
         r.setName("checkSaveMethod");
         r.setServiceId("testId");
         r.setJwks("file:/tmp/thekeystorehere.jwks");
         r.setSignIdToken(true);
         r.setBypassApprovalPrompt(true);
-        final var r2 = this.dao.save(r);
+        val r2 = this.dao.save(r);
         assertTrue(r2 instanceof OidcRegisteredService);
         this.dao.load();
-        final var r3 = this.dao.findServiceById(r2.getId());
+        val r3 = this.dao.findServiceById(r2.getId());
         assertTrue(r3 instanceof OidcRegisteredService);
         assertEquals(r, r2);
         assertEquals(r2, r3);
@@ -61,7 +63,7 @@ public class OidcRegisteredServiceTests {
 
     @Test
     public void verifySerializeAOidcRegisteredServiceToJson() throws IOException {
-        final var serviceWritten = new OidcRegisteredService();
+        val serviceWritten = new OidcRegisteredService();
         serviceWritten.setName("verifySerializeAOidcRegisteredServiceToJson");
         serviceWritten.setServiceId("testId");
         serviceWritten.setJwks("file:/tmp/thekeystorehere.jwks");
@@ -69,7 +71,7 @@ public class OidcRegisteredServiceTests {
         serviceWritten.setBypassApprovalPrompt(true);
         serviceWritten.setUsernameAttributeProvider(new PairwiseOidcRegisteredServiceUsernameAttributeProvider());
         MAPPER.writeValue(JSON_FILE, serviceWritten);
-        final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, OidcRegisteredService.class);
+        val serviceRead = MAPPER.readValue(JSON_FILE, OidcRegisteredService.class);
         assertEquals(serviceWritten, serviceRead);
     }
 }

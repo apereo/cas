@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
@@ -10,7 +12,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
@@ -36,9 +37,9 @@ public class DisplayBeforePasswordlessAuthenticationActionTests extends BasePass
 
     @Test
     public void verifyAction() throws Exception {
-        final var context = new MockRequestContext();
+        val context = new MockRequestContext();
         context.setCurrentEvent(new Event(this, "processing"));
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("username", "casuser");
         assertEquals("success", displayBeforePasswordlessAuthenticationAction.execute(context).getId());
@@ -46,10 +47,10 @@ public class DisplayBeforePasswordlessAuthenticationActionTests extends BasePass
 
     @Test
     public void verifyError() throws Exception {
-        final var context = new MockRequestContext();
-        final AttributeMap attributes = new LocalAttributeMap("error", new IllegalArgumentException("Bad account"));
+        val context = new MockRequestContext();
+        val attributes = new LocalAttributeMap("error", new IllegalArgumentException("Bad account"));
         context.setCurrentEvent(new Event(this, "processing", attributes));
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         WebUtils.putPasswordlessAuthenticationAccount(context, passwordlessUserAccountStore.findUser("casuser").get());
         assertEquals("success", displayBeforePasswordlessAuthenticationAction.execute(context).getId());

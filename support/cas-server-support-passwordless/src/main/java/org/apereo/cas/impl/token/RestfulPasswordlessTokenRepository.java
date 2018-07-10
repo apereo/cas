@@ -1,5 +1,7 @@
 package org.apereo.cas.impl.token;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.CipherExecutor;
@@ -10,7 +12,6 @@ import org.springframework.http.HttpMethod;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -35,14 +36,14 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
     @Override
     public Optional<String> findToken(final String username) {
         try {
-            final Map<String, Object> parameters = new HashMap<>();
+            val parameters = new HashMap<String, Object>();
             parameters.put("username", username);
-            final var response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.GET.name(),
+            val response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.GET.name(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>());
             if (response != null && response.getEntity() != null) {
-                final var token = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                final var result = cipherExecutor.decode(token).toString();
+                val token = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                val result = cipherExecutor.decode(token).toString();
                 return Optional.of(result);
             }
         } catch (final Exception e) {
@@ -54,7 +55,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
     @Override
     public void deleteTokens(final String username) {
         try {
-            final Map<String, Object> parameters = new HashMap<>();
+            val parameters = new HashMap<String, Object>();
             parameters.put("username", username);
             HttpUtils.execute(restProperties.getUrl(), HttpMethod.DELETE.name(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
@@ -67,7 +68,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
     @Override
     public void deleteToken(final String username, final String token) {
         try {
-            final Map<String, Object> parameters = new HashMap<>();
+            val parameters = new HashMap<String, Object>();
             parameters.put("username", username);
             parameters.put("token", cipherExecutor.encode(token).toString());
             HttpUtils.execute(restProperties.getUrl(), HttpMethod.DELETE.name(),
@@ -81,7 +82,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
     @Override
     public void saveToken(final String username, final String token) {
         try {
-            final Map<String, Object> parameters = new HashMap<>();
+            val parameters = new HashMap<String, Object>();
             parameters.put("username", username);
             parameters.put("token", cipherExecutor.encode(token).toString());
             HttpUtils.execute(restProperties.getUrl(), HttpMethod.POST.name(),

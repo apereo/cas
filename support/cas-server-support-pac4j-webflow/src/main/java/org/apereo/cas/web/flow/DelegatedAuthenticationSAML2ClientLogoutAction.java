@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.Pac4jUtils;
@@ -9,7 +11,6 @@ import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.exception.TechnicalException;
 import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -39,13 +40,13 @@ public class DelegatedAuthenticationSAML2ClientLogoutAction extends AbstractActi
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         try {
-            final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            final var response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-            final var context = Pac4jUtils.getPac4jJ2EContext(request, response);
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+            val context = Pac4jUtils.getPac4jJ2EContext(request, response);
 
             Client<?, ?> client;
             try {
-                final var currentClientName = findCurrentClientName(context);
+                val currentClientName = findCurrentClientName(context);
                 client = (currentClientName == null) ? null : clients.findClient(currentClientName);
             } catch (final TechnicalException e) {
                 LOGGER.debug("No SAML2 client found: " + e.getMessage(), e);
@@ -53,9 +54,9 @@ public class DelegatedAuthenticationSAML2ClientLogoutAction extends AbstractActi
             }
 
             if (client instanceof SAML2Client) {
-                final var saml2Client = (SAML2Client) client;
+                val saml2Client = (SAML2Client) client;
                 LOGGER.debug("Located SAML2 client [{}]", saml2Client);
-                final var action = saml2Client.getLogoutAction(context, null, null);
+                val action = saml2Client.getLogoutAction(context, null, null);
                 LOGGER.debug("Preparing logout message to send is [{}]", action.getLocation());
                 action.perform(context);
             } else {
@@ -75,8 +76,8 @@ public class DelegatedAuthenticationSAML2ClientLogoutAction extends AbstractActi
      * @return The currently used client's name or {@code null} if there is no active profile.
      */
     private String findCurrentClientName(final WebContext webContext) {
-        final ProfileManager<? extends CommonProfile> pm = Pac4jUtils.getPac4jProfileManager(webContext);
-        final Optional<? extends CommonProfile> profile = pm.get(true);
+        val pm = Pac4jUtils.getPac4jProfileManager(webContext);
+        val profile = (Optional<CommonProfile>) pm.get(true);
         return profile.map(CommonProfile::getClientName).orElse(null);
     }
 

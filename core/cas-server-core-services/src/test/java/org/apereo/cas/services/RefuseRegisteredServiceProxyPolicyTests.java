@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -22,11 +24,11 @@ public class RefuseRegisteredServiceProxyPolicyTests {
 
     @Test
     public void verifySerializeARefuseRegisteredServiceProxyPolicyToJson() throws IOException {
-        final var policyWritten = new RefuseRegisteredServiceProxyPolicy();
+        val policyWritten = new RefuseRegisteredServiceProxyPolicy();
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
 
-        final RegisteredServiceProxyPolicy policyRead = MAPPER.readValue(JSON_FILE, RefuseRegisteredServiceProxyPolicy.class);
+        val policyRead = MAPPER.readValue(JSON_FILE, RefuseRegisteredServiceProxyPolicy.class);
 
         assertEquals(policyWritten, policyRead);
     }

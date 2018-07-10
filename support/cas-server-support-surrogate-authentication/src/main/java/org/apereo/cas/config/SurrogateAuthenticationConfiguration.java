@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
@@ -38,9 +40,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link SurrogateAuthenticationConfiguration}.
@@ -82,9 +83,9 @@ public class SurrogateAuthenticationConfiguration {
 
     @Bean
     public ExpirationPolicy grantingTicketExpirationPolicy(@Qualifier("ticketGrantingTicketExpirationPolicy") final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
-        final var su = casProperties.getAuthn().getSurrogate();
-        final var surrogatePolicy = new HardTimeoutExpirationPolicy(su.getTgt().getTimeToKillInSeconds());
-        final var policy = new SurrogateSessionExpirationPolicy(surrogatePolicy);
+        val su = casProperties.getAuthn().getSurrogate();
+        val surrogatePolicy = new HardTimeoutExpirationPolicy(su.getTgt().getTimeToKillInSeconds());
+        val policy = new SurrogateSessionExpirationPolicy(surrogatePolicy);
         policy.addPolicy(SurrogateSessionExpirationPolicy.PolicyTypes.SURROGATE, surrogatePolicy);
         policy.addPolicy(SurrogateSessionExpirationPolicy.PolicyTypes.DEFAULT, ticketGrantingTicketExpirationPolicy);
         return policy;
@@ -101,12 +102,12 @@ public class SurrogateAuthenticationConfiguration {
     @Bean
     @SneakyThrows
     public SurrogateAuthenticationService surrogateAuthenticationService() {
-        final var su = casProperties.getAuthn().getSurrogate();
+        val su = casProperties.getAuthn().getSurrogate();
         if (su.getJson().getLocation() != null) {
             LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getLocation());
             return new JsonResourceSurrogateAuthenticationService(su.getJson().getLocation(), servicesManager);
         }
-        final Map<String, List> accounts = new LinkedHashMap<>();
+        val accounts = new HashMap<String, List>();
         su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, new ArrayList<>(StringUtils.commaDelimitedListToSet(v))));
         LOGGER.debug("Using accounts [{}] for surrogate authentication", accounts);
         return new SimpleSurrogateAuthenticationService(accounts, servicesManager);
@@ -115,7 +116,7 @@ public class SurrogateAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public PrincipalResolver personDirectoryPrincipalResolver() {
-        final var principal = casProperties.getAuthn().getSurrogate().getPrincipal();
+        val principal = casProperties.getAuthn().getSurrogate().getPrincipal();
         return new SurrogatePrincipalResolver(attributeRepository.getIfAvailable(),
             surrogatePrincipalFactory(),
             principal.isReturnNull(),

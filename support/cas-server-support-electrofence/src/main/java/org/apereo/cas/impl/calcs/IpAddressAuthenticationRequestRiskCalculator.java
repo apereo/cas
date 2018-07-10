@@ -1,5 +1,7 @@
 package org.apereo.cas.impl.calcs;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
@@ -30,9 +32,9 @@ public class IpAddressAuthenticationRequestRiskCalculator extends BaseAuthentica
                                         final Authentication authentication,
                                         final RegisteredService service,
                                         final Collection<CasEvent> events) {
-        final var remoteAddr = ClientInfoHolder.getClientInfo().getClientIpAddress();
+        val remoteAddr = ClientInfoHolder.getClientInfo().getClientIpAddress();
         LOGGER.debug("Filtering authentication events for ip address [{}]", remoteAddr);
-        final var count = events.stream().filter(e -> e.getClientIpAddress().equalsIgnoreCase(remoteAddr)).count();
+        val count = events.stream().filter(e -> e.getClientIpAddress().equalsIgnoreCase(remoteAddr)).count();
         LOGGER.debug("Total authentication events found for [{}]: [{}]", remoteAddr, count);
         if (count == events.size()) {
             LOGGER.debug("Principal [{}] has always authenticated from [{}]", authentication.getPrincipal(), remoteAddr);

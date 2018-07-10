@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -42,33 +44,33 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
 
     @Override
     public PropertySource<?> locate(final Environment environment, final ResourceLoader resourceLoader) {
-        final var compositePropertySource = new CompositePropertySource("casCompositePropertySource");
+        val compositePropertySource = new CompositePropertySource("casCompositePropertySource");
 
-        final var configFile = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile();
+        val configFile = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile();
         if (configFile != null) {
-            final PropertySource<?> sourceStandalone = loadSettingsFromStandaloneConfigFile(configFile);
+            val sourceStandalone = loadSettingsFromStandaloneConfigFile(configFile);
             compositePropertySource.addPropertySource(sourceStandalone);
         }
 
-        final var config = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
+        val config = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
         LOGGER.debug("Located CAS standalone configuration directory at [{}]", config);
         if (config.isDirectory() && config.exists()) {
-            final PropertySource<?> sourceProfiles = loadSettingsByApplicationProfiles(environment, config);
+            val sourceProfiles = loadSettingsByApplicationProfiles(environment, config);
             compositePropertySource.addPropertySource(sourceProfiles);
         } else {
             LOGGER.info("Configuration directory [{}] is not a directory or cannot be found at the specific path", config);
         }
 
-        final PropertySource<?> sourceYaml = loadEmbeddedYamlOverriddenProperties(resourceLoader);
+        val sourceYaml = loadEmbeddedYamlOverriddenProperties(resourceLoader);
         compositePropertySource.addPropertySource(sourceYaml);
 
         return compositePropertySource;
     }
 
     private PropertySource<?> loadSettingsFromStandaloneConfigFile(final File configFile) {
-        final var props = new Properties();
+        val props = new Properties();
 
-        try (var r = Files.newBufferedReader(configFile.toPath(), StandardCharsets.UTF_8)) {
+        try (val r = Files.newBufferedReader(configFile.toPath(), StandardCharsets.UTF_8)) {
             LOGGER.debug("Located CAS standalone configuration file at [{}]", configFile);
             props.load(r);
             LOGGER.debug("Found settings [{}] in file [{}]", props.keySet(), configFile);
@@ -81,22 +83,22 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     }
 
     private PropertySource<?> loadSettingsByApplicationProfiles(final Environment environment, final File config) {
-        final var props = new Properties();
+        val props = new Properties();
 
-        final var profiles = getApplicationProfiles(environment);
-        final var regex = buildPatternForConfigurationFileDiscovery(config, profiles);
-        final var configFiles = scanForConfigurationFilesByPattern(config, regex);
+        val profiles = getApplicationProfiles(environment);
+        val regex = buildPatternForConfigurationFileDiscovery(config, profiles);
+        val configFiles = scanForConfigurationFilesByPattern(config, regex);
 
         LOGGER.info("Configuration files found at [{}] are [{}] under profile(s) [{}]", config, configFiles, environment.getActiveProfiles());
         configFiles.forEach(Unchecked.consumer(f -> {
             LOGGER.debug("Loading configuration file [{}]", f);
             if (f.getName().toLowerCase().endsWith("yml")) {
-                final Map<String, Object> pp = CasCoreConfigurationUtils.loadYamlProperties(new FileSystemResource(f));
+                val pp = CasCoreConfigurationUtils.loadYamlProperties(new FileSystemResource(f));
                 LOGGER.debug("Found settings [{}] in YAML file [{}]", pp.keySet(), f);
                 props.putAll(decryptProperties(pp));
             } else {
-                final var pp = new Properties();
-                try (var reader = Files.newBufferedReader(f.toPath(), StandardCharsets.UTF_8)) {
+                val pp = new Properties();
+                try (val reader = Files.newBufferedReader(f.toPath(), StandardCharsets.UTF_8)) {
                     pp.load(reader);
                 }
                 LOGGER.debug("Found settings [{}] in file [{}]", pp.keySet(), f);
@@ -108,10 +110,10 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     }
 
     private PropertySource<?> loadEmbeddedYamlOverriddenProperties(final ResourceLoader resourceLoader) {
-        final var props = new Properties();
-        final var resource = resourceLoader.getResource("classpath:/application.yml");
+        val props = new Properties();
+        val resource = resourceLoader.getResource("classpath:/application.yml");
         if (resource != null && resource.exists()) {
-            final var pp = CasCoreConfigurationUtils.loadYamlProperties(resource);
+            val pp = CasCoreConfigurationUtils.loadYamlProperties(resource);
             if (pp.isEmpty()) {
                 LOGGER.debug("No properties were located inside [{}]", resource);
             } else {
@@ -134,18 +136,18 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     }
 
     private static String buildPatternForConfigurationFileDiscovery(final File config, final List<String> profiles) {
-        final var propertyNames = profiles.stream().collect(Collectors.joining("|"));
-        final var profiledProperties = profiles.stream()
+        val propertyNames = profiles.stream().collect(Collectors.joining("|"));
+        val profiledProperties = profiles.stream()
             .map(p -> String.format("application-%s", p))
             .collect(Collectors.joining("|"));
 
-        final var regex = String.format("(%s|%s|application)\\.(yml|properties)", propertyNames, profiledProperties);
+        val regex = String.format("(%s|%s|application)\\.(yml|properties)", propertyNames, profiledProperties);
         LOGGER.debug("Looking for configuration files at [{}] that match the pattern [{}]", config, regex);
         return regex;
     }
 
     private List<String> getApplicationProfiles(final Environment environment) {
-        final List<String> profiles = new ArrayList<>();
+        val profiles = new ArrayList<String>();
         profiles.add(casConfigurationPropertiesEnvironmentManager.getApplicationName());
         profiles.addAll(Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toList()));
         return profiles;

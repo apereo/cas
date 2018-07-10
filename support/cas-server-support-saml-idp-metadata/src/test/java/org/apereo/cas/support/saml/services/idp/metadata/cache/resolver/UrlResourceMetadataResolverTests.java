@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.category.FileSystemCategory;
@@ -20,8 +22,6 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
-
-import java.util.Collection;
 
 import static org.junit.Assert.*;
 
@@ -53,10 +53,10 @@ public class UrlResourceMetadataResolverTests {
 
     @Test
     public void verifyResolverSupports() {
-        final var props = new SamlIdPProperties();
+        val props = new SamlIdPProperties();
         props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
-        final var resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
-        final var service = new SamlRegisteredService();
+        val resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
+        val service = new SamlRegisteredService();
         service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
         assertTrue(resolver.supports(service));
         service.setMetadataLocation("classpath:sample-sp.xml");
@@ -65,14 +65,14 @@ public class UrlResourceMetadataResolverTests {
 
     @Test
     public void verifyResolverResolves() {
-        final var props = new SamlIdPProperties();
+        val props = new SamlIdPProperties();
         props.getMetadata().setLocation(new FileSystemResource(FileUtils.getTempDirectory()));
-        final var service = new SamlRegisteredService();
-        final var resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
+        val service = new SamlRegisteredService();
+        val resolver = new UrlResourceMetadataResolver(props, openSamlConfigBean);
         service.setName("TestShib");
         service.setId(1000);
         service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
-        final Collection results = resolver.resolve(service);
+        val results = resolver.resolve(service);
         assertFalse(results.isEmpty());
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.hz;
 
+import lombok.val;
+
 import com.hazelcast.azure.AzureDiscoveryStrategyFactory;
 import com.hazelcast.config.DiscoveryStrategyConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +10,6 @@ import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastA
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link HazelcastAzureDiscoveryStrategy}.
@@ -20,8 +21,8 @@ import java.util.Map;
 public class HazelcastAzureDiscoveryStrategy implements HazelcastDiscoveryStrategy {
     @Override
     public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster) {
-        final var azure = cluster.getDiscovery().getAzure();
-        final Map<String, Comparable> properties = new HashMap<>();
+        val azure = cluster.getDiscovery().getAzure();
+        val properties = new HashMap<String, Comparable>();
         if (StringUtils.hasText(azure.getClientId())) {
             properties.put(HazelcastAzureDiscoveryProperties.AZURE_DISCOVERY_CLIENT_ID, azure.getClientId());
         }

@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -10,7 +12,6 @@ import org.junit.runners.JUnit4;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -27,17 +28,17 @@ public class GroovyScriptAttributeReleasePolicyTests {
 
     @Test
     public void verifySerializeAGroovyScriptAttributeReleasePolicyToJson() throws IOException {
-        final var policyWritten = new GroovyScriptAttributeReleasePolicy();
+        val policyWritten = new GroovyScriptAttributeReleasePolicy();
         MAPPER.writeValue(JSON_FILE, policyWritten);
-        final RegisteredServiceAttributeReleasePolicy policyRead = MAPPER.readValue(JSON_FILE, GroovyScriptAttributeReleasePolicy.class);
+        val policyRead = MAPPER.readValue(JSON_FILE, GroovyScriptAttributeReleasePolicy.class);
         assertEquals(policyWritten, policyRead);
     }
 
     @Test
     public void verifyAction() {
-        final var policy = new GroovyScriptAttributeReleasePolicy();
+        val policy = new GroovyScriptAttributeReleasePolicy();
         policy.setGroovyScript("classpath:GroovyAttributeRelease.groovy");
-        final Map attributes = policy.getAttributes(CoreAuthenticationTestUtils.getPrincipal(), CoreAuthenticationTestUtils.getService(),
+        val attributes = policy.getAttributes(CoreAuthenticationTestUtils.getPrincipal(), CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getRegisteredService());
         assertTrue(attributes.containsKey("username"));
         assertTrue(attributes.containsKey("likes"));

@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.val;
+
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
@@ -100,12 +102,12 @@ public class DynamoDbTicketRegistryFacilitator {
      * @return the boolean
      */
     public boolean delete(final String ticketId, final String encodedTicketId) {
-        final var metadata = this.ticketCatalog.find(ticketId);
+        val metadata = this.ticketCatalog.find(ticketId);
         if (metadata != null) {
-            final var del = new DeleteItemRequest().withTableName(metadata.getProperties().getStorageName())
+            val del = new DeleteItemRequest().withTableName(metadata.getProperties().getStorageName())
                 .withKey(CollectionUtils.wrap(ColumnNames.ID.getColumnName(), new AttributeValue(encodedTicketId)));
             LOGGER.debug("Submitting delete request [{}] for ticket [{}]", del, ticketId);
-            final var res = amazonDynamoDBClient.deleteItem(del);
+            val res = amazonDynamoDBClient.deleteItem(del);
             LOGGER.debug("Delete request came back with result [{}]", res);
             return res != null;
         }
@@ -118,10 +120,10 @@ public class DynamoDbTicketRegistryFacilitator {
      * @return the int
      */
     public int deleteAll() {
-        final var count = new AtomicInteger();
-        final var metadata = this.ticketCatalog.findAll();
+        val count = new AtomicInteger();
+        val metadata = this.ticketCatalog.findAll();
         metadata.forEach(r -> {
-            final var scan = new ScanRequest(r.getProperties().getStorageName());
+            val scan = new ScanRequest(r.getProperties().getStorageName());
             LOGGER.debug("Submitting scan request [{}] to table [{}]", scan, r.getProperties().getStorageName());
             count.addAndGet(this.amazonDynamoDBClient.scan(scan).getCount());
         });
@@ -135,12 +137,12 @@ public class DynamoDbTicketRegistryFacilitator {
      * @return the all
      */
     public Collection<Ticket> getAll() {
-        final Collection<Ticket> tickets = new ArrayList<>();
-        final var metadata = this.ticketCatalog.findAll();
+        val tickets = new ArrayList<Ticket>();
+        val metadata = this.ticketCatalog.findAll();
         metadata.forEach(r -> {
-            final var scan = new ScanRequest(r.getProperties().getStorageName());
+            val scan = new ScanRequest(r.getProperties().getStorageName());
             LOGGER.debug("Scanning table with request [{}]", scan);
-            final var result = this.amazonDynamoDBClient.scan(scan);
+            val result = this.amazonDynamoDBClient.scan(scan);
             LOGGER.debug("Scanned table with result [{}]", scan);
             tickets.addAll(result.getItems().stream().map(DynamoDbTicketRegistryFacilitator::deserializeTicket).collect(Collectors.toList()));
         });
@@ -155,15 +157,15 @@ public class DynamoDbTicketRegistryFacilitator {
      * @return the ticket
      */
     public Ticket get(final String ticketId, final String encodedTicketId) {
-        final var metadata = this.ticketCatalog.find(ticketId);
+        val metadata = this.ticketCatalog.find(ticketId);
         if (metadata != null) {
-            final Map<String, AttributeValue> keys = new HashMap<>();
+            val keys = new HashMap<String, AttributeValue>();
             keys.put(ColumnNames.ID.getColumnName(), new AttributeValue(encodedTicketId));
-            final var request = new GetItemRequest().withKey(keys).withTableName(metadata.getProperties().getStorageName());
+            val request = new GetItemRequest().withKey(keys).withTableName(metadata.getProperties().getStorageName());
             LOGGER.debug("Submitting request [{}] to get ticket item [{}]", request, ticketId);
-            final var returnItem = amazonDynamoDBClient.getItem(request).getItem();
+            val returnItem = amazonDynamoDBClient.getItem(request).getItem();
             if (returnItem != null) {
-                final var ticket = deserializeTicket(returnItem);
+                val ticket = deserializeTicket(returnItem);
                 LOGGER.debug("Located ticket [{}]", ticket);
                 if (ticket == null || ticket.isExpired()) {
                     LOGGER.warn("The expiration policy for ticket id [{}] has expired the ticket", ticketId);
@@ -178,9 +180,9 @@ public class DynamoDbTicketRegistryFacilitator {
     }
 
     private static Ticket deserializeTicket(final Map<String, AttributeValue> returnItem) {
-        final var bb = returnItem.get(ColumnNames.ENCODED.getColumnName()).getB();
+        val bb = returnItem.get(ColumnNames.ENCODED.getColumnName()).getB();
         LOGGER.debug("Located binary encoding of ticket item [{}]. Transforming item into ticket object", returnItem);
-        try (var is = new ByteArrayInputStream(bb.array(), bb.arrayOffset() + bb.position(), bb.remaining())) {
+        try (val is = new ByteArrayInputStream(bb.array(), bb.arrayOffset() + bb.position(), bb.remaining())) {
             return SerializationUtils.deserialize(is);
         } catch (final Exception e){
             LOGGER.error(e.getMessage(), e);
@@ -195,12 +197,12 @@ public class DynamoDbTicketRegistryFacilitator {
      * @param encodedTicket the encoded ticket
      */
     public void put(final Ticket ticket, final Ticket encodedTicket) {
-        final var metadata = this.ticketCatalog.find(ticket);
-        final var values = buildTableAttributeValuesMapFromTicket(ticket, encodedTicket);
+        val metadata = this.ticketCatalog.find(ticket);
+        val values = buildTableAttributeValuesMapFromTicket(ticket, encodedTicket);
         LOGGER.debug("Adding ticket id [{}] with attribute values [{}]", encodedTicket.getId(), values);
-        final var putItemRequest = new PutItemRequest(metadata.getProperties().getStorageName(), values);
+        val putItemRequest = new PutItemRequest(metadata.getProperties().getStorageName(), values);
         LOGGER.debug("Submitting put request [{}] for ticket id [{}]", putItemRequest, encodedTicket.getId());
-        final var putItemResult = amazonDynamoDBClient.putItem(putItemRequest);
+        val putItemResult = amazonDynamoDBClient.putItem(putItemRequest);
         LOGGER.debug("Ticket added with result [{}]", putItemResult);
         getAll();
     }
@@ -211,15 +213,15 @@ public class DynamoDbTicketRegistryFacilitator {
      * @param deleteTables the delete tables
      */
     public void createTicketTables(final boolean deleteTables) {
-        final var metadata = this.ticketCatalog.findAll();
+        val metadata = this.ticketCatalog.findAll();
         metadata.forEach(Unchecked.consumer(r -> {
-            final var request = new CreateTableRequest()
+            val request = new CreateTableRequest()
                 .withAttributeDefinitions(new AttributeDefinition(ColumnNames.ID.getColumnName(), ScalarAttributeType.S))
                 .withKeySchema(new KeySchemaElement(ColumnNames.ID.getColumnName(), KeyType.HASH))
                 .withProvisionedThroughput(new ProvisionedThroughput(dynamoDbProperties.getReadCapacity(),
                     dynamoDbProperties.getWriteCapacity())).withTableName(r.getProperties().getStorageName());
             if (deleteTables) {
-                final var delete = new DeleteTableRequest(r.getProperties().getStorageName());
+                val delete = new DeleteTableRequest(r.getProperties().getStorageName());
                 LOGGER.debug("Sending delete request [{}] to remove table if necessary", delete);
                 TableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
             }
@@ -227,9 +229,9 @@ public class DynamoDbTicketRegistryFacilitator {
             TableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
             LOGGER.debug("Waiting until table [{}] becomes active...", request.getTableName());
             TableUtils.waitUntilActive(amazonDynamoDBClient, request.getTableName());
-            final var describeTableRequest = new DescribeTableRequest().withTableName(request.getTableName());
+            val describeTableRequest = new DescribeTableRequest().withTableName(request.getTableName());
             LOGGER.debug("Sending request [{}] to obtain table description...", describeTableRequest);
-            final var tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
+            val tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
             LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
         }));
     }
@@ -242,7 +244,7 @@ public class DynamoDbTicketRegistryFacilitator {
      * @return the map
      */
     public Map<String, AttributeValue> buildTableAttributeValuesMapFromTicket(final Ticket ticket, final Ticket encTicket) {
-        final Map<String, AttributeValue> values = new HashMap<>();
+        val values = new HashMap<String, AttributeValue>();
         values.put(ColumnNames.ID.getColumnName(), new AttributeValue(encTicket.getId()));
         values.put(ColumnNames.PREFIX.getColumnName(), new AttributeValue(ticket.getPrefix()));
         values.put(ColumnNames.CREATION_TIME.getColumnName(), new AttributeValue(ticket.getCreationTime().toString()));

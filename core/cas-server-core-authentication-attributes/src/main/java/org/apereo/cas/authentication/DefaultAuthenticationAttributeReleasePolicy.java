@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
      */
     @Override
     public Map<String, Object> getAuthenticationAttributesForRelease(final Authentication authentication) {
-        final HashMap<String, Object> attrs = new HashMap<>(authentication.getAttributes());
+        val attrs = new HashMap<String, Object>(authentication.getAttributes());
         // remove any attributes explicitly prohibited
         attrs.keySet().removeAll(attributesToNeverRelease);
         // only apply whitelist if it contains attributes

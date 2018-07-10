@@ -13,6 +13,7 @@ import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
 import com.datastax.driver.core.policies.LoggingRetryPolicy;
 import com.datastax.driver.core.policies.TokenAwarePolicy;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.BaseCassandraProperties;
 import org.springframework.beans.factory.DisposableBean;
@@ -38,28 +39,28 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
     }
 
     private static Cluster initializeCassandraCluster(final BaseCassandraProperties cassandra) {
-        final Cluster cluster;
-        final var poolingOptions = new PoolingOptions()
+        val poolingOptions = new PoolingOptions()
             .setMaxRequestsPerConnection(HostDistance.LOCAL, cassandra.getMaxRequestsPerConnection())
             .setConnectionsPerHost(HostDistance.LOCAL, cassandra.getCoreConnections(), cassandra.getMaxConnections());
 
-        final var dcPolicyBuilder = DCAwareRoundRobinPolicy.builder();
+        val dcPolicyBuilder = DCAwareRoundRobinPolicy.builder();
         if (StringUtils.isNotBlank(cassandra.getLocalDc())) {
             dcPolicyBuilder.withLocalDc(cassandra.getLocalDc());
         }
 
-        final var loadBalancingPolicy = new TokenAwarePolicy(dcPolicyBuilder.build(), cassandra.isShuffleReplicas());
+        val replica = TokenAwarePolicy.ReplicaOrdering.valueOf(cassandra.getReplicaOrdering().toUpperCase());
+        val loadBalancingPolicy = new TokenAwarePolicy(dcPolicyBuilder.build(), replica);
 
-        final var socketOptions = new SocketOptions()
+        val socketOptions = new SocketOptions()
             .setConnectTimeoutMillis(cassandra.getConnectTimeoutMillis())
             .setReadTimeoutMillis(cassandra.getReadTimeoutMillis());
 
-        final var queryOptions = new QueryOptions()
+        val queryOptions = new QueryOptions()
             .setConsistencyLevel(ConsistencyLevel.valueOf(cassandra.getConsistencyLevel()))
             .setSerialConsistencyLevel(ConsistencyLevel.valueOf(cassandra.getSerialConsistencyLevel()));
 
-        final var retryPolicy = RetryPolicyType.valueOf(cassandra.getRetryPolicy()).getRetryPolicy();
-        final var builder =
+        val retryPolicy = RetryPolicyType.valueOf(cassandra.getRetryPolicy()).getRetryPolicy();
+        val builder =
             Cluster.builder()
                 .withCredentials(cassandra.getUsername(), cassandra.getPassword())
                 .withPoolingOptions(poolingOptions)
@@ -74,7 +75,7 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
         Arrays.stream(StringUtils.split(cassandra.getContactPoints(), ','))
             .forEach(contactPoint -> builder.addContactPoint(StringUtils.trim(contactPoint)));
 
-        cluster = builder.build();
+        val cluster = builder.build();
 
         if (LOGGER.isDebugEnabled()) {
             cluster.getMetadata().getAllHosts().forEach(clusterHost ->

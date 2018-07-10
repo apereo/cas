@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
@@ -19,16 +21,16 @@ public class DefaultPrincipalFactoryTests {
 
     @Test
     public void checkCreatingSimplePrincipal() {
-        final PrincipalFactory f = new DefaultPrincipalFactory();
-        final var p = f.createPrincipal(UID);
+        val f = new DefaultPrincipalFactory();
+        val p = f.createPrincipal(UID);
         assertEquals(UID, p.getId());
         assertTrue(p.getAttributes().isEmpty());
     }
 
     @Test
     public void checkCreatingSimplePrincipalWithAttributes() {
-        final PrincipalFactory f = new DefaultPrincipalFactory();
-        final var p = f.createPrincipal(UID, Collections.singletonMap("mail", "final@example.com"));
+        val f = new DefaultPrincipalFactory();
+        val p = f.createPrincipal(UID, Collections.singletonMap("mail", "final@example.com"));
         assertEquals(UID, p.getId());
         assertEquals(1, p.getAttributes().size());
         assertTrue(p.getAttributes().containsKey("mail"));
@@ -36,8 +38,8 @@ public class DefaultPrincipalFactoryTests {
 
     @Test
     public void checkCreatingSimplePrincipalWithDefaultRepository() {
-        final PrincipalFactory f = new DefaultPrincipalFactory();
-        final var p = f.createPrincipal(UID);
+        val f = new DefaultPrincipalFactory();
+        val p = f.createPrincipal(UID);
         assertEquals(UID, p.getId());
         assertTrue(p.getAttributes().isEmpty());
     }

@@ -1,6 +1,7 @@
 package org.apereo.cas.shell.commands.properties;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -13,7 +14,7 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
@@ -49,7 +50,7 @@ public class FindPropertiesCommand {
         @ShellOption(value = {"summary"},
             help = "Whether results should be presented in summarized mode") final boolean summary) {
 
-        final var results = find(strict, RegexUtils.createPattern(name));
+        val results = find(strict, RegexUtils.createPattern(name));
 
         if (results.isEmpty()) {
             LOGGER.info("Could not find any results matching the criteria");
@@ -59,7 +60,7 @@ public class FindPropertiesCommand {
         results.forEach((k, v) -> {
             if (summary) {
                 LOGGER.info("{}={}", k, v.getDefaultValue());
-                final var value = StringUtils.normalizeSpace(v.getShortDescription());
+                val value = StringUtils.normalizeSpace(v.getShortDescription());
                 if (StringUtils.isNotBlank(value)) {
                     LOGGER.info("{}", value);
                 }
@@ -90,15 +91,17 @@ public class FindPropertiesCommand {
      * @return the map
      */
     public Map<String, ConfigurationMetadataProperty> find(final boolean strict, final Pattern propertyPattern) {
-        final Map<String, ConfigurationMetadataProperty> results = new LinkedHashMap<>();
+        val results = new HashMap<String, ConfigurationMetadataProperty>();
 
-        final var repository = new CasConfigurationMetadataRepository();
-        final var props = repository.getRepository().getAllProperties();
+        val repository = new CasConfigurationMetadataRepository();
+        val props = repository.getRepository().getAllProperties();
 
         props.forEach((k, v) -> {
-            final var matched = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(k).spliterator(), false)
+            val matched = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(k).spliterator(), false)
                 .map(Object::toString)
-                .anyMatch(name -> strict ? RegexUtils.matches(propertyPattern, name) : RegexUtils.find(propertyPattern, name));
+                .anyMatch(name -> strict
+                    ? RegexUtils.matches(propertyPattern, name)
+                    : RegexUtils.find(propertyPattern, name));
             if (matched) {
                 results.put(k, v);
             }

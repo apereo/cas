@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +13,6 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
-import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -72,7 +73,7 @@ public class OAuth20CasAuthenticationBuilder {
      * @return the service
      */
     public Service buildService(final OAuthRegisteredService registeredService, final J2EContext context, final boolean useServiceHeader) {
-        String id = null;
+        var id = StringUtils.EMPTY;
         if (useServiceHeader) {
             id = OAuth20Utils.getServiceRequestHeaderIfAny(context.getRequest());
             LOGGER.debug("Located service based on request header is [{}]", id);
@@ -97,18 +98,18 @@ public class OAuth20CasAuthenticationBuilder {
                                 final J2EContext context,
                                 final Service service) {
 
-        final var profileAttributes = getPrincipalAttributesFromProfile(profile);
-        final var newPrincipal = this.principalFactory.createPrincipal(profile.getId(), profileAttributes);
+        val profileAttributes = getPrincipalAttributesFromProfile(profile);
+        val newPrincipal = this.principalFactory.createPrincipal(profile.getId(), profileAttributes);
         LOGGER.debug("Created final principal [{}] after filtering attributes based on [{}]", newPrincipal, registeredService);
 
-        final var authenticator = profile.getClass().getCanonicalName();
-        final CredentialMetaData metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(profile.getId()));
+        val authenticator = profile.getClass().getCanonicalName();
+        val metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(profile.getId()));
         final AuthenticationHandlerExecutionResult handlerResult =
             new DefaultAuthenticationHandlerExecutionResult(authenticator, metadata, newPrincipal, new ArrayList<>());
-        final var scopes = CollectionUtils.toCollection(context.getRequest().getParameterValues(OAuth20Constants.SCOPE));
+        val scopes = CollectionUtils.toCollection(context.getRequest().getParameterValues(OAuth20Constants.SCOPE));
 
-        final var state = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.STATE), StringUtils.EMPTY);
-        final var nonce = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.NONCE), StringUtils.EMPTY);
+        val state = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.STATE), StringUtils.EMPTY);
+        val nonce = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.NONCE), StringUtils.EMPTY);
         LOGGER.debug("OAuth [{}] is [{}], and [{}] is [{}]", OAuth20Constants.STATE, state, OAuth20Constants.NONCE, nonce);
 
         /*
@@ -116,7 +117,7 @@ public class OAuth20CasAuthenticationBuilder {
          * happily serializes to json but is unable to deserialize.
          * We have to of it to HashSet to avoid such problem
          */
-        final var bldr = DefaultAuthenticationBuilder.newInstance()
+        val bldr = DefaultAuthenticationBuilder.newInstance()
                 .addAttribute("permissions", new HashSet<>(profile.getPermissions()))
                 .addAttribute("roles", new HashSet<>(profile.getRoles()))
                 .addAttribute("scopes", scopes)
@@ -132,7 +133,7 @@ public class OAuth20CasAuthenticationBuilder {
     }
 
     private static Map<String, Object> getPrincipalAttributesFromProfile(final UserProfile profile) {
-        final Map<String, Object> profileAttributes = new HashMap<>(profile.getAttributes());
+        val profileAttributes = new HashMap<String, Object>(profile.getAttributes());
         profileAttributes.remove(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN);
         profileAttributes.remove(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME);
         profileAttributes.remove(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);

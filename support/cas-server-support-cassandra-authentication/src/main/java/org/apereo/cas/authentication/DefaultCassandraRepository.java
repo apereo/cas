@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
@@ -24,15 +26,15 @@ public class DefaultCassandraRepository implements CassandraRepository {
     private final PreparedStatement selectUserQuery;
 
     public DefaultCassandraRepository(final CassandraAuthenticationProperties cassandraProperties, final CassandraSessionFactory cassandraSessionFactory) {
-        final var query = String.format(cassandraProperties.getQuery(), cassandraProperties.getTableName(), cassandraProperties.getUsernameAttribute());
+        val query = String.format(cassandraProperties.getQuery(), cassandraProperties.getTableName(), cassandraProperties.getUsernameAttribute());
         this.session = cassandraSessionFactory.getSession();
         this.selectUserQuery = session.prepare(query);
     }
 
     @Override
     public Map<String, Object> getUser(final String uid) {
-        final Map<String, Object> attributes = new HashMap<>();
-        final var row = session.execute(bind(selectUserQuery, uid)).one();
+        val attributes = new HashMap<String, Object>();
+        val row = session.execute(bind(selectUserQuery, uid)).one();
         if (row != null) {
             row.getColumnDefinitions().forEach(c -> {
                 LOGGER.debug("Located attribute column [{}]", c.getName());
@@ -43,7 +45,7 @@ public class DefaultCassandraRepository implements CassandraRepository {
     }
 
     private static BoundStatement bind(final PreparedStatement statement, final Object... params) {
-        final var boundStatement = statement.bind(params);
+        val boundStatement = statement.bind(params);
         LOGGER.debug("CQL: {} with parameters [{}]", statement.getQueryString(), StringUtils.join(params, ", "));
         return boundStatement;
     }

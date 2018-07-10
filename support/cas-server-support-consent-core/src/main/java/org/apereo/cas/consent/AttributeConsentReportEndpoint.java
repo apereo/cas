@@ -1,5 +1,7 @@
 package org.apereo.cas.consent;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
@@ -33,13 +35,13 @@ public class AttributeConsentReportEndpoint {
      */
     @ReadOperation
     public Collection<Map<String, Object>> consentDecisions(@Selector final String principal) {
-        final Collection<Map<String, Object>> result = new HashSet<>();
+        val result = new HashSet<Map<String, Object>>();
         LOGGER.debug("Fetching consent decisions for principal [{}]", principal);
-        final var consentDecisions = this.consentRepository.findConsentDecisions(principal);
+        val consentDecisions = this.consentRepository.findConsentDecisions(principal);
         LOGGER.debug("Resolved consent decisions for principal [{}]: {}", principal, consentDecisions);
 
-        consentDecisions.stream().forEach(d -> {
-            final Map<String, Object> map = new HashMap<>();
+        consentDecisions.forEach(d -> {
+            val map = new HashMap<String, Object>();
             map.put("decision", d);
             map.put("attributes", this.consentEngine.resolveConsentableAttributesFrom(d));
             result.add(map);

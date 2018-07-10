@@ -1,5 +1,7 @@
 package org.apereo.cas.consent;
 
+import lombok.val;
+
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
@@ -53,7 +55,7 @@ public abstract class BaseConsentRepository implements ConsentRepository {
 
     @Override
     public boolean storeConsentDecision(final ConsentDecision decision) {
-        final var consent = getConsentDecisions()
+        val consent = getConsentDecisions()
             .stream()
             .filter(d -> d.getId() == decision.getId())
             .findFirst()
@@ -70,8 +72,8 @@ public abstract class BaseConsentRepository implements ConsentRepository {
 
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
-        final var decisions = findConsentDecisions(principal);
-        final var result = decisions.stream().filter(d -> d.getId() == decisionId).findFirst();
+        val decisions = findConsentDecisions(principal);
+        val result = decisions.stream().filter(d -> d.getId() == decisionId).findFirst();
         result.ifPresent(value -> this.consentDecisions.remove(value));
         return result.isPresent();
     }

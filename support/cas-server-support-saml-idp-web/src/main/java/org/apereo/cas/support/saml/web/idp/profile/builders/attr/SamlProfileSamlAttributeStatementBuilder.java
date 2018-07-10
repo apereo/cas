@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.attr;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -18,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link SamlProfileSamlAttributeStatementBuilder}.
@@ -58,13 +59,13 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                        final MessageContext messageContext) throws SamlException {
 
-        final var assertion = Assertion.class.cast(casAssertion);
-        final Map<String, Object> attributes = new HashMap<>(assertion.getAttributes());
+        val assertion = Assertion.class.cast(casAssertion);
+        val attributes = new HashMap<String, Object>(assertion.getAttributes());
         attributes.putAll(assertion.getPrincipal().getAttributes());
-        final var encodedAttrs = this.samlAttributeEncoder.encodeAttributes(attributes, service);
+        val encodedAttrs = this.samlAttributeEncoder.encodeAttributes(attributes, service);
 
-        final var resp = casProperties.getAuthn().getSamlIdp().getResponse();
-        final Map<String, String> nameFormats = new HashMap<>(resp.configureAttributeNameFormats());
+        val resp = casProperties.getAuthn().getSamlIdp().getResponse();
+        val nameFormats = new HashMap<String, String>(resp.configureAttributeNameFormats());
         nameFormats.putAll(service.getAttributeNameFormats());
         return newAttributeStatement(encodedAttrs, service.getAttributeFriendlyNames(),
             nameFormats,

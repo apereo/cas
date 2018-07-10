@@ -1,5 +1,7 @@
 package org.apereo.cas.pm.impl;
 
+import lombok.val;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
@@ -59,7 +61,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
 
     @Override
     public boolean changeInternal(@NonNull final Credential credential, @NonNull final PasswordChangeBean bean) {
-        final var c = (UsernamePasswordCredential) credential;
+        val c = (UsernamePasswordCredential) credential;
         if (StringUtils.isBlank(c.getPassword()) || StringUtils.isBlank(bean.getPassword())) {
             LOGGER.error("Password cannot be blank");
             return false;
@@ -68,7 +70,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
             LOGGER.error("Password does not match and cannot be confirmed");
             return false;
         }
-        final var account = this.jsonBackedAccounts.getOrDefault(c.getId(), null);
+        val account = this.jsonBackedAccounts.getOrDefault(c.getId(), null);
         if (account == null) {
             LOGGER.error("User account [{}] cannot be found", c.getId());
             return false;
@@ -87,13 +89,13 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
 
     @Override
     public String findEmail(final String username) {
-        final var account = this.jsonBackedAccounts.getOrDefault(username, null);
+        val account = this.jsonBackedAccounts.getOrDefault(username, null);
         return account == null ? null : account.getEmail();
     }
 
     @Override
     public Map<String, String> getSecurityQuestions(final String username) {
-        final var account = this.jsonBackedAccounts.getOrDefault(username, null);
+        val account = this.jsonBackedAccounts.getOrDefault(username, null);
         if (account != null) {
             return account.getSecurityQuestions();
         }

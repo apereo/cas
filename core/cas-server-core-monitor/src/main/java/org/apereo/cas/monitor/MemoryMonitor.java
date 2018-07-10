@@ -1,6 +1,8 @@
 package org.apereo.cas.monitor;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
@@ -12,7 +14,7 @@ import org.springframework.boot.actuate.health.Health;
  * @since 3.5.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MemoryMonitor extends AbstractHealthIndicator {
 
     private static final int PERCENTAGE_VALUE = 100;
@@ -24,9 +26,9 @@ public class MemoryMonitor extends AbstractHealthIndicator {
 
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
-        final var used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-        final var total = Runtime.getRuntime().maxMemory();
-        final var free = total - used;
+        val used = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        val total = Runtime.getRuntime().maxMemory();
+        val free = total - used;
         if (free * PERCENTAGE_VALUE / total < this.freeMemoryWarnThreshold) {
             buildHealthCheckStatus(builder.down(), free, total);
         } else {

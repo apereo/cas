@@ -1,5 +1,7 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -50,7 +52,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
 
         openIdService = openIdServiceFactory.createService(request);
         MAPPER.writeValue(JSON_FILE, openIdService);
-        final var serviceRead = MAPPER.readValue(JSON_FILE, OpenIdService.class);
+        val serviceRead = MAPPER.readValue(JSON_FILE, OpenIdService.class);
         assertEquals(openIdService, serviceRead);
     }
 
@@ -61,13 +63,13 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
             openIdService = openIdServiceFactory.createService(request);
-            final var ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), openIdService);
+            val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), openIdService);
 
-            final var tgt = centralAuthenticationService.createTicketGrantingTicket(ctx).getId();
-            final var st = centralAuthenticationService.grantServiceTicket(tgt, openIdService, ctx).getId();
+            val tgt = centralAuthenticationService.createTicketGrantingTicket(ctx).getId();
+            val st = centralAuthenticationService.grantServiceTicket(tgt, openIdService, ctx).getId();
             centralAuthenticationService.validateServiceTicket(st, openIdService);
 
-            final var response = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL,
+            val response = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL,
                 serverManager, centralAuthenticationService,
                 new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
                 .build(openIdService, "something", CoreAuthenticationTestUtils.getAuthentication());
@@ -77,7 +79,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             assertEquals(RETURN_TO_URL, response.getAttributes().get(OpenIdProtocolConstants.OPENID_RETURNTO));
             assertEquals(OPEN_ID_PREFIX_URL, response.getAttributes().get(OpenIdProtocolConstants.OPENID_IDENTITY));
 
-            final var response2 = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL, serverManager,
+            val response2 = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL, serverManager,
                 centralAuthenticationService, new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
                 .build(openIdService, null, CoreAuthenticationTestUtils.getAuthentication());
             assertEquals("cancel", response2.getAttributes().get(OpenIdProtocolConstants.OPENID_MODE));
@@ -93,9 +95,9 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
             openIdService = openIdServiceFactory.createService(request);
-            final var ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), openIdService);
-            final var tgt = centralAuthenticationService.createTicketGrantingTicket(ctx).getId();
-            final var st = centralAuthenticationService.grantServiceTicket(tgt, openIdService, ctx).getId();
+            val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), openIdService);
+            val tgt = centralAuthenticationService.createTicketGrantingTicket(ctx).getId();
+            val st = centralAuthenticationService.grantServiceTicket(tgt, openIdService, ctx).getId();
             centralAuthenticationService.validateServiceTicket(st, openIdService);
 
             synchronized (this) {
@@ -105,7 +107,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
                     throw new AssertionError("Could not wait long enough to check association expiry date");
                 }
             }
-            final var response = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL, serverManager,
+            val response = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL, serverManager,
                 centralAuthenticationService, new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
                 .build(openIdService, st, CoreAuthenticationTestUtils.getAuthentication());
             assertNotNull(response);
@@ -119,17 +121,17 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
 
     @Test
     public void verifyEquals() {
-        final var request1 = new MockHttpServletRequest();
+        val request1 = new MockHttpServletRequest();
         request1.addParameter("openid.identity", OPEN_ID_PREFIX_URL);
         request1.addParameter("openid.return_to", RETURN_TO_URL);
         request1.addParameter("openid.mode", "openid.checkid_setup");
 
-        final var request2 = new MockHttpServletRequest();
+        val request2 = new MockHttpServletRequest();
         request2.addParameter("openid.identity", OPEN_ID_PREFIX_URL);
         request2.addParameter("openid.return_to", RETURN_TO_URL);
 
-        final var o1 = openIdServiceFactory.createService(request);
-        final var o2 = openIdServiceFactory.createService(request);
+        val o1 = openIdServiceFactory.createService(request);
+        val o2 = openIdServiceFactory.createService(request);
 
         assertTrue(o1.equals(o2));
         assertFalse(o1.equals(new Object()));

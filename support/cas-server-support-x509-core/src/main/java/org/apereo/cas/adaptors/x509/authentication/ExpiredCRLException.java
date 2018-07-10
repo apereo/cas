@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import java.security.GeneralSecurityException;
 import java.time.Instant;
@@ -18,7 +18,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ExpiredCRLException extends GeneralSecurityException {
 
     /** Serialization version marker. */

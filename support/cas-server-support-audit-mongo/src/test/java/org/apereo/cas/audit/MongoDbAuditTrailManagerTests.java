@@ -1,5 +1,7 @@
 package org.apereo.cas.audit;
 
+import lombok.val;
+
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -21,7 +23,7 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.time.LocalDate;
-import java.util.Set;
+
 import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
@@ -57,14 +59,14 @@ public class MongoDbAuditTrailManagerTests {
 
     @Test
     public void verify() {
-        final var twoDaysAgo = LocalDate.now().minusDays(2);
-        final var since = DateTimeUtils.dateOf(twoDaysAgo);
-        final var ctx = new AuditActionContext("casuser", "resource",
+        val twoDaysAgo = LocalDate.now().minusDays(2);
+        val since = DateTimeUtils.dateOf(twoDaysAgo);
+        val ctx = new AuditActionContext("casuser", "resource",
             "action", "appcode", since, "clientIp",
             "serverIp");
         auditTrailExecutionPlan.record(ctx);
 
-        final Set results = auditTrailExecutionPlan.getAuditRecordsSince(twoDaysAgo);
+        val results = auditTrailExecutionPlan.getAuditRecordsSince(twoDaysAgo);
         assertFalse(results.isEmpty());
     }
 }

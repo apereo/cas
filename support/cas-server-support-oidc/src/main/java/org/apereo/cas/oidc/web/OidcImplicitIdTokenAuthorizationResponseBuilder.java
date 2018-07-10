@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.web;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -47,7 +49,7 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilder extends OAuth20Toke
                                                 final RefreshToken refreshToken,
                                                 final J2EContext context) throws Exception {
 
-        final var idToken = this.idTokenGenerator.generate(context.getRequest(),
+        val idToken = this.idTokenGenerator.generate(context.getRequest(),
                 context.getResponse(), accessToken, idTokenExpirationPolicy.getTimeToLive(),
                 OAuth20ResponseTypes.IDTOKEN_TOKEN, holder.getRegisteredService());
         LOGGER.debug("Generated id token [{}]", idToken);
@@ -57,7 +59,7 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilder extends OAuth20Toke
 
     @Override
     public boolean supports(final J2EContext context) {
-        final var responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
+        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
         return OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.IDTOKEN_TOKEN);
     }
 }

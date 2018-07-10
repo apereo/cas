@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.val;
+
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.qrcode.QRCodeWriter;
@@ -16,7 +18,6 @@ import java.awt.image.BufferedImage;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
-import java.util.Map;
 import java.util.stream.IntStream;
 
 /**
@@ -50,19 +51,19 @@ public class QRUtils {
     @SneakyThrows
     public static void generateQRCode(final OutputStream stream, final String key,
                                       final int width, final int height) {
-        final Map<EncodeHintType, Object> hintMap = new EnumMap<>(EncodeHintType.class);
+        val hintMap = new EnumMap<>(EncodeHintType.class);
         hintMap.put(EncodeHintType.CHARACTER_SET, StandardCharsets.UTF_8.name());
         hintMap.put(EncodeHintType.MARGIN, 2);
         hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
 
-        final var qrCodeWriter = new QRCodeWriter();
-        final var byteMatrix = qrCodeWriter.encode(key, BarcodeFormat.QR_CODE, width, height, hintMap);
-        final var byteMatrixWidth = byteMatrix.getWidth();
-        final var image = new BufferedImage(byteMatrixWidth, byteMatrixWidth, BufferedImage.TYPE_INT_RGB);
+        val qrCodeWriter = new QRCodeWriter();
+        val byteMatrix = qrCodeWriter.encode(key, BarcodeFormat.QR_CODE, width, height, hintMap);
+        val byteMatrixWidth = byteMatrix.getWidth();
+        val image = new BufferedImage(byteMatrixWidth, byteMatrixWidth, BufferedImage.TYPE_INT_RGB);
         image.createGraphics();
 
         @Cleanup("dispose")
-        final var graphics = (Graphics2D) image.getGraphics();
+        val graphics = (Graphics2D) image.getGraphics();
 
         graphics.setColor(Color.WHITE);
         graphics.fillRect(0, 0, byteMatrixWidth, byteMatrixWidth);

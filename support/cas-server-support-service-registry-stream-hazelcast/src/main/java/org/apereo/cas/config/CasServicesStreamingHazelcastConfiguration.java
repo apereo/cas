@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +51,7 @@ public class CasServicesStreamingHazelcastConfiguration {
 
     @Bean
     public RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy() {
-        final var stream = casProperties.getServiceRegistry().getStream();
+        val stream = casProperties.getServiceRegistry().getStream();
         return new DefaultRegisteredServiceReplicationStrategy(registeredServiceDistributedCacheManager(), stream);
     }
     
@@ -61,15 +63,15 @@ public class CasServicesStreamingHazelcastConfiguration {
 
     @Bean
     public HazelcastInstance casRegisteredServiceHazelcastInstance() {
-        final var name = CasRegisteredServiceHazelcastStreamPublisher.class.getSimpleName();
+        val name = CasRegisteredServiceHazelcastStreamPublisher.class.getSimpleName();
         LOGGER.debug("Creating Hazelcast instance [{}] to publish service definitions", name);
-        final var factory = new HazelcastConfigurationFactory();
-        final var stream = casProperties.getServiceRegistry().getStream().getHazelcast();
-        final var hz = stream.getConfig();
-        final var duration = Beans.newDuration(stream.getDuration()).toMillis();
-        final var mapConfig = factory.buildMapConfig(hz, name,
+        val factory = new HazelcastConfigurationFactory();
+        val stream = casProperties.getServiceRegistry().getStream().getHazelcast();
+        val hz = stream.getConfig();
+        val duration = Beans.newDuration(stream.getDuration()).toMillis();
+        val mapConfig = factory.buildMapConfig(hz, name,
             TimeUnit.MILLISECONDS.toSeconds(duration));
-        final var cfg = factory.build(hz, mapConfig);
+        val cfg = factory.build(hz, mapConfig);
         LOGGER.debug("Created hazelcast instance [{}] with publisher id [{}] to publish service definitions",
                 name, casRegisteredServiceStreamPublisherIdentifier);
         return Hazelcast.newHazelcastInstance(cfg);

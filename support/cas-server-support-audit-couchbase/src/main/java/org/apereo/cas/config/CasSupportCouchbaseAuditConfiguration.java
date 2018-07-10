@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.CouchbaseAuditTrailManager;
@@ -32,8 +34,8 @@ public class CasSupportCouchbaseAuditConfiguration {
     @RefreshScope
     @Bean
     public CouchbaseClientFactory auditsCouchbaseClientFactory() {
-        final var cb = casProperties.getAudit().getCouchbase();
-        final var nodes = StringUtils.commaDelimitedListToSet(cb.getNodeSet());
+        val cb = casProperties.getAudit().getCouchbase();
+        val nodes = StringUtils.commaDelimitedListToSet(cb.getNodeSet());
         return new CouchbaseClientFactory(nodes, cb.getBucket(),
             cb.getPassword(),
             Beans.newDuration(cb.getTimeout()).toMillis(),
@@ -43,7 +45,7 @@ public class CasSupportCouchbaseAuditConfiguration {
 
     @Bean
     public AuditTrailManager couchbaseAuditTrailManager() {
-        final var cb = casProperties.getAudit().getCouchbase();
+        val cb = casProperties.getAudit().getCouchbase();
         return new CouchbaseAuditTrailManager(auditsCouchbaseClientFactory(),
             new AuditActionContextJsonSerializer(), cb.isAsynchronous());
     }

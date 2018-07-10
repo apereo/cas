@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.proxy.support;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
@@ -31,15 +33,15 @@ public class Cas20ProxyHandler implements ProxyHandler {
 
     @Override
     public String handle(final Credential credential, final TicketGrantingTicket proxyGrantingTicketId) {
-        final var serviceCredentials = (HttpBasedServiceCredential) credential;
-        final var proxyIou = this.uniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX);
+        val serviceCredentials = (HttpBasedServiceCredential) credential;
+        val proxyIou = this.uniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX);
 
-        final var callbackUrl = serviceCredentials.getCallbackUrl();
-        final var serviceCredentialsAsString = callbackUrl.toExternalForm();
-        final var bufferLength = serviceCredentialsAsString.length() + proxyIou.length()
+        val callbackUrl = serviceCredentials.getCallbackUrl();
+        val serviceCredentialsAsString = callbackUrl.toExternalForm();
+        val bufferLength = serviceCredentialsAsString.length() + proxyIou.length()
             + proxyGrantingTicketId.getId().length() + BUFFER_LENGTH_ADDITIONAL_CHARGE;
 
-        final var stringBuffer = new StringBuilder(bufferLength)
+        val stringBuffer = new StringBuilder(bufferLength)
             .append(serviceCredentialsAsString);
 
         if (callbackUrl.getQuery() != null) {

@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -39,7 +41,7 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
             if (StringUtils.isBlank(this.scriptFile)) {
                 return new HashMap<>(0);
             }
-            final var matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(this.scriptFile);
+            val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(this.scriptFile);
             if (matcherInline.find()) {
                 return getAttributesFromInlineGroovyScript(attributes, matcherInline);
             }
@@ -51,15 +53,15 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
     }
 
     private static Map<String, Object> getAttributesFromInlineGroovyScript(final Map<String, Object> attributes, final Matcher matcherInline) {
-        final var script = matcherInline.group(1).trim();
-        final var args = CollectionUtils.wrap("attributes", attributes, "logger", LOGGER);
-        final Map<String, Object> map = ScriptingUtils.executeGroovyScriptEngine(script, args, Map.class);
+        val script = matcherInline.group(1).trim();
+        val args = CollectionUtils.wrap("attributes", attributes, "logger", LOGGER);
+        val map = ScriptingUtils.executeGroovyScriptEngine(script, args, Map.class);
         return ObjectUtils.defaultIfNull(map, new HashMap<>());
     }
 
     private Map<String, Object> getScriptedAttributesFromFile(final Map<String, Object> attributes) {
         final Object[] args = {attributes, LOGGER};
-        final Map<String, Object> map = ScriptingUtils.executeScriptEngine(this.scriptFile, args, Map.class);
+        val map = ScriptingUtils.executeScriptEngine(this.scriptFile, args, Map.class);
         return ObjectUtils.defaultIfNull(map, new HashMap<>());
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.view;
 
+import lombok.val;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,9 +33,9 @@ public class ThemeFileTemplateResolver extends FileTemplateResolver {
     protected ITemplateResource computeTemplateResource(final IEngineConfiguration configuration, final String ownerTemplate,
                                                         final String template, final String resourceName, final String characterEncoding,
                                                         final Map<String, Object> templateResolutionAttributes) {
-        final var themeName = getCurrentTheme();
+        val themeName = getCurrentTheme();
         if (StringUtils.isNotBlank(themeName)) {
-            final var themeTemplate = String.format(resourceName, themeName);
+            val themeTemplate = String.format(resourceName, themeName);
             return super.computeTemplateResource(configuration, ownerTemplate, template, themeTemplate, characterEncoding, templateResolutionAttributes);
         }
         return super.computeTemplateResource(configuration, ownerTemplate, template, resourceName, characterEncoding, templateResolutionAttributes);
@@ -45,9 +47,9 @@ public class ThemeFileTemplateResolver extends FileTemplateResolver {
      * @return the current theme
      */
     protected String getCurrentTheme() {
-        final var request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
         if (request != null) {
-            final var session = request.getSession(false);
+            val session = request.getSession(false);
             if (session != null) {
                 return (String) session.getAttribute(casProperties.getTheme().getParamName());
             }

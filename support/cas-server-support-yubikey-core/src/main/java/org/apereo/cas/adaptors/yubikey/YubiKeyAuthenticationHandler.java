@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import lombok.val;
+
 import com.yubico.client.v2.ResponseStatus;
 import com.yubico.client.v2.YubicoClient;
 import com.yubico.client.v2.exceptions.YubicoValidationFailure;
@@ -62,30 +64,30 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
-        final var yubiKeyCredential = (YubiKeyCredential) credential;
+        val yubiKeyCredential = (YubiKeyCredential) credential;
 
-        final var otp = yubiKeyCredential.getToken();
+        val otp = yubiKeyCredential.getToken();
 
         if (!YubicoClient.isValidOTPFormat(otp)) {
             LOGGER.debug("Invalid OTP format [{}]", otp);
             throw new AccountNotFoundException("OTP format is invalid");
         }
 
-        final var authentication = WebUtils.getInProgressAuthentication();
+        val authentication = WebUtils.getInProgressAuthentication();
         if (authentication == null) {
             throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
         }
-        final var principal = authentication.getPrincipal();
-        final var uid = principal.getId();
-        final var publicId = registry.getAccountValidator().getTokenPublicId(otp);
+        val principal = authentication.getPrincipal();
+        val uid = principal.getId();
+        val publicId = registry.getAccountValidator().getTokenPublicId(otp);
         if (!this.registry.isYubiKeyRegisteredFor(uid, publicId)) {
             LOGGER.debug("YubiKey public id [{}] is not registered for user [{}]", publicId, uid);
             throw new AccountNotFoundException("YubiKey id is not recognized in registry");
         }
 
         try {
-            final var response = this.client.verify(otp);
-            final var status = response.getStatus();
+            val response = this.client.verify(otp);
+            val status = response.getStatus();
             if (status.compareTo(ResponseStatus.OK) == 0) {
                 LOGGER.debug("YubiKey response status [{}] at [{}]", status, response.getTimestamp());
                 return createHandlerResult(yubiKeyCredential, this.principalFactory.createPrincipal(uid));

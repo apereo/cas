@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.generic;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
@@ -13,7 +15,6 @@ import javax.security.auth.login.FailedLoginException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
-import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -30,7 +31,7 @@ public class RejectUsersAuthenticationHandlerTests {
     private final RejectUsersAuthenticationHandler authenticationHandler;
 
     public RejectUsersAuthenticationHandlerTests() {
-        final Set<String> users = new HashSet<>();
+        val users = new HashSet<String>();
         users.add("scott");
         users.add("dima");
         users.add("bill");
@@ -40,7 +41,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test
     public void verifySupportsProperUserCredentials() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         c.setUsername("fff");
         c.setPassword("rutgers");
@@ -60,7 +61,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsUserInMap() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
         c.setPassword("rutgers");
@@ -72,7 +73,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyPassesUserNotInMap() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
         c.setPassword("rutgers");
@@ -82,7 +83,7 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyPassesNullUserName() throws Exception {
-        final var c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword("user");

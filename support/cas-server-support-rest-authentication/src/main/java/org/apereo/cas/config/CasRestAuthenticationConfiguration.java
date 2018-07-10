@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -68,8 +70,8 @@ public class CasRestAuthenticationConfiguration {
 
     @Bean
     public AuthenticationHandler restAuthenticationHandler() {
-        final var rest = casProperties.getAuthn().getRest();
-        final var r = new RestAuthenticationHandler(rest.getName(), restAuthenticationApi(),
+        val rest = casProperties.getAuthn().getRest();
+        val r = new RestAuthenticationHandler(rest.getName(), restAuthenticationApi(),
             servicesManager, restAuthenticationPrincipalFactory());
         r.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rest.getPasswordEncoder()));
         return r;

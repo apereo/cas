@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import lombok.val;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -137,7 +139,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @Override
     public synchronized ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
                                                          final boolean credentialProvided, final boolean onlyTrackMostRecentSession) {
-        final ServiceTicket serviceTicket = new ServiceTicketImpl(id, this, service, credentialProvided, expirationPolicy);
+        val serviceTicket = new ServiceTicketImpl(id, this, service, credentialProvided, expirationPolicy);
         trackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
         return serviceTicket;
     }
@@ -153,8 +155,8 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         update();
         service.setPrincipal(getRoot().getAuthentication().getPrincipal().getId());
         if (onlyTrackMostRecentSession) {
-            final var path = normalizePath(service);
-            final var existingServices = this.services.values();
+            val path = normalizePath(service);
+            val existingServices = this.services.values();
             // loop on existing services
             existingServices.stream().filter(existingService -> path.equals(normalizePath(existingService))).findFirst().ifPresent(existingServices::remove);
         }
@@ -196,7 +198,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @JsonIgnore
     @Override
     public TicketGrantingTicket getRoot() {
-        final var parent = this.getTicketGrantingTicket();
+        val parent = this.getTicketGrantingTicket();
         if (parent == null) {
             return this;
         }
@@ -206,7 +208,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @JsonIgnore
     @Override
     public List<Authentication> getChainedAuthentications() {
-        final List<Authentication> list = new ArrayList<>();
+        val list = new ArrayList<Authentication>();
         list.add(getAuthentication());
         if (this.getTicketGrantingTicket() == null) {
             return new ArrayList<>(list);

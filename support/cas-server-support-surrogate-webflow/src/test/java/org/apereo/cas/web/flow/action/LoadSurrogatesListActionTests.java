@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.action;
 
+import lombok.val;
+
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -44,8 +46,8 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
     @Test
     public void verifyGetListView() {
         try {
-            final var context = new MockRequestContext();
-            final var request = new MockHttpServletRequest();
+            val context = new MockRequestContext();
+            val request = new MockHttpServletRequest();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
             WebUtils.putRequestSurrogateAuthentication(context, true);
@@ -60,26 +62,26 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
 
     @Test
     public void verifyAuthenticate() throws Exception {
-        final var context = new MockRequestContext();
+        val context = new MockRequestContext();
         WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService());
 
-        final Map attributes = new LinkedHashMap<>();
+        val attributes = new LinkedHashMap<String, Object>();
         attributes.put(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true);
         attributes.putAll(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap());
 
-        final var p = CoreAuthenticationTestUtils.getPrincipal("casuser", attributes);
+        val p = CoreAuthenticationTestUtils.getPrincipal("casuser", (Map) attributes);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(p), context);
 
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        final var creds = new SurrogateUsernamePasswordCredential();
+        val creds = new SurrogateUsernamePasswordCredential();
         creds.setPassword("Mellon");
         creds.setUsername("casuser");
         creds.setSurrogateUsername("cassurrogate");
         WebUtils.putCredential(context, creds);
 
-        final var builder = mock(AuthenticationResultBuilder.class);
+        val builder = mock(AuthenticationResultBuilder.class);
         when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication()));
         when(builder.collect(any(Authentication.class))).thenReturn(builder);
         

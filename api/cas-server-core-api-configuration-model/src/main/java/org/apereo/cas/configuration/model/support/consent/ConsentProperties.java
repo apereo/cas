@@ -29,7 +29,7 @@ public class ConsentProperties implements Serializable {
      * Global reminder time unit, to reconfirm consent
      * in cases no changes are detected.
      */
-    private int reminder = 30;
+    private long reminder = 30;
 
     /**
      * Global reminder time unit of measure, to reconfirm consent

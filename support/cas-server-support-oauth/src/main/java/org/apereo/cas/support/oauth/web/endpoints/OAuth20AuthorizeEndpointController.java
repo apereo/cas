@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditableContext;
@@ -33,7 +35,6 @@ import org.apereo.cas.web.support.CookieUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -119,8 +120,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final var context = Pac4jUtils.getPac4jJ2EContext(request, response);
-        final var manager = Pac4jUtils.getPac4jProfileManager(request, response);
+        val context = Pac4jUtils.getPac4jJ2EContext(request, response);
+        val manager = Pac4jUtils.getPac4jProfileManager(request, response);
 
         if (!verifyAuthorizeRequest(context) || !isRequestAuthenticated(manager, context)) {
             LOGGER.error("Authorize request verification failed. Either the authorization request is missing required parameters, "
@@ -128,8 +129,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        final var clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
-        final var registeredService = getRegisteredServiceByClientId(clientId);
+        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
+        val registeredService = getRegisteredServiceByClientId(clientId);
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
         } catch (final Exception e) {
@@ -137,7 +138,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        final var mv = this.consentApprovalViewResolver.resolve(context, registeredService);
+        val mv = this.consentApprovalViewResolver.resolve(context, registeredService);
         if (!mv.isEmpty() && mv.hasView()) {
             return mv;
         }
@@ -169,7 +170,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
     }
 
     private static boolean isRequestAuthenticated(final ProfileManager manager, final J2EContext context) {
-        final Optional<CommonProfile> opt = manager.get(true);
+        val opt = manager.get(true);
         return opt.isPresent();
     }
 
@@ -186,32 +187,33 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                                          final OAuthRegisteredService registeredService,
                                                          final J2EContext context,
                                                          final String clientId) {
-        final Optional<UserProfile> profile = manager.get(true);
+        val profile = (Optional<CommonProfile>) manager.get(true);
         if (profile == null || !profile.isPresent()) {
             LOGGER.error("Unexpected null profile from profile manager. Request is not fully authenticated.");
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        final var service = this.authenticationBuilder.buildService(registeredService, context, false);
+        val service = this.authenticationBuilder.buildService(registeredService, context, false);
         LOGGER.debug("Created service [{}] based on registered service [{}]", service, registeredService);
 
-        final var authentication = this.authenticationBuilder.build(profile.get(), registeredService, context, service);
+        val authentication = this.authenticationBuilder.build(profile.get(), registeredService, context, service);
         LOGGER.debug("Created OAuth authentication [{}] for service [{}]", service, authentication);
 
         try {
-            final var audit = AuditableContext.builder().service(service)
+            val audit = AuditableContext.builder()
+                .service(service)
                 .authentication(authentication)
                 .registeredService(registeredService)
                 .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                 .build();
-            final var accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
         } catch (final UnauthorizedServiceException | PrincipalException e) {
             LOGGER.error(e.getMessage(), e);
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
-        final var view = buildAuthorizationForRequest(registeredService, context, clientId, service, authentication);
+        val view = buildAuthorizationForRequest(registeredService, context, clientId, service, authentication);
         if (view != null) {
             return OAuth20Utils.redirectTo(view);
         }
@@ -233,19 +235,19 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                                 final J2EContext context,
                                                 final String clientId, final Service service,
                                                 final Authentication authentication) {
-        final var builder = this.oauthAuthorizationResponseBuilders
+        val builder = this.oauthAuthorizationResponseBuilders
             .stream()
             .filter(b -> b.supports(context))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Could not build the callback url. Response type likely not supported"));
 
-        final var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
+        val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
             ticketGrantingTicketCookieGenerator, this.ticketRegistry, context.getRequest());
 
-        final var grantType = StringUtils.defaultIfEmpty(context.getRequestParameter(OAuth20Constants.GRANT_TYPE),
+        val grantType = StringUtils.defaultIfEmpty(context.getRequestParameter(OAuth20Constants.GRANT_TYPE),
             OAuth20GrantTypes.AUTHORIZATION_CODE.getType()).toUpperCase();
-        final var scopes = OAuth20Utils.parseRequestScopes(context);
-        final var holder = new AccessTokenRequestDataHolder(service, authentication,
+        val scopes = OAuth20Utils.parseRequestScopes(context);
+        val holder = new AccessTokenRequestDataHolder(service, authentication,
             registeredService, ticketGrantingTicket, OAuth20GrantTypes.valueOf(grantType), scopes);
 
         LOGGER.debug("Building authorization response for grant type [{}] with scopes [{}] for client id [{}]",
@@ -260,7 +262,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @return whether the authorize request is valid
      */
     private boolean verifyAuthorizeRequest(final J2EContext context) {
-        final var validator = this.oauthRequestValidators
+        val validator = this.oauthRequestValidators
             .stream()
             .filter(b -> b.supports(context))
             .findFirst()

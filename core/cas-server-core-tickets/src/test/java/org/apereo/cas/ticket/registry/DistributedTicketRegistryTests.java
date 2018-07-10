@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -42,9 +44,9 @@ public class DistributedTicketRegistryTests {
 
     @Test
     public void verifyProxiedInstancesEqual() {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+        val t = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(t);
-        final var returned = (TicketGrantingTicket) this.ticketRegistry.getTicket(TGT_ID);
+        val returned = (TicketGrantingTicket) this.ticketRegistry.getTicket(TGT_ID);
         assertEquals(t, returned);
         assertEquals(returned, t);
         assertEquals(t.getCreationTime(), returned.getCreationTime());
@@ -55,9 +57,9 @@ public class DistributedTicketRegistryTests {
         assertEquals(t.getChainedAuthentications(), returned.getChainedAuthentications());
         assertEquals(t.isExpired(), returned.isExpired());
         assertEquals(t.isRoot(), returned.isRoot());
-        final var s = t.grantServiceTicket("stest", RegisteredServiceTestUtils.getService(), new NeverExpiresExpirationPolicy(), false, true);
+        val s = t.grantServiceTicket("stest", RegisteredServiceTestUtils.getService(), new NeverExpiresExpirationPolicy(), false, true);
         this.ticketRegistry.addTicket(s);
-        final var sreturned = (ServiceTicket) this.ticketRegistry.getTicket("stest");
+        val sreturned = (ServiceTicket) this.ticketRegistry.getTicket("stest");
         assertEquals(s, sreturned);
         assertEquals(sreturned, s);
         assertEquals(s.getCreationTime(), sreturned.getCreationTime());
@@ -71,12 +73,12 @@ public class DistributedTicketRegistryTests {
 
     @Test
     public void verifyUpdateOfRegistry() throws AbstractTicketException {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+        val t = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(t);
-        final var returned = (TicketGrantingTicket) this.ticketRegistry.getTicket(TGT_ID);
-        final var s = returned.grantServiceTicket("test2", RegisteredServiceTestUtils.getService(), new NeverExpiresExpirationPolicy(), false, true);
+        val returned = (TicketGrantingTicket) this.ticketRegistry.getTicket(TGT_ID);
+        val s = returned.grantServiceTicket("test2", RegisteredServiceTestUtils.getService(), new NeverExpiresExpirationPolicy(), false, true);
         this.ticketRegistry.addTicket(s);
-        final var s2 = (ServiceTicket) this.ticketRegistry.getTicket("test2");
+        val s2 = (ServiceTicket) this.ticketRegistry.getTicket("test2");
         assertNotNull(s2.grantProxyGrantingTicket("ff", CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
         assertTrue(s2.isValidFor(RegisteredServiceTestUtils.getService()));
         assertTrue(this.wasTicketUpdated);
@@ -91,15 +93,15 @@ public class DistributedTicketRegistryTests {
 
     @Test
     public void verifyDeleteTicketWithPGT() {
-        final var a = CoreAuthenticationTestUtils.getAuthentication();
+        val a = CoreAuthenticationTestUtils.getAuthentication();
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TGT_NAME, a, new NeverExpiresExpirationPolicy()));
-        final var tgt = this.ticketRegistry.getTicket(TGT_NAME, TicketGrantingTicket.class);
-        final var service = CoreAuthenticationTestUtils.getService("TGT_DELETE_TEST");
-        final var st1 = tgt.grantServiceTicket("ST1", service, new NeverExpiresExpirationPolicy(), true, true);
+        val tgt = this.ticketRegistry.getTicket(TGT_NAME, TicketGrantingTicket.class);
+        val service = CoreAuthenticationTestUtils.getService("TGT_DELETE_TEST");
+        val st1 = tgt.grantServiceTicket("ST1", service, new NeverExpiresExpirationPolicy(), true, true);
         this.ticketRegistry.addTicket(st1);
         assertNotNull(this.ticketRegistry.getTicket(TGT_NAME, TicketGrantingTicket.class));
         assertNotNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
-        final var pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
+        val pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
         assertEquals(a, pgt.getAuthentication());
         this.ticketRegistry.addTicket(pgt);
         assertSame(3, this.ticketRegistry.deleteTicket(tgt.getId()));
@@ -147,7 +149,7 @@ public class DistributedTicketRegistryTests {
 
         @Override
         public long deleteAll() {
-            final var size = this.tickets.size();
+            val size = this.tickets.size();
             this.tickets.clear();
             return size;
         }

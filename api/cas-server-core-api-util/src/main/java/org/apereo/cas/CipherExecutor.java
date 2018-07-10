@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.val;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,11 +74,11 @@ public interface CipherExecutor<I, O> {
      * @return the map
      */
     default Map<String, Object> decode(Map<String, Object> properties, final Object[] parameters) {
-        final Map<String, Object> decrypted = new HashMap<>();
+        val decrypted = new HashMap<String, Object>();
         properties.forEach((key, value) -> {
             try {
                 LOGGER.debug("Attempting to decode key [{}]", key);
-                final Object result = decode((I) value, parameters);
+                val result = decode((I) value, parameters);
                 if (result != null) {
                     LOGGER.debug("Decrypted key [{}] successfully", key);
                     decrypted.put(key, result);

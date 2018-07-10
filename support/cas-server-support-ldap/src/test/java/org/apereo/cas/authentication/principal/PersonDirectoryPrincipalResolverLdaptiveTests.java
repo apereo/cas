@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -21,7 +23,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -44,8 +45,8 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests {
 
     @Test
     public void verifyResolver() {
-        final var resolver = new PersonDirectoryPrincipalResolver(this.attributeRepository);
-        final var p = resolver.resolve(new UsernamePasswordCredential("castest1", "castest1"),
+        val resolver = new PersonDirectoryPrincipalResolver(this.attributeRepository);
+        val p = resolver.resolve(new UsernamePasswordCredential("castest1", "castest1"),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertNotNull(p);
@@ -54,13 +55,13 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests {
 
     @Test
     public void verifyChainedResolver() {
-        final var resolver = new PersonDirectoryPrincipalResolver(this.attributeRepository);
-        final var chain = new ChainingPrincipalResolver();
+        val resolver = new PersonDirectoryPrincipalResolver(this.attributeRepository);
+        val chain = new ChainingPrincipalResolver();
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
-        final Map<String, Object> attributes = new HashMap<>(2);
+        val attributes = new HashMap<String, Object>(2);
         attributes.put("a1", "v1");
         attributes.put("a2", "v2");
-        final var p = chain.resolve(new UsernamePasswordCredential("castest1", "castest1"),
+        val p = chain.resolve(new UsernamePasswordCredential("castest1", "castest1"),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal("castest1", attributes)),
                 Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertNotNull(p);

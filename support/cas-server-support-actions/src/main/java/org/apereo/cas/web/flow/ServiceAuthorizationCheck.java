@@ -1,7 +1,8 @@
 package org.apereo.cas.web.flow;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -18,7 +19,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.5.1
  **/
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ServiceAuthorizationCheck extends AbstractAction {
     
     private final ServicesManager servicesManager;
@@ -26,28 +27,28 @@ public class ServiceAuthorizationCheck extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext context) {
-        final var serviceInContext = WebUtils.getService(context);
-        final var service = authenticationRequestServiceSelectionStrategies.resolveService(serviceInContext);
+        val serviceInContext = WebUtils.getService(context);
+        val service = authenticationRequestServiceSelectionStrategies.resolveService(serviceInContext);
         if (service == null) {
             return success();
         }
 
         if (this.servicesManager.getAllServices().isEmpty()) {
-            final var msg = String.format("No service definitions are found in the service manager. "
+            val msg = String.format("No service definitions are found in the service manager. "
                     + "Service [%s] will not be automatically authorized to request authentication.", service.getId());
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_EMPTY_SVC_MGMR, msg);
         }
-        final var registeredService = this.servicesManager.findServiceBy(service);
+        val registeredService = this.servicesManager.findServiceBy(service);
 
         if (registeredService == null) {
-            final var msg = String.format("Service Management: missing service. "
+            val msg = String.format("Service Management: missing service. "
                     + "Service [%s] is not found in service registry.", service.getId());
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            final var msg = String.format("Service Management: Unauthorized Service Access. "
+            val msg = String.format("Service Management: Unauthorized Service Access. "
                     + "Service [%s] is not allowed access via the service registry.", service.getId());
 
             LOGGER.warn(msg);

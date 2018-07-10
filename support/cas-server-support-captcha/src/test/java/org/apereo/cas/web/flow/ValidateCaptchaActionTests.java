@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -89,18 +91,18 @@ public class ValidateCaptchaActionTests {
 
     @Test
     public void verifyCaptchaValidated() {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
 
-        final var data = "{\"success\": true }";
+        val data = "{\"success\": true }";
         request.addParameter(ValidateCaptchaAction.REQUEST_PARAM_RECAPTCHA_RESPONSE, data);
 
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        try (var webServer = new MockWebServer(9294,
+        try (val webServer = new MockWebServer(9294,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            final var result = validateCaptchaAction.execute(context);
+            val result = validateCaptchaAction.execute(context);
             assertNull(result);
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
@@ -109,14 +111,14 @@ public class ValidateCaptchaActionTests {
 
     @Test
     public void verifyCaptchaFails() {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        try (var webServer = new MockWebServer(9294,
+        try (val webServer = new MockWebServer(9294,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            final var result = validateCaptchaAction.execute(context);
+            val result = validateCaptchaAction.execute(context);
             assertNotNull(result);
             assertEquals(ValidateCaptchaAction.EVENT_ID_ERROR, result.getId());
         } catch (final Exception e) {

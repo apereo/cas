@@ -1,5 +1,7 @@
 package org.apereo.cas.memcached.kryo.serial;
 
+import lombok.val;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
@@ -8,7 +10,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
@@ -56,7 +57,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getDescription(), StringUtils.EMPTY));
         kryo.writeObject(output, service.getId());
         kryo.writeObject(output, service.getEvaluationOrder());
-        final var emptyUrl = getEmptyUrl();
+        val emptyUrl = getEmptyUrl();
         kryo.writeObject(output, ObjectUtils.defaultIfNull(service.getLogo(), emptyUrl));
         kryo.writeObject(output, service.getLogoutType());
         kryo.writeObject(output, ObjectUtils.defaultIfNull(service.getLogoutUrl(), emptyUrl));
@@ -84,7 +85,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
 
     @Override
     public RegisteredService read(final Kryo kryo, final Input input, final Class<? extends RegisteredService> type) {
-        final AbstractRegisteredService svc = new RegexRegisteredService();
+        val svc = new RegexRegisteredService();
         svc.setServiceId(kryo.readObject(input, String.class));
         svc.setName(kryo.readObject(input, String.class));
         svc.setDescription(kryo.readObject(input, String.class));
@@ -117,7 +118,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
      * @param obj    the obj
      */
     private static void writeObjectByReflection(final Kryo kryo, final Output output, final Object obj) {
-        final var className = obj.getClass().getCanonicalName();
+        val className = obj.getClass().getCanonicalName();
         kryo.writeObject(output, className);
         kryo.writeObject(output, obj);
     }
@@ -133,9 +134,9 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
      */
     @SneakyThrows
     private static <T> T readObjectByReflection(final Kryo kryo, final Input input, final Class<T> clazz) {
-        final var className = kryo.readObject(input, String.class);
-        final var foundClass = (Class<T>) Class.forName(className);
-        final Object result = kryo.readObject(input, foundClass);
+        val className = kryo.readObject(input, String.class);
+        val foundClass = (Class<T>) Class.forName(className);
+        val result = kryo.readObject(input, foundClass);
 
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [" + result

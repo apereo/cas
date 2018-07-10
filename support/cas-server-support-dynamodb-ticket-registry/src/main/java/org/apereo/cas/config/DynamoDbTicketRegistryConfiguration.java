@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -34,8 +36,8 @@ public class DynamoDbTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        final var db = casProperties.getTicket().getRegistry().getDynamoDb();
-        final var crypto = db.getCrypto();
+        val db = casProperties.getTicket().getRegistry().getDynamoDb();
+        val crypto = db.getCrypto();
         return new DynamoDbTicketRegistry(CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "dynamoDb"),
             dynamoDbTicketRegistryFacilitator(ticketCatalog));
     }
@@ -44,8 +46,8 @@ public class DynamoDbTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public DynamoDbTicketRegistryFacilitator dynamoDbTicketRegistryFacilitator(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        final var db = casProperties.getTicket().getRegistry().getDynamoDb();
-        final var f = new DynamoDbTicketRegistryFacilitator(ticketCatalog, db, amazonDynamoDbClient());
+        val db = casProperties.getTicket().getRegistry().getDynamoDb();
+        val f = new DynamoDbTicketRegistryFacilitator(ticketCatalog, db, amazonDynamoDbClient());
         if (!db.isPreventTableCreationOnStartup()) {
             f.createTicketTables(db.isDropTablesOnStartup());
         }
@@ -56,8 +58,8 @@ public class DynamoDbTicketRegistryConfiguration {
     @Bean
     @SneakyThrows
     public AmazonDynamoDB amazonDynamoDbClient() {
-        final var dynamoDbProperties = casProperties.getTicket().getRegistry().getDynamoDb();
-        final var factory = new AmazonDynamoDbClientFactory();
+        val dynamoDbProperties = casProperties.getTicket().getRegistry().getDynamoDb();
+        val factory = new AmazonDynamoDbClientFactory();
         return factory.createAmazonDynamoDb(dynamoDbProperties);
     }
 }

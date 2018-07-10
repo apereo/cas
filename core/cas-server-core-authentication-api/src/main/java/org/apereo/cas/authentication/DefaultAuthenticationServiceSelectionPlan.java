@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
@@ -33,13 +35,13 @@ public class DefaultAuthenticationServiceSelectionPlan implements Authentication
 
     @Override
     public Service resolveService(final Service service) {
-        final var strategy = this.strategies
+        val strategy = this.strategies
             .stream()
             .filter(s -> s.supports(service))
             .findFirst();
 
         if (strategy.isPresent()) {
-            final var result = strategy.get();
+            val result = strategy.get();
             return result.resolveServiceFrom(service);
         }
         return null;
@@ -47,7 +49,7 @@ public class DefaultAuthenticationServiceSelectionPlan implements Authentication
 
     @Override
     public <T extends Service> T resolveService(final Service service, final Class<T> clazz) {
-        final var result = resolveService(service);
+        val result = resolveService(service);
         if (result == null) {
             return null;
         }

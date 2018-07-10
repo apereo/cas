@@ -1,7 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.couchdb.tickets.TicketDocument;
 import org.apereo.cas.couchdb.tickets.TicketRepository;
@@ -21,7 +22,7 @@ import java.util.stream.Stream;
  * @author Timur Duehr
  * @since 5.3.0
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class CouchDbTicketRegistry extends AbstractTicketRegistry {
 
@@ -31,11 +32,11 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketIdToDelete) {
-        final var ticketId = encodeTicketId(ticketIdToDelete);
+        val ticketId = encodeTicketId(ticketIdToDelete);
         LOGGER.debug("Deleting ticket [{}]", ticketIdToDelete);
-        DbAccessException exception = null;
+        var exception = (DbAccessException) null;
         var success = false;
-        final var ticketDocument = new TicketDocument();
+        val ticketDocument = new TicketDocument();
         try {
             ticketDocument.setRevision(couchDb.getCurrentRevision(ticketId));
         } catch (final DocumentNotFoundException e) {
@@ -47,13 +48,11 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
                 couchDb.remove(ticketDocument);
                 success = true;
             } catch (final UpdateConflictException e) {
-                // Retry if update conflict.
                 ticketDocument.setRevision(couchDb.getCurrentRevision(ticketId));
                 if (retries + 1 == conflictRetries) {
                     exception = e;
                 }
             } catch (final DocumentNotFoundException e) {
-                // Fail if document not found.
                 exception = e;
             }
         }
@@ -71,41 +70,34 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public void addTicket(final Ticket ticketToAdd) {
-        final var encodedTicket = encodeTicket(ticketToAdd);
+        val encodedTicket = encodeTicket(ticketToAdd);
         LOGGER.debug("Adding ticket [{}]", encodedTicket.getId());
-
         couchDb.add(new TicketDocument(encodedTicket));
     }
 
     @Override
     public Ticket getTicket(final String ticketId) {
         LOGGER.debug("Locating ticket id [{}]", ticketId);
-        final var encTicketId = encodeTicketId(ticketId);
+        val encTicketId = encodeTicketId(ticketId);
         if (StringUtils.isBlank(encTicketId)) {
             LOGGER.debug("Ticket id [{}] could not be found", encTicketId);
             return null;
         }
 
-        TicketDocument document;
-
         try {
-            document = this.couchDb.get(encTicketId);
-        } catch (final DocumentNotFoundException ignored) {
-            document = null;
-        }
-
-        if (document != null) {
-            final var t = document.getTicket();
+            val document = this.couchDb.get(encTicketId);
+            val t = document.getTicket();
             LOGGER.debug("Got ticket [{}] from the registry.", t);
 
-            final var decoded = decodeTicket(t);
+            val decoded = decodeTicket(t);
             if (decoded == null || decoded.isExpired()) {
                 LOGGER.warn("The expiration policy for ticket id [{}] has expired the ticket", encTicketId);
                 return null;
             }
             return decoded;
+        } catch (final DocumentNotFoundException ignored) {
+            LOGGER.debug("Ticket [{}] not found in the registry.", encTicketId);
         }
-        LOGGER.debug("Ticket [{}] not found in the registry.", encTicketId);
         return null;
     }
 
@@ -122,11 +114,11 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        final var encodedTicket = encodeTicket(ticket);
+        val encodedTicket = encodeTicket(ticket);
         LOGGER.debug("Updating [{}]", encodedTicket.getId());
-        DbAccessException exception = null;
+        var exception = (DbAccessException) null;
         var success = false;
-        final var doc = new TicketDocument(encodedTicket);
+        val doc = new TicketDocument(encodedTicket);
         doc.setRevision(couchDb.getCurrentRevision(encodedTicket.getId()));
         for (var retries = 0; retries < conflictRetries; retries++) {
             try {

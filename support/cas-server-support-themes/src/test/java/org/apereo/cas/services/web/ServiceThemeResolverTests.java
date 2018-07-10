@@ -1,5 +1,7 @@
 package org.apereo.cas.services.web;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
@@ -31,7 +33,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
-import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
@@ -75,7 +76,7 @@ public class ServiceThemeResolverTests {
 
     @Test
     public void verifyGetServiceThemeDoesNotExist() {
-        final var r = new RegexRegisteredService();
+        val r = new RegexRegisteredService();
         r.setTheme("myTheme");
         r.setId(1000);
         r.setName("Test Service");
@@ -83,9 +84,9 @@ public class ServiceThemeResolverTests {
 
         this.servicesManager.save(r);
 
-        final var request = new MockHttpServletRequest();
-        final var ctx = mock(RequestContext.class);
-        final MutableAttributeMap scope = new LocalAttributeMap();
+        val request = new MockHttpServletRequest();
+        val ctx = mock(RequestContext.class);
+        val scope = new LocalAttributeMap();
         scope.put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService(r.getServiceId()));
         when(ctx.getFlowScope()).thenReturn(scope);
         RequestContextHolder.setRequestContext(ctx);
@@ -95,7 +96,7 @@ public class ServiceThemeResolverTests {
 
     @Test
     public void verifyGetDefaultService() {
-        final var request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "myServiceId");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, MOZILLA);
         assertEquals(DEFAULT_THEME_NAME, this.themeResolver.resolveThemeName(request));

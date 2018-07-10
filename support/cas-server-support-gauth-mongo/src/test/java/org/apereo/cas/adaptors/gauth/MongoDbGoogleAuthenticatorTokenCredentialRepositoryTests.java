@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.gauth;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -99,22 +101,22 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
     @Test
     public void verifySave() {
         registry.save("uid", "secret", 143211, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
-        final var s = registry.get("uid");
+        val s = registry.get("uid");
         assertEquals("secret", s.getSecretKey());
     }
 
     @Test
     public void verifySaveAndUpdate() {
         registry.save("casuser", "secret", 222222, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
-        var s = registry.get("casuser");
+        val s = registry.get("casuser");
         assertNotNull(s.getRegistrationDate());
         assertEquals(222222, s.getValidationCode());
         s.setSecretKey("newSecret");
         s.setValidationCode(999666);
         registry.update(s);
-        s = registry.get("casuser");
-        assertEquals(999666, s.getValidationCode());
-        assertEquals("newSecret", s.getSecretKey());
+        val s2 = registry.get("casuser");
+        assertEquals(999666, s2.getValidationCode());
+        assertEquals("newSecret", s2.getSecretKey());
     }
 
     @TestConfiguration

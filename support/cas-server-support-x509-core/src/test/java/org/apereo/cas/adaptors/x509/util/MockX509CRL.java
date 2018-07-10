@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.x509.util;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import java.math.BigInteger;
 import java.security.Principal;
@@ -25,7 +27,7 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MockX509CRL extends X509CRL {
 
     /** Issuer name */
@@ -128,7 +130,7 @@ public class MockX509CRL extends X509CRL {
     @Override
     public boolean isRevoked(final Certificate cert) {
         if (cert instanceof X509Certificate) {
-            final var xcert = (X509Certificate) cert;
+            val xcert = (X509Certificate) cert;
             return getRevokedCertificates().stream().anyMatch(entry -> entry.getSerialNumber().equals(xcert.getSerialNumber()));
         }
         return false;

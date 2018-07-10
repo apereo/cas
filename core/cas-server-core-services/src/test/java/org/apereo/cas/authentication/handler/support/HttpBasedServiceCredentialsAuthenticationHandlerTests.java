@@ -1,9 +1,10 @@
 package org.apereo.cas.authentication.handler.support;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.junit.Rule;
 import org.junit.Test;
@@ -68,9 +69,9 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 
     @Test
     public void verifyNoAcceptableStatusCodeButOneSet() throws Exception {
-        final var clientFactory = new SimpleHttpClientFactoryBean();
+        val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setAcceptableCodes(CollectionUtils.wrapList(900));
-        final HttpClient httpClient = clientFactory.getObject();
+        val httpClient = clientFactory.getObject();
         this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler("", null, null, null, httpClient);
         this.thrown.expect(FailedLoginException.class);
         this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://www.ja-sig.org"));

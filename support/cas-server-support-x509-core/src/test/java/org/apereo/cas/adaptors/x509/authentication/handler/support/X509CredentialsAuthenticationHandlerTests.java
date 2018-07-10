@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
@@ -38,7 +40,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(Parameterized.class)
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class X509CredentialsAuthenticationHandlerTests {
 
     private static final String USER_VALID_CRT = "user-valid.crt";
@@ -70,10 +72,10 @@ public class X509CredentialsAuthenticationHandlerTests {
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() {
-        final Collection<Object[]> params = new ArrayList<>();
+        val params = new ArrayList<Object[]>();
 
-        X509CredentialsAuthenticationHandler handler;
-        X509CertificateCredential credential;
+        var handler = (X509CredentialsAuthenticationHandler) null;
+        var credential = (X509CertificateCredential) null;
 
         // Test case #1: Unsupported credential type
         handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"));
@@ -158,10 +160,9 @@ public class X509CredentialsAuthenticationHandlerTests {
         //===================================
         // Revocation tests
         //===================================
-        ResourceCRLRevocationChecker checker;
+        var checker = (ResourceCRLRevocationChecker) null;
 
         // Test case #10: Valid certificate with CRL checking
-
         checker = new ResourceCRLRevocationChecker(new ClassPathResource("userCA-valid.crl"));
         checker.init();
         handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"), checker);
@@ -185,7 +186,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         });
 
         // Test case #12: Valid certificate on expired CRL data
-        final var zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
+        val zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
         checker = new ResourceCRLRevocationChecker(new ClassPathResource("userCA-expired.crl"), null, zeroThresholdPolicy);
         checker.init();
         handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"), checker);
@@ -206,7 +207,7 @@ public class X509CredentialsAuthenticationHandlerTests {
     public void verifyAuthenticate() {
         try {
             if (this.handler.supports(this.credential)) {
-                final var result = this.handler.authenticate(this.credential);
+                val result = this.handler.authenticate(this.credential);
                 if (this.expectedResult instanceof DefaultAuthenticationHandlerExecutionResult) {
                     assertEquals(this.expectedResult, result);
                 } else {
@@ -231,10 +232,10 @@ public class X509CredentialsAuthenticationHandlerTests {
     }
 
     protected static X509Certificate[] createCertificates(final String... files) {
-        final var certs = new X509Certificate[files.length];
+        val certs = new X509Certificate[files.length];
 
         var i = 0;
-        for (final var file : files) {
+        for (val file : files) {
             try {
                 certs[i++] = CertUtil.readCertificate(new ClassPathResource(file).getInputStream());
             } catch (final Exception e) {

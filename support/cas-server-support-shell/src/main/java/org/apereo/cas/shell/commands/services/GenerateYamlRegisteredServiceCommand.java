@@ -1,5 +1,7 @@
 package org.apereo.cas.shell.commands.services;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
@@ -42,19 +44,19 @@ public class GenerateYamlRegisteredServiceCommand {
             return;
         }
 
-        final var filePath = new File(file);
-        final var result = StringUtils.isBlank(destination) ? null : new File(destination);
+        val filePath = new File(file);
+        val result = StringUtils.isBlank(destination) ? null : new File(destination);
         generate(filePath, result);
     }
 
     private void generate(final File filePath, final File result) {
         try {
-            final var validator = new DefaultRegisteredServiceJsonSerializer();
+            val validator = new DefaultRegisteredServiceJsonSerializer();
             if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {
-                final var svc = validator.from(filePath);
+                val svc = validator.from(filePath);
                 LOGGER.info("Service [{}] is valid at [{}].", svc.getName(), filePath.getCanonicalPath());
-                final var yaml = new RegisteredServiceYamlSerializer();
-                try (var writer = new StringWriter()) {
+                val yaml = new RegisteredServiceYamlSerializer();
+                try (val writer = new StringWriter()) {
                     yaml.to(writer, svc);
                     LOGGER.info(writer.toString());
 

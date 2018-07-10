@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
@@ -92,7 +93,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
          * @return the attribute merger
          */
         public IAttributeMerger getAttributeMerger() {
-            final var name = this.name().toUpperCase();
+            val name = this.name().toUpperCase();
             switch(name.toUpperCase()) {
                 case "REPLACE":
                     return new ReplacingAttributeAdder();
@@ -144,11 +145,11 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @return person attributes
      */
     private static Map<String, List<Object>> convertPrincipalAttributesToPersonAttributes(final Principal p) {
-        final Map<String, List<Object>> convertedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        final var principalAttributes = p.getAttributes();
+        val convertedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
+        val principalAttributes = p.getAttributes();
         principalAttributes.entrySet().forEach(entry -> {
-            final var values = entry.getValue();
-            final var key = entry.getKey();
+            val values = entry.getValue();
+            val key = entry.getKey();
             if (values instanceof List) {
                 convertedAttributes.put(key, (List) values);
             } else {
@@ -166,12 +167,12 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @return the map of attributes
      */
     protected Map<String, List<Object>> retrievePersonAttributesToPrincipalAttributes(final String id) {
-        final var attrs = getAttributeRepository().getPerson(id);
+        val attrs = getAttributeRepository().getPerson(id);
         if (attrs == null) {
             LOGGER.debug("Could not find principal [{}] in the repository so no attributes are returned.", id);
             return new HashMap<>(0);
         }
-        final var attributes = attrs.getAttributes();
+        val attributes = attrs.getAttributes();
         if (attributes == null) {
             LOGGER.debug("Principal [{}] has no attributes and so none are returned.", id);
             return new HashMap<>(0);
@@ -181,7 +182,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
 
     @Override
     public Map<String, Object> getAttributes(final Principal p) {
-        final var cachedAttributes = getPrincipalAttributes(p);
+        val cachedAttributes = getPrincipalAttributes(p);
         if (cachedAttributes != null && !cachedAttributes.isEmpty()) {
             LOGGER.debug("Found [{}] cached attributes for principal [{}] that are [{}]", cachedAttributes.size(), p.getId(), cachedAttributes);
             return cachedAttributes;
@@ -190,19 +191,19 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
             LOGGER.debug("No attribute repository is defined for [{}]. Returning default principal attributes for [{}]", getClass().getName(), p.getId());
             return cachedAttributes;
         }
-        final var sourceAttributes = retrievePersonAttributesToPrincipalAttributes(p.getId());
+        val sourceAttributes = retrievePersonAttributesToPrincipalAttributes(p.getId());
         LOGGER.debug("Found [{}] attributes for principal [{}] from the attribute repository.", sourceAttributes.size(), p.getId());
         if (this.mergingStrategy == null || this.mergingStrategy.getAttributeMerger() == null) {
             LOGGER.debug("No merging strategy found, so attributes retrieved from the repository will be used instead.");
             return convertAttributesToPrincipalAttributesAndCache(p, sourceAttributes);
         }
-        final var principalAttributes = convertPrincipalAttributesToPersonAttributes(p);
+        val principalAttributes = convertPrincipalAttributesToPersonAttributes(p);
         LOGGER.debug("Merging current principal attributes with that of the repository via strategy [{}]", this.mergingStrategy);
         try {
-            final var mergedAttributes = this.mergingStrategy.getAttributeMerger().mergeAttributes(principalAttributes, sourceAttributes);
+            val mergedAttributes = this.mergingStrategy.getAttributeMerger().mergeAttributes(principalAttributes, sourceAttributes);
             return convertAttributesToPrincipalAttributesAndCache(p, mergedAttributes);
         } catch (final Exception e) {
-            final var builder = new StringBuilder();
+            val builder = new StringBuilder();
             builder.append(e.getClass().getName().concat("-"));
             if (StringUtils.isNotBlank(e.getMessage())) {
                 builder.append(e.getMessage());
@@ -223,7 +224,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @return the map
      */
     private Map<String, Object> convertAttributesToPrincipalAttributesAndCache(final Principal p, final Map<String, List<Object>> sourceAttributes) {
-        final var finalAttributes = convertPersonAttributesToPrincipalAttributes(sourceAttributes);
+        val finalAttributes = convertPersonAttributesToPrincipalAttributes(sourceAttributes);
         addPrincipalAttributes(p.getId(), finalAttributes);
         return finalAttributes;
     }
@@ -248,7 +249,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     private IPersonAttributeDao getAttributeRepository() {
         try {
             if (this.attributeRepository == null) {
-                final var context = ApplicationContextProvider.getApplicationContext();
+                val context = ApplicationContextProvider.getApplicationContext();
                 if (context != null) {
                     return context.getBean("attributeRepository", IPersonAttributeDao.class);
                 }

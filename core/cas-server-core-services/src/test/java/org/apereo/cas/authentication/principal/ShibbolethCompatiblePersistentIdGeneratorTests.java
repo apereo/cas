@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -24,36 +26,33 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
 
     @Test
     public void verifyGenerator() {
-        final var generator = new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
+        val generator = new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
 
-        final var p = mock(Principal.class);
+        val p = mock(Principal.class);
         when(p.getId()).thenReturn("testuser");
-        final var value = generator.generate(p, RegisteredServiceTestUtils.getService());
+        val value = generator.generate(p, RegisteredServiceTestUtils.getService());
 
         assertNotNull(value);
     }
 
     @Test
     public void realTestofGeneratorThatVerifiesValueReturned() {
-        final var generator = new ShibbolethCompatiblePersistentIdGenerator("thisisasalt");
+        val generator = new ShibbolethCompatiblePersistentIdGenerator("thisisasalt");
 
-        final var p = mock(Principal.class);
+        val p = mock(Principal.class);
         when(p.getId()).thenReturn("grudkin");
-        final var s = mock(Service.class);
+        val s = mock(Service.class);
         when(s.getId()).thenReturn("https://shibboleth.irbmanager.com/");
 
-        final var value = generator.generate(p, s);
+        val value = generator.generate(p, s);
         assertEquals("jvZO/wYedArYIEIORGdHoMO4qkw=", value);
     }
 
     @Test
     public void verifySerializeAShibbolethCompatiblePersistentIdGeneratorToJson() throws IOException {
-        final var generatorWritten = new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
-
+        val generatorWritten = new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
         MAPPER.writeValue(JSON_FILE, generatorWritten);
-
-        final PersistentIdGenerator credentialRead = MAPPER.readValue(JSON_FILE, ShibbolethCompatiblePersistentIdGenerator.class);
-
+        val credentialRead = MAPPER.readValue(JSON_FILE, ShibbolethCompatiblePersistentIdGenerator.class);
         assertEquals(generatorWritten, credentialRead);
     }
 }

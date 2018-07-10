@@ -1,9 +1,10 @@
 package org.apereo.cas.ticket.query;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -22,7 +23,7 @@ import org.opensaml.saml.common.SAMLObject;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQueryTicketFactory {
 
     /**
@@ -44,9 +45,9 @@ public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQuer
     @SneakyThrows
     public SamlAttributeQueryTicket create(final String id, final SAMLObject samlObject,
                                            final String relyingParty, final TicketGrantingTicket ticketGrantingTicket) {
-        try (var w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
-            final var codeId = createTicketIdFor(id);
-            final Service service = this.webApplicationServiceFactory.createService(relyingParty);
+        try (val w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
+            val codeId = createTicketIdFor(id);
+            val service = this.webApplicationServiceFactory.createService(relyingParty);
             final SamlAttributeQueryTicket at = new SamlAttributeQueryTicketImpl(codeId, service, this.expirationPolicy, 
                     relyingParty, w.toString(), ticketGrantingTicket);
             if (ticketGrantingTicket != null) {

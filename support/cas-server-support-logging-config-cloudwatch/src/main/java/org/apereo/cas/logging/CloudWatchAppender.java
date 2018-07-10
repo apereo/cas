@@ -1,5 +1,7 @@
 package org.apereo.cas.logging;
 
+import lombok.val;
+
 import com.amazonaws.services.logs.AWSLogs;
 import com.amazonaws.services.logs.AWSLogsClient;
 import com.amazonaws.services.logs.model.CreateLogGroupRequest;
@@ -26,7 +28,6 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -80,7 +81,7 @@ public class CloudWatchAppender extends AbstractAppender {
             flushPeriodMillis = flushPeriod * 1_000;
 
             LOGGER.debug("Connecting to AWS CloudWatch...");
-            final var builder = AWSLogsClient.builder();
+            val builder = AWSLogsClient.builder();
             builder.setCredentials(ChainingAWSCredentialsProvider.getInstance(credentialAccessKey, credentialSecretKey));
             builder.setRegion(awsLogRegionName);
 
@@ -94,8 +95,8 @@ public class CloudWatchAppender extends AbstractAppender {
     }
 
     private void flush() {
-        int drained;
-        final List<InputLogEvent> logEvents = new ArrayList<>(AWS_DRAIN_LIMIT);
+        var drained = 0;
+        val logEvents = new ArrayList<InputLogEvent>(AWS_DRAIN_LIMIT);
         do {
             drained = queue.drainTo(logEvents, AWS_DRAIN_LIMIT);
             if (logEvents.isEmpty()) {
@@ -103,7 +104,7 @@ public class CloudWatchAppender extends AbstractAppender {
             }
             logEvents.sort(Comparator.comparing(InputLogEvent::getTimestamp));
             if (lastReportedTimestamp > 0) {
-                for (final var event : logEvents) {
+                for (val event : logEvents) {
                     if (event.getTimestamp() < lastReportedTimestamp) {
                         event.setTimestamp(lastReportedTimestamp);
                     }
@@ -111,10 +112,10 @@ public class CloudWatchAppender extends AbstractAppender {
             }
 
             lastReportedTimestamp = logEvents.get(logEvents.size() - 1).getTimestamp();
-            final var putLogEventsRequest = new PutLogEventsRequest(logGroupName, logStreamName, logEvents);
+            val putLogEventsRequest = new PutLogEventsRequest(logGroupName, logStreamName, logEvents);
             putLogEventsRequest.setSequenceToken(sequenceTokenCache);
             try {
-                final var putLogEventsResult = awsLogsClient.putLogEvents(putLogEventsRequest);
+                val putLogEventsResult = awsLogsClient.putLogEvents(putLogEventsRequest);
                 sequenceTokenCache = putLogEventsResult.getNextSequenceToken();
             } catch (final DataAlreadyAcceptedException daae) {
                 sequenceTokenCache = daae.getExpectedSequenceToken();
@@ -129,10 +130,10 @@ public class CloudWatchAppender extends AbstractAppender {
 
     @Override
     public void append(final LogEvent logEvent) {
-        final var event = LoggingUtils.prepareLogEvent(logEvent);
-        final var awsLogEvent = new InputLogEvent();
-        final var timestamp = event.getTimeMillis();
-        final var message = new String(getLayout().toByteArray(event), StandardCharsets.UTF_8);
+        val event = LoggingUtils.prepareLogEvent(logEvent);
+        val awsLogEvent = new InputLogEvent();
+        val timestamp = event.getTimeMillis();
+        val message = new String(getLayout().toByteArray(event), StandardCharsets.UTF_8);
         awsLogEvent.setTimestamp(timestamp);
         awsLogEvent.setMessage(message);
         if (!queue.offer(awsLogEvent) && !queueFull) {
@@ -144,7 +145,7 @@ public class CloudWatchAppender extends AbstractAppender {
 
     private String createLogGroupAndLogStreamIfNeeded() {
         LOGGER.debug("Attempting to locate the log group [{}]", logGroupName);
-        final var describeLogGroupsResult =
+        val describeLogGroupsResult =
             awsLogsClient.describeLogGroups(new DescribeLogGroupsRequest().withLogGroupNamePrefix(logGroupName));
         var createLogGroup = true;
         if (describeLogGroupsResult != null && describeLogGroupsResult.getLogGroups() != null && !describeLogGroupsResult.getLogGroups().isEmpty()) {
@@ -152,16 +153,16 @@ public class CloudWatchAppender extends AbstractAppender {
         }
         if (createLogGroup) {
             LOGGER.debug("Creating log group [{}]", logGroupName);
-            final var createLogGroupRequest = new CreateLogGroupRequest(logGroupName);
+            val createLogGroupRequest = new CreateLogGroupRequest(logGroupName);
             awsLogsClient.createLogGroup(createLogGroupRequest);
         }
-        String logSequenceToken = null;
+        var logSequenceToken = StringUtils.EMPTY;
         var createLogStream = true;
         LOGGER.debug("Attempting to locate the log stream [{}] for group [{}]", logStreamName, logGroupName);
-        final var describeLogStreamsRequest = new DescribeLogStreamsRequest(logGroupName).withLogStreamNamePrefix(logStreamName);
-        final var describeLogStreamsResult = awsLogsClient.describeLogStreams(describeLogStreamsRequest);
+        val describeLogStreamsRequest = new DescribeLogStreamsRequest(logGroupName).withLogStreamNamePrefix(logStreamName);
+        val describeLogStreamsResult = awsLogsClient.describeLogStreams(describeLogStreamsRequest);
         if (describeLogStreamsResult != null && describeLogStreamsResult.getLogStreams() != null && !describeLogStreamsResult.getLogStreams().isEmpty()) {
-            for (final var ls : describeLogStreamsResult.getLogStreams()) {
+            for (val ls : describeLogStreamsResult.getLogStreams()) {
                 if (logStreamName.equals(ls.getLogStreamName())) {
                     createLogStream = false;
                     logSequenceToken = ls.getUploadSequenceToken();
@@ -173,7 +174,7 @@ public class CloudWatchAppender extends AbstractAppender {
 
         if (createLogStream) {
             LOGGER.debug("Creating log stream [{}] for group [{}]", logStreamName, logGroupName);
-            final var createLogStreamRequest = new CreateLogStreamRequest(logGroupName, logStreamName);
+            val createLogStreamRequest = new CreateLogStreamRequest(logGroupName, logStreamName);
             awsLogsClient.createLogStream(createLogStreamRequest);
         }
         return logSequenceToken;

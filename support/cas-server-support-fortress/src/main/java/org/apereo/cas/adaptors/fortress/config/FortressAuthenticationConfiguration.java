@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.fortress.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.directory.fortress.core.AccessMgr;
 import org.apache.directory.fortress.core.rest.AccessMgrRestImpl;
@@ -45,9 +47,9 @@ public class FortressAuthenticationConfiguration {
 
     @Bean
     public AccessMgr fortressAccessManager() {
-        final var rbacContext = casProperties.getAuthn().getFortress().getRbaccontext();
+        val rbacContext = casProperties.getAuthn().getFortress().getRbaccontext();
         LOGGER.trace("Registering fortress access manager with context: [{}]", rbacContext);
-        final var accessMgrRestImpl = new AccessMgrRestImpl();
+        val accessMgrRestImpl = new AccessMgrRestImpl();
         accessMgrRestImpl.setContextId(casProperties.getAuthn().getFortress().getRbaccontext());
         return accessMgrRestImpl;
     }

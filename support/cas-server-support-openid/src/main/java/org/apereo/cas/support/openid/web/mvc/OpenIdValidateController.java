@@ -1,5 +1,7 @@
 package org.apereo.cas.support.openid.web.mvc;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -23,7 +25,6 @@ import org.springframework.web.servlet.View;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * An Openid controller that delegates to its own views on service validates.
@@ -58,12 +59,12 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
     @Override
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
-        final var openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
+        val openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
         if (StringUtils.equals(openIdMode, OpenIdProtocolConstants.CHECK_AUTHENTICATION)) {
 
-            final var message = (VerifyResponse) this.serverManager.verify(new ParameterList(request.getParameterMap()));
+            val message = (VerifyResponse) this.serverManager.verify(new ParameterList(request.getParameterMap()));
 
-            final Map<String, String> parameters = new HashMap<>(message.getParameterMap());
+            val parameters = new HashMap<String, String>(message.getParameterMap());
             if (message.isSignatureVerified()) {
                 LOGGER.debug("Signature verification request successful.");
                 return new ModelAndView(getSuccessView(), parameters);
@@ -78,7 +79,7 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
 
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
-        final var openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
+        val openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
         if (StringUtils.equals(openIdMode, OpenIdProtocolConstants.CHECK_AUTHENTICATION)) {
             LOGGER.info("Handling request. openid.mode : [{}]", openIdMode);
             return true;

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.surrogate;
 
+import lombok.val;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -43,7 +45,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 
 import static org.junit.Assert.*;
 
@@ -97,20 +98,20 @@ public class SurrogateRestAuthenticationServiceTests {
 
     @Test
     public void verifyAccountsQualifying() throws Exception {
-        final var data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
-        try (var webServer = new MockWebServer(9293,
+        val data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
+        try (val webServer = new MockWebServer(9293,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            final Collection results = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy("casuser");
+            val results = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy("casuser");
             assertFalse(results.isEmpty());
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
         }
 
-        try (var webServer = new MockWebServer(9293,
+        try (val webServer = new MockWebServer(9293,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            final var result = surrogateAuthenticationService.canAuthenticateAs("cassurrogate",
+            val result = surrogateAuthenticationService.canAuthenticateAs("cassurrogate",
                 CoreAuthenticationTestUtils.getPrincipal("casuser"),
                 CoreAuthenticationTestUtils.getService());
             assertTrue(result);

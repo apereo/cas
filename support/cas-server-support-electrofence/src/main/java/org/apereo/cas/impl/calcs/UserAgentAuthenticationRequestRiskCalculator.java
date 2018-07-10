@@ -1,5 +1,7 @@
 package org.apereo.cas.impl.calcs;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
@@ -31,9 +33,9 @@ public class UserAgentAuthenticationRequestRiskCalculator extends BaseAuthentica
                                         final RegisteredService service,
                                         final Collection<CasEvent> events) {
 
-        final var agent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
+        val agent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
         LOGGER.debug("Filtering authentication events for user agent [{}]", agent);
-        final var count = events.stream().filter(e -> e.getAgent().equalsIgnoreCase(agent)).count();
+        val count = events.stream().filter(e -> e.getAgent().equalsIgnoreCase(agent)).count();
         LOGGER.debug("Total authentication events found for [{}]: [{}]", agent, count);
         if (count == events.size()) {
             LOGGER.debug("Principal [{}] has always authenticated from [{}]", authentication.getPrincipal(), agent);

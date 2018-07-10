@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.web.flow;
 
+import lombok.val;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +33,7 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        final var c = WebUtils.getAuthentication(requestContext);
+        val c = WebUtils.getAuthentication(requestContext);
         if (c == null) {
             LOGGER.error("Could not determine authentication from the request context");
             return error();
@@ -39,15 +41,15 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
 
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(c);
 
-        final var principal = c.getPrincipal().getId();
+        val principal = c.getPrincipal().getId();
         if (!MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
             LOGGER.debug("Attempt to store trusted authentication record for [{}]", principal);
-            final var record = MultifactorAuthenticationTrustRecord.newInstance(principal,
+            val record = MultifactorAuthenticationTrustRecord.newInstance(principal,
                     MultifactorAuthenticationTrustUtils.generateGeography(),
                     deviceFingerprintStrategy.determineFingerprint(principal, requestContext, true));
 
             if (requestContext.getRequestParameters().contains(PARAM_NAME_DEVICE_NAME)) {
-                final var deviceName = requestContext.getRequestParameters().get(PARAM_NAME_DEVICE_NAME);
+                val deviceName = requestContext.getRequestParameters().get(PARAM_NAME_DEVICE_NAME);
                 if (StringUtils.isNotBlank(deviceName)) {
                     record.setName(deviceName);
                 }

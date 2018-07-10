@@ -1,5 +1,7 @@
 package org.apereo.cas.impl.mock;
 
+import lombok.val;
+
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -53,14 +55,14 @@ public class MockTicketGrantingTicketCreatedEventProducer {
         Pair.of("-38.41", "-63.61"));
 
     private static String getMockUserAgent() {
-        final var index = ThreadLocalRandom.current().nextInt(ALL_USER_AGENTS.size());
+        val index = ThreadLocalRandom.current().nextInt(ALL_USER_AGENTS.size());
         return ALL_USER_AGENTS.get(index);
     }
 
     private static GeoLocationRequest getMockGeoLocation() {
-        final var index = ThreadLocalRandom.current().nextInt(ALL_GEOLOCS.size());
-        final var location = new GeoLocationRequest();
-        final var pair = ALL_GEOLOCS.get(index);
+        val index = ThreadLocalRandom.current().nextInt(ALL_GEOLOCS.size());
+        val location = new GeoLocationRequest();
+        val pair = ALL_GEOLOCS.get(index);
         location.setLatitude(pair.getKey());
         location.setLongitude(pair.getValue());
         location.setAccuracy("50");
@@ -69,12 +71,12 @@ public class MockTicketGrantingTicketCreatedEventProducer {
     }
 
     private static String getMockClientIpAddress() {
-        final var index = ThreadLocalRandom.current().nextInt(ALL_IP_ADDRS.size());
+        val index = ThreadLocalRandom.current().nextInt(ALL_IP_ADDRS.size());
         return ALL_IP_ADDRS.get(index);
     }
 
     private static void createEvent(final int i, final CasEventRepository casEventRepository) {
-        final var dto = new CasEvent();
+        val dto = new CasEvent();
         dto.setType(CasTicketGrantingTicketCreatedEvent.class.getName());
         dto.putTimestamp(new Date().getTime());
         dto.setCreationTime(ZonedDateTime.now(ZoneOffset.UTC).minusDays(5).toString());

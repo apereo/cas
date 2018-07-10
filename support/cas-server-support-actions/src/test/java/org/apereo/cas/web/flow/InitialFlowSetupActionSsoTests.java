@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -106,8 +108,8 @@ public class InitialFlowSetupActionSsoTests {
 
     @Test
     public void disableFlowIfNoService() throws Exception {
-        final var context = new MockRequestContext();
-        final var request = new MockHttpServletRequest();
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         this.thrown.expect(NoSuchFlowExecutionException.class);
         this.action.execute(context);

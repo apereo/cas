@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import static org.junit.Assert.*;
 
 import lombok.extern.slf4j.Slf4j;
@@ -16,15 +18,15 @@ public class UnauthorizedServiceExceptionTests {
 
     @Test
     public void verifyCodeConstructor() {
-        final var e = new UnauthorizedServiceException(MESSAGE);
+        val e = new UnauthorizedServiceException(MESSAGE);
 
         assertEquals(MESSAGE, e.getMessage());
     }
 
     @Test
     public void verifyThrowableConstructorWithCode() {
-        final var r = new RuntimeException();
-        final var e = new UnauthorizedServiceException(MESSAGE, r);
+        val r = new RuntimeException();
+        val e = new UnauthorizedServiceException(MESSAGE, r);
 
         assertEquals(MESSAGE, e.getMessage());
         assertEquals(r, e.getCause());

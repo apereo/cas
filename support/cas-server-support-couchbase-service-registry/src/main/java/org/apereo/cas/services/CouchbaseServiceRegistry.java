@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.val;
+
 import com.couchbase.client.java.document.RawJsonDocument;
 import com.couchbase.client.java.view.DefaultView;
 import com.couchbase.client.java.view.View;
@@ -67,9 +69,9 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
         if (service.getId() == AbstractRegisteredService.INITIAL_IDENTIFIER_VALUE) {
             service.setId(service.hashCode());
         }
-        try (var stringWriter = new StringWriter()) {
+        try (val stringWriter = new StringWriter()) {
             this.registeredServiceJsonSerializer.to(stringWriter, service);
-            final var document = RawJsonDocument.create(String.valueOf(service.getId()), 0, stringWriter.toString());
+            val document = RawJsonDocument.create(String.valueOf(service.getId()), 0, stringWriter.toString());
             this.couchbase.getBucket().upsert(document);
         }
         return service;
@@ -85,16 +87,16 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
     @Override
     public List<RegisteredService> load() {
         try {
-            final var allKeys = executeViewQueryForAllServices();
-            final List<RegisteredService> services = new ArrayList<>();
-            for (final var row : allKeys) {
-                final var document = row.document(RawJsonDocument.class);
+            val allKeys = executeViewQueryForAllServices();
+            val services = new ArrayList<RegisteredService>();
+            for (val row : allKeys) {
+                val document = row.document(RawJsonDocument.class);
                 if (document != null) {
-                    final var json = document.content();
+                    val json = document.content();
                     LOGGER.debug("Found service: [{}]", json);
 
-                    final var stringReader = new StringReader(json);
-                    final var service = this.registeredServiceJsonSerializer.from(stringReader);
+                    val stringReader = new StringReader(json);
+                    val service = this.registeredServiceJsonSerializer.from(stringReader);
                     services.add(service);
                     publishEvent(new CasRegisteredServiceLoadedEvent(this, service));
                 }
@@ -114,10 +116,10 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
     public RegisteredService findServiceById(final long id) {
         try {
             LOGGER.debug("Lookup for service [{}]", id);
-            final var document = this.couchbase.getBucket().get(String.valueOf(id), RawJsonDocument.class);
+            val document = this.couchbase.getBucket().get(String.valueOf(id), RawJsonDocument.class);
             if (document != null) {
-                final var json = document.content();
-                final var stringReader = new StringReader(json);
+                val json = document.content();
+                val stringReader = new StringReader(json);
                 return this.registeredServiceJsonSerializer.from(stringReader);
             }
         } catch (final Exception e) {

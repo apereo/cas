@@ -1,5 +1,7 @@
 package org.apereo.cas.web.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
@@ -180,8 +182,8 @@ public class CasValidationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "cas3ServiceJsonView")
     public View cas3ServiceJsonView() {
-        final var authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        final var isReleaseProtocolAttributes = casProperties.getAuthn().isReleaseProtocolAttributes();
+        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        val isReleaseProtocolAttributes = casProperties.getAuthn().isReleaseProtocolAttributes();
         return new Cas30JsonResponseView(true,
             protocolAttributeEncoder.getIfAvailable(),
             servicesManager,
@@ -207,8 +209,8 @@ public class CasValidationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "cas3ServiceSuccessView")
     public View cas3ServiceSuccessView() {
-        final var authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        final var isReleaseProtocolAttributes = casProperties.getAuthn().isReleaseProtocolAttributes();
+        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        val isReleaseProtocolAttributes = casProperties.getAuthn().isReleaseProtocolAttributes();
         return new Cas30ResponseView(true,
             protocolAttributeEncoder.getIfAvailable(),
             servicesManager,

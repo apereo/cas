@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
@@ -31,17 +33,17 @@ public class MongoDbServiceRegistryConfiguration implements ServiceRegistryExecu
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryTemplate")
     @Bean
     public MongoTemplate mongoDbServiceRegistryTemplate() {
-        final var mongo = casProperties.getServiceRegistry().getMongo();
-        final var factory = new MongoDbConnectionFactory();
+        val mongo = casProperties.getServiceRegistry().getMongo();
+        val factory = new MongoDbConnectionFactory();
 
-        final var mongoTemplate = factory.buildMongoTemplate(mongo);
+        val mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
     
     @Bean
     public ServiceRegistry mongoDbServiceRegistry() {
-        final var mongo = casProperties.getServiceRegistry().getMongo();
+        val mongo = casProperties.getServiceRegistry().getMongo();
         return new MongoDbServiceRegistry(
                 mongoDbServiceRegistryTemplate(),
                 mongo.getCollection());

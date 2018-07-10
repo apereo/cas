@@ -1,5 +1,7 @@
 package org.apereo.cas.oidc.web;
 
+import lombok.val;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.oidc.OidcConstants;
@@ -13,7 +15,6 @@ import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link OidcCallbackAuthorizeViewResolver}.
@@ -28,12 +29,12 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
 
     @Override
     public ModelAndView resolve(final J2EContext ctx, final ProfileManager manager, final String url) {
-        final var prompt = authorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
+        val prompt = authorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
         if (prompt.contains(OidcConstants.PROMPT_NONE)) {
             if (manager.get(true) != null) {
                 return new ModelAndView(url);
             }
-            final Map<String, String> model = new HashMap<>();
+            val model = new HashMap<String, String>();
             model.put(OAuth20Constants.ERROR, OidcConstants.LOGIN_REQUIRED);
             return new ModelAndView(new MappingJackson2JsonView(), model);
         }

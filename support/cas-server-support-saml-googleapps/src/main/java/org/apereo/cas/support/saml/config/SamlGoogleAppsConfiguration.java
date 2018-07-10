@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.config;
 
+import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -67,7 +69,7 @@ public class SamlGoogleAppsConfiguration implements ServiceFactoryConfigurer {
     @Bean
     @Lazy
     public ResponseBuilder googleAccountsServiceResponseBuilder() {
-        final var gApps = casProperties.getGoogleApps();
+        val gApps = casProperties.getGoogleApps();
         return new GoogleAccountsServiceResponseBuilder(
                 gApps.getPrivateKeyLocation(),
                 gApps.getPublicKeyLocation(),
