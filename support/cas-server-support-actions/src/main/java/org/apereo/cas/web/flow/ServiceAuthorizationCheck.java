@@ -1,9 +1,8 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -20,7 +19,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.5.1
  **/
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ServiceAuthorizationCheck extends AbstractAction {
     
     private final ServicesManager servicesManager;

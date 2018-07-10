@@ -1,12 +1,11 @@
 package org.apereo.cas.adaptors.duo.authn;
 
-import lombok.val;
-
 import com.duosecurity.client.Http;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.adaptors.duo.DuoUserAccount;
@@ -26,7 +25,7 @@ import java.nio.charset.StandardCharsets;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurityAuthenticationService {
     private static final long serialVersionUID = -8044100706027708789L;
 
@@ -38,7 +37,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     private static final String RESULT_KEY_STATUS_MESSAGE = "status_msg";
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-    
+
     /**
      * Duo Properties.
      */

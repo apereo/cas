@@ -303,7 +303,7 @@ all case-sensitive.
     in Section [3.5](#head3.5).
 
 -   `rememberMe` [OPTIONAL, CAS 3.0] - if this parameter is set, a Long-Term
-    Ticket Granting Ticket might be created by the CAS server (refered to as
+    Ticket Granting Ticket might be created by the CAS server (referred to as
     Remember-Me support). It is subject to the CAS server configuration whether
     Long-Term Ticket Granting Tickets are supported or not.
 
@@ -1842,7 +1842,7 @@ to Faraz Khan at ASU for catching the typo.
 
 April, 2013: v3.0 - CAS 3.0 protocol, Apereo copyright, Apache License 2.0
 
-January, 2014: v3.0.1 - Attribute occurance
+January, 2014: v3.0.1 - Attribute occurrence
 
 September, 2015: v3.0.2 - Format parameter
 
