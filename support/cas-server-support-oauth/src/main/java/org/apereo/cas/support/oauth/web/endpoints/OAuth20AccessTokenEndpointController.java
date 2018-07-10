@@ -144,7 +144,8 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             requestHolder.getService(),
             result,
             accessTokenExpirationPolicy.getTimeToLive(),
-            type);
+            type,
+            casProperties);
     }
 
     private AccessTokenRequestDataHolder examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,

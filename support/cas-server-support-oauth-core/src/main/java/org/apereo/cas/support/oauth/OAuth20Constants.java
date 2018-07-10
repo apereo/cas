@@ -116,7 +116,10 @@ public interface OAuth20Constants {
 
     /** The access token url. */
     String ACCESS_TOKEN_URL = "accessToken";
-    
+
+    /** device authorization url. */
+    String DEVICE_AUTHZ_URL = "device";
+
     /** The token url. */
     String TOKEN_URL = "token";
 

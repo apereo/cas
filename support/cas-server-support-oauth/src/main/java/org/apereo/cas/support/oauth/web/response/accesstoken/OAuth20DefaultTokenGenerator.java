@@ -75,9 +75,8 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      */
     protected OAuth20TokenGeneratedResult generateAccessTokenOAuthDeviceCodeResponseType(final AccessTokenRequestDataHolder holder) {
         val deviceCode = holder.getDeviceCode();
-        val userCode = holder.getUserCode();
-
-        if (StringUtils.isNotBlank(deviceCode) && StringUtils.isNotBlank(userCode)) {
+        
+        if (StringUtils.isNotBlank(deviceCode)) {
             val deviceCodeTicket = this.ticketRegistry.getTicket(deviceCode, DeviceToken.class);
             if (deviceCodeTicket == null) {
                 LOGGER.error("Provided device code [{}] is invalid or expired and cannot be found in the ticket registry");
@@ -88,19 +87,13 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
                 LOGGER.error("Provided device code [{}] has expired and will be removed from the ticket registry");
                 throw new InvalidTicketException(deviceCode);
             }
-            if (!deviceCodeTicket.getUserCode().equalsIgnoreCase(userCode)) {
-                this.ticketRegistry.deleteTicket(deviceCode);
-                LOGGER.error("Provided device code [{}] is linked to a different user code than [{}]", userCode);
-                throw new InvalidTicketException(deviceCode);
-            }
             if (deviceCodeTicket.isUserCodeApproved()) {
-                LOGGER.error("Provided user code [{}] linked to device code [{}] is approved", userCode, deviceCode);
+                LOGGER.error("Provided user code [{}] linked to device code [{}] is approved", deviceCodeTicket.getUserCode(), deviceCode);
                 this.ticketRegistry.deleteTicket(deviceCode);
                 return OAuth20TokenGeneratedResult.builder()
                     .responseType(holder.getResponseType())
                     .registeredService(holder.getRegisteredService())
                     .deviceCode(deviceCode)
-                    .userCode(userCode)
                     .build();
             }
         }
