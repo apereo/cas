@@ -58,4 +58,7 @@ public class OAuth20TokenGeneratedResult {
         return Optional.ofNullable(userCode);
     }
 
+    public Map<String, Object> getDetails() {
+        return details;
+    }
 }
