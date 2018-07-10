@@ -1,7 +1,7 @@
 package org.apereo.cas.util.http;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -36,7 +36,7 @@ import java.util.concurrent.RejectedExecutionException;
  */
 @Slf4j
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SimpleHttpClient implements HttpClient, Serializable, DisposableBean {
 
     /**

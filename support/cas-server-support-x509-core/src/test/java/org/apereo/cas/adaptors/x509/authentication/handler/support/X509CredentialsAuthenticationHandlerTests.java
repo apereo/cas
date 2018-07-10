@@ -1,8 +1,8 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(Parameterized.class)
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class X509CredentialsAuthenticationHandlerTests {
 
     private static final String USER_VALID_CRT = "user-valid.crt";

@@ -1,10 +1,10 @@
 package org.apereo.cas.consent;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     private static final long serialVersionUID = 8220243983483982326L;

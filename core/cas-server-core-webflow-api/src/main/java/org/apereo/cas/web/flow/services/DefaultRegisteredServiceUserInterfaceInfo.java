@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.services;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import lombok.AllArgsConstructor;
@@ -23,7 +24,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
 
     private static final int DEFAULT_IMAGE_SIZE = 32;

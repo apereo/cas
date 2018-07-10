@@ -36,7 +36,7 @@ public class UniquePrincipalAuthenticationPolicy implements AuthenticationPolicy
                         val principal = TicketGrantingTicket.class.cast(t).getAuthentication().getPrincipal();
                         return principal.getId().equalsIgnoreCase(authPrincipal.getId());
                     },
-                    () -> true)
+                    () -> Boolean.TRUE)
                     .get();
                 return pass;
             }).count();
