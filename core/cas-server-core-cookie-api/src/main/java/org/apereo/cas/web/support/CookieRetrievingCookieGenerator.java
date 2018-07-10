@@ -32,7 +32,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
      * The maximum age the cookie should be remembered for.
      * The default is three months ({@value} in seconds, according to Google)
      */
-    private int rememberMeMaxAge = DEFAULT_REMEMBER_ME_MAX_AGE;
+    private final int rememberMeMaxAge;
 
     /**
      * Responsible for manging and verifying the cookie value.
@@ -106,20 +106,20 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
     private Boolean isRememberMeAuthentication(final RequestContext requestContext) {
         if (isRememberMeProvidedInRequest(requestContext)) {
             LOGGER.debug("This request is from a remember-me authentication event");
-            return true;
+            return Boolean.TRUE;
         }
         if (isRememberMeRecordedInAuthentication(requestContext)) {
             LOGGER.debug("The recorded authentication is from a remember-me request");
-            return true;
+            return Boolean.TRUE;
         }
-        return false;
+        return Boolean.FALSE;
     }
 
     private Boolean isRememberMeRecordedInAuthentication(final RequestContext requestContext) {
         LOGGER.debug("Request does not indicate a remember-me authentication event. Locating authentication object from the request context...");
         val auth = WebUtils.getAuthentication(requestContext);
         if (auth == null) {
-            return false;
+            return Boolean.FALSE;
         }
         val attributes = auth.getAttributes();
         LOGGER.debug("Located authentication attributes [{}]", attributes);
@@ -128,7 +128,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
             LOGGER.debug("Located remember-me authentication attribute [{}]", rememberMeValue);
             return CollectionUtils.wrapSet(rememberMeValue).contains(Boolean.TRUE);
         }
-        return false;
+        return Boolean.FALSE;
     }
 
     private boolean isRememberMeProvidedInRequest(final RequestContext requestContext) {
