@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -22,7 +22,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class AbstractConsentAction extends AbstractAction {
     /**
      * CAS Settings.

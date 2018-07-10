@@ -1,8 +1,8 @@
 package org.apereo.cas.consent;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
@@ -28,7 +28,7 @@ import java.util.List;
  */
 @Slf4j
 @ToString
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RestConsentRepository implements ConsentRepository {
 
     private static final long serialVersionUID = 6583408864586270206L;

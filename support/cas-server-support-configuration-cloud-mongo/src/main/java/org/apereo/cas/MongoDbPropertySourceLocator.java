@@ -1,8 +1,8 @@
 package org.apereo.cas;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.env.CompositePropertySource;
@@ -18,7 +18,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MongoDbPropertySourceLocator implements PropertySourceLocator {
     private final MongoOperations mongo;
 

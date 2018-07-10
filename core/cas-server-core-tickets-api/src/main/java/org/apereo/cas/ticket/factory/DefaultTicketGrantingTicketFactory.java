@@ -1,8 +1,8 @@
 package org.apereo.cas.ticket.factory;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
@@ -24,22 +24,22 @@ import java.io.Serializable;
  * @since 4.2
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketFactory {
     /**
      * UniqueTicketIdGenerator to generate ids for {@link TicketGrantingTicket}s created.
      */
-    protected UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
+    protected final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
     /**
      * Expiration policy for ticket granting tickets.
      */
-    protected ExpirationPolicy ticketGrantingTicketExpirationPolicy;
+    protected final ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
     /**
      * The ticket cipher, if any.
      */
-    protected CipherExecutor<Serializable, String> cipherExecutor;
+    protected final CipherExecutor<Serializable, String> cipherExecutor;
 
     @Override
     public <T extends TicketGrantingTicket> T create(final Authentication authentication, final Class<T> clazz) {

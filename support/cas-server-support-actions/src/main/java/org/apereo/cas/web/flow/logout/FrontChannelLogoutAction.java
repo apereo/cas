@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow.logout;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.logout.LogoutHttpMessage;
 import org.apereo.cas.logout.LogoutManager;
@@ -25,7 +25,7 @@ import java.util.HashMap;
  * @since 4.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FrontChannelLogoutAction extends AbstractLogoutAction {
     
     private final LogoutManager logoutManager;

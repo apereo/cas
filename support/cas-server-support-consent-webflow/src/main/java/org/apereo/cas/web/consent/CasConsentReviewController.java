@@ -1,6 +1,6 @@
 package org.apereo.cas.web.consent;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -35,11 +35,9 @@ import java.util.Map;
 @Controller("casConsentReviewController")
 @RequestMapping("/consentReview")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CasConsentReviewController {
-
     private static final String CONSENT_REVIEW_VIEW = "casConsentReviewView";
-    private static final String CONSENT_LOGOUT_VIEW = "casConsentLogoutView";
 
     private final ConsentRepository consentRepository;
     private final ConsentEngine consentEngine;

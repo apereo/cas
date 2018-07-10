@@ -1,8 +1,8 @@
 package org.apereo.cas.logout;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -26,13 +26,13 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutServiceMessageHandler {
     private final HttpClient httpClient;
     private final LogoutMessageCreator logoutMessageBuilder;
     private final ServicesManager servicesManager;
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
-    private boolean asynchronous = true;
+    private final boolean asynchronous;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     /**
