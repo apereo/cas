@@ -187,10 +187,6 @@ subprojects {
                 if (details.requested.group == "gnu-getopt") {
                     details.useTarget group: "gnu.getopt", name: "java-getopt", version: details.requested.version
                 }
-
-                if (details.requested.group == "org.ow2.asm") {
-                    details.useVersion "6.2"
-                }
             }
         }
         exclude(group: "ch.qos.logback", module: "logback-core")
