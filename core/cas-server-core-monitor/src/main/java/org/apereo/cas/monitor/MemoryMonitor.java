@@ -1,8 +1,8 @@
 package org.apereo.cas.monitor;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
@@ -14,7 +14,7 @@ import org.springframework.boot.actuate.health.Health;
  * @since 3.5.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MemoryMonitor extends AbstractHealthIndicator {
 
     private static final int PERCENTAGE_VALUE = 100;
