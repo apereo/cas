@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication;
 
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -16,7 +16,7 @@ import lombok.val;
  */
 @Slf4j
 @ToString
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class RootCasException extends RuntimeException {
 
     private static final long serialVersionUID = -2384466176716541689L;
