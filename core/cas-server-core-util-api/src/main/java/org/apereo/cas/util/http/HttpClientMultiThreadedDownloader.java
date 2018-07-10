@@ -1,11 +1,11 @@
 package org.apereo.cas.util.http;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import com.github.axet.wget.SpeedInfo;
 import com.github.axet.wget.WGet;
 import com.github.axet.wget.info.DownloadInfo;
-import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class HttpClientMultiThreadedDownloader {
     private final Resource resourceToDownload;
     private final File targetDestination;
