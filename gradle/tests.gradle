@@ -74,6 +74,12 @@ task testIgnite(type: Test) {
     useJUnit {
         includeCategories 'org.apereo.cas.category.IgniteCategory'
     }
+    def list = []
+    list.add("--add-exports")
+    list.add("java.base/jdk.internal.misc=ALL-UNNAMED")
+    list.add("--add-exports")
+    list.add("java.base/sun.nio.ch=ALL-UNNAMED")
+    jvmArgs = list
     onlyIf {
         "IGNITE".equalsIgnoreCase(rootProject.testCategoryType)
     }

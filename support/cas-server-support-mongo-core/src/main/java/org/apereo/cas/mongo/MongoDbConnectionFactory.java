@@ -10,21 +10,24 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.ssl.SSLContexts;
 import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
+import org.bson.BSON;
+import org.bson.codecs.configuration.CodecRegistries;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.data.annotation.Persistent;
+import org.springframework.data.convert.CustomConversions;
 import org.springframework.data.convert.JodaTimeConverters;
 import org.springframework.data.convert.Jsr310Converters;
 import org.springframework.data.mapping.model.CamelCaseAbbreviatingFieldNamingStrategy;
 import org.springframework.data.mapping.model.FieldNamingStrategy;
 import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
 import org.springframework.data.mongodb.MongoDbFactory;
-import org.springframework.data.mongodb.core.MongoClientOptionsFactoryBean;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
@@ -35,7 +38,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.util.ClassUtils;
 
-import javax.net.ssl.SSLSocketFactory;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,7 +58,8 @@ import java.util.stream.Stream;
 public class MongoDbConnectionFactory {
     private static final int DEFAULT_PORT = 27017;
 
-    private final MongoCustomConversions customConversions;
+    //private final MongoCustomConversions customConversions;
+    private final CustomConversions customConversions;
 
     public MongoDbConnectionFactory() {
         this(new ArrayList<>());
@@ -78,14 +82,16 @@ public class MongoDbConnectionFactory {
         converters.add(new BaseConverters.CaffeinCacheConverter());
         converters.add(new BaseConverters.CaffeinCacheLoaderConverter());
         converters.add(new BaseConverters.CacheConverter());
+        converters.add(new BaseConverters.CacheBuilderConverter());
         converters.add(new BaseConverters.ZonedDateTimeToDateConverter());
         converters.add(new BaseConverters.ZonedDateTimeToStringConverter());
         converters.add(new BaseConverters.StringToZonedDateTimeConverter());
         converters.add(new BaseConverters.DateToZonedDateTimeConverter());
+        converters.add(new BaseConverters.BsonTimestampToDateConverter());
 
         converters.addAll(JodaTimeConverters.getConvertersToRegister());
         converters.addAll(Jsr310Converters.getConvertersToRegister());
-        
+
         this.customConversions = new MongoCustomConversions(converters);
     }
 
@@ -225,68 +231,46 @@ public class MongoDbConnectionFactory {
      * individual settings. If specified, takes over all other settings
      * where applicable."
      *
-     * @param mongo the property setttings (including, perhaps, a client uri)
+     * @param mongo the property settings (including, perhaps, a client uri)
      * @return a bean containing the MongoClientOptions object
      */
     @SneakyThrows
-    private MongoClientOptionsFactoryBean buildMongoDbClientOptionsFactoryBean(final BaseMongoDbProperties mongo) {
+    private MongoClientOptions buildMongoDbClientOptions(final BaseMongoDbProperties mongo) {
 
-        val bean1 = new MongoClientOptionsFactoryBean();
-
-        bean1.setWriteConcern(WriteConcern.valueOf(mongo.getWriteConcern()));
-        bean1.setHeartbeatConnectTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis());
-        bean1.setHeartbeatSocketTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis());
-        bean1.setMaxConnectionLifeTime(mongo.getConns().getLifetime());
-        bean1.setSocketKeepAlive(mongo.isSocketKeepAlive());
-        bean1.setMaxConnectionIdleTime((int) Beans.newDuration(mongo.getIdleTimeout()).toMillis());
-        bean1.setConnectionsPerHost(mongo.getConns().getPerHost());
-        bean1.setSocketTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis());
-        bean1.setConnectTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis());
-        if (StringUtils.isNotBlank(mongo.getReplicaSet())) {
-            bean1.setRequiredReplicaSetName(mongo.getReplicaSet());
-        }
-        bean1.setSsl(mongo.isSslEnabled());
-        if (mongo.isSslEnabled()) {
-            bean1.setSslSocketFactory((SSLSocketFactory) SSLSocketFactory.getDefault());
-        }
-
-        bean1.afterPropertiesSet();
+        var clientOptions = (MongoClientOptions.Builder) null;
 
         if (StringUtils.isNotBlank(mongo.getClientUri())) {
-            val bean2 = new MongoClientOptionsFactoryBean();
+            val opts = buildMongoClientURI(mongo.getClientUri()).getOptions();
+            clientOptions = MongoClientOptions.builder(opts);
+        } else {
+            clientOptions = MongoClientOptions.builder()
+                .writeConcern(WriteConcern.valueOf(mongo.getWriteConcern()))
+                .heartbeatConnectTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis())
+                .heartbeatSocketTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis())
+                .maxConnectionLifeTime(mongo.getConns().getLifetime())
+                .socketKeepAlive(mongo.isSocketKeepAlive())
+                .maxConnectionIdleTime((int) Beans.newDuration(mongo.getIdleTimeout()).toMillis())
+                .connectionsPerHost(mongo.getConns().getPerHost())
+                .socketTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis())
+                .connectTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis())
+                .sslEnabled(mongo.isSslEnabled());
 
-            val uri = buildMongoClientURI(mongo.getClientUri(), bean1.getObject());
-            val opts = uri.getOptions();
-
-            bean2.setWriteConcern(opts.getWriteConcern());
-            bean2.setHeartbeatConnectTimeout(opts.getHeartbeatConnectTimeout());
-            bean2.setHeartbeatSocketTimeout(opts.getHeartbeatSocketTimeout());
-            bean2.setMaxConnectionLifeTime(opts.getMaxConnectionLifeTime());
-            bean2.setSocketKeepAlive(opts.isSocketKeepAlive());
-            bean2.setMaxConnectionIdleTime(opts.getMaxConnectionIdleTime());
-            bean2.setConnectionsPerHost(opts.getConnectionsPerHost());
-            bean2.setSocketTimeout(opts.getSocketTimeout());
-            bean2.setConnectTimeout(opts.getConnectTimeout());
-            bean2.setRequiredReplicaSetName(opts.getRequiredReplicaSetName());
-            bean2.setSsl(opts.isSslEnabled());
-
-            if (opts.isSslEnabled()) {
-                bean2.setSslSocketFactory((SSLSocketFactory) SSLSocketFactory.getDefault());
+            if (StringUtils.isNotBlank(mongo.getReplicaSet())) {
+                clientOptions.requiredReplicaSetName(mongo.getReplicaSet());
             }
-
-            bean2.afterPropertiesSet();
-            bean1.destroy();
-
-            return bean2;
         }
+        clientOptions.sslContext(SSLContexts.createSystemDefault());
 
-        return bean1;
+        BSON.addEncodingHook(ZonedDateTime.class, new BaseConverters.ZonedDateTimeTransformer());
+
+        val codecRegistry = CodecRegistries.fromRegistries(
+            CodecRegistries.fromProviders(new BaseConverters.ZonedDateTimeCodecProvider()),
+            MongoClient.getDefaultCodecRegistry()
+        );
+        clientOptions.codecRegistry(codecRegistry);
+        return clientOptions.build();
     }
 
-    @SneakyThrows
-    private MongoClientOptions buildMongoDbClientOptions(final BaseMongoDbProperties mongo) {
-        return buildMongoDbClientOptionsFactoryBean(mongo).getObject();
-    }
 
     private MongoClient buildMongoDbClient(final BaseMongoDbProperties mongo) {
 
@@ -330,8 +314,12 @@ public class MongoDbConnectionFactory {
     }
 
     private MongoClientURI buildMongoClientURI(final String clientUri, final MongoClientOptions clientOptions) {
-        val builder = new MongoClientOptions.Builder(clientOptions);
+        val builder = clientOptions != null ? MongoClientOptions.builder(clientOptions) : MongoClientOptions.builder();
         return new MongoClientURI(clientUri, builder);
+    }
+
+    private MongoClientURI buildMongoClientURI(final String clientUri) {
+        return buildMongoClientURI(clientUri, null);
     }
 
     private static class ClientUriMongoDbProperties extends BaseMongoDbProperties {
