@@ -31,6 +31,7 @@ import java.io.IOException;
  */
 @Slf4j
 public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseGenerator {
+    private static final int DEVICE_REQUEST_INTERVAL = 15;
 
     private static final JsonFactory JSON_FACTORY = new JsonFactory(new ObjectMapper().findAndRegisterModules());
 
@@ -54,26 +55,34 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                          final Service service,
                          final OAuth20TokenGeneratedResult result,
                          final long accessTokenTimeout,
-                         final OAuth20ResponseTypes responseType) {
+                         final OAuth20ResponseTypes responseType,
+                         final CasConfigurationProperties casProperties) {
 
         if (OAuth20ResponseTypes.DEVICE_CODE == responseType) {
-            generateResponseForDeviceToken(request, response, registeredService, service, result);
+            generateResponseForDeviceToken(request, response, registeredService, service, result, casProperties);
         } else {
             generateResponseForAccessToken(request, response, registeredService, service, result, accessTokenTimeout, responseType);
         }
     }
 
     @SneakyThrows
-    private void generateResponseForDeviceToken(final HttpServletRequest request, final HttpServletResponse response,
-                                                final OAuthRegisteredService registeredService, final Service service,
-                                                final OAuth20TokenGeneratedResult result) {
+    private void generateResponseForDeviceToken(final HttpServletRequest request,
+                                                final HttpServletResponse response,
+                                                final OAuthRegisteredService registeredService,
+                                                final Service service,
+                                                final OAuth20TokenGeneratedResult result,
+                                                final CasConfigurationProperties casProperties) {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         try (val jsonGenerator = getResponseJsonGenerator(response)) {
             jsonGenerator.writeStartObject();
-            jsonGenerator.writeStringField(OAuth20Constants.DEVICE_VERIFICATION_URI, "");
+            val uri = casProperties.getServer().getPrefix()
+                .concat(OAuth20Constants.BASE_OAUTH20_URL)
+                .concat("/")
+                .concat(OAuth20Constants.DEVICE_AUTHZ_URL);
+            jsonGenerator.writeStringField(OAuth20Constants.DEVICE_VERIFICATION_URI, uri);
             jsonGenerator.writeStringField(OAuth20Constants.DEVICE_USER_CODE, result.getUserCode().get());
             jsonGenerator.writeStringField(OAuth20Constants.DEVICE_CODE, result.getDeviceCode().get());
-            jsonGenerator.writeNumberField(OAuth20Constants.DEVICE_INTERVAL, 30);
+            jsonGenerator.writeNumberField(OAuth20Constants.DEVICE_INTERVAL, DEVICE_REQUEST_INTERVAL);
             jsonGenerator.writeEndObject();
         }
     }

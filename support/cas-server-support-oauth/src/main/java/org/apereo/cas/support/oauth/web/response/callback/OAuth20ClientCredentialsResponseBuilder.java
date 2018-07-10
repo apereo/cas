@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web.response.callback;
 import lombok.val;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -22,10 +23,10 @@ public class OAuth20ClientCredentialsResponseBuilder extends OAuth20ResourceOwne
 
     public OAuth20ClientCredentialsResponseBuilder(final AccessTokenResponseGenerator accessTokenResponseGenerator,
                                                    final OAuth20TokenGenerator accessTokenGenerator,
-                                                   final ExpirationPolicy accessTokenExpirationPolicy) {
-        super(accessTokenResponseGenerator, accessTokenGenerator, accessTokenExpirationPolicy);
+                                                   final ExpirationPolicy accessTokenExpirationPolicy,
+                                                   final CasConfigurationProperties casProperties) {
+        super(accessTokenResponseGenerator, accessTokenGenerator, accessTokenExpirationPolicy, casProperties);
     }
-
 
     @Override
     public boolean supports(final J2EContext context) {

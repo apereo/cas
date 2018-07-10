@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
@@ -26,6 +27,7 @@ public interface AccessTokenResponseGenerator {
      * @param result            the result
      * @param timeout           the timeout
      * @param responseType      the response type
+     * @param casProperties     the cas properties
      */
     void generate(HttpServletRequest request,
                   HttpServletResponse response,
@@ -33,5 +35,6 @@ public interface AccessTokenResponseGenerator {
                   Service service,
                   OAuth20TokenGeneratedResult result,
                   long timeout,
-                  OAuth20ResponseTypes responseType);
+                  OAuth20ResponseTypes responseType,
+                  CasConfigurationProperties casProperties);
 }
