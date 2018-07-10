@@ -1,8 +1,8 @@
 package org.apereo.cas.web.support;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -21,14 +21,14 @@ import java.util.List;
  */
 @Slf4j
 @NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
     /**
      * The factory responsible for creating service objects based on the arguments extracted.
      */
-    protected List<ServiceFactory<? extends WebApplicationService>> serviceFactories= new ArrayList<>();
+    protected final List<ServiceFactory<? extends WebApplicationService>> serviceFactories= new ArrayList<>();
 
     @Override
     public WebApplicationService extractService(final HttpServletRequest request) {
