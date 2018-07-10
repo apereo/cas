@@ -32,6 +32,8 @@ task compileSass(type: NpmTask) {
 
 if (!rootProject.publishingRelease && !Boolean.getBoolean("skipNpmLint")) {
     processResources.dependsOn npmLint
+} else {
+    npmLint.enabled = false
 }
 
 if (!Boolean.getBoolean("skipSass")) {

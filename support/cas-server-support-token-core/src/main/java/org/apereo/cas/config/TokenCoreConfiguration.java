@@ -59,7 +59,7 @@ public class TokenCoreConfiguration {
             () -> {
                 LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
                     + "are defined for operations. CAS will proceed to enable the token encryption/signing functionality.");
-                return true;
+                return Boolean.TRUE;
             },
             crypto::isEnabled)
             .get();

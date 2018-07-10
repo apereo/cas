@@ -313,7 +313,7 @@ subprojects {
         spotbugs {
             toolVersion = "${findbugsVersion}"
             sourceSets = [sourceSets.main]
-            ignoreFailures = false
+            ignoreFailures = Boolean.getBoolean("ignoreFindbugsFailures")
             reportsDir = file("$project.buildDir/findbugsReports")
             effort = "max"
             reportLevel = "low"

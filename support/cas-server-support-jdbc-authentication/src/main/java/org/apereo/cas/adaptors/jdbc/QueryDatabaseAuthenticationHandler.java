@@ -1,8 +1,8 @@
 package org.apereo.cas.adaptors.jdbc;
 
-import lombok.val;
-
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -23,7 +23,6 @@ import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -47,10 +46,15 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     private final String fieldDisabled;
     private final Map<String, Object> principalAttributeMap;
 
-    public QueryDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public QueryDatabaseAuthenticationHandler(final String name,
+                                              final ServicesManager servicesManager,
                                               final PrincipalFactory principalFactory,
-                                              final Integer order, final DataSource dataSource, final String sql,
-                                              final String fieldPassword, final String fieldExpired, final String fieldDisabled,
+                                              final Integer order,
+                                              final DataSource dataSource,
+                                              final String sql,
+                                              final String fieldPassword,
+                                              final String fieldExpired,
+                                              final String fieldDisabled,
                                               final Map<String, Object> attributes) {
         super(name, servicesManager, principalFactory, order, dataSource);
         this.sql = sql;
@@ -75,7 +79,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                 + "No SQL statement or JDBC template is found.");
         }
 
-        val attributes = new HashMap<String, Object>(this.principalAttributeMap.size());
+        val attributes = Maps.<String, Object>newHashMapWithExpectedSize(this.principalAttributeMap.size());
         val username = credential.getUsername();
         val password = credential.getPassword();
         try {

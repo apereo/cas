@@ -60,7 +60,7 @@ public class GenerateSamlIdPMetadataCommand {
             serverPrefix, scope, locator, writer);
 
         val generateMetadata = FunctionUtils.doIf(locator.exists(),
-            () -> true,
+            () -> Boolean.TRUE,
             () -> {
                 LOGGER.warn("Metadata artifacts are available at the specified location: [{}]", metadataLocation);
                 return force;

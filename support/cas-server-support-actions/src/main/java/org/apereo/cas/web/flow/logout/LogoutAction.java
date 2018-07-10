@@ -48,7 +48,7 @@ public class LogoutAction extends AbstractLogoutAction {
             () -> logoutRequests
                 .stream()
                 .anyMatch(logoutRequest -> logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED),
-            () -> false)
+            () -> Boolean.FALSE)
             .get();
 
         val paramName = StringUtils.defaultIfEmpty(logoutProperties.getRedirectParameter(), CasProtocolConstants.PARAMETER_SERVICE);
