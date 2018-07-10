@@ -1,8 +1,7 @@
 package org.apereo.cas.audit;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.category.CouchbaseCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -19,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
@@ -45,7 +43,6 @@ import static org.junit.Assert.*;
     "cas.audit.couchbase.bucket=testbucket",
     "cas.audit.couchbase.asynchronous=false"
 })
-@TestPropertySource(locations = {"classpath:/couchbaseaudit.properties"})
 @Category(CouchbaseCategory.class)
 @Slf4j
 public class CouchbaseAuditTrailManagerTests {
