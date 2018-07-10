@@ -48,7 +48,7 @@ public class CoreTicketUtils {
                 LOGGER.warn("Ticket registry encryption/signing for [{}] is not enabled explicitly in the configuration, yet signing/encryption keys "
                     + "are defined for ticket operations. CAS will proceed to enable the ticket registry encryption/signing functionality. "
                     + "If you intend to turn off this behavior, consider removing/disabling the signing/encryption keys defined in settings", registryName);
-                return true;
+                return Boolean.TRUE;
             },
             registry::isEnabled
         ).get();

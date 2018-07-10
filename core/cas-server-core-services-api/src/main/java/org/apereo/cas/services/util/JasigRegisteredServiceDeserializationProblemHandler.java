@@ -56,7 +56,7 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
         val handled = FunctionUtils.doIf(Predicates.instanceOf(CachingPrincipalAttributesRepository.class),
             () -> {
                 if (!"duration".equals(propertyName)) {
-                    return false;
+                    return Boolean.FALSE;
                 }
                 return Unchecked.supplier(() -> {
                     for (var i = 1; i <= TOKEN_COUNT_DURATION; i++) {
@@ -75,10 +75,10 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
                     LOGGER.warn("CAS has converted legacy JSON property [{}] for type [{}]. It parsed 'expiration' value [{}] with time unit of [{}]."
                             + "It is STRONGLY recommended that you review the configuration and upgrade from the legacy syntax.",
                         propertyName, beanOrClass.getClass().getName(), expiration, timeUnit);
-                    return true;
+                    return Boolean.TRUE;
                 }).get();
             },
-            () -> false)
+            () -> Boolean.FALSE)
             .apply(beanOrClass);
 
         return handled;
