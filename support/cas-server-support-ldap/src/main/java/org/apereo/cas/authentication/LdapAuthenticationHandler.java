@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import com.google.common.collect.Maps;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -158,7 +159,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @return the map
      */
     protected Map<String, Object> collectAttributesForLdapEntry(final LdapEntry ldapEntry, final String username) {
-        val attributeMap = new HashMap<String, Object>(this.principalAttributeMap.size());
+        val attributeMap = Maps.<String, Object>newHashMapWithExpectedSize(this.principalAttributeMap.size());
         LOGGER.debug("The following attributes are requested to be retrieved and mapped: [{}]", attributeMap.keySet());
         this.principalAttributeMap.forEach((key, attributeNames) -> {
             val attr = ldapEntry.getAttribute(key);
