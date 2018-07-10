@@ -32,7 +32,7 @@ abstract class AbstractTicketRegistryTicketCatalogConfigTests {
     abstract PT_storageNameForConcreteTicketRegistry()
 
     @Before
-    def initialize() {
+    private void initialize() {
         ticketCatalogConfigurerUnderTest().configureTicketCatalog(ticketCatalog)
     }
 

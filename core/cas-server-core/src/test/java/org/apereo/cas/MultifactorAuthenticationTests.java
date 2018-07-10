@@ -1,8 +1,7 @@
 package org.apereo.cas;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -61,33 +60,32 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(
-        classes = {
-                CasMultifactorTestAuthenticationEventExecutionPlanConfiguration.class,
-                CasWebApplicationServiceFactoryConfiguration.class,
-                CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-                CasCoreAuthenticationConfiguration.class, 
-                CasCoreServicesAuthenticationConfiguration.class,
-                CasCoreServicesConfiguration.class,
-                CasCoreTicketCatalogConfiguration.class,
-                CasCoreAuthenticationPrincipalConfiguration.class,
-                CasCoreAuthenticationPolicyConfiguration.class,
-                CasCoreAuthenticationMetadataConfiguration.class,
-                CasCoreAuthenticationSupportConfiguration.class,
-                CasCoreAuthenticationHandlersConfiguration.class,
-                CasCoreHttpConfiguration.class,
-                AopAutoConfiguration.class,
-                CasCoreUtilConfiguration.class,
-                CasCoreConfiguration.class,
-                CasRegisteredServicesTestConfiguration.class,
-                CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-                CasCoreLogoutConfiguration.class,
-                RefreshAutoConfiguration.class,
-                CasCoreTicketsConfiguration.class,
-                CasPersonDirectoryTestConfiguration.class,
-                CasCoreTicketIdGeneratorsConfiguration.class,
-                CasCoreValidationConfiguration.class,
-                CasCoreWebConfiguration.class})
+@SpringBootTest(classes = {
+    CasMultifactorTestAuthenticationEventExecutionPlanConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    AopAutoConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreConfiguration.class,
+    CasRegisteredServicesTestConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreValidationConfiguration.class,
+    CasCoreWebConfiguration.class})
 @TestPropertySource(locations = {"classpath:/core.properties"}, properties = "cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=true")
 @Slf4j
 public class MultifactorAuthenticationTests {
@@ -148,8 +146,8 @@ public class MultifactorAuthenticationTests {
     @Test
     public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTP() {
         val ctx = processAuthenticationAttempt(HIGH_SERVICE,
-                newUserPassCredentials(ALICE, ALICE),
-                new OneTimePasswordCredential(ALICE, PASSWORD_31415));
+            newUserPassCredentials(ALICE, ALICE),
+            new OneTimePasswordCredential(ALICE, PASSWORD_31415));
 
         val tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -159,9 +157,8 @@ public class MultifactorAuthenticationTests {
 
     @Test
     public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() {
-        // Note the original credential used to start SSO session does not satisfy security policy
         val ctx2 = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials(ALICE, ALICE),
-                new OneTimePasswordCredential(ALICE, PASSWORD_31415));
+            new OneTimePasswordCredential(ALICE, PASSWORD_31415));
 
         val tgt = cas.createTicketGrantingTicket(ctx2);
         assertNotNull(tgt);
@@ -191,6 +188,4 @@ public class MultifactorAuthenticationTests {
     private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws AuthenticationException {
         return this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
     }
-
-    
 }

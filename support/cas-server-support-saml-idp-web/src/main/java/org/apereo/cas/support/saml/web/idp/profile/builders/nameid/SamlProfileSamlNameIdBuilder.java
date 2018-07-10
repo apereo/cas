@@ -15,7 +15,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
@@ -142,10 +141,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      */
     protected String getRequiredNameIdFormatIfAny(final RequestAbstractType authnRequest) {
         val nameIDPolicy = getNameIDPolicy(authnRequest);
-        val requiredNameFormat = FunctionUtils.doIf(nameIDPolicy != null,
-            nameIDPolicy::getFormat,
-            () -> null)
-            .get();
+        val requiredNameFormat = nameIDPolicy != null ? nameIDPolicy.getFormat() : null;
         LOGGER.debug("AuthN request indicates [{}] is the required NameID format", requiredNameFormat);
         return requiredNameFormat;
     }

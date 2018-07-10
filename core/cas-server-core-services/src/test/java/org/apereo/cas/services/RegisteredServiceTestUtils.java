@@ -5,6 +5,7 @@ import lombok.val;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
@@ -81,7 +82,7 @@ public class RegisteredServiceTestUtils {
 
     public static AbstractWebApplicationService getService(final String name) {
         val request = new MockHttpServletRequest();
-        request.addParameter("service", name);
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, name);
         return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
     }
 
