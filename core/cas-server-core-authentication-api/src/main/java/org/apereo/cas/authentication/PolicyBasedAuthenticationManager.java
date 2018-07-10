@@ -1,12 +1,11 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalException;
@@ -168,10 +167,10 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
         final Collection<AuthenticationPreProcessor> supported = pops.stream()
             .filter(processor -> transaction.getCredentials()
-            .stream()
-            .filter(processor::supports)
-            .findFirst()
-            .isPresent())
+                .stream()
+                .filter(processor::supports)
+                .findFirst()
+                .isPresent())
             .collect(Collectors.toList());
 
         var processed = true;
@@ -344,9 +343,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                             val resolver = getPrincipalResolverLinkedToHandlerIfAny(handler, transaction);
                             LOGGER.debug("Attempting authentication of [{}] using [{}]", credential.getId(), handler.getName());
                             authenticateAndResolvePrincipal(builder, credential, resolver, handler);
-                            AuthenticationCredentialsThreadLocalBinder.bindInProgress(builder.build());
-
-                            val failures = evaluateAuthenticationPolicies(builder.build(), transaction);
+                            val authnResult = builder.build();
+                            AuthenticationCredentialsThreadLocalBinder.bindInProgress(authnResult);
+                            val failures = evaluateAuthenticationPolicies(authnResult, transaction);
                             proceedWithNextHandler = !failures.getKey();
                         } catch (final Exception e) {
                             LOGGER.error("Authentication has failed. Credentials may be incorrect or CAS cannot "
