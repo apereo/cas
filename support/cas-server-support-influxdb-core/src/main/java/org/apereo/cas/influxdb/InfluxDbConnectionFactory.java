@@ -25,8 +25,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class InfluxDbConnectionFactory implements AutoCloseable {
-
-
     /**
      * The Influx db.
      */
