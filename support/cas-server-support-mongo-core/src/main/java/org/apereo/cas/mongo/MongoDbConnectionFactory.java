@@ -88,6 +88,7 @@ public class MongoDbConnectionFactory {
         converters.add(new BaseConverters.StringToZonedDateTimeConverter());
         converters.add(new BaseConverters.DateToZonedDateTimeConverter());
         converters.add(new BaseConverters.BsonTimestampToDateConverter());
+        converters.add(new BaseConverters.BsonTimestampToStringConverter());
 
         converters.addAll(JodaTimeConverters.getConvertersToRegister());
         converters.addAll(Jsr310Converters.getConvertersToRegister());

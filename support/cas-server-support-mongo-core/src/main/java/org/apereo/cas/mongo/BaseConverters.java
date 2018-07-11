@@ -206,6 +206,16 @@ public abstract class BaseConverters {
     }
 
     /**
+     * The type BsonTimestamp to String converter.
+     */
+    public static class BsonTimestampToStringConverter implements Converter<BsonTimestamp, String> {
+        @Override
+        public String convert(final BsonTimestamp source) {
+            return String.valueOf(source.getTime());
+        }
+    }
+
+    /**
      * The type Zoned date time transformer.
      */
     public static class ZonedDateTimeTransformer implements Transformer {

@@ -45,21 +45,21 @@ class DefaultVariegatedMfaProviderTests {
     }
 
     @Test
-    verifySingleProviderProperties() {
+    void verifySingleProviderProperties() {
         def variegatedProvider = createVariegatedProviderWith([mfaProvider1])
         variegatedProvider.id == MFA_PROVIDER1_ID
         variegatedProvider.order == MFA_PROVIDER1_ORDER
     }
 
     @Test
-    verifyMultipleProvidersProperties() {
+    void verifyMultipleProvidersProperties() {
         def variegatedProvider = createVariegatedProviderWith([mfaProvider2, mfaProvider1])
         variegatedProvider.id == MFA_PROVIDER2_ID
         variegatedProvider.order == MFA_PROVIDER2_ORDER
     }
 
     @Test
-    verifyProviderUnavailability() {
+    void verifyProviderUnavailability() {
         mfaProvider1.isAvailable(registeredService) >> true
         mfaProvider2.isAvailable(registeredService) >> false
         def variegatedProvider = createVariegatedProviderWith([mfaProvider1, mfaProvider2])
@@ -67,7 +67,7 @@ class DefaultVariegatedMfaProviderTests {
     }
 
     @Test
-    verifyProviderAvailability() {
+    void verifyProviderAvailability() {
         mfaProvider1.isAvailable(registeredService) >> true
         mfaProvider2.isAvailable(registeredService) >> true
         def variegatedProvider = createVariegatedProviderWith([mfaProvider1, mfaProvider2])
@@ -75,7 +75,7 @@ class DefaultVariegatedMfaProviderTests {
     }
 
     @Test
-    def verifyMatches() {
+    void  verifyMatches() {
         def variegatedProvider = createVariegatedProviderWith([mfaProvider1, mfaProvider2])
         variegatedProvider.matches(MFA_PROVIDER1_ID)
         variegatedProvider.matches(MFA_PROVIDER2_ID)
