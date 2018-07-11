@@ -40,4 +40,10 @@ public class SmsProvidersProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AmazonSnsProperties sns = new AmazonSnsProperties();
+
+    /**
+     * Nexmo settings.
+     */
+    @NestedConfigurationProperty
+    private NexmoProperties nexmo = new NexmoProperties();
 }

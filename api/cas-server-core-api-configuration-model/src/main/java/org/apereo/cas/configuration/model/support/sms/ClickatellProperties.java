@@ -13,7 +13,6 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-sms-clickatell")
-
 @Getter
 @Setter
 public class ClickatellProperties implements Serializable {

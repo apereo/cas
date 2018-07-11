@@ -30,7 +30,7 @@ class DefaultVariegatedMfaProviderTests {
     static BOGUS_ID = 'BOGUS'
 
     @Before
-    private void initialize() {
+    void initialize() {
         mfaProvider1.id >> MFA_PROVIDER1_ID
         mfaProvider1.order >> MFA_PROVIDER1_ORDER
         mfaProvider1.friendlyName >> MFA_PROVIDER1_ID
