@@ -68,7 +68,7 @@ public class DefaultCasSslContext {
         allManagers.addAll(jvmTrustManagers);
         val trustManagers = new TrustManager[]{new CompositeX509TrustManager(allManagers)};
 
-        this.sslContext = SSLContexts.custom().useProtocol("SSL").build();
+        this.sslContext = SSLContexts.custom().setProtocol("SSL").build();
         sslContext.init(keyManagers, trustManagers, null);
     }
 
