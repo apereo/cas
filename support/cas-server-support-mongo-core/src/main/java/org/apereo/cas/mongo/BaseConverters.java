@@ -165,7 +165,7 @@ public abstract class BaseConverters {
     /**
      * The type String to zoned date time converter.
      */
-    public static class StringToZonedDateTimeConverter implements Converter<String, ZonedDateTime> {
+    static class StringToZonedDateTimeConverter implements Converter<String, ZonedDateTime> {
         @Override
         public ZonedDateTime convert(final String source) {
             if (StringUtils.isBlank(source)) {

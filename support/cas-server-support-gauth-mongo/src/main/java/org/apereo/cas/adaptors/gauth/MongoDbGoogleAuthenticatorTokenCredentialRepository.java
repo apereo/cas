@@ -25,13 +25,13 @@ import java.util.List;
 @Slf4j
 @ToString
 public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
-
     private final IGoogleAuthenticator googleAuthenticator;
     private final MongoOperations mongoTemplate;
     private final String collectionName;
 
     public MongoDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-                                                               final MongoOperations mongoTemplate, final String collectionName,
+                                                               final MongoOperations mongoTemplate,
+                                                               final String collectionName,
                                                                final CipherExecutor<String, String> tokenCredentialCipher) {
         super(tokenCredentialCipher);
         this.googleAuthenticator = googleAuthenticator;

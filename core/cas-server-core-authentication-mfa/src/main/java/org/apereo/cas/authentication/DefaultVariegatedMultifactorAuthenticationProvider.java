@@ -10,6 +10,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -47,6 +48,12 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
         }
         this.providers.add(provider);
     }
+
+    @Override
+    public void addProviders(final MultifactorAuthenticationProvider... provider) {
+        Arrays.stream(provider).forEach(this::addProvider);
+    }
+
 
     @Override
     public boolean isAvailable(final RegisteredService service) throws AuthenticationException {
