@@ -1892,6 +1892,19 @@ ext.libraries = [
             exclude(group: "org.apache.httpcomponents", module: "httpclient")
             force = true
         },
+        nexmo                  : dependencies.create("com.nexmo:client:$nexmoVersion") {
+            exclude(group: "org.slf4j", module: "slf4j-api")
+            exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+            exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+            exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+            exclude(group: "javax.xml.bind", module: "jaxb-api")
+            exclude(group: "org.apache.httpcomponents", module: "httpclient")
+            exclude(group: "commons-io", module: "commons-io")
+            exclude(group: "commons-logging", module: "commons-logging")
+            exclude(group: "commons-codec", module: "commons-codec")
+            exclude(group: "org.apache.commons", module: "commons-lang3")
+            force = true
+        },
         textmagic               : [
                 dependencies.create("com.textmagic.sdk:textmagic-java-sdk:$textMagicVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
