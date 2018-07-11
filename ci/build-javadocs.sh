@@ -18,7 +18,6 @@ if [ "$runBuild" = false ]; then
     exit 0
 fi
 
-
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""

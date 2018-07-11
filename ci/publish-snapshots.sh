@@ -29,6 +29,9 @@ echo -e "***********************************************"
 
 echo -e "The build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
 
+echo -e "Installing NPM...\n"
+./gradlew npmInstall --stacktrace -q
+
 gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check \
         -DskipNpmLint=true -DskipNestedConfigMetadataGen=true \
         -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} \

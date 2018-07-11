@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ import java.util.Set;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 public class OidcRegisteredService extends OAuthRegisteredService {
 
     private static final long serialVersionUID = 1310899699465091444L;
@@ -67,10 +69,6 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @Lob
     @Column(name = "scopes", length = Integer.MAX_VALUE)
     private HashSet<String> scopes = new HashSet<>();
-
-    public OidcRegisteredService() {
-        setJsonFormat(true);
-    }
 
     /**
      * Gets subject type.

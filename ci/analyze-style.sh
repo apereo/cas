@@ -27,6 +27,9 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
+echo -e "Installing NPM...\n"
+./gradlew npmInstall --stacktrace -q
+
 gradleBuild="$gradleBuild check -x test -x javadoc \
      -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
