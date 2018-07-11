@@ -1,8 +1,8 @@
 package org.apereo.cas.support.oauth.web;
 
-import lombok.val;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.CasProtocolConstants;
@@ -16,9 +16,10 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.refreshtoken.DefaultRefreshTokenFactory;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
-import org.junit.Test;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
@@ -26,6 +27,7 @@ import org.springframework.mock.web.MockHttpSession;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -247,57 +249,53 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     @Test
     public void verifyClientAuthByParameter() throws Exception {
         val service = addRegisteredService();
-        internalVerifyClientOK(service, false, false);
+        internalVerifyClientOK(service, false);
     }
 
     @Test
     public void verifyClientAuthByHeader() throws Exception {
         val service = addRegisteredService();
-        internalVerifyClientOK(service, false, false);
+        internalVerifyClientOK(service, false);
     }
 
     @Test
     public void verifyClientAuthByParameterWithRefreshToken() throws Exception {
         val service = addRegisteredService();
         service.setGenerateRefreshToken(true);
-        internalVerifyClientOK(service, true, false);
+        internalVerifyClientOK(service, true);
     }
 
     @Test
     public void verifyClientAuthByHeaderWithRefreshToken() throws Exception {
         val service = addRegisteredService();
         service.setGenerateRefreshToken(true);
-        internalVerifyClientOK(service, true, false);
+        internalVerifyClientOK(service, true);
     }
 
     @Test
     public void verifyClientAuthJsonByParameter() throws Exception {
         val service = addRegisteredService();
-        service.setJsonFormat(true);
-        internalVerifyClientOK(service, false, true);
+        internalVerifyClientOK(service, false);
     }
 
     @Test
     public void verifyClientAuthJsonByHeader() throws Exception {
         val service = addRegisteredService();
-        service.setJsonFormat(true);
-        internalVerifyClientOK(service, false, true);
+        internalVerifyClientOK(service, false);
     }
 
     @Test
     public void verifyClientAuthJsonByParameterWithRefreshToken() throws Exception {
         val service = addRegisteredService();
         service.setGenerateRefreshToken(true);
-        service.setJsonFormat(true);
-        internalVerifyClientOK(service, true, true);
+        internalVerifyClientOK(service, true);
     }
 
     @Test
     public void verifyClientAuthJsonByHeaderWithRefreshToken() throws Exception {
         val service = addRegisteredService();
         service.setGenerateRefreshToken(true);
-        service.setJsonFormat(true);
-        internalVerifyClientOK(service, true, true);
+        internalVerifyClientOK(service, true);
     }
 
     @Test
@@ -316,16 +314,9 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         var response = mockResponse.getContentAsString();
 
-        val refreshToken = Arrays.stream(response.split("&"))
-            .filter(f -> f.startsWith(OAuth20Constants.REFRESH_TOKEN))
-            .map(f -> StringUtils.remove(f, OAuth20Constants.REFRESH_TOKEN + '='))
-            .findFirst()
-            .get();
-        val accessToken = Arrays.stream(response.split("&"))
-            .filter(f -> f.startsWith(OAuth20Constants.ACCESS_TOKEN))
-            .map(f -> StringUtils.remove(f, OAuth20Constants.ACCESS_TOKEN + '='))
-            .findFirst()
-            .get();
+        val map = new ObjectMapper().readValue(response, Map.class);
+        val refreshToken = map.get(OAuth20Constants.REFRESH_TOKEN).toString();
+        val accessToken = map.get(OAuth20Constants.ACCESS_TOKEN).toString();
 
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
         mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
@@ -407,33 +398,30 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     @Test
     public void verifyUserAuth() throws Exception {
         addRegisteredService();
-        internalVerifyUserAuth(false, false);
+        internalVerifyUserAuth(false);
     }
 
     @Test
     public void verifyUserAuthWithRefreshToken() throws Exception {
         val registeredService = addRegisteredService();
         registeredService.setGenerateRefreshToken(true);
-        internalVerifyUserAuth(true, false);
+        internalVerifyUserAuth(true);
     }
 
     @Test
     public void verifyJsonUserAuth() throws Exception {
         val registeredService = addRegisteredService();
-        registeredService.setJsonFormat(true);
-
-        internalVerifyUserAuth(false, true);
+        internalVerifyUserAuth(false);
     }
 
     @Test
     public void verifyJsonUserAuthWithRefreshToken() throws Exception {
         val registeredService = addRegisteredService();
         registeredService.setGenerateRefreshToken(true);
-        registeredService.setJsonFormat(true);
-        internalVerifyUserAuth(true, true);
+        internalVerifyUserAuth(true);
     }
 
-    private void internalVerifyUserAuth(final boolean refreshToken, final boolean json) throws Exception {
+    private void internalVerifyUserAuth(final boolean refreshToken) throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.name().toLowerCase());
@@ -447,28 +435,19 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         val body = mockResponse.getContentAsString();
 
         var accessTokenId = StringUtils.EMPTY;
-        if (json) {
-            assertEquals("application/json", mockResponse.getContentType());
-            assertTrue(body.contains('"' + OAuth20Constants.ACCESS_TOKEN + "\":\"AT-"));
-            if (refreshToken) {
-                assertTrue(body.contains('"' + OAuth20Constants.REFRESH_TOKEN + "\":\"RT-"));
-            }
-            assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":"));
-            accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + "\":\"", "\",\"");
-        } else {
-            assertEquals("text/plain", mockResponse.getContentType());
-            assertTrue(body.contains(OAuth20Constants.ACCESS_TOKEN + '='));
-            if (refreshToken) {
-                assertTrue(body.contains(OAuth20Constants.REFRESH_TOKEN + '='));
-            }
-            assertTrue(body.contains(OAuth20Constants.EXPIRES_IN + '='));
-            accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + '=', "&");
+
+        assertEquals("application/json", mockResponse.getContentType());
+        assertTrue(body.contains('"' + OAuth20Constants.ACCESS_TOKEN + "\":\"AT-"));
+        if (refreshToken) {
+            assertTrue(body.contains('"' + OAuth20Constants.REFRESH_TOKEN + "\":\"RT-"));
         }
+        assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":"));
+        accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + "\":\"", "\",\"");
 
         val accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
         assertEquals(GOOD_USERNAME, accessToken.getAuthentication().getPrincipal().getId());
 
-        val timeLeft = getTimeLeft(body, refreshToken, json);
+        val timeLeft = getTimeLeft(body, refreshToken);
         assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);
     }
 
@@ -546,48 +525,44 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_OK, mockResponse.getStatus());
-        assertEquals("text/plain", mockResponse.getContentType());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
         val body = mockResponse.getContentAsString();
 
-        assertTrue(body.contains(OAuth20Constants.ACCESS_TOKEN + '='));
-        assertFalse(body.contains(OAuth20Constants.REFRESH_TOKEN + '='));
-        assertTrue(body.contains(OAuth20Constants.EXPIRES_IN + '='));
-
-        val accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + '=', "&");
+        val map = new ObjectMapper().readValue(body, Map.class);
+        val accessTokenId = map.get(OAuth20Constants.ACCESS_TOKEN).toString();
 
         val accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());
 
-        val timeLeft = getTimeLeft(body, false, false);
+        val timeLeft = getTimeLeft(body, false);
         assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);
     }
 
     @Test
     public void verifyRefreshTokenOK() throws Exception {
         val service = addRegisteredService();
-        internalVerifyRefreshTokenOk(service, false);
+        internalVerifyRefreshTokenOk(service);
     }
 
     @Test
     public void verifyRefreshTokenOKWithRefreshToken() throws Exception {
         val service = addRegisteredService();
         service.setGenerateRefreshToken(true);
-        internalVerifyRefreshTokenOk(service, false);
+        internalVerifyRefreshTokenOk(service);
     }
 
     @Test
     public void verifyJsonRefreshTokenOK() throws Exception {
         val service = addRegisteredService();
-        service.setJsonFormat(true);
-        internalVerifyRefreshTokenOk(service, true);
+
+        internalVerifyRefreshTokenOk(service);
     }
 
     @Test
     public void verifyJsonRefreshTokenOKWithRefreshToken() throws Exception {
         val service = addRegisteredService();
         service.setGenerateRefreshToken(true);
-        service.setJsonFormat(true);
-        internalVerifyRefreshTokenOk(service, true);
+        internalVerifyRefreshTokenOk(service);
     }
 
 }

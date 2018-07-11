@@ -1,0 +1,35 @@
+# Configuration for behaviorbot-welcome - https://github.com/behaviorbot/welcome
+
+#updateDocsWhiteList:
+#- BUG
+#- Chore
+#- minor
+
+#updateDocsComment: >
+#  Thanks for opening this pull request! The maintainers of this repository would appreciate it if you would update some of our documentation based on your changes.
+#
+#requestInfoReplyComment: >
+#  We would appreciate it if you could provide us with more info about this issue/pr!
+#
+#requestInfoLabelToAdd: request-more-info
+
+newPRWelcomeComment: >
+  Thank you so much for opening your first pull request here!
+
+firstPRMergeComment: >
+  Congratulations on merging your first pull request here! :tada: Excellent work! Keep'em coming.
+
+#newIssueWelcomeComment: >
+#  Thanks for opening this issue, a maintainer will get back to you shortly!
+#
+#sentimentBotToxicityThreshold: .7
+#
+#sentimentBotReplyComment: >
+#  Please be sure to review the code of conduct and be respectful of other users. cc/ @hiimbex
+
+#lockThreads:
+#  toxicityThreshold: .7
+#  numComments: 2
+#  setTimeInHours: 72
+#  replyComment: >
+#    This thread is being locked due to exceeding the toxicity minimums. cc/ @hiimbex

@@ -41,7 +41,4 @@ echo "Home directory: $HOME"
 echo "Gradle Home directory:"
 ./gradlew gradleHome
 
-echo -e "Installing NPM...\n"
-./gradlew npmInstall --stacktrace -q
-
 echo -e "Configured build environment\n"
