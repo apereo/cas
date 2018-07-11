@@ -303,8 +303,7 @@ public abstract class AbstractOAuth20Tests {
             .build();
     }
 
-    protected Pair<String, String> internalVerifyClientOK(final OAuthRegisteredService service,
-                                                          final boolean refreshToken, final boolean json) throws Exception {
+    protected Pair<String, String> internalVerifyClientOK(final OAuthRegisteredService service, final boolean refreshToken) throws Exception {
 
         val principal = createPrincipal();
         val code = addCode(principal, service);
@@ -330,68 +329,44 @@ public abstract class AbstractOAuth20Tests {
         var accessTokenId = StringUtils.EMPTY;
         var refreshTokenId = StringUtils.EMPTY;
 
-        if (json) {
-            assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
-            assertTrue(body.contains('"' + OAuth20Constants.ACCESS_TOKEN + "\":\"AT-"));
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
+        assertTrue(body.contains('"' + OAuth20Constants.ACCESS_TOKEN + "\":\"AT-"));
 
-            val results = MAPPER.readValue(body, Map.class);
-            if (refreshToken) {
-                assertTrue(body.contains('"' + OAuth20Constants.REFRESH_TOKEN + "\":\"RT-"));
-                refreshTokenId = results.get(OAuth20Constants.REFRESH_TOKEN).toString();
-            }
-            assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":"));
-            accessTokenId = results.get(OAuth20Constants.ACCESS_TOKEN).toString();
-        } else {
-            assertEquals(MediaType.TEXT_PLAIN_VALUE, mockResponse.getContentType());
-            assertTrue(body.contains(OAuth20Constants.ACCESS_TOKEN + "=AT-"));
-            if (refreshToken) {
-                assertTrue(body.contains(OAuth20Constants.REFRESH_TOKEN + "=RT-"));
-                refreshTokenId = Arrays.stream(body.split("&"))
-                    .filter(f -> f.startsWith(OAuth20Constants.REFRESH_TOKEN))
-                    .map(f -> StringUtils.remove(f, OAuth20Constants.REFRESH_TOKEN + '='))
-                    .findFirst()
-                    .get();
-            }
-            assertTrue(body.contains(OAuth20Constants.EXPIRES_IN + '='));
-            accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + '=', "&");
+        val results = MAPPER.readValue(body, Map.class);
+        if (refreshToken) {
+            assertTrue(body.contains('"' + OAuth20Constants.REFRESH_TOKEN + "\":\"RT-"));
+            refreshTokenId = results.get(OAuth20Constants.REFRESH_TOKEN).toString();
         }
+        assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":"));
+        accessTokenId = results.get(OAuth20Constants.ACCESS_TOKEN).toString();
 
         val accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());
 
-        val timeLeft = getTimeLeft(body, refreshToken, json);
+        val timeLeft = getTimeLeft(body, refreshToken);
         assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);
 
         return Pair.of(accessTokenId, refreshTokenId);
     }
 
-    protected static int getTimeLeft(final String body, final boolean refreshToken, final boolean json) {
+    protected static int getTimeLeft(final String body, final boolean refreshToken) {
         var timeLeft = 0;
-        if (json) {
-            if (refreshToken) {
-                timeLeft = Integer.parseInt(StringUtils.substringBetween(body, OAuth20Constants.EXPIRES_IN + "\":", ","));
-            } else {
-                timeLeft = Integer.parseInt(StringUtils.substringBetween(body, OAuth20Constants.EXPIRES_IN + "\":", "}"));
-            }
+        if (refreshToken) {
+            timeLeft = Integer.parseInt(StringUtils.substringBetween(body, OAuth20Constants.EXPIRES_IN + "\":", ","));
         } else {
-            if (refreshToken) {
-                timeLeft = Integer.parseInt(StringUtils.substringBetween(body, '&' + OAuth20Constants.EXPIRES_IN + '=',
-                    '&' + OAuth20Constants.REFRESH_TOKEN));
-            } else {
-                timeLeft = Integer.parseInt(StringUtils.substringAfter(body, '&' + OAuth20Constants.EXPIRES_IN + '='));
-            }
+            timeLeft = Integer.parseInt(StringUtils.substringBetween(body, OAuth20Constants.EXPIRES_IN + "\":", "}"));
         }
         return timeLeft;
     }
 
-    protected Pair<AccessToken, RefreshToken> internalVerifyRefreshTokenOk(final OAuthRegisteredService service, final boolean json) throws Exception {
+    protected Pair<AccessToken, RefreshToken> internalVerifyRefreshTokenOk(final OAuthRegisteredService service) throws Exception {
         val principal = createPrincipal();
         val refreshToken = addRefreshToken(principal, service);
-        return internalVerifyRefreshTokenOk(service, json, refreshToken, principal);
+        return internalVerifyRefreshTokenOk(service, refreshToken, principal);
     }
 
 
-    protected Pair<AccessToken, RefreshToken> internalVerifyRefreshTokenOk(final OAuthRegisteredService service, final boolean json,
+    protected Pair<AccessToken, RefreshToken> internalVerifyRefreshTokenOk(final OAuthRegisteredService service,
                                                                            final RefreshToken refreshToken, final Principal principal) throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
@@ -405,26 +380,18 @@ public abstract class AbstractOAuth20Tests {
         val body = mockResponse.getContentAsString();
 
         var accessTokenId = StringUtils.EMPTY;
-        if (json) {
-            val results = MAPPER.readValue(body, Map.class);
+        val results = MAPPER.readValue(body, Map.class);
 
-            assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
-            assertTrue(body.contains('"' + OAuth20Constants.ACCESS_TOKEN + "\":\"AT-"));
-            assertFalse(body.contains('"' + OAuth20Constants.REFRESH_TOKEN + "\":\"RT-"));
-            assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":"));
-            accessTokenId = results.get(OAuth20Constants.ACCESS_TOKEN).toString();
-        } else {
-            assertEquals(MediaType.TEXT_PLAIN_VALUE, mockResponse.getContentType());
-            assertTrue(body.contains(OAuth20Constants.ACCESS_TOKEN + '='));
-            assertFalse(body.contains(OAuth20Constants.REFRESH_TOKEN + '='));
-            assertTrue(body.contains(OAuth20Constants.EXPIRES_IN + '='));
-            accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + '=', "&");
-        }
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
+        assertTrue(body.contains('"' + OAuth20Constants.ACCESS_TOKEN + "\":\"AT-"));
+        assertFalse(body.contains('"' + OAuth20Constants.REFRESH_TOKEN + "\":\"RT-"));
+        assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":"));
+        accessTokenId = results.get(OAuth20Constants.ACCESS_TOKEN).toString();
 
         val accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());
 
-        val timeLeft = getTimeLeft(body, false, json);
+        val timeLeft = getTimeLeft(body, false);
         assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);
 
         return Pair.of(accessToken, refreshToken);
