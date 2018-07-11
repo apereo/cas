@@ -1265,6 +1265,15 @@ Send text messaging using Clickatell.
 # cas.smsProviders.clickatell.token=
 ```
 
+### Nexmo
+
+Send text messaging using Nexmo.
+
+```properties
+# cas.smsProviders.nexmo.apiToken=
+# cas.smsProviders.nexmo.apiSecret=
+```
+
 ### Amazon SNS
 
 Send text messaging using Amazon SNS.
