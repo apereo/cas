@@ -67,9 +67,9 @@ import java.util.regex.Pattern;
 @Getter
 public class DelegatedClientAuthenticationAction extends AbstractAuthenticationAction {
     /**
-     * All the urls and names of the pac4j clients.
+     * All the urls and names of the provider clients.
      */
-    public static final String PAC4J_URLS = "pac4jUrls";
+    public static final String FLOW_ATTRIBUTE_PROVIDER_URLS = "delegatedAuthenticationProviderUrls";
 
     private static final Pattern PAC4J_CLIENT_SUFFIX_PATTERN = Pattern.compile("Client\\d*");
     private static final Pattern PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN = Pattern.compile("\\W");
@@ -233,21 +233,29 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
+
         val urls = new LinkedHashSet<ProviderLoginPageConfiguration>();
-        this.clients.findAllClients()
+        this.clients
+            .findAllClients()
             .stream()
             .filter(client -> client instanceof IndirectClient && isDelegatedClientAuthorizedForService(client, service))
             .map(IndirectClient.class::cast)
             .forEach(client -> {
                 try {
                     val provider = buildProviderConfiguration(client, webContext, service);
-                    provider.ifPresent(urls::add);
+                    provider.ifPresent(p -> {
+                        urls.add(p);
+                        if (p.isAutoRedirect()) {
+                            WebUtils.putDelegatedAuthenticationProviderDominant(context, p);
+                        }
+                    });
                 } catch (final Exception e) {
                     LOGGER.error("Cannot process client [{}]", client, e);
                 }
             });
+
         if (!urls.isEmpty()) {
-            context.getFlowScope().put(PAC4J_URLS, urls);
+            context.getFlowScope().put(FLOW_ATTRIBUTE_PROVIDER_URLS, urls);
         } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
             LOGGER.warn("No delegated authentication providers could be determined based on the provided configuration. "
                 + "Either no clients are configured, or the current access strategy rules prohibit CAS from using authentication providers for this request.");

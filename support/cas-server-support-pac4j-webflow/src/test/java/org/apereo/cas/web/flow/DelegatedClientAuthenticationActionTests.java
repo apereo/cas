@@ -144,7 +144,7 @@ public class DelegatedClientAuthenticationActionTests {
         val flowScope = mockRequestContext.getFlowScope();
         val urls =
             (Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration>)
-                flowScope.get(DelegatedClientAuthenticationAction.PAC4J_URLS);
+                flowScope.get(DelegatedClientAuthenticationAction.FLOW_ATTRIBUTE_PROVIDER_URLS);
 
         assertFalse(urls.isEmpty());
         assertSame(2, urls.size());

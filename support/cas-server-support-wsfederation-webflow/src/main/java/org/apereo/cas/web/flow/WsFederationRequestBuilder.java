@@ -60,6 +60,10 @@ public class WsFederationRequestBuilder {
             c.setRedirectUrl(getRelativeRedirectUrlFor(cfg, service, request));
             c.setAutoRedirect(cfg.isAutoRedirect());
             clients.add(c);
+
+            if (cfg.isAutoRedirect()) {
+                WebUtils.putDelegatedAuthenticationProviderDominant(context, cfg);
+            }
         });
         context.getFlowScope().put(PARAMETER_NAME_WSFED_CLIENTS, clients);
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROCEED);
