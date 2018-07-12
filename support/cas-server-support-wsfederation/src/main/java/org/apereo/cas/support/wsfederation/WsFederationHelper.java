@@ -289,7 +289,7 @@ public class WsFederationHelper {
                 relyingPartyIdentifier = RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.getPropertyValue(registeredService).getValue();
             }
         }
-        LOGGER.debug("Determined relying party identifier for [{}] to be [{}]", service, relyingPartyIdentifier);
+        LOGGER.debug("Determined relying party identifier for service [{}] to be [{}]", service, relyingPartyIdentifier);
         return relyingPartyIdentifier;
     }
 
