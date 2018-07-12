@@ -29,6 +29,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -123,8 +124,13 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             final Authentication authn = WebUtils.getAuthentication(context);
 
             LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
+            final URI unauthorizedRedirectUrl = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl();
+            if (unauthorizedRedirectUrl != null) {
+                WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, unauthorizedRedirectUrl);
+            }
 
-            final AuditableContext audit = AuditableContext.builder().service(service)
+            final AuditableContext audit = AuditableContext.builder()
+                .service(service)
                 .authentication(authn)
                 .registeredService(registeredService)
                 .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
