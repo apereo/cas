@@ -84,7 +84,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
     }
 
     @Override
-    public RegisteredService read(final Kryo kryo, final Input input, final Class<? extends RegisteredService> type) {
+    public RegisteredService read(final Kryo kryo, final Input input, final Class<RegisteredService> type) {
         val svc = new RegexRegisteredService();
         svc.setServiceId(kryo.readObject(input, String.class));
         svc.setName(kryo.readObject(input, String.class));
