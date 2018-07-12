@@ -1,6 +1,7 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.mfa;
 
 import lombok.val;
+import org.apereo.cas.authentication.DefaultVariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.junit.Before;
@@ -45,15 +46,15 @@ public class DefaultVariegatedMultifactorAuthenticationProviderTests {
     @Test
     public void verifySingleProviderProperties() {
         val variegatedProvider = createVariegatedProviderWith(mfaProvider1);
-        assertEquals(variegatedProvider.getId(), MFA_PROVIDER1_ID);
-        assertEquals(variegatedProvider.getOrder(), MFA_PROVIDER1_ORDER);
+        assertEquals(MFA_PROVIDER1_ID, variegatedProvider.getId());
+        assertEquals(MFA_PROVIDER1_ORDER, variegatedProvider.getOrder());
     }
 
     @Test
     public void verifyMultipleProvidersProperties() {
         val variegatedProvider = createVariegatedProviderWith(mfaProvider2, mfaProvider1);
-        assertEquals(variegatedProvider.getId(), MFA_PROVIDER2_ID);
-        assertEquals(variegatedProvider.getOrder(), MFA_PROVIDER2_ORDER);
+        assertEquals(MFA_PROVIDER2_ID, variegatedProvider.getId());
+        assertEquals(MFA_PROVIDER2_ORDER, variegatedProvider.getOrder());
     }
 
     @Test
