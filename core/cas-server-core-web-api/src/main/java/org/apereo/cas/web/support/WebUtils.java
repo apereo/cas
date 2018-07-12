@@ -960,4 +960,13 @@ public class WebUtils {
         return requestContext.getFlowScope().contains("guaUserImage");
     }
 
+    /**
+     * Put delegated authentication provider dominant.
+     *
+     * @param context the context
+     * @param client  the client
+     */
+    public static void putDelegatedAuthenticationProviderDominant(final RequestContext context, final Object client) {
+        context.getFlowScope().put("delegatedAuthenticationProviderDominant", client);
+    }
 }
