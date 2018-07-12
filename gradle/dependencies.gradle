@@ -1936,10 +1936,12 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "com.vaadin.external.google", module: "android-json")
                     exclude(group: "org.json", module: "json")
                     exclude(group: "commons-cli", module: "commons-cli")
                 },
                 dependencies.create("org.json:json:$jsonVersion") {
+                    exclude(group: "com.vaadin.external.google", module: "android-json")
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-configuration-metadata:$springBootVersion") {
@@ -2117,6 +2119,8 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "com.vaadin.external.google", module: "android-json")
+                    exclude(group: "com.vaadin.external.google", module: "android-json")
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-log4j2:$springBootVersion") {

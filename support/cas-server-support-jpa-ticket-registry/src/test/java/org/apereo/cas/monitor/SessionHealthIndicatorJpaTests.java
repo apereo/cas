@@ -108,7 +108,7 @@ public class SessionHealthIndicatorJpaTests {
     @Rollback(false)
     public void verifyObserveOkJpaTicketRegistry() {
         addTicketsToRegistry(jpaRegistry, 5, 5);
-        assertEquals(10, jpaRegistry.getTickets().size());
+        assertEquals(30, jpaRegistry.getTickets().size());
         val monitor = new SessionMonitor(jpaRegistry, -1, -1);
         val status = monitor.health();
         assertEquals(Status.UP, status.getStatus());
