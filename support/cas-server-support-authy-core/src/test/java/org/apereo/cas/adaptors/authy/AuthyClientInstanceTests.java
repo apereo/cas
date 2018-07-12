@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
@@ -35,7 +36,7 @@ public class AuthyClientInstanceTests {
                 CollectionUtils.wrap("mail", "casuser@example.org", "phone", "123-456-6789")));
             assertNotNull(user);
             assertTrue(user.getId() <= 0);
-            assertTrue(user.getStatus() <= 0);
+            assertTrue(HttpStatus.valueOf(user.getStatus()).isError());
 
             val error = new Error();
             error.setCountryCode("1");
