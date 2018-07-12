@@ -26,7 +26,7 @@ public class ThrowableSerializer extends Serializer<Throwable> {
     }
 
     @Override
-    public Throwable read(final Kryo kryo, final Input input, final Class<? extends Throwable> type) {
+    public Throwable read(final Kryo kryo, final Input input, final Class<Throwable> type) {
         try {
             val clazz = kryo.readObject(input, Class.class);
             val msg = kryo.readObject(input, String.class);
