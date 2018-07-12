@@ -98,7 +98,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
      */
     protected String handleAuthenticationException(final AuthenticationException e, final RequestContext requestContext) {
         if (e.getHandlerErrors().containsKey(UnauthorizedServiceForPrincipalException.class.getSimpleName())) {
-            val url = WebUtils.getUnauthorizedRedirectUrlIntoFlowScope(requestContext);
+            val url = WebUtils.getUnauthorizedRedirectUrlFromFlowScope(requestContext);
             if (url != null) {
                 LOGGER.warn("Unauthorized service access for principal; CAS will be redirecting to [{}]", url);
                 return CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK;

@@ -121,8 +121,13 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         val authn = WebUtils.getAuthentication(context);
 
         LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
+        val unauthorizedRedirectUrl = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl();
+        if (unauthorizedRedirectUrl != null) {
+            WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, unauthorizedRedirectUrl);
+        }
 
-        val audit = AuditableContext.builder().service(service)
+        val audit = AuditableContext.builder()
+            .service(service)
             .authentication(authn)
             .registeredService(registeredService)
             .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)

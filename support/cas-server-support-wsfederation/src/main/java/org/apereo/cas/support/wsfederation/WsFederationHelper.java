@@ -289,11 +289,11 @@ public class WsFederationHelper {
             val registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             if (RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.isAssignedTo(registeredService)) {
-                LOGGER.debug("Determined relying party identifier from [{}] to be [{}]", service, relyingPartyIdentifier);
+                LOGGER.debug("Determined relying party identifier from service [{}] to be [{}]", service, relyingPartyIdentifier);
                 return RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.getPropertyValue(registeredService).getValue();
             }
         }
-        LOGGER.debug("Determined relying party identifier for [{}] to be [{}]", service, relyingPartyIdentifier);
+        LOGGER.debug("Determined relying party identifier to be [{}]", relyingPartyIdentifier);
         return relyingPartyIdentifier;
     }
 

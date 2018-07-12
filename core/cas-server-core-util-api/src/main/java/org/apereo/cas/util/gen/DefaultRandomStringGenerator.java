@@ -37,8 +37,9 @@ public class DefaultRandomStringGenerator extends AbstractRandomStringGenerator 
     protected String convertBytesToString(final byte[] random) {
         val output = new char[random.length];
         IntStream.range(0, random.length).forEach(i -> {
-            val index = Math.abs(random[i] % PRINTABLE_CHARACTERS.length);
-            output[i] = getPrintableCharacters()[index];
+            val printableCharacters = getPrintableCharacters();
+            val index = Math.abs(random[i] % printableCharacters.length);
+            output[i] = printableCharacters[index];
         });
         return new String(output);
     }

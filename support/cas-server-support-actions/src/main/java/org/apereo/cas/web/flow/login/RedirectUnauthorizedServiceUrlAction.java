@@ -26,7 +26,7 @@ public class RedirectUnauthorizedServiceUrlAction extends AbstractAction {
     @Override
     public Event doExecute(final RequestContext context) {
         val redirectUrl = determineUnauthorizedServiceRedirectUrl(context);
-        WebUtils.putUnauthorizedRedirectUrl(context, redirectUrl);
+        WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, redirectUrl);
         return null;
     }
 
@@ -37,7 +37,7 @@ public class RedirectUnauthorizedServiceUrlAction extends AbstractAction {
      * @return the uri
      */
     protected URI determineUnauthorizedServiceRedirectUrl(final RequestContext context) {
-        val redirectUrl = WebUtils.getUnauthorizedRedirectUrlIntoFlowScope(context);
+        val redirectUrl = WebUtils.getUnauthorizedRedirectUrlFromFlowScope(context);
         val currentEvent = context.getCurrentEvent();
         val eventAttributes = currentEvent.getAttributes();
         LOGGER.debug("Finalizing the unauthorized redirect URL [{}] when processing event [{}] with attributes [{}]",
