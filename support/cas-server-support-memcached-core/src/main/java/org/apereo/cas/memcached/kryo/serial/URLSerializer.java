@@ -21,7 +21,7 @@ import java.net.URL;
 public class URLSerializer extends Serializer<URL> {
     @Override
     @SneakyThrows
-    public URL read(final Kryo kryo, final Input input, final Class<? extends URL> aClass) {
+    public URL read(final Kryo kryo, final Input input, final Class<URL> aClass) {
         val url = kryo.readObject(input, String.class);
         return new URL(url);
     }
