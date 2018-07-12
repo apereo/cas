@@ -25,7 +25,7 @@ public class SimpleWebApplicationServiceSerializer extends Serializer<SimpleWebA
     }
 
     @Override
-    public SimpleWebApplicationServiceImpl read(final Kryo kryo, final Input input, final Class<? extends SimpleWebApplicationServiceImpl> type) {
+    public SimpleWebApplicationServiceImpl read(final Kryo kryo, final Input input, final Class<SimpleWebApplicationServiceImpl> type) {
         val id = kryo.readObject(input, String.class);
         return new WebApplicationServiceFactory().createService(id, SimpleWebApplicationServiceImpl.class);
     }

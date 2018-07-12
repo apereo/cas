@@ -34,7 +34,7 @@ public class ZonedDateTimeSerializer extends Serializer<ZonedDateTime> {
     }
 
     @Override
-    public ZonedDateTime read(final Kryo kryo, final Input input, final Class<? extends ZonedDateTime> type) {
+    public ZonedDateTime read(final Kryo kryo, final Input input, final Class<ZonedDateTime> type) {
         val time = kryo.readObject(input, Long.class);
         val zoneId = StringUtils.removeAll(input.readString().trim(), "\\p{C}");
         try {
