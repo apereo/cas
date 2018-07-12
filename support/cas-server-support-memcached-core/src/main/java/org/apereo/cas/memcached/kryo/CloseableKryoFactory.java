@@ -60,6 +60,7 @@ import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.ProxyTicketImpl;
 import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.registry.EncodedTicket;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.support.BaseDelegatingExpirationPolicy;
@@ -219,6 +220,7 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(ProxyGrantingTicketImpl.class);
         kryo.register(ProxyTicketImpl.class);
         kryo.register(EncodedTicket.class);
+        kryo.register(TransientSessionTicketImpl.class);
     }
 
     private void registerNativeJdkComponentsWithKryo(final Kryo kryo) {
