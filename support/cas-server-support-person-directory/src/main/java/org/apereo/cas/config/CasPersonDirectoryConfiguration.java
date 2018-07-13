@@ -311,19 +311,24 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @Bean
     @ConditionalOnMissingBean(name = "cachingAttributeRepository")
     public IPersonAttributeDao cachingAttributeRepository() {
+        final PrincipalAttributesProperties props = casProperties.getAuthn().getAttributeRepository();
+        final long cacheTime = props.getExpirationTime();
+        if (cacheTime < 0) {
+            return aggregatingAttributeRepository();
+        }
+
         final CachingPersonAttributeDaoImpl impl = new CachingPersonAttributeDaoImpl();
         impl.setCacheNullResults(false);
 
-        final PrincipalAttributesProperties props = casProperties.getAuthn().getAttributeRepository();
         final Cache graphs = Caffeine.newBuilder()
             .maximumSize(props.getMaximumCacheSize())
-            .expireAfterWrite(props.getExpirationTime(), TimeUnit.valueOf(props.getExpirationTimeUnit().toUpperCase()))
+            .expireAfterWrite(cacheTime, TimeUnit.valueOf(props.getExpirationTimeUnit().toUpperCase()))
             .build();
         impl.setUserInfoCache(graphs.asMap());
         impl.setCachedPersonAttributesDao(aggregatingAttributeRepository());
 
         LOGGER.debug("Configured cache expiration policy for merging attribute sources to be [{}] minute(s)",
-            props.getExpirationTime());
+            cacheTime);
         return impl;
     }
 
