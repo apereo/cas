@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -19,11 +18,11 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.SurrogateJdbcAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
-import lombok.val;
+import lombok.Getter;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,8 +33,6 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import javax.sql.DataSource;
-
-import static org.junit.Assert.*;
 
 /**
  * This is {@link SurrogateJdbcAuthenticationServiceTests}.
@@ -65,7 +62,8 @@ import static org.junit.Assert.*;
     SurrogateJdbcAuthenticationConfiguration.class
 })
 @TestPropertySource(locations = {"classpath:/surrogate-jdbc.properties"})
-public class SurrogateJdbcAuthenticationServiceTests {
+@Getter
+public class SurrogateJdbcAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
@@ -74,7 +72,7 @@ public class SurrogateJdbcAuthenticationServiceTests {
 
     @Autowired
     @Qualifier("surrogateAuthenticationService")
-    private SurrogateAuthenticationService surrogateAuthenticationService;
+    private SurrogateAuthenticationService service;
 
     @Autowired
     @Qualifier("surrogateAuthenticationJdbcDataSource")
@@ -87,25 +85,14 @@ public class SurrogateJdbcAuthenticationServiceTests {
         jdbcTemplate = new JdbcTemplate(this.surrogateAuthenticationJdbcDataSource);
         jdbcTemplate.execute("drop table surrogate_accounts if exists;");
         jdbcTemplate.execute("create table surrogate_accounts (id int, username varchar(255), surrogateAccount varchar(255));");
-        jdbcTemplate.execute("insert into surrogate_accounts values (100, 'casuser', 'surrogate1');");
+        jdbcTemplate.execute("insert into surrogate_accounts values (100, 'casuser', 'banderson');");
         jdbcTemplate.execute("insert into surrogate_accounts values (200, 'casuser', 'surrogate2');");
         jdbcTemplate.execute("insert into surrogate_accounts values (300, 'casuser', 'surrogate3');");
     }
 
-
-    @Test
-    public void verifyAccountsQualifying() {
-        val results = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy("casuser");
-        assertFalse(results.isEmpty());
-        assertEquals(3, results.size());
-    }
-
-    @Test
-    public void verifyAccountQualifying() {
-        val casuser = CoreAuthenticationTestUtils.getPrincipal("casuser");
-        val service = CoreAuthenticationTestUtils.getService();
-        assertTrue(surrogateAuthenticationService.canAuthenticateAs("surrogate1", casuser, service));
-        assertTrue(surrogateAuthenticationService.canAuthenticateAs("surrogate2", casuser, service));
-        assertTrue(surrogateAuthenticationService.canAuthenticateAs("surrogate3", casuser, service));
+    @After
+    public void after() {
+        jdbcTemplate = new JdbcTemplate(this.surrogateAuthenticationJdbcDataSource);
+        jdbcTemplate.execute("drop table surrogate_accounts if exists;");
     }
 }
