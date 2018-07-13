@@ -4,6 +4,9 @@
         <cve>CVE-2018-1258</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2018-1275</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2010-1622</cve>
     </suppress>
     <suppress>
