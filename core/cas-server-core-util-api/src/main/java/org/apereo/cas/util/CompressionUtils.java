@@ -6,6 +6,7 @@ import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.var;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 

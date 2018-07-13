@@ -14,6 +14,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 
@@ -28,16 +29,20 @@ import java.io.IOException;
 @Slf4j
 public class CasGeoLocationConfiguration {
 
-    @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    public CasGeoLocationConfiguration(CasConfigurationProperties casProperties) {
+        this.casProperties = casProperties;
+    }
 
     @Bean
     @RefreshScope
     @SneakyThrows
     public GeoLocationService geoLocationService() {
         val properties = casProperties.getMaxmind();
-        val cityDatabase = readCityDatabase(properties);
-        val countryDatabase = readCountryDatabase(properties);
+        val cityDatabase = readDatabase(properties.getCityDatabase());
+        val countryDatabase = readDatabase(properties.getCountryDatabase());
 
         if (cityDatabase == null && countryDatabase == null) {
             throw new IllegalArgumentException("No geolocation services have been defined for Maxmind");
@@ -48,16 +53,9 @@ public class CasGeoLocationConfiguration {
         return svc;
     }
 
-    private DatabaseReader readCountryDatabase(final MaxmindProperties properties) throws IOException {
-        if (properties.getCountryDatabase().exists()) {
-            return new DatabaseReader.Builder(properties.getCountryDatabase().getFile()).withCache(new CHMCache()).build();
-        }
-        return null;
-    }
-
-    private DatabaseReader readCityDatabase(final MaxmindProperties properties) throws IOException {
-        if (properties.getCityDatabase().exists()) {
-            return new DatabaseReader.Builder(properties.getCityDatabase().getFile()).withCache(new CHMCache()).build();
+    private DatabaseReader readDatabase(final Resource maxmindDatabase) throws IOException {
+        if (maxmindDatabase != null && maxmindDatabase.exists()) {
+            return new DatabaseReader.Builder(maxmindDatabase.getFile()).withCache(new CHMCache()).build();
         }
         return null;
     }

@@ -4,6 +4,7 @@ import lombok.val;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.var;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import java.util.ArrayList;
 import java.util.List;

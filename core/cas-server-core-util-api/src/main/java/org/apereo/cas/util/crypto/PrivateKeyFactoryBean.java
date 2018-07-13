@@ -3,6 +3,7 @@ package org.apereo.cas.util.crypto;
 import lombok.val;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.var;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
