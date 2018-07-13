@@ -14,7 +14,6 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-saml-sp-integrations")
-
 @Getter
 @Setter
 @NoArgsConstructor

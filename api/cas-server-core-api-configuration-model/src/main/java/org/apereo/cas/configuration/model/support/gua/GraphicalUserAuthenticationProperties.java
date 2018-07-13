@@ -17,7 +17,6 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-gua")
-
 @Getter
 @Setter
 public class GraphicalUserAuthenticationProperties implements Serializable {

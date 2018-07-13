@@ -16,7 +16,6 @@ import lombok.Setter;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-generic")
-
 @Getter
 @Setter
 public class JsonResourceAuthenticationProperties extends SpringResourceProperties {

@@ -13,7 +13,6 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-dynamodb-ticket-registry")
-
 @Getter
 @Setter
 public class DynamoDbTicketRegistryProperties extends AbstractDynamoDbProperties {

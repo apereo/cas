@@ -12,7 +12,6 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-
 @Getter
 @Setter
 public class SpringResourceProperties implements Serializable {

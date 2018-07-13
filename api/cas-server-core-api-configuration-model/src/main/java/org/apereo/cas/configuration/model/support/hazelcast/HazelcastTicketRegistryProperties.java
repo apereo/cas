@@ -13,7 +13,6 @@ import lombok.Setter;
  * @since 4.2.0
  */
 @RequiresModule(name = "cas-server-support-hazelcast-ticket-registry")
-
 @Getter
 @Setter
 public class HazelcastTicketRegistryProperties extends BaseHazelcastProperties {

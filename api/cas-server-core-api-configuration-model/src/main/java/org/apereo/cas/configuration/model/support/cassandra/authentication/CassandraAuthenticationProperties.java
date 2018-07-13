@@ -15,7 +15,6 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-cassandra-authentication")
-
 @Getter
 @Setter
 public class CassandraAuthenticationProperties extends BaseCassandraProperties {

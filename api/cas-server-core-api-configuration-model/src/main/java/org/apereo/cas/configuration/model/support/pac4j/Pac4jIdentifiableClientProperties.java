@@ -12,7 +12,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-pac4j-webflow")
-
 @Getter
 @Setter
 public class Pac4jIdentifiableClientProperties extends Pac4jBaseClientProperties {

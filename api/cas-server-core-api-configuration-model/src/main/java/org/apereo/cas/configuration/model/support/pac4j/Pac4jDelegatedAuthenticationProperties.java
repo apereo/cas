@@ -20,7 +20,6 @@ import java.util.List;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-pac4j-webflow")
-
 @Getter
 @Setter
 public class Pac4jDelegatedAuthenticationProperties implements Serializable {

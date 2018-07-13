@@ -14,7 +14,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-service-registry-stream")
-
 @Getter
 @Setter
 public class StreamingServiceRegistryProperties implements Serializable {

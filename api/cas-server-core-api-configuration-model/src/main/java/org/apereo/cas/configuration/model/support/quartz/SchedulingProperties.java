@@ -12,7 +12,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-core-util", automated = true)
-
 @Getter
 @Setter
 public class SchedulingProperties implements Serializable {

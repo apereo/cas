@@ -18,7 +18,6 @@ import lombok.NoArgsConstructor;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-shiro")
-
 @Getter
 @Setter
 @NoArgsConstructor

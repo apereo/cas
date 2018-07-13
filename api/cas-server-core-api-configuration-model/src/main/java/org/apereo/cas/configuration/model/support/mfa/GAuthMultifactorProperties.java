@@ -20,7 +20,6 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-gauth")
-
 @Getter
 @Setter
 public class GAuthMultifactorProperties extends BaseMultifactorProviderProperties {

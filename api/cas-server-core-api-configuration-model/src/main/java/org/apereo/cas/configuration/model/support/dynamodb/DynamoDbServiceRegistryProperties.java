@@ -11,7 +11,6 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-dynamodb-service-registry")
-
 @Getter
 @Setter
 public class DynamoDbServiceRegistryProperties extends AbstractDynamoDbProperties {

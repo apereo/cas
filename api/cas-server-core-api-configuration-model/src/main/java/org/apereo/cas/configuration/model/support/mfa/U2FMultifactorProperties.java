@@ -19,7 +19,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-u2f")
-
 @Getter
 @Setter
 public class U2FMultifactorProperties extends BaseMultifactorProviderProperties {

@@ -17,7 +17,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-aup-webflow")
-
 @Getter
 @Setter
 public class AcceptableUsagePolicyProperties implements Serializable {

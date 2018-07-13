@@ -12,7 +12,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-oauth")
-
 @Getter
 @Setter
 public class OAuthProperties implements Serializable {

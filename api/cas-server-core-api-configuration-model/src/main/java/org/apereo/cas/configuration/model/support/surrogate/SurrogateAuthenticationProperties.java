@@ -23,7 +23,6 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-surrogate-webflow")
-
 @Getter
 @Setter
 public class SurrogateAuthenticationProperties implements Serializable {

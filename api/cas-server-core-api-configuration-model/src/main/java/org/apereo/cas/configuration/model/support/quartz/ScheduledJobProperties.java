@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-core-util", automated = true)
-
 @Getter
 @Setter
 @NoArgsConstructor

@@ -15,7 +15,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-webflow")
-
 @Getter
 @Setter
 public class WebflowProperties implements Serializable {

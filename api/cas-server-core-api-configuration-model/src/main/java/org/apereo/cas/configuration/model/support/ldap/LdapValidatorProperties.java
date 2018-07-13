@@ -16,7 +16,6 @@ import lombok.Setter;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-ldap")
-
 @Getter
 @Setter
 public class LdapValidatorProperties implements Serializable {

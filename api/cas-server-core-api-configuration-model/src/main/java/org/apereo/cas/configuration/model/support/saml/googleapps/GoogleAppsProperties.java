@@ -10,7 +10,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 @Getter
 @Setter
 public class GoogleAppsProperties implements Serializable {

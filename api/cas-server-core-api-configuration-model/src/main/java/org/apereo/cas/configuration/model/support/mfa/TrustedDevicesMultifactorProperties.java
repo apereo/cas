@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-trusted-mfa")
-
 @Getter
 @Setter
 public class TrustedDevicesMultifactorProperties implements Serializable {

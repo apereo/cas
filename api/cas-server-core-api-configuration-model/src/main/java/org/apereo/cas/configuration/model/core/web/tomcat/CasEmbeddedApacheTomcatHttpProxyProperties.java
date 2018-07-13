@@ -14,7 +14,6 @@ import lombok.Setter;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-webapp-tomcat")
-
 @Getter
 @Setter
 public class CasEmbeddedApacheTomcatHttpProxyProperties implements Serializable {

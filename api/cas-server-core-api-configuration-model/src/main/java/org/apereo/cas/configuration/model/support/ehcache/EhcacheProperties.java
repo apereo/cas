@@ -17,7 +17,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-ehcache-ticket-registry")
-
 @Getter
 @Setter
 public class EhcacheProperties implements Serializable {

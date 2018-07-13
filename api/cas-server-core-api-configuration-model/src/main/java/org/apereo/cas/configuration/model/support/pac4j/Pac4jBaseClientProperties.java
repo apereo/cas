@@ -13,7 +13,6 @@ import java.io.Serializable;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-pac4j-webflow")
-
 @Getter
 @Setter
 public class Pac4jBaseClientProperties implements Serializable {

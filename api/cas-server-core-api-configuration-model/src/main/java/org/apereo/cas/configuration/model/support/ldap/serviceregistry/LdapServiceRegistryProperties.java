@@ -12,7 +12,6 @@ import org.apereo.cas.configuration.support.RequiresModule;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-ldap-service-registry")
-
 @Getter
 @Setter
 public class LdapServiceRegistryProperties extends AbstractLdapSearchProperties {

@@ -13,7 +13,6 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-scim")
-
 @Getter
 @Setter
 public class ScimProperties implements Serializable {

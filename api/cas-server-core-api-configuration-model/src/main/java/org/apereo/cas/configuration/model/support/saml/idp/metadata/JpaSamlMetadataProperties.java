@@ -12,7 +12,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-saml-idp-metadata-jpa")
-
 @Getter
 @Setter
 public class JpaSamlMetadataProperties extends AbstractJpaProperties {

@@ -14,7 +14,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-generic-remote-webflow")
-
 @Getter
 @Setter
 public class RemoteAddressAuthenticationProperties implements Serializable {
