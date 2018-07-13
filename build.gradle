@@ -31,6 +31,9 @@ apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
 apply plugin: "com.github.kt3k.coveralls"
 apply plugin: "com.github.ben-manes.versions"
+if (!Boolean.getBoolean("skipSonarqube")) {
+    apply plugin: "org.sonarqube"
+}
 
 buildscript {
     repositories {
@@ -54,6 +57,7 @@ buildscript {
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:$gradleCoverallsVersion"
         classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
         classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$gradleFindbugsVersion"
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
     }
 }
 
@@ -147,7 +151,7 @@ subprojects {
     apply plugin: "propdeps-idea"
     apply plugin: "propdeps-eclipse"
     apply plugin: "org.owasp.dependencycheck"
-
+    
     apply from: rootProject.file("gradle/tasks.gradle")
     apply from: rootProject.file("gradle/tests.gradle")
 
