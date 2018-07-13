@@ -8,6 +8,14 @@ ext.libraries = [
                     force = true
                     transitive = false
                 },
+                dependencies.create("org.glassfish.main.javaee-api:javax.jws:$javaxJwsVersion") {
+                    force = true
+                    transitive = false
+                },
+                dependencies.create("javax.xml.soap:javax.xml.soap-api:$javaxSoapApiVersion") {
+                    force = true
+                    transitive = false
+                },
                 dependencies.create("org.glassfish.jaxb:jaxb-runtime:$jaxbGlassfishVersion") {
                     force = true
                     transitive = false

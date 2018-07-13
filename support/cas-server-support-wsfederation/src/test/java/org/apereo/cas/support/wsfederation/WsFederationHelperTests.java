@@ -1,9 +1,8 @@
 package org.apereo.cas.support.wsfederation;
 
-import lombok.val;
-
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 import org.junit.Test;
 import org.opensaml.security.credential.Credential;
@@ -38,17 +37,14 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
     public void verifyParseTokenString() {
         val wresult = testTokens.get(GOOD_TOKEN);
         val result =
-            wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult),
-                wsFederationConfigurations);
+            wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult), wsFederationConfigurations);
         assertNotNull("testParseTokenString() - Not null", result);
     }
 
     @Test
     public void verifyCreateCredentialFromToken() {
         val wresult = testTokens.get(GOOD_TOKEN);
-        val assertion =
-            wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult),
-                wsFederationConfigurations);
+        val assertion = wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult), wsFederationConfigurations);
         val expResult = new WsFederationCredential();
         expResult.setIssuedOn(ZonedDateTime.parse("2014-02-26T22:51:16.504Z"));
         expResult.setNotBefore(ZonedDateTime.parse("2014-02-26T22:51:16.474Z"));
@@ -56,30 +52,30 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
         expResult.setIssuer("http://adfs.example.com/adfs/services/trust");
         expResult.setAudience("urn:federation:cas");
         expResult.setId("_6257b2bf-7361-4081-ae1f-ec58d4310f61");
+
         val result = wsFederationHelper.createCredentialFromToken(assertion.getKey());
-        assertNotNull("testCreateCredentialFromToken() - Not Null", result);
-        assertEquals("testCreateCredentialFromToken() - IssuedOn", expResult.getIssuedOn(), result.getIssuedOn());
-        assertEquals("testCreateCredentialFromToken() - NotBefore", expResult.getNotBefore(), result.getNotBefore());
-        assertEquals("testCreateCredentialFromToken() - NotOnOrAfter", expResult.getNotOnOrAfter(), result.getNotOnOrAfter());
-        assertEquals("testCreateCredentialFromToken() - Issuer", expResult.getIssuer(), result.getIssuer());
-        assertEquals("testCreateCredentialFromToken() - Audience", expResult.getAudience(), result.getAudience());
-        assertEquals("testCreateCredentialFromToken() - Id", expResult.getId(), result.getId());
+        assertNotNull(result);
+        assertEquals(expResult.getIssuedOn(), result.getIssuedOn());
+        assertEquals(expResult.getNotBefore(), result.getNotBefore());
+        assertEquals(expResult.getNotOnOrAfter(), result.getNotOnOrAfter());
+        assertEquals(expResult.getIssuer(), result.getIssuer());
+        assertEquals(expResult.getAudience(), result.getAudience());
+        assertEquals(expResult.getId(), result.getId());
     }
 
     @Test
     public void verifyGetSigningCredential() {
         val result = wsFederationConfigurations.iterator().next().getSigningWallet().iterator().next();
-        assertNotNull("testGetSigningCredential() - Not Null", result);
+        assertNotNull(result);
     }
 
     @Test
     public void verifyValidateSignatureGoodToken() {
         val wresult = testTokens.get(GOOD_TOKEN);
         val assertion =
-            wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult),
-                wsFederationConfigurations);
+            wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult), wsFederationConfigurations);
         val result = wsFederationHelper.validateSignature(assertion);
-        assertTrue("testValidateSignatureGoodToken() - True", result);
+        assertTrue(result);
     }
 
     @Test
@@ -89,7 +85,7 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
             wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult),
                 wsFederationConfigurations);
         val result = wsFederationHelper.validateSignature(assertion);
-        assertFalse("testValidateSignatureModifiedAttribute() - False", result);
+        assertFalse(result);
     }
 
     @Test
@@ -105,7 +101,7 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
         wallet.clear();
         wallet.addAll(signingWallet);
         val result = wsFederationHelper.validateSignature(assertion);
-        assertFalse("testValidateSignatureModifiedKey() - False", result);
+        assertFalse(result);
     }
 
     @Test
@@ -115,6 +111,6 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
             wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult),
                 wsFederationConfigurations);
         val result = wsFederationHelper.validateSignature(assertion);
-        assertFalse("testValidateSignatureModifiedSignature() - False", result);
+        assertFalse(result);
     }
 }

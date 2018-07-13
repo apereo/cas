@@ -1,8 +1,7 @@
 package org.apereo.cas.trusted.web;
 
-import lombok.val;
-
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -40,6 +39,20 @@ public class MultifactorTrustedDevicesReportEndpoint {
         val onOrAfter = LocalDateTime.now().minus(properties.getExpiration(), unit);
         this.mfaTrustEngine.expire(onOrAfter);
         return this.mfaTrustEngine.get(onOrAfter);
+    }
+
+    /**
+     * Devices for user.
+     *
+     * @param username the username
+     * @return the set
+     */
+    @ReadOperation
+    public Set<MultifactorAuthenticationTrustRecord> devicesForUser(@Selector final String username) {
+        val unit = DateTimeUtils.toChronoUnit(properties.getTimeUnit());
+        val onOrAfter = LocalDateTime.now().minus(properties.getExpiration(), unit);
+        this.mfaTrustEngine.expire(onOrAfter);
+        return this.mfaTrustEngine.get(username, onOrAfter);
     }
 
     /**

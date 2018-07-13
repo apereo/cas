@@ -67,24 +67,27 @@ Supported parameters are the following:
 |---------------------------|--------------------------------------------
 | `username`                | The username to use for authentication.
 | `password`                | The password to use for authentication.
-| `service`                | Service to which attributes should be released.
+| `service`                 | Service to which attributes should be released.
 
 ### Single SignOn Sessions Endpoint
 
-A `GET` operation produces a list of current SSO sessions. A `DELETE` operation without 
-specifying a ticket id will attempt to destroy all SSO sessions. Specifying a ticket-granting ticket identifier 
+A `GET` operation produces a list of current SSO sessions. 
+
+A `DELETE` operation without specifying a ticket id will attempt to destroy all SSO sessions. Specifying a ticket-granting ticket identifier 
 in the URL as a placeholder/selector will attempt to destroy the session controlled by that ticket. (i.e. `sso-sessions/{ticket}`)
 
 ### Multifactor Trusted Devices
 
-A `GET` operation produces a list of all trusted devices. A `DELETE` operation with a 
-a decision id will attempt to remove the consent decision (i.e. `multifactor-trusted-devices/{/{id}`).
-Specifying the `principal`  in the same manner will revoke all consent decisions for the user.
+A `GET` operation produces a list of all trusted devices. Specifying a username in the URL
+as the placeholder/selector will fetch devices registered for that user (i.e. `multifactor-trusted-devices/{/{username}`).
+
+A `DELETE` operation with a device key  id will attempt to remove the trusted device (i.e. `multifactor-trusted-devices/{/{id}`).
 
 ### Attribute Release Consent
 
-A `GET` operation produces a list of all consent decisions. A `DELETE` operation with a 
-a record key id will attempt to remove and revoke the registered device (i.e. `attribute-consent/{principal}/{id}`).
+A `GET` operation produces a list of all consent decisions. 
+
+A `DELETE` operation with a record key id will attempt to remove and revoke the registered device (i.e. `attribute-consent/{principal}/{id}`).
 
 ### Metrics
 
@@ -143,8 +146,7 @@ levels:
 ```
 
 
-Monitors allow you to watch the internal state of a given CAS component.
-See [this guide](Configuring-Monitoring.html) for more info.
+Monitors allow you to watch the internal state of a given CAS component. ````See [this guide](Configuring-Monitoring.html) for more info.
 
 ## Distributed Tracing
 
