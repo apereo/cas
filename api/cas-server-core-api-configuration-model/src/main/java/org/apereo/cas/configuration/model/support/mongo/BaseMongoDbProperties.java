@@ -12,7 +12,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-
 @Getter
 @Setter
 public abstract class BaseMongoDbProperties implements Serializable {

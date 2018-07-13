@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-x509-webflow")
-
 @Getter
 @Setter
 public class X509Properties implements Serializable {

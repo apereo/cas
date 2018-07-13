@@ -14,7 +14,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-radius-mfa")
-
 @Getter
 @Setter
 public class RadiusMultifactorProperties extends BaseMultifactorProviderProperties {

@@ -12,7 +12,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-mongo-service-registry")
-
 @Getter
 @Setter
 public class MongoDbServiceRegistryProperties extends SingleCollectionMongoDbProperties {

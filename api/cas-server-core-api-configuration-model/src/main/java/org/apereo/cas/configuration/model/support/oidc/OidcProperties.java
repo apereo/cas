@@ -21,7 +21,6 @@ import java.util.stream.Stream;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-oidc")
-
 @Getter
 @Setter
 public class OidcProperties implements Serializable {

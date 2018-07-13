@@ -16,7 +16,6 @@ import lombok.Setter;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-syncope-authentication")
-
 @Getter
 @Setter
 public class SyncopeAuthenticationProperties implements Serializable {
