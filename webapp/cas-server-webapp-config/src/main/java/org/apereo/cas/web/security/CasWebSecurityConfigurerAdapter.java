@@ -38,6 +38,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
+        http.csrf().disable();
         val requests = http.authorizeRequests();
         configureEndpointAccessToDenyUndefined(requests);
         configureEndpointAccessForStaticResources(requests);
