@@ -2,7 +2,6 @@ package org.apereo.cas.support.geo.config;
 
 import lombok.val;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
