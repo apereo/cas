@@ -11,7 +11,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-redis-service-registry")
-
 @Getter
 @Setter
 public class RedisServiceRegistryProperties extends BaseRedisProperties {

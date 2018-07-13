@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-saml-idp")
-
 @Getter
 @Setter
 public class SamlIdPMetadataProperties implements Serializable {

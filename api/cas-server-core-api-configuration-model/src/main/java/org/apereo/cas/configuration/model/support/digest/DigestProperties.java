@@ -14,7 +14,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-digest-authentication")
-
 @Getter
 @Setter
 public class DigestProperties implements Serializable {

@@ -17,7 +17,6 @@ import lombok.Setter;
  * @since 4.2.0
  */
 @RequiresModule(name = "cas-server-support-infinispan-ticket-registry")
-
 @Getter
 @Setter
 public class InfinispanProperties implements Serializable {

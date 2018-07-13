@@ -13,7 +13,6 @@ import lombok.Setter;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-core-web", automated = true)
-
 @Getter
 @Setter
 public class HttpWebRequestProperties implements Serializable {

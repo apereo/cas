@@ -16,7 +16,6 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-cloud-directory-authentication")
-
 @Getter
 @Setter
 public class CloudDirectoryProperties extends BaseAmazonWebServicesProperties {

@@ -21,7 +21,6 @@ import java.util.Map;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-yubikey")
-
 @Getter
 @Setter
 public class YubiKeyMultifactorProperties extends BaseMultifactorProviderProperties {

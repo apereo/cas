@@ -16,7 +16,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-spnego-webflow")
-
 @Getter
 @Setter
 public class SpnegoProperties implements Serializable {

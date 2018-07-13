@@ -12,7 +12,6 @@ import org.apereo.cas.configuration.support.RequiresModule;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-saml-idp-metadata-aws-s3")
-
 @Getter
 @Setter
 public class AmazonS3SamlMetadataProperties extends BaseAmazonWebServicesProperties {

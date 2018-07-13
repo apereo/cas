@@ -17,7 +17,6 @@ import java.util.List;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-saml-idp")
-
 @Getter
 @Setter
 public class SamlIdPProperties implements Serializable {

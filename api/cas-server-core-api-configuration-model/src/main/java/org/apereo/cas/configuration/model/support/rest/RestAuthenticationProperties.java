@@ -15,7 +15,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-rest-authentication")
-
 @Getter
 @Setter
 public class RestAuthenticationProperties implements Serializable {
