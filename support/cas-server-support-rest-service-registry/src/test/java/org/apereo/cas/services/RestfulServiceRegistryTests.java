@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,7 +41,10 @@ import java.util.Collection;
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@EnableAutoConfiguration(exclude = CasCoreServicesConfiguration.class)
+@EnableAutoConfiguration(exclude = {
+    CasCoreServicesConfiguration.class,
+    MetricsAutoConfiguration.class
+})
 @TestPropertySource(locations = "classpath:restful-svc.properties")
 public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
 
