@@ -17,7 +17,9 @@ dependencies {
     if (!skipConfigurationMetadata) {
         annotationProcessor libraries.springbootconfigmetadata
     }
+    
 }
+
 
 if (!skipConfigurationMetadata) {
     task generateConfigurationMetadata(type: JavaExec) {
@@ -31,7 +33,7 @@ if (!skipConfigurationMetadata) {
         classpath = sourceSets.main.runtimeClasspath
         args buildDir, projectDir.canonicalPath
     }
-    
+
     compileJava.dependsOn(processResources)
     jar.dependsOn(generateConfigurationMetadata)
 }

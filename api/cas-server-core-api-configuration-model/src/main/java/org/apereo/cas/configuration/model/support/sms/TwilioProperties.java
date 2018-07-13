@@ -13,7 +13,6 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-sms-twilio")
-
 @Getter
 @Setter
 public class TwilioProperties implements Serializable {

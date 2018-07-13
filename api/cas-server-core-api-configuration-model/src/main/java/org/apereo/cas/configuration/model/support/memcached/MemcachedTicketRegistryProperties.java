@@ -13,7 +13,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-memcached-ticket-registry")
-
 @Getter
 @Setter
 public class MemcachedTicketRegistryProperties extends BaseMemcachedProperties {

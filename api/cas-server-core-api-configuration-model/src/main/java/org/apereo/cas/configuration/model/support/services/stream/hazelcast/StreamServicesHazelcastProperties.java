@@ -14,7 +14,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-service-registry-stream-hazelcast")
-
 @Getter
 @Setter
 public class StreamServicesHazelcastProperties extends BaseStreamServicesProperties {

@@ -16,7 +16,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-jdbc-authentication")
-
 @Getter
 @Setter
 public class SearchJdbcAuthenticationProperties extends AbstractJpaProperties {

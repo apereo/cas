@@ -12,7 +12,6 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-shibboleth")
-
 @Getter
 @Setter
 public class ShibbolethIdPProperties implements Serializable {
