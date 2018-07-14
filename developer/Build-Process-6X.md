@@ -55,13 +55,15 @@ The following commandline boolean flags are supported by the build:
 | `skipSass`                        | Skip compilation of `.sass` files into `.css`, etc. Mostly useful when running tests.
 | `skipNestedConfigMetadataGen`     | Skip generating configuration metadata for nested properties and generic collections.
 | `skipNodeModulesCleanUp`          | Skip cleaning and removing the `node_modules` directory. Mostly useful when running tests.
+| `skipSonarqube`                   | Ignore reporting results to Sonarqube.
 | `skipErrorProneCompiler`          | Skip running the `error-prone` static-analysis compiler.
 | `skipNpmCache`                    | Skip cleaning the NPM cache.
 | `skipNpmLint`                     | Skip running the linter for resources managed by NPM, such as Javascript files.
 | `forceBom`                        | Force the generation of the CAS Maven BOM.
-| `ignoreJavadocFailures`           | Ignore javadoc fialures and let the build resume.
-| `ignoreFindbugsFailures`          | Ignore Findbugs fialures and let the build resume.
-| `ignoreTestFailures`              | Ignore test fialures and let the build resume.
+| `ignoreJavadocFailures`           | Ignore javadoc failures and let the build resume.
+| `ignoreFindbugsFailures`          | Ignore Findbugs failures and let the build resume.
+| `ignoreTestFailures`              | Ignore test failures and let the build resume.
+
 
 - You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`, `-x check`).
 - If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.
