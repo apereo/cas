@@ -29,7 +29,7 @@ echo -e "***********************************************"
 
 ./ci/tests/memcached/run-memcached-server.sh
 
-gradleBuild="$gradleBuild testMemcached coveralls -x javadoc -x check \
+gradleBuild="$gradleBuild testMemcached coveralls -x test -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 

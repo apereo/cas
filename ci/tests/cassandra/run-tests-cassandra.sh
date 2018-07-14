@@ -29,7 +29,7 @@ echo -e "***********************************************"
 
 ./ci/tests/cassandra/run-cassandra-server.sh
 
-gradleBuild="$gradleBuild testCassandra coveralls -x javadoc -x check \
+gradleBuild="$gradleBuild testCassandra coveralls -x test -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
