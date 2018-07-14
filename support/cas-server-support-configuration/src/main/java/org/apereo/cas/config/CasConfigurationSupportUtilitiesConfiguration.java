@@ -1,10 +1,9 @@
 
 package org.apereo.cas.config;
 
-import lombok.val;
-
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.support.events.AbstractCasEvent;
@@ -13,6 +12,7 @@ import org.apereo.cas.support.events.config.CasConfigurationDeletedEvent;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.function.ComposableFunction;
 import org.apereo.cas.util.io.PathWatcherService;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -50,7 +50,7 @@ public class CasConfigurationSupportUtilitiesConfiguration {
     @Configuration("casCoreConfigurationWatchConfiguration")
     @Profile("standalone")
     @ConditionalOnProperty(value = "spring.cloud.config.enabled", havingValue = "false")
-    public class CasCoreConfigurationWatchConfiguration implements InitializingBean {
+    public class CasCoreConfigurationWatchConfiguration implements InitializingBean, DisposableBean {
         @Autowired
         private ApplicationEventPublisher eventPublisher;
 
@@ -60,22 +60,23 @@ public class CasConfigurationSupportUtilitiesConfiguration {
 
         private final Consumer<AbstractCasEvent> publish = event -> eventPublisher.publishEvent(event);
 
+        private PathWatcherService watcher;
+
         public void init() {
             runNativeConfigurationDirectoryPathWatchService();
         }
 
         @Override
-        public void afterPropertiesSet() throws Exception {
+        public void afterPropertiesSet() {
             init();
         }
 
         @SneakyThrows
         public void runNativeConfigurationDirectoryPathWatchService() {
-
             val config = configurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
             if (casProperties.getEvents().isTrackConfigurationModifications() && config.exists()) {
                 LOGGER.debug("Starting to watch configuration directory [{}]", config);
-                val watcher = new PathWatcherService(config.toPath(),
+                this.watcher = new PathWatcherService(config.toPath(),
                     createConfigurationCreatedEvent.andNext(publish),
                     createConfigurationModifiedEvent.andNext(publish),
                     createConfigurationDeletedEvent.andNext(publish));
@@ -83,7 +84,13 @@ public class CasConfigurationSupportUtilitiesConfiguration {
             } else {
                 LOGGER.info("CAS is configured to NOT watch configuration directory [{}]. Changes require manual reloads/restarts.", config);
             }
+        }
 
+        @Override
+        public void destroy() {
+            if (this.watcher != null) {
+                this.watcher.close();
+            }
         }
     }
 }

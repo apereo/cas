@@ -25,8 +25,7 @@ import static org.junit.Assert.*;
 public class SimpleHttpClientTests {
 
     private static SimpleHttpClient getHttpClient() {
-        val httpClient = new SimpleHttpClientFactoryBean().getObject();
-        return httpClient;
+        return new SimpleHttpClientFactoryBean().getObject();
     }
 
     @Test

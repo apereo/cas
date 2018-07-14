@@ -73,15 +73,16 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
      * @param index The index to find
      */
     private void removeDifferingIndexIfAny(final MongoCollection collection, final Index index) {
-        final ListIndexesIterable<Document> indexes = collection.listIndexes();
-        boolean indexExistsWithDifferentOptions = false;
-        for (final var existingIndex : indexes) {
-            final boolean keyMatches = existingIndex.get("key").equals(index.getIndexKeys());
-            final boolean optionsMatch = index.getIndexOptions().entrySet().stream().allMatch(entry -> entry.getValue().equals(existingIndex.get(entry.getKey())));
-            final boolean noExtraOptions = existingIndex.keySet().stream().allMatch(key -> MONGO_INDEX_KEYS.contains(key) || index.getIndexOptions().keySet().contains(key));
+        val indexes = (ListIndexesIterable<Document>) collection.listIndexes();
+        var indexExistsWithDifferentOptions = false;
 
+        for (val existingIndex : indexes) {
+            val keyMatches = existingIndex.get("key").equals(index.getIndexKeys());
+            val optionsMatch = index.getIndexOptions().entrySet().stream().allMatch(entry -> entry.getValue().equals(existingIndex.get(entry.getKey())));
+            val noExtraOptions = existingIndex.keySet().stream().allMatch(key -> MONGO_INDEX_KEYS.contains(key) || index.getIndexOptions().keySet().contains(key));
             indexExistsWithDifferentOptions |= keyMatches && !(optionsMatch && noExtraOptions);
         }
+
         if (indexExistsWithDifferentOptions) {
             LOGGER.debug("Removing MongoDb index [{}] from [{}] because it appears to already exist in a different form", index.getIndexKeys(), collection.getNamespace());
             collection.dropIndex(index.getIndexKeys());

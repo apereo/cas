@@ -1,11 +1,9 @@
 package org.apereo.cas.util;
 
-import lombok.val;
-
-import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -61,6 +59,7 @@ public class CompressionUtils {
             inflater.end();
             return new String(xmlMessageBytes, 0, resultLength, StandardCharsets.UTF_8);
         } catch (final DataFormatException e) {
+            LOGGER.trace(e.getMessage(), e);
             return null;
         }
     }
@@ -127,9 +126,9 @@ public class CompressionUtils {
     @SneakyThrows
     public static String decompress(final String zippedBase64Str) {
         val bytes = EncodingUtils.decodeBase64(zippedBase64Str);
-        @Cleanup
-        val zi = new GZIPInputStream(new ByteArrayInputStream(bytes));
-        return IOUtils.toString(zi, Charset.defaultCharset());
+        try (val zi = new GZIPInputStream(new ByteArrayInputStream(bytes))) {
+            return IOUtils.toString(zi, Charset.defaultCharset());
+        }
     }
 
     /**
@@ -141,16 +140,13 @@ public class CompressionUtils {
      */
     @SneakyThrows
     public static String compress(final String srcTxt) {
-        @Cleanup
-        val rstBao = new ByteArrayOutputStream();
-        @Cleanup
-        val zos = new GZIPOutputStream(rstBao);
-        zos.write(srcTxt.getBytes(StandardCharsets.UTF_8));
-        zos.flush();
-        zos.finish();
-        val bytes = rstBao.toByteArray();
-        val base64 = StringUtils.remove(EncodingUtils.encodeBase64(bytes), '\0');
-        return new String(StandardCharsets.UTF_8.encode(base64).array(), StandardCharsets.UTF_8);
-
+        try (val rstBao = new ByteArrayOutputStream(); val zos = new GZIPOutputStream(rstBao)) {
+            zos.write(srcTxt.getBytes(StandardCharsets.UTF_8));
+            zos.flush();
+            zos.finish();
+            val bytes = rstBao.toByteArray();
+            val base64 = StringUtils.remove(EncodingUtils.encodeBase64(bytes), '\0');
+            return new String(StandardCharsets.UTF_8.encode(base64).array(), StandardCharsets.UTF_8);
+        }
     }
 }
