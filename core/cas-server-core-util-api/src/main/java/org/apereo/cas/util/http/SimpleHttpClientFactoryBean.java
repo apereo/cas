@@ -260,7 +260,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     }
 
     /**
-     * Destroy.
+     * Destroy the service.
      */
     @Override
     public void destroy() {
