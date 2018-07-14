@@ -29,7 +29,7 @@ echo -e "***********************************************"
 
 ./ci/tests/mail/run-mail-server.sh
 
-gradleBuild="$gradleBuild testMail coveralls -x javadoc -x check \
+gradleBuild="$gradleBuild testMail coveralls -x test -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
