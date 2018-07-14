@@ -271,7 +271,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     }
 
     /**
-     * The type Default http client.
+     * The default http client.
      */
     public static class DefaultHttpClient extends SimpleHttpClientFactoryBean {
     }
