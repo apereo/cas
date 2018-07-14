@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface AuthenticationTransaction extends Serializable {
 
     /**
-     * Gets service.
+     * Gets service linked to this transaction.
      *
      * @return the service
      */
