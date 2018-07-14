@@ -13,7 +13,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-hazelcast-core")
-
 @Getter
 @Setter
 public class BaseHazelcastProperties implements Serializable {

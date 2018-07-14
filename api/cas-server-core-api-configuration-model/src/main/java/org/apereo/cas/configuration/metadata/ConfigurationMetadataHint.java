@@ -14,7 +14,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-
 @Getter
 @Setter
 public class ConfigurationMetadataHint {

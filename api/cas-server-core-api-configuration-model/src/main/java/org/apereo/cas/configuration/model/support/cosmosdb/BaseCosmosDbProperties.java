@@ -14,7 +14,6 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-cosmosdb-core")
-
 @Getter
 @Setter
 public abstract class BaseCosmosDbProperties implements Serializable {

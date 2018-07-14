@@ -12,7 +12,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-trusted-webflow")
-
 @Getter
 @Setter
 public class TrustedAuthenticationProperties extends PersonDirectoryPrincipalResolverProperties {

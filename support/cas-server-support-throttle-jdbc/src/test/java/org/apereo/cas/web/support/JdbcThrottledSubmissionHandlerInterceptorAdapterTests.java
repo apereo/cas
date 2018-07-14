@@ -54,7 +54,8 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {CasJdbcThrottlingConfiguration.class,
+@SpringBootTest(classes = {
+    CasJdbcThrottlingConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,

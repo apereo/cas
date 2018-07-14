@@ -15,7 +15,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-jpa-ticket-registry")
-
 @Getter
 @Setter
 public class JpaTicketRegistryProperties extends AbstractJpaProperties {

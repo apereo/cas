@@ -19,7 +19,6 @@ import java.util.stream.Stream;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-ignite-ticket-registry")
-
 @Getter
 @Setter
 public class IgniteProperties implements Serializable {

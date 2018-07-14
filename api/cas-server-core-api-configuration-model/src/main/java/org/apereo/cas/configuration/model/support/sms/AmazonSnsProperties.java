@@ -12,7 +12,6 @@ import org.apereo.cas.configuration.support.RequiresModule;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-sms-clickatell")
-
 @Getter
 @Setter
 public class AmazonSnsProperties extends BaseAmazonWebServicesProperties {

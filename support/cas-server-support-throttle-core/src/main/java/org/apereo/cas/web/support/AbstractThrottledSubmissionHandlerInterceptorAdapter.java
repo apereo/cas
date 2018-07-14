@@ -81,9 +81,12 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
         if (exceedsThreshold(request)) {
             recordThrottle(request);
             request.setAttribute(WebUtils.CAS_ACCESS_DENIED_REASON, "screen.blocked.message");
+            val username = StringUtils.isNotBlank(this.usernameParameter)
+                ? StringUtils.defaultString(request.getParameter(this.usernameParameter), "N/A")
+                : "N/A";
             response.sendError(HttpStatus.SC_LOCKED, "Access Denied for user ["
-                + StringEscapeUtils.escapeHtml4(request.getParameter(this.usernameParameter))
-                + "] from IP Address [" + request.getRemoteAddr() + ']');
+                + StringEscapeUtils.escapeHtml4(username) + "] from IP Address ["
+                + request.getRemoteAddr() + ']');
             return false;
         }
         return true;
