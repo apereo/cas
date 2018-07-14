@@ -130,12 +130,12 @@ In order to successfully finish this exercise you need:
 
 First thing you need to do is to [fork the CAS repository](https://help.github.com/articles/fork-a-repo/) under your own account. The CAS repository is hosted on Github and is available [here](https://github.com/apereo/cas).
 
-### Clone repositories
+### Clone Repositories
 
 There are much faster ways of cloning the codebase, but let's keep it simple for now:
 
 ```bash
-git clone git@github.com:apereo/cas.git
+git clone --recursive git@github.com:apereo/cas.git
 cd cas
 git remote add github-username git@github.com:github-username/cas.git
 git checkout master
@@ -150,6 +150,12 @@ github-username  git@github.com:github-username/cas.git (fetch)
 github-username  git@github.com:github-username/cas.git (push)
 ```
 
+### Fetch Submodules
+
+You can use `git submodule update --init --recursive` to fetch all submodules linked to the repository.
+
+### Workflow
+
 You want to isolate your changes inside individual topics branches and never commit anything to the `master` branch. The workflow more or less is the following:
 
 1. Create topic branch.
@@ -162,7 +168,7 @@ You want to isolate your changes inside individual topics branches and never com
   <strong>Functional Build</strong><br/>You may want to ensure the codebase can be built locally from source. <a href="https://apereo.github.io/cas/developer/Build-Process.html">Follow this guide</a> to learn more.
 </div>
 
-### Create branch
+### Create Branch
 
 To create a topic branch for the change, execute:
 
@@ -171,7 +177,7 @@ git status
 git checkout -b my-topic-branch-which-fixes-something
 ```
 
-### Commit changes
+### Commit Changes
 
 When you're ready to commit changes after having made changes, execute:
 
@@ -181,7 +187,7 @@ git add --all && git commit -am "This change fixes a problem"
 
 Note that the `--all` flag adds *all* modified files in the project directory. If you wish to pick and choose, you can either individually add files via a `git add fileName` command one at a time or perhaps, it might be best to simply opt for a GUI client such as [SourceTree](https://www.sourcetreeapp.com/) or [Git Extensions](https://github.com/gitextensions/gitextensions). 
 
-### Push changes
+### Push Changes
 
 Push your changes from the *local* branch to a *remote* branch of your own fork:
 
