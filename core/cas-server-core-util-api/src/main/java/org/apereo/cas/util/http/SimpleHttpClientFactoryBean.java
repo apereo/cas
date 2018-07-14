@@ -108,6 +108,9 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
 
     private int readTimeout = DEFAULT_TIMEOUT;
 
+    /**
+     * The redirection strategy by default, using http status codes.
+     */
     private RedirectStrategy redirectionStrategy = new DefaultRedirectStrategy();
 
     /**
