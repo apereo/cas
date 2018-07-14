@@ -7,8 +7,6 @@ title: CAS - Build Process
 
 This page documents the steps that a CAS developer/contributor should take for building a CAS server locally.
 
-## Development 
-
 ## Source Checkout
 
 The following shell commands may be used to grab the source from the repository:
@@ -26,6 +24,14 @@ git clone --depth=1 --single-branch --branch=master git@github.com:apereo/cas.gi
 
 For a successful clone, you will need to have [set up SSH keys](https://help.github.com/articles/working-with-ssh-key-passphrases/) for your account on Github.
 If that is not an option, you may clone the CAS repository under `https` via `https://github.com/apereo/cas.git`.
+
+You may also need to update submodules linked to the CAS repository. Newer versions of Git will do this automatically, 
+but older versions will require you to explicitly tell git to download the contents of submodules:
+
+```bash
+git submodule update --init --recursive
+```
+
 
 ## Build
 
