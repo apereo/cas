@@ -12,13 +12,13 @@ This page documents the steps that a CAS developer/contributor should take for b
 The following shell commands may be used to grab the source from the repository:
 
 ```bash
-git clone git@github.com:apereo/cas.git cas-server
+git clone --recursive git@github.com:apereo/cas.git cas-server
 ```
 
 Or a quicker clone:
 
 ```bash
-git clone --depth=1 --single-branch --branch=master git@github.com:apereo/cas.git cas-server
+git clone --recursive --depth=1 --single-branch --branch=master git@github.com:apereo/cas.git cas-server
 # git fetch --unshallow
 ```
 
