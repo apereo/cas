@@ -8,6 +8,14 @@ ext.libraries = [
                     force = true
                     transitive = false
                 },
+                dependencies.create("org.glassfish.main.javaee-api:javax.jws:$javaxJwsVersion") {
+                    force = true
+                    transitive = false
+                },
+                dependencies.create("javax.xml.soap:javax.xml.soap-api:$javaxSoapApiVersion") {
+                    force = true
+                    transitive = false
+                },
                 dependencies.create("org.glassfish.jaxb:jaxb-runtime:$jaxbGlassfishVersion") {
                     force = true
                     transitive = false
@@ -1892,6 +1900,19 @@ ext.libraries = [
             exclude(group: "org.apache.httpcomponents", module: "httpclient")
             force = true
         },
+        nexmo                  : dependencies.create("com.nexmo:client:$nexmoVersion") {
+            exclude(group: "org.slf4j", module: "slf4j-api")
+            exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+            exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+            exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+            exclude(group: "javax.xml.bind", module: "jaxb-api")
+            exclude(group: "org.apache.httpcomponents", module: "httpclient")
+            exclude(group: "commons-io", module: "commons-io")
+            exclude(group: "commons-logging", module: "commons-logging")
+            exclude(group: "commons-codec", module: "commons-codec")
+            exclude(group: "org.apache.commons", module: "commons-lang3")
+            force = true
+        },
         textmagic               : [
                 dependencies.create("com.textmagic.sdk:textmagic-java-sdk:$textMagicVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -1923,10 +1944,12 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "com.vaadin.external.google", module: "android-json")
                     exclude(group: "org.json", module: "json")
                     exclude(group: "commons-cli", module: "commons-cli")
                 },
                 dependencies.create("org.json:json:$jsonVersion") {
+                    exclude(group: "com.vaadin.external.google", module: "android-json")
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-configuration-metadata:$springBootVersion") {
@@ -2104,6 +2127,8 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "com.vaadin.external.google", module: "android-json")
+                    exclude(group: "com.vaadin.external.google", module: "android-json")
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-log4j2:$springBootVersion") {

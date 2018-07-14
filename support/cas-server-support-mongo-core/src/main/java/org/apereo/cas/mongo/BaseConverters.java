@@ -165,7 +165,7 @@ public abstract class BaseConverters {
     /**
      * The type String to zoned date time converter.
      */
-    public static class StringToZonedDateTimeConverter implements Converter<String, ZonedDateTime> {
+    static class StringToZonedDateTimeConverter implements Converter<String, ZonedDateTime> {
         @Override
         public ZonedDateTime convert(final String source) {
             if (StringUtils.isBlank(source)) {
@@ -202,6 +202,16 @@ public abstract class BaseConverters {
         @Override
         public Date convert(final BsonTimestamp source) {
             return new Date(source.getTime());
+        }
+    }
+
+    /**
+     * The type BsonTimestamp to String converter.
+     */
+    public static class BsonTimestampToStringConverter implements Converter<BsonTimestamp, String> {
+        @Override
+        public String convert(final BsonTimestamp source) {
+            return String.valueOf(source.getTime());
         }
     }
 

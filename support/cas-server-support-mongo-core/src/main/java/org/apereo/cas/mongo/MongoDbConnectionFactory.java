@@ -21,7 +21,6 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.data.annotation.Persistent;
-import org.springframework.data.convert.CustomConversions;
 import org.springframework.data.convert.JodaTimeConverters;
 import org.springframework.data.convert.Jsr310Converters;
 import org.springframework.data.mapping.model.CamelCaseAbbreviatingFieldNamingStrategy;
@@ -31,6 +30,7 @@ import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+import org.springframework.data.mongodb.core.convert.CustomConversions;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
@@ -58,8 +58,7 @@ import java.util.stream.Stream;
 public class MongoDbConnectionFactory {
     private static final int DEFAULT_PORT = 27017;
 
-    //private final MongoCustomConversions customConversions;
-    private final CustomConversions customConversions;
+    private final MongoCustomConversions customConversions;
 
     public MongoDbConnectionFactory() {
         this(new ArrayList<>());
@@ -83,16 +82,19 @@ public class MongoDbConnectionFactory {
         converters.add(new BaseConverters.CaffeinCacheLoaderConverter());
         converters.add(new BaseConverters.CacheConverter());
         converters.add(new BaseConverters.CacheBuilderConverter());
-        converters.add(new BaseConverters.ZonedDateTimeToDateConverter());
-        converters.add(new BaseConverters.ZonedDateTimeToStringConverter());
-        converters.add(new BaseConverters.StringToZonedDateTimeConverter());
-        converters.add(new BaseConverters.DateToZonedDateTimeConverter());
-        converters.add(new BaseConverters.BsonTimestampToDateConverter());
-
         converters.addAll(JodaTimeConverters.getConvertersToRegister());
         converters.addAll(Jsr310Converters.getConvertersToRegister());
 
-        this.customConversions = new MongoCustomConversions(converters);
+        /*
+        converters.add(new BaseConverters.ZonedDateTimeToStringConverter());
+        converters.add(new BaseConverters.StringToZonedDateTimeConverter());
+        */
+        converters.add(new BaseConverters.BsonTimestampToStringConverter());
+        converters.add(new BaseConverters.ZonedDateTimeToDateConverter());
+        converters.add(new BaseConverters.DateToZonedDateTimeConverter());
+        converters.add(new BaseConverters.BsonTimestampToDateConverter());
+
+        this.customConversions = new CustomConversions(converters);
     }
 
     /**
@@ -270,8 +272,7 @@ public class MongoDbConnectionFactory {
         clientOptions.codecRegistry(codecRegistry);
         return clientOptions.build();
     }
-
-
+    
     private MongoClient buildMongoDbClient(final BaseMongoDbProperties mongo) {
 
         if (StringUtils.isNotBlank(mongo.getClientUri())) {

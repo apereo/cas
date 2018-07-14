@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.support;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.cas.CasViewConstants;
@@ -22,15 +22,15 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttributeEncoder {
 
     /**
      * The Services manager.
      */
-    protected ServicesManager servicesManager;
+    protected final ServicesManager servicesManager;
 
-    private RegisteredServiceCipherExecutor cipherExecutor;
+    private final RegisteredServiceCipherExecutor cipherExecutor;
 
     /**
      * Instantiates a new attribute encoder with the default

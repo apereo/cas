@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import com.couchbase.client.java.document.SerializableDocument;
@@ -8,7 +9,6 @@ import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
-import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +37,7 @@ import java.util.function.Consumer;
  * @since 4.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
     /**
      * The all tickets view name.

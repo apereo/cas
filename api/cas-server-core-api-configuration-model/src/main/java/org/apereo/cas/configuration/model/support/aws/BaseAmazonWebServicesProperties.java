@@ -13,7 +13,6 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-
 @Getter
 @Setter
 public abstract class BaseAmazonWebServicesProperties implements Serializable {

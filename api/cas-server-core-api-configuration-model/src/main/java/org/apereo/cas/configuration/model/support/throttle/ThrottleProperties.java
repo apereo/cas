@@ -15,7 +15,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-throttle", automated = true)
-
 @Getter
 @Setter
 public class ThrottleProperties implements Serializable {

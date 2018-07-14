@@ -14,7 +14,6 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-mongo-ticket-registry")
-
 @Getter
 @Setter
 public class MongoTicketRegistryProperties extends BaseMongoDbProperties {

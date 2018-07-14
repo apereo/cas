@@ -15,7 +15,6 @@ import java.io.Serializable;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-webapp-tomcat")
-
 @Getter
 @Setter
 public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable {

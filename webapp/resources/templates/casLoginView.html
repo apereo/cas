@@ -13,24 +13,31 @@
 <body class="login">
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content" class="row">
-        <div class="col-md">
-            <div th:replace="fragments/loginform :: loginform"><a href="fragments/loginform.html">Login Form goeshere</a></div>
+        <div class="col-md" th:if="${delegatedAuthenticationProviderDominant == null}">
+            <div th:replace="fragments/loginform :: loginform">
+                <a href="fragments/loginform.html">Login Form goes here</a>
+            </div>
         </div>
-        <div id="notices" class="col-md mt-3 mt-md-0">
-            <div th:replace="fragments/insecure :: insecure"><a href="fragments/insecure.html">insecure alert goes
-                here</a></div>
+        <div id="notices" class="col-md mt-3 mt-md-0"  th:if="${delegatedAuthenticationProviderDominant == null}">
+            <div th:replace="fragments/insecure :: insecure">
+                <a href="fragments/insecure.html">insecure alert goeshere</a>
+            </div>
             <div th:replace="fragments/defaultauthn :: staticAuthentication">
                 <a href="fragments/defaultauthn.html">defaultAuthn</a>
-                fragment
             </div>
-            <div th:replace="fragments/cookies :: cookiesDisabled"><a href="fragments/cookies.html">cookies</a> fragment
+            <div th:replace="fragments/cookies :: cookiesDisabled">
+                <a href="fragments/cookies.html">cookies fragment</a>
             </div>
-            <div th:replace="fragments/serviceui :: serviceUI"><a href="fragments/serviceui.html">service ui</a> fragment</div>
-            <div th:replace="fragments/loginProviders :: loginProviders"><a href="fragments/loginProviders.html">loginProviders</a>
-                fragment
+            <div th:replace="fragments/serviceui :: serviceUI">
+                <a href="fragments/serviceui.html">service ui fragment</a>
             </div>
             <div th:replace="fragments/cas-resources-list :: cas-resource-list">
                 <a href="fragments/cas-resources-list.html">cas-resource</a> list fragment
+            </div>
+        </div>
+        <div id="providers" class="col-md mt-3 mt-md-0">
+            <div th:replace="fragments/loginProviders :: loginProviders">
+                <a href="fragments/loginProviders.html">loginProviders</a>
             </div>
         </div>
     </div>

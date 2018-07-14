@@ -1,11 +1,10 @@
 package org.apereo.cas.consent;
 
-import lombok.val;
-
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
@@ -25,8 +24,8 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Setter
+@RequiredArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor
 public abstract class BaseConsentRepository implements ConsentRepository {
     private static final long serialVersionUID = 1736846688546785564L;
     private Set<ConsentDecision> consentDecisions = new LinkedHashSet<>();

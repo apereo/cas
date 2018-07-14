@@ -68,7 +68,7 @@ public class InitialFlowSetupAction extends AbstractAction {
                     LOGGER.debug("Placing registered service's unauthorized redirect url [{}] with id [{}] in context scope",
                             accessStrategy.getUnauthorizedRedirectUrl(),
                             registeredService.getServiceId());
-                    WebUtils.putUnauthorizedRedirectUrl(context, accessStrategy.getUnauthorizedRedirectUrl());
+                    WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, accessStrategy.getUnauthorizedRedirectUrl());
                 }
             }
         } else if (!casProperties.getSso().isAllowMissingServiceParameter()) {

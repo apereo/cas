@@ -21,7 +21,6 @@ import java.util.Map;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-passwordless")
-
 @Getter
 @Setter
 public class PasswordlessAuthenticationProperties implements Serializable {

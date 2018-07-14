@@ -1,9 +1,8 @@
 package org.apereo.cas.authentication.policy;
 
-import lombok.val;
-
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationPolicy;
@@ -16,7 +15,7 @@ import org.apereo.cas.authentication.AuthenticationPolicy;
  * @since 4.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy {
 
     /**

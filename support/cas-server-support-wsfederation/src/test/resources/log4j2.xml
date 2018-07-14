@@ -15,19 +15,19 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="off">
+        <Logger name="org.apereo" level="off" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.apereo.cas.support.wsfederation" level="off">
+        <Logger name="org.apereo.cas.support.wsfederation" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.opensaml" level="off">
+        <Logger name="org.opensaml" level="off" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="PROTOCOL_MESSAGE" level="off">
+        <Logger name="PROTOCOL_MESSAGE" level="off" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.apache.xml.security" level="off" />
+        <Logger name="org.apache.xml.security" level="off" additivity="false" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

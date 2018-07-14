@@ -1,11 +1,6 @@
 package org.apereo.cas.config
 
-import org.apereo.cas.ticket.DefaultTicketCatalog
-import org.apereo.cas.ticket.ProxyGrantingTicketImpl
-import org.apereo.cas.ticket.ProxyTicketImpl
-import org.apereo.cas.ticket.ServiceTicketImpl
-import org.apereo.cas.ticket.TicketCatalogConfigurer
-import org.apereo.cas.ticket.TicketGrantingTicketImpl
+import org.apereo.cas.ticket.*
 import org.junit.Before
 import org.junit.Test
 
@@ -32,12 +27,12 @@ abstract class AbstractTicketRegistryTicketCatalogConfigTests {
     abstract PT_storageNameForConcreteTicketRegistry()
 
     @Before
-    def initialize() {
+    void initialize() {
         ticketCatalogConfigurerUnderTest().configureTicketCatalog(ticketCatalog)
     }
 
     @Test
-    def verifyTgtTicketDefinition() {
+    void verifyTgtTicketDefinition() {
         def ticketDefinition = ticketCatalog.find(TGT_TICKET)
         assert ticketDefinition.implementationClass == TicketGrantingTicketImpl
         assert ticketDefinition.prefix == 'TGT'
@@ -45,7 +40,7 @@ abstract class AbstractTicketRegistryTicketCatalogConfigTests {
     }
 
     @Test
-    def verifyStTicketDefinition() {
+    void verifyStTicketDefinition() {
         def ticketDefinition = ticketCatalog.find(ST_TICKET)
         assert ticketDefinition.implementationClass == ServiceTicketImpl
         assert ticketDefinition.prefix == 'ST'
@@ -53,7 +48,7 @@ abstract class AbstractTicketRegistryTicketCatalogConfigTests {
     }
 
     @Test
-    def verifyPgtTicketDefinition() {
+    void verifyPgtTicketDefinition() {
         def ticketDefinition = ticketCatalog.find(PGT_TICKET)
         assert ticketDefinition.implementationClass == ProxyGrantingTicketImpl
         assert ticketDefinition.prefix == 'PGT'
@@ -61,7 +56,7 @@ abstract class AbstractTicketRegistryTicketCatalogConfigTests {
     }
 
     @Test
-    def verifyPtTicketDefinition() {
+    void verifyPtTicketDefinition() {
         def ticketDefinition = ticketCatalog.find(PT_TICKET)
         assert ticketDefinition.implementationClass == ProxyTicketImpl
         assert ticketDefinition.prefix == 'PT'

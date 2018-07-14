@@ -260,7 +260,7 @@ public class WebUtils {
      * @param context the context
      * @return the unauthorized redirect url into flow scope
      */
-    public static URI getUnauthorizedRedirectUrlIntoFlowScope(final RequestContext context) {
+    public static URI getUnauthorizedRedirectUrlFromFlowScope(final RequestContext context) {
         return context.getFlowScope().get(PARAMETER_UNAUTHORIZED_REDIRECT_URL, URI.class);
     }
 
@@ -645,16 +645,6 @@ public class WebUtils {
     }
 
     /**
-     * Put unauthorized redirect url into flowscope.
-     *
-     * @param context                 the context
-     * @param unauthorizedRedirectUrl the url to redirect to
-     */
-    public static void putUnauthorizedRedirectUrl(final RequestContext context, final URI unauthorizedRedirectUrl) {
-        context.getFlowScope().put(PARAMETER_UNAUTHORIZED_REDIRECT_URL, unauthorizedRedirectUrl);
-    }
-
-    /**
      * Put principal.
      *
      * @param requestContext          the request context
@@ -970,4 +960,13 @@ public class WebUtils {
         return requestContext.getFlowScope().contains("guaUserImage");
     }
 
+    /**
+     * Put delegated authentication provider dominant.
+     *
+     * @param context the context
+     * @param client  the client
+     */
+    public static void putDelegatedAuthenticationProviderDominant(final RequestContext context, final Object client) {
+        context.getFlowScope().put("delegatedAuthenticationProviderDominant", client);
+    }
 }

@@ -13,7 +13,6 @@ import lombok.Setter;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-hazelcast-core")
-
 @Getter
 @Setter
 public class HazelcastAzureDiscoveryProperties implements Serializable {

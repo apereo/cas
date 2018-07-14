@@ -14,7 +14,6 @@ import java.io.Serializable;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-sms-textmagic")
-
 @Getter
 @Setter
 public class TextMagicProperties implements Serializable {

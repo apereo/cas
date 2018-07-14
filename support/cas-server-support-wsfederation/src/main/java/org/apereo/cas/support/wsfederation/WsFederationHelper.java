@@ -231,39 +231,40 @@ public class WsFederationHelper {
     /**
      * validateSignature checks to see if the signature on an assertion is valid.
      *
-     * @param assertion a provided assertion
+     * @param resultPair a provided assertion
      * @return true if the assertion's signature is valid, otherwise false
      */
-    public boolean validateSignature(final Pair<Assertion, WsFederationConfiguration> assertion) {
-        if (assertion == null) {
+    public boolean validateSignature(final Pair<Assertion, WsFederationConfiguration> resultPair) {
+        if (resultPair == null) {
             LOGGER.warn("No assertion or its configuration was provided to validate signatures");
             return false;
         }
-        val value = assertion.getValue();
-        val key = assertion.getKey();
-        if (key == null || value == null) {
+        val configuration = resultPair.getValue();
+        val assertion = resultPair.getKey();
+
+        if (assertion == null || configuration == null) {
             LOGGER.warn("No signature or configuration was provided to validate signatures");
             return false;
         }
-
-        val signature = key.getSignature();
-        SamlUtils.logSamlObject(this.configBean, assertion.getKey());
-        if (signature != null) {
+        val signature = assertion.getSignature();
+        if (signature == null) {
+            LOGGER.warn("No signature is attached to the assertion to validate");
             return false;
         }
 
-        val validator = new SAMLSignatureProfileValidator();
         try {
-            LOGGER.debug("Validating signature...");
+            LOGGER.debug("Validating the signature...");
+            val validator = new SAMLSignatureProfileValidator();
             validator.validate(signature);
+
             val criteriaSet = new CriteriaSet();
             criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
             criteriaSet.add(new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME));
             criteriaSet.add(new ProtocolCriterion(SAMLConstants.SAML20P_NS));
-            criteriaSet.add(new EntityIdCriterion(value.getIdentityProviderIdentifier()));
+            criteriaSet.add(new EntityIdCriterion(configuration.getIdentityProviderIdentifier()));
             try {
-                val engine = buildSignatureTrustEngine(value);
-                LOGGER.debug("Validating signature via trust engine for [{}]", value.getIdentityProviderIdentifier());
+                val engine = buildSignatureTrustEngine(configuration);
+                LOGGER.debug("Validating signature via trust engine for [{}]", configuration.getIdentityProviderIdentifier());
                 return engine.validate(signature, criteriaSet);
             } catch (final SecurityException e) {
                 LOGGER.warn(e.getMessage(), e);
@@ -272,7 +273,9 @@ public class WsFederationHelper {
             LOGGER.error("Failed to validate assertion signature", e);
         }
 
-        LOGGER.error("Signature doesn't match any signing credential.");
+        SamlUtils.logSamlObject(this.configBean, assertion);
+
+        LOGGER.error("Signature doesn't match any signing credential and cannot be validated.");
         return false;
     }
 
@@ -289,11 +292,11 @@ public class WsFederationHelper {
             val registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             if (RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.isAssignedTo(registeredService)) {
-                LOGGER.debug("Determined relying party identifier from [{}] to be [{}]", service, relyingPartyIdentifier);
+                LOGGER.debug("Determined relying party identifier from service [{}] to be [{}]", service, relyingPartyIdentifier);
                 return RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.getPropertyValue(registeredService).getValue();
             }
         }
-        LOGGER.debug("Determined relying party identifier for [{}] to be [{}]", service, relyingPartyIdentifier);
+        LOGGER.debug("Determined relying party identifier to be [{}]", relyingPartyIdentifier);
         return relyingPartyIdentifier;
     }
 
@@ -306,6 +309,9 @@ public class WsFederationHelper {
     @SneakyThrows
     private static SignatureTrustEngine buildSignatureTrustEngine(final WsFederationConfiguration wsFederationConfiguration) {
         val signingWallet = wsFederationConfiguration.getSigningWallet();
+        LOGGER.debug("Building signature trust engine based on the following signing certificates:");
+        signingWallet.forEach(c -> LOGGER.debug("Credential entity id [{}] with public key [{}]", c.getEntityId(), c.getPublicKey()));
+
         val resolver = new StaticCredentialResolver(signingWallet);
         val keyResolver = new StaticKeyInfoCredentialResolver(signingWallet);
         return new ExplicitKeySignatureTrustEngine(resolver, keyResolver);

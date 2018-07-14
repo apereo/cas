@@ -6,7 +6,9 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisNode;
+import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -60,10 +62,23 @@ public class RedisObjectFactory {
             ? redisPoolConfig(redis)
             : LettucePoolingClientConfiguration.defaultConfiguration();
 
-        val factory = new LettuceConnectionFactory(potentiallyGetSentinelConfig(redis), poolConfig);
+        val sentinelConfiguration = redis.getSentinel() == null
+            ? null
+            : potentiallyGetSentinelConfig(redis);
+
+        val standaloneConfig = new RedisStandaloneConfiguration(redis.getHost(), redis.getPort());
+        standaloneConfig.setDatabase(redis.getDatabase());
+        if (StringUtils.hasText(redis.getPassword())) {
+            standaloneConfig.setPassword(RedisPassword.of(redis.getPassword()));
+        }
+
+        val factory = sentinelConfiguration != null
+            ? new LettuceConnectionFactory(sentinelConfiguration, poolConfig)
+            : new LettuceConnectionFactory(standaloneConfig);
+
         factory.setHostName(redis.getHost());
         factory.setPort(redis.getPort());
-        if (redis.getPassword() != null) {
+        if (StringUtils.hasText(redis.getPassword())) {
             factory.setPassword(redis.getPassword());
         }
         factory.setDatabase(redis.getDatabase());
@@ -104,9 +119,6 @@ public class RedisObjectFactory {
     }
 
     private RedisSentinelConfiguration potentiallyGetSentinelConfig(final BaseRedisProperties redis) {
-        if (redis.getSentinel() == null) {
-            return null;
-        }
         val sentinelConfig = new RedisSentinelConfiguration().master(redis.getSentinel().getMaster());
         sentinelConfig.setSentinels(createRedisNodesForProperties(redis));
 

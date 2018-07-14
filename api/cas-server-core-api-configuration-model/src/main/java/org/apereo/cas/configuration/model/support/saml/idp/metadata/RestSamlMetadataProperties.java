@@ -12,7 +12,6 @@ import org.apereo.cas.configuration.support.RestEndpointProperties;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-saml-idp-metadata-rest")
-
 @Getter
 @Setter
 public class RestSamlMetadataProperties extends RestEndpointProperties {
