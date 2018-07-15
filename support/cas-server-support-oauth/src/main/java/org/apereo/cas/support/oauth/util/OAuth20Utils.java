@@ -89,7 +89,7 @@ public class OAuth20Utils {
      *
      * @param servicesManager the services manager
      * @param redirectUri     the redirect uri
-     * @return the registered o auth service by redirect uri
+     * @return the registered OAuth service by redirect uri
      */
     public static OAuthRegisteredService getRegisteredOAuthServiceByRedirectUri(final ServicesManager servicesManager, final String redirectUri) {
         return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.matches(redirectUri));

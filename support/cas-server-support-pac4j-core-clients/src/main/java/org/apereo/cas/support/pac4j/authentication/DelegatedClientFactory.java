@@ -387,7 +387,7 @@ public class DelegatedClientFactory {
     }
 
     /**
-     * Configure o auth 20 client.
+     * Configure OAuth client.
      *
      * @param properties the properties
      */

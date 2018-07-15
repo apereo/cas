@@ -80,10 +80,10 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     }
 
     /**
-     * Generate access token o auth device code response type o auth 20 token generated result.
+     * Generate access token OAuth device code response type OAuth token generated result.
      *
      * @param holder the holder
-     * @return the o auth 20 token generated result
+     * @return the OAuth token generated result
      */
     protected OAuth20TokenGeneratedResult generateAccessTokenOAuthDeviceCodeResponseType(final AccessTokenRequestDataHolder holder) {
         val deviceCode = holder.getDeviceCode();
@@ -137,7 +137,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     }
 
     /**
-     * Generate access token o auth grant types pair.
+     * Generate access token OAuth grant types pair.
      *
      * @param holder the holder
      * @return the pair
@@ -170,7 +170,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     }
 
     /**
-     * Update o auth code.
+     * Update OAuth code.
      *
      * @param holder the holder
      */
