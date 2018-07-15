@@ -20,6 +20,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -65,14 +66,14 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
     @PostMapping(value = {'/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.TOKEN_URL})
     @Override
-    public void handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        super.handleRequest(request, response);
+    public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return super.handleRequest(request, response);
     }
 
     @GetMapping(value = {'/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.TOKEN_URL})
     @Override
-    public void handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        super.handleRequest(request, response);
+    public ModelAndView handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return super.handleRequest(request, response);
     }
 }

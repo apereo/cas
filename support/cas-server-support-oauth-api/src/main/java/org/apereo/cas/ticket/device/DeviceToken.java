@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.device;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketState;
 
 /**
  * This is {@link DeviceToken}.
@@ -11,18 +12,11 @@ import org.apereo.cas.ticket.Ticket;
  * @since 6.0.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface DeviceToken extends Ticket {
+public interface DeviceToken extends Ticket, TicketState {
     /**
      * Prefix generally applied to unique ids.
      */
-    String PREFIX = "OT";
-
-    /**
-     * Gets device code.
-     *
-     * @return the device code
-     */
-    String getDeviceCode();
+    String PREFIX = "ODT";
 
     /**
      * Gets user code.

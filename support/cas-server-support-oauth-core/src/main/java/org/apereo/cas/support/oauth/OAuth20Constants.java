@@ -102,6 +102,15 @@ public interface OAuth20Constants {
     /** The invalid grant. */
     String INVALID_GRANT = "invalid_grant";
 
+    /** Access denied error. */
+    String ACCESS_DENIED = "access_denied";
+
+    /** Authz pending error. */
+    String AUTHORIZATION_PENDING = "authorization_pending";
+
+    /** slow down error for when approval requests are too quick. */
+    String SLOW_DOWN = "slow_down";
+
     /** The authorize url. */
     String AUTHORIZE_URL = "authorize";
 
