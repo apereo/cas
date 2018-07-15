@@ -12,6 +12,8 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenImpl;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.code.OAuthCodeImpl;
+import org.apereo.cas.ticket.device.DeviceToken;
+import org.apereo.cas.ticket.device.DeviceTokenImpl;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,14 @@ public class OAuthProtocolTicketCatalogConfiguration extends BaseTicketCatalogCo
         buildAndRegisterOAuthCodeDefinition(plan, buildTicketDefinition(plan, OAuthCode.PREFIX, OAuthCodeImpl.class));
         buildAndRegisterAccessTokenDefinition(plan, buildTicketDefinition(plan, AccessToken.PREFIX, AccessTokenImpl.class));
         buildAndRegisterRefreshTokenDefinition(plan, buildTicketDefinition(plan, RefreshToken.PREFIX, RefreshTokenImpl.class));
+        buildAndRegisterDeviceTokenDefinition(plan, buildTicketDefinition(plan, DeviceToken.PREFIX, DeviceTokenImpl.class));
+    }
+
+    private void buildAndRegisterDeviceTokenDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
+        metadata.getProperties().setStorageName("oauthDeviceTokensCache");
+        val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getDeviceToken().getMaxTimeToLiveInSeconds()).getSeconds();
+        metadata.getProperties().setStorageTimeout(timeout);
+        registerTicketDefinition(plan, metadata);
     }
 
     protected void buildAndRegisterAccessTokenDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
