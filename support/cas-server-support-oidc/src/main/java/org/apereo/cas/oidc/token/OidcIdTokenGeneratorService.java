@@ -166,9 +166,9 @@ public class OidcIdTokenGeneratorService {
     }
 
     /**
-     * Gets o auth callback url.
+     * Gets OAuth callback url.
      *
-     * @return the o auth callback url
+     * @return the OAuth callback url
      */
     public String getOAuthCallbackUrl() {
         return casProperties.getServer().getPrefix()
