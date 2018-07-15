@@ -47,6 +47,7 @@ import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourc
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20CallbackAuthorizeEndpointController;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
@@ -152,7 +153,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -160,7 +161,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
 
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
@@ -232,13 +233,13 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @ConditionalOnMissingBean(name = "oAuthClientAuthenticator")
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthClientAuthenticator() {
-        return new OAuth20ClientAuthenticator(this.servicesManager, webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
+        return new OAuth20ClientAuthenticator(this.servicesManager.getIfAvailable(), webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
     }
 
     @ConditionalOnMissingBean(name = "oAuthUserAuthenticator")
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthUserAuthenticator() {
-        return new OAuth20UserAuthenticator(authenticationSystemSupport, servicesManager, webApplicationServiceFactory);
+        return new OAuth20UserAuthenticator(authenticationSystemSupport, servicesManager.getIfAvailable(), webApplicationServiceFactory);
     }
 
     @ConditionalOnMissingBean(name = "oauthAccessTokenResponseGenerator")
@@ -321,7 +322,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @ConditionalOnMissingBean(name = "callbackAuthorizeController")
     @RefreshScope
     public OAuth20CallbackAuthorizeEndpointController callbackAuthorizeController() {
-        return new OAuth20CallbackAuthorizeEndpointController(servicesManager, ticketRegistry,
+        return new OAuth20CallbackAuthorizeEndpointController(servicesManager.getIfAvailable(),
+            ticketRegistry.getIfAvailable(),
             defaultAccessTokenFactory(),
             oauthPrincipalFactory(),
             webApplicationServiceFactory,
@@ -339,34 +341,34 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         return new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory(),
             defaultDeviceTokenFactory(),
             defaultRefreshTokenFactory(),
-            ticketRegistry,
+            ticketRegistry.getIfAvailable(),
             casProperties);
     }
 
     @Bean
     public Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors() {
         final AccessTokenGrantRequestExtractor authzCodeExt =
-            new AccessTokenAuthorizationCodeGrantRequestExtractor(servicesManager, ticketRegistry,
+            new AccessTokenAuthorizationCodeGrantRequestExtractor(this.servicesManager.getIfAvailable(), this.ticketRegistry.getIfAvailable(),
                 centralAuthenticationService, casProperties.getAuthn().getOauth(),
                 webApplicationServiceFactory);
 
         final AccessTokenGrantRequestExtractor refreshTokenExt =
-            new AccessTokenRefreshTokenGrantRequestExtractor(servicesManager, ticketRegistry,
+            new AccessTokenRefreshTokenGrantRequestExtractor(this.servicesManager.getIfAvailable(), this.ticketRegistry.getIfAvailable(),
                 centralAuthenticationService, casProperties.getAuthn().getOauth(),
                 webApplicationServiceFactory);
 
         final AccessTokenGrantRequestExtractor pswExt =
-            new AccessTokenPasswordGrantRequestExtractor(servicesManager, ticketRegistry,
+            new AccessTokenPasswordGrantRequestExtractor(this.servicesManager.getIfAvailable(), this.ticketRegistry.getIfAvailable(),
                 oauthCasAuthenticationBuilder(), centralAuthenticationService,
                 casProperties.getAuthn().getOauth(), registeredServiceAccessStrategyEnforcer);
 
         final AccessTokenGrantRequestExtractor credsExt =
-            new AccessTokenClientCredentialsGrantRequestExtractor(servicesManager, ticketRegistry,
+            new AccessTokenClientCredentialsGrantRequestExtractor(this.servicesManager.getIfAvailable(), this.ticketRegistry.getIfAvailable(),
                 oauthCasAuthenticationBuilder(), centralAuthenticationService,
                 casProperties.getAuthn().getOauth(), registeredServiceAccessStrategyEnforcer);
 
         final AccessTokenGrantRequestExtractor deviceCodeExt =
-            new AccessTokenDeviceCodeResponseRequestExtractor(servicesManager, ticketRegistry,
+            new AccessTokenDeviceCodeResponseRequestExtractor(this.servicesManager.getIfAvailable(), this.ticketRegistry.getIfAvailable(),
                 centralAuthenticationService, casProperties.getAuthn().getOauth(),
                 oauthCasAuthenticationBuilder(), registeredServiceAccessStrategyEnforcer);
 
@@ -377,8 +379,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @Bean
     public OAuth20IntrospectionEndpointController introspectionEndpointController() {
         return new OAuth20IntrospectionEndpointController(
-            servicesManager,
-            ticketRegistry,
+            servicesManager.getIfAvailable(),
+            ticketRegistry.getIfAvailable(),
             defaultAccessTokenFactory(),
             oauthPrincipalFactory(),
             webApplicationServiceFactory,
@@ -394,8 +396,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @Bean
     public OAuth20AccessTokenEndpointController accessTokenController() {
         return new OAuth20AccessTokenEndpointController(
-            servicesManager,
-            ticketRegistry,
+            servicesManager.getIfAvailable(),
+            ticketRegistry.getIfAvailable(),
             defaultAccessTokenFactory(),
             oauthPrincipalFactory(),
             webApplicationServiceFactory,
@@ -410,6 +412,21 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         );
     }
 
+    @ConditionalOnMissingBean(name = "deviceUserCodeApprovalEndpointController")
+    @Bean
+    public OAuth20DeviceUserCodeApprovalEndpointController deviceUserCodeApprovalEndpointController() {
+        return new OAuth20DeviceUserCodeApprovalEndpointController(
+            servicesManager.getIfAvailable(),
+            ticketRegistry.getIfAvailable(),
+            defaultAccessTokenFactory(),
+            oauthPrincipalFactory(),
+            webApplicationServiceFactory,
+            profileScopeToAttributesFilter(),
+            casProperties,
+            ticketGrantingTicketCookieGenerator.getIfAvailable()
+        );
+    }
+
     @ConditionalOnMissingBean(name = "oauthUserProfileViewRenderer")
     @Bean
     @RefreshScope
@@ -420,14 +437,15 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @ConditionalOnMissingBean(name = "oAuth2UserProfileDataCreator")
     @Bean
     public OAuth20UserProfileDataCreator oAuth2UserProfileDataCreator() {
-        return new DefaultOAuth20UserProfileDataCreator(servicesManager, profileScopeToAttributesFilter());
+        return new DefaultOAuth20UserProfileDataCreator(servicesManager.getIfAvailable(), profileScopeToAttributesFilter());
     }
 
     @ConditionalOnMissingBean(name = "profileController")
     @Bean
     public OAuth20UserProfileEndpointController profileController() {
-        return new OAuth20UserProfileEndpointController(servicesManager,
-            ticketRegistry,
+        return new OAuth20UserProfileEndpointController(
+            servicesManager.getIfAvailable(),
+            ticketRegistry.getIfAvailable(),
             defaultAccessTokenFactory(),
             oauthPrincipalFactory(),
             webApplicationServiceFactory,
@@ -461,11 +479,12 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @RefreshScope
     public Collection<OAuth20TokenRequestValidator> oauthTokenRequestValidators() {
         val validators = new ArrayList<OAuth20TokenRequestValidator>();
-        validators.add(new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(servicesManager, ticketRegistry, registeredServiceAccessStrategyEnforcer));
-        validators.add(new OAuth20DeviceCodeResponseTypeRequestValidator(servicesManager, ticketRegistry));
-        validators.add(new OAuth20RefreshTokenGrantTypeTokenRequestValidator(registeredServiceAccessStrategyEnforcer, ticketRegistry));
-        validators.add(new OAuth20PasswordGrantTypeTokenRequestValidator(registeredServiceAccessStrategyEnforcer, servicesManager, webApplicationServiceFactory));
-        validators.add(new OAuth20ClientCredentialsGrantTypeTokenRequestValidator(servicesManager, registeredServiceAccessStrategyEnforcer, webApplicationServiceFactory));
+        validators.add(new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(servicesManager.getIfAvailable(),
+            ticketRegistry.getIfAvailable(), registeredServiceAccessStrategyEnforcer));
+        validators.add(new OAuth20DeviceCodeResponseTypeRequestValidator(servicesManager.getIfAvailable(), ticketRegistry.getIfAvailable()));
+        validators.add(new OAuth20RefreshTokenGrantTypeTokenRequestValidator(registeredServiceAccessStrategyEnforcer, ticketRegistry.getIfAvailable()));
+        validators.add(new OAuth20PasswordGrantTypeTokenRequestValidator(registeredServiceAccessStrategyEnforcer, servicesManager.getIfAvailable(), webApplicationServiceFactory));
+        validators.add(new OAuth20ClientCredentialsGrantTypeTokenRequestValidator(servicesManager.getIfAvailable(), registeredServiceAccessStrategyEnforcer, webApplicationServiceFactory));
         return validators;
     }
 
@@ -473,7 +492,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @Bean
     @RefreshScope
     public OAuth20AuthorizationRequestValidator oauthClientCredentialsGrantTypeRequestValidator() {
-        return new OAuth20ClientCredentialsGrantTypeAuthorizationRequestValidator(servicesManager,
+        return new OAuth20ClientCredentialsGrantTypeAuthorizationRequestValidator(servicesManager.getIfAvailable(),
             webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
     }
 
@@ -481,7 +500,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @Bean
     @RefreshScope
     public OAuth20AuthorizationRequestValidator oauthAuthorizationCodeResponseTypeRequestValidator() {
-        return new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(servicesManager,
+        return new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(servicesManager.getIfAvailable(),
             webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
     }
 
@@ -489,7 +508,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @Bean
     @RefreshScope
     public OAuth20AuthorizationRequestValidator oauthTokenResponseTypeRequestValidator() {
-        return new OAuth20TokenResponseTypeAuthorizationRequestValidator(servicesManager,
+        return new OAuth20TokenResponseTypeAuthorizationRequestValidator(servicesManager.getIfAvailable(),
             webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
     }
 
@@ -497,7 +516,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @Bean
     @RefreshScope
     public OAuth20AuthorizationRequestValidator oauthIdTokenResponseTypeRequestValidator() {
-        return new OAuth20IdTokenResponseTypeAuthorizationRequestValidator(servicesManager,
+        return new OAuth20IdTokenResponseTypeAuthorizationRequestValidator(servicesManager.getIfAvailable(),
             webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
     }
 
@@ -505,7 +524,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @Bean
     @RefreshScope
     public OAuth20AuthorizationRequestValidator oauthPasswordGrantTypeRequestValidator() {
-        return new OAuth20PasswordGrantTypeAuthorizationRequestValidator(servicesManager,
+        return new OAuth20PasswordGrantTypeAuthorizationRequestValidator(servicesManager.getIfAvailable(),
             webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
     }
 
@@ -513,7 +532,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @Bean
     @RefreshScope
     public OAuth20AuthorizationRequestValidator oauthRefreshTokenGrantTypeRequestValidator() {
-        return new OAuth20RefreshTokenGrantTypeAuthorizationRequestValidator(servicesManager,
+        return new OAuth20RefreshTokenGrantTypeAuthorizationRequestValidator(servicesManager.getIfAvailable(),
             webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
     }
 
@@ -544,7 +563,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @Bean
     @RefreshScope
     public OAuth20AuthorizationResponseBuilder oauthAuthorizationCodeResponseBuilder() {
-        return new OAuth20AuthorizationCodeAuthorizationResponseBuilder(ticketRegistry, defaultOAuthCodeFactory());
+        return new OAuth20AuthorizationCodeAuthorizationResponseBuilder(ticketRegistry.getIfAvailable(), defaultOAuthCodeFactory());
     }
 
     @ConditionalOnMissingBean(name = "authorizeController")
@@ -552,8 +571,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @RefreshScope
     public OAuth20AuthorizeEndpointController authorizeController() {
         return new OAuth20AuthorizeEndpointController(
-            servicesManager,
-            ticketRegistry,
+            servicesManager.getIfAvailable(),
+            ticketRegistry.getIfAvailable(),
             defaultAccessTokenFactory(),
             oauthPrincipalFactory(),
             webApplicationServiceFactory,

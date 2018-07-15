@@ -93,6 +93,12 @@ public interface OAuth20Constants {
     /** The confirm view. */
     String CONFIRM_VIEW = "oauthConfirmView";
 
+    /** The device code approval view. */
+    String DEVICE_CODE_APPROVAL_VIEW = "oauthDeviceCodeApprovalView";
+
+    /** The device code approved view. */
+    String DEVICE_CODE_APPROVED_VIEW = "oauthDeviceCodeApprovedView";
+
     /** The error view. */
     String ERROR_VIEW = "casServiceErrorView";
 
