@@ -42,6 +42,10 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
             return requiresAuthenticationAccessTokenInterceptor.preHandle(request, response, handler);
         }
 
+        if (isDeviceTokenRequest(request, response)) {
+            return requiresAuthenticationAuthorizeInterceptor.preHandle(request, response, handler);
+        }
+        
         if (isAuthorizationRequest(request, response)) {
             return requiresAuthenticationAuthorizeInterceptor.preHandle(request, response, handler);
         }
@@ -58,6 +62,19 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
     protected boolean isAccessTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val requestPath = request.getRequestURI();
         val pattern = String.format("(%s|%s)", OAuth20Constants.ACCESS_TOKEN_URL, OAuth20Constants.TOKEN_URL);
+        return doesUriMatchPattern(requestPath, pattern);
+    }
+
+    /**
+     * Is device token request boolean.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the boolean
+     */
+    protected boolean isDeviceTokenRequest(final HttpServletRequest request, final HttpServletResponse response) {
+        val requestPath = request.getRequestURI();
+        val pattern = String.format("(%s)", OAuth20Constants.DEVICE_AUTHZ_URL);
         return doesUriMatchPattern(requestPath, pattern);
     }
 

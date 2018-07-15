@@ -56,8 +56,7 @@ public class CasCoreHttpConfiguration {
 
         val client = casProperties.getHttpClient().getTruststore();
         if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
-            val ctx =
-                new DefaultCasSslContext(client.getFile(), client.getPsw(), KeyStore.getDefaultType());
+            val ctx = new DefaultCasSslContext(client.getFile(), client.getPsw(), KeyStore.getDefaultType());
             return ctx.getSslContext();
         }
         return SSLContexts.createSystemDefault();
@@ -76,13 +75,13 @@ public class CasCoreHttpConfiguration {
 
     @ConditionalOnMissingBean(name = "noRedirectHttpClient")
     @Bean
-    public HttpClient noRedirectHttpClient() throws Exception {
+    public HttpClient noRedirectHttpClient() {
         return getHttpClient(false);
     }
 
     @ConditionalOnMissingBean(name = "supportsTrustStoreSslSocketFactoryHttpClient")
     @Bean
-    public HttpClient supportsTrustStoreSslSocketFactoryHttpClient() throws Exception {
+    public HttpClient supportsTrustStoreSslSocketFactoryHttpClient() {
         return getHttpClient(true);
     }
 
