@@ -121,7 +121,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         val selectedService = resolveServiceFromAuthenticationRequest(service);
         val registeredService = this.servicesManager.findServiceBy(selectedService);
 
-        val audit = AuditableContext.builder().service(selectedService)
+        val audit = AuditableContext.builder()
+            .service(selectedService)
             .ticketGrantingTicket(ticketGrantingTicket)
             .registeredService(registeredService)
             .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)

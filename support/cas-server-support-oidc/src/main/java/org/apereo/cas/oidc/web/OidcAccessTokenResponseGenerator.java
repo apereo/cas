@@ -1,6 +1,5 @@
 package org.apereo.cas.oidc.web;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -16,6 +15,7 @@ import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * This is {@link OidcAccessTokenResponseGenerator}.
@@ -29,23 +29,15 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
     private final OidcIdTokenGeneratorService idTokenGenerator;
 
     @Override
-    protected void generateJsonInternal(final HttpServletRequest request,
-                                        final HttpServletResponse response,
-                                        final JsonGenerator jsonGenerator,
-                                        final AccessToken accessTokenId,
-                                        final RefreshToken refreshTokenId,
-                                        final long timeout,
-                                        final Service service,
-                                        final OAuthRegisteredService registeredService,
-                                        final OAuth20ResponseTypes responseType) throws Exception {
-
-        super.generateJsonInternal(request, response, jsonGenerator, accessTokenId,
-            refreshTokenId, timeout, service, registeredService, responseType);
+    protected Map getAccessTokenResponseModel(final HttpServletRequest request, final HttpServletResponse response, final AccessToken accessTokenId,
+                                              final RefreshToken refreshTokenId, final long timeout, final Service service,
+                                              final OAuthRegisteredService registeredService, final OAuth20ResponseTypes responseType) throws Exception {
+        val model = super.getAccessTokenResponseModel(request, response, accessTokenId, refreshTokenId, timeout, service, registeredService, responseType);
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
         val idToken = this.idTokenGenerator.generate(request, response, accessTokenId,
             timeout, responseType, oidcRegisteredService);
-        jsonGenerator.writeStringField(OidcConstants.ID_TOKEN, idToken);
+        model.put(OidcConstants.ID_TOKEN, idToken);
+        return model;
     }
-
 }
 

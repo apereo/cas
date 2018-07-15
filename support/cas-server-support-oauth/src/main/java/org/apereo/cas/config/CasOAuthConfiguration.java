@@ -339,7 +339,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         return new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory(),
             defaultDeviceTokenFactory(),
             defaultRefreshTokenFactory(),
-            ticketRegistry);
+            ticketRegistry,
+            casProperties);
     }
 
     @Bean

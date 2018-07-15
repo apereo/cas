@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,13 +29,14 @@ public interface AccessTokenResponseGenerator {
      * @param timeout           the timeout
      * @param responseType      the response type
      * @param casProperties     the cas properties
+     * @return the model and view
      */
-    void generate(HttpServletRequest request,
-                  HttpServletResponse response,
-                  OAuthRegisteredService registeredService,
-                  Service service,
-                  OAuth20TokenGeneratedResult result,
-                  long timeout,
-                  OAuth20ResponseTypes responseType,
-                  CasConfigurationProperties casProperties);
+    ModelAndView generate(HttpServletRequest request,
+                          HttpServletResponse response,
+                          OAuthRegisteredService registeredService,
+                          Service service,
+                          OAuth20TokenGeneratedResult result,
+                          long timeout,
+                          OAuth20ResponseTypes responseType,
+                          CasConfigurationProperties casProperties);
 }

@@ -24,17 +24,15 @@ import javax.persistence.Entity;
 public class DeviceTokenImpl extends AbstractTicket implements DeviceToken {
     private static final long serialVersionUID = 2339545346159721563L;
 
-    private final String deviceCode;
     private final String userCode;
     private final Service service;
 
     private boolean userCodeApproved;
 
     public DeviceTokenImpl(final String id, final Service service,
-                           final String deviceCode, final String userCode,
+                           final String userCode,
                            final ExpirationPolicy expirationPolicy) {
         super(id, expirationPolicy);
-        this.deviceCode = deviceCode;
         this.userCode = userCode;
         this.service = service;
     }

@@ -6,11 +6,15 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
+import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
+import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
-import org.apereo.cas.ticket.InvalidTicketException;
-import org.apereo.cas.ticket.OAuthToken;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
@@ -22,6 +26,9 @@ import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.function.FunctionUtils;
+
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 /**
  * This is {@link OAuth20DefaultTokenGenerator}.
@@ -52,6 +59,11 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      */
     protected final TicketRegistry ticketRegistry;
 
+    /**
+     * Cas configuration settings.
+     */
+    protected final CasConfigurationProperties casProperties;
+
     @Override
     public OAuth20TokenGeneratedResult generate(final AccessTokenRequestDataHolder holder) {
         if (OAuth20ResponseTypes.DEVICE_CODE.equals(holder.getResponseType())) {
@@ -79,16 +91,16 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         if (StringUtils.isNotBlank(deviceCode)) {
             val deviceCodeTicket = this.ticketRegistry.getTicket(deviceCode, DeviceToken.class);
             if (deviceCodeTicket == null) {
-                LOGGER.error("Provided device code [{}] is invalid or expired and cannot be found in the ticket registry");
-                throw new InvalidTicketException(deviceCode);
+                LOGGER.error("Provided device code [{}] is invalid or expired and cannot be found in the ticket registry", deviceCode);
+                throw new InvalidOAuth20DeviceTokenException(deviceCode);
             }
             if (deviceCodeTicket.isExpired()) {
                 this.ticketRegistry.deleteTicket(deviceCode);
-                LOGGER.error("Provided device code [{}] has expired and will be removed from the ticket registry");
-                throw new InvalidTicketException(deviceCode);
+                LOGGER.error("Provided device code [{}] has expired and will be removed from the ticket registry", deviceCode);
+                throw new InvalidOAuth20DeviceTokenException(deviceCode);
             }
             if (deviceCodeTicket.isUserCodeApproved()) {
-                LOGGER.error("Provided user code [{}] linked to device code [{}] is approved", deviceCodeTicket.getUserCode(), deviceCode);
+                LOGGER.debug("Provided user code [{}] linked to device code [{}] is approved", deviceCodeTicket.getUserCode(), deviceCode);
                 this.ticketRegistry.deleteTicket(deviceCode);
                 return OAuth20TokenGeneratedResult.builder()
                     .responseType(holder.getResponseType())
@@ -96,13 +108,30 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
                     .deviceCode(deviceCode)
                     .build();
             }
+
+            if (deviceCodeTicket.getLastTimeUsed() != null) {
+                val interval = Beans.newDuration(casProperties.getAuthn().getOauth().getDeviceToken().getRefreshInterval()).getSeconds();
+                val shouldSlowDown = deviceCodeTicket.getLastTimeUsed().plusSeconds(interval).isAfter(ZonedDateTime.now(ZoneOffset.UTC));
+                if (shouldSlowDown) {
+                    LOGGER.error("Request for user code approval is greater than the configured refresh interval of [{}] second(s)", interval);
+                    throw new ThrottledOAuth20DeviceUserCodeApprovalException(deviceCodeTicket.getUserCode());
+                }
+            }
+            deviceCodeTicket.update();
+            this.ticketRegistry.updateTicket(deviceCodeTicket);
+            LOGGER.error("Provided user code [{}] linked to device code [{}] is NOT approved yet", deviceCodeTicket.getUserCode(), deviceCode);
+            throw new UnapprovedOAuth20DeviceUserCodeException(deviceCodeTicket.getUserCode());
         }
 
         val deviceToken = deviceTokenFactory.create(holder.getService());
+        LOGGER.debug("Created device code token [{}]", deviceToken.getId());
+        addTicketToRegistry(deviceToken);
+        LOGGER.debug("Added device token [{}] to registry", deviceToken);
+
         return OAuth20TokenGeneratedResult.builder()
             .responseType(holder.getResponseType())
             .registeredService(holder.getRegisteredService())
-            .deviceCode(deviceToken.getDeviceCode())
+            .deviceCode(deviceToken.getId())
             .userCode(deviceToken.getUserCode())
             .build();
     }
@@ -165,13 +194,22 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      * @param ticket               the ticket
      * @param ticketGrantingTicket the ticket granting ticket
      */
-    protected void addTicketToRegistry(final OAuthToken ticket, final TicketGrantingTicket ticketGrantingTicket) {
-        LOGGER.debug("Adding OAuth ticket [{}] to registry", ticket);
+    protected void addTicketToRegistry(final Ticket ticket, final TicketGrantingTicket ticketGrantingTicket) {
+        LOGGER.debug("Adding ticket [{}] to registry", ticket);
         this.ticketRegistry.addTicket(ticket);
         if (ticketGrantingTicket != null) {
-            LOGGER.debug("Updating ticket-granting ticket [{}]", ticketGrantingTicket);
+            LOGGER.debug("Updating parent ticket-granting ticket [{}]", ticketGrantingTicket);
             this.ticketRegistry.updateTicket(ticketGrantingTicket);
         }
+    }
+
+    /**
+     * Add ticket to registry.
+     *
+     * @param ticket the ticket
+     */
+    protected void addTicketToRegistry(final Ticket ticket) {
+        addTicketToRegistry(ticket, null);
     }
 
     /**
