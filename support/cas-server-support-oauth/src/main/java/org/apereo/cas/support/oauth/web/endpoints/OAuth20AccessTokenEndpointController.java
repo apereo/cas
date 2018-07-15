@@ -118,7 +118,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             LOGGER.error("Could not identify and extract device token request for device token [{}]", e.getTicketId());
             return OAuth20Utils.writeError(OAuth20Constants.ACCESS_DENIED);
         } catch (final UnapprovedOAuth20DeviceUserCodeException e) {
-            LOGGER.error("User code [{}] not yet approved for the device token request", e.getTicketId());
+            LOGGER.error("User code [{}] is not yet approved for the device token request", e.getTicketId());
             return OAuth20Utils.writeError(OAuth20Constants.AUTHORIZATION_PENDING);
         } catch (final ThrottledOAuth20DeviceUserCodeApprovalException e) {
             LOGGER.error("Check for device user code approval is too quick and is throttled. Requests must slow down");
