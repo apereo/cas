@@ -91,10 +91,10 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     }
 
     /**
-     * Gets o auth parameter.
+     * Gets OAuth parameter.
      *
      * @param request the request
-     * @return the o auth parameter
+     * @return the OAuth parameter
      */
     protected String getOAuthParameter(final HttpServletRequest request) {
         return request.getParameter(getOAuthParameterName());
