@@ -55,6 +55,11 @@ public class OAuthProperties implements Serializable {
     private OAuthRefreshTokenProperties refreshToken = new OAuthRefreshTokenProperties();
 
     /**
+     * Settings related to oauth device tokens.
+     */
+    private OAuthDeviceTokenProperties deviceToken = new OAuthDeviceTokenProperties();
+
+    /**
      * User profile view type determines how the final user profile should be rendered
      * once an access token is "validated". 
      */

@@ -106,7 +106,7 @@ allprojects {
             }
         }
     }
-
+    
     signArchives.enabled = rootProject.publishingRelease || rootProject.publishSnapshots
 
     /*

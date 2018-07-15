@@ -13,7 +13,7 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface ServiceTicket extends Ticket {
 
     /**
@@ -59,5 +59,5 @@ public interface ServiceTicket extends Ticket {
     ProxyGrantingTicket grantProxyGrantingTicket(String id,
                                                  Authentication authentication,
                                                  ExpirationPolicy expirationPolicy)
-                                                 throws AbstractTicketException;
+        throws AbstractTicketException;
 }

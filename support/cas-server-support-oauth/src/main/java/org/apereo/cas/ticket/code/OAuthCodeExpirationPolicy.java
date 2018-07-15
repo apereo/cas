@@ -11,7 +11,7 @@ import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS)
 @Slf4j
 public class OAuthCodeExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
     private static final long serialVersionUID = -8383186621682727360L;

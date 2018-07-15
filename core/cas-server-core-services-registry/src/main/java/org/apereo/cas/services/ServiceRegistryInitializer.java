@@ -4,6 +4,7 @@ import lombok.val;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -36,7 +37,8 @@ public class ServiceRegistryInitializer {
         val servicesLoaded = this.jsonServiceRegistry.load();
         LOGGER.debug("Loading JSON services are [{}]", servicesLoaded);
 
-        servicesLoaded.stream()
+        servicesLoaded
+            .stream()
             .filter(s -> !findExistingMatchForService(s))
             .forEach(r -> {
                 LOGGER.debug("Initializing service registry with the [{}] JSON service definition...", r);
@@ -48,19 +50,22 @@ public class ServiceRegistryInitializer {
     }
 
     private boolean findExistingMatchForService(final RegisteredService r) {
-        val match = this.serviceRegistry.findServiceById(r.getServiceId());
+        if (StringUtils.isNotBlank(r.getServiceId())) {
+            val match = this.serviceRegistry.findServiceById(r.getServiceId());
+            if (match != null) {
+                LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match.getName());
+                return true;
+            }
+            val match2 = this.serviceRegistry.findServiceByExactServiceId(r.getServiceId());
+            if (match2 != null) {
+                LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match2.getName());
+                return true;
+            }
+        }
+
+        val match = this.serviceRegistry.findServiceById(r.getId());
         if (match != null) {
-            LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match.getName());
-            return true;
-        }
-        val match2 = this.serviceRegistry.findServiceByExactServiceId(r.getServiceId());
-        if (match2 != null) {
-            LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match2.getName());
-            return true;
-        }
-        val match3 = this.serviceRegistry.findServiceById(r.getId());
-        if (match3 != null) {
-            LOGGER.warn("Skipping [{}] JSON service definition as a matching id [{}] is found in the registry", r.getName(), match3.getId());
+            LOGGER.warn("Skipping [{}] JSON service definition as a matching id [{}] is found in the registry", r.getName(), match.getId());
             return true;
         }
         return false;
