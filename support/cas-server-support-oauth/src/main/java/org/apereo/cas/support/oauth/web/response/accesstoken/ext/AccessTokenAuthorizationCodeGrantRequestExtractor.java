@@ -10,6 +10,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -132,6 +133,11 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     @Override
     public OAuth20GrantTypes getGrantType() {
         return OAuth20GrantTypes.AUTHORIZATION_CODE;
+    }
+
+    @Override
+    public OAuth20ResponseTypes getResponseType() {
+        return null;
     }
 
     /**

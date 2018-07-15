@@ -176,21 +176,43 @@ public class OidcIdTokenGeneratorService {
             + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
     }
 
-    private String generateAccessTokenHash(final AccessToken accessTokenId,
-                                           final OidcRegisteredService service) {
+    /**
+     * Generate access token hash string.
+     *
+     * @param accessTokenId the access token id
+     * @param service       the service
+     * @return the string
+     */
+    protected String generateAccessTokenHash(final AccessToken accessTokenId,
+                                             final OidcRegisteredService service) {
         val tokenBytes = accessTokenId.getId().getBytes(StandardCharsets.UTF_8);
-        val hashAlg = getSigningHashAlgorithm();
+        val hashAlg = getSigningHashAlgorithm(service);
         LOGGER.debug("Digesting access token hash via algorithm [{}]", hashAlg);
         val digested = DigestUtils.rawDigest(hashAlg, tokenBytes);
         val hashBytesLeftHalf = Arrays.copyOf(digested, digested.length / 2);
         return EncodingUtils.encodeUrlSafeBase64(hashBytesLeftHalf);
     }
 
-    private String getSigningHashAlgorithm() {
-        if (AlgorithmIdentifiers.RSA_USING_SHA512.equalsIgnoreCase(signingService.getJsonWebKeySigningAlgorithm())) {
+    /**
+     * Gets signing hash algorithm.
+     *
+     * @param service the service
+     * @return the signing hash algorithm
+     */
+    protected String getSigningHashAlgorithm(final OidcRegisteredService service) {
+        val alg = signingService.getJsonWebKeySigningAlgorithm(service);
+        LOGGER.debug("Signing algorithm specified by service [{}] is [{}]", service.getServiceId(), alg);
+
+        if (AlgorithmIdentifiers.RSA_USING_SHA512.equalsIgnoreCase(alg)) {
             return MessageDigestAlgorithms.SHA_512;
         }
-        return MessageDigestAlgorithms.SHA_256;
+        if (AlgorithmIdentifiers.RSA_USING_SHA384.equalsIgnoreCase(alg)) {
+            return MessageDigestAlgorithms.SHA_384;
+        }
+        if (AlgorithmIdentifiers.RSA_USING_SHA256.equalsIgnoreCase(alg)) {
+            return MessageDigestAlgorithms.SHA_256;
+        }
+        throw new IllegalArgumentException("Could not determine the hash algorithm for the id token issued to service " + service.getServiceId());
     }
 }
 

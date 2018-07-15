@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 
 /**
@@ -59,7 +61,7 @@ public interface ServiceRegistry {
     default RegisteredService findServiceByExactServiceId(final String id) {
         return load()
             .stream()
-            .filter(r -> r.getServiceId().equals(id))
+            .filter(r -> StringUtils.isNotBlank(r.getServiceId()) && r.getServiceId().equals(id))
             .findFirst()
             .orElse(null);
     }
