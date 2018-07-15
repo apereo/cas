@@ -20,7 +20,6 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultDeviceTokenFactory implements DeviceTokenFactory {
-    private static final int DEVICE_CODE_LENGTH = 24;
     private static final int USER_CODE_LENGTH = 6;
 
     /**
@@ -40,9 +39,8 @@ public class DefaultDeviceTokenFactory implements DeviceTokenFactory {
     @Override
     public DeviceToken create(final Service service) {
         val codeId = this.deviceTokenIdGenerator.getNewTicketId(DeviceToken.PREFIX);
-        val deviceCode = RandomStringUtils.randomAlphanumeric(DEVICE_CODE_LENGTH);
         val userCode = RandomStringUtils.randomAlphanumeric(USER_CODE_LENGTH).toUpperCase();
-        return new DeviceTokenImpl(codeId, service, deviceCode, userCode, expirationPolicy);
+        return new DeviceTokenImpl(codeId, service, userCode, expirationPolicy);
     }
 
     @Override
