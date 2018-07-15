@@ -1,12 +1,11 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessTokenGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.web.support.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.web.support.AuthenticationThrottlingExecutionPlanConfigurer;
 import org.pac4j.core.config.Config;
@@ -49,7 +48,7 @@ public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingEx
         @Override
         public void addInterceptors(final InterceptorRegistry registry) {
             authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors().forEach(handler ->
-                    registry.addInterceptor(handler).addPathPatterns(BASE_OAUTH20_URL.concat("/").concat("*")));
+                registry.addInterceptor(handler).addPathPatterns(BASE_OAUTH20_URL.concat("/").concat("*")));
         }
     }
 
@@ -59,7 +58,7 @@ public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingEx
 
     @Autowired
     @Qualifier("accessTokenGrantRequestExtractors")
-    private Collection<BaseAccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
+    private Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
 
     @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
     @Bean

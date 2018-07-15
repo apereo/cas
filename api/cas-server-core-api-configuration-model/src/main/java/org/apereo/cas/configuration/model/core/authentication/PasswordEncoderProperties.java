@@ -23,22 +23,27 @@ public class PasswordEncoderProperties implements Serializable {
         /**
          * No password encoding will take place.
          */
-        NONE, /**
+        NONE,
+        /**
          * Uses an encoding algorithm and a char encoding algorithm.
          */
-        DEFAULT, /**
-         * Uses {@link org.springframework.security.crypto.password.StandardPasswordEncoder}.
+        DEFAULT,
+        /**
+         * Uses Spring Security's {@code StandardPasswordEncoder}.
          * A standard {@code PasswordEncoder} implementation that uses SHA-256 hashing with 1024
          * iterations and a random 8-byte random salt value.
          */
-        STANDARD, /**
-         * Uses {@link org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder}.
+        STANDARD,
+        /**
+         * Uses Spring Security's {@code BCryptPasswordEncoder}.
          */
-        BCRYPT, /**
-         * Uses {@link org.springframework.security.crypto.scrypt.SCryptPasswordEncoder}.
+        BCRYPT,
+        /**
+         * Uses Spring Security's {@code SCryptPasswordEncoder}.
          */
-        SCRYPT, /**
-         * Uses {@link org.springframework.security.crypto.password.Pbkdf2PasswordEncoder}.
+        SCRYPT,
+        /**
+         * Uses Spring Security's {@code Pbkdf2PasswordEncoder}.
          */
         PBKDF2
     }
@@ -47,7 +52,7 @@ public class PasswordEncoderProperties implements Serializable {
      * Define the password encoder type to use.
      * Type may be specified as blank or 'NONE' to disable password encoding.
      * It may also refer to a fully-qualified class name that implements
-     * the {@link org.springframework.security.crypto.password.PasswordEncoder} interface
+     * the Spring Security's {@code PasswordEncoder} interface
      * if you wish you define your own encoder.
      * @see PasswordEncoderTypes
      */
@@ -58,7 +63,7 @@ public class PasswordEncoderProperties implements Serializable {
      * Relevant when the type used is 'DEFAULT'.
      */
     private String encodingAlgorithm;
-
+        
     /**
      * The encoding algorithm to use such as 'UTF-8'.
      * Relevant when the type used is 'DEFAULT'.

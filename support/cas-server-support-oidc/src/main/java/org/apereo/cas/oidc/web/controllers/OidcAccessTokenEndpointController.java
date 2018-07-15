@@ -13,7 +13,7 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessTokenGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -45,7 +45,7 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
                                              final CasConfigurationProperties casProperties,
                                              final CookieRetrievingCookieGenerator cookieGenerator,
                                              final ExpirationPolicy accessTokenExpirationPolicy,
-                                             final Collection<BaseAccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors,
+                                             final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors,
                                              final Collection<OAuth20TokenRequestValidator> accessTokenGrantRequestValidators) {
         super(servicesManager,
             ticketRegistry,

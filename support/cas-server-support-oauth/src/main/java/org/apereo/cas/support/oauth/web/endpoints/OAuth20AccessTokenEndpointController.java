@@ -1,10 +1,9 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
-import lombok.val;
-
 import com.google.common.base.Supplier;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -15,13 +14,12 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessTokenGrantRequestExtractor;
 import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
@@ -50,7 +48,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
     private final AccessTokenResponseGenerator accessTokenResponseGenerator;
 
     private final ExpirationPolicy accessTokenExpirationPolicy;
-    private final Collection<BaseAccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
+    private final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
     private final Collection<OAuth20TokenRequestValidator> accessTokenGrantRequestValidators;
 
     public OAuth20AccessTokenEndpointController(final ServicesManager servicesManager,
@@ -64,7 +62,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
                                                 final CasConfigurationProperties casProperties,
                                                 final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                                 final ExpirationPolicy accessTokenExpirationPolicy,
-                                                final Collection<BaseAccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors,
+                                                final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors,
                                                 final Collection<OAuth20TokenRequestValidator> accessTokenGrantRequestValidators) {
         super(servicesManager,
             ticketRegistry,
@@ -109,17 +107,15 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             val requestHolder = examineAndExtractAccessTokenGrantRequest(request, response);
             LOGGER.debug("Creating access token for [{}]", requestHolder);
             val context = Pac4jUtils.getPac4jJ2EContext(request, response);
-            val accessToken = accessTokenGenerator.generate(requestHolder);
-            LOGGER.debug("Access token generated is: [{}]. Refresh token generated is [{}]", accessToken.getKey(), accessToken.getValue());
-            generateAccessTokenResponse(request, response, requestHolder, context, accessToken.getKey(), accessToken.getValue());
+            val token = accessTokenGenerator.generate(requestHolder);
+            LOGGER.debug("Access token generated result is: [{}]", token);
+            generateAccessTokenResponse(request, response, requestHolder, context, token);
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (final Exception e) {
             LOGGER.error("Could not identify and extract access token request", e);
             OAuth20Utils.writeTextError(response, OAuth20Constants.INVALID_GRANT);
             return;
         }
-
-
     }
 
     /**
@@ -138,19 +134,18 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
 
     private void generateAccessTokenResponse(final HttpServletRequest request, final HttpServletResponse response,
                                              final AccessTokenRequestDataHolder requestHolder,
-                                             final J2EContext context, final AccessToken accessToken,
-                                             final RefreshToken refreshToken) {
-        LOGGER.debug("Generating access token response for [{}]", accessToken);
+                                             final J2EContext context, final OAuth20TokenGeneratedResult result) {
+        LOGGER.debug("Generating access token response for [{}]", result);
         val type = OAuth20Utils.getResponseType(context);
         LOGGER.debug("Located response type as [{}]", type);
 
         this.accessTokenResponseGenerator.generate(request, response,
             requestHolder.getRegisteredService(),
             requestHolder.getService(),
-            accessToken,
-            refreshToken,
+            result,
             accessTokenExpirationPolicy.getTimeToLive(),
-            type);
+            type,
+            casProperties);
     }
 
     private AccessTokenRequestDataHolder examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,
