@@ -13,6 +13,9 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
+import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
+import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
+import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
@@ -27,6 +30,7 @@ import org.pac4j.core.context.J2EContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -85,22 +89,22 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
      *
      * @param request  the request
      * @param response the response
+     * @return the model and view
      * @throws Exception the exception
      */
-    @PostMapping(path = {OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,
-        OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.TOKEN_URL})
+    @PostMapping(path = {
+        OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,
+        OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.TOKEN_URL},
+        produces = MediaType.APPLICATION_JSON_VALUE)
     @SneakyThrows
-    public void handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        response.setContentType(MediaType.TEXT_PLAIN_VALUE);
-
+    public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         try {
             if (!verifyAccessTokenRequest(request, response)) {
                 throw new IllegalArgumentException("Access token validation failed");
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            OAuth20Utils.writeTextError(response, OAuth20Constants.INVALID_REQUEST);
-            return;
+            return OAuth20Utils.writeError(OAuth20Constants.INVALID_REQUEST);
         }
 
         try {
@@ -109,12 +113,19 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             val context = Pac4jUtils.getPac4jJ2EContext(request, response);
             val token = accessTokenGenerator.generate(requestHolder);
             LOGGER.debug("Access token generated result is: [{}]", token);
-            generateAccessTokenResponse(request, response, requestHolder, context, token);
-            response.setStatus(HttpServletResponse.SC_OK);
+            return generateAccessTokenResponse(request, response, requestHolder, context, token);
+        } catch (final InvalidOAuth20DeviceTokenException e) {
+            LOGGER.error("Could not identify and extract device token request for device token [{}]", e.getTicketId());
+            return OAuth20Utils.writeError(OAuth20Constants.ACCESS_DENIED);
+        } catch (final UnapprovedOAuth20DeviceUserCodeException e) {
+            LOGGER.error("User code [{}] not yet approved for the device token request", e.getTicketId());
+            return OAuth20Utils.writeError(OAuth20Constants.AUTHORIZATION_PENDING);
+        } catch (final ThrottledOAuth20DeviceUserCodeApprovalException e) {
+            LOGGER.error("Check for device user code approval is too quick and is throttled. Requests must slow down");
+            return OAuth20Utils.writeError(OAuth20Constants.SLOW_DOWN);
         } catch (final Exception e) {
             LOGGER.error("Could not identify and extract access token request", e);
-            OAuth20Utils.writeTextError(response, OAuth20Constants.INVALID_GRANT);
-            return;
+            return OAuth20Utils.writeError(OAuth20Constants.INVALID_GRANT);
         }
     }
 
@@ -123,23 +134,24 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
      *
      * @param request  the request
      * @param response the response
+     * @return the model and view
      * @throws Exception the exception
      */
     @GetMapping(path = {OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,
         OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.TOKEN_URL})
-    public void handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        handleRequest(request, response);
+    public ModelAndView handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return handleRequest(request, response);
     }
 
 
-    private void generateAccessTokenResponse(final HttpServletRequest request, final HttpServletResponse response,
-                                             final AccessTokenRequestDataHolder requestHolder,
-                                             final J2EContext context, final OAuth20TokenGeneratedResult result) {
+    private ModelAndView generateAccessTokenResponse(final HttpServletRequest request, final HttpServletResponse response,
+                                                     final AccessTokenRequestDataHolder requestHolder,
+                                                     final J2EContext context, final OAuth20TokenGeneratedResult result) {
         LOGGER.debug("Generating access token response for [{}]", result);
         val type = OAuth20Utils.getResponseType(context);
         LOGGER.debug("Located response type as [{}]", type);
 
-        this.accessTokenResponseGenerator.generate(request, response,
+        return this.accessTokenResponseGenerator.generate(request, response,
             requestHolder.getRegisteredService(),
             requestHolder.getService(),
             result,
