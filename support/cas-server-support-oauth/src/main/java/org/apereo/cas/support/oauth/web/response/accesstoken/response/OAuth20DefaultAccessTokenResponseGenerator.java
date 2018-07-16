@@ -1,11 +1,12 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
+import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
@@ -31,7 +32,7 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         val generateDeviceResponse = OAuth20ResponseTypes.DEVICE_CODE == result.getResponseType()
             && result.getGeneratedToken().getDeviceCode().isPresent()
             && result.getGeneratedToken().getUserCode().isPresent()
-            && result.getGeneratedToken().getAccessToken().isEmpty();
+            && result.getGeneratedToken().getAccessToken().isPresent();
 
         if (generateDeviceResponse) {
             return generateResponseForDeviceToken(request, response, result);
