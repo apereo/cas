@@ -2,13 +2,16 @@ apply plugin: "war"
 
 project.ext["mainClassName"] = "org.apereo.cas.CasConfigurationServerWebApplication"
 apply from: rootProject.file("gradle/springboot.gradle")
+
 description = "Apereo CAS Spring Cloud Configuration Server"
 
 dependencies {
-    providedRuntime libraries.springboottomcat
+    implementation libraries.springboottomcat
     implementation libraries.springsecurity
     implementation libraries.springsecurityweb
     implementation libraries.springsecurityconfig
     implementation libraries.springcloudconfigserver
+    
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-logging")
 }
