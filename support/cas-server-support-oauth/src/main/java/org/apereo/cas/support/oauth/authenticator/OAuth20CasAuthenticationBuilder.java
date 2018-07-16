@@ -1,6 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +40,7 @@ import java.util.Map;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OAuth20CasAuthenticationBuilder {
 
     /**

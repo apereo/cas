@@ -1,10 +1,10 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.Ticket;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * @since 4.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class HazelcastTicketRegistry extends AbstractTicketRegistry implements AutoCloseable, DisposableBean {
     private final HazelcastInstance hazelcastInstance;
     private final TicketCatalog ticketCatalog;

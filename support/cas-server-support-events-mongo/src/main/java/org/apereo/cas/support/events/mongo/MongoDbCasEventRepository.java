@@ -1,8 +1,8 @@
 package org.apereo.cas.support.events.mongo;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
@@ -21,7 +21,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MongoDbCasEventRepository extends AbstractCasEventRepository {
 
     private final MongoOperations mongoTemplate;

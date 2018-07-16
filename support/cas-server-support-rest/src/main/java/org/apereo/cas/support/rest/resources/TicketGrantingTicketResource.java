@@ -1,8 +1,8 @@
 package org.apereo.cas.support.rest.resources;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -41,7 +41,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @RestController("ticketResourceRestController")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TicketGrantingTicketResource {
 
     private final AuthenticationSystemSupport authenticationSystemSupport;

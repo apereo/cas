@@ -1,6 +1,6 @@
 package org.apereo.cas.oidc.profile;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
@@ -16,7 +16,7 @@ import org.springframework.context.event.EventListener;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OidcRegisteredServicePreProcessorEventListener {
 
     private final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter;

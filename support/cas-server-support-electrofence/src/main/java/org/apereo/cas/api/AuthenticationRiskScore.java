@@ -1,7 +1,7 @@
 package org.apereo.cas.api;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
@@ -15,7 +15,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 public class AuthenticationRiskScore {
 

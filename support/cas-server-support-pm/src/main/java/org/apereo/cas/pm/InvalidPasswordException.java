@@ -1,7 +1,7 @@
 package org.apereo.cas.pm;
 
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.Getter;
 
@@ -15,7 +15,7 @@ import lombok.Getter;
 @Slf4j
 @Getter
 @NoArgsConstructor(force = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class InvalidPasswordException extends RuntimeException {
 
     private static final long serialVersionUID = 458954862481279L;

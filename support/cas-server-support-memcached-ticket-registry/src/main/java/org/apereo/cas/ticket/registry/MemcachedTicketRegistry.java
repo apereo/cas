@@ -1,8 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.MemcachedClientIF;
@@ -22,7 +22,7 @@ import java.util.Collection;
  */
 @SuppressWarnings("FutureReturnValueIgnored")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MemcachedTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
 
     /**
