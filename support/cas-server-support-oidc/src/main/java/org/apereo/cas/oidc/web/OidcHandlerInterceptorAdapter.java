@@ -3,7 +3,7 @@ package org.apereo.cas.oidc.web;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessTokenGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,13 +20,13 @@ import java.util.Collection;
 public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdapter {
     private final HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor;
     private final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode;
-    private final Collection<BaseAccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
+    private final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
 
     public OidcHandlerInterceptorAdapter(final HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor,
                                          final HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor,
                                          final HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor,
                                          final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode,
-                                         final Collection<BaseAccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors) {
+                                         final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors) {
         super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor, accessTokenGrantRequestExtractors);
         this.requiresAuthenticationDynamicRegistrationInterceptor = requiresAuthenticationDynamicRegistrationInterceptor;
         this.dynamicClientRegistrationMode = dynamicClientRegistrationMode;

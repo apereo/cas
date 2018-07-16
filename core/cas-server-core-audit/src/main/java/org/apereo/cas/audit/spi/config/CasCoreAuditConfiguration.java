@@ -1,8 +1,7 @@
 package org.apereo.cas.audit.spi.config;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
@@ -40,7 +39,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,10 +70,10 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
     public AuditTrailManagementAspect auditTrailManagementAspect(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailExecutionPlan,
                                                                  @Qualifier("auditTrailRecordResolutionPlan") final AuditTrailRecordResolutionPlan auditTrailRecordResolutionPlan) {
         val aspect = new AuditTrailManagementAspect(
-                casProperties.getAudit().getAppCode(),
-                auditablePrincipalResolver(auditPrincipalIdProvider()),
-                auditTrailExecutionPlan.getAuditTrailManagers(), auditTrailRecordResolutionPlan.getAuditActionResolvers(),
-                auditTrailRecordResolutionPlan.getAuditResourceResolvers());
+            casProperties.getAudit().getAppCode(),
+            auditablePrincipalResolver(auditPrincipalIdProvider()),
+            auditTrailExecutionPlan.getAuditTrailManagers(), auditTrailRecordResolutionPlan.getAuditActionResolvers(),
+            auditTrailRecordResolutionPlan.getAuditResourceResolvers());
         aspect.setFailOnAuditFailures(!casProperties.getAudit().isIgnoreAuditFailures());
         return aspect;
     }
@@ -217,10 +218,10 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
     @ConditionalOnMissingBean(name = "auditPrincipalIdProvider")
     @Bean
     public AuditPrincipalIdProvider auditPrincipalIdProvider() {
-        val chain = new ChainingAuditPrincipalIdProvider();
         val resolvers = applicationContext.getBeansOfType(AuditPrincipalIdProvider.class, false, true);
-        resolvers.values().forEach(chain::addProvider);
-        return chain;
+        val providers = new ArrayList<>(resolvers.values());
+        AnnotationAwareOrderComparator.sort(providers);
+        return new ChainingAuditPrincipalIdProvider(providers);
     }
 
     @Override

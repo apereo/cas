@@ -208,10 +208,9 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     @SneakyThrows
     private CloseableHttpClient buildHttpClient() {
         val plainSocketFactory = PlainConnectionSocketFactory.getSocketFactory();
-        val sslSocketFactory = this.sslSocketFactory;
         val registry = RegistryBuilder.<ConnectionSocketFactory>create()
             .register("http", plainSocketFactory)
-            .register("https", sslSocketFactory)
+            .register("https", this.sslSocketFactory)
             .build();
 
         val connectionManager = new PoolingHttpClientConnectionManager(registry);
@@ -235,7 +234,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
         val builder = HttpClients.custom()
             .setConnectionManager(connectionManager)
             .setDefaultRequestConfig(requestConfig)
-            .setSSLSocketFactory(sslSocketFactory)
+            .setSSLSocketFactory(this.sslSocketFactory)
             .setSSLHostnameVerifier(this.hostnameVerifier)
             .setRedirectStrategy(this.redirectionStrategy)
             .setDefaultCredentialsProvider(this.credentialsProvider)

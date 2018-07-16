@@ -1,8 +1,8 @@
 package org.apereo.cas.ticket.code;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
@@ -22,7 +22,7 @@ import java.util.Collection;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
 
     /**
