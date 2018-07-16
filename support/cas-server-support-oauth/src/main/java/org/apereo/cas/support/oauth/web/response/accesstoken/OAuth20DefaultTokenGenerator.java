@@ -22,6 +22,7 @@ import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.device.DeviceToken;
 import org.apereo.cas.ticket.device.DeviceTokenFactory;
+import org.apereo.cas.ticket.device.DeviceUserCode;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -29,6 +30,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.LinkedHashSet;
 
 /**
  * This is {@link OAuth20DefaultTokenGenerator}.
@@ -71,13 +73,9 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         }
 
         val pair = generateAccessTokenOAuthGrantTypes(holder);
-        return OAuth20TokenGeneratedResult.builder()
-            .registeredService(holder.getRegisteredService())
-            .accessToken(pair.getKey())
-            .refreshToken(pair.getValue())
-            .grantType(holder.getGrantType())
-            .build();
+        return generateAccessTokenResult(holder, pair);
     }
+
 
     /**
      * Generate access token OAuth device code response type OAuth token generated result.
@@ -89,24 +87,26 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         val deviceCode = holder.getDeviceCode();
 
         if (StringUtils.isNotBlank(deviceCode)) {
-            val deviceCodeTicket = this.ticketRegistry.getTicket(deviceCode, DeviceToken.class);
-            if (deviceCodeTicket == null) {
-                LOGGER.error("Provided device code [{}] is invalid or expired and cannot be found in the ticket registry", deviceCode);
-                throw new InvalidOAuth20DeviceTokenException(deviceCode);
-            }
-            if (deviceCodeTicket.isExpired()) {
+            val deviceCodeTicket = getDeviceTokenFromTicketRegistry(deviceCode);
+            val deviceUserCode = getDeviceUserCodeFromRegistry(deviceCodeTicket);
+
+            if (deviceUserCode.isUserCodeApproved()) {
+                LOGGER.debug("Provided user code [{}] linked to device code [{}] is approved", deviceCodeTicket.getId(), deviceCode);
                 this.ticketRegistry.deleteTicket(deviceCode);
-                LOGGER.error("Provided device code [{}] has expired and will be removed from the ticket registry", deviceCode);
-                throw new InvalidOAuth20DeviceTokenException(deviceCode);
-            }
-            if (deviceCodeTicket.isUserCodeApproved()) {
-                LOGGER.debug("Provided user code [{}] linked to device code [{}] is approved", deviceCodeTicket.getUserCode(), deviceCode);
-                this.ticketRegistry.deleteTicket(deviceCode);
-                return OAuth20TokenGeneratedResult.builder()
-                    .responseType(holder.getResponseType())
+
+                val deviceResult = AccessTokenRequestDataHolder.builder()
+                    .service(holder.getService())
+                    .authentication(holder.getAuthentication())
                     .registeredService(holder.getRegisteredService())
-                    .deviceCode(deviceCode)
+                    .ticketGrantingTicket(holder.getTicketGrantingTicket())
+                    .grantType(holder.getGrantType())
+                    .scopes(new LinkedHashSet<>())
+                    .responseType(holder.getResponseType())
+                    .generateRefreshToken(holder.getRegisteredService() != null && holder.isGenerateRefreshToken())
                     .build();
+
+                val ticketPair = generateAccessTokenOAuthGrantTypes(deviceResult);
+                return generateAccessTokenResult(deviceResult, ticketPair);
             }
 
             if (deviceCodeTicket.getLastTimeUsed() != null) {
@@ -114,26 +114,66 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
                 val shouldSlowDown = deviceCodeTicket.getLastTimeUsed().plusSeconds(interval).isAfter(ZonedDateTime.now(ZoneOffset.UTC));
                 if (shouldSlowDown) {
                     LOGGER.error("Request for user code approval is greater than the configured refresh interval of [{}] second(s)", interval);
-                    throw new ThrottledOAuth20DeviceUserCodeApprovalException(deviceCodeTicket.getUserCode());
+                    throw new ThrottledOAuth20DeviceUserCodeApprovalException(deviceCodeTicket.getId());
                 }
             }
             deviceCodeTicket.update();
             this.ticketRegistry.updateTicket(deviceCodeTicket);
-            LOGGER.error("Provided user code [{}] linked to device code [{}] is NOT approved yet", deviceCodeTicket.getUserCode(), deviceCode);
-            throw new UnapprovedOAuth20DeviceUserCodeException(deviceCodeTicket.getUserCode());
+            LOGGER.error("Provided user code [{}] linked to device code [{}] is NOT approved yet", deviceCodeTicket.getId(), deviceCode);
+            throw new UnapprovedOAuth20DeviceUserCodeException(deviceCodeTicket.getId());
         }
 
-        val deviceToken = deviceTokenFactory.create(holder.getService());
-        LOGGER.debug("Created device code token [{}]", deviceToken.getId());
-        addTicketToRegistry(deviceToken);
-        LOGGER.debug("Added device token [{}] to registry", deviceToken);
-
+        val deviceTokens = createDeviceTokensInTicketRegistry(holder);
         return OAuth20TokenGeneratedResult.builder()
             .responseType(holder.getResponseType())
             .registeredService(holder.getRegisteredService())
-            .deviceCode(deviceToken.getId())
-            .userCode(deviceToken.getUserCode())
+            .deviceCode(deviceTokens.getLeft().getId())
+            .userCode(deviceTokens.getValue().getId())
             .build();
+    }
+
+    private DeviceUserCode getDeviceUserCodeFromRegistry(final DeviceToken deviceCodeTicket) {
+        val userCode = this.ticketRegistry.getTicket(deviceCodeTicket.getUserCode(), DeviceUserCode.class);
+        if (userCode == null) {
+            LOGGER.error("Provided user code [{}] is invalid or expired and cannot be found in the ticket registry", deviceCodeTicket.getUserCode());
+            throw new InvalidOAuth20DeviceTokenException(deviceCodeTicket.getUserCode());
+        }
+        if (userCode.isExpired()) {
+            this.ticketRegistry.deleteTicket(userCode.getId());
+            LOGGER.error("Provided device code [{}] has expired and will be removed from the ticket registry", deviceCodeTicket.getUserCode());
+            throw new InvalidOAuth20DeviceTokenException(deviceCodeTicket.getUserCode());
+        }
+        return userCode;
+    }
+
+    private DeviceToken getDeviceTokenFromTicketRegistry(final String deviceCode) {
+        val deviceCodeTicket = this.ticketRegistry.getTicket(deviceCode, DeviceToken.class);
+        if (deviceCodeTicket == null) {
+            LOGGER.error("Provided device code [{}] is invalid or expired and cannot be found in the ticket registry", deviceCode);
+            throw new InvalidOAuth20DeviceTokenException(deviceCode);
+        }
+        if (deviceCodeTicket.isExpired()) {
+            this.ticketRegistry.deleteTicket(deviceCode);
+            LOGGER.error("Provided device code [{}] has expired and will be removed from the ticket registry", deviceCode);
+            throw new InvalidOAuth20DeviceTokenException(deviceCode);
+        }
+        return deviceCodeTicket;
+    }
+
+    private Pair<DeviceToken, DeviceUserCode> createDeviceTokensInTicketRegistry(final AccessTokenRequestDataHolder holder) {
+        val deviceToken = deviceTokenFactory.createDeviceCode(holder.getService());
+        LOGGER.debug("Created device code token [{}]", deviceToken.getId());
+
+        val deviceUserCode = deviceTokenFactory.createDeviceUserCode(deviceToken);
+        LOGGER.debug("Created device user code token [{}]", deviceUserCode.getId());
+
+        addTicketToRegistry(deviceToken);
+        LOGGER.debug("Added device token [{}] to registry", deviceToken);
+
+        addTicketToRegistry(deviceUserCode);
+        LOGGER.debug("Added device user token [{}] to registry", deviceUserCode);
+
+        return Pair.of(deviceToken, deviceUserCode);
     }
 
     /**
@@ -150,11 +190,12 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             .build();
 
         LOGGER.debug("Creating access token for [{}]", holder);
+        val ticketGrantingTicket = holder.getTicketGrantingTicket();
         val accessToken = this.accessTokenFactory.create(holder.getService(),
-            authn, holder.getTicketGrantingTicket(), holder.getScopes());
+            authn, ticketGrantingTicket, holder.getScopes());
 
         LOGGER.debug("Created access token [{}]", accessToken);
-        addTicketToRegistry(accessToken, holder.getTicketGrantingTicket());
+        addTicketToRegistry(accessToken, ticketGrantingTicket);
         LOGGER.debug("Added access token [{}] to registry", accessToken);
 
         updateOAuthCode(holder);
@@ -225,5 +266,15 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         LOGGER.debug("Adding refresh token [{}] to the registry", refreshToken);
         addTicketToRegistry(refreshToken, responseHolder.getTicketGrantingTicket());
         return refreshToken;
+    }
+
+    private OAuth20TokenGeneratedResult generateAccessTokenResult(final AccessTokenRequestDataHolder holder, final Pair<AccessToken, RefreshToken> pair) {
+        return OAuth20TokenGeneratedResult.builder()
+            .registeredService(holder.getRegisteredService())
+            .accessToken(pair.getKey())
+            .refreshToken(pair.getValue())
+            .grantType(holder.getGrantType())
+            .responseType(holder.getResponseType())
+            .build();
     }
 }

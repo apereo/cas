@@ -49,7 +49,12 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                                  final OAuth20ResponseTypes responseType,
                                  final CasConfigurationProperties casProperties) {
 
-        if (OAuth20ResponseTypes.DEVICE_CODE == responseType) {
+        val generateDeviceResponse = OAuth20ResponseTypes.DEVICE_CODE == responseType
+            && result.getDeviceCode().isPresent()
+            && result.getUserCode().isPresent()
+            && result.getAccessToken().isEmpty();
+
+        if (generateDeviceResponse) {
             return generateResponseForDeviceToken(request, response, registeredService, service, result, casProperties);
         }
 
@@ -91,9 +96,10 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
             .concat(OAuth20Constants.BASE_OAUTH20_URL)
             .concat("/")
             .concat(OAuth20Constants.DEVICE_AUTHZ_URL);
+
         model.put(OAuth20Constants.DEVICE_VERIFICATION_URI, uri);
-        model.put(OAuth20Constants.DEVICE_USER_CODE, result.getUserCode().get());
-        model.put(OAuth20Constants.DEVICE_CODE, result.getDeviceCode().get());
+        result.getUserCode().ifPresent(c -> model.put(OAuth20Constants.DEVICE_USER_CODE, c));
+        result.getDeviceCode().ifPresent(c -> model.put(OAuth20Constants.DEVICE_CODE, c));
 
         val deviceRefreshInterval = Beans.newDuration(casProperties.getAuthn().getOauth().getDeviceToken().getRefreshInterval()).getSeconds();
         model.put(OAuth20Constants.DEVICE_INTERVAL, deviceRefreshInterval);
@@ -118,7 +124,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                                                           final OAuth20TokenGeneratedResult result, final long timeout,
                                                           final OAuth20ResponseTypes responseType) throws Exception {
         val accessToken = result.getAccessToken().get();
-        val refreshToken = result.getRefreshToken().get();
+        val refreshToken = result.getRefreshToken().isPresent() ? result.getRefreshToken().get() : null;
         val model = getAccessTokenResponseModel(request, response, accessToken, refreshToken, timeout, service, registeredService, responseType);
         return new ModelAndView(new MappingJackson2JsonView(MAPPER), model);
     }

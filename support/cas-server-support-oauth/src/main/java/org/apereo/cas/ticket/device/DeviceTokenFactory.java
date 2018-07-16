@@ -14,8 +14,24 @@ public interface DeviceTokenFactory extends TicketFactory {
     /**
      * Create an device token.
      *
-     * @param service    the service
+     * @param service the service
      * @return the device token
      */
-    DeviceToken create(Service service);
+    DeviceToken createDeviceCode(Service service);
+
+    /**
+     * Create device user code device user code.
+     *
+     * @param deviceCode the device code
+     * @return the device user code
+     */
+    DeviceUserCode createDeviceUserCode(DeviceToken deviceCode);
+
+    /**
+     * Generate device user code string.
+     *
+     * @param providedCode the provided code
+     * @return the string
+     */
+    String generateDeviceUserCode(String providedCode);
 }
