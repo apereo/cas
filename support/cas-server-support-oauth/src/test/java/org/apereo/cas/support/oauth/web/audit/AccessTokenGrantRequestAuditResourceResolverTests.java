@@ -32,9 +32,16 @@ public class AccessTokenGrantRequestAuditResourceResolverTests {
         service.setClientId("CLIENTID");
         service.setName("OAUTH");
         service.setId(123);
-        val holder =
-            new AccessTokenRequestDataHolder(token, service, OAuth20GrantTypes.AUTHORIZATION_CODE,
-                true, CollectionUtils.wrapSet("email"));
+
+        val holder = AccessTokenRequestDataHolder.builder()
+            .scopes(CollectionUtils.wrapSet("email"))
+            .service(token.getService())
+            .authentication(token.getAuthentication())
+            .registeredService(service)
+            .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
+            .token(token)
+            .ticketGrantingTicket(token != null ? token.getTicketGrantingTicket() : null)
+            .build();
         assertTrue(r.resolveFrom(mock(JoinPoint.class), holder).length > 0);
     }
 }

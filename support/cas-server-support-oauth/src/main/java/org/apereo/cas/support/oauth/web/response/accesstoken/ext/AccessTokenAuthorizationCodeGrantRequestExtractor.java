@@ -58,13 +58,23 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         if (token == null) {
             throw new InvalidTicketException(getOAuthParameter(request));
         }
-        
+
         val service = this.webApplicationServiceServiceFactory.createService(redirectUri);
         scopes.addAll(token.getScopes());
 
-        return new AccessTokenRequestDataHolder(service, token.getAuthentication(), token,
-            registeredService, getGrantType(),
-            isAllowedToGenerateRefreshToken(), scopes);
+        val generateRefreshToken = isAllowedToGenerateRefreshToken()
+            ? (registeredService != null && registeredService.isGenerateRefreshToken())
+            : false;
+        return AccessTokenRequestDataHolder.builder()
+            .scopes(scopes)
+            .service(service)
+            .authentication(token.getAuthentication())
+            .registeredService(registeredService)
+            .grantType(getGrantType())
+            .generateRefreshToken(generateRefreshToken)
+            .token(token)
+            .ticketGrantingTicket(token != null ? token.getTicketGrantingTicket() : null)
+            .build();
     }
 
     /**
@@ -137,7 +147,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
     @Override
     public OAuth20ResponseTypes getResponseType() {
-        return null;
+        return OAuth20ResponseTypes.NONE;
     }
 
     /**
