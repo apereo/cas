@@ -3,7 +3,6 @@ package org.apereo.cas;
 import de.codecentric.boot.admin.server.config.EnableAdminServer;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
@@ -24,8 +23,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@SpringBootApplication
-@EnableAutoConfiguration(exclude = {
+@SpringBootApplication(exclude = {
     HibernateJpaAutoConfiguration.class,
     JerseyAutoConfiguration.class,
     GroovyTemplateAutoConfiguration.class,
@@ -48,6 +46,9 @@ public class CasSpringBootAdminServerWebApplication {
      * @param args the args
      */
     public static void main(final String[] args) {
-        new SpringApplicationBuilder(CasSpringBootAdminServerWebApplication.class).banner(new CasSpringBootAdminServerBanner()).logStartupInfo(true).run(args);
+        new SpringApplicationBuilder(CasSpringBootAdminServerWebApplication.class)
+            .banner(new CasSpringBootAdminServerBanner())
+            .logStartupInfo(true)
+            .run(args);
     }
 }
