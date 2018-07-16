@@ -1,6 +1,6 @@
 package org.apereo.cas.support.oauth.web.views;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
@@ -19,10 +19,9 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfileViewRenderer {
     private final OAuthProperties oauthProperties;
-
 
     @Override
     public String render(final Map<String, Object> model, final AccessToken accessToken) {
