@@ -20,7 +20,7 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultDeviceTokenFactory implements DeviceTokenFactory {
-    private static final int USER_CODE_LENGTH = 6;
+    private static final int USER_CODE_LENGTH = 8;
 
     /**
      * Default instance for the ticket id generator.
@@ -32,19 +32,36 @@ public class DefaultDeviceTokenFactory implements DeviceTokenFactory {
      */
     protected final ExpirationPolicy expirationPolicy;
 
+    /**
+     * Length of the generated user code.
+     */
+    protected final int userCodeLength;
+
     public DefaultDeviceTokenFactory(final ExpirationPolicy expirationPolicy) {
-        this(new DefaultUniqueTicketIdGenerator(), expirationPolicy);
+        this(new DefaultUniqueTicketIdGenerator(), expirationPolicy, USER_CODE_LENGTH);
     }
 
     @Override
-    public DeviceToken create(final Service service) {
-        val codeId = this.deviceTokenIdGenerator.getNewTicketId(DeviceToken.PREFIX);
-        val userCode = RandomStringUtils.randomAlphanumeric(USER_CODE_LENGTH).toUpperCase();
-        return new DeviceTokenImpl(codeId, service, userCode, expirationPolicy);
+    public DeviceToken createDeviceCode(final Service service) {
+        val codeId = deviceTokenIdGenerator.getNewTicketId(DeviceToken.PREFIX);
+        return new DeviceTokenImpl(codeId, service, expirationPolicy);
+    }
+
+    @Override
+    public DeviceUserCode createDeviceUserCode(final DeviceToken deviceToken) {
+        val userCode = generateDeviceUserCode(RandomStringUtils.randomAlphanumeric(userCodeLength));
+        val deviceUserCode = new DeviceUserCodeImpl(userCode, deviceToken.getId(), this.expirationPolicy);
+        deviceToken.assignUserCode(deviceUserCode);
+        return deviceUserCode;
     }
 
     @Override
     public TicketFactory get(final Class<? extends Ticket> clazz) {
         return this;
+    }
+
+    @Override
+    public String generateDeviceUserCode(final String providedCode) {
+        return DeviceUserCode.PREFIX + '-' + providedCode.toUpperCase();
     }
 }

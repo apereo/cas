@@ -3,7 +3,6 @@ package org.apereo.cas.ticket.device;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 
@@ -11,36 +10,34 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 /**
- * This is {@link DeviceTokenImpl}.
+ * This is {@link DeviceUserCodeImpl}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
 @Entity
-@DiscriminatorValue(DeviceToken.PREFIX)
+@DiscriminatorValue(DeviceUserCode.PREFIX)
 @Slf4j
 @NoArgsConstructor(force = true)
 @Getter
-public class DeviceTokenImpl extends AbstractTicket implements DeviceToken {
+public class DeviceUserCodeImpl extends AbstractTicket implements DeviceUserCode {
     private static final long serialVersionUID = 2339545346159721563L;
 
-    private final Service service;
+    private final String deviceCode;
+    private boolean userCodeApproved;
 
-    private String userCode;
-
-    public DeviceTokenImpl(final String id, final Service service,
-                           final ExpirationPolicy expirationPolicy) {
+    public DeviceUserCodeImpl(final String id, final String deviceCode, final ExpirationPolicy expirationPolicy) {
         super(id, expirationPolicy);
-        this.service = service;
+        this.deviceCode = deviceCode;
     }
 
     @Override
     public String getPrefix() {
-        return DeviceToken.PREFIX;
+        return DeviceUserCode.PREFIX;
     }
 
     @Override
-    public void assignUserCode(final DeviceUserCode userCode) {
-        this.userCode = userCode.getId();
+    public void approveUserCode() {
+        this.userCodeApproved = true;
     }
 }

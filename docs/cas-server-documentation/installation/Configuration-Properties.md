@@ -2742,6 +2742,7 @@ To learn more about this topic, [please review this guide](OAuth-OpenId-Authenti
 
 # cas.authn.oauth.deviceToken.timeToKillInSeconds=2592000
 # cas.authn.oauth.deviceToken.refreshInterval=PT15S
+# cas.authn.oauth.deviceToken.userCodeLength=8
 
 # cas.authn.oauth.grants.resourceOwner.requireServiceHeader=true
 

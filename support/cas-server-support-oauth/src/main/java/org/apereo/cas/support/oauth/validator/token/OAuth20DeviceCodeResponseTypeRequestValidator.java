@@ -4,13 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.pac4j.core.context.J2EContext;
 
 /**
@@ -23,7 +24,7 @@ import org.pac4j.core.context.J2EContext;
 @Slf4j
 public class OAuth20DeviceCodeResponseTypeRequestValidator implements OAuth20TokenRequestValidator {
     private final ServicesManager servicesManager;
-    private final TicketRegistry ticketRegistry;
+    private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
 
     @Override
     public boolean validate(final J2EContext context) {

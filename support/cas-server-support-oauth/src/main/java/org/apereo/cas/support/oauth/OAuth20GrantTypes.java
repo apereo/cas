@@ -12,6 +12,10 @@ import lombok.Getter;
 public enum OAuth20GrantTypes {
 
     /**
+     * Indicates the absence of invalidity of a grant type.
+     */
+    NONE("none"),
+    /**
      * For the authorization grant type.
      */
     AUTHORIZATION_CODE("authorization_code"),

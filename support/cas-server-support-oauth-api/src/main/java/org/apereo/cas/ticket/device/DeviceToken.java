@@ -19,13 +19,6 @@ public interface DeviceToken extends Ticket, TicketState {
     String PREFIX = "ODT";
 
     /**
-     * Gets user code.
-     *
-     * @return the user code
-     */
-    String getUserCode();
-
-    /**
      * Gets service.
      *
      * @return the service
@@ -33,15 +26,16 @@ public interface DeviceToken extends Ticket, TicketState {
     Service getService();
 
     /**
-     * Indicate whether the provided user code is approved
-     * by the end-user.
+     * Gets user code.
      *
-     * @return the boolean
+     * @return the user code
      */
-    boolean isUserCodeApproved();
+    String getUserCode();
 
     /**
-     * Approve user code.
+     * Instantiates a new Assign user code.
+     *
+     * @param userCode the user code
      */
-    void approveUserCode();
+    void assignUserCode(DeviceUserCode userCode);
 }

@@ -247,8 +247,14 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         val grantType = StringUtils.defaultIfEmpty(context.getRequestParameter(OAuth20Constants.GRANT_TYPE),
             OAuth20GrantTypes.AUTHORIZATION_CODE.getType()).toUpperCase();
         val scopes = OAuth20Utils.parseRequestScopes(context);
-        val holder = new AccessTokenRequestDataHolder(service, authentication,
-            registeredService, ticketGrantingTicket, OAuth20GrantTypes.valueOf(grantType), scopes);
+        val holder = AccessTokenRequestDataHolder.builder()
+            .service(service)
+            .authentication(authentication)
+            .registeredService(registeredService)
+            .ticketGrantingTicket(ticketGrantingTicket)
+            .grantType(OAuth20GrantTypes.valueOf(grantType))
+            .scopes(scopes)
+            .build();
 
         LOGGER.debug("Building authorization response for grant type [{}] with scopes [{}] for client id [{}]",
             grantType, scopes, clientId);

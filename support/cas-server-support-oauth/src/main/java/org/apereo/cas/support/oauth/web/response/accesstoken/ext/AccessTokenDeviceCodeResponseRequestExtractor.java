@@ -15,6 +15,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilde
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.Pac4jUtils;
+import org.pac4j.core.profile.AnonymousProfile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,14 +54,26 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
         val context = Pac4jUtils.getPac4jJ2EContext(request, response);
         val service = this.authenticationBuilder.buildService(registeredService, context, false);
 
+        LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
+        val authentication = this.authenticationBuilder.build(new AnonymousProfile(), registeredService, context, service);
+
         val audit = AuditableContext.builder()
             .service(service)
             .registeredService(registeredService)
+            .authentication(authentication)
             .build();
         val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();
 
-        return new AccessTokenRequestDataHolder(service, registeredService, getResponseType(), deviceCode);
+        return AccessTokenRequestDataHolder.builder()
+            .service(service)
+            .authentication(authentication)
+            .registeredService(registeredService)
+            .responseType(getResponseType())
+            .grantType(getGrantType())
+            .generateRefreshToken(registeredService != null && registeredService.isGenerateRefreshToken())
+            .deviceCode(deviceCode)
+            .build();
     }
 
     @Override
@@ -73,7 +86,7 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
 
     @Override
     public OAuth20GrantTypes getGrantType() {
-        return null;
+        return OAuth20GrantTypes.NONE;
     }
 
     @Override
