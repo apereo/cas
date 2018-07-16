@@ -16,7 +16,7 @@ gradleBuild="$gradleBuild build -x test -x javadoc -x check -DskipNpmLint=true \
     -DskipNestedConfigMetadataGen=true --parallel "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
-    gradleBuild="$gradleBuild -DshowStandardStreams=true "
+    gradleBuild="$gradleBuild -DshowStandardStreams=true -Dnet.bytebuddy.experimental=true "
 fi
 
 if [ -z "$gradleBuild" ]; then
