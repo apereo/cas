@@ -68,7 +68,7 @@ public class JcifsConfig implements InitializingBean {
     private ResourceLoader resourceLoader;
 
     /**
-     * Instantiates a new jCIFS config.
+     * Instantiates a new JCIFS config.
      */
     public JcifsConfig() {
         Config.setProperty(JCIFS_PROP_CLIENT_SOTIMEOUT, "300000");
