@@ -1,8 +1,8 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
@@ -23,7 +23,7 @@ import org.pac4j.core.profile.CommonProfile;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OAuth20ClientAuthenticator implements Authenticator<UsernamePasswordCredentials> {
     private final ServicesManager servicesManager;
     private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;

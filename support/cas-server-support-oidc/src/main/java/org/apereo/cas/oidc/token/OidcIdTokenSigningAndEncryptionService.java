@@ -106,12 +106,21 @@ public class OidcIdTokenSigningAndEncryptionService {
             jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
         }
         LOGGER.debug("Signing id token with key id header value [{}]", jws.getKeyIdHeaderValue());
-        jws.setAlgorithmHeaderValue(getJsonWebKeySigningAlgorithm());
+        jws.setAlgorithmHeaderValue(getJsonWebKeySigningAlgorithm(svc));
 
         LOGGER.debug("Signing id token with algorithm [{}]", jws.getAlgorithmHeaderValue());
     }
 
-    public String getJsonWebKeySigningAlgorithm() {
-        return AlgorithmIdentifiers.RSA_USING_SHA256;
+    /**
+     * Gets json web key signing algorithm.
+     *
+     * @param svc the svc
+     * @return the json web key signing algorithm
+     */
+    public String getJsonWebKeySigningAlgorithm(final OidcRegisteredService svc) {
+        if (StringUtils.isBlank(svc.getIdTokenSigningAlg())) {
+            return AlgorithmIdentifiers.RSA_USING_SHA256;
+        }
+        return svc.getIdTokenSigningAlg();
     }
 }

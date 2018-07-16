@@ -12,13 +12,23 @@ import lombok.Getter;
 public enum OAuth20ResponseTypes {
 
     /**
-     * For authorization grant type.
+     * For authorization response type.
      */
-    CODE("code"), /**
-     * For implicit grant type.
+    CODE("code"),
+    /**
+     * For indication of invalid or absent response type.
      */
-    TOKEN("token"), /**
-     * For implicit grant type.
+    NONE("none"),
+    /**
+     * For implicit response type.
+     */
+    TOKEN("token"),
+    /**
+     * For device_code response type.
+     */
+    DEVICE_CODE("device_code"),
+    /**
+     * For implicit response type.
      */
     IDTOKEN_TOKEN("id_token token");
 

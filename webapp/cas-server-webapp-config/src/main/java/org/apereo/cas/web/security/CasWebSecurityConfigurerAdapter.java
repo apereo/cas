@@ -1,10 +1,9 @@
 package org.apereo.cas.web.security;
 
-import lombok.val;
-
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -38,7 +37,11 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http.csrf().disable();
+        http.csrf()
+            .disable()
+            .logout()
+            .disable();
+
         val requests = http.authorizeRequests();
         configureEndpointAccessToDenyUndefined(requests);
         configureEndpointAccessForStaticResources(requests);

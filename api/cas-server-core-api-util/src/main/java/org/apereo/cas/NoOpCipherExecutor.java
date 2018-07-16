@@ -46,4 +46,9 @@ class NoOpCipherExecutor<I, O> implements CipherExecutor<I, O> {
     public O decode(final I value, final Object[] parameters) {
         return (O) value;
     }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
 }
