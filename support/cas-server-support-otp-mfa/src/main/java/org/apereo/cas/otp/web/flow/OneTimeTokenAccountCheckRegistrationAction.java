@@ -1,8 +1,8 @@
 package org.apereo.cas.otp.web.flow;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
@@ -19,7 +19,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OneTimeTokenAccountCheckRegistrationAction extends AbstractAction {
     private final OneTimeTokenCredentialRepository repository;
     private final String label;

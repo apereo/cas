@@ -1,10 +1,10 @@
 package org.apereo.cas.interrupt;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
@@ -23,7 +23,7 @@ import java.util.HashMap;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
 
     private static final ObjectMapper MAPPER = new ObjectMapper()

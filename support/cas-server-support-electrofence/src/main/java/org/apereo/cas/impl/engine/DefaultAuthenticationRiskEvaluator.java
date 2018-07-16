@@ -1,8 +1,8 @@
 package org.apereo.cas.impl.engine;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
@@ -24,7 +24,7 @@ import java.util.Set;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEvaluator {
     private final Set<AuthenticationRequestRiskCalculator> calculators;
 
