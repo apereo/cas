@@ -1,0 +1,31 @@
+package org.apereo.cas.authentication.surrogate;
+
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.couchdb.SurrogateAuthorizationCouchDbRepository;
+
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
+/**
+ * This is {@link SurrogateCouchDbAuthenticationService}.
+ *
+ * @author Timur Duehr
+ * @since 6.0.0
+ */
+@Slf4j
+public class SurrogateCouchDbAuthenticationService extends BaseSurrogateAuthenticationService {
+
+    private SurrogateAuthorizationCouchDbRepository couchDb;
+
+    @Override
+    protected boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Service service) {
+        return !couchDb.findBySurrogatePrincipal(surrogate, principal.getId()).isEmpty();
+    }
+
+    @Override
+    public List<String> getEligibleAccountsForSurrogateToProxy(final String username) {
+        return couchDb.findBySurrogate(username);
+    }
+}
