@@ -1,10 +1,8 @@
+description = "Apereo CAS Web Application"
+
 apply plugin: "war"
 
 project.ext["mainClassName"] = "org.apereo.cas.web.CasWebApplication"
-apply from: rootProject.file("gradle/springboot.gradle")
-apply from: rootProject.file("gradle/node.gradle")
-
-description = "Apereo CAS Web Application"
 
 sourceSets {
     main {
@@ -12,7 +10,19 @@ sourceSets {
             srcDirs "${project.buildDir}/generated-src/main/resources", "${project.projectDir}/../resources"
         }
     }
+    /**
+     * Make resources become reloadable.
+     * Application’s static resources are loaded from their source location.
+     */
+    bootRun {
+        resources {
+            srcDirs new File("/etc/cas/templates"), new File(project(":webapp").getProjectDir(), "resources")
+        }
+    }
 }
+
+apply from: rootProject.file("gradle/springboot.gradle")
+apply from: rootProject.file("gradle/node.gradle")
 
 dependencies {
     implementation project(":core:cas-server-core")
@@ -53,7 +63,6 @@ dependencies {
     implementation libraries.metrics
     implementation libraries.bouncycastle
     implementation libraries.springcloudconfigclient
-
     
     runtime libraries.webjars
 }
