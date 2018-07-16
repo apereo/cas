@@ -16,6 +16,10 @@ public enum OAuth20ResponseTypes {
      */
     CODE("code"),
     /**
+     * For indication of invalid or absent response type.
+     */
+    NONE("none"),
+    /**
      * For implicit response type.
      */
     TOKEN("token"),

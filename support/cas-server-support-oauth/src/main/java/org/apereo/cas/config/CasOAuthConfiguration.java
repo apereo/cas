@@ -259,7 +259,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @RefreshScope
     @ConditionalOnMissingBean(name = "defaultDeviceTokenFactory")
     public DeviceTokenFactory defaultDeviceTokenFactory() {
-        return new DefaultDeviceTokenFactory(deviceTokenIdGenerator(), deviceTokenExpirationPolicy());
+        return new DefaultDeviceTokenFactory(deviceTokenIdGenerator(), deviceTokenExpirationPolicy(),
+            casProperties.getAuthn().getOauth().getDeviceToken().getUserCodeLength());
     }
 
     @Bean
@@ -423,7 +424,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
             webApplicationServiceFactory,
             profileScopeToAttributesFilter(),
             casProperties,
-            ticketGrantingTicketCookieGenerator.getIfAvailable()
+            ticketGrantingTicketCookieGenerator.getIfAvailable(),
+            defaultDeviceTokenFactory()
         );
     }
 
@@ -481,7 +483,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         val validators = new ArrayList<OAuth20TokenRequestValidator>();
         validators.add(new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(servicesManager.getIfAvailable(),
             ticketRegistry.getIfAvailable(), registeredServiceAccessStrategyEnforcer));
-        validators.add(new OAuth20DeviceCodeResponseTypeRequestValidator(servicesManager.getIfAvailable(), ticketRegistry.getIfAvailable()));
+        validators.add(new OAuth20DeviceCodeResponseTypeRequestValidator(servicesManager.getIfAvailable(), webApplicationServiceFactory));
         validators.add(new OAuth20RefreshTokenGrantTypeTokenRequestValidator(registeredServiceAccessStrategyEnforcer, ticketRegistry.getIfAvailable()));
         validators.add(new OAuth20PasswordGrantTypeTokenRequestValidator(registeredServiceAccessStrategyEnforcer, servicesManager.getIfAvailable(), webApplicationServiceFactory));
         validators.add(new OAuth20ClientCredentialsGrantTypeTokenRequestValidator(servicesManager.getIfAvailable(), registeredServiceAccessStrategyEnforcer, webApplicationServiceFactory));

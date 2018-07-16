@@ -1,8 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
@@ -84,7 +83,15 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         val result = new DefaultAuthenticationResult(authentication, requireServiceHeader ? service : null);
         val ticketGrantingTicket = this.centralAuthenticationService.createTicketGrantingTicket(result);
 
-        return new AccessTokenRequestDataHolder(service, authentication, registeredService, ticketGrantingTicket, getGrantType(), scopes);
+        return AccessTokenRequestDataHolder.builder()
+            .scopes(scopes)
+            .service(service)
+            .authentication(authentication)
+            .registeredService(registeredService)
+            .grantType(getGrantType())
+            .ticketGrantingTicket(ticketGrantingTicket)
+            .generateRefreshToken(registeredService != null && registeredService.isGenerateRefreshToken())
+            .build();
     }
 
     @Override

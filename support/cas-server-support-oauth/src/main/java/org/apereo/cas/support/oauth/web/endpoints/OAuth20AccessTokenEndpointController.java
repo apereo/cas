@@ -143,20 +143,16 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         return handleRequest(request, response);
     }
 
-
     private ModelAndView generateAccessTokenResponse(final HttpServletRequest request, final HttpServletResponse response,
                                                      final AccessTokenRequestDataHolder requestHolder,
                                                      final J2EContext context, final OAuth20TokenGeneratedResult result) {
         LOGGER.debug("Generating access token response for [{}]", result);
-        val type = OAuth20Utils.getResponseType(context);
-        LOGGER.debug("Located response type as [{}]", type);
-
         return this.accessTokenResponseGenerator.generate(request, response,
             requestHolder.getRegisteredService(),
             requestHolder.getService(),
             result,
             accessTokenExpirationPolicy.getTimeToLive(),
-            type,
+            result.getResponseType().get(),
             casProperties);
     }
 
