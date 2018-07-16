@@ -1,10 +1,9 @@
 package org.apereo.cas.util.http;
 
-import lombok.val;
-
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
@@ -109,6 +108,9 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
 
     private int readTimeout = DEFAULT_TIMEOUT;
 
+    /**
+     * The redirection strategy by default, using http status codes.
+     */
     private RedirectStrategy redirectionStrategy = new DefaultRedirectStrategy();
 
     /**
@@ -205,30 +207,45 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
      */
     @SneakyThrows
     private CloseableHttpClient buildHttpClient() {
-        val plainsf = PlainConnectionSocketFactory.getSocketFactory();
-        val sslsf = this.sslSocketFactory;
+        val plainSocketFactory = PlainConnectionSocketFactory.getSocketFactory();
+        val sslSocketFactory = this.sslSocketFactory;
         val registry = RegistryBuilder.<ConnectionSocketFactory>create()
-            .register("http", plainsf).register("https", sslsf).build();
-        val connMgmr = new PoolingHttpClientConnectionManager(registry);
-        connMgmr.setMaxTotal(this.maxPooledConnections);
-        connMgmr.setDefaultMaxPerRoute(this.maxConnectionsPerRoute);
-        connMgmr.setValidateAfterInactivity(DEFAULT_TIMEOUT);
+            .register("http", plainSocketFactory)
+            .register("https", sslSocketFactory)
+            .build();
+
+        val connectionManager = new PoolingHttpClientConnectionManager(registry);
+        connectionManager.setMaxTotal(this.maxPooledConnections);
+        connectionManager.setDefaultMaxPerRoute(this.maxConnectionsPerRoute);
+        connectionManager.setValidateAfterInactivity(DEFAULT_TIMEOUT);
+
         val httpHost = new HttpHost(InetAddress.getLocalHost());
         val httpRoute = new HttpRoute(httpHost);
-        connMgmr.setMaxPerRoute(httpRoute, MAX_CONNECTIONS_PER_ROUTE);
-        val requestConfig = RequestConfig.custom().setSocketTimeout(this.readTimeout)
-            .setConnectTimeout((int) this.connectionTimeout).setConnectionRequestTimeout((int) this.connectionTimeout)
-            .setCircularRedirectsAllowed(this.circularRedirectsAllowed).setRedirectsEnabled(this.redirectsEnabled)
-            .setAuthenticationEnabled(this.authenticationEnabled).build();
-        val builder = HttpClients.custom().setConnectionManager(connMgmr)
-            .setDefaultRequestConfig(requestConfig).setSSLSocketFactory(sslsf)
-            .setSSLHostnameVerifier(this.hostnameVerifier).setRedirectStrategy(this.redirectionStrategy)
-            .setDefaultCredentialsProvider(this.credentialsProvider).setDefaultCookieStore(this.cookieStore)
+        connectionManager.setMaxPerRoute(httpRoute, MAX_CONNECTIONS_PER_ROUTE);
+
+        val requestConfig = RequestConfig.custom()
+            .setSocketTimeout(this.readTimeout)
+            .setConnectTimeout((int) this.connectionTimeout)
+            .setConnectionRequestTimeout((int) this.connectionTimeout)
+            .setCircularRedirectsAllowed(this.circularRedirectsAllowed)
+            .setRedirectsEnabled(this.redirectsEnabled)
+            .setAuthenticationEnabled(this.authenticationEnabled)
+            .build();
+
+        val builder = HttpClients.custom()
+            .setConnectionManager(connectionManager)
+            .setDefaultRequestConfig(requestConfig)
+            .setSSLSocketFactory(sslSocketFactory)
+            .setSSLHostnameVerifier(this.hostnameVerifier)
+            .setRedirectStrategy(this.redirectionStrategy)
+            .setDefaultCredentialsProvider(this.credentialsProvider)
+            .setDefaultCookieStore(this.cookieStore)
             .setConnectionReuseStrategy(this.connectionReuseStrategy)
             .setConnectionBackoffStrategy(this.connectionBackoffStrategy)
             .setServiceUnavailableRetryStrategy(this.serviceUnavailableRetryStrategy)
             .setProxyAuthenticationStrategy(this.proxyAuthenticationStrategy)
-            .setDefaultHeaders(this.defaultHeaders).useSystemProperties();
+            .setDefaultHeaders(this.defaultHeaders)
+            .useSystemProperties();
         return builder.build();
     }
 
@@ -246,7 +263,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     }
 
     /**
-     * Destroy.
+     * Destroy the service if available.
      */
     @Override
     public void destroy() {
@@ -257,7 +274,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     }
 
     /**
-     * The type Default http client.
+     * The default http client.
      */
     public static class DefaultHttpClient extends SimpleHttpClientFactoryBean {
     }

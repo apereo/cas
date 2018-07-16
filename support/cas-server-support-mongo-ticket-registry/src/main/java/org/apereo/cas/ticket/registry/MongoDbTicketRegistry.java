@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import com.google.common.collect.ImmutableSet;
+import com.mongodb.client.ListIndexesIterable;
 import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -9,6 +11,7 @@ import org.apereo.cas.ticket.BaseTicketSerializers;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.bson.Document;
 import org.apereo.cas.ticket.TicketState;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
@@ -34,6 +37,8 @@ import java.util.stream.Collectors;
 public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     private static final Query SELECT_ALL_NAMES_QUERY = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).regex(".+"));
 
+    private static final ImmutableSet<String> MONGO_INDEX_KEYS = ImmutableSet.of("v", "key", "name", "ns");
+
     private final TicketCatalog ticketCatalog;
     private final MongoOperations mongoTemplate;
     private final boolean dropCollection;
@@ -56,9 +61,32 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
         LOGGER.debug("Creating indices on collection [{}] to auto-expire documents...", collectionName);
         val collection = mongoTemplate.getCollection(collectionName);
-        mongoTemplate.indexOps(TicketHolder.class)
-            .ensureIndex(new Index().on("expireAt", Sort.Direction.ASC).expire(ticket.getProperties().getStorageTimeout()));
+        val index = new Index().on(TicketHolder.FIELD_NAME_EXPIRE_AT, Sort.Direction.ASC).expire(ticket.getProperties().getStorageTimeout());
+        removeDifferingIndexIfAny(collection, index);
+        mongoTemplate.indexOps(TicketHolder.class).ensureIndex(index);
         return collection;
+    }
+
+    /**
+     * Remove any index with the same indexKey but differing indexOptions in anticipation of recreating it.
+     * @param collection The collection to check the indexes of
+     * @param index The index to find
+     */
+    private void removeDifferingIndexIfAny(final MongoCollection collection, final Index index) {
+        val indexes = (ListIndexesIterable<Document>) collection.listIndexes();
+        var indexExistsWithDifferentOptions = false;
+
+        for (val existingIndex : indexes) {
+            val keyMatches = existingIndex.get("key").equals(index.getIndexKeys());
+            val optionsMatch = index.getIndexOptions().entrySet().stream().allMatch(entry -> entry.getValue().equals(existingIndex.get(entry.getKey())));
+            val noExtraOptions = existingIndex.keySet().stream().allMatch(key -> MONGO_INDEX_KEYS.contains(key) || index.getIndexOptions().keySet().contains(key));
+            indexExistsWithDifferentOptions |= keyMatches && !(optionsMatch && noExtraOptions);
+        }
+
+        if (indexExistsWithDifferentOptions) {
+            LOGGER.debug("Removing MongoDb index [{}] from [{}] because it appears to already exist in a different form", index.getIndexKeys(), collection.getNamespace());
+            collection.dropIndex(index.getIndexKeys());
+        }
     }
 
     private void createTicketCollections() {
