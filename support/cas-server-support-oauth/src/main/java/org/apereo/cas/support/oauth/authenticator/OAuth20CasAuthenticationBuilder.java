@@ -1,9 +1,8 @@
 package org.apereo.cas.support.oauth.authenticator;
 
-import lombok.val;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
@@ -31,7 +30,7 @@ import org.pac4j.core.profile.UserProfile;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 /**
@@ -63,7 +62,7 @@ public class OAuth20CasAuthenticationBuilder {
      * Collection of CAS settings.
      */
     protected final CasConfigurationProperties casProperties;
-    
+
     /**
      * Build service.
      *
@@ -115,18 +114,18 @@ public class OAuth20CasAuthenticationBuilder {
         /*
          * pac4j UserProfile.getPermissions() and getRoles() returns UnmodifiableSet which Jackson Serializer
          * happily serializes to json but is unable to deserialize.
-         * We have to of it to HashSet to avoid such problem
+         * We have to transform those to HashSet to avoid such a problem
          */
         val bldr = DefaultAuthenticationBuilder.newInstance()
-                .addAttribute("permissions", new HashSet<>(profile.getPermissions()))
-                .addAttribute("roles", new HashSet<>(profile.getRoles()))
-                .addAttribute("scopes", scopes)
-                .addAttribute(OAuth20Constants.STATE, state)
-                .addAttribute(OAuth20Constants.NONCE, nonce)
-                .addCredential(metadata)
-                .setPrincipal(newPrincipal)
-                .setAuthenticationDate(ZonedDateTime.now())
-                .addSuccess(profile.getClass().getCanonicalName(), handlerResult);
+            .addAttribute("permissions", new LinkedHashSet<>(profile.getPermissions()))
+            .addAttribute("roles", new LinkedHashSet<>(profile.getRoles()))
+            .addAttribute("scopes", scopes)
+            .addAttribute(OAuth20Constants.STATE, state)
+            .addAttribute(OAuth20Constants.NONCE, nonce)
+            .addCredential(metadata)
+            .setPrincipal(newPrincipal)
+            .setAuthenticationDate(ZonedDateTime.now())
+            .addSuccess(profile.getClass().getCanonicalName(), handlerResult);
 
         collectionAuthenticationAttributesIfNecessary(profile, bldr);
         return bldr.build();

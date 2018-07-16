@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -10,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.http.HttpStatus;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -21,12 +19,12 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.pac4j.core.context.J2EContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -50,35 +48,19 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
 @Slf4j
 @UtilityClass
 public class OAuth20Utils {
-    private static final ObjectWriter WRITER = new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     /**
-     * Write to the output this error text and return a null view.
+     * Write to the output this error.
      *
-     * @param response http response
-     * @param error    error message
-     * @return a null view
+     * @param error error message
+     * @return json-backed view.
      */
-    public static ModelAndView writeTextError(final HttpServletResponse response, final String error) {
-        return OAuth20Utils.writeText(response, OAuth20Constants.ERROR + '=' + error, HttpStatus.SC_BAD_REQUEST);
-    }
-
-    /**
-     * Write to the output the text and return a null view.
-     *
-     * @param response http response
-     * @param text     output text
-     * @param status   status code
-     * @return a null view
-     */
-    public static ModelAndView writeText(final HttpServletResponse response, final String text, final int status) {
-        try (val printWriter = response.getWriter()) {
-            response.setStatus(status);
-            printWriter.print(text);
-        } catch (final IOException e) {
-            LOGGER.error("Failed to write to response", e);
-        }
-        return null;
+    public static ModelAndView writeError(final String error) {
+        val model = CollectionUtils.wrap(OAuth20Constants.ERROR, error);
+        val mv = new ModelAndView(new MappingJackson2JsonView(MAPPER), (Map) model);
+        mv.setStatus(HttpStatus.BAD_REQUEST);
+        return mv;
     }
 
     /**
@@ -107,7 +89,7 @@ public class OAuth20Utils {
      *
      * @param servicesManager the services manager
      * @param redirectUri     the redirect uri
-     * @return the registered o auth service by redirect uri
+     * @return the registered OAuth service by redirect uri
      */
     public static OAuthRegisteredService getRegisteredOAuthServiceByRedirectUri(final ServicesManager servicesManager, final String redirectUri) {
         return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.matches(redirectUri));
@@ -208,7 +190,7 @@ public class OAuth20Utils {
      */
     @SneakyThrows
     public static String jsonify(final Map map) {
-        return WRITER.writeValueAsString(map);
+        return MAPPER.writeValueAsString(map);
     }
 
     /**

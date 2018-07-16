@@ -11,15 +11,16 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
-import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessTokenGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,12 +41,13 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
                                              final PrincipalFactory principalFactory,
                                              final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                              final OAuth20TokenGenerator accessTokenGenerator,
-                                             final AccessTokenResponseGenerator accessTokenResponseGenerator,
+                                             final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator,
                                              final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                              final CasConfigurationProperties casProperties,
                                              final CookieRetrievingCookieGenerator cookieGenerator,
                                              final ExpirationPolicy accessTokenExpirationPolicy,
-                                             final Collection<BaseAccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors,
+                                             final ExpirationPolicy deviceTokenExpirationPolicy,
+                                             final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors,
                                              final Collection<OAuth20TokenRequestValidator> accessTokenGrantRequestValidators) {
         super(servicesManager,
             ticketRegistry,
@@ -58,6 +60,7 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
             casProperties,
             cookieGenerator,
             accessTokenExpirationPolicy,
+            deviceTokenExpirationPolicy,
             accessTokenGrantRequestExtractors,
             accessTokenGrantRequestValidators);
     }
@@ -65,14 +68,14 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
     @PostMapping(value = {'/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.TOKEN_URL})
     @Override
-    public void handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        super.handleRequest(request, response);
+    public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return super.handleRequest(request, response);
     }
 
     @GetMapping(value = {'/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.TOKEN_URL})
     @Override
-    public void handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        super.handleRequest(request, response);
+    public ModelAndView handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return super.handleRequest(request, response);
     }
 }

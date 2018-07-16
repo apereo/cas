@@ -113,6 +113,17 @@ public class CasProtocolViewsConfiguration {
             return new CasProtocolView("protocol/oauth/confirm", applicationContext, springTemplateEngine, thymeleafProperties);
         }
 
+        @Bean
+        @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        public CasProtocolView oauthDeviceCodeApprovalView() {
+            return new CasProtocolView("protocol/oauth/deviceCodeApproval", applicationContext, springTemplateEngine, thymeleafProperties);
+        }
+
+        @Bean
+        @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        public CasProtocolView oauthDeviceCodeApprovedView() {
+            return new CasProtocolView("protocol/oauth/deviceCodeApproved", applicationContext, springTemplateEngine, thymeleafProperties);
+        }
     }
 
     /**

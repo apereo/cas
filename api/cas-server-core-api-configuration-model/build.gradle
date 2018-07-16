@@ -2,8 +2,6 @@ description = "Apereo CAS Core Configuration Model"
 def skipConfigurationMetadata = Boolean.getBoolean("skipNestedConfigMetadataGen")
 
 dependencies {
-    implementation libraries.springsecurity
-    implementation libraries.mongo
     implementation libraries.jasypt
 
     implementation libraries.bouncycastle
