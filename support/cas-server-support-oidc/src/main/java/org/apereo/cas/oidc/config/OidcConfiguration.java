@@ -63,7 +63,7 @@ import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
-import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
@@ -157,6 +157,10 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @Autowired
     @Qualifier("accessTokenExpirationPolicy")
     private ExpirationPolicy accessTokenExpirationPolicy;
+
+    @Autowired
+    @Qualifier("deviceTokenExpirationPolicy")
+    private ExpirationPolicy deviceTokenExpirationPolicy;
 
     @Autowired
     @Qualifier("requiresAuthenticationAccessTokenInterceptor")
@@ -301,7 +305,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
 
     @Bean
     @RefreshScope
-    public AccessTokenResponseGenerator oidcAccessTokenResponseGenerator() {
+    public OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator() {
         return new OidcAccessTokenResponseGenerator(oidcIdTokenGenerator());
     }
 
@@ -363,11 +367,20 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     @Bean
     public OidcAccessTokenEndpointController oidcAccessTokenController() {
         return new OidcAccessTokenEndpointController(
-            servicesManager, ticketRegistry, defaultAccessTokenFactory,
-            oidcPrincipalFactory(), webApplicationServiceFactory, oauthTokenGenerator,
-            oidcAccessTokenResponseGenerator(), profileScopeToAttributesFilter(), casProperties,
-            ticketGrantingTicketCookieGenerator.getIfAvailable(), accessTokenExpirationPolicy,
-            accessTokenGrantRequestExtractors, oauthTokenRequestValidators);
+            servicesManager,
+            ticketRegistry,
+            defaultAccessTokenFactory,
+            oidcPrincipalFactory(),
+            webApplicationServiceFactory,
+            oauthTokenGenerator,
+            oidcAccessTokenResponseGenerator(),
+            profileScopeToAttributesFilter(),
+            casProperties,
+            ticketGrantingTicketCookieGenerator.getIfAvailable(),
+            accessTokenExpirationPolicy,
+            deviceTokenExpirationPolicy,
+            accessTokenGrantRequestExtractors,
+            oauthTokenRequestValidators);
     }
 
     @ConditionalOnMissingBean(name = "clientRegistrationRequestSerializer")

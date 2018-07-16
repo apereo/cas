@@ -129,6 +129,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             .registeredService(holder.getRegisteredService())
             .deviceCode(deviceTokens.getLeft().getId())
             .userCode(deviceTokens.getValue().getId())
+
             .build();
     }
 

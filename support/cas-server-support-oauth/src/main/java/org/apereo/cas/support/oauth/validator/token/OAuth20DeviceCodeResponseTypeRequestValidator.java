@@ -41,7 +41,7 @@ public class OAuth20DeviceCodeResponseTypeRequestValidator implements OAuth20Tok
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
         } catch (final UnauthorizedServiceException e) {
-            LOGGER.warn("Registered service access is not allowed for [{}]", registeredService.getServiceId());
+            LOGGER.warn("Registered service access is not allowed for service definition for client id [{}]", clientId);
             return false;
         }
         return OAuth20Utils.isAuthorizedResponseTypeForService(context, registeredService);

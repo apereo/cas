@@ -52,8 +52,6 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointCo
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.OAuth20DefaultCasClientRedirectActionBuilder;
-import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
-import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultTokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenAuthorizationCodeGrantRequestExtractor;
@@ -62,6 +60,8 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenDevi
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenPasswordGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRefreshTokenGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ClientCredentialsResponseBuilder;
@@ -169,8 +169,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
 
     @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
     @Bean
-    public AccessTokenResponseGenerator accessTokenResponseGenerator() {
-        return new OAuth20AccessTokenResponseGenerator();
+    public OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator() {
+        return new OAuth20DefaultAccessTokenResponseGenerator();
     }
 
     @ConditionalOnMissingBean(name = "oauthCasClientRedirectActionBuilder")
@@ -244,8 +244,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
 
     @ConditionalOnMissingBean(name = "oauthAccessTokenResponseGenerator")
     @Bean
-    public AccessTokenResponseGenerator oauthAccessTokenResponseGenerator() {
-        return new OAuth20AccessTokenResponseGenerator();
+    public OAuth20AccessTokenResponseGenerator oauthAccessTokenResponseGenerator() {
+        return new OAuth20DefaultAccessTokenResponseGenerator();
     }
 
     @Bean
@@ -408,6 +408,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
             casProperties,
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
             accessTokenExpirationPolicy(),
+            deviceTokenExpirationPolicy(),
             accessTokenGrantRequestExtractors(),
             oauthTokenRequestValidators()
         );
