@@ -32,7 +32,7 @@ public class CasGeoLocationConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    public CasGeoLocationConfiguration(CasConfigurationProperties casProperties) {
+    public CasGeoLocationConfiguration(final CasConfigurationProperties casProperties) {
         this.casProperties = casProperties;
     }
 
